@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://USERNAME:PASSWORD@grocerycluster.7zupq.mongodb.net/ldes
+      database: ldes
