@@ -35,11 +35,8 @@ class LdesFragmentControllerTest {
         JSONObject expectedStoredLdesFragment = new JSONObject(Map.of("data", "stored_some_ldes_data"));
         when(ldesFragmentService.storeLdesFragment(originalLdesFragment)).thenReturn(expectedStoredLdesFragment);
 
-        mockMvc.perform(post("/ldes-fragment")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(originalLdesFragment.toJSONString()))
-                .andDo(print())
-                .andExpect(status().isOk())
+        mockMvc.perform(post("/ldes-fragment").contentType(MediaType.APPLICATION_JSON)
+                .content(originalLdesFragment.toJSONString())).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string(expectedStoredLdesFragment.toJSONString()));
 
         verify(ldesFragmentService, times(1)).storeLdesFragment(originalLdesFragment);
@@ -51,9 +48,7 @@ class LdesFragmentControllerTest {
         JSONObject returnedLdesFragment = new JSONObject(Map.of("data", "some_ldes_data"));
         when(ldesFragmentService.retrieveLdesFragmentsPage(0)).thenReturn(returnedLdesFragment);
 
-        mockMvc.perform(get("/ldes-fragment"))
-                .andDo(print())
-                .andExpect(status().isOk())
+        mockMvc.perform(get("/ldes-fragment")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string(returnedLdesFragment.toJSONString()));
 
         verify(ldesFragmentService, times(1)).retrieveLdesFragmentsPage(0);

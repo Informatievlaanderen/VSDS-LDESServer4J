@@ -16,7 +16,7 @@ class LdesFragmentServiceTest {
 
     @DisplayName("Correct storing of an LdesFragment in a repository")
     @Test
-    void when_LdesFragmentIsStoredInRepository_CreatedResourceIsReturned(){
+    void when_LdesFragmentIsStoredInRepository_CreatedResourceIsReturned() {
         JSONObject originalLdesFragment = new JSONObject(Map.of("data", "some_ldes_data"));
         JSONObject expectedStoredLdesFragment = new JSONObject(Map.of("data", "some_ldes_data_stored"));
         when(ldesFragmentRepository.saveLdesFragment(originalLdesFragment)).thenReturn(expectedStoredLdesFragment);
@@ -29,7 +29,7 @@ class LdesFragmentServiceTest {
 
     @DisplayName("Correct Retrieval of an LdesFragmentPage from a repository")
     @Test
-    void when_LdesFragmentIsRetrievedFromRepository_PageWithLdesFragmentsIsReturned(){
+    void when_LdesFragmentIsRetrievedFromRepository_PageWithLdesFragmentsIsReturned() {
         JSONObject expectedLdesFragmentPage = new JSONObject(Map.of("data", "some_ldes_data_stored"));
         when(ldesFragmentRepository.retrieveLdesFragmentsPage(0)).thenReturn(expectedLdesFragmentPage);
 

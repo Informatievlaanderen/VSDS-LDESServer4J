@@ -19,17 +19,19 @@ import static org.mockito.Mockito.*;
 class LdesFragmentStorageServiceTest {
     private final LdesFragmentMongoRepository ldesFragmentMongoRepository = mock(LdesFragmentMongoRepository.class);
     private final LdesFragmentCreator ldesFragmentCreator = new LdesFragmentCreator(new EndpointConfiguration());
-    private final LdesFragmentStorageService ldesFragmentStorageService = new LdesFragmentStorageService(ldesFragmentMongoRepository, ldesFragmentCreator);
+    private final LdesFragmentStorageService ldesFragmentStorageService = new LdesFragmentStorageService(
+            ldesFragmentMongoRepository, ldesFragmentCreator);
 
     @DisplayName("Correct saving of an LdesFragment in MongoDB")
     @Test
     void when_LdesFragmentIsSavedInRepository_CreatedResourceIsReturned() {
         JSONObject originalLdesFragment = new JSONObject(Map.of("data", "some_ldes_data"));
-        LdesFragmentEntity originalLdesFragmentEntity = new LdesFragmentEntity(originalLdesFragment.hashCode(), originalLdesFragment);
+        LdesFragmentEntity originalLdesFragmentEntity = new LdesFragmentEntity(originalLdesFragment.hashCode(),
+                originalLdesFragment);
         JSONObject expectedStoredLdesFragment = new JSONObject(Map.of("data", "some_ldes_data_stored"));
-        LdesFragmentEntity expectedLdesFragmentEntity = new LdesFragmentEntity(expectedStoredLdesFragment.hashCode(), expectedStoredLdesFragment);
-        when(ldesFragmentMongoRepository.save(any()))
-                .thenReturn(expectedLdesFragmentEntity);
+        LdesFragmentEntity expectedLdesFragmentEntity = new LdesFragmentEntity(expectedStoredLdesFragment.hashCode(),
+                expectedStoredLdesFragment);
+        when(ldesFragmentMongoRepository.save(any())).thenReturn(expectedLdesFragmentEntity);
 
         JSONObject actualStoredLdesFragment = ldesFragmentStorageService.saveLdesFragment(originalLdesFragment);
 
@@ -41,11 +43,13 @@ class LdesFragmentStorageServiceTest {
     @Test
     void when_RepositoryIsQueried_LdesFragmentsPageIsReturned() {
         JSONObject storedLdesFragment = new JSONObject(Map.of("data", "some_ldes_data_stored"));
-        LdesFragmentEntity storedLdesFragmentEntity = new LdesFragmentEntity(storedLdesFragment.hashCode(), storedLdesFragment);
-        PageImpl<LdesFragmentEntity> pageStoredLdesFragmentEntity = new PageImpl<>(List.of(storedLdesFragmentEntity), Pageable.ofSize(1), 5);
-        when(ldesFragmentMongoRepository.findAll(PageRequest.of(0, 1)))
-                .thenReturn(pageStoredLdesFragmentEntity);
-        JSONObject expectedReturnedLdesFragment = ldesFragmentCreator.createLdesFragmentPage(pageStoredLdesFragmentEntity);
+        LdesFragmentEntity storedLdesFragmentEntity = new LdesFragmentEntity(storedLdesFragment.hashCode(),
+                storedLdesFragment);
+        PageImpl<LdesFragmentEntity> pageStoredLdesFragmentEntity = new PageImpl<>(List.of(storedLdesFragmentEntity),
+                Pageable.ofSize(1), 5);
+        when(ldesFragmentMongoRepository.findAll(PageRequest.of(0, 1))).thenReturn(pageStoredLdesFragmentEntity);
+        JSONObject expectedReturnedLdesFragment = ldesFragmentCreator
+                .createLdesFragmentPage(pageStoredLdesFragmentEntity);
 
         JSONObject actualRetrievedLdesFragment = ldesFragmentStorageService.retrieveLdesFragmentsPage(0);
 
