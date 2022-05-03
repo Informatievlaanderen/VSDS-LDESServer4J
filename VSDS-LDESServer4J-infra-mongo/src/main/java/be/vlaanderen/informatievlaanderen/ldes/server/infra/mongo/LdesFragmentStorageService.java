@@ -19,11 +19,12 @@ public class LdesFragmentStorageService implements LdesFragmentRepository {
 
     @Override
     public JSONObject saveLdesFragment(JSONObject ldesFragment) {
-        LdesFragmentEntity savedLdesFragmentEntity = ldesFragmentMongoRepository.save(new LdesFragmentEntity(ldesFragment.hashCode(), ldesFragment));
+        LdesFragmentEntity savedLdesFragmentEntity = ldesFragmentMongoRepository
+                .save(new LdesFragmentEntity(ldesFragment.hashCode(), ldesFragment));
         return savedLdesFragmentEntity.getLdesFragment();
     }
 
-    public JSONObject retrieveLdesFragmentsPage(int page){
+    public JSONObject retrieveLdesFragmentsPage(int page) {
         Pageable paging = PageRequest.of(page, 1);
         Page<LdesFragmentEntity> pageable = ldesFragmentMongoRepository.findAll(paging);
         return ldesFragmentCreator.createLdesFragmentPage(pageable);

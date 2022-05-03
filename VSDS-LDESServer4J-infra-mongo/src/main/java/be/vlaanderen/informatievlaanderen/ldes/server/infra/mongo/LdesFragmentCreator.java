@@ -25,7 +25,8 @@ public class LdesFragmentCreator {
     }
 
     private void addItemsToLdesFragment(Page<LdesFragmentEntity> pageable, JSONObject ldesFragment) {
-        List<JSONObject> items = pageable.getContent().stream().map(LdesFragmentEntity::getLdesFragment).collect(Collectors.toList());
+        List<JSONObject> items = pageable.getContent().stream().map(LdesFragmentEntity::getLdesFragment)
+                .collect(Collectors.toList());
         ldesFragment.put("items", items);
     }
 
@@ -34,13 +35,15 @@ public class LdesFragmentCreator {
         addPointerToPage(pageable.getNumber(), pageable.previousOrFirstPageable(), ldesFragment, "previous");
     }
 
-    private void addPointerToPage(int currentPageNumber, Pageable referralPage, JSONObject jsonObject, String keyToPage) {
+    private void addPointerToPage(int currentPageNumber, Pageable referralPage, JSONObject jsonObject,
+            String keyToPage) {
         int referralPageNumber = referralPage.getPageNumber();
         if (currentPageNumber != referralPageNumber)
             jsonObject.put(keyToPage, updatedLink(referralPageNumber));
     }
 
     private String updatedLink(int referralPageNumber) {
-        return endpointConfiguration.getEndpoint() + "/ldes-fragment?page=PAGE".replace("PAGE", String.valueOf(referralPageNumber));
+        return endpointConfiguration.getEndpoint()
+                + "/ldes-fragment?page=PAGE".replace("PAGE", String.valueOf(referralPageNumber));
     }
 }

@@ -17,10 +17,9 @@ public class LdesFragmentController {
         return ldesFragmentService.retrieveLdesFragmentsPage(page);
     }
 
-    @PostMapping(value = "/ldes-fragment", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/ldes-fragment", consumes = { MediaType.APPLICATION_JSON_VALUE })
     JSONObject createLdesFragment(@RequestBody JSONObject ldesMember) {
         return ldesFragmentService.storeLdesFragment(ldesMember);
     }
-
 
 }
