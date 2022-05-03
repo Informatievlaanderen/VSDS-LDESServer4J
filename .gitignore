@@ -161,5 +161,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Local application files
+**/application-local.yml
 
 # End of https://www.gitignore.io/api/git,java,maven,eclipse,windows

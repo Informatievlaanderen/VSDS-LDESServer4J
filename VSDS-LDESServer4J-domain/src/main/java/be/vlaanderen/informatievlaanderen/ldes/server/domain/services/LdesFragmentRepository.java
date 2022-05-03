@@ -5,4 +5,6 @@ import org.json.simple.JSONObject;
 public interface LdesFragmentRepository {
 
     JSONObject saveLdesFragment(JSONObject ldesFragment);
+
+    JSONObject retrieveLdesFragmentsPage(int page);
 }

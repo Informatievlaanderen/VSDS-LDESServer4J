@@ -13,4 +13,8 @@ public class LdesFragmentService {
     public JSONObject storeLdesFragment(final JSONObject ldesFragment){
         return ldesFragmentRepository.saveLdesFragment(ldesFragment);
     }
+
+    public JSONObject retrieveLdesFragmentsPage(final int page){
+        return ldesFragmentRepository.retrieveLdesFragmentsPage(page);
+    }
 }
