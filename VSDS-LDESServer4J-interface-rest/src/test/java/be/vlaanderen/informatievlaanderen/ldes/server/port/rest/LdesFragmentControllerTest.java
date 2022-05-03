@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -42,5 +43,19 @@ class LdesFragmentControllerTest {
                 .andExpect(content().string(expectedStoredLdesFragment.toJSONString()));
 
         verify(ldesFragmentService, times(1)).storeLdesFragment(originalLdesFragment);
+    }
+
+    @Test
+    @DisplayName("Correct getting of an LdesFragment from the REST Service")
+    void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment() throws Exception {
+        JSONObject returnedLdesFragment = new JSONObject(Map.of("data", "some_ldes_data"));
+        when(ldesFragmentService.retrieveLdesFragmentsPage(0)).thenReturn(returnedLdesFragment);
+
+        mockMvc.perform(get("/ldes-fragment"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(returnedLdesFragment.toJSONString()));
+
+        verify(ldesFragmentService, times(1)).retrieveLdesFragmentsPage(0);
     }
 }

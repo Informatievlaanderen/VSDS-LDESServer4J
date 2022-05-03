@@ -12,6 +12,7 @@ import static org.mockito.Mockito.*;
 class LdesFragmentServiceTest {
 
     private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+    private final LdesFragmentService ldesFragmentService = new LdesFragmentService(ldesFragmentRepository);
 
     @DisplayName("Correct storing of an LdesFragment in a repository")
     @Test
@@ -20,10 +21,22 @@ class LdesFragmentServiceTest {
         JSONObject expectedStoredLdesFragment = new JSONObject(Map.of("data", "some_ldes_data_stored"));
         when(ldesFragmentRepository.saveLdesFragment(originalLdesFragment)).thenReturn(expectedStoredLdesFragment);
 
-        JSONObject actualStoredLdesFragment = ldesFragmentRepository.saveLdesFragment(originalLdesFragment);
+        JSONObject actualStoredLdesFragment = ldesFragmentService.storeLdesFragment(originalLdesFragment);
 
         assertEquals(expectedStoredLdesFragment, actualStoredLdesFragment);
         verify(ldesFragmentRepository, times(1)).saveLdesFragment(originalLdesFragment);
+    }
+
+    @DisplayName("Correct Retrieval of an LdesFragmentPage from a repository")
+    @Test
+    void when_LdesFragmentIsRetrievedFromRepository_PageWithLdesFragmentsIsReturned(){
+        JSONObject expectedLdesFragmentPage = new JSONObject(Map.of("data", "some_ldes_data_stored"));
+        when(ldesFragmentRepository.retrieveLdesFragmentsPage(0)).thenReturn(expectedLdesFragmentPage);
+
+        JSONObject actualStoredLdesFragment = ldesFragmentService.retrieveLdesFragmentsPage(0);
+
+        assertEquals(expectedLdesFragmentPage, actualStoredLdesFragment);
+        verify(ldesFragmentRepository, times(1)).retrieveLdesFragmentsPage(0);
     }
 
 }
