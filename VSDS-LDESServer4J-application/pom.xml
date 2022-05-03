@@ -20,13 +20,13 @@
 
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen</groupId>
-            <artifactId>vsds-ldesserver4j-interface-rest</artifactId>
+            <artifactId>VSDS-LDESServer4J-interface-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen</groupId>
-            <artifactId>vsds-ldesserver4j-infra-mongo</artifactId>
+            <artifactId>VSDS-LDESServer4J-infra-mongo</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
