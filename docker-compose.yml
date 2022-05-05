@@ -1,0 +1,12 @@
+version: '3.3'
+services:
+  ldes-server:
+    environment:
+      - MONGO_URL=
+      - MONGO_DATABASE=ldes
+      - MONGO_USERNAME=
+      - MONGO_PASSWORD=
+      - LDES_ENDPOINT=http://localhost:8080
+    ports:
+      - '8080:8080'
+    image: ldes-server
