@@ -1,8 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.config.EndpointConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entity.LdesFragmentEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repository.LdesFragmentMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.services.LdesFragmentCreator;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +17,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class LdesFragmentStorageServiceTest {
-    private final LdesFragmentMongoRepository ldesFragmentMongoRepository = mock(LdesFragmentMongoRepository.class);
+class LdesFragmentMongoRepositoryTest {
+    private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
     private final LdesFragmentCreator ldesFragmentCreator = new LdesFragmentCreator(new EndpointConfig("localhost"));
-    private final LdesFragmentStorageService ldesFragmentStorageService = new LdesFragmentStorageService(
-            ldesFragmentMongoRepository, ldesFragmentCreator);
+    private final LdesFragmentMongoRepository ldesFragmentMongoRepository = new LdesFragmentMongoRepository(
+            ldesFragmentRepository, ldesFragmentCreator);
 
     @DisplayName("Correct saving of an LdesFragment in MongoDB")
     @Test
@@ -31,12 +32,12 @@ class LdesFragmentStorageServiceTest {
         JSONObject expectedStoredLdesFragment = new JSONObject(Map.of("data", "some_ldes_data_stored"));
         LdesFragmentEntity expectedLdesFragmentEntity = new LdesFragmentEntity(expectedStoredLdesFragment.hashCode(),
                 expectedStoredLdesFragment);
-        when(ldesFragmentMongoRepository.save(any())).thenReturn(expectedLdesFragmentEntity);
+        when(ldesFragmentRepository.save(any())).thenReturn(expectedLdesFragmentEntity);
 
-        JSONObject actualStoredLdesFragment = ldesFragmentStorageService.saveLdesFragment(originalLdesFragment);
+        JSONObject actualStoredLdesFragment = ldesFragmentMongoRepository.saveLdesFragment(originalLdesFragment);
 
         assertEquals(expectedStoredLdesFragment, actualStoredLdesFragment);
-        verify(ldesFragmentMongoRepository, times(1)).save(any());
+        verify(ldesFragmentRepository, times(1)).save(any());
     }
 
     @DisplayName("Correct retrieval of an LdesFragment from MongoDB")
@@ -47,13 +48,13 @@ class LdesFragmentStorageServiceTest {
                 storedLdesFragment);
         PageImpl<LdesFragmentEntity> pageStoredLdesFragmentEntity = new PageImpl<>(List.of(storedLdesFragmentEntity),
                 Pageable.ofSize(1), 5);
-        when(ldesFragmentMongoRepository.findAll(PageRequest.of(0, 1))).thenReturn(pageStoredLdesFragmentEntity);
+        when(ldesFragmentRepository.findAll(PageRequest.of(0, 1))).thenReturn(pageStoredLdesFragmentEntity);
         JSONObject expectedReturnedLdesFragment = ldesFragmentCreator
                 .createLdesFragmentPage(pageStoredLdesFragmentEntity);
 
-        JSONObject actualRetrievedLdesFragment = ldesFragmentStorageService.retrieveLdesFragmentsPage(0);
+        JSONObject actualRetrievedLdesFragment = ldesFragmentMongoRepository.retrieveLdesFragmentsPage(0);
 
         assertEquals(expectedReturnedLdesFragment, actualRetrievedLdesFragment);
-        verify(ldesFragmentMongoRepository, times(1)).findAll(PageRequest.of(0, 1));
+        verify(ldesFragmentRepository, times(1)).findAll(PageRequest.of(0, 1));
     }
 }

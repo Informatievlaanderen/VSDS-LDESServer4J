@@ -1,5 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesFragmentService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesFragmentServiceImpl;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,10 +12,10 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class LdesFragmentServiceTest {
+class LdesFragmentServiceImplTest {
 
     private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-    private final LdesFragmentService ldesFragmentService = new LdesFragmentService(ldesFragmentRepository);
+    private final LdesFragmentService ldesFragmentService = new LdesFragmentServiceImpl(ldesFragmentRepository);
 
     @DisplayName("Correct storing of an LdesFragment in a repository")
     @Test

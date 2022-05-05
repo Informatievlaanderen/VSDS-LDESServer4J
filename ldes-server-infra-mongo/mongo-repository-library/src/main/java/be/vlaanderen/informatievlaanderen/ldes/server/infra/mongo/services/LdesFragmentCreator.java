@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.config.EndpointConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entity.LdesFragmentEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.springframework.data.domain.Page;

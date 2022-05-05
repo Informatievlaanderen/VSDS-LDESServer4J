@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.port.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesFragmentService;
 import org.json.simple.JSONObject;

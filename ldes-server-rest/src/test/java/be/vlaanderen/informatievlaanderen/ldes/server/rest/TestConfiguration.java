@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.port.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
