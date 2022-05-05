@@ -11,14 +11,14 @@
     </parent>
 
     <groupId>be.vlaanderen.informatievlaanderen</groupId>
-    <artifactId>VSDS-LDESServer4J</artifactId>
+    <artifactId>ldes-server</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>VSDS-LDESServer4J-domain</module>
-        <module>VSDS-LDESServer4J-infra-mongo</module>
-        <module>VSDS-LDESServer4J-interface-rest</module>
-        <module>VSDS-LDESServer4J-application</module>
+        <module>ldes-server-domain</module>
+        <module>ldes-server-infra-mongo</module>
+        <module>ldes-server-rest</module>
+        <module>ldes-server-application</module>
     </modules>
 
 
