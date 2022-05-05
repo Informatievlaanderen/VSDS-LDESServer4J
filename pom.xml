@@ -80,4 +80,10 @@
         </plugins>
     </build>
 
+
+    <scm>
+        <url>https://github.com/Informatievlaanderen/VSDS-LDESServer4J</url>
+        <connection>scm:git:git://github.com/Informatievlaanderen/VSDS-LDESServer4J.git</connection>
+        <developerConnection>scm:git:git@github.com/Informatievlaanderen/VSDS-LDESServer4J.git</developerConnection>
+    </scm>
 </project>
