@@ -1,10 +1,8 @@
 spring:
-  profiles:
-    active: local
   data:
     mongodb:
-      uri: mongodb+srv://USERNAME:PASSWORD@grocerycluster.7zupq.mongodb.net/ldes
-      database: ldes
+      uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
+      database: ${MONGO_DATABASE}
 
 ldes:
-  endpoint: "http://localhost:8080"
+  endpoint: ${LDES_ENDPOINT}
