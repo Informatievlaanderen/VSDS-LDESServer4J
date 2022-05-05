@@ -164,4 +164,8 @@ $RECYCLE.BIN/
 # Local application files
 **/application-local.yml
 
+# IntelliJ IDEA
+*.iml
+.idea/
+
 # End of https://www.gitignore.io/api/git,java,maven,eclipse,windows
