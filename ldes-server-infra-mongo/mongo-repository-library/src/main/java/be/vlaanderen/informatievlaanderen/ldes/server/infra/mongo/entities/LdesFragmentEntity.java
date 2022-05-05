@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

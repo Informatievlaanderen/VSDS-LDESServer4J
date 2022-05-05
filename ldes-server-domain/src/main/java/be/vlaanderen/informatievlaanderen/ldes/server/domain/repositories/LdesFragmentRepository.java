@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories;
 
 import org.json.simple.JSONObject;
 
