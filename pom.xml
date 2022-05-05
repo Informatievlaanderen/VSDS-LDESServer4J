@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>be.vlaanderen.informatievlaanderen</groupId>
-    <artifactId>vsds-ldesserver4j</artifactId>
+    <artifactId>VSDS-LDESServer4J</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
