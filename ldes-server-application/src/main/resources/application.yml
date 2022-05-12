@@ -5,4 +5,4 @@ spring:
       database: ${MONGO_DATABASE}
 
 ldes:
-  endpoint: ${LDES_ENDPOINT}
+  endpoint: ${LDES_HOST}:${LDES_PORT}/
