@@ -1,3 +1,27 @@
+# https://gist.github.com/mpneuried/0594963ad38e68917ef189b4e6a269db
+
+#
+# SETUP
+#
+
+# Import container config
+cnf ?= config.env
+include $(cnf)
+export $(shell sed 's/=.*//' $(cnf))
+
+# Import local container config (can be committed to git and overrides previous config)
+lcl ?= config.local.env
+include $(lcl)
+export $(shell sed 's/=.*//' $(lcl))
+
+# Import deployment config
+dpl ?= deploy.env
+include $(dpl)
+export $(shell sed 's/=.*//' $(dpl))
+
+# Grep the version
+VERSION=$(shell ./version.sh)
+
 ###
 ##. Configuration
 ###
@@ -21,13 +45,18 @@ REPOSITORIES=self VSDS-LDESServer4J
 REPOSITORY_DIRECTORY_VSDS-LDESServer4J=.
 # REPOSITORY_URL_VSDS-LDESServer4J=git@github.com:Informatievlaanderen/VSDS-LDESServer4J.git
 REPOSITORY_URL_VSDS-LDESServer4J=git@github.com:sverholen/VSDS-LDESServer4J.git
+REPOSITORY_MAKEFILE_VSDS-LDESServer4J=Makefile
+
+# GIT config
+DEFAULT_BRANCH=main
 
 #. At least include the includes/base.makefile and includes/git.makefile files
 include $(MAKEFILES_DIRECTORY)/builtins.makefile  # Reset the default makefile builtins
 include $(MAKEFILES_DIRECTORY)/base.makefile      # Base functionality
 include $(MAKEFILES_DIRECTORY)/git.makefile       # Git management
 include $(MAKEFILES_DIRECTORY)/maven.makefile     # Maven management
-# include $(MAKEFILES_DIRECTORY)/docker-compose-services.makefile
+include $(MAKEFILES_DIRECTORY)/docker-compose-services.makefile
+include $(MAKEFILES_DIRECTORY)/docker-tools.makefile
 
 ###
 ## VSDS-LDESServer4J
