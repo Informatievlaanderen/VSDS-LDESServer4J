@@ -28,14 +28,16 @@ VERSION=$(shell ./version.sh)
 #
 
 # This installs/updates the included makefiles
-MAKEFILES_REPOSITORY:=https://github.com/phpqa/makefiles.git
+#MAKEFILES_REPOSITORY:=https://github.com/phpqa/makefiles.git
+MAKEFILES_REPOSITORY:=https://github.com/sverholen/makefiles.git
 MAKEFILES_DIRECTORY:=.makefiles
 MAKEFILES_TAG:=v0.5.6
 MAKEFILES_LOG:=$(shell \
 	rm -rf includes || true; \
 	if test ! -d $(MAKEFILES_DIRECTORY); then git clone $(MAKEFILES_REPOSITORY) "$(MAKEFILES_DIRECTORY)"; fi; \
 	cd "$(MAKEFILES_DIRECTORY)"; \
-	if test -z "$$(git --no-pager describe --always --dirty | grep "^$(MAKEFILES_TAG)")"; then git fetch --all --tags; git reset --hard "tags/$(MAKEFILES_TAG)"; fi \
+	if test -z !$$(grep "^$(MAKEFILES_TAG)") || $$(grep "^$(MAKEFILES_TAG")") == "v0.0.0"; then git pull; \
+	elif test -z $$(git --no-pager describe --always --dirty | grep "^$(MAKEFILES_TAG)")"; then git fetch --all --tags; git reset --hard "tags/$(MAKEFILES_TAG)"; fi \
 )
 
 # This section contains the variables required by the included makefiles, before including the makefiles themselves.
@@ -54,6 +56,7 @@ include $(MAKEFILES_DIRECTORY)/base.makefile
 include $(MAKEFILES_DIRECTORY)/git.makefile
 include $(MAKEFILES_DIRECTORY)/docker-compose-services.makefile
 include $(MAKEFILES_DIRECTORY)/docker-tools.makefile
+include $(MAKEFILES_DIRECTORY)/maven.makefile
 
 #
 # HELP
@@ -62,8 +65,8 @@ include $(MAKEFILES_DIRECTORY)/docker-tools.makefile
 
 .PHONY: help
 
-help: ## This help message
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+# help: ## This help message
+# 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
 
