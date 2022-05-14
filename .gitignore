@@ -168,8 +168,11 @@ $RECYCLE.BIN/
 *.iml
 .idea/
 
+# VSCode
+.vscode/
+
 # End of https://www.gitignore.io/api/git,java,maven,eclipse,windows
 /docker-compose-local.yml
 
-# makefiles
+### makefiles ###
 .makefiles
