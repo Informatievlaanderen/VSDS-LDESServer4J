@@ -27,9 +27,8 @@ VERSION=$(shell ./version.sh)
 ###
 
 # This installs/updates the included makefiles
-#MAKEFILES_REPOSITORY:=https://github.com/phpqa/makefiles.git
-
-MAKEFILES_REPOSITORY:=https://github.com/sverholen/makefiles.git
+MAKEFILES_REPOSITORY:=https://github.com/phpqa/makefiles.git
+#MAKEFILES_REPOSITORY:=https://github.com/sverholen/makefiles.git
 MAKEFILES_DIRECTORY:=.makefiles
 MAKEFILES_TAG:=v0.0.0
 MAKEFILES_LOG:=$(shell \
@@ -59,7 +58,6 @@ include $(MAKEFILES_DIRECTORY)/git.makefile       # Git management
 include $(MAKEFILES_DIRECTORY)/maven.makefile     # Maven management
 include $(MAKEFILES_DIRECTORY)/docker-compose-services.makefile
 include $(MAKEFILES_DIRECTORY)/docker-tools.makefile
-include $(MAKEFILES_DIRECTORY)/maven.makefile
 
 ###
 ## VSDS-LDESServer4J
@@ -82,5 +80,9 @@ pull: pull-repositories
 	@true
 
 # Build the images
-docker-build: build-images -f docker-compose.yml
+docker-build: build-images
+	@true
+
+# Run the containers
+docker-up: up-services
 	@true

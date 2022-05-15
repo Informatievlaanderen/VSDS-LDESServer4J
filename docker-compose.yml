@@ -1,15 +1,20 @@
 version: '3.3'
 services:
   ldes-server:
-    image: ldes-server
+    container_name: ldes-server
+    build:
+      context: .
+      dockerfile: Dockerfile
     environment:
       - MONGO_URL=${MONGO_URL}
-      - MONGO_DATABASE=${MONGO_DB}
+      - MONGO_DATABASE=${MONGO_DATABASE}
       - MONGO_USERNAME=${MONGO_USERNAME}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
-    hostname:
-      - ${LDES_HOST}
+    hostname: ${LDES_HOST}
     ports:
       - '${LDES_PORT}:8080'
     networks:
       - ldes
+
+networks:
+  ldes:
