@@ -3,7 +3,6 @@
 FROM maven:3.8.5-openjdk-18 AS builder
 COPY . /ldes-server
 WORKDIR /ldes-server
-#RUN mvn clean formatter:format package
 RUN mvn clean package
 
 FROM openjdk:18-ea-alpine

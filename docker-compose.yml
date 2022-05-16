@@ -1,6 +1,8 @@
 version: '3.3'
 services:
   ldes-server:
+    env_file:
+      - ./config.local.env
     container_name: ldes-server
     build:
       context: .
@@ -10,11 +12,13 @@ services:
       - MONGO_DATABASE=${MONGO_DATABASE}
       - MONGO_USERNAME=${MONGO_USERNAME}
       - MONGO_PASSWORD=${MONGO_PASSWORD}
-    hostname: ${LDES_HOST}
+      - LDES_HOST=${LDES_HOST}
+      - LDES_PORT=${LDES_PORT}
     ports:
-      - '${LDES_PORT}:8080'
+      - "${LDES_PORT}:8080"
     networks:
       - ldes
 
 networks:
   ldes:
+    driver: bridge
