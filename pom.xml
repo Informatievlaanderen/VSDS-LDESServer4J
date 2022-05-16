@@ -76,6 +76,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <lineEnding>KEEP</lineEnding>
+                </configuration>
             </plugin>
         </plugins>
     </build>
