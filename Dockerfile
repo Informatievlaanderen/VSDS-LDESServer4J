@@ -3,7 +3,7 @@
 FROM maven:3.8.5-openjdk-18 AS builder
 COPY . /ldes-server
 WORKDIR /ldes-server
-RUN mvn clean package
+RUN mvn clean package -DskipFormatCode=true
 
 FROM openjdk:18-ea-alpine
 COPY --from=builder /ldes-server/ldes-server-application/target/ldes-server-application.jar ./
