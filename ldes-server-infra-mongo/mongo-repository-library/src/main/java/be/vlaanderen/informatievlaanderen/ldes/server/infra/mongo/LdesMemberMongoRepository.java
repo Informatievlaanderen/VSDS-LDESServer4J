@@ -2,37 +2,30 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.services.LdesFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.converters.LdesMemberConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class LdesMemberMongoRepository implements LdesMemberRepository {
 
-    private final LdesFragmentRepository ldesFragmentRepository;
-    private final LdesFragmentCreator ldesFragmentCreator;
-
-    @Override
-    public JSONObject saveLdesMember(JSONObject ldesFragment) {
-        LdesFragmentEntity savedLdesFragmentEntity = ldesFragmentRepository
-                .save(new LdesFragmentEntity(ldesFragment.hashCode(), ldesFragment));
-        return savedLdesFragmentEntity.getLdesFragment();
-    }
+    private final LdesMemberEntityRepository ldesMemberEntityRepository;
+    private final LdesMemberConverter ldesMemberConverter;
 
     @Override
     public LdesMember saveLdesMember(LdesMember ldesMember) {
-        throw new UnsupportedOperationException("Not yet implemented");
+        LdesMemberEntity ldesMemberEntity = ldesMemberConverter.toEntity(ldesMember);
+        LdesMemberEntity savedLdesMemberEntity = ldesMemberEntityRepository.save(ldesMemberEntity);
+        return ldesMemberConverter.fromEntity(savedLdesMemberEntity);
     }
 
     @Override
-    public JSONObject retrieveLdesFragmentsPage(int page) {
-        Pageable paging = PageRequest.of(page, 1);
-        Page<LdesFragmentEntity> pageable = ldesFragmentRepository.findAll(paging);
-        return ldesFragmentCreator.createLdesFragmentPage(pageable);
+    public List<LdesMember> fetchLdesMembers() {
+        return ldesMemberEntityRepository.findAll().stream().map(ldesMemberConverter::fromEntity)
+                .collect(Collectors.toList());
     }
 }

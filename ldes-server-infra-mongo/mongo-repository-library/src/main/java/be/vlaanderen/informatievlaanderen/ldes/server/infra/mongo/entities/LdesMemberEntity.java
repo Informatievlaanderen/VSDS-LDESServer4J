@@ -7,14 +7,14 @@ import org.json.simple.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("ldesfragment")
+@Document("ldesmember")
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class LdesFragmentEntity {
+public class LdesMemberEntity {
 
     @Id
     private final Integer id;
 
-    private final JSONObject ldesFragment;
+    private final JSONObject ldesMember;
 }
