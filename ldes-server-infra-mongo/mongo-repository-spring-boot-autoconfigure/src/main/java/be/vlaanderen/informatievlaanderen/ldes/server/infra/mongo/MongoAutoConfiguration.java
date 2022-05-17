@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass(LdesFragmentMongoRepository.class)
+@ConditionalOnClass(LdesMemberMongoRepository.class)
 @EnableConfigurationProperties(value = { EndpointProperties.class })
 public class MongoAutoConfiguration {
 
@@ -27,10 +27,10 @@ public class MongoAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public LdesFragmentMongoRepository ldesFragmentStorageService(final LdesFragmentRepository ldesFragmentRepository,
+    public LdesMemberMongoRepository ldesFragmentStorageService(final LdesFragmentRepository ldesFragmentRepository,
             final EndpointConfig endpointConfig) {
         final LdesFragmentCreator fragmentCreator = new LdesFragmentCreator(endpointConfig);
-        return new LdesFragmentMongoRepository(ldesFragmentRepository, fragmentCreator);
+        return new LdesMemberMongoRepository(ldesFragmentRepository, fragmentCreator);
     }
 
 }
