@@ -1,16 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesFragmentService;
-import lombok.RequiredArgsConstructor;
+
 import org.json.simple.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
 @RestController
 public class LdesFragmentController {
 
     private final LdesFragmentService ldesFragmentService;
+    
+    public LdesFragmentController(final LdesFragmentService ldesFragmentService) {
+    	this.ldesFragmentService = ldesFragmentService;
+    }
 
     @GetMapping("/ldes-fragment")
     JSONObject retrieveLdesFragmentsPage(@RequestParam(defaultValue = "0") int page) {

@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.config.EndpointConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
-import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,14 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class LdesFragmentCreator {
 
     private final EndpointConfig endpointConfig;
+    
+    @Autowired
+    public LdesFragmentCreator(final EndpointConfig endpointConfig) {
+    	this.endpointConfig = endpointConfig;
+    }
 
     public JSONObject createLdesFragmentPage(Page<LdesFragmentEntity> pageable) {
         JSONObject ldesFragment = new JSONObject();

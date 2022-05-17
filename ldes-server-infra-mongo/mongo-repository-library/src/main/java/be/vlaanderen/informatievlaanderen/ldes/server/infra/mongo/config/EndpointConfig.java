@@ -1,14 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.config;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-
 import java.util.Properties;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
 public class EndpointConfig extends Properties {
-    private final String endpoint;
+	
+    /** Implements Serializable. */
+	private static final long serialVersionUID = 1L;
+	
+	private final String endpoint;
+    
+    public EndpointConfig(final String endpoint) {
+    	this.endpoint = endpoint;
+    }
+    
+    public String getEndpoint() {
+    	return this.endpoint;
+    }
 }
