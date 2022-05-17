@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class LdesFragmentMongoRepositoryTest {
     private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
     private final LdesFragmentCreator ldesFragmentCreator = new LdesFragmentCreator(new EndpointConfig("localhost"));
-    private final LdesFragmentMongoRepository ldesFragmentMongoRepository = new LdesFragmentMongoRepository(
+    private final LdesMemberMongoRepository ldesFragmentMongoRepository = new LdesMemberMongoRepository(
             ldesFragmentRepository, ldesFragmentCreator);
 
     @DisplayName("Correct saving of an LdesFragment in MongoDB")
@@ -34,7 +34,7 @@ class LdesFragmentMongoRepositoryTest {
                 expectedStoredLdesFragment);
         when(ldesFragmentRepository.save(any())).thenReturn(expectedLdesFragmentEntity);
 
-        JSONObject actualStoredLdesFragment = ldesFragmentMongoRepository.saveLdesFragment(originalLdesFragment);
+        JSONObject actualStoredLdesFragment = ldesFragmentMongoRepository.saveLdesMember(originalLdesFragment);
 
         assertEquals(expectedStoredLdesFragment, actualStoredLdesFragment);
         verify(ldesFragmentRepository, times(1)).save(any());
