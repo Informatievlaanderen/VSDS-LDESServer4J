@@ -13,10 +13,11 @@ public class LdesMemberMongoRepository implements LdesMemberRepository {
 
     private final LdesMemberEntityRepository ldesMemberEntityRepository;
     private final LdesMemberConverter ldesMemberConverter;
-    
-    public LdesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository, final LdesMemberConverter ldesMemberConverter) {
-    	this.ldesMemberEntityRepository = ldesMemberEntityRepository;
-    	this.ldesMemberConverter = ldesMemberConverter;
+
+    public LdesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository,
+            final LdesMemberConverter ldesMemberConverter) {
+        this.ldesMemberEntityRepository = ldesMemberEntityRepository;
+        this.ldesMemberConverter = ldesMemberConverter;
     }
 
     @Override

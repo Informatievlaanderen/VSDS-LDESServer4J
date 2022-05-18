@@ -26,9 +26,9 @@ class LdesMemberConverterImplTest {
 
     @BeforeEach
     public void init() throws IOException, ParseException, URISyntaxException {
-    	ClassLoader classLoader = getClass().getClassLoader();
-    	ldesMember = readLdesMemberFromFile(classLoader, "example-ldes-member.txt");
-    	ldesMemberEntity = readLdesMemberEntityFromFile(classLoader, "example-ldes-member-entity.json");
+        ClassLoader classLoader = getClass().getClassLoader();
+        ldesMember = readLdesMemberFromFile(classLoader, "example-ldes-member.txt");
+        ldesMemberEntity = readLdesMemberEntityFromFile(classLoader, "example-ldes-member-entity.json");
     }
 
     @Test

@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 public class SdsReaderImpl implements SdsReader {
 
     private final LdesMemberRepository ldesMemberRepository;
-    
+
     @Autowired
     public SdsReaderImpl(final LdesMemberRepository ldesMemberRepository) {
-    	this.ldesMemberRepository = ldesMemberRepository;
+        this.ldesMemberRepository = ldesMemberRepository;
     }
 
     @Override

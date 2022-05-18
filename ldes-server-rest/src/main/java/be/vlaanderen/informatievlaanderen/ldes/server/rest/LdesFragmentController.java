@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LdesFragmentController {
 
     private final SdsReader sdsReader;
-    
+
     public LdesFragmentController(final SdsReader sdsReader) {
-    	this.sdsReader = sdsReader;
+        this.sdsReader = sdsReader;
     }
 }
