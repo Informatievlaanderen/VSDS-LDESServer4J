@@ -5,16 +5,19 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMe
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.converters.LdesMemberConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class LdesMemberMongoRepository implements LdesMemberRepository {
 
     private final LdesMemberEntityRepository ldesMemberEntityRepository;
     private final LdesMemberConverter ldesMemberConverter;
+    
+    public LdesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository, final LdesMemberConverter ldesMemberConverter) {
+    	this.ldesMemberEntityRepository = ldesMemberEntityRepository;
+    	this.ldesMemberConverter = ldesMemberConverter;
+    }
 
     @Override
     public LdesMember saveLdesMember(LdesMember ldesMember) {

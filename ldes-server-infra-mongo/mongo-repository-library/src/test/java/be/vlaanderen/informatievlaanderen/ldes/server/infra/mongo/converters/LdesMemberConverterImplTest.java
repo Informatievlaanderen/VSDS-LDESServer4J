@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
-import lombok.SneakyThrows;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,12 +24,11 @@ class LdesMemberConverterImplTest {
     private LdesMember ldesMember;
     private LdesMemberEntity ldesMemberEntity;
 
-    @SneakyThrows
     @BeforeEach
-    public void init() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        ldesMember = readLdesMemberFromFile(classLoader, "example-ldes-member.txt");
-        ldesMemberEntity = readLdesMemberEntityFromFile(classLoader, "example-ldes-member-entity.json");
+    public void init() throws IOException, ParseException, URISyntaxException {
+    	ClassLoader classLoader = getClass().getClassLoader();
+    	ldesMember = readLdesMemberFromFile(classLoader, "example-ldes-member.txt");
+    	ldesMemberEntity = readLdesMemberEntityFromFile(classLoader, "example-ldes-member-entity.json");
     }
 
     @Test
