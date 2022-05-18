@@ -1,6 +1,13 @@
 # syntax=docker/dockerfile:1
 
-FROM maven:3.8.5-openjdk-18 AS builder
+FROM alpine:latest AS bom
+RUN apk update && apk add git maven
+RUN git clone https://github.com/Informatievlaanderen/VSDS-LDES.git vsds
+WORKDIR /vsds
+RUN mvn clean install -DskipFormatCode=true
+
+
+#FROM maven:3.8.5-openjdk-18 AS builder
 COPY . /ldes-server
 WORKDIR /ldes-server
 RUN mvn clean package -DskipFormatCode=true
