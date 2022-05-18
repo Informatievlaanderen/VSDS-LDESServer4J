@@ -3,8 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.config.EndpointConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.services.LdesFragmentCreator;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBObject;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +12,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class LdesFragmentMongoRepositoryIntegrationTest {
 
     @Autowired
-    private LdesFragmentMongoRepository ldesFragmentMongoRepository;
+    private LdesMemberMongoRepository ldesFragmentMongoRepository;
 
     @Autowired
     private LdesFragmentRepository ldesFragmentRepository;
@@ -40,8 +35,8 @@ class LdesFragmentMongoRepositoryIntegrationTest {
         JSONObject jsonObject1 = createLdesFragment("ldesFragmentKeyOne", "ldesFragmentValueOne");
         JSONObject jsonObject2 = createLdesFragment("ldesFragmentKeyTwo", "ldesFragmentValueTwo");
 
-        ldesFragmentMongoRepository.saveLdesFragment(jsonObject1);
-        ldesFragmentMongoRepository.saveLdesFragment(jsonObject2);
+        ldesFragmentMongoRepository.saveLdesMember(jsonObject1);
+        ldesFragmentMongoRepository.saveLdesMember(jsonObject2);
 
         assertEquals(2, ldesFragmentRepository.findAll().size());
 
@@ -61,10 +56,10 @@ class LdesFragmentMongoRepositoryIntegrationTest {
     static class TestConfig {
 
         @Bean
-        public LdesFragmentMongoRepository ldesFragmentMongoRepository(
+        public LdesMemberMongoRepository ldesFragmentMongoRepository(
                 final LdesFragmentRepository ldesFragmentRepository) {
             final LdesFragmentCreator fragmentCreator = new LdesFragmentCreator(new EndpointConfig("localhost"));
-            return new LdesFragmentMongoRepository(ldesFragmentRepository, fragmentCreator);
+            return new LdesMemberMongoRepository(ldesFragmentRepository, fragmentCreator);
         }
 
     }
