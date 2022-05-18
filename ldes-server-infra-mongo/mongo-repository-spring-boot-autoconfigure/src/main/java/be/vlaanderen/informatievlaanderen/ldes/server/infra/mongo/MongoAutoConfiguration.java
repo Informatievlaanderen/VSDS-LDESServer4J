@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass(LdesMemberMongoRepository.class)
-@EnableConfigurationProperties(value = { EndpointProperties.class })
+@EnableConfigurationProperties()
 public class MongoAutoConfiguration {
 
     @Bean

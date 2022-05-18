@@ -11,17 +11,17 @@ public class LdesMemberEntity {
     private final Integer id;
 
     private final JSONObject ldesMember;
-    
+
     public LdesMemberEntity(final Integer id, final JSONObject ldesMember) {
-    	this.id = id;
-    	this.ldesMember = ldesMember;
+        this.id = id;
+        this.ldesMember = ldesMember;
     }
-    
+
     public Integer getId() {
-    	return this.id;
+        return this.id;
     }
-    
+
     public JSONObject getLdesMember() {
-    	return this.ldesMember;
+        return this.ldesMember;
     }
 }
