@@ -17,14 +17,14 @@ class SdsReaderImplTest {
 
     @DisplayName("Correct storing of an LdesMember in a repository")
     @Test
-    void when_LdesFragmentIsStoredInRepository_CreatedResourceIsReturned() {
+    void when_LdesMemberIsStoredInRepository_CreatedResourceIsReturned() {
         LdesMember originalLdesMember = new LdesMember(new String[] { "original", "ldes", "member" });
-        LdesMember expectedStoredLdesFragment = new LdesMember(new String[] { "stored", "ldes", "member" });
-        when(ldesMemberRepository.saveLdesMember(originalLdesMember)).thenReturn(expectedStoredLdesFragment);
+        LdesMember expectedStoredLdesMember = new LdesMember(new String[] { "stored", "ldes", "member" });
+        when(ldesMemberRepository.saveLdesMember(originalLdesMember)).thenReturn(expectedStoredLdesMember);
 
-        LdesMember actualStoredLdesFragment = sdsReader.storeLdesMember(originalLdesMember);
+        LdesMember actualStoredLdesMember = sdsReader.storeLdesMember(originalLdesMember);
 
-        assertEquals(expectedStoredLdesFragment, actualStoredLdesFragment);
+        assertEquals(expectedStoredLdesMember, actualStoredLdesMember);
         verify(ldesMemberRepository, times(1)).saveLdesMember(originalLdesMember);
     }
 }

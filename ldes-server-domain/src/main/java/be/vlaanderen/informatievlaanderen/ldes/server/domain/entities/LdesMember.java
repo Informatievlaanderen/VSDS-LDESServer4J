@@ -6,4 +6,8 @@ public class LdesMember {
     public LdesMember(final String[] quads) {
     	this.quads = quads;
     }
+    
+    public String[] getQuads() {
+    	return this.quads;
+    }
 }

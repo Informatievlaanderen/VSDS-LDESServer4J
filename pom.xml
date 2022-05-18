@@ -20,9 +20,4 @@
         <module>ldes-server-rest</module>
         <module>ldes-server-application</module>
     </modules>
-
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
 </project>

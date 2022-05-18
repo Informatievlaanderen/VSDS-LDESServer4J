@@ -4,24 +4,24 @@ import org.json.simple.JSONObject;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("ldesfragment")
-public class LdesFragmentEntity {
+@Document("ldesmember")
+public class LdesMemberEntity {
 
     @Id
     private final Integer id;
 
-    private final JSONObject ldesFragment;
+    private final JSONObject ldesMember;
     
-    public LdesFragmentEntity(final Integer id, final JSONObject ldesFragment) {
+    public LdesMemberEntity(final Integer id, final JSONObject ldesMember) {
     	this.id = id;
-    	this.ldesFragment = ldesFragment;
+    	this.ldesMember = ldesMember;
     }
     
     public Integer getId() {
     	return this.id;
     }
     
-    public JSONObject getLdesFragment() {
-    	return this.ldesFragment;
+    public JSONObject getLdesMember() {
+    	return this.ldesMember;
     }
 }
