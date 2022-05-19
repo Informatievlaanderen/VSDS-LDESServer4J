@@ -1,4 +1,7 @@
 spring:
+  mongodb:
+    embedded:
+      version: 3.2.22
   data:
     mongodb:
       uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
