@@ -8,6 +8,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+<<<<<<< HEAD
+=======
+    environment:
+      - MONGO_URL=${MONGO_URL}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+>>>>>>> fix: docker for local BOM
     ports:
       - "8080:8080"
     networks:
