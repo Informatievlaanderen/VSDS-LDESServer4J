@@ -6,10 +6,10 @@ import org.json.simple.JSONObject;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JsonObjectCreatorIml implements JsonObjectCreator {
+public class JsonObjectCreatorImpl implements JsonObjectCreator {
     private final LdesConfig ldesConfig;
 
-    public JsonObjectCreatorIml(final LdesConfig ldesConfig) {
+    public JsonObjectCreatorImpl(final LdesConfig ldesConfig) {
         this.ldesConfig = ldesConfig;
     }
 

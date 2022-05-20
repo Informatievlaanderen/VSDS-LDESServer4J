@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JSONConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JSONConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JsonConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JenaConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JenaConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 public class LdesMemberConverterImpl implements LdesMemberConverter {
     private static final String DELIMITER = "\n";
     private final JenaConverter jenaConverter = new JenaConverterImpl();
-    private final JSONConverter jsonConverter = new JSONConverterImpl();
+    private final JSONConverter jsonConverter = new JsonConverterImpl();
 
     @Override
     public JSONArray convertLdesMemberToJSONArray(LdesMember ldesMember) {

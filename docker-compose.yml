@@ -4,16 +4,12 @@ services:
     env_file:
       - ./config.local.env
     container_name: ldes-server
+    image: ldes-server
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      - MONGO_URL=${MONGO_URL}
-      - MONGO_DATABASE=${MONGO_DATABASE}
-      - MONGO_USERNAME=${MONGO_USERNAME}
-      - MONGO_PASSWORD=${MONGO_PASSWORD}
     ports:
-      - "${LDES_PORT}:8080"
+      - "8080:8080"
     networks:
       - ldes
 

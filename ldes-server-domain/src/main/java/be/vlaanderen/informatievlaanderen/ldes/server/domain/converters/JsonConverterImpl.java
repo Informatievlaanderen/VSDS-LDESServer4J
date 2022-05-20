@@ -4,7 +4,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class JSONConverterImpl implements JSONConverter {
+public class JsonConverterImpl implements JSONConverter {
     private final JSONParser parser = new JSONParser();
 
     public JSONObject convertStringToJSONObject(String jsonLDString) {
