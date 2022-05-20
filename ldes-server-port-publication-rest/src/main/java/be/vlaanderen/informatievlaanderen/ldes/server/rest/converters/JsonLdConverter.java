@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.services.JsonObjectCreatorIml;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.services.JsonObjectCreatorImpl;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpInputMessage;
@@ -18,9 +18,9 @@ import java.util.List;
 public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
 
     private final LdesMemberConverter ldesMemberConverter = new LdesMemberConverterImpl();
-    private final JsonObjectCreatorIml jsonObjectCreator;
+    private final JsonObjectCreatorImpl jsonObjectCreator;
 
-    public JsonLdConverter(JsonObjectCreatorIml jsonObjectCreator) {
+    public JsonLdConverter(JsonObjectCreatorImpl jsonObjectCreator) {
         this.jsonObjectCreator = jsonObjectCreator;
     }
 
