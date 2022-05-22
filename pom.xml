@@ -16,8 +16,9 @@
     
     <modules>
         <module>ldes-server-domain</module>
-        <module>ldes-server-infra-mongo</module>
-        <module>ldes-server-port-publication-rest</module>
         <module>ldes-server-application</module>
+        <module>ldes-server-infra-mongo</module>
+        <module>ldes-server-port-ingestion-rest</module>
+        <module>ldes-server-port-publication-rest</module>
     </modules>
 </project>
