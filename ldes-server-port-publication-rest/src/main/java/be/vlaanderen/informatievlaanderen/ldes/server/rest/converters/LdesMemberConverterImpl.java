@@ -25,5 +25,4 @@ public class LdesMemberConverterImpl implements LdesMemberConverter {
         JSONObject jsonObject = jsonConverter.convertStringToJSONObject(jsonLDString);
         return (JSONArray) jsonObject.get("@graph");
     }
-
 }
