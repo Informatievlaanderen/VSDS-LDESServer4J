@@ -41,9 +41,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
 
                 <configuration>
-                    <outputDirectory>
-                        ../plugins
-                    </outputDirectory>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
