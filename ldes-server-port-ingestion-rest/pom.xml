@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ldes-server-port-publication-rest</artifactId>
+    <artifactId>ldes-server-port-ingestion-rest</artifactId>
 
     <dependencies>
         <!-- ############################################################## -->
@@ -20,7 +20,6 @@
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-server-domain</artifactId>
         </dependency>
-
         <!-- ############################################################## -->
         <!-- SPRING BOOT -->
         <!-- ############################################################## -->
@@ -31,22 +30,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-
-        <!-- ############################################################## -->
-        <!-- TESTING -->
-        <!-- ############################################################## -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
         </dependency>
     </dependencies>
 
