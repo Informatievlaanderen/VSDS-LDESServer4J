@@ -12,6 +12,18 @@ services:
       - "8080:8080"
     networks:
       - ldes
+    depends_on:
+      - mongodb
+    volumes:
+      - ./plugins:/plugins
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    restart: always
+    networks:
+      - ldes
 
 networks:
   ldes:

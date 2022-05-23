@@ -22,6 +22,5 @@ FROM openjdk:18-ea-alpine
 #RUN /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
 
 COPY --from=builder /ldes-server/ldes-server-application/target/ldes-server-application.jar ./
-COPY --from=builder /ldes-server/ldes-server-infra-mongo/target/ldes-server-infra-mongo-jar-with-dependencies.jar ./plugins/
-COPY --from=builder /ldes-server/ldes-server-port-publication-rest/target/ldes-server-port-publication-rest-jar-with-dependencies.jar ./plugins/
+RUN mkdir plugins
 CMD ["java", "-cp", "ldes-server-application.jar", "-Dloader.path=plugins/", "org.springframework.boot.loader.PropertiesLauncher"]
