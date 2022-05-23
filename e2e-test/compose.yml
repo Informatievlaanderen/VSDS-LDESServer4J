@@ -1,0 +1,53 @@
+version: '3.3'
+services:
+  ldes-server:
+    env_file:
+      - ../config.local.env
+    container_name: ldes-server
+    image: ldes-server
+    build:
+      context: ..
+    ports:
+      - "8080:8080"
+    networks:
+      - ldes
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    restart: always
+    networks:
+      - ldes
+  gipod-simulator:
+    image: vsds/gipod-simuator
+    # TODO: use pre-built container (i.e. image: not build:)
+    build:
+      context: ../../VSDS-LDESServerSimulator
+    ports:
+      - "9001:80"
+    environment:
+      - BASEURL=http://gipod-simulator
+      - SEED=data/gipod
+    networks:
+      - ldes
+  replicate-workflow:
+    image: vsds/nifi
+    build:
+      context: ../../VSDS-LDESClient-NifiProcessor
+    environment:
+      - SINGLE_USER_CREDENTIALS_USERNAME=${SINGLE_USER_CREDENTIALS_USERNAME}
+      - SINGLE_USER_CREDENTIALS_PASSWORD=${SINGLE_USER_CREDENTIALS_PASSWORD}
+    ports:
+      - "8443:8443"
+      - "9002:8080"
+    volumes:
+      - ./nifi/logs:/opt/nifi/nifi-current/logs
+      - ./nifi/conf:/opt/nifi/nifi-current/conf
+    networks:
+      - ldes
+networks:
+  ldes: {}
+  
