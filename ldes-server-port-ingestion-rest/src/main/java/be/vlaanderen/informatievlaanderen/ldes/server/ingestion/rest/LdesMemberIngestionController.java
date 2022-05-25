@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,10 +16,8 @@ public class LdesMemberIngestionController {
         this.sdsReader = sdsReader;
     }
 
-    @PostMapping(value = "/ldes-member", consumes = MediaType.TEXT_PLAIN_VALUE)
-    public void ingestLdesMember(@RequestBody String ldesMemberData) {
-        LdesMember ldesMember = new LdesMember(ldesMemberData.split("\n"));
-
-        this.sdsReader.storeLdesMember(ldesMember);
+    @PostMapping(value = "/ldes-member", consumes = "application/n-quads")
+    public LdesMember ingestLdesMember(@RequestBody LdesMember ldesMember) {
+        return sdsReader.storeLdesMember(ldesMember);
     }
 }

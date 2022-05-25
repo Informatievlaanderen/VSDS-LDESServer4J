@@ -1,6 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.SdsReader;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.LdesMemberIngestionController;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +14,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers=LdesMemberIngestionController.class)
+@WebMvcTest(controllers = LdesMemberIngestionController.class)
 class LdesMemberIngestionControllerTest {
 
     @Autowired
@@ -30,8 +39,11 @@ class LdesMemberIngestionControllerTest {
     @DisplayName("Ingest an LDES member in the REST service")
     void when_POSTRequestIsPerformed_LDesMemberIsSaved() throws Exception {
         String ldesMemberData = readLdesMemberDataFromFile("example-ldes-member.txt");
+        when(sdsReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberData.split("\n")));
 
-        mockMvc.perform(post("/ldes-fragment").content(ldesMemberData).contentType("application/n-quads"));
+        mockMvc.perform(post("/ldes-member").contentType("application/n-quads").content(ldesMemberData)).andDo(print())
+                .andExpect(status().isOk()).andExpect(content().string(ldesMemberData));
+        verify(sdsReader, times(1)).storeLdesMember(any());
     }
 
     private String readLdesMemberDataFromFile(String fileName) throws URISyntaxException, IOException {
