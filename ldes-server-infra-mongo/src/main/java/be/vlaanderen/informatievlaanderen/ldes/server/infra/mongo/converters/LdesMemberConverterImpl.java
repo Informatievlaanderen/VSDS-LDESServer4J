@@ -1,11 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JSONConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JsonConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JenaConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JenaConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converters.JsonConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -13,8 +14,8 @@ import org.apache.jena.riot.RDFFormat;
 import org.json.simple.JSONObject;
 
 public class LdesMemberConverterImpl implements LdesMemberConverter {
-
-    private final JenaConverter jenaConverter = new JenaConverterImpl();
+	
+	private final JenaConverter jenaConverter = new JenaConverterImpl();
     private final JSONConverter jsonConverter = new JsonConverterImpl();
     private static final String DELIMITER = "\n";
 
@@ -34,5 +35,4 @@ public class LdesMemberConverterImpl implements LdesMemberConverter {
         String quadString = jenaConverter.writeModelToString(model, RDFFormat.NQUADS);
         return new LdesMember(quadString.split(DELIMITER));
     }
-
 }
