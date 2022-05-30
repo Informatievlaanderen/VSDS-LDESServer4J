@@ -7,7 +7,7 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.2-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
