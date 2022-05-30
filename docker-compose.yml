@@ -2,23 +2,25 @@ version: '3.3'
 services:
   ldes-server:
     env_file:
-      - ./config.local.env
-    container_name: ldes-server
+      - ./docker-compose/config.local.env
+    container_name: ldes.server
     image: ldes-server
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
+      args:
+        DOCKER_LDES_BOM_REPO: ${DOCKER_LDES_BOM_REPO}
     ports:
-      - "8080:8080"
+      - "6060:8080"
     networks:
       - ldes
     depends_on:
-      - mongodb
-  mongodb:
+      - ldes-mongodb
+  ldes-mongodb:
     image: mongo
-    container_name: mongodb
+    container_name: ldes.mongodb
     ports:
-      - 27017:27017
+      - "28018:27017"
     restart: always
     networks:
       - ldes
