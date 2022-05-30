@@ -1,6 +1,5 @@
 # syntax=docker/dockerfile:1
 
-<<<<<<< HEAD
 FROM maven:3.8.5-openjdk-18 AS builder
 RUN git clone https://github.com/Informatievlaanderen/VSDS-LDES.git # Temporary build VSDS-LDES until there's an artifactory
 WORKDIR /VSDS-LDES
@@ -11,19 +10,6 @@ RUN mkdir /ldes-server
 WORKDIR /ldes-server
 COPY . /ldes-server
 RUN mvn install -DskipFormatCode=true
-=======
-FROM alpine:latest AS bom
-RUN apk update && apk add git maven
-RUN git clone https://github.com/sverholen/VSDS-LDES.git vsds
-
-
-FROM maven:3.8.5-openjdk-18 AS builder
-COPY --from=bom /vsds/pom.xml .
-RUN mvn clean install -DskipFormatCode=true
-COPY . /ldes-server
-WORKDIR /ldes-server
-RUN mvn clean package -DskipFormatCode=true -DSkipTests=true
->>>>>>> fix: docker for local BOM
 
 FROM openjdk:18-ea-alpine
 #RUN apk --no-cache add ca-certificates
@@ -37,9 +23,7 @@ FROM openjdk:18-ea-alpine
 
 COPY --from=builder /ldes-server/ldes-server-application/target/ldes-server-application.jar ./
 COPY --from=builder /ldes-server/ldes-server-infra-mongo/target/ldes-server-infra-mongo-jar-with-dependencies.jar ./plugins/
-<<<<<<< HEAD
 COPY --from=builder /ldes-server/ldes-server-port-ingestion-rest/target/ldes-server-port-ingestion-rest-jar-with-dependencies.jar ./plugins/
 COPY --from=builder /ldes-server/ldes-server-port-publication-rest/target/ldes-server-port-publication-rest-jar-with-dependencies.jar ./plugins/
-=======
->>>>>>> fix: docker for local BOM
+
 CMD ["java", "-cp", "ldes-server-application.jar", "-Dloader.path=plugins/", "org.springframework.boot.loader.PropertiesLauncher"]
