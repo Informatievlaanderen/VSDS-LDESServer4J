@@ -2,7 +2,7 @@ version: '3.3'
 services:
   ldes-server:
     env_file:
-      - ./config.env
+      - ./config.local.env
     container_name: ldes-server
     image: ldes-server
     build:
