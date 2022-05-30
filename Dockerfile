@@ -12,15 +12,6 @@ COPY . /ldes-server
 RUN mvn install -DskipFormatCode=true
 
 FROM openjdk:18-ea-alpine
-#RUN apk --no-cache add ca-certificates
-#RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
-#RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk
-#RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-bin-2.29-r0.apk
-#RUN apk add glibc-2.29-r0.apk glibc-bin-2.29-r0.apk
-#RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-i18n-2.29-r0.apk
-#RUN apk add glibc-bin-2.29-r0.apk glibc-i18n-2.29-r0.apk
-#RUN /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
-
 COPY --from=builder /ldes-server/ldes-server-application/target/ldes-server-application.jar ./
 COPY --from=builder /ldes-server/ldes-server-infra-mongo/target/ldes-server-infra-mongo-jar-with-dependencies.jar ./plugins/
 COPY --from=builder /ldes-server/ldes-server-port-ingestion-rest/target/ldes-server-port-ingestion-rest-jar-with-dependencies.jar ./plugins/
