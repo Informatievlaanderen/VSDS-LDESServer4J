@@ -3,7 +3,3 @@ spring:
     mongodb:
       uri: mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_URL}/${MONGO_DATABASE}
       database: ${MONGO_DATABASE}
-
-ldes:
-  context: ${LDES_CONTEXT}
-  id: ${LDES_ID}
