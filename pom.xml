@@ -3,17 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
-    <parent>
-        <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-        <artifactId>ldes</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
-    </parent>
 
     <artifactId>ldes-server</artifactId>
     <packaging>pom</packaging>
-    
+    <version>0.0.1-SNAPSHOT</version>
+
+    <parent>
+        <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+        <artifactId>ldes</artifactId>
+        <version>0.0.3-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
     <modules>
         <module>ldes-server-domain</module>
         <module>ldes-server-infra-mongo</module>
@@ -21,4 +22,15 @@
         <module>ldes-server-application</module>
         <module>ldes-server-port-ingestion-rest</module>
     </modules>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/Informatievlaanderen/VSDS-LDES</url>
+        </repository>
+    </repositories>
 </project>
