@@ -23,5 +23,4 @@ public class MongoAutoConfiguration {
             final LdesMemberEntityRepository ldesMemberEntityRepository) {
         return new LdesMemberMongoRepository(ldesMemberEntityRepository, new LdesMemberConverterImpl());
     }
-
 }
