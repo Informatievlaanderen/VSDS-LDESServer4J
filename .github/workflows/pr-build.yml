@@ -1,4 +1,4 @@
-name: Build & Test
+name: 1. Build & Test Project
 
 on:
   pull_request:
@@ -19,9 +19,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean formatter:validate
-      - name: Verify Test Coverage
+      - name: Verify Build
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean verify sonar:sonar \
-          -Dsonar.login=${SONAR_TOKEN}
+        run: mvn clean verify
