@@ -30,7 +30,7 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.organization>Informatievlaanderen</sonar.organization>
+        <sonar.organization>informatievlaanderen</sonar.organization>
         <sonar.projectKey>
             ${project.groupId}:${project.artifactId}
         </sonar.projectKey>
