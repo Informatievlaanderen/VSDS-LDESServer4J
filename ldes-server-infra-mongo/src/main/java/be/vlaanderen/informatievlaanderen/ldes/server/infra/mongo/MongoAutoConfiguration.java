@@ -19,8 +19,7 @@ public class MongoAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public LdesMemberRepository ldesMemberMongoRepository(
-            final LdesMemberEntityRepository ldesMemberEntityRepository) {
+    public LdesMemberRepository ldesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository) {
         return new LdesMemberMongoRepository(ldesMemberEntityRepository, new LdesMemberConverterImpl());
     }
 }
