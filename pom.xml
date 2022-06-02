@@ -4,14 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <parent>
-        <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-        <artifactId>ldes</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
-    </parent>
-
+	<groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     
     <modules>
@@ -23,7 +18,39 @@
     </modules>
 
     <properties>
-        <!-- JaCoCo Properties -->
+    	<!-- MAVEN -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
+		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+		<maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
+		
+    	<!-- VSDS -->
+    	<project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
+    	
+    	<!-- SPRING BOOT -->
+		<spring-boot.version>2.6.7</spring-boot.version>
+		
+		<!-- JSON & RDF -->
+		<json-simple.version>1.1.1</json-simple.version>
+		<apache-jena.version>4.5.0</apache-jena.version>
+		
+		<!-- TESTING -->
+		<junit.version>4.13.2</junit.version>
+		<jupiter.version>5.8.2</jupiter.version>
+		<junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
+		<mockito.version>4.6.0</mockito.version>
+		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
+		<byte-buddy.version>1.12.10</byte-buddy.version>
+ 		<de.flapdoodle.embed.mongo.version>3.4.5</de.flapdoodle.embed.mongo.version>
+ 		
+ 		<!-- VULNERABILITY -->
+		<depencency-check-maven.version>7.1.0</depencency-check-maven.version>
+		
+        <!-- JACOCO PROPERTIES -->
         <jacoco.version>0.8.8</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -35,8 +62,154 @@
             ${project.groupId}:${project.artifactId}
         </sonar.projectKey>
     </properties>
+    
+    <dependencyManagement>
+    	<dependencies>
+    		<!-- VSDS -->
+    		<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>ldes-server-application</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>ldes-server-domain</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			
+	    	<!-- SPRING BOOT -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-parent</artifactId>
+				<version>${spring-boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			
+			<!-- JSON & RDF -->
+			<dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>${json-simple.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-arq</artifactId>
+				<version>${apache-jena.version}</version>
+			</dependency>
+			
+			<!-- TESTING -->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-test</artifactId>
+				<version>${spring-boot.version}</version>
+				<scope>test</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.junit.vintage</groupId>
+						<artifactId>junit-vintage-engine</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>${jupiter.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-core</artifactId>
+				<version>${mockito.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.github.tomakehurst</groupId>
+				<artifactId>wiremock-jre8</artifactId>
+				<version>${wiremock-jre8.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.bytebuddy</groupId>
+				<artifactId>byte-buddy</artifactId>
+				<version>${byte-buddy.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>de.flapdoodle.embed</groupId>
+				<artifactId>de.flapdoodle.embed.mongo</artifactId>
+				<version>${de.flapdoodle.embed.mongo.version}</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+    </dependencyManagement>
 
-    <build>
+	<build>
+		<pluginManagement>
+			<plugins>
+	            <!-- MAVEN -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>${maven-surefire-plugin.version}</version>
+				</plugin>
+	            <plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-assembly-plugin</artifactId>
+	                <version>${maven-assembly-plugin.version}</version>
+	                <configuration>
+	                    <descriptorRefs>
+	                        <descriptorRef>jar-with-dependencies</descriptorRef>
+	                    </descriptorRefs>
+	                </configuration>
+	                <executions>
+	                    <execution>
+	                        <id>make-assembly</id>
+	                        <phase>package</phase>
+	                        <goals>
+	                            <goal>single</goal>
+	                        </goals>
+	                    </execution>
+	                </executions>
+	            </plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>${maven-release-plugin.version}</version>
+					<configuration>
+						<scmCommentPrefix>[ci skip]</scmCommentPrefix>
+						<tagNameFormat>@{project.version}</tagNameFormat>
+					</configuration>
+				</plugin>
+	            
+	            <!-- SPRING BOOT -->
+	            <plugin>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-maven-plugin</artifactId>
+	                <version>${spring-boot.version}</version>
+	                <executions>
+	                    <execution>
+	                        <goals>
+	                            <goal>repackage</goal>
+	                        </goals>
+	                    </execution>
+	                </executions>
+	            </plugin>
+	            
+	            <!-- VULNERABILITY -->
+				<plugin>
+					<groupId>org.owasp</groupId>
+					<artifactId>dependency-check-maven</artifactId>
+					<version>${depencency-check-maven.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>check</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
