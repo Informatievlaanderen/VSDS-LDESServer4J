@@ -23,5 +23,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean verify sonar:sonar \
-          -Dsonar.login=${SONAR_TOKEN} \
-          -Dsonar.projectKey=VSDS-LDESServer4J
+          -Dsonar.login=${SONAR_TOKEN} -Pcoverage

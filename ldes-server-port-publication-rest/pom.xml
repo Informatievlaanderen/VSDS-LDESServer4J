@@ -12,10 +12,6 @@
 
     <artifactId>ldes-server-port-publication-rest</artifactId>
 
-    <properties>
-        <sonar.projectKey>VSDS-LDESServer4J-${project.groupId}:${project.artifactId}</sonar.projectKey>
-    </properties>
-
     <dependencies>
         <!-- VSDS -->
         <dependency>

@@ -59,7 +59,7 @@
 		<sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>informatievlaanderen</sonar.organization>
-
+		<sonar.projectKey>VSDS-LDESServer4J</sonar.projectKey>
 		<!-- CODE FORMATTER -->
 		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
@@ -215,21 +215,6 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco.version}</version>
-                    <executions>
-                        <execution>
-                            <id>jacoco-initialize</id>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>jacoco-site</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
 
                 <!-- CODE FORMATTER -->
@@ -257,11 +242,6 @@
             	<groupId>net.revelc.code.formatter</groupId>
             	<artifactId>formatter-maven-plugin</artifactId>
             </plugin>
-
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-			</plugin>
         </plugins>
     </build>
 
@@ -275,4 +255,40 @@
             <url>https://maven.pkg.github.com/Informatievlaanderen/VSDS-LDES</url>
         </repository>
     </repositories>
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco.version}</version>
+						<executions>
+							<execution>
+								<id>prepare-agent</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<goals>
+									<goal>report</goal>
+								</goals>
+								<configuration>
+									<formats>
+										<format>XML</format>
+									</formats>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
 </project>
