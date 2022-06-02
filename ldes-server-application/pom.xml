@@ -9,7 +9,9 @@
         <artifactId>ldes-server</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-
+    <properties>
+        <sonar.projectKey>VSDS-LDESServer4J-${project.groupId}:${project.artifactId}</sonar.projectKey>
+    </properties>
     <artifactId>ldes-server-application</artifactId>
 
     <dependencies>
