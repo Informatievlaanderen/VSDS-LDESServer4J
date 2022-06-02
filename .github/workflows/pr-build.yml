@@ -14,7 +14,12 @@ jobs:
         with:
           java-version: '18'
           distribution: 'adopt'
-      - name: Build with Maven
+      - name: Verify Formatting
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean formatter:validate
+      - name: Verify Test Coverage
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
