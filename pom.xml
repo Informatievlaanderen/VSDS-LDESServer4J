@@ -36,7 +36,7 @@
 
 		<!-- JSON & RDF -->
 		<json-simple.version>1.1.1</json-simple.version>
-		<apache-jena.version>4.5.0</apache-jena.version>
+		<apache-jena.version>4.4.0</apache-jena.version>
 
 		<!-- TESTING -->
 		<junit.version>4.13.2</junit.version>
@@ -60,7 +60,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>informatievlaanderen</sonar.organization>
 		<sonar.projectKey>
-			VSDS-LDESServer4J-${project.groupId}:${project.artifactId}
+			VSDS-LDESServer4J
 		</sonar.projectKey>
 		<!-- CODE FORMATTER -->
 		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
@@ -254,12 +254,6 @@
 		</pluginManagement>
 
         <plugins>
-            <!-- JACOCO -->
-	        <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-
             <!-- CODE FORMATTER -->
             <plugin>
             	<groupId>net.revelc.code.formatter</groupId>
