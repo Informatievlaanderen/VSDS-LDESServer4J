@@ -14,8 +14,8 @@ import org.apache.jena.riot.RDFFormat;
 import org.json.simple.JSONObject;
 
 public class LdesMemberConverterImpl implements LdesMemberConverter {
-	
-	private final JenaConverter jenaConverter = new JenaConverterImpl();
+
+    private final JenaConverter jenaConverter = new JenaConverterImpl();
     private final JSONConverter jsonConverter = new JsonConverterImpl();
     private static final String DELIMITER = "\n";
 

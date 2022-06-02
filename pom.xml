@@ -22,8 +22,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>14</maven.compiler.source>
+		<maven.compiler.target>14</maven.compiler.target>
 		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
@@ -50,7 +50,7 @@
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.0</depencency-check-maven.version>
 		
-        <!-- JACOCO PROPERTIES -->
+        <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -61,6 +61,10 @@
         <sonar.projectKey>
             ${project.groupId}:${project.artifactId}
         </sonar.projectKey>
+		
+		<!-- CODE FORMATTER -->
+		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
+		<skipFormatCode>false</skipFormatCode>
     </properties>
     
     <dependencyManagement>
@@ -207,29 +211,59 @@
 						</execution>
 					</executions>
 				</plugin>
+	            
+	            <!-- JACOCO -->
+	            <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <executions>
+                        <execution>
+                            <id>jacoco-initialize</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>jacoco-site</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                
+                <!-- CODE FORMATTER -->
+				<plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${formatter-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>validate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <skip>${skipFormatCode}</skip>
+                    </configuration>
+                </plugin>
 			</plugins>
 		</pluginManagement>
 
         <plugins>
-            <plugin>
+            <!-- JACOCO -->
+	        <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
+            </plugin>
+            
+            <!-- CODE FORMATTER -->
+            <plugin>
+            	<groupId>net.revelc.code.formatter</groupId>
+            	<artifactId>formatter-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
