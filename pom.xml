@@ -36,7 +36,7 @@
 
 		<!-- JSON & RDF -->
 		<json-simple.version>1.1.1</json-simple.version>
-		<apache-jena.version>4.5.0</apache-jena.version>
+		<apache-jena.version>4.4.0</apache-jena.version>
 
 		<!-- TESTING -->
 		<junit.version>4.13.2</junit.version>
@@ -55,12 +55,10 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-        <sonar.language>java</sonar.language>
+		<sonar.coverage.jacoco.xmlReportPaths>${project.basedir}${basedir}/../target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>informatievlaanderen</sonar.organization>
-		<sonar.projectKey>
-			VSDS-LDESServer4J-${project.groupId}:${project.artifactId}
-		</sonar.projectKey>
 		<!-- CODE FORMATTER -->
 		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
@@ -253,17 +251,16 @@
 		</pluginManagement>
 
         <plugins>
-            <!-- JACOCO -->
-	        <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-            </plugin>
-
             <!-- CODE FORMATTER -->
             <plugin>
             	<groupId>net.revelc.code.formatter</groupId>
             	<artifactId>formatter-maven-plugin</artifactId>
             </plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
         </plugins>
     </build>
 
