@@ -11,9 +11,7 @@
     </parent>
 
     <artifactId>ldes-server-domain</artifactId>
-    <properties>
-        <sonar.projectKey>VSDS-LDESServer4J-${project.groupId}:${project.artifactId}</sonar.projectKey>
-    </properties>
+
     <dependencies>
         <!-- SPRING -->
         <dependency>

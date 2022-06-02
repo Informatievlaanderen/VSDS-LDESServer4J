@@ -12,9 +12,7 @@
     
     <artifactId>ldes-server-infra-mongo</artifactId>
     <packaging>jar</packaging>
-    <properties>
-        <sonar.projectKey>VSDS-LDESServer4J-${project.groupId}:${project.artifactId}</sonar.projectKey>
-    </properties>
+
 	<dependencies>
 		<!-- VSDS -->
 		<dependency>
