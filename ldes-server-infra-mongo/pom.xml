@@ -6,7 +6,7 @@
     
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-        <artifactId>ldes-server</artifactId>
+        <artifactId>VSDS-LDESServer4J</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     
