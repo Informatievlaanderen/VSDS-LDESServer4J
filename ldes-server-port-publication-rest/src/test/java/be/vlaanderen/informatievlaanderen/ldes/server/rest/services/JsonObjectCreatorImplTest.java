@@ -31,7 +31,7 @@ class JsonObjectCreatorImplTest {
         jsonArray.add("b");
         JSONObject jsonObject = jsonObjectCreator.createJSONObject(jsonArray);
         assertEquals(
-                "{\"@id\":\"some_id\",\"@context\":\"some_context\",\"shape\":\"some_shape\",\"items\":[\"a\",\"b\"]}",
+                "{\"shape\":\"some_shape\",\"@id\":\"some_id\",\"@context\":\"some_context\",\"items\":[\"a\",\"b\"]}",
                 jsonObject.toJSONString());
 
     }
