@@ -18,6 +18,7 @@ class JsonObjectCreatorImplTest {
         LdesConfig ldesConfig = new LdesConfig();
         ldesConfig.setId("some_id");
         ldesConfig.setContext("some_context");
+        ldesConfig.setShape("some_shape");
         jsonObjectCreator = new JsonObjectCreatorImpl(ldesConfig);
     }
 
@@ -29,7 +30,8 @@ class JsonObjectCreatorImplTest {
         jsonArray.add("a");
         jsonArray.add("b");
         JSONObject jsonObject = jsonObjectCreator.createJSONObject(jsonArray);
-        assertEquals("{\"@id\":\"some_id\",\"@context\":\"some_context\",\"items\":[\"a\",\"b\"]}",
+        assertEquals(
+                "{\"@id\":\"some_id\",\"@context\":\"some_context\",\"shape\":\"some_shape\",\"items\":[\"a\",\"b\"]}",
                 jsonObject.toJSONString());
 
     }

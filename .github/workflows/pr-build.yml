@@ -18,6 +18,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: mvn clean formatter:validate
+      - name: Verify Build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: mvn clean formatter:validate
       - name: Verify Test Coverage
         env:
           GITHUB_TOKEN: ${{ github.token }}

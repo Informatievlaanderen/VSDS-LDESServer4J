@@ -19,6 +19,7 @@ public class JsonObjectCreatorImpl implements JsonObjectCreator {
         JSONObject newJsonObject = new JSONObject();
         newJsonObject.put("@context", ldesConfig.getContext());
         newJsonObject.put("@id", ldesConfig.getId());
+        newJsonObject.put("shape", ldesConfig.getShape());
         newJsonObject.put("items", items);
         return newJsonObject;
     }

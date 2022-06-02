@@ -4,13 +4,13 @@ import java.util.List;
 
 public class LdesFragment {
 
-    public LdesFragment(List<LdesMember> records) {
-        this.records = records;
+    private final List<LdesMember> members;
+
+    public LdesFragment(List<LdesMember> members) {
+        this.members = members;
     }
 
-    private final List<LdesMember> records;
-
-    public List<LdesMember> getRecords() {
-        return records;
+    public List<LdesMember> getMembers() {
+        return members;
     }
 }
