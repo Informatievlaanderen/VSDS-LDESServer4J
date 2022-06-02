@@ -13,17 +13,13 @@
     <artifactId>ldes-server-port-publication-rest</artifactId>
 
     <dependencies>
-        <!-- ############################################################## -->
         <!-- VSDS -->
-        <!-- ############################################################## -->
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-server-domain</artifactId>
         </dependency>
 
-        <!-- ############################################################## -->
         <!-- SPRING BOOT -->
-        <!-- ############################################################## -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -37,9 +33,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
-        <!-- ############################################################## -->
         <!-- TESTING -->
-        <!-- ############################################################## -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
