@@ -58,10 +58,9 @@
         <sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>informatievlaanderen</sonar.organization>
-        <sonar.projectKey>VSDS-LDESServer4J</sonar.projectKey>
-        <sonar.moduleKey>
-            ${project.groupId}:${project.artifactId}
-        </sonar.moduleKey>
+		<sonar.projectKey>
+			VSDS-LDESServer4J-${project.groupId}:${project.artifactId}
+		</sonar.projectKey>
 		<!-- CODE FORMATTER -->
 		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
