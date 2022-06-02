@@ -21,23 +21,23 @@
     	<!-- MAVEN -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		
+
 		<maven.compiler.source>14</maven.compiler.source>
 		<maven.compiler.target>14</maven.compiler.target>
 		<maven-assembly-plugin.version>3.3.0</maven-assembly-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M6</maven-surefire-plugin.version>
-		
+
     	<!-- VSDS -->
     	<project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
-    	
+
     	<!-- SPRING BOOT -->
 		<spring-boot.version>2.6.7</spring-boot.version>
-		
+
 		<!-- JSON & RDF -->
 		<json-simple.version>1.1.1</json-simple.version>
 		<apache-jena.version>4.5.0</apache-jena.version>
-		
+
 		<!-- TESTING -->
 		<junit.version>4.13.2</junit.version>
 		<jupiter.version>5.8.2</jupiter.version>
@@ -46,10 +46,10 @@
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.10</byte-buddy.version>
  		<de.flapdoodle.embed.mongo.version>3.4.5</de.flapdoodle.embed.mongo.version>
- 		
+
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.0</depencency-check-maven.version>
-		
+
         <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -58,15 +58,15 @@
         <sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>informatievlaanderen</sonar.organization>
-        <sonar.projectKey>
+        <sonar.projectKey>VSDS-LDESServer4J</sonar.projectKey>
+        <sonar.moduleKey>
             ${project.groupId}:${project.artifactId}
-        </sonar.projectKey>
-
+        </sonar.moduleKey>
 		<!-- CODE FORMATTER -->
 		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
     </properties>
-    
+
     <dependencyManagement>
     	<dependencies>
     		<!-- VSDS -->
@@ -80,7 +80,7 @@
 				<artifactId>ldes-server-domain</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			
+
 	    	<!-- SPRING BOOT -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -89,7 +89,7 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			
+
 			<!-- JSON & RDF -->
 			<dependency>
 				<groupId>com.googlecode.json-simple</groupId>
@@ -101,7 +101,7 @@
 				<artifactId>jena-arq</artifactId>
 				<version>${apache-jena.version}</version>
 			</dependency>
-			
+
 			<!-- TESTING -->
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
@@ -183,7 +183,7 @@
 						<tagNameFormat>@{project.version}</tagNameFormat>
 					</configuration>
 				</plugin>
-	            
+
 	            <!-- SPRING BOOT -->
 	            <plugin>
 	                <groupId>org.springframework.boot</groupId>
@@ -197,7 +197,7 @@
 	                    </execution>
 	                </executions>
 	            </plugin>
-	            
+
 	            <!-- VULNERABILITY -->
 				<plugin>
 					<groupId>org.owasp</groupId>
@@ -211,7 +211,7 @@
 						</execution>
 					</executions>
 				</plugin>
-	            
+
 	            <!-- JACOCO -->
 	            <plugin>
                     <groupId>org.jacoco</groupId>
@@ -233,7 +233,7 @@
                         </execution>
                     </executions>
                 </plugin>
-                
+
                 <!-- CODE FORMATTER -->
 				<plugin>
                     <groupId>net.revelc.code.formatter</groupId>
@@ -259,7 +259,7 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
-            
+
             <!-- CODE FORMATTER -->
             <plugin>
             	<groupId>net.revelc.code.formatter</groupId>
