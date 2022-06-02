@@ -17,9 +17,14 @@ jobs:
       - name: Verify Formatting
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn clean formatter:validate
       - name: Verify Build
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: mvn clean verify
+        run: mvn clean formatter:validate
+      - name: Verify Test Coverage
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn clean verify sonar:sonar \
+          -Dsonar.login=${SONAR_TOKEN} -Pcoverage
