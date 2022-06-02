@@ -13,16 +13,13 @@
     <artifactId>ldes-server-port-ingestion-rest</artifactId>
 
     <dependencies>
-        <!-- ############################################################## -->
         <!-- VSDS -->
-        <!-- ############################################################## -->
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-server-domain</artifactId>
         </dependency>
-        <!-- ############################################################## -->
+        
         <!-- SPRING BOOT -->
-        <!-- ############################################################## -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -39,22 +36,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
