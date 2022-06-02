@@ -59,9 +59,6 @@
 		<sonar.language>java</sonar.language>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.organization>informatievlaanderen</sonar.organization>
-		<sonar.projectKey>
-			VSDS-LDESServer4J
-		</sonar.projectKey>
 		<!-- CODE FORMATTER -->
 		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
@@ -259,6 +256,11 @@
             	<groupId>net.revelc.code.formatter</groupId>
             	<artifactId>formatter-maven-plugin</artifactId>
             </plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
         </plugins>
     </build>
 
