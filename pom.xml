@@ -45,7 +45,7 @@
 		<mockito.version>4.6.0</mockito.version>
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.10</byte-buddy.version>
- 		<de.flapdoodle.embed.mongo.version>3.4.5</de.flapdoodle.embed.mongo.version>
+ 		<de.flapdoodle.embed.mongo.version>3.4.6</de.flapdoodle.embed.mongo.version>
 
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.0</depencency-check-maven.version>
