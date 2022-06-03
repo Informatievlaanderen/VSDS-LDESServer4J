@@ -11,7 +11,4 @@ public class LdesMember {
         return this.quads;
     }
 
-    public String favoriteQuad() {
-        return this.quads[0];
-    }
 }
