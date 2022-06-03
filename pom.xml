@@ -63,7 +63,7 @@
 
 
 		<!-- CODE FORMATTER -->
-		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
+		<formatter-maven-plugin.version>2.19.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
     </properties>
 
