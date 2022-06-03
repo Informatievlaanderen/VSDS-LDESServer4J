@@ -44,6 +44,7 @@ class LdesFragmentControllerTest {
         mockMvc.perform(get("/ldes-fragment")).andDo(print()).andExpect(status().isOk())
                 .andExpect(content().string(Matchers.containsString("\"@id\":\"test-id\"")))
                 .andExpect(content().string(Matchers.containsString("\"@context\":\"test-context\"")))
+                .andExpect(content().string(Matchers.containsString("\"shape\":\"test-shape\"")))
                 .andExpect(content().string(Matchers.containsString("\"items\":[[{")));
         verify(fragmentProvider, times(1)).getFragment();
     }

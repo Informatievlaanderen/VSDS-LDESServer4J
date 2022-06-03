@@ -57,7 +57,7 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
     @SuppressWarnings("unchecked")
     private JSONArray getItems(LdesFragment ldesFragment) {
         JSONArray items = new JSONArray();
-        ldesFragment.getRecords().stream().map(ldesMemberConverter::convertLdesMemberToJSONArray).forEach(items::add);
+        ldesFragment.getMembers().stream().map(ldesMemberConverter::convertLdesMemberToJSONArray).forEach(items::add);
         return items;
     }
 }

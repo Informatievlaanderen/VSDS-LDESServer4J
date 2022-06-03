@@ -10,4 +10,5 @@ public class LdesMember {
     public String[] getQuads() {
         return this.quads;
     }
+
 }

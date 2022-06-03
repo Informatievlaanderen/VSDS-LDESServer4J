@@ -14,6 +14,7 @@ public class TestConfiguration {
         LdesConfig ldesConfig = new LdesConfig();
         ldesConfig.setId("test-id");
         ldesConfig.setContext("test-context");
+        ldesConfig.setShape("test-shape");
         return new JsonLdConverter(new JsonObjectCreatorImpl(ldesConfig));
     }
 
