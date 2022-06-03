@@ -1,3 +1,0 @@
-ldes:
-  context: ${LDES_CONTEXT}
-  id: ${LDES_ID}
