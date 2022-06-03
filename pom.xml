@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     
 	<groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-    <artifactId>VSDS-LDESServer4J</artifactId>
+    <artifactId>ldes-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     
@@ -32,7 +32,7 @@
     	<project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
     	<!-- SPRING BOOT -->
-		<spring-boot.version>2.6.7</spring-boot.version>
+		<spring-boot.version>2.7.0</spring-boot.version>
 
 		<!-- JSON & RDF -->
 		<json-simple.version>1.1.1</json-simple.version>
@@ -42,10 +42,10 @@
 		<junit.version>4.13.2</junit.version>
 		<jupiter.version>5.8.2</jupiter.version>
 		<junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-		<mockito.version>4.6.0</mockito.version>
+		<mockito.version>4.6.1</mockito.version>
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.10</byte-buddy.version>
- 		<de.flapdoodle.embed.mongo.version>3.4.5</de.flapdoodle.embed.mongo.version>
+ 		<de.flapdoodle.embed.mongo.version>3.4.6</de.flapdoodle.embed.mongo.version>
 
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.0</depencency-check-maven.version>
@@ -63,7 +63,7 @@
 
 
 		<!-- CODE FORMATTER -->
-		<formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
+		<formatter-maven-plugin.version>2.19.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
     </properties>
 
@@ -244,6 +244,12 @@
             	<groupId>net.revelc.code.formatter</groupId>
             	<artifactId>formatter-maven-plugin</artifactId>
             </plugin>
+
+			<!-- RELEASE -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
         </plugins>
     </build>
 
@@ -292,5 +298,19 @@
 		</profile>
 	</profiles>
 
+	<distributionManagement>
+		<repository>
+			<id>github</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/Informatievlaanderen/VSDS-LDESServer4J</url>
+		</repository>
+	</distributionManagement>
 
+
+	<scm>
+		<connection>scm:git:${project.scm.url}</connection>
+		<developerConnection>scm:git:${project.scm.url}</developerConnection>
+		<url>git@github.com:Informatievlaanderen/VSDS-LDESServer4J.git</url>
+		<tag>HEAD</tag>
+	</scm>
 </project>
