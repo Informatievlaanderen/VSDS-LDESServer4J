@@ -26,7 +26,7 @@ class FragmentCreatorImplTest {
 
         LdesFragment actualLdesFragment = fragmentCreator.createFragment();
 
-        assertEquals(actualLdesFragment.getRecords(), ldesMembers);
+        assertEquals(actualLdesFragment.getMembers(), ldesMembers);
         verify(ldesMemberRepository, times(1)).fetchLdesMembers();
     }
 
