@@ -16,7 +16,7 @@
         <module>ldes-server-application</module>
         <module>ldes-server-port-ingestion-rest</module>
     </modules>
-
+	<!-- test -->
     <properties>
     	<!-- MAVEN -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
