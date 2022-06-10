@@ -12,24 +12,20 @@ import java.util.stream.Collectors;
 public class LdesMemberMongoRepository implements LdesMemberRepository {
 
     private final LdesMemberEntityRepository ldesMemberEntityRepository;
-    private final LdesMemberConverter ldesMemberConverter;
 
-    public LdesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository,
-            final LdesMemberConverter ldesMemberConverter) {
+    public LdesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository) {
         this.ldesMemberEntityRepository = ldesMemberEntityRepository;
-        this.ldesMemberConverter = ldesMemberConverter;
     }
 
     @Override
     public LdesMember saveLdesMember(LdesMember ldesMember) {
-        LdesMemberEntity ldesMemberEntity = ldesMemberConverter.toEntity(ldesMember);
-        LdesMemberEntity savedLdesMemberEntity = ldesMemberEntityRepository.save(ldesMemberEntity);
-        return ldesMemberConverter.fromEntity(savedLdesMemberEntity);
+        ldesMemberEntityRepository.save(LdesMemberEntity.fromLdesMember(ldesMember));
+        return ldesMember;
     }
 
     @Override
     public List<LdesMember> fetchLdesMembers() {
-        return ldesMemberEntityRepository.findAll().stream().map(ldesMemberConverter::fromEntity)
+        return ldesMemberEntityRepository.findAll().stream().map(LdesMemberEntity::toLdesMember)
                 .collect(Collectors.toList());
     }
 }

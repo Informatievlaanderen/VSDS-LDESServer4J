@@ -29,7 +29,8 @@ class LdesMemberConverterImplTest {
     private LdesMember readLdesMemberFromFile(String fileName) throws URISyntaxException, IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-        return new LdesMember(Files.lines(Paths.get(file.toURI())).toArray(String[]::new));
+        // return new LdesMember(Files.lines(Paths.get(file.toURI())).toArray(String[]::new));
+        return null;
     }
 
 }

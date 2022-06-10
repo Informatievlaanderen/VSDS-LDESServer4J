@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.services.JsonObjectCreatorImpl;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -13,7 +13,10 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.List;
+
+import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
 
@@ -48,16 +51,13 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
     @Override
     public void write(LdesFragment ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        JSONArray items = getItems(ldesFragment);
-        JSONObject newJsonObject = jsonObjectCreator.createJSONObject(items);
-        OutputStream body = outputMessage.getBody();
-        body.write(newJsonObject.toJSONString().getBytes());
-    }
+        Model fragmentModel = ldesFragment.toRdfOutputModel();
 
-    @SuppressWarnings("unchecked")
-    private JSONArray getItems(LdesFragment ldesFragment) {
-        JSONArray items = new JSONArray();
-        ldesFragment.getMembers().stream().map(ldesMemberConverter::convertLdesMemberToJSONArray).forEach(items::add);
-        return items;
+        StringWriter outputStream = new StringWriter();
+
+        RDFDataMgr.write(outputStream, fragmentModel, NQUADS);
+
+        OutputStream body = outputMessage.getBody();
+        body.write(outputStream.toString().getBytes());
     }
 }

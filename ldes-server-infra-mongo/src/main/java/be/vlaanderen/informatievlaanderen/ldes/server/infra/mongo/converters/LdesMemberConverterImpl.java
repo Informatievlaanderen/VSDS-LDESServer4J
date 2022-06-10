@@ -22,17 +22,19 @@ public class LdesMemberConverterImpl implements LdesMemberConverter {
     @Override
     public LdesMemberEntity toEntity(LdesMember ldesMember) {
         Model model = ModelFactory.createDefaultModel();
-        jenaConverter.readModelFromString(String.join(DELIMITER, ldesMember.getQuads()), model, Lang.NQUADS);
+        // jenaConverter.readModelFromString(String.join(DELIMITER, ldesMember.getQuads()), model, Lang.NQUADS);
         String jsonLDString = jenaConverter.writeModelToString(model, RDFFormat.JSONLD_COMPACT_FLAT);
         JSONObject jsonObject = jsonConverter.convertStringToJSONObject(jsonLDString);
-        return new LdesMemberEntity(jsonObject.hashCode(), jsonObject);
+        // return new LdesMemberEntity(jsonObject.hashCode(), jsonObject);
+        return null;
     }
 
     @Override
     public LdesMember fromEntity(LdesMemberEntity ldesMemberEntity) {
         Model model = ModelFactory.createDefaultModel();
-        jenaConverter.readModelFromString(ldesMemberEntity.getLdesMember().toJSONString(), model, Lang.JSONLD11);
+        // jenaConverter.readModelFromString(ldesMemberEntity.getLdesMember().toJSONString(), model, Lang.JSONLD11);
         String quadString = jenaConverter.writeModelToString(model, RDFFormat.NQUADS);
-        return new LdesMember(quadString.split(DELIMITER));
+        // return new LdesMember(quadString.split(DELIMITER));
+        return null;
     }
 }

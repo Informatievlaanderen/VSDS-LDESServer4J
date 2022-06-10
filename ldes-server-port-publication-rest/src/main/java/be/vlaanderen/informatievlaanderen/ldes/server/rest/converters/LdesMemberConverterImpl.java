@@ -20,7 +20,7 @@ public class LdesMemberConverterImpl implements LdesMemberConverter {
     @Override
     public JSONArray convertLdesMemberToJSONArray(LdesMember ldesMember) {
         Model model = ModelFactory.createDefaultModel();
-        jenaConverter.readModelFromString(String.join(DELIMITER, ldesMember.getQuads()), model, Lang.NQUADS);
+        // jenaConverter.readModelFromString(String.join(DELIMITER, ldesMember.getQuads()), model, Lang.NQUADS);
         String jsonLDString = jenaConverter.writeModelToString(model, RDFFormat.JSONLD11);
         JSONObject jsonObject = jsonConverter.convertStringToJSONObject(jsonLDString);
         return (JSONArray) jsonObject.get("@graph");

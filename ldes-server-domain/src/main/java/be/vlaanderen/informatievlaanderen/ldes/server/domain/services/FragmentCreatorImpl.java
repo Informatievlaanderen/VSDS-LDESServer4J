@@ -4,6 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragme
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 public class FragmentCreatorImpl implements FragmentCreator {
 
@@ -15,6 +17,6 @@ public class FragmentCreatorImpl implements FragmentCreator {
 
     @Override
     public LdesFragment createFragment() {
-        return new LdesFragment(ldesMemberRepository.fetchLdesMembers());
+        return new LdesFragment(ldesMemberRepository.fetchLdesMembers().stream().limit(1).collect(Collectors.toList()));
     }
 }
