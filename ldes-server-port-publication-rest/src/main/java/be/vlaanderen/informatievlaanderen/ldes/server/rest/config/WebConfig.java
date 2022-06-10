@@ -10,7 +10,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 public class WebConfig {
 
     @Bean
-    public HttpMessageConverter<LdesFragment> createJsonLDConverter() {
+    public HttpMessageConverter<LdesFragment> ldesFragmentHttpConverter() {
         return new LdesFragmentHttpConverter();
     }
 }

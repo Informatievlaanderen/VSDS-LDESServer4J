@@ -1,27 +1,31 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
+import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 
 public class TreeRelation {
-    private final String treePath;
-    private final String treeValue;
-    private final String treeNode;
-    private final String rdfSyntaxType;
+    private String treePath;
+    private String treeValue;
+    private String treeNode;
+    private String rdfSyntaxType;
 
-    public TreeRelation(String treePath, String treeValue, String treeNode, String rdfSyntaxType) {
-        this.treePath = treePath;
-        this.treeValue = treeValue;
-        this.treeNode = treeNode;
-        this.rdfSyntaxType = rdfSyntaxType;
+    private TreeRelation(){
+    }
+
+    public TreeRelation(LdesFragment fragment, String relation) {
+        this.treePath = fragment.getFragmentInfo().getPath();
+        this.treeNode = fragment.getFragmentId();
+        this.treeValue = String.format("%s^^<http://www.w3.org/2001/XMLSchema#dateTime>",fragment.getFragmentInfo().getValue());
+        this.rdfSyntaxType = relation;
     }
 
     public Resource getTreePathAsResource() {
         return ResourceFactory.createResource(treePath);
     }
 
-    public Resource getTreeValueAsStringLiteral() {
-        return ResourceFactory.createResource(treeValue);
+    public Literal getTreeValueAsStringLiteral() {
+        return ResourceFactory.createStringLiteral(treeValue);
     }
 
     public Resource getTreeNodeAsResource() {

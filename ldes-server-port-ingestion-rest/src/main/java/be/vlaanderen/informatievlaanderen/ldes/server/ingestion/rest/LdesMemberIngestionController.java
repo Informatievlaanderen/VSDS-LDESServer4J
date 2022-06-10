@@ -1,23 +1,24 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesReader;
 
 @RestController
 public class LdesMemberIngestionController {
 
-    private final LdesReader ldesReader;
+    private final FragmentationService ldesReader;
 
-    public LdesMemberIngestionController(final LdesReader ldesReader) {
+    public LdesMemberIngestionController(final FragmentationService ldesReader) {
         this.ldesReader = ldesReader;
     }
 
+    // TODO update value to an injected value
     @PostMapping(value = "/ldes-member", consumes = "application/n-quads")
     public LdesMember ingestLdesMember(@RequestBody LdesMember ldesMember) {
-        return ldesReader.storeLdesMember(ldesMember);
+        return ldesReader.addMember(ldesMember);
     }
 }

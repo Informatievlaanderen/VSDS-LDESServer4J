@@ -8,61 +8,78 @@ import org.apache.jena.rdf.model.Statement;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.FragmentIdConverter.toFragmentId;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 public class LdesFragment {
 
-    List<Statement> statements = new ArrayList<>();
+    private final String fragmentId;
+
+    private final FragmentInfo fragmentInfo;
+
+    private final List<Statement> statements;
 
     private final List<LdesMember> members;
 
-    private List<TreeRelation> treeRelations = new LinkedList<>();
+    private final List<TreeRelation> relations;
 
-    private final Map<String, String> ldesFragmentConfig;
-
-    public LdesFragment(List<LdesMember> members, Map<String, String> ldesFragmentConfig) {
-        this.members = members;
-        this.ldesFragmentConfig = ldesFragmentConfig;
-        addHeaders();
+    public LdesFragment(String fragmentId, FragmentInfo fragmentInfo) {
+        this.fragmentId = fragmentId;
+        this.fragmentInfo = fragmentInfo;
+        this.statements = new ArrayList<>();
+        this.relations = new ArrayList<>();
+        this.members = new ArrayList<>();
     }
 
-    public LdesFragment(List<LdesMember> members, Map<String, String> ldesFragmentConfig,
-            List<TreeRelation> treeRelations) {
-        this(members, ldesFragmentConfig);
-        this.treeRelations = treeRelations;
+    public static LdesFragment newFragment(String hostname, FragmentInfo fragmentInfo) {
+        String fragmentId = toFragmentId(hostname, fragmentInfo.getViewShortName(), fragmentInfo.getPath(),
+                fragmentInfo.getValue());
+        return new LdesFragment(fragmentId, fragmentInfo);
+    }
+
+    public void addRelation(TreeRelation treeRelation) {
+        this.relations.add(treeRelation);
+    }
+
+    public String getFragmentId() {
+        return fragmentId;
+    }
+
+    public FragmentInfo getFragmentInfo() {
+        return fragmentInfo;
+    }
+
+    public List<TreeRelation> getRelations() {
+        return relations;
     }
 
     public List<LdesMember> getMembers() {
         return members;
     }
 
+    public void addMember(LdesMember ldesMember) {
+        members.add(ldesMember);
+    }
+
     public Model toRdfOutputModel() {
+        addFragmentMetadata();
         Model model = ModelFactory.createDefaultModel();
         model.add(statements);
 
-        members.stream().map(LdesMember::getModel).map(this::replaceViewId).forEach(model::add);
+        members.stream().map(LdesMember::getModel).forEach(model::add);
 
         return model;
     }
 
-    private Model replaceViewId(Model memberModel) {
-        Statement statement = memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextStatement();
-        memberModel.remove(statement);
-        memberModel.add(createStatement(createResource(ldesFragmentConfig.get("view")), statement.getPredicate(),
-                statement.getObject()));
-        return memberModel;
-    }
+    private void addFragmentMetadata() {
+        Resource viewId = createResource(fragmentInfo.getView());
+        Resource fragmentId = createResource(this.fragmentId);
 
-    private void addHeaders() {
-        Resource viewId = createResource(ldesFragmentConfig.get("view"));
-        Resource fragmentId = createResource(viewId.toString() + "?fragment=1");
-
-        if (ldesFragmentConfig.containsKey("shape")) {
-            statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesFragmentConfig.get("shape"))));
+        if (fragmentInfo.getShape() != null) {
+            statements.add(createStatement(viewId, TREE_SHAPE, createResource(fragmentInfo.getShape())));
         }
         statements.add(createStatement(viewId, TREE_VIEW, fragmentId));
         statements
@@ -70,13 +87,11 @@ public class LdesFragment {
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,
                 createResource("http://www.w3.org/ns/prov#generatedAtTime")));
         statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource("https://w3id.org/ldes#EventStream")));
-        statements.add(createStatement(fragmentId, RDF_SYNTAX_TYPE, createResource("https://w3id.org/tree#Node")));
-
         Resource treeRelationNode = createResource();
-        if (!treeRelations.isEmpty()) {
+        if (!relations.isEmpty()) {
             statements.add(createStatement(fragmentId, TREE_RELATION, treeRelationNode));
         }
-        treeRelations.forEach(treeRelation -> {
+        relations.forEach(treeRelation -> {
             statements.add(createStatement(treeRelationNode, TREE_VALUE, treeRelation.getTreeValueAsStringLiteral()));
             statements.add(createStatement(treeRelationNode, TREE_PATH, treeRelation.getTreePathAsResource()));
             statements.add(createStatement(treeRelationNode, TREE_NODE, treeRelation.getTreeNodeAsResource()));
