@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 class FragmentProviderImplTest {
     private final FragmentCreator fragmentCreator = mock(FragmentCreator.class);
-    private final FragmentProvider fragmentProvider = new FragmentProviderImpl(fragmentCreator);
+    private final FragmentProvider fragmentProvider = new FragmentProviderImpl(fragmentCreator, new LdesFragmentConfig());
 
     @DisplayName("Fetching of an LdesFragment")
     @Test

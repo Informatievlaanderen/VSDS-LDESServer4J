@@ -1,24 +1,25 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Map;
+
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "ldes")
-public class LdesConfig {
-
-    private String id;
+public class LdesFragmentConfig {
+    private String view;
     private String context;
     private String shape;
 
-    public String getId() {
-        return id;
+    public String getView() {
+        return view;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setView(String view) {
+        this.view = view;
     }
 
     public String getContext() {
@@ -35,5 +36,9 @@ public class LdesConfig {
 
     public void setShape(String shape) {
         this.shape = shape;
+    }
+
+    public Map<String, String> toMap() {
+        return Map.of("view", view, "context", context, "shape", shape);
     }
 }

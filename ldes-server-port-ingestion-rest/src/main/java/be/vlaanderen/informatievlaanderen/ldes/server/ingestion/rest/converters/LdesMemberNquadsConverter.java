@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -13,7 +14,10 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+
+import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberNquadsConverter extends AbstractHttpMessageConverter<LdesMember> {
 
@@ -38,8 +42,15 @@ public class LdesMemberNquadsConverter extends AbstractHttpMessageConverter<Ldes
 
     @Override
     protected void writeInternal(LdesMember ldesMember, HttpOutputMessage outputMessage)
-            throws UnsupportedOperationException, HttpMessageNotWritableException {
-        throw new HttpMessageNotWritableException("Ingestion point does not write Model");
+            throws UnsupportedOperationException, HttpMessageNotWritableException, IOException {
+        Model fragmentModel = ldesMember.getModel();
+
+        StringWriter outputStream = new StringWriter();
+
+        RDFDataMgr.write(outputStream, fragmentModel, NQUADS);
+
+        OutputStream body = outputMessage.getBody();
+        body.write(outputStream.toString().getBytes());
     }
 
 }

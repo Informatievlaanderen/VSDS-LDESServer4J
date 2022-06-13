@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.services.JsonObjectCreatorImpl;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -16,15 +18,13 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.List;
 
+import static org.apache.jena.riot.RDFFormat.JSONLD11;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
 
-    private final LdesMemberConverter ldesMemberConverter = new LdesMemberConverterImpl();
-    private final JsonObjectCreatorImpl jsonObjectCreator;
+    public JsonLdConverter() {
 
-    public JsonLdConverter(JsonObjectCreatorImpl jsonObjectCreator) {
-        this.jsonObjectCreator = jsonObjectCreator;
     }
 
     @Override
@@ -51,13 +51,23 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
     @Override
     public void write(LdesFragment ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
+
+        OutputStream body = outputMessage.getBody();
+
+        final RDFFormat rdfFormat;
+        if("application/n-quads".equals(contentType.toString())) {
+            rdfFormat = NQUADS;
+        }
+        else {
+            rdfFormat = JSONLD11;
+        }
+
         Model fragmentModel = ldesFragment.toRdfOutputModel();
 
         StringWriter outputStream = new StringWriter();
 
-        RDFDataMgr.write(outputStream, fragmentModel, NQUADS);
+        RDFDataMgr.write(outputStream, fragmentModel, rdfFormat);
 
-        OutputStream body = outputMessage.getBody();
         body.write(outputStream.toString().getBytes());
     }
 }

@@ -17,23 +17,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.StringWriter;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 @Document("ldesmember")
 public class LdesMemberEntity {
 
-    @Id
-    private final String id;
-
     private final String ldesMember;
 
-    public LdesMemberEntity(final String id, final String ldesMember) {
-        this.id = id;
+    public LdesMemberEntity(final String ldesMember) {
         this.ldesMember = ldesMember;
-    }
-
-    public String getId() {
-        return this.id;
     }
 
     public String getLdesMember() {
@@ -41,19 +34,18 @@ public class LdesMemberEntity {
     }
 
     public static LdesMemberEntity fromLdesMember(LdesMember ldesMember) {
-        String memberId = ldesMember.getModel()
-                .listStatements(null, createProperty("https://w3id.org/tree#member"), (Resource) null).nextStatement()
-                .getObject().toString();
-
         StringWriter outputStream = new StringWriter();
-        RDFDataMgr.write(outputStream, ldesMember.getModel(), RDFFormat.NQUADS);
+        RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.JSONLD11);
         String ldesMemberString = outputStream.toString();
 
-        return new LdesMemberEntity(memberId, ldesMemberString);
+        return new LdesMemberEntity(ldesMemberString);
     }
 
     public LdesMember toLdesMember() {
-        Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.NQUADS).toModel();
+        Model ldesMemberModel = RDFParserBuilder.create()
+                .fromString(this.ldesMember)
+                .lang(Lang.JSONLD11)
+                .toModel();
         return new LdesMember(ldesMemberModel);
     }
 }

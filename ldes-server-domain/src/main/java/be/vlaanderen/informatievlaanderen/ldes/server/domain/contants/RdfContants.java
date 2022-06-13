@@ -5,7 +5,8 @@ import org.apache.jena.rdf.model.Property;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class RdfContants {
-    private RdfContants() {}
+    private RdfContants() {
+    }
 
     public static final String TREE = "https://w3id.org/tree#";
     public static final Property TREE_VIEW = createProperty(TREE, "view");
@@ -14,6 +15,7 @@ public class RdfContants {
     public static final Property TREE_VALUE = createProperty(TREE, "value");
     public static final Property TREE_PATH = createProperty(TREE, "path");
     public static final Property TREE_NODE = createProperty(TREE, "node");
+    public static final Property TREE_MEMBER = createProperty(TREE, "member");
     public static final String LDES = "https://w3id.org/ldes#";
     public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOf");
     public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
