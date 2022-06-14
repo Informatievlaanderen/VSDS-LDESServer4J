@@ -31,7 +31,7 @@ public class LdesFragment {
     }
 
     public LdesFragment(List<LdesMember> members, Map<String, String> ldesFragmentConfig,
-                        List<TreeRelation> treeRelations) {
+            List<TreeRelation> treeRelations) {
         this(members, ldesFragmentConfig);
         this.treeRelations = treeRelations;
     }
@@ -64,11 +64,10 @@ public class LdesFragment {
         Resource viewId = createResource(ldesFragmentConfig.get("view"));
         Resource fragmentId = createResource(viewId.toString() + "?fragment=1");
 
-
         if (ldesFragmentConfig.containsKey("shape")) {
             statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesFragmentConfig.get("shape"))));
         }
-
+        statements.add(createStatement(viewId, TREE_VIEW, fragmentId));
         statements
                 .add(createStatement(viewId, LDES_VERSION_OF, createResource("http://purl.org/dc/terms/isVersionOf")));
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,

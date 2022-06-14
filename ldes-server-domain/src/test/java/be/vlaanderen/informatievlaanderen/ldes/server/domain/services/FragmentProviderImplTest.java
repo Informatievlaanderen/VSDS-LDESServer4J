@@ -23,16 +23,18 @@ class FragmentProviderImplTest {
     @Test
     void when_LdesFragmentIsFetched_CreatedResourceIsReturned() {
         LdesMember firstMember = new LdesMember("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS);
-        LdesMember secondMember = new LdesMember("_:subject2 <http://an.example/predicate2> \"object2\" .", Lang.NQUADS);
+        LdesMember secondMember = new LdesMember("_:subject2 <http://an.example/predicate2> \"object2\" .",
+                Lang.NQUADS);
 
         ldesFragmentConfig.setView("http://an.example/view");
 
-         LdesFragment expectedLdesFragment = new LdesFragment(List.of(firstMember, secondMember), ldesFragmentConfig.toMap());
-         when(fragmentCreator.createFragment(ldesFragmentConfig.toMap())).thenReturn(expectedLdesFragment);
+        LdesFragment expectedLdesFragment = new LdesFragment(List.of(firstMember, secondMember),
+                ldesFragmentConfig.toMap());
+        when(fragmentCreator.createFragment(ldesFragmentConfig.toMap())).thenReturn(expectedLdesFragment);
 
-         LdesFragment actualLdesFragment = fragmentProvider.getFragment();
+        LdesFragment actualLdesFragment = fragmentProvider.getFragment();
 
-         assertEquals(expectedLdesFragment, actualLdesFragment);
-         verify(fragmentCreator, times(1)).createFragment(ldesFragmentConfig.toMap());
+        assertEquals(expectedLdesFragment, actualLdesFragment);
+        verify(fragmentCreator, times(1)).createFragment(ldesFragmentConfig.toMap());
     }
 }

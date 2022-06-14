@@ -55,10 +55,9 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
         OutputStream body = outputMessage.getBody();
 
         final RDFFormat rdfFormat;
-        if("application/n-quads".equals(contentType.toString())) {
+        if ("application/n-quads".equals(contentType.toString())) {
             rdfFormat = NQUADS;
-        }
-        else {
+        } else {
             rdfFormat = JSONLD11;
         }
 

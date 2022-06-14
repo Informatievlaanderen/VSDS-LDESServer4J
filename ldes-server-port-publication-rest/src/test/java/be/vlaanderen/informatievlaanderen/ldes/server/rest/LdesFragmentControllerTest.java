@@ -60,18 +60,15 @@ class LdesFragmentControllerTest {
         List<LdesMember> ldesMembers = List.of(ldesMember);
         when(fragmentProvider.getFragment()).thenReturn(new LdesFragment(ldesMembers, ldesFragmentConfig.toMap()));
 
-        ResultActions resultActions = mockMvc.perform(get("/ldes-fragment"))
-                .andDo(print()).andExpect(status().isOk());
+        ResultActions resultActions = mockMvc.perform(get("/ldes-fragment")).andDo(print()).andExpect(status().isOk());
 
         MvcResult result = resultActions.andReturn();
 
-        Model resultModel = RDFParserBuilder.create()
-                .fromString(result.getResponse().getContentAsString())
-                .lang(Lang.JSONLD11)
-                .toModel();
+        Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString())
+                .lang(Lang.JSONLD11).toModel();
 
-        assertTrue(resultModel.contains(createStatement(
-                createResource(ldesFragmentConfig.getView()), createProperty("https://w3id.org/tree#shape"), createResource(ldesFragmentConfig.getShape()))));
+        assertTrue(resultModel.contains(createStatement(createResource(ldesFragmentConfig.getView()),
+                createProperty("https://w3id.org/tree#shape"), createResource(ldesFragmentConfig.getShape()))));
 
         verify(fragmentProvider, times(1)).getFragment();
     }
@@ -91,8 +88,7 @@ class LdesFragmentControllerTest {
         File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 
         Model ldesModel = RDFParserBuilder.create()
-                .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n")))
-                .lang(Lang.NQUADS)
+                .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"))).lang(Lang.NQUADS)
                 .toModel();
 
         return new LdesMember(ldesModel);

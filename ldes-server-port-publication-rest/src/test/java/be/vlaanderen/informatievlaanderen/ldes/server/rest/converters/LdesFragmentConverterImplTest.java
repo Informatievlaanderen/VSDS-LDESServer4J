@@ -43,16 +43,10 @@ class LdesFragmentConverterImplTest {
 
         String expectedFragment = getContentFromFile("example-ldes-fragment.nq");
 
-        Model fragmentModel = RDFParserBuilder.create()
-                .fromString(fragmentString)
-                .lang(Lang.NQUADS)
-                .toModel();
+        Model fragmentModel = RDFParserBuilder.create().fromString(fragmentString).lang(Lang.NQUADS).toModel();
 
-        Model expectedFragmentModel = RDFParserBuilder.create()
-                .fromString(expectedFragment)
-                .lang(Lang.NQUADS)
+        Model expectedFragmentModel = RDFParserBuilder.create().fromString(expectedFragment).lang(Lang.NQUADS)
                 .toModel();
-
 
         assertTrue(expectedFragmentModel.isIsomorphicWith(fragmentModel));
     }

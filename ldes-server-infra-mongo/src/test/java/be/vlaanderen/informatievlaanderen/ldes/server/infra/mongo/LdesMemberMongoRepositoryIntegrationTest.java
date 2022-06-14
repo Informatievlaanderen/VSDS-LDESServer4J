@@ -34,8 +34,8 @@ class LdesMemberMongoRepositoryIntegrationTest {
     @Test
     void when_LdesMembersAreStoredUsingRepository_ObjectsAreStoredInMongoDB() {
         String member = """
-                        <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
-                        <http://example.org/graph1> .""";
+                <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
+                <http://example.org/graph1> .""";
 
         LdesMember ldesMember = new LdesMember(member, Lang.NQUADS);
         ldesMemberMongoRepository.saveLdesMember(ldesMember);

@@ -31,10 +31,7 @@ public class LdesMemberEntity {
     }
 
     public LdesMember toLdesMember() {
-        Model ldesMemberModel = RDFParserBuilder.create()
-                .fromString(this.ldesMember)
-                .lang(Lang.JSONLD11)
-                .toModel();
+        Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.JSONLD11).toModel();
         return new LdesMember(ldesMemberModel);
     }
 }

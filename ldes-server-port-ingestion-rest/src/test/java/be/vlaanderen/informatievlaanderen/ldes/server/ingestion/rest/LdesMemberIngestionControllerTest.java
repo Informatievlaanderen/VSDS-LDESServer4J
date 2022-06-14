@@ -39,22 +39,14 @@ class LdesMemberIngestionControllerTest {
     @DisplayName("Ingest an LDES member in the REST service")
     void when_POSTRequestIsPerformed_LDesMemberIsSaved() throws Exception {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq");
-        Model ldesMemberData = RDFParserBuilder.create()
-                .fromString(ldesMemberString)
-                .lang(Lang.NQUADS)
-                .toModel();
+        Model ldesMemberData = RDFParserBuilder.create().fromString(ldesMemberString).lang(Lang.NQUADS).toModel();
 
         when(ldesReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
 
-        mockMvc.perform(post("/ldes-member")
-                        .contentType("application/n-quads")
-                        .content(ldesMemberString)).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(result -> {
+        mockMvc.perform(post("/ldes-member").contentType("application/n-quads").content(ldesMemberString))
+                .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
                     Model responseModel = RDFParserBuilder.create()
-                            .fromString(result.getResponse().getContentAsString())
-                            .lang(Lang.NQUADS)
-                            .toModel();
+                            .fromString(result.getResponse().getContentAsString()).lang(Lang.NQUADS).toModel();
 
                     responseModel.isIsomorphicWith(ldesMemberData);
                 });

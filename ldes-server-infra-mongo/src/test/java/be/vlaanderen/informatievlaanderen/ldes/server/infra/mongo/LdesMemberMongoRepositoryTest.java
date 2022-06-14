@@ -24,8 +24,8 @@ class LdesMemberMongoRepositoryTest {
     @Test
     void when_LdesMemberIsSavedInRepository_CreatedResourceIsReturned() {
         String member = """
-                        <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
-                        <http://example.org/graph1> .""";
+                <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
+                <http://example.org/graph1> .""";
 
         LdesMember ldesMember = new LdesMember(member, Lang.NQUADS);
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
@@ -40,22 +40,16 @@ class LdesMemberMongoRepositoryTest {
     @DisplayName("Correct retrieval of all LdesMembers from MongoDB")
     @Test
     void when_LdesMembersAreRetrieved_ListOfAllLdesMemberInDbIsReturned() {
-        Model ldesMemberModel = RDFParserBuilder.create()
-                .fromString("""
-                        <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
-                        <http://example.org/graph1> .""")
-                .lang(Lang.NQUADS)
-                .toModel();
+        Model ldesMemberModel = RDFParserBuilder.create().fromString("""
+                <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
+                <http://example.org/graph1> .""").lang(Lang.NQUADS).toModel();
 
         LdesMember ldesMember = new LdesMember(ldesMemberModel);
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
 
-        Model ldesMemberModel2 = RDFParserBuilder.create()
-                .fromString("""
-                        <http://one.example/subject2> <http://one.example/predicate2> <http://one.example/object2>
-                        <http://example.org/graph2> .""")
-                .lang(Lang.NQUADS)
-                .toModel();
+        Model ldesMemberModel2 = RDFParserBuilder.create().fromString("""
+                <http://one.example/subject2> <http://one.example/predicate2> <http://one.example/object2>
+                <http://example.org/graph2> .""").lang(Lang.NQUADS).toModel();
         LdesMember ldesMember2 = new LdesMember(ldesMemberModel2);
         LdesMemberEntity ldesMemberEntity2 = LdesMemberEntity.fromLdesMember(ldesMember2);
         when(ldesMemberEntityRepository.findAll()).thenReturn(List.of(ldesMemberEntity, ldesMemberEntity2));

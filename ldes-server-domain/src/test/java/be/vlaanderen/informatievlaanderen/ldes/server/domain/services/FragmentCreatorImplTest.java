@@ -25,17 +25,18 @@ class FragmentCreatorImplTest {
     @Test
     void when_LdesMemberIsStoredInRepository_CreatedResourceIsReturned() {
 
-         LdesMember firstMember = new LdesMember("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS);
-         LdesMember secondMember = new LdesMember("_:subject2 <http://an.example/predicate2> \"object2\" .", Lang.NQUADS);
-         List<LdesMember> ldesMembers = List.of(firstMember, secondMember);
-         when(ldesMemberRepository.fetchLdesMembers()).thenReturn(ldesMembers);
+        LdesMember firstMember = new LdesMember("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS);
+        LdesMember secondMember = new LdesMember("_:subject2 <http://an.example/predicate2> \"object2\" .",
+                Lang.NQUADS);
+        List<LdesMember> ldesMembers = List.of(firstMember, secondMember);
+        when(ldesMemberRepository.fetchLdesMembers()).thenReturn(ldesMembers);
 
         ldesFragmentConfig.setView("http://an.example/view");
 
-         LdesFragment actualLdesFragment = fragmentCreator.createFragment(ldesFragmentConfig.toMap());
+        LdesFragment actualLdesFragment = fragmentCreator.createFragment(ldesFragmentConfig.toMap());
 
-         assertEquals(actualLdesFragment.getMembers(), ldesMembers);
-         verify(ldesMemberRepository, times(1)).fetchLdesMembers();
+        assertEquals(actualLdesFragment.getMembers(), ldesMembers);
+        verify(ldesMemberRepository, times(1)).fetchLdesMembers();
     }
 
     @DisplayName("Throws exception when view in config is missing")
