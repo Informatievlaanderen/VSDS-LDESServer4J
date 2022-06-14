@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.SdsReader;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesReader;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -24,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LdesMemberIngestionController.class)
@@ -34,7 +33,7 @@ class LdesMemberIngestionControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private SdsReader sdsReader;
+    private LdesReader ldesReader;
 
     @Test
     @DisplayName("Ingest an LDES member in the REST service")
@@ -45,7 +44,7 @@ class LdesMemberIngestionControllerTest {
                 .lang(Lang.NQUADS)
                 .toModel();
 
-        when(sdsReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
+        when(ldesReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
 
         mockMvc.perform(post("/ldes-member")
                         .contentType("application/n-quads")
@@ -59,7 +58,7 @@ class LdesMemberIngestionControllerTest {
 
                     responseModel.isIsomorphicWith(ldesMemberData);
                 });
-        verify(sdsReader, times(1)).storeLdesMember(any());
+        verify(ldesReader, times(1)).storeLdesMember(any());
     }
 
     private String readLdesMemberDataFromFile(String fileName) throws URISyntaxException, IOException {
