@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +12,6 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "ldes")
 public class LdesFragmentConfig {
     private String view;
-    private String context;
     private String shape;
 
     public String getView() {
@@ -20,14 +20,6 @@ public class LdesFragmentConfig {
 
     public void setView(String view) {
         this.view = view;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public void setContext(String context) {
-        this.context = context;
     }
 
     public String getShape() {
@@ -39,6 +31,6 @@ public class LdesFragmentConfig {
     }
 
     public Map<String, String> toMap() {
-        return Map.of("view", view, "context", context, "shape", shape);
+        return new ObjectMapper().convertValue(this, Map.class);
     }
 }

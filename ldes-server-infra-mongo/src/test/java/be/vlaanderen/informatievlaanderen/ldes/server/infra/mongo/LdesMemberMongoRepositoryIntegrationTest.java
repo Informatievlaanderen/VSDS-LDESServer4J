@@ -33,14 +33,11 @@ class LdesMemberMongoRepositoryIntegrationTest {
     @DisplayName("given object to save" + " when save object using MongoDB template" + " then object is saved")
     @Test
     void when_LdesMembersAreStoredUsingRepository_ObjectsAreStoredInMongoDB() {
-        Model model = RDFParserBuilder.create()
-                .fromString("""
+        String member = """
                         <http://one.example/subject1> <http://one.example/predicate1> <http://one.example/object1>
-                        <http://example.org/graph1> .""")
-                .lang(Lang.NQUADS)
-                .toModel();
+                        <http://example.org/graph1> .""";
 
-        LdesMember ldesMember = new LdesMember(model);
+        LdesMember ldesMember = new LdesMember(member, Lang.NQUADS);
         ldesMemberMongoRepository.saveLdesMember(ldesMember);
         assertEquals(1, ldesMemberEntityRepository.findAll().size());
         assertEquals(1, ldesMemberMongoRepository.fetchLdesMembers().size());

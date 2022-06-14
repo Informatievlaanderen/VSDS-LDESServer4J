@@ -16,32 +16,16 @@ public class TreeRelation {
         this.rdfSyntaxType = rdfSyntaxType;
     }
 
-    public String getTreePath() {
-        return treePath;
-    }
-
     public Resource getTreePathAsResource() {
         return ResourceFactory.createResource(treePath);
-    }
-
-    public String getTreeValue() {
-        return treeValue;
     }
 
     public Resource getTreeValueAsStringLiteral() {
         return ResourceFactory.createResource(treeValue);
     }
 
-    public String getTreeNode() {
-        return treeNode;
-    }
-
     public Resource getTreeNodeAsResource() {
         return ResourceFactory.createResource(treeNode);
-    }
-
-    public String getRdfSyntaxType() {
-        return rdfSyntaxType;
     }
 
     public Resource getRdfSyntaxTypeAsResource() {

@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -24,9 +22,12 @@ public class LdesFragment {
 
     private List<TreeRelation> treeRelations = new LinkedList<>();
 
+    private final Map<String, String> ldesFragmentConfig;
+
     public LdesFragment(List<LdesMember> members, Map<String, String> ldesFragmentConfig) {
         this.members = members;
-        addHeaders(ldesFragmentConfig);
+        this.ldesFragmentConfig = ldesFragmentConfig;
+        addHeaders();
     }
 
     public LdesFragment(List<LdesMember> members, Map<String, String> ldesFragmentConfig,
@@ -43,17 +44,31 @@ public class LdesFragment {
         Model model = ModelFactory.createDefaultModel();
         model.add(statements);
 
-        members.stream().map(LdesMember::getModel).forEach(model::add);
+        members.stream().map(LdesMember::getModel).map(this::replaceViewId).forEach(model::add);
 
         return model;
     }
 
-    private void addHeaders(Map<String, String> ldesFragmentConfig) {
+    private Model replaceViewId(Model memberModel) {
+        Statement statement = memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextStatement();
+        memberModel.remove(statement);
+        memberModel.add(createStatement(createResource(ldesFragmentConfig.get("view")), statement.getPredicate(),
+                statement.getObject()));
+        return memberModel;
+    }
+
+    private void addHeaders() {
+        if (!ldesFragmentConfig.containsKey("view")) {
+            throw new RuntimeException("Fragment configuration: missing view");
+        }
         Resource viewId = createResource(ldesFragmentConfig.get("view"));
         Resource fragmentId = createResource(viewId.toString() + "?fragment=1");
 
-        statements.add(createStatement(viewId, TREE_VIEW, fragmentId));
-        statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesFragmentConfig.get("shape"))));
+
+        if (ldesFragmentConfig.containsKey("shape")) {
+            statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesFragmentConfig.get("shape"))));
+        }
+
         statements
                 .add(createStatement(viewId, LDES_VERSION_OF, createResource("http://purl.org/dc/terms/isVersionOf")));
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,

@@ -45,7 +45,7 @@ class LdesMemberIngestionControllerTest {
                 .lang(Lang.NQUADS)
                 .toModel();
 
-        when(sdsReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberData));
+        when(sdsReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
 
         mockMvc.perform(post("/ldes-member")
                         .contentType("application/n-quads")

@@ -22,7 +22,7 @@ public class LdesFragmentController {
     @GetMapping(value = "/ldes-fragment")
     String retrieveLdesFragmentsPageAsJsonLd(HttpServletResponse response) {
         response.setContentType("application/ld+json");
-        return outputLdesFragment(fragmentProvider.getFragment(), RDFFormat.JSONLD10_COMPACT_PRETTY);
+        return outputLdesFragment(fragmentProvider.getFragment(), RDFFormat.JSONLD11);
     }
 
     @GetMapping(value = "/ldes-fragment", produces = "application/n-quads")
