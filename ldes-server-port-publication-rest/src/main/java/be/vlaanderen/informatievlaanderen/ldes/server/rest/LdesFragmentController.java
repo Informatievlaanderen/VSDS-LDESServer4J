@@ -19,15 +19,13 @@ public class LdesFragmentController {
         this.fragmentProvider = fragmentProvider;
     }
 
-    @GetMapping(value = "/ldes-fragment")
+    @GetMapping(value = "/ldes-fragment", produces = "application/ld+json")
     String retrieveLdesFragmentsPageAsJsonLd(HttpServletResponse response) {
-        response.setContentType("application/ld+json");
         return outputLdesFragment(fragmentProvider.getFragment(), RDFFormat.JSONLD11);
     }
 
     @GetMapping(value = "/ldes-fragment", produces = "application/n-quads")
     String retrieveLdesFragmentsPageAsNQuads(HttpServletResponse response) {
-        response.setContentType("application/n-quads");
         return outputLdesFragment(fragmentProvider.getFragment(), RDFFormat.NQUADS);
     }
 

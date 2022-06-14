@@ -39,10 +39,4 @@ class FragmentCreatorImplTest {
         verify(ldesMemberRepository, times(1)).fetchLdesMembers();
     }
 
-    @DisplayName("Throws exception when view in config is missing")
-    @Test
-    void when_viewIsMissingInConfig_throwsException() {
-        assertThrows(RuntimeException.class, () -> fragmentCreator.createFragment(Map.of()));
-    }
-
 }

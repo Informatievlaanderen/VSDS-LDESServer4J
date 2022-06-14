@@ -58,9 +58,6 @@ public class LdesFragment {
     }
 
     private void addHeaders() {
-        if (!ldesFragmentConfig.containsKey("view")) {
-            throw new RuntimeException("Fragment configuration: missing view");
-        }
         Resource viewId = createResource(ldesFragmentConfig.get("view"));
         Resource fragmentId = createResource(viewId.toString() + "?fragment=1");
 

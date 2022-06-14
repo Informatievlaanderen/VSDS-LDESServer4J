@@ -79,7 +79,7 @@ class LdesFragmentControllerTest {
         when(fragmentProvider.getFragment()).thenReturn(new LdesFragment(List.of(), ldesFragmentConfig.toMap()));
 
         mockMvc.perform(get("/ldes-fragment").accept("application/n-quads")).andDo(print()).andExpect(status().isOk())
-                .andExpect(content().contentType("application/n-quads"));
+                .andExpect(content().contentType("application/n-quads;charset=UTF-8"));
         verify(fragmentProvider, times(1)).getFragment();
     }
 
