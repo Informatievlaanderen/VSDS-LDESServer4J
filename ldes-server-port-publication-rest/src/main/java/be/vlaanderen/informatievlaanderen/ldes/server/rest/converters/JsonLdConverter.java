@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.services.JsonObjectCreatorImpl;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -13,15 +15,16 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.StringWriter;
 import java.util.List;
+
+import static org.apache.jena.riot.RDFFormat.JSONLD11;
+import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
 
-    private final LdesMemberConverter ldesMemberConverter = new LdesMemberConverterImpl();
-    private final JsonObjectCreatorImpl jsonObjectCreator;
+    public JsonLdConverter() {
 
-    public JsonLdConverter(JsonObjectCreatorImpl jsonObjectCreator) {
-        this.jsonObjectCreator = jsonObjectCreator;
     }
 
     @Override
@@ -48,16 +51,22 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
     @Override
     public void write(LdesFragment ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-        JSONArray items = getItems(ldesFragment);
-        JSONObject newJsonObject = jsonObjectCreator.createJSONObject(items);
-        OutputStream body = outputMessage.getBody();
-        body.write(newJsonObject.toJSONString().getBytes());
-    }
 
-    @SuppressWarnings("unchecked")
-    private JSONArray getItems(LdesFragment ldesFragment) {
-        JSONArray items = new JSONArray();
-        ldesFragment.getMembers().stream().map(ldesMemberConverter::convertLdesMemberToJSONArray).forEach(items::add);
-        return items;
+        OutputStream body = outputMessage.getBody();
+
+        final RDFFormat rdfFormat;
+        if ("application/n-quads".equals(contentType.toString())) {
+            rdfFormat = NQUADS;
+        } else {
+            rdfFormat = JSONLD11;
+        }
+
+        Model fragmentModel = ldesFragment.toRdfOutputModel();
+
+        StringWriter outputStream = new StringWriter();
+
+        RDFDataMgr.write(outputStream, fragmentModel, rdfFormat);
+
+        body.write(outputStream.toString().getBytes());
     }
 }

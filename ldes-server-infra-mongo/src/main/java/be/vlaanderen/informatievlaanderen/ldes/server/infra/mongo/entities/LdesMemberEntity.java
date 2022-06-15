@@ -1,27 +1,37 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
 
-import org.json.simple.JSONObject;
-import org.springframework.data.annotation.Id;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.StringWriter;
 
 @Document("ldesmember")
 public class LdesMemberEntity {
 
-    @Id
-    private final Integer id;
+    private final String ldesMember;
 
-    private final JSONObject ldesMember;
-
-    public LdesMemberEntity(final Integer id, final JSONObject ldesMember) {
-        this.id = id;
+    public LdesMemberEntity(final String ldesMember) {
         this.ldesMember = ldesMember;
     }
 
-    public Integer getId() {
-        return this.id;
+    public String getLdesMember() {
+        return this.ldesMember;
     }
 
-    public JSONObject getLdesMember() {
-        return this.ldesMember;
+    public static LdesMemberEntity fromLdesMember(LdesMember ldesMember) {
+        StringWriter outputStream = new StringWriter();
+        RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.JSONLD11);
+        String ldesMemberString = outputStream.toString();
+
+        return new LdesMemberEntity(ldesMemberString);
+    }
+
+    public LdesMember toLdesMember() {
+        Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.JSONLD11).toModel();
+        return new LdesMember(ldesMemberModel);
     }
 }

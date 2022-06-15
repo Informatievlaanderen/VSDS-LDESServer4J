@@ -166,6 +166,7 @@ local.properties
 *.iws
 *.iml
 *.ipr
+.run
 
 ###
 ### Netbeans

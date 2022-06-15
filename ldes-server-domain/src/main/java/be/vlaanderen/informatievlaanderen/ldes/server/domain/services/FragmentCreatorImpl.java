@@ -1,8 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
+import org.apache.jena.ext.com.google.common.collect.ImmutableMap;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class FragmentCreatorImpl implements FragmentCreator {
@@ -14,7 +20,7 @@ public class FragmentCreatorImpl implements FragmentCreator {
     }
 
     @Override
-    public LdesFragment createFragment() {
-        return new LdesFragment(ldesMemberRepository.fetchLdesMembers());
+    public LdesFragment createFragment(Map<String, String> ldesFragmentConfig) {
+        return new LdesFragment(ldesMemberRepository.fetchLdesMembers(), ldesFragmentConfig);
     }
 }
