@@ -5,11 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragme
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFFormat;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
+import org.springframework.mock.http.MockHttpOutputMessage;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +21,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.rest.converters.LdesFragmentConverter.outputLdesFragment;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class LdesFragmentConverterImplTest {
+class LdesFragmentHttpConverterTest {
 
     private final LdesFragmentConfig ldesFragmentConfig = new LdesFragmentConfig();
+    private final LdesFragmentHttpConverter ldesFragmentHttpConverter = new LdesFragmentHttpConverter();
 
     @BeforeEach
     void setup() {
@@ -35,20 +35,20 @@ class LdesFragmentConverterImplTest {
     }
 
     @Test
-    @DisplayName("Correct conversion of LdesMember to JSONArray")
-    void when_LdesMemberIsProvided_LdesMemberConverterReturnsJsonArray() throws URISyntaxException, IOException {
+    @DisplayName("Correct conversion of LdesMember")
+    void when_LdesMemberIsValid_LdesFragmentHttpConverterReturnsValidFragment() throws URISyntaxException, IOException {
         LdesMember ldesMember = readLdesMemberFromFile("example-ldes-member.nq");
         LdesFragment ldesFragment = new LdesFragment(List.of(ldesMember), ldesFragmentConfig.toMap());
-        String fragmentString = outputLdesFragment(ldesFragment, RDFFormat.NQUADS);
-
+        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
         String expectedFragment = getContentFromFile("example-ldes-fragment.nq");
-
-        Model fragmentModel = RDFParserBuilder.create().fromString(fragmentString).lang(Lang.NQUADS).toModel();
-
         Model expectedFragmentModel = RDFParserBuilder.create().fromString(expectedFragment).lang(Lang.NQUADS)
                 .toModel();
 
-        assertTrue(expectedFragmentModel.isIsomorphicWith(fragmentModel));
+        ldesFragmentHttpConverter.write(ldesFragment, MediaType.valueOf("application/n-quads"), mockHttpOutputMessage);
+        Model actualFragmentModel = RDFParserBuilder.create().fromString(mockHttpOutputMessage.getBodyAsString())
+                .lang(Lang.NQUADS).toModel();
+
+        assertTrue(expectedFragmentModel.isIsomorphicWith(actualFragmentModel));
     }
 
     private LdesMember readLdesMemberFromFile(String fileName) throws URISyntaxException, IOException {
