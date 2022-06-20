@@ -33,7 +33,7 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
     @Override
     public List<MediaType> getSupportedMediaTypes() {
-        return List.of(new MediaType("application/ld+json"), new MediaType("application/nquads"));
+        return List.of(new MediaType("application/ld+json"), new MediaType("application/n-quads"));
     }
 
     @Override
@@ -56,10 +56,9 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
     private RDFFormat getRdfFormat(MediaType contentType) {
         return switch (contentType.toString()) {
-        case "application/n-quads" -> NQUADS;
-        case "application/ld+json" -> JSONLD11;
-        default -> throw new UnsupportedOperationException(
-                String.format("No converter implemented for MediaType %s", contentType));
+            case "application/n-quads" -> NQUADS;
+            case "application/ld+json" -> JSONLD11;
+            default -> JSONLD11;
         };
     }
 }
