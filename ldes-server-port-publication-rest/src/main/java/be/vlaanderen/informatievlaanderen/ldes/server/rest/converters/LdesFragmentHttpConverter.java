@@ -56,9 +56,9 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
     private RDFFormat getRdfFormat(MediaType contentType) {
         return switch (contentType.toString()) {
-            case "application/n-quads" -> NQUADS;
-            case "application/ld+json" -> JSONLD11;
-            default -> JSONLD11;
+        case "application/n-quads" -> NQUADS;
+        case "application/ld+json" -> JSONLD11;
+        default -> JSONLD11;
         };
     }
 }
