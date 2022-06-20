@@ -5,19 +5,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.SdsReader;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesReader;
 
 @RestController
 public class LdesMemberIngestionController {
 
-    private final SdsReader sdsReader;
+    private final LdesReader ldesReader;
 
-    public LdesMemberIngestionController(final SdsReader sdsReader) {
-        this.sdsReader = sdsReader;
+    public LdesMemberIngestionController(final LdesReader ldesReader) {
+        this.ldesReader = ldesReader;
     }
 
     @PostMapping(value = "/ldes-member", consumes = "application/n-quads")
     public LdesMember ingestLdesMember(@RequestBody LdesMember ldesMember) {
-        return sdsReader.storeLdesMember(ldesMember);
+        return ldesReader.storeLdesMember(ldesMember);
     }
 }

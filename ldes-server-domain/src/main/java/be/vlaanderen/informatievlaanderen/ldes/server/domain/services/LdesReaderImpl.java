@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SdsReaderImpl implements SdsReader {
+public class LdesReaderImpl implements LdesReader {
 
     private final LdesMemberRepository ldesMemberRepository;
 
     @Autowired
-    public SdsReaderImpl(final LdesMemberRepository ldesMemberRepository) {
+    public LdesReaderImpl(final LdesMemberRepository ldesMemberRepository) {
         this.ldesMemberRepository = ldesMemberRepository;
     }
 
