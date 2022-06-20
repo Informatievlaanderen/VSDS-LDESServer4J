@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
@@ -21,11 +19,7 @@ import java.util.List;
 import static org.apache.jena.riot.RDFFormat.JSONLD11;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
-public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
-
-    public JsonLdConverter() {
-
-    }
+public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
 
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {
@@ -39,7 +33,7 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
 
     @Override
     public List<MediaType> getSupportedMediaTypes() {
-        return List.of(MediaType.ALL);
+        return List.of(new MediaType("application/ld+json"), new MediaType("application/nquads"));
     }
 
     @Override
@@ -53,20 +47,19 @@ public class JsonLdConverter implements HttpMessageConverter<LdesFragment> {
             throws IOException, HttpMessageNotWritableException {
 
         OutputStream body = outputMessage.getBody();
-
-        final RDFFormat rdfFormat;
-        if ("application/n-quads".equals(contentType.toString())) {
-            rdfFormat = NQUADS;
-        } else {
-            rdfFormat = JSONLD11;
-        }
-
+        RDFFormat rdfFormat = getRdfFormat(contentType);
         Model fragmentModel = ldesFragment.toRdfOutputModel();
-
         StringWriter outputStream = new StringWriter();
-
         RDFDataMgr.write(outputStream, fragmentModel, rdfFormat);
-
         body.write(outputStream.toString().getBytes());
+    }
+
+    private RDFFormat getRdfFormat(MediaType contentType) {
+        return switch (contentType.toString()) {
+        case "application/n-quads" -> NQUADS;
+        case "application/ld+json" -> JSONLD11;
+        default -> throw new UnsupportedOperationException(
+                String.format("No converter implemented for MediaType %s", contentType));
+        };
     }
 }
