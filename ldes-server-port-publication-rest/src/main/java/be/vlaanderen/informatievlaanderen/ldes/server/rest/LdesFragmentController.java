@@ -17,7 +17,7 @@ public class LdesFragmentController {
     }
 
     @GetMapping(value = "/ldes-fragment", produces = { "application/ld+json", "application/n-quads" })
-    LdesFragment retrieveLdesFragmentsPageAsJsonLd(HttpServletResponse response) {
+    LdesFragment retrieveLdesFragments(HttpServletResponse response) {
         return fragmentProvider.getFragment();
     }
 
