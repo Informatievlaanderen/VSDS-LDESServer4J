@@ -9,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.StringWriter;
-import java.util.List;
 
 @Document("ldesmember")
 public class LdesMemberEntity {
@@ -18,8 +17,6 @@ public class LdesMemberEntity {
     private final String id;
 
     private final String ldesMember;
-
-    private List<String> identifiers;
 
     public LdesMemberEntity(String id, final String ldesMember) {
         this.id = id;

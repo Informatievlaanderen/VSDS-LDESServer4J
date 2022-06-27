@@ -1,10 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.VIEW_SHORTNAME;
 import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.constants.MongoTestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
-public class LdesFragmentMongoRepositoryIntegrationTest {
+class LdesFragmentMongoRepositoryIntegrationTest {
 
     @Autowired
     private LdesFragmentMongoRepository ldesFragmentMongoRepository;

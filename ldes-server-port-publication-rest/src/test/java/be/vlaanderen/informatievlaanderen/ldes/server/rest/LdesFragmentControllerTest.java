@@ -32,7 +32,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.FRAGMENTATION_VALUE_1;
+import static be.vlaanderen.informatievlaanderen.ldes.server.rest.constants.PublicationRestTestConstants.FRAGMENTATION_VALUE_1;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
