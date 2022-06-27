@@ -9,7 +9,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
 import org.apache.commons.io.FileUtils;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -119,5 +121,4 @@ class FragmentationServiceImplTest {
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }
-
 }
