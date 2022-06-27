@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LdesMemberRepository {
 

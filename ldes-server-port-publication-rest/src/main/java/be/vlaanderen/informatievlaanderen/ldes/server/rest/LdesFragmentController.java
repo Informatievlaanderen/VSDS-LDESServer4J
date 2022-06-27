@@ -1,24 +1,28 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationService;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class LdesFragmentController {
 
-    private final FragmentProvider fragmentProvider;
+    private final FragmentationService fragmentationService;
+    private final ViewConfig viewConfig;
 
-    public LdesFragmentController(FragmentProvider fragmentProvider) {
-        this.fragmentProvider = fragmentProvider;
+    public LdesFragmentController(FragmentationService fragmentationService, ViewConfig viewConfig) {
+        this.fragmentationService = fragmentationService;
+        this.viewConfig = viewConfig;
     }
 
-    @GetMapping(value = "/ldes-fragment", produces = { "application/ld+json", "application/n-quads" })
-    LdesFragment retrieveLdesFragments(HttpServletResponse response) {
-        return fragmentProvider.getFragment();
+    @GetMapping(value = "/{viewShortName}", produces = { "application/ld+json", "application/n-quads" })
+    LdesFragment retrieveLdesFragment(@PathVariable String viewShortName,
+                                      @RequestParam(name = "generatedAtTime") String value) {
+        return fragmentationService.getFragment(viewShortName, viewConfig.getTimestampPath(), value);
     }
 
 }
