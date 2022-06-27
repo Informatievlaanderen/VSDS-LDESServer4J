@@ -39,9 +39,9 @@ class LdesMemberIngestionControllerTest {
     @DisplayName("Ingest an LDES member in the REST service")
     void when_POSTRequestIsPerformed_LDesMemberIsSaved() throws Exception {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq");
-        Model ldesMemberData = RDFParserBuilder.create().fromString(ldesMemberString).lang(Lang.NQUADS).toModel();
+        Model ldesMemberData = createModel(ldesMemberString, Lang.NQUADS);
 
-        when(fragmentationService.addMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
+        when(fragmentationService.addMember(any())).thenReturn(new LdesMember(createModel(ldesMemberString, Lang.NQUADS)));
 
         mockMvc.perform(post("/ldes-member").contentType("application/n-quads").content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
@@ -57,5 +57,9 @@ class LdesMemberIngestionControllerTest {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
         return Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+    }
+
+    private Model createModel(final String ldesMember, final Lang lang){
+        return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
     }
 }

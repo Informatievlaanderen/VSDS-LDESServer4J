@@ -27,7 +27,7 @@ class LdesMemberMongoRepositoryTest {
         String member = String.format("""
                 <http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
-        LdesMember ldesMember = new LdesMember(member, Lang.NQUADS);
+        LdesMember ldesMember = new LdesMember(createModel(member, Lang.NQUADS));
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
         when(ldesMemberEntityRepository.save(any())).thenReturn(ldesMemberEntity);
 
@@ -58,5 +58,9 @@ class LdesMemberMongoRepositoryTest {
 
         assertEquals(2, actualLdesMembers.size());
         verify(ldesMemberEntityRepository, times(1)).findAll();
+    }
+
+    private Model createModel(final String ldesMember, final Lang lang){
+        return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
     }
 }
