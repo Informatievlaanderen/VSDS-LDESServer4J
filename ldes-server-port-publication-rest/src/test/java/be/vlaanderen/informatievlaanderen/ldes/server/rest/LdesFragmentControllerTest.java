@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.rest.constants.PublicationRestTestConstants.FRAGMENTATION_VALUE_1;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = LdesFragmentController.class)
 class LdesFragmentControllerTest {
-
+    public static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     @Autowired
     private MockMvc mockMvc;
 
