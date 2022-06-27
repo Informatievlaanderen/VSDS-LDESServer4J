@@ -5,16 +5,24 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.StringWriter;
+import java.util.List;
 
 @Document("ldesmember")
 public class LdesMemberEntity {
 
+    @Id
+    private final String id;
+
     private final String ldesMember;
 
-    public LdesMemberEntity(final String ldesMember) {
+    private List<String> identifiers;
+
+    public LdesMemberEntity(String id, final String ldesMember) {
+        this.id = id;
         this.ldesMember = ldesMember;
     }
 
@@ -27,11 +35,12 @@ public class LdesMemberEntity {
         RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.JSONLD11);
         String ldesMemberString = outputStream.toString();
 
-        return new LdesMemberEntity(ldesMemberString);
+        return new LdesMemberEntity(ldesMember.getLdesMemberId(), ldesMemberString);
     }
 
     public LdesMember toLdesMember() {
         Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.JSONLD11).toModel();
         return new LdesMember(ldesMemberModel);
     }
+
 }

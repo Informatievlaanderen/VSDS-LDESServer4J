@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.LdesReader;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationService;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -33,7 +33,7 @@ class LdesMemberIngestionControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private LdesReader ldesReader;
+    private FragmentationService fragmentationService;
 
     @Test
     @DisplayName("Ingest an LDES member in the REST service")
@@ -41,7 +41,7 @@ class LdesMemberIngestionControllerTest {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq");
         Model ldesMemberData = RDFParserBuilder.create().fromString(ldesMemberString).lang(Lang.NQUADS).toModel();
 
-        when(ldesReader.storeLdesMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
+        when(fragmentationService.addMember(any())).thenReturn(new LdesMember(ldesMemberString, Lang.NQUADS));
 
         mockMvc.perform(post("/ldes-member").contentType("application/n-quads").content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
@@ -50,7 +50,7 @@ class LdesMemberIngestionControllerTest {
 
                     responseModel.isIsomorphicWith(ldesMemberData);
                 });
-        verify(ldesReader, times(1)).storeLdesMember(any());
+        verify(fragmentationService, times(1)).addMember(any());
     }
 
     private String readLdesMemberDataFromFile(String fileName) throws URISyntaxException, IOException {
