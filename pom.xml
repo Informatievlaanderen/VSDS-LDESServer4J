@@ -44,7 +44,7 @@
 		<junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
 		<mockito.version>4.6.1</mockito.version>
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
-		<byte-buddy.version>1.12.11</byte-buddy.version>
+		<byte-buddy.version>1.12.12</byte-buddy.version>
  		<de.flapdoodle.embed.mongo.version>3.4.6</de.flapdoodle.embed.mongo.version>
 
  		<!-- VULNERABILITY -->
