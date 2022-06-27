@@ -3,9 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 @Configuration
 @ConfigurationProperties(prefix = "view")
 public class ViewConfig {
@@ -24,17 +21,6 @@ public class ViewConfig {
 
     public String getTimestampPath() {
         return timestampPath;
-    }
-
-    public String getTimestampPathValue() {
-        Pattern pattern = Pattern.compile("([^^]*)\\^\\^(.*)");
-        Matcher matcher = pattern.matcher(timestampPath);
-        if(matcher.find()){
-            return matcher.group(1);
-        }
-        else {
-            return timestampPath;
-        }
     }
 
     public void setTimestampPath(String timestampPath) {

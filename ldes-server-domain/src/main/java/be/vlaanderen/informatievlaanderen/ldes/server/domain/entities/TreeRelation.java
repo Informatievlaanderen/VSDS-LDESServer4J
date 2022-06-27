@@ -10,13 +10,13 @@ public class TreeRelation {
     private String treeNode;
     private String rdfSyntaxType;
 
-    private TreeRelation(){
+    private TreeRelation() {
     }
 
-    public TreeRelation(LdesFragment fragment, String relation) {
-        this.treePath = fragment.getFragmentInfo().getPath();
+    public TreeRelation(LdesFragment fragment, String relation, String timestampPath) {
+        this.treePath = timestampPath;
         this.treeNode = fragment.getFragmentId();
-        this.treeValue = String.format("%s^^<http://www.w3.org/2001/XMLSchema#dateTime>",fragment.getFragmentInfo().getValue());
+        this.treeValue = fragment.getFragmentInfo().getValue();
         this.rdfSyntaxType = relation;
     }
 
