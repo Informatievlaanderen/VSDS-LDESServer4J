@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import org.apache.jena.rdf.model.*;
 
+import java.util.Objects;
+
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
@@ -22,7 +24,9 @@ public class LdesMember {
                 .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
                 .nextOptional()
                 .map(Statement::getObject)
-                .map(RDFNode::toString)
+                .map(RDFNode::asLiteral)
+                .map(Literal::getValue)
+                .map(Objects::toString)
                 .orElse(null);
     }
 
