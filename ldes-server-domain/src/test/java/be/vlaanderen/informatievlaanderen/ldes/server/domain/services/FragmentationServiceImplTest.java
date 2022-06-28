@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
@@ -9,27 +10,20 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMe
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -37,6 +31,15 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class FragmentationServiceImplTest {
+    private static final String VIEW_SHORTNAME = "exampleData";
+    private static final String VIEW = "http://localhost:8089/exampleData";
+    private static final String SHAPE = "http://localhost:8089/exampleData/shape";
+    private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+    private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+    private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
+    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH,
+            FRAGMENTATION_VALUE_1, 10L);
+
     @Autowired
     private LdesConfig ldesConfig;
     @Autowired
