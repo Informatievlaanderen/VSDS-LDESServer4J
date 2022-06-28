@@ -36,17 +36,17 @@
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-infra-mongo</artifactId>
-                    <version>0.0.1-SNAPSHOT</version>
+                    <version>${project.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-port-ingestion-rest</artifactId>
-                    <version>0.0.1-SNAPSHOT</version>
+                    <version>${project.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-port-publication-rest</artifactId>
-                    <version>0.0.1-SNAPSHOT</version>
+                    <version>${project.version}</version>
                 </dependency>
             </dependencies>
         </profile>
