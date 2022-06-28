@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
@@ -24,7 +25,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -33,6 +33,15 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class FragmentationServiceImplTest {
+    private static final String VIEW_SHORTNAME = "exampleData";
+    private static final String VIEW = "http://localhost:8089/exampleData";
+    private static final String SHAPE = "http://localhost:8089/exampleData/shape";
+    private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+    private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+    private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
+    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH,
+            FRAGMENTATION_VALUE_1, 10L);
+
     @Autowired
     private LdesConfig ldesConfig;
     @Autowired

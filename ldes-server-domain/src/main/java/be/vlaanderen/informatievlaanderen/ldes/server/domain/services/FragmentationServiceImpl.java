@@ -8,13 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
-import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Component;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 @Component
 public class FragmentationServiceImpl implements FragmentationService {
