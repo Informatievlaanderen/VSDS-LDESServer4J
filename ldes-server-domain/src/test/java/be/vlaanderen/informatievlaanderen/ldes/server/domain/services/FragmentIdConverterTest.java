@@ -7,7 +7,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.Fr
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class FragmentIdConverterTest {
+class FragmentIdConverterTest {
     @Test
     void testFragmentPatternAgainstFragmentId() {
         assertEquals("https://testserver.com/objects",

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
@@ -27,7 +28,7 @@ class LdesMemberMongoRepositoryTest {
         String member = String.format("""
                 <http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
-        LdesMember ldesMember = new LdesMember(member, Lang.NQUADS);
+        LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(member, Lang.NQUADS));
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
         when(ldesMemberEntityRepository.save(any())).thenReturn(ldesMemberEntity);
 
@@ -59,4 +60,5 @@ class LdesMemberMongoRepositoryTest {
         assertEquals(2, actualLdesMembers.size());
         verify(ldesMemberEntityRepository, times(1)).findAll();
     }
+
 }

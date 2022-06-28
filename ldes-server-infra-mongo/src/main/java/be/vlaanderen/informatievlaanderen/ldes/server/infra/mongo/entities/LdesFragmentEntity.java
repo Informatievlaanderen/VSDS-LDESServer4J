@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;

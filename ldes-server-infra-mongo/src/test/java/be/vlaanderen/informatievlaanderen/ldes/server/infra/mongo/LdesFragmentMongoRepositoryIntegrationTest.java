@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.LdesConfigTestConstants.VIEW_SHORTNAME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.constants.MongoTestConstants.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,7 +22,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
-public class LdesFragmentMongoRepositoryIntegrationTest {
+class LdesFragmentMongoRepositoryIntegrationTest {
+    private static final Long MEMBER_LIMIT = 3L;
+    private static final String VIEW_SHORTNAME = "exampleData";
+    private static final String VIEW = "http://localhost:8089/exampleData";
+    private static final String SHAPE = "http://localhost:8089/exampleData/shape";
+    private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+    private static final String FRAGMENT_VALUE_1 = "2022-03-03T00:00:00.000Z";
+    private static final String FRAGMENT_VALUE_2 = "2022-03-04T00:00:00.000Z";
+    private static final String FRAGMENT_VALUE_3 = "2022-03-05T00:00:00.000Z";
 
     @Autowired
     private LdesFragmentMongoRepository ldesFragmentMongoRepository;
@@ -58,6 +62,10 @@ public class LdesFragmentMongoRepositoryIntegrationTest {
 
         assertTrue(ldesFragment.isPresent());
         assertEquals(ldesFragmentEntity_2.toLdesFragment().getFragmentId(), ldesFragment.get().getFragmentId());
+    }
+
+    private FragmentInfo fragmentInfo(String fragmentValue) {
+        return new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH, fragmentValue, MEMBER_LIMIT);
     }
 
 

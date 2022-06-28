@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -15,21 +13,23 @@ public class LdesMember {
         this.memberModel = memberModel;
     }
 
-    public LdesMember(final String ldesMember, Lang lang) {
-        memberModel = RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
-    }
-
     public Model getModel() {
         return memberModel;
     }
 
     public String getFragmentationValue(String fragmentationProperty) {
-        return memberModel.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
-                .nextOptional().map(Statement::getObject).map(RDFNode::toString).orElse(null);
+        return memberModel
+                .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+                .nextOptional()
+                .map(Statement::getObject)
+                .map(RDFNode::toString)
+                .orElse(null);
     }
 
     public Statement getTreeMember() {
-        return memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
+        return memberModel
+                .listStatements(null, TREE_MEMBER, (Resource) null)
+                .nextOptional()
                 .orElseThrow(() -> new RuntimeException("No tree member found for ldes member %s".formatted(this)));
     }
 
