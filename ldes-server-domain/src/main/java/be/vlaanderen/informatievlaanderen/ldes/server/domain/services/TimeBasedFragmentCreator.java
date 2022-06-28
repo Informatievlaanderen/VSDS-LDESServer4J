@@ -42,8 +42,8 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     }
 
     private LdesFragment createFreshFragment(LdesMember firstMember) {
-        //TODO rework this. should not remove type from timeStampPath
+        String fragmentationValue = firstMember.getFragmentationValue(viewConfig.getTimestampPath());
         return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), viewConfig.getTimestampPathValue()));
+                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), fragmentationValue));
     }
 }
