@@ -23,14 +23,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
 class LdesFragmentMongoRepositoryIntegrationTest {
-    public static Long MEMBER_LIMIT = 3L;
-    public static final String VIEW_SHORTNAME = "exampleData";
-    public static final String VIEW = "http://localhost:8089/exampleData";
-    public static final String SHAPE = "http://localhost:8089/exampleData/shape";
-    public static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
-    public static String FRAGMENT_VALUE_1 = "2022-03-03T00:00:00.000Z";
-    public static String FRAGMENT_VALUE_2 = "2022-03-04T00:00:00.000Z";
-    public static String FRAGMENT_VALUE_3 = "2022-03-05T00:00:00.000Z";
+    private static Long MEMBER_LIMIT = 3L;
+    private static final String VIEW_SHORTNAME = "exampleData";
+    private static final String VIEW = "http://localhost:8089/exampleData";
+    private static final String SHAPE = "http://localhost:8089/exampleData/shape";
+    private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+    private static String FRAGMENT_VALUE_1 = "2022-03-03T00:00:00.000Z";
+    private static String FRAGMENT_VALUE_2 = "2022-03-04T00:00:00.000Z";
+    private static String FRAGMENT_VALUE_3 = "2022-03-05T00:00:00.000Z";
 
     @Autowired
     private LdesFragmentMongoRepository ldesFragmentMongoRepository;

@@ -31,13 +31,13 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class FragmentationServiceImplTest {
-    public static final String VIEW_SHORTNAME = "exampleData";
-    public static final String VIEW = "http://localhost:8089/exampleData";
-    public static final String SHAPE = "http://localhost:8089/exampleData/shape";
-    public static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
-    public static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-    public static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
-    public static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH,
+    private static final String VIEW_SHORTNAME = "exampleData";
+    private static final String VIEW = "http://localhost:8089/exampleData";
+    private static final String SHAPE = "http://localhost:8089/exampleData/shape";
+    private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+    private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+    private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
+    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH,
             FRAGMENTATION_VALUE_1, 10L);
 
     @Autowired

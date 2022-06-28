@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = LdesFragmentController.class)
 class LdesFragmentControllerTest {
-    public static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+    private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     @Autowired
     private MockMvc mockMvc;
 
