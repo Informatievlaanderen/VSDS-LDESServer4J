@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationService;
 import org.apache.jena.rdf.model.Model;
@@ -39,9 +40,9 @@ class LdesMemberIngestionControllerTest {
     @DisplayName("Ingest an LDES member in the REST service")
     void when_POSTRequestIsPerformed_LDesMemberIsSaved() throws Exception {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq");
-        Model ldesMemberData = createModel(ldesMemberString, Lang.NQUADS);
+        Model ldesMemberData = RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS);
 
-        when(fragmentationService.addMember(any())).thenReturn(new LdesMember(createModel(ldesMemberString, Lang.NQUADS)));
+        when(fragmentationService.addMember(any())).thenReturn(new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS)));
 
         mockMvc.perform(post("/ldes-member").contentType("application/n-quads").content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
@@ -59,7 +60,4 @@ class LdesMemberIngestionControllerTest {
         return Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
     }
 
-    private Model createModel(final String ldesMember, final Lang lang){
-        return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
-    }
 }

@@ -2,15 +2,14 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
 import org.apache.commons.io.FileUtils;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { LdesConfig.class, ViewConfig.class})
+@SpringBootTest(classes = {LdesConfig.class, ViewConfig.class})
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class FragmentationServiceImplTest {
@@ -59,9 +58,9 @@ class FragmentationServiceImplTest {
     @Test
     void when_addMember_WithOneFragmentDefined_thenReturnFragment() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
 
-        LdesMember expectedProcessedMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
+        LdesMember expectedProcessedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         expectedProcessedMember.resetLdesMemberView(ldesConfig);
 
         when(ldesFragmentRespository.retrieveFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), ldesMember.getFragmentationValue(viewConfig.getTimestampPath())))
@@ -90,7 +89,7 @@ class FragmentationServiceImplTest {
     @Test
     void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        LdesMember firstMember = new LdesMember(createModel("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
+        LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
         ldesFragment.addMember(firstMember);
 
         when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1))
@@ -107,7 +106,7 @@ class FragmentationServiceImplTest {
     @Test
     void when_getFragment_WhenNearbyFragmentExists_ThenReturnThatFragment() {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        LdesMember firstMember = new LdesMember(createModel("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
+        LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
         ldesFragment.addMember(firstMember);
 
         when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, "2020-12-30T00:00:00.00Z"))
@@ -121,7 +120,4 @@ class FragmentationServiceImplTest {
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }
 
-    private Model createModel(final String ldesMember, final Lang lang){
-        return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
-    }
 }

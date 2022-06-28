@@ -1,19 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -38,13 +34,10 @@ class LdesMemberMongoRepositoryIntegrationTest {
         String member = String.format("""
                 <http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
-        LdesMember ldesMember = new LdesMember(createModel(member, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(member, Lang.NQUADS));
         ldesMemberMongoRepository.saveLdesMember(ldesMember);
         assertEquals(1, ldesMemberEntityRepository.findAll().size());
         assertEquals(1, ldesMemberMongoRepository.fetchLdesMembers().size());
     }
 
-    private Model createModel(final String ldesMember, final Lang lang){
-        return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
-    }
 }
