@@ -33,7 +33,6 @@ public class LdesMemberNquadsConverter extends AbstractHttpMessageConverter<Ldes
     @Override
     protected LdesMember readInternal(Class<? extends LdesMember> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
-        // TODO get MIME type and use this to parse. (support different formats)
         Model memberModel = RDFParserBuilder.create()
                 .fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8)).lang(Lang.NQUADS)
                 .toModel();

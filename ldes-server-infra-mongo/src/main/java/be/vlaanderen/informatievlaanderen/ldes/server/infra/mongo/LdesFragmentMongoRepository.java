@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFr
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 
+import java.util.Comparator;
 import java.util.Optional;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRespository {
@@ -31,6 +32,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
         return repository.findAll().stream()
                 .filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
                 .map(LdesFragmentEntity::toLdesFragment)
-                .findFirst();
+                .min(Comparator.comparing(LdesFragment::getFragmentId));
     }
 }

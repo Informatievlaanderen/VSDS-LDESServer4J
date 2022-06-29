@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 public class FragmentIdConverter {
+    private FragmentIdConverter() {
+    }
 
     public static String toFragmentId(String hostLocation, String view, String fragmentationType,
                                       String fragmentationValue) {

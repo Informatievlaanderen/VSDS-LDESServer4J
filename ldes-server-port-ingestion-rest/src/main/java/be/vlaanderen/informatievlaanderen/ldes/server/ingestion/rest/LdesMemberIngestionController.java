@@ -16,7 +16,6 @@ public class LdesMemberIngestionController {
         this.ldesReader = ldesReader;
     }
 
-    // TODO update value to an injected value
     @PostMapping(value = "/ldes-member", consumes = "application/n-quads")
     public LdesMember ingestLdesMember(@RequestBody LdesMember ldesMember) {
         return ldesReader.addMember(ldesMember);
