@@ -7,9 +7,7 @@ services:
     image: ldes-server
     build:
       context: .
-      dockerfile: docker/Dockerfile
-      args:
-        DOCKER_LDES_BOM_REPO: ${DOCKER_LDES_BOM_REPO}
+      dockerfile: Dockerfile
     ports:
       - "6060:8080"
     networks:

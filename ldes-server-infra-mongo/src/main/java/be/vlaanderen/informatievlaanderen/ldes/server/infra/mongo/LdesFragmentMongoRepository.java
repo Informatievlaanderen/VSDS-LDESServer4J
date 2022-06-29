@@ -21,7 +21,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     }
 
     @Override
-    public Optional<LdesFragment> retrieveFragmentByViewShortNameAndPathAndType(String viewShortName, String path, String value) {
+    public Optional<LdesFragment> retrieveFragment(String viewShortName, String path, String value) {
         return repository.findClosestFragments(viewShortName, path, value).findFirst()
                 .map(LdesFragmentEntity::toLdesFragment);
     }

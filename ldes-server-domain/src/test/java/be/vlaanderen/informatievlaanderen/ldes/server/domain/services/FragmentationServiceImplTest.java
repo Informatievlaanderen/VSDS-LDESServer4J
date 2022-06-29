@@ -134,7 +134,7 @@ class FragmentationServiceImplTest {
 
     @Test
     void when_getFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
-        when(ldesFragmentRespository.retrieveFragmentByViewShortNameAndPathAndType(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1)).thenReturn(Optional.empty());
+        when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1)).thenReturn(Optional.empty());
 
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1);
 
@@ -150,7 +150,7 @@ class FragmentationServiceImplTest {
         LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
         ldesFragment.addMember(firstMember);
 
-        when(ldesFragmentRespository.retrieveFragmentByViewShortNameAndPathAndType(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1))
+        when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1))
                 .thenReturn(Optional.of(ldesFragment));
 
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1);
@@ -167,7 +167,7 @@ class FragmentationServiceImplTest {
         LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
         ldesFragment.addMember(firstMember);
 
-        when(ldesFragmentRespository.retrieveFragmentByViewShortNameAndPathAndType(VIEW_SHORTNAME, PATH, "2020-12-30T00:00:00.00Z"))
+        when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, "2020-12-30T00:00:00.00Z"))
                 .thenReturn(Optional.of(ldesFragment));
 
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, "2020-12-30T00:00:00.00Z");

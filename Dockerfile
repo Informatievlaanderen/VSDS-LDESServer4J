@@ -5,18 +5,8 @@
 #
 FROM maven:3.8.5-openjdk-18 AS builder
 
-# MAVEN: BOM
-FROM builder as bom-stage
-
-ARG DOCKER_LDES_BOM_REPO
-RUN git clone ${DOCKER_LDES_BOM_REPO} bom
-
 # MAVEN: application
 FROM builder as app-stage
-
-COPY --from=bom-stage bom/pom.xml .
-RUN mvn install
-WORKDIR /
 COPY . /
 RUN mvn install
 
