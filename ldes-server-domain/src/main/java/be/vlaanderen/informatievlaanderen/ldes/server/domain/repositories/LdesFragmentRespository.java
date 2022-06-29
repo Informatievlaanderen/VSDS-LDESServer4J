@@ -7,7 +7,7 @@ import java.util.Optional;
 public interface LdesFragmentRespository {
     LdesFragment saveFragment(LdesFragment ldesFragment);
 
-    Optional<LdesFragment> retrieveFragment(String viewShortName, String path, String value);
+    Optional<LdesFragment> retrieveFragmentByViewShortNameAndPathAndType(String viewShortName, String path, String value);
 
     Optional<LdesFragment> retrieveLastFragment(String view);
 }

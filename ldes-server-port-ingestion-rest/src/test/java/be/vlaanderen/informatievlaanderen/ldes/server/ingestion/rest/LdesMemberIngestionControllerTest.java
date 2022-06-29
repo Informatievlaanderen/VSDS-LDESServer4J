@@ -59,5 +59,4 @@ class LdesMemberIngestionControllerTest {
         File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
         return Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
     }
-
 }

@@ -60,5 +60,4 @@ class LdesMemberMongoRepositoryTest {
         assertEquals(2, actualLdesMembers.size());
         verify(ldesMemberEntityRepository, times(1)).findAll();
     }
-
 }
