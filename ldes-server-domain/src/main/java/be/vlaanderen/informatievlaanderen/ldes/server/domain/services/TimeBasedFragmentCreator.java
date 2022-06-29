@@ -30,7 +30,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     @Override
     public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment, LdesMember firstMember) {
-        LdesFragment newFragment = createFreshFragment(firstMember);
+        LdesFragment newFragment = createNewFragment(firstMember);
         optionalLdesFragment
                 .ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
         return newFragment;
@@ -43,7 +43,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
         newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), completeLdesFragment.getFragmentInfo().getValue(), TREE_LESSER_THAN_RELATION));
     }
 
-    private LdesFragment createFreshFragment(LdesMember firstMember) {
+    private LdesFragment createNewFragment(LdesMember firstMember) {
         String fragmentationValue = firstMember.getFragmentationValue(viewConfig.getTimestampPath());
         return LdesFragment.newFragment(ldesConfig.getHostName(),
                 new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), fragmentationValue));
