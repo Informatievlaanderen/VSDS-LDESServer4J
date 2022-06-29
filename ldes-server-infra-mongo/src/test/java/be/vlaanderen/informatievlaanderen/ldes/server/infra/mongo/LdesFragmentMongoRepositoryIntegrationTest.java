@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
 class LdesFragmentMongoRepositoryIntegrationTest {
-    private static final Long MEMBER_LIMIT = 3L;
     private static final String VIEW_SHORTNAME = "exampleData";
     private static final String VIEW = "http://localhost:8089/exampleData";
     private static final String SHAPE = "http://localhost:8089/exampleData/shape";
@@ -45,7 +44,7 @@ class LdesFragmentMongoRepositoryIntegrationTest {
         LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_3), List.of(), List.of());
 
         ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1, ldesFragmentEntity_2, ldesFragmentEntity_3));
-        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(VIEW_SHORTNAME, PATH, "2022-03-04T18:00:00.000Z");
+        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragmentByViewShortNameAndPathAndType(VIEW_SHORTNAME, PATH, "2022-03-04T18:00:00.000Z");
 
         assertTrue(ldesFragment.isPresent());
         assertEquals(ldesFragmentEntity_2.toLdesFragment().getFragmentId(), ldesFragment.get().getFragmentId());
@@ -58,14 +57,14 @@ class LdesFragmentMongoRepositoryIntegrationTest {
         LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_3), List.of(), List.of());
 
         ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1, ldesFragmentEntity_2, ldesFragmentEntity_3));
-        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENT_VALUE_2);
+        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragmentByViewShortNameAndPathAndType(VIEW_SHORTNAME, PATH, FRAGMENT_VALUE_2);
 
         assertTrue(ldesFragment.isPresent());
         assertEquals(ldesFragmentEntity_2.toLdesFragment().getFragmentId(), ldesFragment.get().getFragmentId());
     }
 
     private FragmentInfo fragmentInfo(String fragmentValue) {
-        return new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH, fragmentValue, MEMBER_LIMIT);
+        return new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, PATH, fragmentValue);
     }
 
 

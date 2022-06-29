@@ -60,7 +60,7 @@ class LdesFragmentControllerTest {
     @ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
     void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang) throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(null, null, null, null, null, null, null));
+        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(null, null, null, null, null));
 
         when(fragmentationService.getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1)).thenReturn(ldesFragment);
 

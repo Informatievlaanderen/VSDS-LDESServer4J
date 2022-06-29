@@ -1,27 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.FragmentIdConverter;
 import org.junit.jupiter.api.Test;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.FragmentIdConverter.getViewFromFragmentId;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.FragmentIdConverter.toFragmentId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 class FragmentIdConverterTest {
     @Test
-    void testFragmentPatternAgainstFragmentId() {
-        assertEquals("https://testserver.com/objects",
-                getViewFromFragmentId("https://testserver.com/objects?generatedAtTime=2022-06-15"));
-        assertEquals("generatedAtTime",
-                FragmentIdConverter.getPathFromFragmentId("https://testserver.com/objects?generatedAtTime=2022-06-15"));
-        assertEquals("2022-06-15", FragmentIdConverter
-                .getValueFromFragmentId("https://testserver.com/objects?generatedAtTime=2022-06-15"));
-    }
+    void when_FragmentIdConverter_ToFragmentId_ExpectCorrectFormat() {
+        String fragmentId = toFragmentId("http://localhost", "exampleData", "https://w3id.org/ldes#timestampPath", "2020-12-05T09:00:00.000Z");
 
-    @Test
-    void testFragmentPatternAgainstView() {
-        assertEquals("https://testserver.com/objects", getViewFromFragmentId("https://testserver.com/objects"));
-        assertNull(FragmentIdConverter.getPathFromFragmentId("https://testserver.com/objects"));
-        assertNull(FragmentIdConverter.getValueFromFragmentId("https://testserver.com/objects"));
+        String expectedFragmentId = "http://localhost/exampleData?timestampPath=2020-12-05T09:00:00.000Z";
+
+        assertEquals(expectedFragmentId, fragmentId);
     }
 }

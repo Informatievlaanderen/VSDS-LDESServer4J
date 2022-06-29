@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
+import java.util.Objects;
 
 public class TreeRelation {
     private String treePath;
@@ -10,29 +8,42 @@ public class TreeRelation {
     private String treeNode;
     private String rdfSyntaxType;
 
-    private TreeRelation(){
+    private TreeRelation() {
     }
 
-    public TreeRelation(LdesFragment fragment, String relation) {
-        this.treePath = fragment.getFragmentInfo().getPath();
-        this.treeNode = fragment.getFragmentId();
-        this.treeValue = String.format("%s^^<http://www.w3.org/2001/XMLSchema#dateTime>",fragment.getFragmentInfo().getValue());
+    public TreeRelation(String treePath, String treeNode, String treeValue, String relation) {
+        this.treePath = treePath;
+        this.treeNode = treeNode;
+        this.treeValue = String.format("%s^^<http://www.w3.org/2001/XMLSchema#dateTime>",treeValue);
         this.rdfSyntaxType = relation;
     }
 
-    public Resource getTreePathAsResource() {
-        return ResourceFactory.createResource(treePath);
+    public String getTreePath() {
+        return treePath;
     }
 
-    public Literal getTreeValueAsStringLiteral() {
-        return ResourceFactory.createStringLiteral(treeValue);
+    public String getTreeValue() {
+        return treeValue;
     }
 
-    public Resource getTreeNodeAsResource() {
-        return ResourceFactory.createResource(treeNode);
+    public String getTreeNode() {
+        return treeNode;
     }
 
-    public Resource getRdfSyntaxTypeAsResource() {
-        return ResourceFactory.createResource(rdfSyntaxType);
+    public String getRdfSyntaxType() {
+        return rdfSyntaxType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TreeRelation that = (TreeRelation) o;
+        return Objects.equals(treePath, that.treePath) && Objects.equals(treeValue, that.treeValue) && Objects.equals(treeNode, that.treeNode) && Objects.equals(rdfSyntaxType, that.rdfSyntaxType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(treePath, treeValue, treeNode, rdfSyntaxType);
     }
 }

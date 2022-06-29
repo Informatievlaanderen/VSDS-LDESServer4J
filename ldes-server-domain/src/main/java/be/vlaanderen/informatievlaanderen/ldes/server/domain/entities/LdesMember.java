@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import org.apache.jena.rdf.model.*;
+
+import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -22,11 +23,13 @@ public class LdesMember {
                 .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
                 .nextOptional()
                 .map(Statement::getObject)
-                .map(RDFNode::toString)
+                .map(RDFNode::asLiteral)
+                .map(Literal::getValue)
+                .map(Objects::toString)
                 .orElse(null);
     }
 
-    public Statement getTreeMember() {
+    private Statement getCurrentTreeMemberStatement() {
         return memberModel
                 .listStatements(null, TREE_MEMBER, (Resource) null)
                 .nextOptional()
@@ -34,14 +37,13 @@ public class LdesMember {
     }
 
     public String getLdesMemberId() {
-        return getTreeMember().getObject().toString();
+        return getCurrentTreeMemberStatement().getObject().toString();
     }
 
-    public void resetLdesMemberView(LdesConfig ldesConfig) {
-        String viewCollection = String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName());
-
-        Statement statement = getTreeMember();
-        memberModel.remove(statement);
-        memberModel.add(createResource(viewCollection), statement.getPredicate(), statement.getResource());
+    public void replaceTreeMemberStatement(final String hostname, final String collectionName) {
+        String viewCollection = String.format("%s/%s", hostname, collectionName);
+        Statement currentTreeMemberStatement = getCurrentTreeMemberStatement();
+        memberModel.remove(currentTreeMemberStatement);
+        memberModel.add(createResource(viewCollection), currentTreeMemberStatement.getPredicate(), currentTreeMemberStatement.getResource());
     }
 }

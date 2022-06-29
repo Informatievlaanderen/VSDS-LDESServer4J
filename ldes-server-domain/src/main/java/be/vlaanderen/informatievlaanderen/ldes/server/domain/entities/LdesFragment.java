@@ -91,11 +91,19 @@ public class LdesFragment {
             statements.add(createStatement(currrentFragmentId, TREE_RELATION, treeRelationNode));
         }
         relations.forEach(treeRelation -> {
-            statements.add(createStatement(treeRelationNode, TREE_VALUE, treeRelation.getTreeValueAsStringLiteral()));
-            statements.add(createStatement(treeRelationNode, TREE_PATH, treeRelation.getTreePathAsResource()));
-            statements.add(createStatement(treeRelationNode, TREE_NODE, treeRelation.getTreeNodeAsResource()));
+            statements.add(createStatement(treeRelationNode, TREE_VALUE, createResource(treeRelation.getTreeValue())));
+            statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
+            statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
             statements
-                    .add(createStatement(treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.getRdfSyntaxTypeAsResource()));
+                    .add(createStatement(treeRelationNode, RDF_SYNTAX_TYPE, createResource(treeRelation.getRdfSyntaxType())));
         });
+    }
+
+    public int getCurrentNumberOfMembers(){
+        return members.size();
+    }
+
+    public void setImmutable(boolean immutable) {
+        this.fragmentInfo.setImmutable(immutable);
     }
 }
