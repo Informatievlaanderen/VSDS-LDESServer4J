@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
@@ -22,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
 class LdesFragmentMongoRepositoryIntegrationTest {
-    private static final Long MEMBER_LIMIT = 3L;
     private static final String VIEW_SHORTNAME = "exampleData";
     private static final String VIEW = "http://localhost:8089/exampleData";
     private static final String SHAPE = "http://localhost:8089/exampleData/shape";
@@ -64,7 +64,7 @@ class LdesFragmentMongoRepositoryIntegrationTest {
     }
 
     private FragmentInfo fragmentInfo(String fragmentValue) {
-        return new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH, fragmentValue, MEMBER_LIMIT);
+        return new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, PATH, fragmentValue);
     }
 
 

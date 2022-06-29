@@ -8,6 +8,9 @@ public class TreeRelation {
     private String treeNode;
     private String rdfSyntaxType;
 
+    private TreeRelation() {
+    }
+
     public TreeRelation(String treePath, String treeNode, String treeValue, String relation) {
         this.treePath = treePath;
         this.treeNode = treeNode;

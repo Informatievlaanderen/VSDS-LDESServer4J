@@ -7,11 +7,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragme
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
+@Qualifier("default")
 public class TimeBasedFragmentCreator implements FragmentCreator {
     private static final String TREE_GREATER_THAN_RELATION = "tree:GreaterThanRelation";
     private static final String TREE_LESSER_THAN_RELATION = "tree:LesserThanRelation";

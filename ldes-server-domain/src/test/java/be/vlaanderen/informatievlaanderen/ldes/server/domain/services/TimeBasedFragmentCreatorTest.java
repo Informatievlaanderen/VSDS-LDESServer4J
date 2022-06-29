@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragme
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +37,7 @@ class TimeBasedFragmentCreatorTest {
     @Test
     @DisplayName("Creating First Time-Based Fragment")
     void when_NoFragmentExists_thenNewFragmentIsCreated() {
-        LdesMember ldesMember = new LdesMember(ModelFactory.createDefaultModel());
+        LdesMember ldesMember = createLdesMember();
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), ldesMember);
 
@@ -48,32 +50,39 @@ class TimeBasedFragmentCreatorTest {
     @Test
     @DisplayName("Creating New Time-BasedFragment")
     void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
-        LdesMember ldesMember = new LdesMember(ModelFactory.createDefaultModel());
+        LdesMember ldesMember = createLdesMember();
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), ldesMember);
 
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
-        verifyRelationOfFragment(newFragment, "Path",  "someId", "Value", "tree:LesserThanRelation");
-        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime",  "http://localhost:8080/mobility-hindrances?generatedAtTime=http://www.w3.org/ns/prov#generatedAtTime","http://www.w3.org/ns/prov#generatedAtTime", "tree:GreaterThanRelation");
+        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LesserThanRelation");
+        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
     }
 
-    private void verifyAssertionsOnAttributesOfFragment(LdesFragment newFragment) {
-        assertEquals("http://localhost:8080/mobility-hindrances?generatedAtTime=http://www.w3.org/ns/prov#generatedAtTime", newFragment.getFragmentId());
-        assertEquals("http://localhost:8080/mobility-hindrances", newFragment.getFragmentInfo().getView());
-        assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", newFragment.getFragmentInfo().getShape());
-        assertEquals("mobility-hindrances", newFragment.getFragmentInfo().getViewShortName());
-        assertEquals("http://www.w3.org/ns/prov#generatedAtTime", newFragment.getFragmentInfo().getPath());
-        assertEquals("http://www.w3.org/ns/prov#generatedAtTime", newFragment.getFragmentInfo().getValue());
+    private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
+        assertEquals("http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", ldesFragment.getFragmentId());
+        assertEquals("http://localhost:8080/mobility-hindrances", ldesFragment.getFragmentInfo().getView());
+        assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", ldesFragment.getFragmentInfo().getShape());
+        assertEquals("mobility-hindrances", ldesFragment.getFragmentInfo().getViewShortName());
+        assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesFragment.getFragmentInfo().getPath());
+        assertEquals("2020-12-28T09:36:37.127Z", ldesFragment.getFragmentInfo().getValue());
+    }
+
+    private LdesMember createLdesMember() {
+        Model ldesMemberModel = ModelFactory.createDefaultModel();
+        ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/ns/prov#generatedAtTime"), createStringLiteral("2020-12-28T09:36:37.127Z")));
+        LdesMember ldesMember = new LdesMember(ldesMemberModel);
+        return ldesMember;
     }
 
     private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode, String expectedTreeValue, String expectedRelation) {
         assertEquals(1, newFragment.getRelations().size());
         TreeRelation actualTreeRelationOnNewFragment = newFragment.getRelations().get(0);
         TreeRelation expectedTreeRelationOnNewFragment = new TreeRelation(expectedTreePath, expectedTreeNode, expectedTreeValue, expectedRelation);
-        assertEquals(expectedTreeRelationOnNewFragment,actualTreeRelationOnNewFragment);
+        assertEquals(expectedTreeRelationOnNewFragment, actualTreeRelationOnNewFragment);
     }
 
     private ViewConfig createViewConfig() {

@@ -42,8 +42,8 @@ class FragmentationServiceImplTest {
     private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
-    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, null, VIEW_SHORTNAME, PATH,
-            FRAGMENTATION_VALUE_1, 10L);
+    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, PATH,
+            FRAGMENTATION_VALUE_1);
 
     @Autowired
     private LdesConfig ldesConfig;
@@ -89,8 +89,8 @@ class FragmentationServiceImplTest {
     @DisplayName("Adding Member when there is an incomplete fragment")
     void when_AnIncompleteFragmentExists_thenMemberIsAddedToFragment() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
-        LdesMember expectedSavedMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
         when(ldesFragmentRespository.retrieveLastFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
@@ -111,8 +111,8 @@ class FragmentationServiceImplTest {
     @DisplayName("Adding Member when there is a complete fragment")
     void when_AFullFragmentExists_thenANewFragmentIsCreatedAndMemberIsAddedToNewFragment() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
-        LdesMember expectedSavedMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
         LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
         IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember(new LdesMember(ModelFactory.createDefaultModel())));
