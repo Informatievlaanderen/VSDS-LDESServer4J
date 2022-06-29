@@ -1,4 +1,4 @@
-name: 1. Build & Test Project
+name: 1.a Build & Test Project
 on:
   push:
     branches:
@@ -20,10 +20,6 @@ jobs:
         with:
           java-version: '18'
           distribution: 'adopt'
-#      - name: Verify Formatting
-#        env:
-#          GITHUB_TOKEN: ${{ github.token }}
-#        run: mvn clean formatter:validate
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
