@@ -53,7 +53,7 @@ public class FragmentationServiceImpl implements FragmentationService {
 
     @Override
     public LdesFragment getFragment(String viewShortName, String path, String value) {
-        return ldesFragmentRespository.retrieveFragmentByViewShortNameAndPathAndType(viewShortName, path, value)
+        return ldesFragmentRespository.retrieveFragment(viewShortName, path, value)
                 .orElse(LdesFragment.newFragment(ldesConfig.getHostName(),
                         new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), viewShortName, path, value)));
     }
