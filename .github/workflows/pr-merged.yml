@@ -29,7 +29,12 @@ jobs:
         run: |
           mvn deploy
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
-          echo "::set-env name=VERSION::$VERSION"
+          echo "version=$VERSION" >> $GITHUB_ENV
+      - name: Get current time
+        uses: josStorer/get-current-time@v2
+        id: current-time
+        with:
+          format: YYYYMMDDTHHmm
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -49,4 +54,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: $VERSION
+          tags: ${{ env.version }}-${{steps.current-time.outputs.formattedTime }}
