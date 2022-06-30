@@ -28,9 +28,10 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     }
 
     @Override
-    public Optional<LdesFragment> retrieveLastFragment(String view) {
+    public Optional<LdesFragment> retrieveOpenFragment(String view) {
         return repository.findAll().stream()
                 .filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
+                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getViewShortName().equals(view))
                 .map(LdesFragmentEntity::toLdesFragment)
                 .min(Comparator.comparing(LdesFragment::getFragmentId));
     }

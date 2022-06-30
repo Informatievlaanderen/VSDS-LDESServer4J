@@ -9,5 +9,5 @@ public interface LdesFragmentRespository {
 
     Optional<LdesFragment> retrieveFragment(String viewShortName, String path, String value);
 
-    Optional<LdesFragment> retrieveLastFragment(String view);
+    Optional<LdesFragment> retrieveOpenFragment(String view);
 }

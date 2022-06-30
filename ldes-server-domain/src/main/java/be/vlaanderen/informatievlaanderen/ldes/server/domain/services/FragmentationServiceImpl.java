@@ -40,7 +40,7 @@ public class FragmentationServiceImpl implements FragmentationService {
     }
 
     private LdesFragment retrieveLastFragmentOrCreateNewFragment(LdesMember ldesMember) {
-        return ldesFragmentRespository.retrieveLastFragment(ldesConfig.getCollectionName())
+        return ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName())
                 .map(fragment -> {
                     if (fragment.getCurrentNumberOfMembers() >= viewConfig.getMemberLimit()) {
                         return fragmentCreator.createNewFragment(Optional.of(fragment), ldesMember);
