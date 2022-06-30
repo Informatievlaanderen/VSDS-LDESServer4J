@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Document("ldesfragment")
-public class LdesFragmentEntity implements Comparable<LdesFragmentEntity> {
+public class LdesFragmentEntity {
     @Id
     private final String id;
 
@@ -42,11 +42,6 @@ public class LdesFragmentEntity implements Comparable<LdesFragmentEntity> {
 
     public List<LdesMemberEntity> getMembers() {
         return members;
-    }
-
-    @Override
-    public int compareTo(LdesFragmentEntity otherFragmentEntity) {
-        return this.id.compareTo(otherFragmentEntity.id);
     }
 
     public LdesFragment toLdesFragment() {

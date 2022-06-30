@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LdesMemberIngestionController.class)
+@ActiveProfiles("test")
 class LdesMemberIngestionControllerTest {
 
     @Autowired
@@ -44,7 +46,7 @@ class LdesMemberIngestionControllerTest {
 
         when(fragmentationService.addMember(any())).thenReturn(new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS)));
 
-        mockMvc.perform(post("/ldes-member").contentType("application/n-quads").content(ldesMemberString))
+        mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
                     Model responseModel = RDFParserBuilder.create()
                             .fromString(result.getResponse().getContentAsString()).lang(Lang.NQUADS).toModel();
@@ -52,6 +54,17 @@ class LdesMemberIngestionControllerTest {
                     responseModel.isIsomorphicWith(ldesMemberData);
                 });
         verify(fragmentationService, times(1)).addMember(any());
+    }
+
+    @Test
+    @DisplayName("Requesting using another collection name returns 404")
+    void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404() throws Exception {
+        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq");
+
+        mockMvc.perform(post("/another-collection-name")
+                        .contentType("application/n-quads")
+                        .content(ldesMemberString))
+                .andDo(print()).andExpect(status().isNotFound());
     }
 
     private String readLdesMemberDataFromFile(String fileName) throws URISyntaxException, IOException {
