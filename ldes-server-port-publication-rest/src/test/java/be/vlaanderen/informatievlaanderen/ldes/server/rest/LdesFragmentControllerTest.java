@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.Fragmentat
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = LdesFragmentController.class)
+@ActiveProfiles("test")
 class LdesFragmentControllerTest {
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     @Autowired
@@ -43,15 +45,11 @@ class LdesFragmentControllerTest {
     @Autowired
     private ViewConfig viewConfig;
 
+    @Autowired
+    private LdesConfig ldesConfig;
+
     @MockBean
     private FragmentationService fragmentationService;
-    private final LdesConfig ldesConfig = new LdesConfig();
-
-    @BeforeEach
-    void setup() {
-        ldesConfig.setCollectionName("mobility-hindrances");
-        ldesConfig.setHostName("http://localhost:8080");
-    }
 
     @ParameterizedTest(name = "Correct getting of an LdesFragment from the REST Service with mediatype {0}")
     @ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
@@ -78,7 +76,7 @@ class LdesFragmentControllerTest {
 
     public String getObjectURI(Model model, Property property) {
         return model
-                .listStatements(null, property , (Resource) null)
+                .listStatements(null, property, (Resource) null)
                 .nextOptional()
                 .map(Statement::getObject)
                 .map(RDFNode::asResource)
@@ -88,6 +86,7 @@ class LdesFragmentControllerTest {
     }
 
     @Test
+    @DisplayName("Requesting with Unsupported MediaType returns 406")
     void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
             throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
@@ -97,7 +96,14 @@ class LdesFragmentControllerTest {
 
         mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())
                 .andExpect(status().is4xxClientError());
+    }
 
+    @Test
+    @DisplayName("Requesting using another collection name returns 404")
+    void when_GETRequestIsPerformedOnOtherCollectionName_ResponseIs404() throws Exception {
+        mockMvc.perform(get("/abba")
+                        .param("generatedAtTime", FRAGMENTATION_VALUE_1).accept("application/n-quads")).andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     static class MediaTypeRdfFormatsArgumentsProvider implements ArgumentsProvider {
@@ -108,16 +114,25 @@ class LdesFragmentControllerTest {
                     Arguments.of("application/ld+json", Lang.JSONLD11));
         }
     }
+
     @TestConfiguration
     static class TestConfig {
         @Bean
-        public ViewConfig viewConfig(){
+        public ViewConfig viewConfig() {
             ViewConfig viewConfig = new ViewConfig();
             viewConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
             viewConfig.setMemberLimit(3L);
             viewConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
             viewConfig.setVersionOfPath("http://purl.org/dc/terms/isVersionOf");
             return viewConfig;
+        }
+
+        @Bean
+        public LdesConfig ldesConfig() {
+            LdesConfig ldesConfig = new LdesConfig();
+            ldesConfig.setCollectionName("mobility-hindrances");
+            ldesConfig.setHostName("http://localhost:8080");
+            return ldesConfig;
         }
 
     }
