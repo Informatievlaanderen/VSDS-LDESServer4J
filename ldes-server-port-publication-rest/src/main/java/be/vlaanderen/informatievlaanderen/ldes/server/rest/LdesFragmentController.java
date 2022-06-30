@@ -21,9 +21,8 @@ public class LdesFragmentController {
         this.viewConfig = viewConfig;
     }
 
-    @GetMapping(value = "${ldes.collectionname}", produces = { "application/ld+json", "application/n-quads" })
-    LdesFragment retrieveLdesFragment(
-                                      @RequestParam(name = "generatedAtTime") String value) {
+    @GetMapping(value = "${ldes.collectionname}", produces = {"application/ld+json", "application/n-quads"})
+    LdesFragment retrieveLdesFragment(@RequestParam(name = "generatedAtTime") String value) {
         return fragmentationService.getFragment(collectionName, viewConfig.getTimestampPath(), value);
     }
 

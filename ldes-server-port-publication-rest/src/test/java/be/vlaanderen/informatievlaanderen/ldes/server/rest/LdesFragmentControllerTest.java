@@ -38,7 +38,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = LdesFragmentController.class)
 @ActiveProfiles("test")
 class LdesFragmentControllerTest {
+    private static final String LDES_EVENTSTREAM = "https://w3id.org/ldes#EventStream";
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+    private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances?generatedAtTime=" + FRAGMENTATION_VALUE_1;
     @Autowired
     private MockMvc mockMvc;
 
@@ -66,11 +68,11 @@ class LdesFragmentControllerTest {
         MvcResult result = resultActions.andReturn();
         Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
                 .toModel();
-        assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", getObjectURI(resultModel, RdfContants.TREE_SHAPE));
-        assertEquals("http://www.w3.org/ns/prov#generatedAtTime", getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
-        assertEquals("http://purl.org/dc/terms/isVersionOf", getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
-        assertEquals("http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z", getObjectURI(resultModel, RdfContants.TREE_VIEW));
-        assertEquals("https://w3id.org/ldes#EventStream", getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
+        assertEquals(FRAGMENT_ID, getObjectURI(resultModel, RdfContants.TREE_VIEW));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
         verify(fragmentationService, times(1)).getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1);
     }
 
