@@ -47,7 +47,8 @@ jobs:
             type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
-            type=raw,value=${{env.version}}-{{date 'YYYYMMDDTHHmm'}}
+            type=raw,value=${{env.version}}
+            type=raw,value={{date 'YYYYMMDDTHHmm'}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
