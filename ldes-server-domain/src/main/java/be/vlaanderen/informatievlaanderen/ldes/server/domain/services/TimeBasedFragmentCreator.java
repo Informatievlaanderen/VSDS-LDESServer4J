@@ -10,6 +10,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFr
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Component
@@ -17,7 +19,7 @@ import java.util.Optional;
 public class TimeBasedFragmentCreator implements FragmentCreator {
     private static final String TREE_GREATER_THAN_RELATION = "tree:GreaterThanRelation";
     private static final String TREE_LESSER_THAN_RELATION = "tree:LesserThanRelation";
-
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private final LdesConfig ldesConfig;
     private final ViewConfig viewConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
@@ -30,7 +32,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     @Override
     public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment, LdesMember firstMember) {
-        LdesFragment newFragment = createNewFragment(firstMember);
+        LdesFragment newFragment = createNewFragment();
         optionalLdesFragment
                 .ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
         return newFragment;
@@ -38,13 +40,13 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
         completeLdesFragment.setImmutable(true);
-        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_LESSER_THAN_RELATION));
+        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_RELATION));
         ldesFragmentRespository.saveFragment(completeLdesFragment);
-        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), completeLdesFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_RELATION));
+        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), completeLdesFragment.getFragmentInfo().getValue(), TREE_LESSER_THAN_RELATION));
     }
 
-    private LdesFragment createNewFragment(LdesMember firstMember) {
-        String fragmentationValue = firstMember.getFragmentationValue(viewConfig.getTimestampPath());
+    private LdesFragment createNewFragment() {
+        String fragmentationValue = LocalDateTime.now().format(formatter);
         return LdesFragment.newFragment(ldesConfig.getHostName(),
                 new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), fragmentationValue));
     }

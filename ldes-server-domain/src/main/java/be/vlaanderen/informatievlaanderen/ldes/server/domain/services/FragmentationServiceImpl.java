@@ -54,7 +54,15 @@ public class FragmentationServiceImpl implements FragmentationService {
     @Override
     public LdesFragment getFragment(String viewShortName, String path, String value) {
         return ldesFragmentRespository.retrieveFragment(viewShortName, path, value)
-                .orElse(LdesFragment.newFragment(ldesConfig.getHostName(),
-                        new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), viewShortName, path, value)));
+                .orElseGet(()->LdesFragment.newFragment(ldesConfig.getHostName(),
+                        new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), viewShortName, path, null)));
+    }
+
+    @Override
+    public LdesFragment getInitialFragment(String collectionName, String timestampPath) {
+       return ldesFragmentRespository.retrieveInitialFragment(collectionName)
+                .orElseGet(()->LdesFragment.newFragment(ldesConfig.getHostName(),
+                        new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, timestampPath, null)));
+
     }
 }

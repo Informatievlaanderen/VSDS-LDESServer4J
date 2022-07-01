@@ -80,7 +80,8 @@ public class LdesFragment {
         if (fragmentInfo.getShape() != null) {
             statements.add(createStatement(viewId, TREE_SHAPE, createResource(fragmentInfo.getShape())));
         }
-        statements.add(createStatement(viewId, TREE_VIEW, currrentFragmentId));
+        if (fragmentInfo.getValue() != null)
+            statements.add(createStatement(viewId, TREE_VIEW, currrentFragmentId));
         statements
                 .add(createStatement(viewId, LDES_VERSION_OF, createResource("http://purl.org/dc/terms/isVersionOf")));
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,
@@ -93,15 +94,19 @@ public class LdesFragment {
             statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
             statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
             statements
-                    .add(createStatement(treeRelationNode, RDF_SYNTAX_TYPE, createResource(treeRelation.getRdfSyntaxType())));
+                    .add(createStatement(treeRelationNode, RDF_SYNTAX_TYPE, createResource(treeRelation.getRelation())));
         });
     }
 
-    public int getCurrentNumberOfMembers(){
+    public int getCurrentNumberOfMembers() {
         return members.size();
     }
 
     public void setImmutable(boolean immutable) {
         this.fragmentInfo.setImmutable(immutable);
+    }
+
+    public Boolean isImmutable() {
+        return this.fragmentInfo.getImmutable();
     }
 }

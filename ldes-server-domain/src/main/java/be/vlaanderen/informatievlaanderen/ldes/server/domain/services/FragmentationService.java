@@ -7,4 +7,6 @@ public interface FragmentationService {
     LdesMember addMember(LdesMember ldesMember);
 
     LdesFragment getFragment(String viewShortName, String path, String value);
+
+    LdesFragment getInitialFragment(String collectionName, String timestampPath);
 }

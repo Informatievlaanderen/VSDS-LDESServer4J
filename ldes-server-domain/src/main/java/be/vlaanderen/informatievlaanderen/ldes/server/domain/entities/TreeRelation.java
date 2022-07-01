@@ -6,7 +6,7 @@ public class TreeRelation {
     private String treePath;
     private String treeValue;
     private String treeNode;
-    private String rdfSyntaxType;
+    private String relation;
 
     private TreeRelation() {
     }
@@ -15,7 +15,7 @@ public class TreeRelation {
         this.treePath = treePath;
         this.treeNode = treeNode;
         this.treeValue = String.format("%s^^<http://www.w3.org/2001/XMLSchema#dateTime>",treeValue);
-        this.rdfSyntaxType = relation;
+        this.relation = relation;
     }
 
     public String getTreePath() {
@@ -30,8 +30,8 @@ public class TreeRelation {
         return treeNode;
     }
 
-    public String getRdfSyntaxType() {
-        return rdfSyntaxType;
+    public String getRelation() {
+        return relation;
     }
 
     @Override
@@ -39,11 +39,11 @@ public class TreeRelation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TreeRelation that = (TreeRelation) o;
-        return Objects.equals(treePath, that.treePath) && Objects.equals(treeValue, that.treeValue) && Objects.equals(treeNode, that.treeNode) && Objects.equals(rdfSyntaxType, that.rdfSyntaxType);
+        return Objects.equals(treePath, that.treePath) && Objects.equals(treeValue, that.treeValue) && Objects.equals(treeNode, that.treeNode) && Objects.equals(relation, that.relation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(treePath, treeValue, treeNode, rdfSyntaxType);
+        return Objects.hash(treePath, treeValue, treeNode, relation);
     }
 }

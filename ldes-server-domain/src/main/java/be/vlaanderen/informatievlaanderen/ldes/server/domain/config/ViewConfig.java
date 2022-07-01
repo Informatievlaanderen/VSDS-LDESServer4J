@@ -42,4 +42,8 @@ public class ViewConfig {
     public void setMemberLimit(Long memberLimit) {
         this.memberLimit = memberLimit;
     }
+
+    public String getCompactTimestampPath() {
+        return timestampPath.split("#")[1];
+    }
 }
