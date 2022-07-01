@@ -3,15 +3,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 public class FragmentInfo {
     private final String view;
     private final String shape;
-    private final String viewShortName;
+    private final String collectionName;
     private final String path;
     private String value;
     private Boolean immutable;
 
-    public FragmentInfo(String view, String shape, String viewShortName, String path, String value) {
+    public FragmentInfo(String view, String shape, String collectionName, String path, String value) {
         this.view = view;
         this.shape = shape;
-        this.viewShortName = viewShortName;
+        this.collectionName = collectionName;
         this.path = path;
         this.value = value;
         this.immutable = false;
@@ -29,8 +29,8 @@ public class FragmentInfo {
         this.value = value;
     }
 
-    public String getViewShortName() {
-        return viewShortName;
+    public String getCollectionName() {
+        return collectionName;
     }
 
     public Boolean getImmutable() {

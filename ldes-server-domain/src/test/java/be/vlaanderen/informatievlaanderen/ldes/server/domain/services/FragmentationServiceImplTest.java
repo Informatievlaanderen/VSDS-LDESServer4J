@@ -134,6 +134,35 @@ class FragmentationServiceImplTest {
     }
 
     @Test
+    void when_retrieveInitialFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
+        when(ldesFragmentRespository.retrieveInitialFragment(VIEW_SHORTNAME)).thenReturn(Optional.empty());
+
+        LdesFragment returnedFragment = fragmentationService.getInitialFragment(VIEW_SHORTNAME, PATH);
+
+        assertEquals(0, returnedFragment.getMembers().size());
+        assertNull(returnedFragment.getFragmentInfo().getValue());
+        assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+        assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
+    }
+
+    @Test
+    void when_retrieveInitialFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
+        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
+        LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
+        ldesFragment.addMember(firstMember);
+
+        when(ldesFragmentRespository.retrieveInitialFragment(VIEW_SHORTNAME))
+                .thenReturn(Optional.of(ldesFragment));
+
+        LdesFragment returnedFragment = fragmentationService.getInitialFragment(VIEW_SHORTNAME, PATH);
+
+        assertEquals(1, returnedFragment.getMembers().size());
+        assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
+        assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+        assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
+    }
+
+    @Test
     void when_getFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
         when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1)).thenReturn(Optional.empty());
 

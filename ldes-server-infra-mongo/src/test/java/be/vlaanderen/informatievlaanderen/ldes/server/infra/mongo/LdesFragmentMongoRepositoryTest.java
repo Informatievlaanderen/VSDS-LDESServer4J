@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -14,7 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.LdesFragmentMongoRepositoryTest.LdesFragmentEntityListProvider.allMutable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,11 +34,23 @@ class LdesFragmentMongoRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(LdesFragmentEntityListProvider.class)
-    void test(List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
+    void when_RetrieveOpenFragment_FirstFragmentThatIsOpenAndBelongsToCollectionIsReturned(List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
         when(ldesFragmentEntityRepository.findAll()).thenReturn(entitiesInRepository);
 
         Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME);
 
+        assertTrue(view.isPresent());
+        assertEquals(expectedFragmentId, view.get().getFragmentId());
+    }
+
+    @Test
+    void when_RetrieveInitialFragment_FirstFragmentThatBelongsToCollectionIsReturned() {
+        when(ldesFragmentEntityRepository.findAll()).thenReturn(allMutable());
+        String expectedFragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", COLLECTION_NAME, FIRST_VALUE);
+
+        Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveInitialFragment(COLLECTION_NAME);
+
+        assertTrue(view.isPresent());
         assertEquals(expectedFragmentId, view.get().getFragmentId());
     }
 
@@ -58,7 +73,7 @@ class LdesFragmentMongoRepositoryTest {
                     createLdesFragmentEntity(false, COLLECTION_NAME, THIRD_VALUE));
         }
 
-        private List<LdesFragmentEntity> allMutable() {
+        protected static List<LdesFragmentEntity> allMutable() {
             return List.of(
                     createLdesFragmentEntity(false, COLLECTION_NAME, FIRST_VALUE),
                     createLdesFragmentEntity(false, COLLECTION_NAME, SECOND_VALUE),
@@ -72,7 +87,7 @@ class LdesFragmentMongoRepositoryTest {
                     createLdesFragmentEntity(false, COLLECTION_NAME, THIRD_VALUE));
         }
 
-        private LdesFragmentEntity createLdesFragmentEntity(boolean immutable, String collectionName, String value) {
+        private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, String collectionName, String value) {
             String fragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", collectionName, value);
             FragmentInfo fragmentInfo = new FragmentInfo(null, null, collectionName, null, null);
             fragmentInfo.setImmutable(immutable);

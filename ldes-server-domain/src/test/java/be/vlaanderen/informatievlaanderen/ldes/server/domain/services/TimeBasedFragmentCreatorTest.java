@@ -66,7 +66,7 @@ class TimeBasedFragmentCreatorTest {
         assertEquals("http://localhost:8080/mobility-hindrances?generatedAtTime", ldesFragment.getFragmentId().split("=")[0]);
         assertEquals("http://localhost:8080/mobility-hindrances", ldesFragment.getFragmentInfo().getView());
         assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", ldesFragment.getFragmentInfo().getShape());
-        assertEquals("mobility-hindrances", ldesFragment.getFragmentInfo().getViewShortName());
+        assertEquals("mobility-hindrances", ldesFragment.getFragmentInfo().getCollectionName());
         assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesFragment.getFragmentInfo().getPath());
     }
 
