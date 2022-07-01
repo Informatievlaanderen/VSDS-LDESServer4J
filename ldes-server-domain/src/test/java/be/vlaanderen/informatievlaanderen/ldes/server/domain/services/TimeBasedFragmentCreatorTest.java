@@ -57,8 +57,8 @@ class TimeBasedFragmentCreatorTest {
 
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
-        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LesserThanRelation");
-        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanRelation");
+        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:GreaterThanRelation");
+        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:LesserThanRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
     }
 
@@ -74,8 +74,7 @@ class TimeBasedFragmentCreatorTest {
     private LdesMember createLdesMember() {
         Model ldesMemberModel = ModelFactory.createDefaultModel();
         ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/ns/prov#generatedAtTime"), createStringLiteral("2020-12-28T09:36:37.127Z")));
-        LdesMember ldesMember = new LdesMember(ldesMemberModel);
-        return ldesMember;
+        return new LdesMember(ldesMemberModel);
     }
 
     private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode, String expectedTreeValue, String expectedRelation) {

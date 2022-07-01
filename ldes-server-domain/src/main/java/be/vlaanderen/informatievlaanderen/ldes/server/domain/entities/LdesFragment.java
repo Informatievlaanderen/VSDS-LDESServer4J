@@ -86,11 +86,9 @@ public class LdesFragment {
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,
                 createResource("http://www.w3.org/ns/prov#generatedAtTime")));
         statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource("https://w3id.org/ldes#EventStream")));
-        Resource treeRelationNode = createResource();
-        if (!relations.isEmpty()) {
-            statements.add(createStatement(currrentFragmentId, TREE_RELATION, treeRelationNode));
-        }
         relations.forEach(treeRelation -> {
+            Resource treeRelationNode = createResource();
+            statements.add(createStatement(currrentFragmentId, TREE_RELATION, treeRelationNode));
             statements.add(createStatement(treeRelationNode, TREE_VALUE, createResource(treeRelation.getTreeValue())));
             statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
             statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
