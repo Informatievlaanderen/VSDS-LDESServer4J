@@ -38,9 +38,9 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
         completeLdesFragment.setImmutable(true);
-        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_RELATION));
+        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_LESSER_THAN_RELATION));
         ldesFragmentRespository.saveFragment(completeLdesFragment);
-        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), completeLdesFragment.getFragmentInfo().getValue(), TREE_LESSER_THAN_RELATION));
+        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), completeLdesFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_RELATION));
     }
 
     private LdesFragment createNewFragment(LdesMember firstMember) {
