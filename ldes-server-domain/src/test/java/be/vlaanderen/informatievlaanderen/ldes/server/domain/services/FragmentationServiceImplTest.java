@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -139,7 +140,7 @@ class FragmentationServiceImplTest {
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1);
 
         assertEquals(0, returnedFragment.getMembers().size());
-        assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
+        assertNull(returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }

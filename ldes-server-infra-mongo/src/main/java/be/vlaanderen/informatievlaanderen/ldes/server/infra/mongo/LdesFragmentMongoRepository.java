@@ -35,4 +35,12 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
                 .map(LdesFragmentEntity::toLdesFragment)
                 .min(Comparator.comparing(LdesFragment::getFragmentId));
     }
+
+    @Override
+    public Optional<LdesFragment> retrieveInitialFragment(String collectionName) {
+        return repository.findAll().stream()
+                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getViewShortName().equals(collectionName))
+                .map(LdesFragmentEntity::toLdesFragment)
+                .min(Comparator.comparing(LdesFragment::getFragmentId));
+    }
 }

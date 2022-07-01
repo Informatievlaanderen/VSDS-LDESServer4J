@@ -57,18 +57,17 @@ class TimeBasedFragmentCreatorTest {
 
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
-        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:GreaterThanRelation");
-        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:LesserThanRelation");
+        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LesserThanRelation");
+        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
     }
 
     private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
-        assertEquals("http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", ldesFragment.getFragmentId());
+        assertEquals("http://localhost:8080/mobility-hindrances?generatedAtTime", ldesFragment.getFragmentId().split("=")[0]);
         assertEquals("http://localhost:8080/mobility-hindrances", ldesFragment.getFragmentInfo().getView());
         assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", ldesFragment.getFragmentInfo().getShape());
         assertEquals("mobility-hindrances", ldesFragment.getFragmentInfo().getViewShortName());
         assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesFragment.getFragmentInfo().getPath());
-        assertEquals("2020-12-28T09:36:37.127Z", ldesFragment.getFragmentInfo().getValue());
     }
 
     private LdesMember createLdesMember() {
@@ -81,7 +80,8 @@ class TimeBasedFragmentCreatorTest {
         assertEquals(1, newFragment.getRelations().size());
         TreeRelation actualTreeRelationOnNewFragment = newFragment.getRelations().get(0);
         TreeRelation expectedTreeRelationOnNewFragment = new TreeRelation(expectedTreePath, expectedTreeNode, expectedTreeValue, expectedRelation);
-        assertEquals(expectedTreeRelationOnNewFragment, actualTreeRelationOnNewFragment);
+        assertEquals(expectedTreeRelationOnNewFragment.getTreePath(), actualTreeRelationOnNewFragment.getTreePath());
+        assertEquals(expectedTreeRelationOnNewFragment.getRelation(), actualTreeRelationOnNewFragment.getRelation());
     }
 
     private ViewConfig createViewConfig() {
