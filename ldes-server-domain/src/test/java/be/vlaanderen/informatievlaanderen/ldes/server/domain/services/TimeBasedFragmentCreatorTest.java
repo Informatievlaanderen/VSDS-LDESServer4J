@@ -57,8 +57,8 @@ class TimeBasedFragmentCreatorTest {
 
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
-        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LesserThanRelation");
-        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanRelation");
+        verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LessThanOrEqualToRelation");
+        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
     }
 
