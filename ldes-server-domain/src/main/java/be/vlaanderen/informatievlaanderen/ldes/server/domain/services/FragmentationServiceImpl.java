@@ -52,17 +52,20 @@ public class FragmentationServiceImpl implements FragmentationService {
     }
 
     @Override
-    public LdesFragment getFragment(String viewShortName, String path, String value) {
-        return ldesFragmentRespository.retrieveFragment(viewShortName, path, value)
-                .orElseGet(()->LdesFragment.newFragment(ldesConfig.getHostName(),
-                        new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), viewShortName, path, null)));
+    public LdesFragment getFragment(String collectionName, String path, String value) {
+        return ldesFragmentRespository.retrieveFragment(collectionName, path, value)
+                .orElseGet(()-> createDummyFragment(collectionName, path));
     }
 
     @Override
-    public LdesFragment getInitialFragment(String collectionName, String timestampPath) {
+    public LdesFragment getInitialFragment(String collectionName, String path) {
        return ldesFragmentRespository.retrieveInitialFragment(collectionName)
-                .orElseGet(()->LdesFragment.newFragment(ldesConfig.getHostName(),
-                        new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, timestampPath, null)));
+                .orElseGet(()-> createDummyFragment(collectionName, path));
 
+    }
+
+    private LdesFragment createDummyFragment(String collectionName, String timestampPath) {
+        return LdesFragment.newFragment(ldesConfig.getHostName(),
+                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, timestampPath, null));
     }
 }

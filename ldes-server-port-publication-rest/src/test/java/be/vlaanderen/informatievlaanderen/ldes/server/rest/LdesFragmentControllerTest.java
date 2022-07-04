@@ -53,11 +53,91 @@ class LdesFragmentControllerTest {
     @MockBean
     private FragmentationService fragmentationService;
 
-    @ParameterizedTest(name = "Correct getting of an LdesFragment from the REST Service with mediatype {0}")
+    @Test
+    @DisplayName("Correct getting of an initial dummy LdesFragment")
+    void when_GETRequestIsPerformedOnBaseURLAndNoFragmentIsCreatedYet_ResponseContainsADummyLDesFragment() throws Exception {
+        String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
+        LdesFragment dummyFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), null));
+        when(fragmentationService.getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath())).thenReturn(dummyFragment);
+
+        ResultActions resultActions = mockMvc
+                .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        MvcResult result = resultActions.andReturn();
+        String headerValue = result.getResponse().getHeader("Cache-Control");
+        assertEquals("public, max-age=60", headerValue);
+        Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(Lang.JSONLD11)
+                .toModel();
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        verify(fragmentationService, times(1)).getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath());
+        verifyNoMoreInteractions(fragmentationService);
+    }
+
+    @Test
+    @DisplayName("Correct redirecting to first fragment")
+    void when_GETRequestIsPerformedOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndReponseContainsRedirect() throws Exception {
+        String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
+        LdesFragment realFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1));
+        when(fragmentationService.getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath())).thenReturn(realFragment);
+
+        ResultActions resultActions = mockMvc
+                .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult result = resultActions.andReturn();
+        String headerValue = result.getResponse().getHeader("Cache-Control");
+        assertEquals("public, max-age=60", headerValue);
+        Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(Lang.JSONLD11)
+                .toModel();
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
+        assertEquals(fragmentId, getObjectURI(resultModel, RdfContants.TREE_VIEW));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        verify(fragmentationService, times(1)).getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath());
+        verifyNoMoreInteractions(fragmentationService);
+    }
+
+    @Test
+    @DisplayName("Correct returning a complete fragment")
+    void when_GETRequestIsPerformeOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndReponseContainsRedirect() throws Exception {
+        String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
+        FragmentInfo fragmentInfo = new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1);
+        fragmentInfo.setImmutable(true);
+        LdesFragment realFragment = new LdesFragment(fragmentId, fragmentInfo);
+        when(fragmentationService.getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1)).thenReturn(realFragment);
+
+        ResultActions resultActions = mockMvc
+                .perform(get("/{viewShortName}", ldesConfig.getCollectionName())
+                        .param("generatedAtTime", FRAGMENTATION_VALUE_1))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        MvcResult result = resultActions.andReturn();
+        String headerValue = result.getResponse().getHeader("Cache-Control");
+        assertEquals("public, max-age=604800, immutable", headerValue);
+        Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(Lang.JSONLD11)
+                .toModel();
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
+        assertEquals(fragmentId, getObjectURI(resultModel, RdfContants.TREE_VIEW));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        verify(fragmentationService, times(1)).getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1);
+        verifyNoMoreInteractions(fragmentationService);
+    }
+
+    @ParameterizedTest(name = "Correct getting of an open LdesFragment from the REST Service with mediatype {0}")
     @ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
     void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang) throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), "2020-12-28T09:36:37.127Z"));
+        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1));
 
         when(fragmentationService.getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1)).thenReturn(ldesFragment);
 

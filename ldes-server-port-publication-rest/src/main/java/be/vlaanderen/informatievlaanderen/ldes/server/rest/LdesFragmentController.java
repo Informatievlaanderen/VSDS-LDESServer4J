@@ -14,6 +14,10 @@ import java.io.IOException;
 @RestController
 public class LdesFragmentController {
 
+    private static final String CACHE_CONTROL_HEADER = "Cache-Control";
+    private static final String CACHE_CONTROL_IMMUTABLE = "public, max-age=604800, immutable";
+    private static final String CACHE_CONTROL_MUTABLE = "public, max-age=60";
+
     private final FragmentationService fragmentationService;
     private final ViewConfig viewConfig;
     @Value("${ldes.collectionname}")
@@ -28,12 +32,18 @@ public class LdesFragmentController {
     @GetMapping(value = "${ldes.collectionname}", produces = {"application/ld+json", "application/n-quads"})
     LdesFragment retrieveLdesFragment(HttpServletResponse response, @RequestParam(name = "generatedAtTime", required = false) String value) throws IOException {
         if (value == null) {
-            return returnInitialFragment(response);
+            return redirectToInitialFragment(response);
         } else {
-            if(value.equals("null"))
-                value=null;
             return returnRequestedFragment(response, value);
         }
+    }
+
+    private LdesFragment redirectToInitialFragment(HttpServletResponse response) throws IOException {
+        LdesFragment initialFragment = fragmentationService.getInitialFragment(collectionName, viewConfig.getTimestampPath());
+        setCacheControlHeader(response, initialFragment);
+        if (initialFragment.isExistingFragment())
+            response.sendRedirect(String.format("/%s?%s=%s", collectionName, viewConfig.getCompactTimestampPath(), initialFragment.getFragmentInfo().getValue()));
+        return initialFragment;
     }
 
     private LdesFragment returnRequestedFragment(HttpServletResponse response, String value) {
@@ -42,15 +52,11 @@ public class LdesFragmentController {
         return fragment;
     }
 
-    private LdesFragment returnInitialFragment(HttpServletResponse response) throws IOException {
-        LdesFragment fragment = fragmentationService.getInitialFragment(collectionName, viewConfig.getTimestampPath());
-        response.sendRedirect(String.format("/%s?%s=%s", collectionName, viewConfig.getCompactTimestampPath(), fragment.getFragmentInfo().getValue()));
-        return null;
-    }
-
     private void setCacheControlHeader(HttpServletResponse response, LdesFragment fragment) {
         if (fragment.isImmutable()) {
-            response.setHeader("Cache-Control", "public, max-age=604800, immutable");
+            response.setHeader(CACHE_CONTROL_HEADER, CACHE_CONTROL_IMMUTABLE);
+        } else {
+            response.setHeader(CACHE_CONTROL_HEADER, CACHE_CONTROL_MUTABLE);
         }
     }
 

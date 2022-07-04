@@ -34,7 +34,7 @@ public class LdesFragment {
     }
 
     public static LdesFragment newFragment(String hostname, FragmentInfo fragmentInfo) {
-        String fragmentId = toFragmentId(hostname, fragmentInfo.getViewShortName(), fragmentInfo.getPath(),
+        String fragmentId = toFragmentId(hostname, fragmentInfo.getCollectionName(), fragmentInfo.getPath(),
                 fragmentInfo.getValue());
         return new LdesFragment(fragmentId, fragmentInfo);
     }
@@ -106,7 +106,11 @@ public class LdesFragment {
         this.fragmentInfo.setImmutable(immutable);
     }
 
-    public Boolean isImmutable() {
+    public boolean isImmutable() {
         return this.fragmentInfo.getImmutable();
+    }
+
+    public boolean isExistingFragment() {
+        return this.fragmentInfo.getValue()!=null;
     }
 }

@@ -22,16 +22,16 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     }
 
     @Override
-    public Optional<LdesFragment> retrieveFragment(String viewShortName, String path, String value) {
-        return repository.findClosestFragments(viewShortName, path, value).findFirst()
+    public Optional<LdesFragment> retrieveFragment(String collectionName, String path, String value) {
+        return repository.findClosestFragments(collectionName, path, value).findFirst()
                 .map(LdesFragmentEntity::toLdesFragment);
     }
 
     @Override
-    public Optional<LdesFragment> retrieveOpenFragment(String view) {
+    public Optional<LdesFragment> retrieveOpenFragment(String collectionName) {
         return repository.findAll().stream()
                 .filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
-                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getViewShortName().equals(view))
+                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName().equals(collectionName))
                 .map(LdesFragmentEntity::toLdesFragment)
                 .min(Comparator.comparing(LdesFragment::getFragmentId));
     }
@@ -39,7 +39,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     @Override
     public Optional<LdesFragment> retrieveInitialFragment(String collectionName) {
         return repository.findAll().stream()
-                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getViewShortName().equals(collectionName))
+                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName().equals(collectionName))
                 .map(LdesFragmentEntity::toLdesFragment)
                 .min(Comparator.comparing(LdesFragment::getFragmentId));
     }
