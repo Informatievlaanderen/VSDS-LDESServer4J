@@ -17,8 +17,8 @@ import java.util.Optional;
 @Component
 @Qualifier("default")
 public class TimeBasedFragmentCreator implements FragmentCreator {
-    private static final String TREE_GREATER_THAN_RELATION = "tree:GreaterThanRelation";
-    private static final String TREE_LESSER_THAN_RELATION = "tree:LesserThanRelation";
+    private static final String TREE_GREATER_THAN_OR_EQUAL_TO_RELATION = "tree:GreaterThanOrEqualToRelation";
+    private static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = "tree:LessThanOrEqualToRelation";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private final LdesConfig ldesConfig;
     private final ViewConfig viewConfig;
@@ -40,9 +40,19 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
         completeLdesFragment.setImmutable(true);
-        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_RELATION));
+        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
         ldesFragmentRespository.saveFragment(completeLdesFragment);
-        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), completeLdesFragment.getFragmentInfo().getValue(), TREE_LESSER_THAN_RELATION));
+        String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
+        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), latestGeneratedAtTime, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
+    }
+
+    private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {
+        return completeLdesFragment
+                .getMembers()
+                .stream()
+                .max(new TimestampPathComparator())
+                .map(ldesMember -> ldesMember.getFragmentationValue(viewConfig.getTimestampPath()))
+                .orElseGet(() -> LocalDateTime.now().format(formatter));
     }
 
     private LdesFragment createNewFragment() {

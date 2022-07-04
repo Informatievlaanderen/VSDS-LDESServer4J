@@ -21,4 +21,6 @@ public class RdfContants {
     public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
     public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
+
+    public static final String PROV_GENERATED_AT_TIME = "http://www.w3.org/ns/prov#generatedAtTime";
 }
