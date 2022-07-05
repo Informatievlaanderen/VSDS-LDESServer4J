@@ -17,8 +17,8 @@ class TimestampPathComparatorTest {
     @DisplayName("Verify correct sorting of LdesMembers based on generatedAtTime property")
     void when_LdesMembersHaveGeneratedAtTimeProperty_TimestampPathComparatorCanSortLdesMembers() {
         LdesMember firstLdesMember = createLdesMember("\"2020-12-28T09:36:37.127Z\"");
-        LdesMember secondLdesMember = createLdesMember("\"2020-12-28T09:37:37.127Z\"");
-        LdesMember thirdLdesMember = createLdesMember("\"2020-12-28T09:38:37.127Z\"");
+        LdesMember secondLdesMember = createLdesMember("\"2020-12-28T09:37:37.17Z\"");
+        LdesMember thirdLdesMember = createLdesMember("\"2020-12-28T09:38:37.1Z\"");
         LdesMember maxLdesMember = Stream.of(thirdLdesMember, firstLdesMember, secondLdesMember).max(new TimestampPathComparator()).get();
         LdesMember minLdesMember = Stream.of(firstLdesMember, thirdLdesMember, secondLdesMember).min(new TimestampPathComparator()).get();
         assertEquals(thirdLdesMember, maxLdesMember);
@@ -27,6 +27,7 @@ class TimestampPathComparatorTest {
     }
 
     private LdesMember createLdesMember(String generatedAtTime) {
+
         Model model = RdfModelConverter.fromString("<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483> <http://www.w3.org/ns/prov#generatedAtTime> " + generatedAtTime + "^^<http://www.w3.org/2001/XMLSchema#dateTime> .\n", Lang.NQUADS);
         return new LdesMember(model);
     }

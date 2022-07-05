@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
 public class TimestampPathComparator implements Comparator<LdesMember> {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS][SS][S]'Z'");
 
     private static final String TIMESTAMP_PATH = RdfContants.PROV_GENERATED_AT_TIME;
 
