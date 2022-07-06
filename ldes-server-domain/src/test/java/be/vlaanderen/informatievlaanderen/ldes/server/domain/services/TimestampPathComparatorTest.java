@@ -19,9 +19,10 @@ class TimestampPathComparatorTest {
         LdesMember firstLdesMember = createLdesMember("\"2020-12-28T09:36:37.127Z\"");
         LdesMember secondLdesMember = createLdesMember("\"2020-12-28T09:37:37.17Z\"");
         LdesMember thirdLdesMember = createLdesMember("\"2020-12-28T09:38:37.1Z\"");
-        LdesMember maxLdesMember = Stream.of(thirdLdesMember, firstLdesMember, secondLdesMember).max(new TimestampPathComparator()).get();
-        LdesMember minLdesMember = Stream.of(firstLdesMember, thirdLdesMember, secondLdesMember).min(new TimestampPathComparator()).get();
-        assertEquals(thirdLdesMember, maxLdesMember);
+        LdesMember fourthLdesMember = createLdesMember("\"2022-05-25T06:46:26Z\"");
+        LdesMember maxLdesMember = Stream.of(fourthLdesMember, thirdLdesMember, firstLdesMember, secondLdesMember).max(new TimestampPathComparator()).get();
+        LdesMember minLdesMember = Stream.of(firstLdesMember, fourthLdesMember, thirdLdesMember, secondLdesMember).min(new TimestampPathComparator()).get();
+        assertEquals(fourthLdesMember, maxLdesMember);
         assertEquals(firstLdesMember, minLdesMember);
 
     }
