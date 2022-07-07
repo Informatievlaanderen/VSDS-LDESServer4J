@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
 import org.apache.commons.io.FileUtils;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -116,7 +115,7 @@ class FragmentationServiceImplTest {
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
         LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
-        IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember(new LdesMember(ModelFactory.createDefaultModel())));
+        IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
         when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), ldesMember)).thenReturn(newFragment);
@@ -148,8 +147,7 @@ class FragmentationServiceImplTest {
     @Test
     void when_retrieveInitialFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
-        ldesFragment.addMember(firstMember);
+        ldesFragment.addMember("firstMember");
 
         when(ldesFragmentRespository.retrieveInitialFragment(VIEW_SHORTNAME))
                 .thenReturn(Optional.of(ldesFragment));
@@ -177,8 +175,7 @@ class FragmentationServiceImplTest {
     @Test
     void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
-        ldesFragment.addMember(firstMember);
+        ldesFragment.addMember("firstMember");
 
         when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1))
                 .thenReturn(Optional.of(ldesFragment));
@@ -194,8 +191,7 @@ class FragmentationServiceImplTest {
     @Test
     void when_getFragment_WhenNearbyFragmentExists_ThenReturnThatFragment() {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        LdesMember firstMember = new LdesMember(RdfModelConverter.fromString("_:subject1 <http://an.example/predicate1> \"object1\" .", Lang.NQUADS));
-        ldesFragment.addMember(firstMember);
+        ldesFragment.addMember("firstMember");
 
         when(ldesFragmentRespository.retrieveFragment(VIEW_SHORTNAME, PATH, "2020-12-30T00:00:00.00Z"))
                 .thenReturn(Optional.of(ldesFragment));

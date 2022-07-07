@@ -34,7 +34,7 @@ public class FragmentationServiceImpl implements FragmentationService {
     public LdesMember addMember(LdesMember ldesMember) {
         ldesMember.replaceTreeMemberStatement(ldesConfig.getHostName(), ldesConfig.getCollectionName());
         LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
-        ldesFragment.addMember(ldesMember);
+        ldesFragment.addMember(ldesMember.getLdesMemberId());
         ldesFragmentRespository.saveFragment(ldesFragment);
         return ldesMemberRepository.saveLdesMember(ldesMember);
     }

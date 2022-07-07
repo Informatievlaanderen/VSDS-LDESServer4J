@@ -9,4 +9,6 @@ public interface LdesMemberRepository {
     LdesMember saveLdesMember(LdesMember ldesMember);
 
     List<LdesMember> fetchLdesMembers();
+
+    LdesMember getLdesMemberById(String id);
 }

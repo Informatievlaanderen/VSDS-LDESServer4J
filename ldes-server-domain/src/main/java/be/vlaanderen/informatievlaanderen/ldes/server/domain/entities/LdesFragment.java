@@ -21,7 +21,7 @@ public class LdesFragment {
 
     private final List<Statement> statements;
 
-    private final List<LdesMember> members;
+    private final List<String> memberIds;
 
     private final List<TreeRelation> relations;
 
@@ -30,7 +30,7 @@ public class LdesFragment {
         this.fragmentInfo = fragmentInfo;
         this.statements = new ArrayList<>();
         this.relations = new ArrayList<>();
-        this.members = new ArrayList<>();
+        this.memberIds = new ArrayList<>();
     }
 
     public static LdesFragment newFragment(String hostname, FragmentInfo fragmentInfo) {
@@ -55,12 +55,12 @@ public class LdesFragment {
         return relations;
     }
 
-    public List<LdesMember> getMembers() {
-        return members;
+    public List<String> getMembers() {
+        return memberIds;
     }
 
-    public void addMember(LdesMember ldesMember) {
-        members.add(ldesMember);
+    public void addMember(String ldesMemberId) {
+        memberIds.add(ldesMemberId);
     }
 
     public Model toRdfOutputModel() {
@@ -68,7 +68,7 @@ public class LdesFragment {
         Model model = ModelFactory.createDefaultModel();
         model.add(statements);
 
-        members.stream().map(LdesMember::getModel).forEach(model::add);
+//        members.stream().map(LdesMember::getModel).forEach(model::add);
 
         return model;
     }
@@ -99,7 +99,7 @@ public class LdesFragment {
     }
 
     public int getCurrentNumberOfMembers() {
-        return members.size();
+        return memberIds.size();
     }
 
     public void setImmutable(boolean immutable) {

@@ -28,4 +28,9 @@ public class LdesMemberMongoRepository implements LdesMemberRepository {
         return repository.findAll().stream().map(LdesMemberEntity::toLdesMember).toList();
     }
 
+    @Override
+    public LdesMember getLdesMemberById(String id) {
+        return repository.findById(id).orElseThrow(()->new RuntimeException("")).toLdesMember();
+    }
+
 }

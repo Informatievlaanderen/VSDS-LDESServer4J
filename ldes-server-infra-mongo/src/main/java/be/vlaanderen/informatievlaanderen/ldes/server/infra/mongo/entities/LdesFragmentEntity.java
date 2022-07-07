@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -17,11 +16,10 @@ public class LdesFragmentEntity {
     private final FragmentInfo fragmentInfo;
     private final List<TreeRelation> relations;
 
-    @DBRef
-    private final List<LdesMemberEntity> members;
+    private final List<String> members;
 
     public LdesFragmentEntity(String id, FragmentInfo fragmentInfo, List<TreeRelation> relations,
-            List<LdesMemberEntity> members) {
+            List<String> members) {
         this.id = id;
         this.fragmentInfo = fragmentInfo;
         this.relations = relations;
@@ -40,20 +38,16 @@ public class LdesFragmentEntity {
         return fragmentInfo.getImmutable();
     }
 
-    public List<LdesMemberEntity> getMembers() {
-        return members;
-    }
-
     public LdesFragment toLdesFragment() {
         LdesFragment ldesFragment = new LdesFragment(id, fragmentInfo);
         relations.forEach(ldesFragment::addRelation);
-        members.forEach(ldesMemberEntity -> ldesFragment.addMember(ldesMemberEntity.toLdesMember()));
+        members.forEach(ldesFragment::addMember);
         return ldesFragment;
     }
 
     public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
         return new LdesFragmentEntity(ldesFragment.getFragmentId(), ldesFragment.getFragmentInfo(),
                 ldesFragment.getRelations(),
-                ldesFragment.getMembers().stream().map(LdesMemberEntity::fromLdesMember).toList());
+                ldesFragment.getMembers());
     }
 }

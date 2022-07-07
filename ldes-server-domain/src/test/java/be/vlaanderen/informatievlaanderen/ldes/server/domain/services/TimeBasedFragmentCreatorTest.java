@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragme
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,13 +25,15 @@ class TimeBasedFragmentCreatorTest {
 
     private FragmentCreator fragmentCreator;
     private LdesFragmentRespository ldesFragmentRespository;
+    private LdesMemberRepository ldesMemberRepository;
 
     @BeforeEach
     void setUp() {
         LdesConfig ldesConfig = createLdesConfig();
         ViewConfig viewConfig = createViewConfig();
         ldesFragmentRespository = mock(LdesFragmentRespository.class);
-        fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, viewConfig, ldesFragmentRespository);
+        ldesMemberRepository = mock(LdesMemberRepository.class);
+        fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, viewConfig, ldesFragmentRespository, ldesMemberRepository);
     }
 
 
@@ -52,6 +55,7 @@ class TimeBasedFragmentCreatorTest {
     void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
         LdesMember ldesMember = createLdesMember();
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), ldesMember);
 
