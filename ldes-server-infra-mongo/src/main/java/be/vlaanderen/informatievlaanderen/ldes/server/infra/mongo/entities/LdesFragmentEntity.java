@@ -38,6 +38,10 @@ public class LdesFragmentEntity {
         return fragmentInfo.getImmutable();
     }
 
+    public List<String> getMembers() {
+        return members;
+    }
+
     public LdesFragment toLdesFragment() {
         LdesFragment ldesFragment = new LdesFragment(id, fragmentInfo);
         relations.forEach(ldesFragment::addRelation);
@@ -48,6 +52,6 @@ public class LdesFragmentEntity {
     public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
         return new LdesFragmentEntity(ldesFragment.getFragmentId(), ldesFragment.getFragmentInfo(),
                 ldesFragment.getRelations(),
-                ldesFragment.getMembers());
+                ldesFragment.getMemberIds());
     }
 }

@@ -138,7 +138,7 @@ class FragmentationServiceImplTest {
 
         LdesFragment returnedFragment = fragmentationService.getInitialFragment(VIEW_SHORTNAME, PATH);
 
-        assertEquals(0, returnedFragment.getMembers().size());
+        assertEquals(0, returnedFragment.getMemberIds().size());
         assertNull(returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
@@ -154,7 +154,7 @@ class FragmentationServiceImplTest {
 
         LdesFragment returnedFragment = fragmentationService.getInitialFragment(VIEW_SHORTNAME, PATH);
 
-        assertEquals(1, returnedFragment.getMembers().size());
+        assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
@@ -166,7 +166,7 @@ class FragmentationServiceImplTest {
 
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1);
 
-        assertEquals(0, returnedFragment.getMembers().size());
+        assertEquals(0, returnedFragment.getMemberIds().size());
         assertNull(returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
@@ -182,7 +182,7 @@ class FragmentationServiceImplTest {
 
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, FRAGMENTATION_VALUE_1);
 
-        assertEquals(1, returnedFragment.getMembers().size());
+        assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
@@ -198,7 +198,7 @@ class FragmentationServiceImplTest {
 
         LdesFragment returnedFragment = fragmentationService.getFragment(VIEW_SHORTNAME, PATH, "2020-12-30T00:00:00.00Z");
 
-        assertEquals(1, returnedFragment.getMembers().size());
+        assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
         assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());

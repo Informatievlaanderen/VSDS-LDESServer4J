@@ -52,7 +52,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {
         return completeLdesFragment
-                .getMembers()
+                .getMemberIds()
                 .stream()
                 .map(ldesMemberRepository::getLdesMemberById)
                 .max(new TimestampPathComparator())
