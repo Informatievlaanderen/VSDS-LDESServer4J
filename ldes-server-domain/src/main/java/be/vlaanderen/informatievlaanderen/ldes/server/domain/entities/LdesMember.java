@@ -8,6 +8,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.Rdf
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 public class LdesMember {
+
     private final Model memberModel;
 
     public LdesMember(final Model memberModel) {
@@ -29,15 +30,15 @@ public class LdesMember {
                 .orElse(null);
     }
 
+    public String getLdesMemberId() {
+        return getCurrentTreeMemberStatement().getObject().toString();
+    }
+
     private Statement getCurrentTreeMemberStatement() {
         return memberModel
                 .listStatements(null, TREE_MEMBER, (Resource) null)
                 .nextOptional()
                 .orElseThrow(() -> new RuntimeException("No tree member found for ldes member %s".formatted(this)));
-    }
-
-    public String getLdesMemberId() {
-        return getCurrentTreeMemberStatement().getObject().toString();
     }
 
     public void replaceTreeMemberStatement(final String hostname, final String collectionName) {

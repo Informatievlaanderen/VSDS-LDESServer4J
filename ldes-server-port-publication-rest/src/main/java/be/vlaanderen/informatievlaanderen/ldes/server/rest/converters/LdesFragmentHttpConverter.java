@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LdesFragmentConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
@@ -19,6 +20,12 @@ import static org.apache.jena.riot.RDFFormat.JSONLD11;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
+
+    private final LdesFragmentConverter ldesFragmentConverter;
+
+    public LdesFragmentHttpConverter(LdesFragmentConverter ldesFragmentConverter) {
+        this.ldesFragmentConverter = ldesFragmentConverter;
+    }
 
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {
@@ -47,7 +54,7 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
         OutputStream body = outputMessage.getBody();
         RDFFormat rdfFormat = getRdfFormat(contentType);
-        Model fragmentModel = ldesFragment.toRdfOutputModel();
+        Model fragmentModel = ldesFragmentConverter.toModel(ldesFragment);
         String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
         body.write(outputString.getBytes());
     }

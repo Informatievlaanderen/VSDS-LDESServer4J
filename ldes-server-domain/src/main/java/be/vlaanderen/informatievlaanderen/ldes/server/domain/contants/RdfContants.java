@@ -18,9 +18,10 @@ public class RdfContants {
     public static final Property TREE_MEMBER = createProperty(TREE, "member");
     public static final String LDES = "https://w3id.org/ldes#";
     public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOf");
+    public static final String VERSION_OF_URI = "http://purl.org/dc/terms/isVersionOf";
     public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
     public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
-
+    public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
     public static final String PROV_GENERATED_AT_TIME = "http://www.w3.org/ns/prov#generatedAtTime";
 }

@@ -45,8 +45,7 @@ class LdesMemberTest {
     void when_TreeMemberStatementIsAvailableInModel_LdesMemberId() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
-        String ldesMemberId = ldesMember.getLdesMemberId();
-        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",ldesMemberId);
+        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",ldesMember.getLdesMemberId());
     }
 
     private Model createModel(final String ldesMember, final Lang lang){

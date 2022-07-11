@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesM
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,7 @@ class LdesMemberEntityTest {
     private LdesMemberEntity ldesMemberEntity;
 
     @BeforeEach
-    public void init() throws IOException, ParseException, URISyntaxException {
+    public void init() throws IOException, URISyntaxException {
         ClassLoader classLoader = getClass().getClassLoader();
         ldesMember = readLdesMemberFromFile(classLoader, "example-ldes-member.nq");
         ldesMemberEntity = readLdesMemberEntityFromFile(classLoader, "example-ldes-member-entity.json");

@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragme
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +25,13 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     private final ViewConfig viewConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
 
-    public TimeBasedFragmentCreator(LdesConfig ldesConfig, ViewConfig viewConfig, LdesFragmentRespository ldesFragmentRespository) {
+    private final LdesMemberRepository ldesMemberRepository;
+
+    public TimeBasedFragmentCreator(LdesConfig ldesConfig, ViewConfig viewConfig, LdesFragmentRespository ldesFragmentRespository, LdesMemberRepository ldesMemberRepository) {
         this.ldesConfig = ldesConfig;
         this.viewConfig = viewConfig;
         this.ldesFragmentRespository = ldesFragmentRespository;
+        this.ldesMemberRepository = ldesMemberRepository;
     }
 
     @Override
@@ -48,8 +52,9 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {
         return completeLdesFragment
-                .getMembers()
+                .getMemberIds()
                 .stream()
+                .map(ldesMemberRepository::getLdesMemberById)
                 .max(new TimestampPathComparator())
                 .map(ldesMember -> ldesMember.getFragmentationValue(viewConfig.getTimestampPath()))
                 .orElseGet(() -> LocalDateTime.now().format(formatter));
