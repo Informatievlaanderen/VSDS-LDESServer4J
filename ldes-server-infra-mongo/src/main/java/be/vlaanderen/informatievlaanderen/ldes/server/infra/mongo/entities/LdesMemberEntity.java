@@ -6,7 +6,6 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.StringWriter;
@@ -15,7 +14,6 @@ import java.io.StringWriter;
 public class LdesMemberEntity {
 
     @Id
-    @Indexed
     private final String id;
 
     private final String ldesMember;
