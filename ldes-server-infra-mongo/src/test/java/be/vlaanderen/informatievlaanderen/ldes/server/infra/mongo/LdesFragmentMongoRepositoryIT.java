@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
-class LdesFragmentMongoRepositoryIntegrationTest {
+class LdesFragmentMongoRepositoryIT {
     private static final String VIEW_SHORTNAME = "exampleData";
     private static final String VIEW = "http://localhost:8089/exampleData";
     private static final String SHAPE = "http://localhost:8089/exampleData/shape";

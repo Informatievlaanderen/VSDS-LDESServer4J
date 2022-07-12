@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
-class LdesMemberMongoRepositoryIntegrationTest {
+class LdesMemberMongoRepositoryIT {
 
     @Autowired
     private LdesMemberMongoRepository ldesMemberMongoRepository;
