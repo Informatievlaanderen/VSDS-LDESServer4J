@@ -1,9 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -13,17 +13,17 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.RDF_SYNTAX_TYPE;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 @Component
-public class LdesFragmentConverter {
+public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
     private final LdesMemberRepository ldesMemberRepository;
 
-    public LdesFragmentConverter(LdesMemberRepository ldesMemberRepository) {
+    public LdesFragmentConverterImpl(LdesMemberRepository ldesMemberRepository) {
         this.ldesMemberRepository = ldesMemberRepository;
     }
 

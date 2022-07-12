@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
 import java.util.ArrayList;
 import java.util.List;

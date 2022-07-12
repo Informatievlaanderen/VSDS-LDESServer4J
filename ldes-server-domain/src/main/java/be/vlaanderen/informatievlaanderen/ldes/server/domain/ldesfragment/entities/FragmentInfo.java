@@ -1,11 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
 public class FragmentInfo {
     private final String view;
     private final String shape;
     private final String collectionName;
     private final String path;
-    private String value;
+    private final String value;
     private Boolean immutable;
 
     public FragmentInfo(String view, String shape, String collectionName, String path, String value) {
@@ -23,10 +23,6 @@ public class FragmentInfo {
 
     public String getValue() {
         return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
     }
 
     public String getCollectionName() {
