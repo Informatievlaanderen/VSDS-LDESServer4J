@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.comparator;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
