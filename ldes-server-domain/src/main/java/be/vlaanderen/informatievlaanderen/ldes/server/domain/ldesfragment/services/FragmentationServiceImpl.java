@@ -5,7 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class FragmentationServiceImpl implements FragmentationService {
@@ -22,20 +26,20 @@ public class FragmentationServiceImpl implements FragmentationService {
     }
 
     @Override
-    public LdesFragment getFragment(String collectionName, String path, String value) {
-        return ldesFragmentRespository.retrieveFragment(collectionName, path, value)
-                .orElseGet(()-> createDummyFragment(collectionName, path));
+    public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
+        return ldesFragmentRespository.retrieveFragment(ldesFragmentRequest)
+                .orElseGet(()-> createDummyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
     }
 
     @Override
-    public LdesFragment getInitialFragment(String collectionName, String path) {
-       return ldesFragmentRespository.retrieveInitialFragment(collectionName)
-                .orElseGet(()-> createDummyFragment(collectionName, path));
+    public LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest) {
+       return ldesFragmentRespository.retrieveInitialFragment(ldesFragmentRequest.collectionName())
+                .orElseGet(()-> createDummyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
 
     }
 
-    private LdesFragment createDummyFragment(String collectionName, String timestampPath) {
+    private LdesFragment createDummyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
         return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, timestampPath, null));
+                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, fragmentationMap));
     }
 }

@@ -2,9 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -13,6 +14,7 @@ import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,7 +40,7 @@ class LdesFragmentConverterImplTest {
     @Test
     @DisplayName("Verify correct conversion of Dummy LdesFragment")
     void when_LdesFragmentIsDummy_ModelHasFourStatements() {
-        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, TIMESTAMP_PATH, null));
+        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of()));
 
         Model model = ldesFragmentConverter.toModel(ldesFragment);
 
@@ -52,7 +54,7 @@ class LdesFragmentConverterImplTest {
                         <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""").lang(Lang.NQUADS)
                 .toModel();
         LdesMember ldesMember = new LdesMember(ldesMemberModel);
-        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, TIMESTAMP_PATH, FRAGMENTATION_VALUE_1));
+        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
         ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
         ldesFragment.addRelation(new TreeRelation("path","node", "value","relation"));
         when(ldesMemberRepository.getLdesMemberById("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165")).thenReturn(Optional.of(ldesMember));

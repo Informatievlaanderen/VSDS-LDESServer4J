@@ -1,28 +1,34 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+
+import java.util.List;
+
 public class FragmentInfo {
     private final String view;
     private final String shape;
     private final String collectionName;
-    private final String path;
-    private final String value;
+    private final List<FragmentPair> fragmentPairs;
     private Boolean immutable;
 
-    public FragmentInfo(String view, String shape, String collectionName, String path, String value) {
+    public FragmentInfo(String view, String shape, String collectionName, List<FragmentPair> fragmentPairs) {
         this.view = view;
         this.shape = shape;
         this.collectionName = collectionName;
-        this.path = path;
-        this.value = value;
+        this.fragmentPairs = fragmentPairs;
         this.immutable = false;
     }
 
     public String getPath() {
-        return path;
+        return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
     }
 
     public String getValue() {
-        return value;
+        return fragmentPairs.stream().map(FragmentPair::fragmentValue).findFirst().orElse(null);
+    }
+
+    public List<FragmentPair> getFragmentPairs() {
+        return fragmentPairs;
     }
 
     public String getCollectionName() {

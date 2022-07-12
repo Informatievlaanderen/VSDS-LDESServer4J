@@ -6,7 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.commons.io.FileUtils;
@@ -25,6 +26,8 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -79,7 +82,7 @@ class MemberIngestServiceImplTest {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment createdFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        LdesFragment createdFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.empty());
@@ -105,7 +108,7 @@ class MemberIngestServiceImplTest {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
@@ -129,8 +132,8 @@ class MemberIngestServiceImplTest {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
-        LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))

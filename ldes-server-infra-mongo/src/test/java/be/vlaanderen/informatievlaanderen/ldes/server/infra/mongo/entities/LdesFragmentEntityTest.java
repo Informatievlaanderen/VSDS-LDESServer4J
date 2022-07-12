@@ -2,10 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +24,7 @@ class LdesFragmentEntityTest {
     @DisplayName("Verify conversion from LdesFragment to LdesFragmentEntity")
     @Test
     void when_LdesFragmentIsConvertedToLdesFragmentEntity_FragmentInfoAndMembersAndMutabilityAreTheSame(){
-        FragmentInfo fragmentInfo = new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, TIMESTAMP_PATH, FRAGMENTATION_VALUE_1);
+        FragmentInfo fragmentInfo = new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1)));
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, fragmentInfo);
         ldesFragment.addMember("member1");
         ldesFragment.addMember("member2");

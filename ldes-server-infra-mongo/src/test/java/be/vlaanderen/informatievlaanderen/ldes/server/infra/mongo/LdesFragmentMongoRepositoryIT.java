@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 import org.junit.jupiter.api.Test;
@@ -13,10 +15,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
@@ -40,31 +42,32 @@ class LdesFragmentMongoRepositoryIT {
     @Test
     void when_retrieveFragmentIsCalledWithUnknownValue_ReturnsClosestFragment() {
         LdesFragmentEntity ldesFragmentEntity_1 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_1), List.of(), List.of());
-        LdesFragmentEntity ldesFragmentEntity_2 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_2), List.of(), List.of());
-        LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_3), List.of(), List.of());
+        LdesFragmentEntity ldesFragmentEntity_2 = new LdesFragmentEntity("http://server:8080/exampleData?key=2", fragmentInfo(FRAGMENT_VALUE_2), List.of(), List.of());
+        LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=3", fragmentInfo(FRAGMENT_VALUE_3), List.of(), List.of());
 
         ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1, ldesFragmentEntity_2, ldesFragmentEntity_3));
-        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(VIEW_SHORTNAME, PATH, "2022-03-04T18:00:00.000Z");
+        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of(new FragmentPair(PATH, "2022-03-04T18:00:00.000Z")));
+        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(ldesFragmentRequest);
 
-        assertTrue(ldesFragment.isPresent());
-        assertEquals(ldesFragmentEntity_2.toLdesFragment().getFragmentId(), ldesFragment.get().getFragmentId());
+        assertFalse(ldesFragment.isPresent());
     }
 
     @Test
     void when_retrieveFragmentIsCalled_ReturnsCorrectFragment() {
         LdesFragmentEntity ldesFragmentEntity_1 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_1), List.of(), List.of());
-        LdesFragmentEntity ldesFragmentEntity_2 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_2), List.of(), List.of());
-        LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=1", fragmentInfo(FRAGMENT_VALUE_3), List.of(), List.of());
+        LdesFragmentEntity ldesFragmentEntity_2 = new LdesFragmentEntity("http://server:8080/exampleData?key=2", fragmentInfo(FRAGMENT_VALUE_2), List.of(), List.of());
+        LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=3", fragmentInfo(FRAGMENT_VALUE_3), List.of(), List.of());
 
         ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1, ldesFragmentEntity_2, ldesFragmentEntity_3));
-        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(VIEW_SHORTNAME, PATH, FRAGMENT_VALUE_2);
+        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of(new FragmentPair(PATH, FRAGMENT_VALUE_2)));
+        Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(ldesFragmentRequest);
 
         assertTrue(ldesFragment.isPresent());
         assertEquals(ldesFragmentEntity_2.toLdesFragment().getFragmentId(), ldesFragment.get().getFragmentId());
     }
 
     private FragmentInfo fragmentInfo(String fragmentValue) {
-        return new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, PATH, fragmentValue);
+        return new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, List.of(new FragmentPair(PATH, fragmentValue)));
     }
 
 

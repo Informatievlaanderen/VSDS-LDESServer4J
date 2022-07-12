@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 
@@ -22,8 +23,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     }
 
     @Override
-    public Optional<LdesFragment> retrieveFragment(String collectionName, String path, String value) {
-        return repository.findClosestFragments(collectionName, path, value).findFirst()
+    public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
+        return repository
+                .findAll()
+                .stream()
+                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName().equals(ldesFragmentRequest.collectionName()))
+                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getFragmentPairs().equals(ldesFragmentRequest.fragmentPairs()))
+                .findFirst()
                 .map(LdesFragmentEntity::toLdesFragment);
     }
 

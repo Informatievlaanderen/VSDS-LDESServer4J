@@ -4,12 +4,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesMemberNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.TimeBasedFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.TimeBasedFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
@@ -26,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
-
-
     private FragmentCreator fragmentCreator;
     private LdesFragmentRespository ldesFragmentRespository;
     private LdesMemberRepository ldesMemberRepository;
@@ -60,7 +60,7 @@ class TimeBasedFragmentCreatorTest {
     void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
         LdesMember newLdesMember = createLdesMember();
         LdesMember ldesMemberOfFragment = createLdesMember();
-        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
         when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.of(ldesMemberOfFragment));
 
@@ -69,7 +69,7 @@ class TimeBasedFragmentCreatorTest {
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
         verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LessThanOrEqualToRelation");
-        verifyRelationOfFragment(existingLdesFragment, "http://www.w3.org/ns/prov#generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
+        verifyRelationOfFragment(existingLdesFragment, "generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
         verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId());
     }
@@ -79,7 +79,7 @@ class TimeBasedFragmentCreatorTest {
     void when_AFragmentAlreadyExistsButItsMembersCannotBeFound_thenLdesMemberNotFoundExceptionIsThrown() {
         LdesMember newLdesMember = createLdesMember();
         LdesMember ldesMemberOfFragment = createLdesMember();
-        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
         when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.empty());
 
@@ -96,7 +96,7 @@ class TimeBasedFragmentCreatorTest {
         assertEquals("http://localhost:8080/mobility-hindrances", ldesFragment.getFragmentInfo().getView());
         assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", ldesFragment.getFragmentInfo().getShape());
         assertEquals("mobility-hindrances", ldesFragment.getFragmentInfo().getCollectionName());
-        assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesFragment.getFragmentInfo().getPath());
+        assertEquals("generatedAtTime", ldesFragment.getFragmentInfo().getPath());
     }
 
     private LdesMember createLdesMember() {
