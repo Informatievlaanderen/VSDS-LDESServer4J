@@ -31,18 +31,28 @@
 
     <profiles>
         <profile>
-            <id>application-ingest-mongo-publication</id>
+            <id>storage-mongo</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-infra-mongo</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>http-ingest</id>
+            <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-port-ingestion-rest</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>http-publish</id>
+            <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-server-port-publication-rest</artifactId>
