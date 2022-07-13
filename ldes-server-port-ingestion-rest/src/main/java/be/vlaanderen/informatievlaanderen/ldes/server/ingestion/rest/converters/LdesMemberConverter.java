@@ -16,13 +16,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-import static org.apache.jena.riot.RDFFormat.NQUADS;
+import static org.apache.jena.riot.RDFFormat.*;
 
-public class LdesMemberNquadsConverter extends AbstractHttpMessageConverter<LdesMember> {
+public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember> {
 
-    public LdesMemberNquadsConverter() {
-        super(new MediaType("application", "n-quads"));
+    public LdesMemberConverter() {
+        super(new MediaType("application", "n-quads"), new MediaType("application", "n-triples"));
     }
 
     @Override
@@ -33,10 +34,19 @@ public class LdesMemberNquadsConverter extends AbstractHttpMessageConverter<Ldes
     @Override
     protected LdesMember readInternal(Class<? extends LdesMember> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
+        Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()));
         Model memberModel = RDFParserBuilder.create()
-                .fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8)).lang(Lang.NQUADS)
+                .fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8)).lang(lang)
                 .toModel();
         return new LdesMember(memberModel);
+    }
+
+    private Lang getLang(MediaType contentType) {
+        return switch ("%s/%s".formatted(contentType.getType(), contentType.getSubtype())) {
+            case "application/n-quads" -> Lang.NQUADS;
+            case "application/n-triples" -> Lang.NTRIPLES;
+            default -> Lang.NQUADS;
+        };
     }
 
     @Override
