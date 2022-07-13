@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LdesMemberRepository {
 
@@ -10,5 +11,5 @@ public interface LdesMemberRepository {
 
     List<LdesMember> fetchLdesMembers();
 
-    LdesMember getLdesMemberById(String id);
+    Optional<LdesMember> getLdesMemberById(String id);
 }

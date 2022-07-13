@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class MemberIngestServiceImpl implements MemberIngestService{
+public class MemberIngestServiceImpl implements MemberIngestService {
 
     private final LdesConfig ldesConfig;
     private final ViewConfig viewConfig;
@@ -31,6 +31,11 @@ public class MemberIngestServiceImpl implements MemberIngestService{
 
     @Override
     public LdesMember addMember(LdesMember ldesMember) {
+        Optional<LdesMember> optionalLdesMember = ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId());
+        return optionalLdesMember.orElseGet(() -> addMemberToFragmentAndStore(ldesMember));
+    }
+
+    private LdesMember addMemberToFragmentAndStore(LdesMember ldesMember) {
         ldesMember.replaceTreeMemberStatement(ldesConfig.getHostName(), ldesConfig.getCollectionName());
         LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
         ldesFragment.addMember(ldesMember.getLdesMemberId());

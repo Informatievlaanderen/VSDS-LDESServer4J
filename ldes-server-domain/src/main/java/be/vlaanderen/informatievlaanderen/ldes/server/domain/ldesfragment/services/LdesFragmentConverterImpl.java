@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
@@ -32,7 +33,9 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
         model.add(addRelationAndMetaDataStatements(ldesFragment));
         ldesFragment.getMemberIds()
                 .stream()
-                .map(ldesMemberRepository::getLdesMemberById)
+                .map(memberId->ldesMemberRepository
+                        .getLdesMemberById(memberId)
+                        .orElseThrow(()->new LdesMemberNotFoundException(memberId)))
                 .map(LdesMember::getModel)
                 .forEach(model::add);
         return model;
