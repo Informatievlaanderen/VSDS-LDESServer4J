@@ -6,6 +6,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstan
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.WebConfig;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -21,7 +25,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -35,21 +41,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = LdesFragmentController.class)
+@WebMvcTest
 @ActiveProfiles("test")
+@Import(LdesFragmentControllerTest.LdesFragmentControllerTestConfiguration.class)
+@ContextConfiguration(classes = {LdesFragmentController.class, ViewConfig.class, LdesConfig.class, WebConfig.class})
 class LdesFragmentControllerTest {
     private static final String LDES_EVENTSTREAM = "https://w3id.org/ldes#EventStream";
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances?generatedAtTime=" + FRAGMENTATION_VALUE_1;
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ViewConfig viewConfig;
-
     @Autowired
     private LdesConfig ldesConfig;
-
     @MockBean
     private FragmentationService fragmentationService;
 
@@ -80,7 +85,7 @@ class LdesFragmentControllerTest {
 
     @Test
     @DisplayName("Correct redirecting to first fragment")
-    void when_GETRequestIsPerformedOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndReponseContainsRedirect() throws Exception {
+    void when_GETRequestIsPerformedOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
         LdesFragment realFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1));
         when(fragmentationService.getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath())).thenReturn(realFragment);
@@ -106,7 +111,7 @@ class LdesFragmentControllerTest {
 
     @Test
     @DisplayName("Correct returning a complete fragment")
-    void when_GETRequestIsPerformeOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndReponseContainsRedirect() throws Exception {
+    void when_GETRequestIsPerformedAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
         FragmentInfo fragmentInfo = new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1);
         fragmentInfo.setImmutable(true);
@@ -197,25 +202,14 @@ class LdesFragmentControllerTest {
         }
     }
 
+
     @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public ViewConfig viewConfig() {
-            ViewConfig viewConfig = new ViewConfig();
-            viewConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
-            viewConfig.setMemberLimit(3L);
-            viewConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-            viewConfig.setVersionOfPath("http://purl.org/dc/terms/isVersionOf");
-            return viewConfig;
-        }
+    public static class LdesFragmentControllerTestConfiguration {
 
         @Bean
-        public LdesConfig ldesConfig() {
-            LdesConfig ldesConfig = new LdesConfig();
-            ldesConfig.setCollectionName("mobility-hindrances");
-            ldesConfig.setHostName("http://localhost:8080");
-            return ldesConfig;
+        public LdesFragmentConverter ldesFragmentConverter() {
+            LdesMemberRepository ldesMemberRepository=mock(LdesMemberRepository.class);
+            return new LdesFragmentConverterImpl(ldesMemberRepository);
         }
-
     }
 }
