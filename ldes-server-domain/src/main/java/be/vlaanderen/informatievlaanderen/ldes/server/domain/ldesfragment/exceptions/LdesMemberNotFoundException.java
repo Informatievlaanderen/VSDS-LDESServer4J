@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions;
 
 public class LdesMemberNotFoundException extends RuntimeException{
 

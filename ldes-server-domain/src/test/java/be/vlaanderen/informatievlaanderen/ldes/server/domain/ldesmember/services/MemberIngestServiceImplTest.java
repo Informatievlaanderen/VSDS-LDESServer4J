@@ -56,6 +56,22 @@ class MemberIngestServiceImplTest {
         memberIngestService = new MemberIngestServiceImpl(ldesConfig, viewConfig, ldesMemberRepository, ldesFragmentRespository, fragmentCreator);
     }
 
+    @Test
+    @DisplayName("Adding Member when there a member with the same id already exists")
+    void when_TheMemberAlreadyExists_thenMemberIsReturned() throws IOException {
+        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
+        LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember savedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(savedMember));
+
+        LdesMember actualLdesMember = memberIngestService.addMember(ldesMember);
+
+        assertEquals(savedMember, actualLdesMember);
+        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+        verifyNoInteractions(ldesFragmentRespository);
+        verifyNoMoreInteractions(fragmentCreator);
+    }
+
 
     @Test
     @DisplayName("Adding Member when there is no existing fragment")
@@ -64,6 +80,7 @@ class MemberIngestServiceImplTest {
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment createdFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.empty());
         when(fragmentCreator.createNewFragment(Optional.empty(), ldesMember))
@@ -74,6 +91,7 @@ class MemberIngestServiceImplTest {
 
         assertEquals(expectedSavedMember, actualLdesMember);
         InOrder inOrder = inOrder(ldesFragmentRespository, fragmentCreator, ldesMemberRepository);
+        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
         inOrder.verify(ldesFragmentRespository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
         inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(), ldesMember);
         inOrder.verify(ldesFragmentRespository, times(1)).saveFragment(createdFragment);
@@ -88,6 +106,7 @@ class MemberIngestServiceImplTest {
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
         when(ldesMemberRepository.saveLdesMember(ldesMember)).thenReturn(expectedSavedMember);
@@ -96,6 +115,7 @@ class MemberIngestServiceImplTest {
 
         assertEquals(expectedSavedMember, actualLdesMember);
         InOrder inOrder = inOrder(ldesFragmentRespository, fragmentCreator, ldesMemberRepository);
+        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
         inOrder.verify(ldesFragmentRespository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
         inOrder.verify(fragmentCreator, never()).createNewFragment(any(), any());
         inOrder.verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
@@ -112,6 +132,7 @@ class MemberIngestServiceImplTest {
         LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
         LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", "Path", "Value"));
         IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
         when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), ldesMember)).thenReturn(newFragment);
@@ -121,6 +142,7 @@ class MemberIngestServiceImplTest {
 
         assertEquals(expectedSavedMember, actualLdesMember);
         InOrder inOrder = inOrder(ldesFragmentRespository, fragmentCreator, ldesMemberRepository);
+        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
         inOrder.verify(ldesFragmentRespository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
         inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.of(existingLdesFragment), ldesMember);
         inOrder.verify(ldesFragmentRespository, times(1)).saveFragment(newFragment);

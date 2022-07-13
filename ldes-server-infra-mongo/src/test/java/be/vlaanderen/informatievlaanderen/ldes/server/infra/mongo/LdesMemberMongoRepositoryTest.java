@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -73,21 +72,22 @@ class LdesMemberMongoRepositoryTest {
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember);
         when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));
 
-        LdesMember actualLdesMember = ldesMemberMongoRepository.getLdesMemberById(memberId);
+        Optional<LdesMember> actualLdesMember = ldesMemberMongoRepository.getLdesMemberById(memberId);
 
-        assertEquals(expectedLdesMember.getLdesMemberId(), actualLdesMember.getLdesMemberId());
+        assertTrue(actualLdesMember.isPresent());
+        assertEquals(expectedLdesMember.getLdesMemberId(), actualLdesMember.get().getLdesMemberId());
         verify(ldesMemberEntityRepository, times(1)).findById(memberId);
     }
 
     @DisplayName("Throwing of LdesMemberNotFoundException")
     @Test
-    void when_LdesMemberByIdAndLdesMemberDoesNotExist_LdesMemberNotFoundExceptionIsThrown() {
+    void when_LdesMemberByIdAndLdesMemberDoesNotExist_EmptyOptionalIsReturned() {
         String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
         when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.empty());
 
-        LdesMemberNotFoundException ldesMemberNotFoundException = assertThrows(LdesMemberNotFoundException.class, () -> ldesMemberMongoRepository.getLdesMemberById(memberId));
+        Optional<LdesMember> ldesMemberById = ldesMemberMongoRepository.getLdesMemberById(memberId);
 
-        assertEquals("LdesMember https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165 not found in database.", ldesMemberNotFoundException.getMessage());
+        assertFalse(ldesMemberById.isPresent());
         verify(ldesMemberEntityRepository, times(1)).findById(memberId);
     }
 }

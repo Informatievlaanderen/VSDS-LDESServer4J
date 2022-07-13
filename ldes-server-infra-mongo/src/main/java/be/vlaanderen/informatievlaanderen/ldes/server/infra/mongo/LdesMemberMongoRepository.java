@@ -3,11 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class LdesMemberMongoRepository implements LdesMemberRepository {
@@ -30,11 +30,10 @@ public class LdesMemberMongoRepository implements LdesMemberRepository {
     }
 
     @Override
-    public LdesMember getLdesMemberById(String memberId) {
+    public Optional<LdesMember> getLdesMemberById(String memberId) {
         return repository
                 .findById(memberId)
-                .orElseThrow(()->new LdesMemberNotFoundException(memberId))
-                .toLdesMember();
+                .map(LdesMemberEntity::toLdesMember);
     }
 
 }
