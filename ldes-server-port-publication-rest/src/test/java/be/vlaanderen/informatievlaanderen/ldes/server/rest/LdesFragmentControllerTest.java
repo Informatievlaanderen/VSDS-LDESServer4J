@@ -2,10 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.services.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -70,10 +70,10 @@ class LdesFragmentControllerTest {
         assertEquals("public, max-age=60", headerValue);
         Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(Lang.JSONLD11)
                 .toModel();
-        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
-        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
-        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
-        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfConstants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfConstants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfConstants.LDES_VERSION_OF));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfConstants.RDF_SYNTAX_TYPE));
         verify(fragmentationService, times(1)).getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath());
         verifyNoMoreInteractions(fragmentationService);
     }
@@ -95,11 +95,11 @@ class LdesFragmentControllerTest {
         assertEquals("public, max-age=60", headerValue);
         Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(Lang.JSONLD11)
                 .toModel();
-        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
-        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
-        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
-        assertEquals(fragmentId, getObjectURI(resultModel, RdfContants.TREE_VIEW));
-        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfConstants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfConstants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfConstants.LDES_VERSION_OF));
+        assertEquals(fragmentId, getObjectURI(resultModel, RdfConstants.TREE_VIEW));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfConstants.RDF_SYNTAX_TYPE));
         verify(fragmentationService, times(1)).getInitialFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath());
         verifyNoMoreInteractions(fragmentationService);
     }
@@ -124,11 +124,11 @@ class LdesFragmentControllerTest {
         assertEquals("public, max-age=604800, immutable", headerValue);
         Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(Lang.JSONLD11)
                 .toModel();
-        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
-        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
-        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
-        assertEquals(fragmentId, getObjectURI(resultModel, RdfContants.TREE_VIEW));
-        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfConstants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfConstants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfConstants.LDES_VERSION_OF));
+        assertEquals(fragmentId, getObjectURI(resultModel, RdfConstants.TREE_VIEW));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfConstants.RDF_SYNTAX_TYPE));
         verify(fragmentationService, times(1)).getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1);
         verifyNoMoreInteractions(fragmentationService);
     }
@@ -148,11 +148,11 @@ class LdesFragmentControllerTest {
         MvcResult result = resultActions.andReturn();
         Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
                 .toModel();
-        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfContants.TREE_SHAPE));
-        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfContants.LDES_TIMESTAMP_PATH));
-        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfContants.LDES_VERSION_OF));
-        assertEquals(FRAGMENT_ID, getObjectURI(resultModel, RdfContants.TREE_VIEW));
-        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfContants.RDF_SYNTAX_TYPE));
+        assertEquals(viewConfig.getShape(), getObjectURI(resultModel, RdfConstants.TREE_SHAPE));
+        assertEquals(viewConfig.getTimestampPath(), getObjectURI(resultModel, RdfConstants.LDES_TIMESTAMP_PATH));
+        assertEquals(viewConfig.getVersionOfPath(), getObjectURI(resultModel, RdfConstants.LDES_VERSION_OF));
+        assertEquals(FRAGMENT_ID, getObjectURI(resultModel, RdfConstants.TREE_VIEW));
+        assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfConstants.RDF_SYNTAX_TYPE));
         verify(fragmentationService, times(1)).getFragment(ldesConfig.getCollectionName(), viewConfig.getTimestampPath(), FRAGMENTATION_VALUE_1);
     }
 

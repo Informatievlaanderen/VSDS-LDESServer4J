@@ -1,13 +1,14 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.comparator.TimestampPathComparator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 

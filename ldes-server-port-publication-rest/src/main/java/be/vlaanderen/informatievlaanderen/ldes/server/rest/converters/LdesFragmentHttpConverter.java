@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LdesFragmentConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFFormat;
 import org.springframework.http.HttpInputMessage;

@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.FragmentInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -14,13 +15,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class LdesFragmentConverterTest {
+class LdesFragmentConverterImplTest {
 
     private static final String SHAPE = "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape";
     private static final String HOSTNAME = "http://localhost:8080";
@@ -31,7 +32,7 @@ class LdesFragmentConverterTest {
 
     private final LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
 
-    private final LdesFragmentConverter ldesFragmentConverter = new LdesFragmentConverter(ldesMemberRepository);
+    private final LdesFragmentConverterImpl ldesFragmentConverter = new LdesFragmentConverterImpl(ldesMemberRepository);
 
     @Test
     @DisplayName("Verify correct conversion of Dummy LdesFragment")

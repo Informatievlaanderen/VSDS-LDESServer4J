@@ -1,6 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.repositories;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 
 import java.util.Optional;
 

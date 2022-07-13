@@ -1,10 +1,10 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities;
 
 import org.apache.jena.rdf.model.*;
 
 import java.util.Objects;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfContants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 public class LdesMember {

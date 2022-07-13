@@ -4,8 +4,8 @@ import org.apache.jena.rdf.model.Property;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-public class RdfContants {
-    private RdfContants() {
+public class RdfConstants {
+    private RdfConstants() {
     }
 
     public static final String TREE = "https://w3id.org/tree#";
