@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -46,7 +46,7 @@ class LdesMemberIngestionControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private FragmentationService fragmentationService;
+    private MemberIngestService memberIngestService;
 
     @ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
     @ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
@@ -54,7 +54,7 @@ class LdesMemberIngestionControllerTest {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq",rdfFormat);
         Model ldesMemberData = RdfModelConverter.fromString(ldesMemberString,lang);
 
-        when(fragmentationService.addMember(any())).thenReturn(new LdesMember(RdfModelConverter.fromString(ldesMemberString, lang)));
+        when(memberIngestService.addMember(any())).thenReturn(new LdesMember(RdfModelConverter.fromString(ldesMemberString, lang)));
 
         mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
@@ -63,7 +63,7 @@ class LdesMemberIngestionControllerTest {
 
                     responseModel.isIsomorphicWith(ldesMemberData);
                 });
-        verify(fragmentationService, times(1)).addMember(any());
+        verify(memberIngestService, times(1)).addMember(any());
     }
 
     @Test
