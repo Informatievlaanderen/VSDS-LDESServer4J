@@ -16,7 +16,7 @@ public class LdesMemberIngestionController {
         this.ldesReader = ldesReader;
     }
 
-    @PostMapping(value = "${ldes.collectionname}", consumes = "application/n-quads")
+    @PostMapping(value = "${ldes.collectionname}", consumes = {"application/n-quads", "application/n-triples"})
     public LdesMember ingestLdesMember(@RequestBody LdesMember ldesMember) {
         return ldesReader.addMember(ldesMember);
     }
