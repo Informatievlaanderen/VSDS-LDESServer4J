@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.TimeBasedFragmentCreator;
@@ -20,11 +19,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
@@ -62,7 +61,7 @@ class TimeBasedFragmentCreatorTest {
         LdesMember ldesMemberOfFragment = createLdesMember();
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
-        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.of(ldesMemberOfFragment));
+        when(ldesMemberRepository.getLdesMembersByIds(List.of(ldesMemberOfFragment.getLdesMemberId()))).thenReturn(Stream.of(ldesMemberOfFragment));
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), newLdesMember);
 
@@ -71,24 +70,7 @@ class TimeBasedFragmentCreatorTest {
         verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LessThanOrEqualToRelation");
         verifyRelationOfFragment(existingLdesFragment, "generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
-        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId());
-    }
-
-    @Test
-    @DisplayName("Creating New Time-BasedFragment, but Member of existing fragment cannot be found")
-    void when_AFragmentAlreadyExistsButItsMembersCannotBeFound_thenLdesMemberNotFoundExceptionIsThrown() {
-        LdesMember newLdesMember = createLdesMember();
-        LdesMember ldesMemberOfFragment = createLdesMember();
-        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
-        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.empty());
-
-        Optional<LdesFragment> ldesFragmentOptional = Optional.of(existingLdesFragment);
-        LdesMemberNotFoundException ldesMemberNotFoundException = assertThrows(LdesMemberNotFoundException.class, () -> fragmentCreator.createNewFragment(ldesFragmentOptional, newLdesMember));
-
-        assertEquals("LdesMember https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483 not found in database.", ldesMemberNotFoundException.getMessage());
-        verifyNoInteractions(ldesFragmentRespository);
-        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId());
+        verify(ldesMemberRepository, times(1)).getLdesMembersByIds(List.of(ldesMemberOfFragment.getLdesMemberId()));
     }
 
     private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {

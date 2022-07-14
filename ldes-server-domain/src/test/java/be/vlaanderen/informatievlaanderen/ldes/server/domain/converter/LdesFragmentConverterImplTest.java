@@ -15,8 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -57,7 +57,7 @@ class LdesFragmentConverterImplTest {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
         ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
         ldesFragment.addRelation(new TreeRelation("path","node", "value","relation"));
-        when(ldesMemberRepository.getLdesMemberById("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165")).thenReturn(Optional.of(ldesMember));
+        when(ldesMemberRepository.getLdesMembersByIds(List.of("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165"))).thenReturn(Stream.of(ldesMember));
 
         Model model = ldesFragmentConverter.toModel(ldesFragment);
 

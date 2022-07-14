@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface LdesMemberRepository {
 
@@ -12,4 +13,6 @@ public interface LdesMemberRepository {
     List<LdesMember> fetchLdesMembers();
 
     Optional<LdesMember> getLdesMemberById(String id);
+
+    Stream<LdesMember> getLdesMembersByIds(List<String> ids);
 }
