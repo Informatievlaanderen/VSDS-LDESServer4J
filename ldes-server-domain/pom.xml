@@ -37,6 +37,13 @@
             <artifactId>jena-arq</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.vividsolutions/jts -->
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
+        </dependency>
+
         <!-- TESTING -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

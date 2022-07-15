@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities;
 
+import org.apache.jena.datatypes.BaseDatatype;
 import org.apache.jena.rdf.model.*;
 
 import java.util.Objects;
@@ -29,6 +30,18 @@ public class LdesMember {
                 .map(RDFNode::asLiteral)
                 .map(Literal::getValue)
                 .map(Objects::toString)
+                .orElse(null);
+    }
+
+    public String getFragmentationValueGeo(String fragmentationProperty) {
+        return memberModel
+                .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+                .nextOptional()
+                .map(Statement::getObject)
+                .map(RDFNode::asLiteral)
+                .map(Literal::getValue)
+                .map(o -> ((BaseDatatype.TypedValue)o))
+                .map(a->a.lexicalValue)
                 .orElse(null);
     }
 

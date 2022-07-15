@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Qualifier("default")
+@Qualifier("timebased")
 public class TimeBasedFragmentCreator implements FragmentCreator {
     private static final String TREE_GREATER_THAN_OR_EQUAL_TO_RELATION = "tree:GreaterThanOrEqualToRelation";
     private static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = "tree:LessThanOrEqualToRelation";

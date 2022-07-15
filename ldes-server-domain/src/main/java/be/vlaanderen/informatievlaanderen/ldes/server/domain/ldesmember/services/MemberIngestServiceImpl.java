@@ -16,7 +16,6 @@ public class MemberIngestServiceImpl implements MemberIngestService {
     private final LdesConfig ldesConfig;
     private final LdesMemberRepository ldesMemberRepository;
     private final LdesFragmentRespository ldesFragmentRespository;
-
     private final FragmentCreator fragmentCreator;
 
     public MemberIngestServiceImpl(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository, LdesFragmentRespository ldesFragmentRespository, FragmentCreator fragmentCreator) {
