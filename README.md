@@ -71,14 +71,14 @@ This will run a clean slate LDES Server depending on your needs, one or of the f
     > see [LDES timestamp](https://w3id.org/ldes#timestampPath) & [LDES versionOfPath](https://w3id.org/ldes#versionOfPath) for more info
   - http-ingest: Enables a http endpoint for to insert LDES members.
     > Endpoint:
-    > - URL: /ldes-member
+    > - URL: /{ldes.collection-name}
     > - Request type: POST
-    > - Accept: "application/n-quads"
+    > - Accept: "application/n-quads", "application/n-triples"
   - http-publish: Enables a http endpoint to retrieve LDES fragments
     > Endpoint:
-    > - URL: /{collection-name}?generatedAtTime={fragmentGenerationTimestamp}
+    > - URL: /{ldes.collection-name}
     > - Request type: GET
-    > - Accept: "application/n-quads", "application/json-ld"
+    > - Accept: "application/n-quads", "application/ld+json"
 - **Storage**
   - storage-mongo: Allows the LDES Server to read and write from a mongo database.
     > _application config_:

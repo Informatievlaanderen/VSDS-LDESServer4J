@@ -23,8 +23,7 @@ public class LdesFragment {
     }
 
     public static LdesFragment newFragment(String hostname, FragmentInfo fragmentInfo) {
-        String fragmentId = toFragmentId(hostname, fragmentInfo.getCollectionName(), fragmentInfo.getPath(),
-                fragmentInfo.getValue());
+        String fragmentId = toFragmentId(hostname, fragmentInfo.getCollectionName(), fragmentInfo.getFragmentPairs());
         return new LdesFragment(fragmentId, fragmentInfo);
     }
 

@@ -2,8 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,18 +20,18 @@ class LdesFragmentTest {
     private static final String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
 
     @Test
-    @DisplayName("Test if fragment is dummy or real")
+    @DisplayName("Test if fragment is empty or real")
     void when_ValueIsNULL_FragmentDoesNotReallyExist() {
-        LdesFragment dummyFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, TIMESTAMP_PATH, null));
-        assertFalse(dummyFragment.isExistingFragment());
-        LdesFragment realFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, TIMESTAMP_PATH, FRAGMENTATION_VALUE_1));
+        LdesFragment emptyFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of()));
+        assertFalse(emptyFragment.isExistingFragment());
+        LdesFragment realFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
         assertTrue(realFragment.isExistingFragment());
     }
 
     @Test
     @DisplayName("Test if fragment is immutable or not")
     void when_LdesFragmentIsImmutable_IsImmutableReturnsTrue() {
-        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, TIMESTAMP_PATH, FRAGMENTATION_VALUE_1));
+        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
         assertFalse(ldesFragment.isImmutable());
         ldesFragment.setImmutable(true);
         assertTrue(ldesFragment.isImmutable());

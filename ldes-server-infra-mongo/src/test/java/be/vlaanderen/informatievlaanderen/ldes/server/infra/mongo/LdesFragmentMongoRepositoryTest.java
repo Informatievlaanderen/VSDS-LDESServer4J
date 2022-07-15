@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -89,7 +90,7 @@ class LdesFragmentMongoRepositoryTest {
 
         private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, String collectionName, String value) {
             String fragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", collectionName, value);
-            FragmentInfo fragmentInfo = new FragmentInfo(null, null, collectionName, null, null);
+            FragmentInfo fragmentInfo = new FragmentInfo(null, null, collectionName, List.of());
             fragmentInfo.setImmutable(immutable);
             return new LdesFragmentEntity(fragmentId, fragmentInfo, List.of(), List.of());
         }
