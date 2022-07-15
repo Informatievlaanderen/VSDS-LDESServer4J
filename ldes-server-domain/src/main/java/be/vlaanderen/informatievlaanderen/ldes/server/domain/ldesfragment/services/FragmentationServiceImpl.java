@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
@@ -15,13 +14,11 @@ import java.util.List;
 public class FragmentationServiceImpl implements FragmentationService {
 
     private final LdesConfig ldesConfig;
-    private final ViewConfig viewConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
 
-    public FragmentationServiceImpl(LdesConfig ldesConfig, ViewConfig viewConfig,
+    public FragmentationServiceImpl(LdesConfig ldesConfig,
                                     LdesFragmentRespository ldesFragmentRespository) {
         this.ldesConfig = ldesConfig;
-        this.viewConfig = viewConfig;
         this.ldesFragmentRespository = ldesFragmentRespository;
     }
 
@@ -40,6 +37,6 @@ public class FragmentationServiceImpl implements FragmentationService {
 
     private LdesFragment createEmptyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
         return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, fragmentationMap));
+                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), collectionName, fragmentationMap));
     }
 }

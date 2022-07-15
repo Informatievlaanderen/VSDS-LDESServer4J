@@ -1,11 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
@@ -24,15 +24,16 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     private static final String TREE_GREATER_THAN_OR_EQUAL_TO_RELATION = "tree:GreaterThanOrEqualToRelation";
     private static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = "tree:LessThanOrEqualToRelation";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static final String GENERATED_AT_TIME = "generatedAtTime";
+    private static final String PROV_GENERATED_AT_TIME = "http://www.w3.org/ns/prov#"+GENERATED_AT_TIME;
     private final LdesConfig ldesConfig;
-    private final ViewConfig viewConfig;
+    private final TimeBasedConfig timeBasedConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
-
     private final LdesMemberRepository ldesMemberRepository;
 
-    public TimeBasedFragmentCreator(LdesConfig ldesConfig, ViewConfig viewConfig, LdesFragmentRespository ldesFragmentRespository, LdesMemberRepository ldesMemberRepository) {
+    public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimeBasedConfig timeBasedConfig, LdesFragmentRespository ldesFragmentRespository, LdesMemberRepository ldesMemberRepository) {
         this.ldesConfig = ldesConfig;
-        this.viewConfig = viewConfig;
+        this.timeBasedConfig = timeBasedConfig;
         this.ldesFragmentRespository = ldesFragmentRespository;
         this.ldesMemberRepository = ldesMemberRepository;
     }
@@ -43,6 +44,11 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
         optionalLdesFragment
                 .ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
         return newFragment;
+    }
+
+    @Override
+    public boolean needsToCreateNewFragment(LdesFragment fragment) {
+        return fragment.getCurrentNumberOfMembers() >= timeBasedConfig.getMemberLimit();
     }
 
     private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
@@ -56,13 +62,13 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {
         return ldesMemberRepository.getLdesMembersByIds(completeLdesFragment.getMemberIds())
                 .max(new TimestampPathComparator())
-                .map(ldesMember -> ldesMember.getFragmentationValue(viewConfig.getTimestampPath()))
+                .map(ldesMember -> ldesMember.getFragmentationValue(PROV_GENERATED_AT_TIME))
                 .orElseGet(() -> LocalDateTime.now().format(formatter));
     }
 
     private LdesFragment createNewFragment() {
         String fragmentationValue = LocalDateTime.now().format(formatter);
         return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(viewConfig.getCompactTimestampPath(), fragmentationValue))));
+                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, fragmentationValue))));
     }
 }

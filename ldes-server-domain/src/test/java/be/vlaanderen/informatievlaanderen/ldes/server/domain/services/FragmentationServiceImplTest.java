@@ -1,12 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,15 +18,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {LdesConfig.class, ViewConfig.class})
+@SpringBootTest(classes = {LdesConfig.class})
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class FragmentationServiceImplTest {
@@ -42,8 +41,6 @@ class FragmentationServiceImplTest {
 
     @Autowired
     private LdesConfig ldesConfig;
-    @Autowired
-    private ViewConfig viewConfig;
 
     private final LdesFragmentRespository ldesFragmentRespository = mock(LdesFragmentRespository.class);
 
@@ -51,7 +48,7 @@ class FragmentationServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        fragmentationService = new FragmentationServiceImpl(ldesConfig, viewConfig, ldesFragmentRespository);
+        fragmentationService = new FragmentationServiceImpl(ldesConfig, ldesFragmentRespository);
     }
 
     @Test
