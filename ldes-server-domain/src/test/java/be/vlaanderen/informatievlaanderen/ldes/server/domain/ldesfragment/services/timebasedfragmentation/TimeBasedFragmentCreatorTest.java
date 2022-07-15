@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation.TimeBasedFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
