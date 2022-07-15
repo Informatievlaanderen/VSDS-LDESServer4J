@@ -21,7 +21,7 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
@@ -69,6 +69,18 @@ class TimeBasedFragmentCreatorTest {
         verifyRelationOfFragment(existingLdesFragment, "generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
         //verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+    }
+
+    @Test
+    @DisplayName("Creating First Time-Based Fragment")
+    void when_FragmentIsFull_NewFragmentNeedsToBeCreated() {
+        LdesFragment ldesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        ldesFragment.addMember("member1");
+        assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
+        ldesFragment.addMember("member2");
+        assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
+        ldesFragment.addMember("member3");
+        assertTrue(fragmentCreator.needsToCreateNewFragment(ldesFragment));
     }
 
     @Test
