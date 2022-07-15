@@ -20,10 +20,10 @@ class LdesFragmentTest {
     private static final String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
 
     @Test
-    @DisplayName("Test if fragment is dummy or real")
+    @DisplayName("Test if fragment is empty or real")
     void when_ValueIsNULL_FragmentDoesNotReallyExist() {
-        LdesFragment dummyFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of()));
-        assertFalse(dummyFragment.isExistingFragment());
+        LdesFragment emptyFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of()));
+        assertFalse(emptyFragment.isExistingFragment());
         LdesFragment realFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
         assertTrue(realFragment.isExistingFragment());
     }

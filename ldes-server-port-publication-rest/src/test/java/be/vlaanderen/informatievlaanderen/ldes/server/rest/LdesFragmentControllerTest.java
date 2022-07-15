@@ -62,12 +62,12 @@ class LdesFragmentControllerTest {
     private FragmentationService fragmentationService;
 
     @Test
-    @DisplayName("Correct getting of an initial dummy LdesFragment")
-    void when_GETRequestIsPerformedOnBaseURLAndNoFragmentIsCreatedYet_ResponseContainsADummyLDesFragment() throws Exception {
+    @DisplayName("Correct getting of an initial empty LdesFragment")
+    void when_GETRequestIsPerformedOnBaseURLAndNoFragmentIsCreatedYet_ResponseContainsAnEmptyLDesFragment() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment dummyFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), List.of()));
+        LdesFragment emptyFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), ldesConfig.getCollectionName(), List.of()));
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of());
-        when(fragmentationService.getInitialFragment(ldesFragmentRequest)).thenReturn(dummyFragment);
+        when(fragmentationService.getInitialFragment(ldesFragmentRequest)).thenReturn(emptyFragment);
 
         ResultActions resultActions = mockMvc
                 .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
@@ -216,7 +216,7 @@ class LdesFragmentControllerTest {
 
         @Bean
         public LdesFragmentConverter ldesFragmentConverter() {
-            LdesMemberRepository ldesMemberRepository=mock(LdesMemberRepository.class);
+            LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
             return new LdesFragmentConverterImpl(ldesMemberRepository);
         }
     }

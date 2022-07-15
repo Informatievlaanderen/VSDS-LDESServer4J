@@ -38,8 +38,8 @@ class LdesFragmentConverterImplTest {
     private final LdesFragmentConverterImpl ldesFragmentConverter = new LdesFragmentConverterImpl(ldesMemberRepository);
 
     @Test
-    @DisplayName("Verify correct conversion of Dummy LdesFragment")
-    void when_LdesFragmentIsDummy_ModelHasFourStatements() {
+    @DisplayName("Verify correct conversion of Empty LdesFragment")
+    void when_LdesFragmentIsEmpty_ModelHasFourStatements() {
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of()));
 
         Model model = ldesFragmentConverter.toModel(ldesFragment);

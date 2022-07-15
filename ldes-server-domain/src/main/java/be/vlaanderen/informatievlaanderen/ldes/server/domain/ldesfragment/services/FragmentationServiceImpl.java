@@ -28,17 +28,17 @@ public class FragmentationServiceImpl implements FragmentationService {
     @Override
     public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
         return ldesFragmentRespository.retrieveFragment(ldesFragmentRequest)
-                .orElseGet(()-> createDummyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
+                .orElseGet(()-> createEmptyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
     }
 
     @Override
     public LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest) {
        return ldesFragmentRespository.retrieveInitialFragment(ldesFragmentRequest.collectionName())
-                .orElseGet(()-> createDummyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
+                .orElseGet(()-> createEmptyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
 
     }
 
-    private LdesFragment createDummyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
+    private LdesFragment createEmptyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
         return LdesFragment.newFragment(ldesConfig.getHostName(),
                 new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), viewConfig.getShape(), collectionName, fragmentationMap));
     }
