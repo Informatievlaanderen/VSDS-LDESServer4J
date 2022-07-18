@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.TimeBasedFragmentCreator;
@@ -20,11 +19,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
@@ -90,6 +89,7 @@ class TimeBasedFragmentCreatorTest {
         assertEquals("LdesMember https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483 not found in database.", ldesMemberNotFoundException.getMessage());
         verifyNoInteractions(ldesFragmentRespository);
         verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+
     }
 
     private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {

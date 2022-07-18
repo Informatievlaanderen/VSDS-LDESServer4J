@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,6 +73,7 @@ class LdesMemberMongoRepositoryTest {
                 .toModel();
         LdesMember expectedLdesMember = new LdesMember(ldesMemberModel);
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember, MEMBER_TYPE);
+
         when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));
 
         Optional<LdesMember> actualLdesMember = ldesMemberMongoRepository.getLdesMemberById(memberId);
@@ -91,5 +93,29 @@ class LdesMemberMongoRepositoryTest {
 
         assertFalse(ldesMemberById.isPresent());
         verify(ldesMemberEntityRepository, times(1)).findById(memberId);
+    }
+
+    @DisplayName("Correct retrieval of LdesMembers by Ids from MongoDB")
+    @Test
+    void when_LdesMemberByIdsIsRequested_LdesMembersAreReturned() {
+        String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
+        LdesMember expectedLdesMember = getLdesMember( memberId);
+        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember);
+        String secondMemberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/166";
+        LdesMember secondExpectedLdesMember = getLdesMember( secondMemberId);
+        LdesMemberEntity secondLdesMemberEntity = LdesMemberEntity.fromLdesMember(secondExpectedLdesMember);
+        when(ldesMemberEntityRepository.findAllById(List.of(memberId, secondMemberId))).thenReturn(List.of(ldesMemberEntity, secondLdesMemberEntity));
+
+        Stream<LdesMember> ldesMemberStream = ldesMemberMongoRepository.getLdesMembersByIds(List.of(memberId, secondMemberId));
+
+        assertEquals(List.of(memberId, secondMemberId), ldesMemberStream.map(LdesMember::getLdesMemberId).toList());
+        verify(ldesMemberEntityRepository, times(1)).findAllById(List.of(memberId, secondMemberId));
+    }
+
+    private LdesMember getLdesMember(String memberId) {
+        Model ldesMemberModel = RDFParserBuilder.create().fromString("""
+                        <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <%s> .""".formatted(memberId)).lang(Lang.NQUADS)
+                .toModel();
+        return new LdesMember(ldesMemberModel);
     }
 }

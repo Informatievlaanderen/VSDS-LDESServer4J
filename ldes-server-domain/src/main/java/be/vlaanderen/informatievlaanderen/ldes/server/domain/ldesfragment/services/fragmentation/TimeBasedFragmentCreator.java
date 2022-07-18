@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesMemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
@@ -55,12 +54,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     }
 
     private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {
-        return completeLdesFragment
-                .getMemberIds()
-                .stream()
-                .map(memberId->ldesMemberRepository
-                        .getLdesMemberById(memberId)
-                        .orElseThrow(()->new LdesMemberNotFoundException(memberId)))
+        return ldesMemberRepository.getLdesMembersByIds(completeLdesFragment.getMemberIds())
                 .max(new TimestampPathComparator())
                 .map(ldesMember -> ldesMember.getFragmentationValue(viewConfig.getTimestampPath()))
                 .orElseGet(() -> LocalDateTime.now().format(formatter));
