@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LdesMemberEntityTest {
 
+    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
+
     private LdesMember ldesMember;
     private LdesMemberEntity ldesMemberEntity;
 
@@ -34,7 +36,7 @@ class LdesMemberEntityTest {
     @Test
     @DisplayName("Convert LdesMember to LdesMemberEntity")
     void toEntity() {
-        LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
+        LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember, MEMBER_TYPE);
 
         Model actualLdesMemberEntityModel = RDFParserBuilder.create().fromString(actualLdesMemberEntity.getLdesMember())
                 .lang(Lang.JSONLD11).toModel();
@@ -60,7 +62,7 @@ class LdesMemberEntityTest {
                 .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.JSONLD11)
                 .toModel();
 
-        return LdesMemberEntity.fromLdesMember(new LdesMember(outputModel));
+        return LdesMemberEntity.fromLdesMember(new LdesMember(outputModel), MEMBER_TYPE);
     }
 
     private LdesMember readLdesMemberFromFile(ClassLoader classLoader, String fileName)

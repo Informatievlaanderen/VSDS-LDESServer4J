@@ -44,6 +44,14 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
         statements.addAll(getGeneralLdesStatements(ldesFragment, viewId));
         statements.addAll(getViewStatements(ldesFragment, viewId, currrentFragmentId));
         statements.addAll(getRelationStatements(ldesFragment, currrentFragmentId));
+        statements.addAll(getMemberStatements(ldesFragment, viewId));
+        return statements;
+    }
+
+    private List<Statement> getMemberStatements(LdesFragment ldesFragment, Resource viewId) {
+        List<Statement> statements = new ArrayList<>();
+        ldesFragment.getMemberIds()
+                .forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER, createResource(memberId))));
         return statements;
     }
 

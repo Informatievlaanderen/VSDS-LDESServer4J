@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
+    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
     private FragmentCreator fragmentCreator;
     private LdesFragmentRespository ldesFragmentRespository;
     private LdesMemberRepository ldesMemberRepository;
@@ -60,8 +61,8 @@ class TimeBasedFragmentCreatorTest {
         LdesMember newLdesMember = createLdesMember();
         LdesMember ldesMemberOfFragment = createLdesMember();
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
-        when(ldesMemberRepository.getLdesMembersByIds(List.of(ldesMemberOfFragment.getLdesMemberId()))).thenReturn(Stream.of(ldesMemberOfFragment));
+        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE))).thenReturn(Optional.of(ldesMemberOfFragment));
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), newLdesMember);
 
@@ -70,7 +71,25 @@ class TimeBasedFragmentCreatorTest {
         verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LessThanOrEqualToRelation");
         verifyRelationOfFragment(existingLdesFragment, "generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
-        verify(ldesMemberRepository, times(1)).getLdesMembersByIds(List.of(ldesMemberOfFragment.getLdesMemberId()));
+        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+    }
+
+    @Test
+    @DisplayName("Creating New Time-BasedFragment, but Member of existing fragment cannot be found")
+    void when_AFragmentAlreadyExistsButItsMembersCannotBeFound_thenLdesMemberNotFoundExceptionIsThrown() {
+        LdesMember newLdesMember = createLdesMember();
+        LdesMember ldesMemberOfFragment = createLdesMember();
+        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE))).thenReturn(Optional.empty());
+
+        Optional<LdesFragment> ldesFragmentOptional = Optional.of(existingLdesFragment);
+        LdesMemberNotFoundException ldesMemberNotFoundException = assertThrows(LdesMemberNotFoundException.class, () -> fragmentCreator.createNewFragment(ldesFragmentOptional, newLdesMember));
+
+        assertEquals("LdesMember https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483 not found in database.", ldesMemberNotFoundException.getMessage());
+        verifyNoInteractions(ldesFragmentRespository);
+        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+
     }
 
     private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
@@ -84,6 +103,7 @@ class TimeBasedFragmentCreatorTest {
     private LdesMember createLdesMember() {
         Model ldesMemberModel = ModelFactory.createDefaultModel();
         ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/ns/prov#generatedAtTime"), createStringLiteral("2020-12-28T09:36:37.127Z")));
+        ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), createResource("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder")));
         ldesMemberModel.add(createStatement(createResource("http://localhost:8080/mobility-hindrances"), TREE_MEMBER, createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483")));
         return new LdesMember(ldesMemberModel);
     }
