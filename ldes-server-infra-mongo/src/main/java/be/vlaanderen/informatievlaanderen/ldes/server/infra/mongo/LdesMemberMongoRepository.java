@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Component
 public class LdesMemberMongoRepository implements LdesMemberRepository {
@@ -34,6 +36,11 @@ public class LdesMemberMongoRepository implements LdesMemberRepository {
         return repository
                 .findById(memberId)
                 .map(LdesMemberEntity::toLdesMember);
+    }
+
+    @Override
+    public Stream<LdesMember> getLdesMembersByIds(List<String> ids) {
+        return StreamSupport.stream(repository.findAllById(ids).spliterator(), false).map(LdesMemberEntity::toLdesMember);
     }
 
 }
