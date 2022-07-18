@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface LdesMemberRepository {
 
-    LdesMember saveLdesMember(LdesMember ldesMember);
+    LdesMember saveLdesMember(LdesMember ldesMember, String memberType);
 
     List<LdesMember> fetchLdesMembers();
 

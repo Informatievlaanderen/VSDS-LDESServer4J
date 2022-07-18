@@ -27,12 +27,12 @@ public class LdesMemberEntity {
         return this.ldesMember;
     }
 
-    public static LdesMemberEntity fromLdesMember(LdesMember ldesMember) {
+    public static LdesMemberEntity fromLdesMember(LdesMember ldesMember, String memberType) {
         StringWriter outputStream = new StringWriter();
         RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.JSONLD11);
         String ldesMemberString = outputStream.toString();
 
-        return new LdesMemberEntity(ldesMember.getLdesMemberId(), ldesMemberString);
+        return new LdesMemberEntity(ldesMember.getLdesMemberId(memberType), ldesMemberString);
     }
 
     public LdesMember toLdesMember() {

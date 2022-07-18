@@ -11,6 +11,8 @@ public class LdesConfig {
 
     private String collectionName;
 
+    private String memberType;
+
     public String getHostName() {
         return hostName;
     }
@@ -25,5 +27,13 @@ public class LdesConfig {
 
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
+    }
+
+    public String getMemberType() {
+        return memberType;
+    }
+
+    public void setMemberType(String memberType) {
+        this.memberType = memberType;
     }
 }

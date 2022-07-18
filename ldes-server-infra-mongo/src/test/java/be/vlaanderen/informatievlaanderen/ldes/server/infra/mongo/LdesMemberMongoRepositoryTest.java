@@ -22,6 +22,8 @@ class LdesMemberMongoRepositoryTest {
     private final LdesMemberMongoRepository ldesMemberMongoRepository = new LdesMemberMongoRepository(
             ldesMemberEntityRepository);
 
+    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
+
     @DisplayName("Correct saving of an LdesMember in MongoDB")
     @Test
     void when_LdesMemberIsSavedInRepository_CreatedResourceIsReturned() {
@@ -29,10 +31,10 @@ class LdesMemberMongoRepositoryTest {
                 <http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(member, Lang.NQUADS));
-        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
+        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember, MEMBER_TYPE);
         when(ldesMemberEntityRepository.save(any())).thenReturn(ldesMemberEntity);
 
-        LdesMember actualLdesMember = ldesMemberMongoRepository.saveLdesMember(ldesMember);
+        LdesMember actualLdesMember = ldesMemberMongoRepository.saveLdesMember(ldesMember, MEMBER_TYPE);
 
         assertTrue(ldesMember.getModel().isIsomorphicWith(actualLdesMember.getModel()));
         verify(ldesMemberEntityRepository, times(1)).save(any());
@@ -46,13 +48,13 @@ class LdesMemberMongoRepositoryTest {
                 .toModel();
 
         LdesMember ldesMember = new LdesMember(ldesMemberModel);
-        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
+        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember, MEMBER_TYPE);
 
         Model ldesMemberModel2 = RDFParserBuilder.create().fromString(String.format("""
                         <http://one.example/subject1> <%s> <http://one.example/object2> .""", TREE_MEMBER)).lang(Lang.NQUADS)
                 .toModel();
         LdesMember ldesMember2 = new LdesMember(ldesMemberModel2);
-        LdesMemberEntity ldesMemberEntity2 = LdesMemberEntity.fromLdesMember(ldesMember2);
+        LdesMemberEntity ldesMemberEntity2 = LdesMemberEntity.fromLdesMember(ldesMember2, MEMBER_TYPE);
         when(ldesMemberEntityRepository.findAll()).thenReturn(List.of(ldesMemberEntity, ldesMemberEntity2));
 
         List<LdesMember> actualLdesMembers = ldesMemberMongoRepository.fetchLdesMembers();
@@ -69,13 +71,13 @@ class LdesMemberMongoRepositoryTest {
                         <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""").lang(Lang.NQUADS)
                 .toModel();
         LdesMember expectedLdesMember = new LdesMember(ldesMemberModel);
-        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember);
+        LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember, MEMBER_TYPE);
         when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));
 
         Optional<LdesMember> actualLdesMember = ldesMemberMongoRepository.getLdesMemberById(memberId);
 
         assertTrue(actualLdesMember.isPresent());
-        assertEquals(expectedLdesMember.getLdesMemberId(), actualLdesMember.get().getLdesMemberId());
+        assertEquals(expectedLdesMember.getLdesMemberId(MEMBER_TYPE), actualLdesMember.get().getLdesMemberId(MEMBER_TYPE));
         verify(ldesMemberEntityRepository, times(1)).findById(memberId);
     }
 
