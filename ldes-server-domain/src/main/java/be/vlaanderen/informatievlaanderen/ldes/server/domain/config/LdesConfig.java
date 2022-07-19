@@ -10,6 +10,8 @@ public class LdesConfig {
     private String collectionName;
     private String shape;
 
+    private String memberType;
+
     public String getHostName() {
         return hostName;
     }
@@ -25,11 +27,20 @@ public class LdesConfig {
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
     }
+    
     public String getShape() {
         return shape;
     }
 
     public void setShape(String shape) {
         this.shape = shape;
+    }
+
+    public String getMemberType() {
+        return memberType;
+    }
+
+    public void setMemberType(String memberType) {
+        this.memberType = memberType;
     }
 }

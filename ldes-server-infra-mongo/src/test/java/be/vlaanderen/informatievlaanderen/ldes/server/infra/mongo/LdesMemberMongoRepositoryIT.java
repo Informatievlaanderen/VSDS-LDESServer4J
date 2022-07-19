@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("mongo-test")
 class LdesMemberMongoRepositoryIT {
 
+    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
+
     @Autowired
     private LdesMemberMongoRepository ldesMemberMongoRepository;
 
@@ -35,7 +37,7 @@ class LdesMemberMongoRepositoryIT {
                 <http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(member, Lang.NQUADS));
-        ldesMemberMongoRepository.saveLdesMember(ldesMember);
+        ldesMemberMongoRepository.saveLdesMember(ldesMember, MEMBER_TYPE);
         assertEquals(1, ldesMemberEntityRepository.findAll().size());
         assertEquals(1, ldesMemberMongoRepository.fetchLdesMembers().size());
     }

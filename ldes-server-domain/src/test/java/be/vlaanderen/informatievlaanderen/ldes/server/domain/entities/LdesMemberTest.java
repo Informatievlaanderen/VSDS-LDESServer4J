@@ -20,25 +20,21 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LdesMemberTest {
+    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 
     @Test
     @DisplayName("Test correct replacing of TreeMember statement")
     void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
-        Resource expectedSubject = createResource("http://some-domain.com/ldes-collection");
-        Resource expectedObject = createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483");
-        Property expectedPredicate = TREE_MEMBER;
 
-        ldesMember.replaceTreeMemberStatement("http://some-domain.com","ldes-collection");
+        ldesMember.removeTreeMember();
         Statement statement = ldesMember.getModel()
-                .listStatements(null, expectedPredicate, (Resource) null)
+                .listStatements(null, TREE_MEMBER, (Resource) null)
                 .nextOptional()
-                .orElseThrow(() -> new RuntimeException("No tree member found for ldes member %s".formatted(this)));
+                .orElse(null);
 
-        assertEquals(expectedSubject, statement.getSubject() );
-        assertEquals(expectedObject,statement.getObject());
-        assertEquals(expectedPredicate, statement.getPredicate());
+        assertNull(statement);
     }
 
     @Test
@@ -46,7 +42,7 @@ class LdesMemberTest {
     void when_TreeMemberStatementIsAvailableInModel_LdesMemberId() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(createModel(ldesMemberString, Lang.NQUADS));
-        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",ldesMember.getLdesMemberId());
+        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",ldesMember.getLdesMemberId(MEMBER_TYPE));
     }
 
     private Model createModel(final String ldesMember, final Lang lang){

@@ -62,6 +62,8 @@ This will run a clean slate LDES Server depending on your needs, one or of the f
     > ldes:
     >   collection-name: {short name of the collection}
     >   host-name: {endpoint of LDES Server}
+    >   member-type: {Defines the which syntax type is used to define the member id}
+    > view:
     >   shape: {URI to defined shape}
     > timebased:
     >   member-limit: {limit how many fragment can exist inside fragment}

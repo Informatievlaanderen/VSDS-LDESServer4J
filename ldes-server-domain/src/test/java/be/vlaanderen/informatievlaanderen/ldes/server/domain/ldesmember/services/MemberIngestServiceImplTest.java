@@ -60,12 +60,12 @@ class MemberIngestServiceImplTest {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember savedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(savedMember));
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()))).thenReturn(Optional.of(savedMember));
 
         LdesMember actualLdesMember = memberIngestService.addMember(ldesMember);
 
         assertEquals(savedMember, actualLdesMember);
-        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()));
         verifyNoInteractions(ldesFragmentRespository);
         verifyNoMoreInteractions(fragmentCreator);
     }
@@ -78,22 +78,22 @@ class MemberIngestServiceImplTest {
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment createdFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()))).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.empty());
         when(fragmentCreator.createNewFragment(Optional.empty(), ldesMember))
                 .thenReturn(createdFragment);
-        when(ldesMemberRepository.saveLdesMember(ldesMember)).thenReturn(expectedSavedMember);
+        when(ldesMemberRepository.saveLdesMember(ldesMember, ldesConfig.getMemberType())).thenReturn(expectedSavedMember);
 
         LdesMember actualLdesMember = memberIngestService.addMember(ldesMember);
 
         assertEquals(expectedSavedMember, actualLdesMember);
         InOrder inOrder = inOrder(ldesFragmentRespository, fragmentCreator, ldesMemberRepository);
-        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()));
         inOrder.verify(ldesFragmentRespository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
         inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(), ldesMember);
         inOrder.verify(ldesFragmentRespository, times(1)).saveFragment(createdFragment);
-        inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember);
+        inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember, ldesConfig.getMemberType());
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -104,20 +104,20 @@ class MemberIngestServiceImplTest {
         LdesMember ldesMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesMember expectedSavedMember = new LdesMember(RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()))).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
-        when(ldesMemberRepository.saveLdesMember(ldesMember)).thenReturn(expectedSavedMember);
+        when(ldesMemberRepository.saveLdesMember(ldesMember, ldesConfig.getMemberType())).thenReturn(expectedSavedMember);
 
         LdesMember actualLdesMember = memberIngestService.addMember(ldesMember);
 
         assertEquals(expectedSavedMember, actualLdesMember);
         InOrder inOrder = inOrder(ldesFragmentRespository, fragmentCreator, ldesMemberRepository);
-        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()));
         inOrder.verify(ldesFragmentRespository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
         inOrder.verify(fragmentCreator, never()).createNewFragment(any(), any());
         inOrder.verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
-        inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember);
+        inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember, ldesConfig.getMemberType());
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -130,22 +130,22 @@ class MemberIngestServiceImplTest {
         LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
+        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()))).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
         when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
         when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), ldesMember)).thenReturn(newFragment);
-        when(ldesMemberRepository.saveLdesMember(ldesMember)).thenReturn(expectedSavedMember);
+        when(ldesMemberRepository.saveLdesMember(ldesMember, ldesConfig.getMemberType())).thenReturn(expectedSavedMember);
 
         LdesMember actualLdesMember = memberIngestService.addMember(ldesMember);
 
         assertEquals(expectedSavedMember, actualLdesMember);
         InOrder inOrder = inOrder(ldesFragmentRespository, fragmentCreator, ldesMemberRepository);
-        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()));
         inOrder.verify(ldesFragmentRespository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
         inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.of(existingLdesFragment), ldesMember);
         inOrder.verify(ldesFragmentRespository, times(1)).saveFragment(newFragment);
-        inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember);
+        inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember, ldesConfig.getMemberType());
         inOrder.verifyNoMoreInteractions();
     }
 
