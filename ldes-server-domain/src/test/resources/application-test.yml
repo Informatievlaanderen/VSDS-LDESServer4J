@@ -1,13 +1,10 @@
 ldes:
   collection-name: "exampleData"
   host-name: "http://localhost:8089"
-<<<<<<< HEAD
   shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
-=======
   member-type: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
 view:
   shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
   member-limit: 5
   timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
   version-of-path: "http://purl.org/dc/terms/isVersionOf"
->>>>>>> main
