@@ -68,7 +68,7 @@ class TimeBasedFragmentCreatorTest {
         verifyRelationOfFragment(newFragment, "Path", "someId", "Value", "tree:LessThanOrEqualToRelation");
         verifyRelationOfFragment(existingLdesFragment, "generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
-        verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
+        //verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
     }
 
     @Test
@@ -81,7 +81,6 @@ class TimeBasedFragmentCreatorTest {
         assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
         ldesFragment.addMember("member3");
         assertTrue(fragmentCreator.needsToCreateNewFragment(ldesFragment));
-
     }
 
     private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
