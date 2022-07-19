@@ -65,11 +65,9 @@ This will run a clean slate LDES Server depending on your needs, one or of the f
     >   member-type: {Defines the which syntax type is used to define the member id}
     > view:
     >   shape: {URI to defined shape}
+    > timebased:
     >   member-limit: {limit how many fragment can exist inside fragment}
-    >   timestamp-path: { LDES timestampPath }
-    >   version-of-path: { LDES versionOfPath }
     > ```
-    > see [LDES timestamp](https://w3id.org/ldes#timestampPath) & [LDES versionOfPath](https://w3id.org/ldes#versionOfPath) for more info
   - http-ingest: Enables a http endpoint for to insert LDES members.
     > Endpoint:
     > - URL: /{ldes.collection-name}

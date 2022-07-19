@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
@@ -23,13 +22,12 @@ public class LdesFragmentController {
     private static final String CACHE_CONTROL_MUTABLE = "public, max-age=60";
 
     private final FragmentationService fragmentationService;
-    private final ViewConfig viewConfig;
+
     @Value("${ldes.collectionname}")
     private String collectionName;
 
-    public LdesFragmentController(FragmentationService fragmentationService, ViewConfig viewConfig) {
+    public LdesFragmentController(FragmentationService fragmentationService) {
         this.fragmentationService = fragmentationService;
-        this.viewConfig = viewConfig;
     }
 
 
@@ -47,7 +45,7 @@ public class LdesFragmentController {
         LdesFragment initialFragment = fragmentationService.getInitialFragment(ldesFragmentRequest);
         setCacheControlHeader(response, initialFragment);
         if (initialFragment.isExistingFragment())
-            response.sendRedirect(String.format("/%s?%s=%s", collectionName, viewConfig.getCompactTimestampPath(), initialFragment.getFragmentInfo().getValue()));
+            response.sendRedirect(String.format("/%s?%s=%s", collectionName, initialFragment.getFragmentInfo().getPath(), initialFragment.getFragmentInfo().getValue()));
         return initialFragment;
     }
 

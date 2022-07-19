@@ -1,8 +1,5 @@
 ldes:
   hostname: "http://localhost:8080"
   collectionname: "mobility-hindrances"
-view:
   shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
-  timestampPath: "http://www.w3.org/ns/prov#generatedAtTime"
-  versionOfPath: "http://purl.org/dc/terms/isVersionOf"
-  memberLimit: 3
+

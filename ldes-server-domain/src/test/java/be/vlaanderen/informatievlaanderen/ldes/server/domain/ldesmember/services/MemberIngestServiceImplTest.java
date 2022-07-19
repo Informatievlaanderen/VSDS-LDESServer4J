@@ -1,12 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
@@ -30,22 +29,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {LdesConfig.class, ViewConfig.class})
+@SpringBootTest(classes = {LdesConfig.class})
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class MemberIngestServiceImplTest {
 
     @Autowired
     private LdesConfig ldesConfig;
-    @Autowired
-    private ViewConfig viewConfig;
 
     private final LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
     private final LdesFragmentRespository ldesFragmentRespository = mock(LdesFragmentRespository.class);
@@ -55,7 +51,7 @@ class MemberIngestServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        memberIngestService = new MemberIngestServiceImpl(ldesConfig, viewConfig, ldesMemberRepository, ldesFragmentRespository, fragmentCreator);
+        memberIngestService = new MemberIngestServiceImpl(ldesConfig, ldesMemberRepository, ldesFragmentRespository, fragmentCreator);
     }
 
     @Test
@@ -137,6 +133,7 @@ class MemberIngestServiceImplTest {
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()))).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
+        when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
         when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), ldesMember)).thenReturn(newFragment);
         when(ldesMemberRepository.saveLdesMember(ldesMember, ldesConfig.getMemberType())).thenReturn(expectedSavedMember);
 

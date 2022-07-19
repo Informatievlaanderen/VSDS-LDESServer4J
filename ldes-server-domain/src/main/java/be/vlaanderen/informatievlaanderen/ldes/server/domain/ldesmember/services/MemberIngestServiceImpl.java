@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.stereotype.Component;
@@ -15,15 +14,13 @@ import java.util.Optional;
 public class MemberIngestServiceImpl implements MemberIngestService {
 
     private final LdesConfig ldesConfig;
-    private final ViewConfig viewConfig;
     private final LdesMemberRepository ldesMemberRepository;
     private final LdesFragmentRespository ldesFragmentRespository;
 
     private final FragmentCreator fragmentCreator;
 
-    public MemberIngestServiceImpl(LdesConfig ldesConfig, ViewConfig viewConfig, LdesMemberRepository ldesMemberRepository, LdesFragmentRespository ldesFragmentRespository, FragmentCreator fragmentCreator) {
+    public MemberIngestServiceImpl(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository, LdesFragmentRespository ldesFragmentRespository, FragmentCreator fragmentCreator) {
         this.ldesConfig = ldesConfig;
-        this.viewConfig = viewConfig;
         this.ldesMemberRepository = ldesMemberRepository;
         this.ldesFragmentRespository = ldesFragmentRespository;
         this.fragmentCreator = fragmentCreator;
@@ -47,7 +44,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
     private LdesFragment retrieveLastFragmentOrCreateNewFragment(LdesMember ldesMember) {
         return ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName())
                 .map(fragment -> {
-                    if (fragment.getCurrentNumberOfMembers() >= viewConfig.getMemberLimit()) {
+                    if (fragmentCreator.needsToCreateNewFragment(fragment)) {
                         return fragmentCreator.createNewFragment(Optional.of(fragment), ldesMember);
                     } else {
                         return fragment;

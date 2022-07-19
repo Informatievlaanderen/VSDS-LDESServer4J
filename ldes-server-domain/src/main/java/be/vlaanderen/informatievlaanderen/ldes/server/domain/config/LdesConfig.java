@@ -6,10 +6,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
 public class LdesConfig {
-
     private String hostName;
-
     private String collectionName;
+    private String shape;
 
     private String memberType;
 
@@ -27,6 +26,14 @@ public class LdesConfig {
 
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
+    }
+    
+    public String getShape() {
+        return shape;
+    }
+
+    public void setShape(String shape) {
+        this.shape = shape;
     }
 
     public String getMemberType() {
