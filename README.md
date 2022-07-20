@@ -45,48 +45,52 @@ Afterwards, you can change storage, ingestion and publication options by pluggin
 
 #### Maven
 
-To locally run the LDES Server in maven, the following Maven command can be executed:
+To locally run the LDES Server in maven, move to the ldes-server-application directory and run the Spring Boot application.
 
+This can be done as follows:
+> **_NOTE:_**  Due to an authorisation issue in Github packages, the easiest way is to first build the project using the following command:
+> ```mvn
+>  mvn install
+> ```
+
+```shell
+cd ldes-server-application
+```
 ```mvn
-mvn spring-boot:run
+mvn spring-boot:run -P {profiles (comma separated with no spaces) }
 ```
 
-This will run a clean slate LDES Server depending on your needs, one or of the following maven profiles can be activated:
+This will start an empty LDES Server. To enrich this server, certain maven profiles can be activated:
 
 #### Profiles
 
-- **Http Endpoints (Publication/Ingestion)**
-    > _application config_:
-    > ```yaml
-    > server.port: {http-port}
-    > ldes:
-    >   collection-name: {short name of the collection}
-    >   host-name: {endpoint of LDES Server}
-    >   member-type: {Defines the which syntax type is used to define the member id}
-    > view:
-    >   shape: {URI to defined shape}
-    > timebased:
-    >   member-limit: {limit how many fragment can exist inside fragment}
-    > ```
-  - http-ingest: Enables a http endpoint for to insert LDES members.
-    > Endpoint:
-    > - URL: /{ldes.collection-name}
-    > - Request type: POST
-    > - Accept: "application/n-quads", "application/n-triples"
-  - http-publish: Enables a http endpoint to retrieve LDES fragments
-    > Endpoint:
-    > - URL: /{ldes.collection-name}
-    > - Request type: GET
-    > - Accept: "application/n-quads", "application/ld+json"
-- **Storage**
-  - storage-mongo: Allows the LDES Server to read and write from a mongo database.
-    > _application config_:
-    > ```yaml
-    > spring.data.mongodb:
-    >   uri: mongodb://{docker-hostname}:{port}
-    >   database: {database name} 
-    > ```
+| Profile Group                              	| Profile name  	| Description                                                     	| Parameters 	                                                                    | Further info                                                                                                                        	|
+|--------------------------------------------	|---------------	|-----------------------------------------------------------------	|---------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------	|
+| **Http Endpoints (Publication/Ingestion)** 	| http-ingest   	| Enables a http endpoint for to insert LDES members.             	| [Http configuration](#example-http-ingest--publication-configuration)          	 | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" 	|
+| **Http Endpoints (Publication/Ingestion)** 	| http-publish  	| Enables a http endpoint to retrieve LDES fragments              	| [Http configuration](#example-http-ingest--publication-configuration)	          | Endpoint:<br>- URL: /{ldes.collection-name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"    	|
+| **Storage**                                	| storage-mongo 	| Allows the LDES Server to read and write from a mongo database. 	| [Mongo configuration](#example-mongo-configuration)	                            |                                                                                                                                     	|
 
+#### Application Configuration:
+Below are properties that are needed when applying certain profiles. 
+These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does not exist, create it)
+
+##### Example HTTP ingest & publication configuration
+  ```yaml
+  server.port: {http-port}
+    ldes:
+      collection-name: {short name of the collection}
+      host-name: {endpoint of LDES Server}
+      member-type: {Defines the which syntax type is used to define the member id}
+      shape: {URI to defined shape}
+    timebased:
+      member-limit: {limit how many fragment can exist inside fragment}
+  ```
+##### Example mongo configuration
+  ```yaml
+  spring.data.mongodb:
+    uri: mongodb://{docker-hostname}:{port}
+    database: {database name}
+  ```
 ### Docker
 
 #### Docker-compose
