@@ -40,7 +40,6 @@ public class MemberIngestServiceImpl implements MemberIngestService {
         return ldesMemberRepository.saveLdesMember(ldesMember, ldesConfig.getMemberType());
     }
 
-
     private LdesFragment retrieveLastFragmentOrCreateNewFragment(LdesMember ldesMember) {
         return ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName())
                 .map(fragment -> {
