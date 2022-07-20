@@ -69,6 +69,6 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     private LdesFragment createNewFragment() {
         String fragmentationValue = LocalDateTime.now().format(formatter);
         return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, fragmentationValue))));
+                new FragmentInfo(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName(), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, fragmentationValue))));
     }
 }

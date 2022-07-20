@@ -14,7 +14,7 @@ public class TreeRelation {
     public TreeRelation(String treePath, String treeNode, String treeValue, String relation) {
         this.treePath = treePath;
         this.treeNode = treeNode;
-        this.treeValue = String.format("%s^^<http://www.w3.org/2001/XMLSchema#dateTime>",treeValue);
+        this.treeValue = treeValue + "^^<http://www.w3.org/2001/XMLSchema#dateTime>";
         this.relation = relation;
     }
 

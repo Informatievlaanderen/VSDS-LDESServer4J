@@ -10,10 +10,10 @@ public class FragmentIdConverter {
 
     public static String toFragmentId(String hostLocation, String view, List<FragmentPair> fragmentPairs) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("%s/%s".formatted(hostLocation, view));
+        stringBuilder.append(hostLocation).append("/").append(view);
         if(!fragmentPairs.isEmpty()){
             stringBuilder.append("?");
-            fragmentPairs.forEach(fragmentPair -> stringBuilder.append("%s=%s".formatted(fragmentPair.fragmentKey(), fragmentPair.fragmentValue())));
+            fragmentPairs.forEach(fragmentPair -> stringBuilder.append(fragmentPair.fragmentKey()).append("=").append(fragmentPair.fragmentValue()).toString());
         }
         return stringBuilder.toString();
     }

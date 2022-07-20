@@ -37,6 +37,6 @@ public class FragmentationServiceImpl implements FragmentationService {
 
     private LdesFragment createEmptyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
         return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), collectionName, fragmentationMap));
+                new FragmentInfo(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName(), ldesConfig.getShape(), collectionName, fragmentationMap));
     }
 }
