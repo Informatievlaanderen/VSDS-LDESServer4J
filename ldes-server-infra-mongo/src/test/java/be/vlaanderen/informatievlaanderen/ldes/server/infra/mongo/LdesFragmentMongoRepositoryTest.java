@@ -4,16 +4,22 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.LdesFragmentMongoRepositoryTest.LdesFragmentEntityListProvider.allMutable;
@@ -36,7 +42,8 @@ class LdesFragmentMongoRepositoryTest {
     @ParameterizedTest
     @ArgumentsSource(LdesFragmentEntityListProvider.class)
     void when_RetrieveOpenFragment_FirstFragmentThatIsOpenAndBelongsToCollectionIsReturned(List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
-        when(ldesFragmentEntityRepository.findAll()).thenReturn(entitiesInRepository);
+        when(ldesFragmentEntityRepository.findAllByFragmentInfoImmutableAndFragmentInfo_CollectionName(false, COLLECTION_NAME))
+                .thenReturn(entitiesInRepository.stream().filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable()).collect(Collectors.toList()));
 
         Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME);
 
