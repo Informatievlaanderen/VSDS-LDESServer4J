@@ -53,10 +53,10 @@ class LdesFragmentConverterImplTest {
         Model ldesMemberModel = RDFParserBuilder.create().fromString("""
                         <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""").lang(Lang.NQUADS)
                 .toModel();
-        LdesMember ldesMember = new LdesMember(ldesMemberModel);
+        LdesMember ldesMember = new LdesMember("some_id", ldesMemberModel);
         LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(String.format("%s/%s", HOSTNAME, COLLECTION_NAME), SHAPE, COLLECTION_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
         ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
-        ldesFragment.addRelation(new TreeRelation("path","node", "value","relation"));
+        ldesFragment.addRelation(new TreeRelation("path", "node", "value", "relation"));
         when(ldesMemberRepository.getLdesMembersByIds(List.of("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165"))).thenReturn(Stream.of(ldesMember));
 
         Model model = ldesFragmentConverter.toModel(ldesFragment);
@@ -87,7 +87,7 @@ class LdesFragmentConverterImplTest {
 
     private int getNumerOfStatements(Model model) {
         AtomicInteger statementCounter = new AtomicInteger();
-        model.listStatements().forEach((statement)-> statementCounter.getAndIncrement());
+        model.listStatements().forEach((statement) -> statementCounter.getAndIncrement());
         return statementCounter.get();
     }
 

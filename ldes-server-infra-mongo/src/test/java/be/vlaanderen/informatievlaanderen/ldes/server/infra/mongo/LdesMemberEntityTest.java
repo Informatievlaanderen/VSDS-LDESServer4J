@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LdesMemberEntityTest {
 
-    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
-
     private LdesMember ldesMember;
     private LdesMemberEntity ldesMemberEntity;
 
@@ -36,7 +34,7 @@ class LdesMemberEntityTest {
     @Test
     @DisplayName("Convert LdesMember to LdesMemberEntity")
     void toEntity() {
-        LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember, MEMBER_TYPE);
+        LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
 
         Model actualLdesMemberEntityModel = RDFParserBuilder.create().fromString(actualLdesMemberEntity.getLdesMember())
                 .lang(Lang.NQUADS).toModel();
@@ -62,7 +60,7 @@ class LdesMemberEntityTest {
                 .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.JSONLD11)
                 .toModel();
 
-        return LdesMemberEntity.fromLdesMember(new LdesMember(outputModel), MEMBER_TYPE);
+        return LdesMemberEntity.fromLdesMember(new LdesMember("some_id", outputModel));
     }
 
     private LdesMember readLdesMemberFromFile(ClassLoader classLoader, String fileName)
@@ -73,6 +71,6 @@ class LdesMemberEntityTest {
                 .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
                 .toModel();
 
-        return new LdesMember(outputModel);
+        return new LdesMember("some_id", outputModel);
     }
 }

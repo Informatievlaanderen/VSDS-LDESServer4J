@@ -5,15 +5,15 @@ import org.apache.jena.rdf.model.*;
 import java.util.Objects;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 public class LdesMember {
 
     private final Model memberModel;
+    private final String memberId;
 
-    public LdesMember(final Model memberModel) {
+    public LdesMember(String memberId, final Model memberModel) {
+        this.memberId = memberId;
         this.memberModel = memberModel;
     }
 
@@ -32,12 +32,8 @@ public class LdesMember {
                 .orElse(null);
     }
 
-    public String getLdesMemberId(String memberType) {
-        return memberModel
-                .listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
-                .nextOptional()
-                .map(statement -> statement.getSubject().toString())
-                .orElse(null);
+    public String getLdesMemberId() {
+        return memberId;
     }
 
     private Optional<Statement> getCurrentTreeMemberStatement() {
