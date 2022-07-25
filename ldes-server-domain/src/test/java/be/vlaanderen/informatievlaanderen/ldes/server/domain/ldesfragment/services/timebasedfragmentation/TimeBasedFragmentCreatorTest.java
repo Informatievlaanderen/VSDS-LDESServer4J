@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.timebased.TimeBasedFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
@@ -72,18 +71,6 @@ class TimeBasedFragmentCreatorTest {
         verifyRelationOfFragment(existingLdesFragment, "generatedAtTime", "http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z", "2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
         verify(ldesFragmentRespository, times(1)).saveFragment(existingLdesFragment);
         //verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
-    }
-
-    @Test
-    @DisplayName("Creating First Time-Based Fragment")
-    void when_FragmentIsFull_NewFragmentNeedsToBeCreated() {
-        LdesFragment ldesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        ldesFragment.addMember("member1");
-        assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
-        ldesFragment.addMember("member2");
-        assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
-        ldesFragment.addMember("member3");
-        assertTrue(fragmentCreator.needsToCreateNewFragment(ldesFragment));
     }
 
     @Test

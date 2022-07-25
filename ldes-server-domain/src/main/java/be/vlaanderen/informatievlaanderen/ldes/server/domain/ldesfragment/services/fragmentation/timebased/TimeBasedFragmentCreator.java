@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.TimestampPathComparator;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -18,14 +18,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+
 @Component
-@Qualifier("timebased")
+@ConditionalOnProperty(
+        value = "fragmentation.type",
+        havingValue = "timebased",
+        matchIfMissing = true)
 public class TimeBasedFragmentCreator implements FragmentCreator {
     private static final String TREE_GREATER_THAN_OR_EQUAL_TO_RELATION = "tree:GreaterThanOrEqualToRelation";
     private static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = "tree:LessThanOrEqualToRelation";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private static final String GENERATED_AT_TIME = "generatedAtTime";
-    private static final String PROV_GENERATED_AT_TIME = "http://www.w3.org/ns/prov#"+GENERATED_AT_TIME;
+    private static final String PROV_GENERATED_AT_TIME = "http://www.w3.org/ns/prov#" + GENERATED_AT_TIME;
     private final LdesConfig ldesConfig;
     private final TimeBasedConfig timeBasedConfig;
     private final LdesFragmentRespository ldesFragmentRespository;

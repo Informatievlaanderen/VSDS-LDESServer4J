@@ -9,8 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -18,8 +17,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-@Qualifier("geospatial")
-@Primary
+@ConditionalOnProperty(
+        value="fragmentation.type",
+        havingValue = "geospatial")
 public class GeoSpatialFragmentCreator implements FragmentCreator {
 
     private final LdesConfig ldesConfig;
