@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 public interface LdesMemberRepository {
 
-    LdesMember saveLdesMember(LdesMember ldesMember, String memberType);
+    LdesMember saveLdesMember(LdesMember ldesMember);
 
     List<LdesMember> fetchLdesMembers();
 
