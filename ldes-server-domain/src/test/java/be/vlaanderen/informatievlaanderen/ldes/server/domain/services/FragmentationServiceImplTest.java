@@ -54,8 +54,7 @@ class FragmentationServiceImplTest {
     @Test
     void when_retrieveInitialFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
         when(ldesFragmentRespository.retrieveInitialFragment(VIEW_SHORTNAME)).thenReturn(Optional.empty());
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
-        LdesFragment returnedFragment = fragmentationService.getInitialFragment(ldesFragmentRequest);
+        LdesFragment returnedFragment = fragmentationService.getInitialFragment(VIEW_SHORTNAME);
 
         assertEquals(0, returnedFragment.getMemberIds().size());
         assertNull(returnedFragment.getFragmentInfo().getValue());
@@ -70,9 +69,8 @@ class FragmentationServiceImplTest {
 
         when(ldesFragmentRespository.retrieveInitialFragment(VIEW_SHORTNAME))
                 .thenReturn(Optional.of(ldesFragment));
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
 
-        LdesFragment returnedFragment = fragmentationService.getInitialFragment(ldesFragmentRequest);
+        LdesFragment returnedFragment = fragmentationService.getInitialFragment(VIEW_SHORTNAME);
 
         assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());

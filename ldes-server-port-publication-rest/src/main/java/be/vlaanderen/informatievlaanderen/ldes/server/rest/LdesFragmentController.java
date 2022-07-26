@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -41,8 +40,7 @@ public class LdesFragmentController {
     }
 
     private LdesFragment redirectToInitialFragment(HttpServletResponse response) throws IOException {
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, List.of());
-        LdesFragment initialFragment = fragmentationService.getInitialFragment(ldesFragmentRequest);
+        LdesFragment initialFragment = fragmentationService.getInitialFragment(collectionName);
         setCacheControlHeader(response, initialFragment);
         if (initialFragment.isExistingFragment())
             response.sendRedirect("/" + collectionName + "?" + initialFragment.getFragmentInfo().getPath() + "=" + initialFragment.getFragmentInfo().getValue());

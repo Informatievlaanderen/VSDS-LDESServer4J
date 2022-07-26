@@ -68,8 +68,7 @@ class LdesFragmentControllerTest {
     void when_GETRequestIsPerformedOnBaseURLAndNoFragmentIsCreatedYet_ResponseContainsAnEmptyLDesFragment() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
         LdesFragment emptyFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of()));
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of());
-        when(fragmentationService.getInitialFragment(ldesFragmentRequest)).thenReturn(emptyFragment);
+        when(fragmentationService.getInitialFragment(ldesConfig.getCollectionName())).thenReturn(emptyFragment);
 
         ResultActions resultActions = mockMvc
                 .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
@@ -85,7 +84,7 @@ class LdesFragmentControllerTest {
         assertEquals(PROV_GENERATED_AT_TIME, getObjectURI(resultModel, RdfConstants.LDES_TIMESTAMP_PATH));
         assertEquals(VERSION_OF_URI, getObjectURI(resultModel, RdfConstants.LDES_VERSION_OF));
         assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfConstants.RDF_SYNTAX_TYPE));
-        verify(fragmentationService, times(1)).getInitialFragment(ldesFragmentRequest);
+        verify(fragmentationService, times(1)).getInitialFragment(ldesConfig.getCollectionName());
         verifyNoMoreInteractions(fragmentationService);
     }
 
@@ -94,8 +93,7 @@ class LdesFragmentControllerTest {
     void when_GETRequestIsPerformedOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
         LdesFragment realFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of());
-        when(fragmentationService.getInitialFragment(ldesFragmentRequest)).thenReturn(realFragment);
+        when(fragmentationService.getInitialFragment(ldesConfig.getCollectionName())).thenReturn(realFragment);
 
         ResultActions resultActions = mockMvc
                 .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
@@ -112,7 +110,7 @@ class LdesFragmentControllerTest {
         assertEquals(VERSION_OF_URI, getObjectURI(resultModel, RdfConstants.LDES_VERSION_OF));
         assertEquals(fragmentId, getObjectURI(resultModel, RdfConstants.TREE_VIEW));
         assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel, RdfConstants.RDF_SYNTAX_TYPE));
-        verify(fragmentationService, times(1)).getInitialFragment(ldesFragmentRequest);
+        verify(fragmentationService, times(1)).getInitialFragment(ldesConfig.getCollectionName());
         verifyNoMoreInteractions(fragmentationService);
     }
 

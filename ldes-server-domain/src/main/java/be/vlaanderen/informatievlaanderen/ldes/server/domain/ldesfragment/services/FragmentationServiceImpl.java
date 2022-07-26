@@ -29,9 +29,9 @@ public class FragmentationServiceImpl implements FragmentationService {
     }
 
     @Override
-    public LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest) {
-       return ldesFragmentRespository.retrieveInitialFragment(ldesFragmentRequest.collectionName())
-                .orElseGet(()-> createEmptyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
+    public LdesFragment getInitialFragment(String collectionName) {
+       return ldesFragmentRespository.retrieveInitialFragment(collectionName)
+                .orElseGet(()-> createEmptyFragment(collectionName, List.of()));
 
     }
 

@@ -7,5 +7,5 @@ public interface FragmentationService {
 
     LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest);
 
-    LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest);
+    LdesFragment getInitialFragment(String collectionName);
 }
