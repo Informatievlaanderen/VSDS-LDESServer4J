@@ -25,19 +25,14 @@ public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     @Override
     public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
         return repository
-                .findAll()
-                .stream()
-                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName().equals(ldesFragmentRequest.collectionName()))
-                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getFragmentPairs().equals(ldesFragmentRequest.fragmentPairs()))
-                .findFirst()
+                .findLdesFragmentEntityByFragmentInfoCollectionNameAndFragmentInfo_FragmentPairs(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs())
                 .map(LdesFragmentEntity::toLdesFragment);
     }
 
     @Override
     public Optional<LdesFragment> retrieveOpenFragment(String collectionName) {
-        return repository.findAll().stream()
-                .filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
-                .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName().equals(collectionName))
+        return repository.findAllByFragmentInfoImmutableAndFragmentInfo_CollectionName(false, collectionName)
+                .stream()
                 .map(LdesFragmentEntity::toLdesFragment)
                 .min(Comparator.comparing(LdesFragment::getFragmentId));
     }

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entitie
 import org.apache.jena.rdf.model.*;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
@@ -39,14 +40,13 @@ public class LdesMember {
                 .orElse(null);
     }
 
-    private Statement getCurrentTreeMemberStatement() {
+    private Optional<Statement> getCurrentTreeMemberStatement() {
         return memberModel
                 .listStatements(null, TREE_MEMBER, (Resource) null)
-                .nextOptional()
-                .orElse(null);
+                .nextOptional();
     }
 
     public void removeTreeMember() {
-        memberModel.remove(getCurrentTreeMemberStatement());
+        getCurrentTreeMemberStatement().ifPresent(memberModel::remove);
     }
 }
