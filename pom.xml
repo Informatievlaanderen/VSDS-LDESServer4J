@@ -64,7 +64,7 @@
 		<sonar.projectKey>Informatievlaanderen_VSDS-LDESServer4J-${project.groupId}:${project.artifactId}</sonar.projectKey>
 
 		<!-- CODE FORMATTER -->
-		<formatter-maven-plugin.version>2.19.0</formatter-maven-plugin.version>
+		<formatter-maven-plugin.version>2.20.0</formatter-maven-plugin.version>
 		<skipFormatCode>false</skipFormatCode>
     </properties>
 
