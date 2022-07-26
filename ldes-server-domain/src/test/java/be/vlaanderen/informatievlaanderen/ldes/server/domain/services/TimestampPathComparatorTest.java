@@ -31,7 +31,7 @@ class TimestampPathComparatorTest {
     private LdesMember createLdesMember(String generatedAtTime) {
 
         Model model = RdfModelConverter.fromString("<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483> <http://www.w3.org/ns/prov#generatedAtTime> " + generatedAtTime + "^^<http://www.w3.org/2001/XMLSchema#dateTime> .\n", Lang.NQUADS);
-        return new LdesMember(model);
+        return new LdesMember("some_id", model);
     }
 
 }

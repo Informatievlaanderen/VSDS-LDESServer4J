@@ -27,7 +27,7 @@ public class LdesConfig {
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
     }
-    
+
     public String getShape() {
         return shape;
     }

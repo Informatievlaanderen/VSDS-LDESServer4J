@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -18,12 +19,17 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.RDF_SYNTAX_TYPE;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.*;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember> {
 
-    public LdesMemberConverter() {
+    private final LdesConfig ldesConfig;
+
+    public LdesMemberConverter(LdesConfig ldesConfig) {
         super(new MediaType("application", "n-quads"), new MediaType("application", "n-triples"));
+        this.ldesConfig = ldesConfig;
     }
 
     @Override
@@ -38,7 +44,8 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember
         Model memberModel = RDFParserBuilder.create()
                 .fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8)).lang(lang)
                 .toModel();
-        return new LdesMember(memberModel);
+        String memberId = extractMemberId(memberModel);
+        return new LdesMember(memberId, memberModel);
     }
 
     private Lang getLang(MediaType contentType) {
@@ -47,6 +54,14 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember
             case "application/n-triples" -> Lang.NTRIPLES;
             default -> Lang.NQUADS;
         };
+    }
+
+    private String extractMemberId(Model model) {
+        return model
+                .listStatements(null, RDF_SYNTAX_TYPE, createResource(ldesConfig.getMemberType()))
+                .nextOptional()
+                .map(statement -> statement.getSubject().toString())
+                .orElse(null);
     }
 
     @Override

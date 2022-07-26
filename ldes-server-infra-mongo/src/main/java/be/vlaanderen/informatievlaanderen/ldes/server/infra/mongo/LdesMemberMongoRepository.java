@@ -21,8 +21,8 @@ public class LdesMemberMongoRepository implements LdesMemberRepository {
     }
 
     @Override
-    public LdesMember saveLdesMember(LdesMember ldesMember, String memberType) {
-        repository.save(LdesMemberEntity.fromLdesMember(ldesMember, memberType));
+    public LdesMember saveLdesMember(LdesMember ldesMember) {
+        repository.save(LdesMemberEntity.fromLdesMember(ldesMember));
         return ldesMember;
     }
 

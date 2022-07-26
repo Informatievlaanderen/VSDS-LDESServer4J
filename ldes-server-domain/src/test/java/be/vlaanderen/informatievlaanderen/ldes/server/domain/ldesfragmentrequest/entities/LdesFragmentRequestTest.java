@@ -40,7 +40,7 @@ class LdesFragmentRequestTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
-                    Arguments.of(new LdesMember(null)),
+                    Arguments.of(new LdesMember("some_id", null)),
                     Arguments.of((Object) null),
                     Arguments.of(new LdesFragmentRequest("otherCollectionName", List.of(new FragmentPair("key", "value"), new FragmentPair("key2", "value2")))),
                     Arguments.of(new LdesFragmentRequest("collectionName", List.of(new FragmentPair("key2", "value2"), new FragmentPair("key", "value")))));

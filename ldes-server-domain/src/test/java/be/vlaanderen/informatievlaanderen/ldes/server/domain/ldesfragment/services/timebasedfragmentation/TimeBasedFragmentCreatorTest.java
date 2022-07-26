@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.timebased.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.fragmentation.timebased.TimeBasedFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
@@ -21,7 +23,7 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
@@ -58,8 +60,8 @@ class TimeBasedFragmentCreatorTest {
         LdesMember newLdesMember = createLdesMember();
         LdesMember ldesMemberOfFragment = createLdesMember();
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
-        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE))).thenReturn(Optional.of(ldesMemberOfFragment));
+        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
+        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.of(ldesMemberOfFragment));
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), newLdesMember);
 
@@ -96,7 +98,7 @@ class TimeBasedFragmentCreatorTest {
         ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/ns/prov#generatedAtTime"), createStringLiteral("2020-12-28T09:36:37.127Z")));
         ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), createResource("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder")));
         ldesMemberModel.add(createStatement(createResource("http://localhost:8080/mobility-hindrances"), TREE_MEMBER, createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483")));
-        return new LdesMember(ldesMemberModel);
+        return new LdesMember("some_id", ldesMemberModel);
     }
 
     private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode, String expectedTreeValue, String expectedRelation) {
