@@ -36,7 +36,7 @@ class TimeBasedFragmentCreatorTest {
         TimeBasedConfig timeBasedConfig = createTimeBasedConfig();
         ldesFragmentRespository = mock(LdesFragmentRespository.class);
         ldesMemberRepository = mock(LdesMemberRepository.class);
-        fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig, ldesFragmentRespository, ldesMemberRepository);
+        fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig, ldesFragmentRespository, ldesMemberRepository, fragmentViewingService);
     }
 
     @Test

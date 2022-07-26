@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentview.services.FragmentViewingService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.TimestampPathComparator;
@@ -30,12 +31,14 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     private final TimeBasedConfig timeBasedConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
     private final LdesMemberRepository ldesMemberRepository;
+    private final FragmentViewingService fragmentViewingService;
 
-    public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimeBasedConfig timeBasedConfig, LdesFragmentRespository ldesFragmentRespository, LdesMemberRepository ldesMemberRepository) {
+    public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimeBasedConfig timeBasedConfig, LdesFragmentRespository ldesFragmentRespository, LdesMemberRepository ldesMemberRepository, FragmentViewingService fragmentViewingService) {
         this.ldesConfig = ldesConfig;
         this.timeBasedConfig = timeBasedConfig;
         this.ldesFragmentRespository = ldesFragmentRespository;
         this.ldesMemberRepository = ldesMemberRepository;
+        this.fragmentViewingService = fragmentViewingService;
     }
 
     @Override
@@ -52,10 +55,11 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     }
 
     private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
-        completeLdesFragment.setImmutable(true);
         completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
         String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
+        completeLdesFragment.setImmutable(true);
         ldesFragmentRespository.saveFragment(completeLdesFragment);
+        fragmentViewingService.saveImmutableLdesFragment(completeLdesFragment);
         newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), latestGeneratedAtTime, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
     }
 

@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentview.repository.LdesFragmentViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,5 +31,11 @@ public class MongoAutoConfiguration {
             final LdesFragmentEntityRepository ldesFragmentEntityRepository,
             final LdesMemberEntityRepository ldesMemberEntityRepository) {
         return new LdesFragmentMongoRepository(ldesFragmentEntityRepository);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public LdesFragmentViewRepository ldesFragmentViewMongoRepository(final LdesFragmentViewEntityRepository ldesFragmentViewEntityRepository) {
+        return new LdesFragmentViewMongoRepository(ldesFragmentViewEntityRepository);
     }
 }

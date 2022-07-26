@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentview.entities.LdesFragmentView;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFFormat;
 import org.springframework.http.HttpInputMessage;
@@ -19,7 +20,7 @@ import java.util.List;
 import static org.apache.jena.riot.RDFFormat.JSONLD11;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
-public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
+public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragmentView> {
 
     private final LdesFragmentConverter ldesFragmentConverter;
 
@@ -43,20 +44,17 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
     }
 
     @Override
-    public LdesFragment read(Class<? extends LdesFragment> clazz, HttpInputMessage inputMessage)
+    public LdesFragmentView read(Class<? extends LdesFragmentView> clazz, HttpInputMessage inputMessage)
             throws HttpMessageNotReadableException {
         return null;
     }
 
     @Override
-    public void write(LdesFragment ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
+    public void write(LdesFragmentView ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
 
         OutputStream body = outputMessage.getBody();
-        RDFFormat rdfFormat = getRdfFormat(contentType);
-        Model fragmentModel = ldesFragmentConverter.toModel(ldesFragment);
-        String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
-        body.write(outputString.getBytes());
+        body.write(ldesFragment.getContent().getBytes());
     }
 
     private RDFFormat getRdfFormat(MediaType contentType) {
