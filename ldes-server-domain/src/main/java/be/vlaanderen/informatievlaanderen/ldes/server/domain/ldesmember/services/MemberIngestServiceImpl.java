@@ -28,16 +28,16 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
     @Override
     public LdesMember addMember(LdesMember ldesMember) {
-        Optional<LdesMember> optionalLdesMember = ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId(ldesConfig.getMemberType()));
+        Optional<LdesMember> optionalLdesMember = ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId());
         return optionalLdesMember.orElseGet(() -> addMemberToFragmentAndStore(ldesMember));
     }
 
     private LdesMember addMemberToFragmentAndStore(LdesMember ldesMember) {
         ldesMember.removeTreeMember();
         LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
-        ldesFragment.addMember(ldesMember.getLdesMemberId(ldesConfig.getMemberType()));
+        ldesFragment.addMember(ldesMember.getLdesMemberId());
         ldesFragmentRespository.saveFragment(ldesFragment);
-        return ldesMemberRepository.saveLdesMember(ldesMember, ldesConfig.getMemberType());
+        return ldesMemberRepository.saveLdesMember(ldesMember);
     }
 
 

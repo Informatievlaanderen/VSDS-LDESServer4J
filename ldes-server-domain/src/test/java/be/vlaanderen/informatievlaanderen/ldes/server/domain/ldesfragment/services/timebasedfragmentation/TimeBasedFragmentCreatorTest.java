@@ -58,8 +58,8 @@ class TimeBasedFragmentCreatorTest {
         LdesMember newLdesMember = createLdesMember();
         LdesMember ldesMemberOfFragment = createLdesMember();
         LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE));
-        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId(MEMBER_TYPE))).thenReturn(Optional.of(ldesMemberOfFragment));
+        existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
+        when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.of(ldesMemberOfFragment));
 
         LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), newLdesMember);
 
@@ -96,7 +96,7 @@ class TimeBasedFragmentCreatorTest {
         ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/ns/prov#generatedAtTime"), createStringLiteral("2020-12-28T09:36:37.127Z")));
         ldesMemberModel.add(createStatement(createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"), createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type"), createResource("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder")));
         ldesMemberModel.add(createStatement(createResource("http://localhost:8080/mobility-hindrances"), TREE_MEMBER, createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483")));
-        return new LdesMember(ldesMemberModel);
+        return new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483", ldesMemberModel);
     }
 
     private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode, String expectedTreeValue, String expectedRelation) {

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.MemberIngestService;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {LdesMemberIngestionController.class, IngestionWebConfig.class})
+@ContextConfiguration(classes = {LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class})
 class LdesMemberIngestionControllerTest {
 
     @Autowired
@@ -48,13 +49,16 @@ class LdesMemberIngestionControllerTest {
     @MockBean
     private MemberIngestService memberIngestService;
 
+    @Autowired
+    private LdesConfig ldesConfig;
+
     @ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
     @ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
     void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, RDFFormat rdfFormat, Lang lang) throws Exception {
-        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq",rdfFormat);
-        Model ldesMemberData = RdfModelConverter.fromString(ldesMemberString,lang);
+        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
+        Model ldesMemberData = RdfModelConverter.fromString(ldesMemberString, lang);
 
-        when(memberIngestService.addMember(any())).thenReturn(new LdesMember(RdfModelConverter.fromString(ldesMemberString, lang)));
+        when(memberIngestService.addMember(any())).thenReturn(new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, lang)));
 
         mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
