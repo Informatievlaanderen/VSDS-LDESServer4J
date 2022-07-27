@@ -208,7 +208,8 @@ class LdesFragmentControllerTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(Arguments.of("application/n-quads", Lang.NQUADS),
-                    Arguments.of("application/ld+json", Lang.JSONLD11));
+                    Arguments.of("application/ld+json", Lang.JSONLD11),
+                    Arguments.of("application/turtle", Lang.TURTLE));
         }
     }
 

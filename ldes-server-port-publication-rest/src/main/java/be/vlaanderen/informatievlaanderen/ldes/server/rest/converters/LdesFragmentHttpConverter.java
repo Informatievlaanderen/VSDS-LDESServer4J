@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import static org.apache.jena.riot.RDFFormat.JSONLD11;
-import static org.apache.jena.riot.RDFFormat.NQUADS;
+import static org.apache.jena.riot.RDFFormat.*;
 
 public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
 
@@ -39,7 +38,7 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
     @Override
     public List<MediaType> getSupportedMediaTypes() {
-        return List.of(new MediaType("application/ld+json"), new MediaType("application/n-quads"));
+        return List.of(new MediaType("application/ld+json"), new MediaType("application/n-quads"), new MediaType("application/turtle"));
     }
 
     @Override
@@ -62,8 +61,9 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
     private RDFFormat getRdfFormat(MediaType contentType) {
         return switch (contentType.toString()) {
             case "application/n-quads" -> NQUADS;
-            case "application/ld+json" -> JSONLD11;
-            default -> JSONLD11;
+            case "application/ld+json" -> JSONLD10;
+            case "application/turtle" -> TURTLE;
+            default -> JSONLD10;
         };
     }
 }

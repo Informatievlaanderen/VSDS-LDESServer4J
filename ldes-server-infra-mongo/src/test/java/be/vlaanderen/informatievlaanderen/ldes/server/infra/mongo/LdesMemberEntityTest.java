@@ -39,10 +39,10 @@ class LdesMemberEntityTest {
         LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember, MEMBER_TYPE);
 
         Model actualLdesMemberEntityModel = RDFParserBuilder.create().fromString(actualLdesMemberEntity.getLdesMember())
-                .lang(Lang.JSONLD11).toModel();
+                .lang(Lang.NQUADS).toModel();
 
         Model ldesMemberEntityModel = RDFParserBuilder.create().fromString(ldesMemberEntity.getLdesMember())
-                .lang(Lang.JSONLD11).toModel();
+                .lang(Lang.NQUADS).toModel();
 
         assertTrue(ldesMemberEntityModel.isIsomorphicWith(actualLdesMemberEntityModel));
     }

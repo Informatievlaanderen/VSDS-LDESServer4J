@@ -31,7 +31,7 @@ public class LdesFragmentController {
     }
 
 
-    @GetMapping(value = "${ldes.collectionname}", produces = {"application/ld+json", "application/n-quads"})
+    @GetMapping(value = "${ldes.collectionname}", produces = {"application/ld+json", "application/n-quads", "application/turtle"})
     LdesFragment retrieveLdesFragment(HttpServletResponse response, @RequestParam Map<String, String> requestParameters) throws IOException {
         if (requestParameters.isEmpty()) {
             return redirectToInitialFragment(response);
