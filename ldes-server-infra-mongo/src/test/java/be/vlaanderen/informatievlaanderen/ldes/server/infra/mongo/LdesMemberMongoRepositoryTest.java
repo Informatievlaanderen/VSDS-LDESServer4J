@@ -51,7 +51,7 @@ class LdesMemberMongoRepositoryTest {
         Model ldesMemberModel2 = RDFParserBuilder.create().fromString(String.format("""
                         <http://one.example/subject1> <%s> <http://one.example/object2> .""", TREE_MEMBER)).lang(Lang.NQUADS)
                 .toModel();
-        LdesMember ldesMember2 = new LdesMember("some_id", ldesMemberModel2);
+        LdesMember ldesMember2 = new LdesMember("some_id_2", ldesMemberModel2);
         LdesMemberEntity ldesMemberEntity2 = LdesMemberEntity.fromLdesMember(ldesMember2);
         when(ldesMemberEntityRepository.findAll()).thenReturn(List.of(ldesMemberEntity, ldesMemberEntity2));
 
@@ -69,7 +69,7 @@ class LdesMemberMongoRepositoryTest {
                         """
                                 <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""")
                 .lang(Lang.NQUADS).toModel();
-        LdesMember expectedLdesMember = new LdesMember("some_id", ldesMemberModel);
+        LdesMember expectedLdesMember = new LdesMember(memberId, ldesMemberModel);
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember);
 
         when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));
@@ -102,7 +102,7 @@ class LdesMemberMongoRepositoryTest {
                         """
                                 <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""")
                 .lang(Lang.NQUADS).toModel();
-        LdesMember expectedLdesMember = new LdesMember("some_id", ldesMemberModel);
+        LdesMember expectedLdesMember = new LdesMember(memberId, ldesMemberModel);
         LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedLdesMember);
 
         when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));

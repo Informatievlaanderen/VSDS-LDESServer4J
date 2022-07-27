@@ -25,7 +25,7 @@ class LdesMemberTest {
     @DisplayName("Test correct replacing of TreeMember statement")
     void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("some_id", createModel(ldesMemberString, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", createModel(ldesMemberString, Lang.NQUADS));
 
         ldesMember.removeTreeMember();
         Statement statement = ldesMember.getModel()
@@ -40,8 +40,8 @@ class LdesMemberTest {
     @DisplayName("Verify retrieving of member id from LdesMember")
     void when_TreeMemberStatementIsAvailableInModel_LdesMemberId() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("some_id", createModel(ldesMemberString, Lang.NQUADS));
-        assertEquals("some_id", ldesMember.getLdesMemberId());
+        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", createModel(ldesMemberString, Lang.NQUADS));
+        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", ldesMember.getLdesMemberId());
     }
 
     private Model createModel(final String ldesMember, final Lang lang) {

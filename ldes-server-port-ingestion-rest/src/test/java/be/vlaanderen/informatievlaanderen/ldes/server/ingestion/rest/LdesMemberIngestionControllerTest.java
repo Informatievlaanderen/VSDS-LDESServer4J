@@ -58,7 +58,7 @@ class LdesMemberIngestionControllerTest {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
         Model ldesMemberData = RdfModelConverter.fromString(ldesMemberString, lang);
 
-        when(memberIngestService.addMember(any())).thenReturn(new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, lang)));
+        when(memberIngestService.addMember(any())).thenReturn(new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, lang)));
 
         mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
                 .andDo(print()).andExpect(status().isOk()).andExpect(result -> {

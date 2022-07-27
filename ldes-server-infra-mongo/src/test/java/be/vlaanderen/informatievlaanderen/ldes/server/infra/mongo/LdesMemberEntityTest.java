@@ -60,7 +60,7 @@ class LdesMemberEntityTest {
                 .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.JSONLD11)
                 .toModel();
 
-        return LdesMemberEntity.fromLdesMember(new LdesMember("some_id", outputModel));
+        return LdesMemberEntity.fromLdesMember(new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", outputModel));
     }
 
     private LdesMember readLdesMemberFromFile(ClassLoader classLoader, String fileName)
@@ -71,6 +71,6 @@ class LdesMemberEntityTest {
                 .fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
                 .toModel();
 
-        return new LdesMember("some_id", outputModel);
+        return new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", outputModel);
     }
 }

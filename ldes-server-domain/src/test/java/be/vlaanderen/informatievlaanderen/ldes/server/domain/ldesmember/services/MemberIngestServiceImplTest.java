@@ -58,8 +58,8 @@ class MemberIngestServiceImplTest {
     @DisplayName("Adding Member when there a member with the same id already exists")
     void when_TheMemberAlreadyExists_thenMemberIsReturned() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesMember savedMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember savedMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(savedMember));
 
         LdesMember actualLdesMember = memberIngestService.addMember(ldesMember);
@@ -75,9 +75,9 @@ class MemberIngestServiceImplTest {
     @DisplayName("Adding Member when there is no existing fragment")
     void when_NoFragmentExists_thenFragmentIsCreatedAndMemberIsAdded() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesMember expectedSavedMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment createdFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember expectedSavedMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesFragment createdFragment = new LdesFragment("fragmentId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.empty());
@@ -101,9 +101,9 @@ class MemberIngestServiceImplTest {
     @DisplayName("Adding Member when there is an incomplete fragment")
     void when_AnIncompleteFragmentExists_thenMemberIsAddedToFragment() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesMember expectedSavedMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember expectedSavedMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesFragment existingLdesFragment = new LdesFragment("fragmentId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
         when(ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName()))
                 .thenReturn(Optional.of(existingLdesFragment));
@@ -125,8 +125,8 @@ class MemberIngestServiceImplTest {
     @DisplayName("Adding Member when there is a complete fragment")
     void when_AFullFragmentExists_thenANewFragmentIsCreatedAndMemberIsAddedToNewFragment() throws IOException {
         String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesMember expectedSavedMember = new LdesMember("some_id", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+        LdesMember expectedSavedMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
         LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
         IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
