@@ -30,7 +30,7 @@ public class LdesFragmentController {
     }
 
 
-    @GetMapping(value = "${ldes.collectionname}", produces = {"application/ld+json", "application/n-quads"})
+    @GetMapping(value = "${ldes.collectionname}", produces = {"application/n-quads", "application/ld+json"})
     LdesFragmentView retrieveLdesFragment(HttpServletResponse response, @RequestParam Map<String, String> requestParameters) throws IOException {
         if (requestParameters.isEmpty()) {
             return redirectToInitialFragment(response);
@@ -42,7 +42,6 @@ public class LdesFragmentController {
     private LdesFragmentView redirectToInitialFragment(HttpServletResponse response) throws IOException {
         LdesFragmentView initialFragment = fragmentationService.getInitialFragment(collectionName);
         setCacheControlHeader(response, initialFragment);
-        //TODO
         if (initialFragment.getFragmentId().split(collectionName).length>1)
             response.sendRedirect(
                     initialFragment.getFragmentId().split("http://localhost:8080")[1]);

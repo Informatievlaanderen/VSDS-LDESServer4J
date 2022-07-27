@@ -55,12 +55,12 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     }
 
     private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
-        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
+        completeLdesFragment.addRelation(new TreeRelation(PROV_GENERATED_AT_TIME, newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
         String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
         completeLdesFragment.setImmutable(true);
         ldesFragmentRespository.saveFragment(completeLdesFragment);
         fragmentViewingService.saveImmutableLdesFragment(completeLdesFragment);
-        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), latestGeneratedAtTime, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
+        newFragment.addRelation(new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(), latestGeneratedAtTime, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
     }
 
     private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {

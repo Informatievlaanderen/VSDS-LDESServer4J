@@ -15,8 +15,7 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.RDF_SYNTAX_TYPE;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
 public class LdesFragmentConverterImpl implements LdesFragmentConverter {
@@ -84,7 +83,7 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
         List<Statement> statements = new ArrayList<>();
         Resource treeRelationNode = createResource();
         statements.add(createStatement(currrentFragmentId, TREE_RELATION, treeRelationNode));
-        statements.add(createStatement(treeRelationNode, TREE_VALUE, createResource(treeRelation.getTreeValue())));
+        statements.add(createStatement(treeRelationNode, TREE_VALUE, createStringLiteral(treeRelation.getTreeValue())));
         statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
         statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
         statements

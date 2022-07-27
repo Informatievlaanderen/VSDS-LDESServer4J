@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentview.entities.LdesFragmentView;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -17,8 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import static org.apache.jena.riot.RDFFormat.JSONLD11;
-import static org.apache.jena.riot.RDFFormat.NQUADS;
+import static org.apache.jena.riot.RDFFormat.*;
 
 public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragmentView> {
 
@@ -35,12 +34,12 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
     @Override
     public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-        return clazz.isAssignableFrom(LdesFragment.class);
+        return clazz.isAssignableFrom(LdesFragmentView.class);
     }
 
     @Override
     public List<MediaType> getSupportedMediaTypes() {
-        return List.of(new MediaType("application/ld+json"), new MediaType("application/n-quads"));
+        return List.of(new MediaType("application/n-quads"), new MediaType("application/ld+json"));
     }
 
     @Override
@@ -52,9 +51,21 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
     @Override
     public void write(LdesFragmentView ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
-
+        RDFFormat rdfFormat = getRdfFormat(contentType);
         OutputStream body = outputMessage.getBody();
-        body.write(ldesFragment.getContent().getBytes());
+        if(contentType.toString().equals("application/n-quads"))
+            body.write(ldesFragment.getContent().getBytes());
+        else {
+            long start = System.currentTimeMillis();
+            Model model = RdfModelConverter.fromString(ldesFragment.getContent(), Lang.NQUADS);
+            long finish = System.currentTimeMillis();
+            System.out.println("Processed in\t"+(finish - start)/1000.+"\tseconds.");
+            start = System.currentTimeMillis();
+            String s = RdfModelConverter.toString(model, rdfFormat);
+            finish = System.currentTimeMillis();
+            System.out.println("Processed in\t"+(finish - start)/1000.+"\tseconds.");
+            body.write(s.getBytes());
+        }
     }
 
     private RDFFormat getRdfFormat(MediaType contentType) {
