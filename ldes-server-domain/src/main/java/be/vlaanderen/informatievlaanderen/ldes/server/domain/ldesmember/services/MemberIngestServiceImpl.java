@@ -9,6 +9,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.reposito
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
 public class MemberIngestServiceImpl implements MemberIngestService {
@@ -18,6 +21,8 @@ public class MemberIngestServiceImpl implements MemberIngestService {
     private final LdesFragmentRespository ldesFragmentRespository;
 
     private final FragmentCreator fragmentCreator;
+    private LinkedBlockingQueue<LdesMember> linkedBlockingQueue = new LinkedBlockingQueue<>();
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public MemberIngestServiceImpl(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository, LdesFragmentRespository ldesFragmentRespository, FragmentCreator fragmentCreator) {
         this.ldesConfig = ldesConfig;
@@ -27,7 +32,13 @@ public class MemberIngestServiceImpl implements MemberIngestService {
     }
 
     @Override
-    public LdesMember addMember(LdesMember ldesMember) {
+    public void addMember(LdesMember ldesMember) {
+        linkedBlockingQueue.add(ldesMember);
+        System.out.println(linkedBlockingQueue.size());
+        executorService.submit(()->getLdesMember(linkedBlockingQueue.poll()));
+    }
+
+    private LdesMember getLdesMember(LdesMember ldesMember) {
         Optional<LdesMember> optionalLdesMember = ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId());
         return optionalLdesMember.orElseGet(() -> addMemberToFragmentAndStore(ldesMember));
     }
