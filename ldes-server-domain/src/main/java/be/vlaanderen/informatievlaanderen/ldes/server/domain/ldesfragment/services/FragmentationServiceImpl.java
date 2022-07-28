@@ -1,42 +1,47 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.MemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Optional;
 
 @Component
-public class FragmentationServiceImpl implements FragmentationService {
+public class FragmentationServiceImpl implements FragmentationService{
 
     private final LdesConfig ldesConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
+    private final FragmentCreator fragmentCreator;
+    private final LdesMemberRepository ldesMemberRepository;
 
-    public FragmentationServiceImpl(LdesConfig ldesConfig,
-                                    LdesFragmentRespository ldesFragmentRespository) {
+    public FragmentationServiceImpl(LdesConfig ldesConfig, LdesFragmentRespository ldesFragmentRespository, FragmentCreator fragmentCreator, LdesMemberRepository ldesMemberRepository) {
         this.ldesConfig = ldesConfig;
         this.ldesFragmentRespository = ldesFragmentRespository;
+        this.fragmentCreator = fragmentCreator;
+        this.ldesMemberRepository = ldesMemberRepository;
     }
 
-    @Override
-    public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
-        return ldesFragmentRespository.retrieveFragment(ldesFragmentRequest)
-                .orElseGet(()-> createEmptyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
+    public void addMemberToFragment(String ldesMemberId){
+        LdesMember ldesMember=ldesMemberRepository.getLdesMemberById(ldesMemberId).orElseThrow(()->new MemberNotFoundException(ldesMemberId));
+        LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
+        ldesFragment.addMember(ldesMember.getLdesMemberId());
+        ldesFragmentRespository.saveFragment(ldesFragment);
     }
 
-    @Override
-    public LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest) {
-       return ldesFragmentRespository.retrieveInitialFragment(ldesFragmentRequest.collectionName())
-                .orElseGet(()-> createEmptyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs()));
 
-    }
-
-    private LdesFragment createEmptyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
-        return LdesFragment.newFragment(ldesConfig.getHostName(),
-                new FragmentInfo(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName(), ldesConfig.getShape(), collectionName, fragmentationMap));
+    private LdesFragment retrieveLastFragmentOrCreateNewFragment(LdesMember ldesMember) {
+        return ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName())
+                .map(fragment -> {
+                    if (fragmentCreator.needsToCreateNewFragment(fragment)) {
+                        return fragmentCreator.createNewFragment(Optional.of(fragment), ldesMember);
+                    } else {
+                        return fragment;
+                    }
+                })
+                .orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), ldesMember));
     }
 }
