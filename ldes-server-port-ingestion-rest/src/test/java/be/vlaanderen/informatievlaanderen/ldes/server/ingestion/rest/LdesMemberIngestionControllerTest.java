@@ -2,13 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFFormat;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -33,7 +30,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,19 +52,11 @@ class LdesMemberIngestionControllerTest {
 
     @ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
     @ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
-    void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, RDFFormat rdfFormat, Lang lang) throws Exception {
+    void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, RDFFormat rdfFormat) throws Exception {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
-        Model ldesMemberData = RdfModelConverter.fromString(ldesMemberString, lang);
-
-        when(memberIngestService.addMember(any())).thenReturn(new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, lang)));
 
         mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
-                .andDo(print()).andExpect(status().isOk()).andExpect(result -> {
-                    Model responseModel = RDFParserBuilder.create()
-                            .fromString(result.getResponse().getContentAsString()).lang(lang).toModel();
-
-                    responseModel.isIsomorphicWith(ldesMemberData);
-                });
+                .andDo(print()).andExpect(status().isOk());
         verify(memberIngestService, times(1)).addMember(any());
     }
 
@@ -92,8 +82,8 @@ class LdesMemberIngestionControllerTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
-                    Arguments.of("application/n-quads", RDFFormat.NQUADS, Lang.NQUADS),
-                    Arguments.of("application/n-triples", RDFFormat.NTRIPLES, Lang.NTRIPLES)
+                    Arguments.of("application/n-quads", RDFFormat.NQUADS),
+                    Arguments.of("application/n-triples", RDFFormat.NTRIPLES)
             );
         }
     }

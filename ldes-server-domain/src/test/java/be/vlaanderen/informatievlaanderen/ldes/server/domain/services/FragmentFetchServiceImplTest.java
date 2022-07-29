@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(classes = {LdesConfig.class})
 @EnableConfigurationProperties
 @ActiveProfiles("test")
-class FragmentationServiceImplTest {
+class FragmentFetchServiceImplTest {
     private static final String VIEW_SHORTNAME = "exampleData";
     private static final String VIEW = "http://localhost:8089/exampleData";
     private static final String SHAPE = "http://localhost:8089/exampleData/shape";
@@ -44,18 +44,18 @@ class FragmentationServiceImplTest {
 
     private final LdesFragmentRespository ldesFragmentRespository = mock(LdesFragmentRespository.class);
 
-    private FragmentationService fragmentationService;
+    private FragmentFetchService fragmentFetchService;
 
     @BeforeEach
     void setUp() {
-        fragmentationService = new FragmentationServiceImpl(ldesConfig, ldesFragmentRespository);
+        fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig, ldesFragmentRespository);
     }
 
     @Test
     void when_retrieveInitialFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
         when(ldesFragmentRespository.retrieveInitialFragment(VIEW_SHORTNAME)).thenReturn(Optional.empty());
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
-        LdesFragment returnedFragment = fragmentationService.getInitialFragment(ldesFragmentRequest);
+        LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
 
         assertEquals(0, returnedFragment.getMemberIds().size());
         assertNull(returnedFragment.getFragmentInfo().getValue());
@@ -72,7 +72,7 @@ class FragmentationServiceImplTest {
                 .thenReturn(Optional.of(ldesFragment));
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
 
-        LdesFragment returnedFragment = fragmentationService.getInitialFragment(ldesFragmentRequest);
+        LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
 
         assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
@@ -85,7 +85,7 @@ class FragmentationServiceImplTest {
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of(new FragmentPair(PATH, FRAGMENTATION_VALUE_1)));
         when(ldesFragmentRespository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
 
-        LdesFragment returnedFragment = fragmentationService.getFragment(ldesFragmentRequest);
+        LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 
         assertEquals(0, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
@@ -101,7 +101,7 @@ class FragmentationServiceImplTest {
         when(ldesFragmentRespository.retrieveFragment(ldesFragmentRequest))
                 .thenReturn(Optional.of(ldesFragment));
 
-        LdesFragment returnedFragment = fragmentationService.getFragment(ldesFragmentRequest);
+        LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 
         assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());

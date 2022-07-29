@@ -49,6 +49,7 @@
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.12</byte-buddy.version>
  		<de.flapdoodle.embed.mongo.version>3.4.8</de.flapdoodle.embed.mongo.version>
+		<awaitability.version>3.0.0</awaitability.version>
 
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.1</depencency-check-maven.version>
@@ -142,6 +143,12 @@
 				<groupId>de.flapdoodle.embed</groupId>
 				<artifactId>de.flapdoodle.embed.mongo</artifactId>
 				<version>${de.flapdoodle.embed.mongo.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitability.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>

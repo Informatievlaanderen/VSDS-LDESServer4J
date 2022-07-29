@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.stereotype.Component;
@@ -13,43 +10,26 @@ import java.util.Optional;
 @Component
 public class MemberIngestServiceImpl implements MemberIngestService {
 
-    private final LdesConfig ldesConfig;
     private final LdesMemberRepository ldesMemberRepository;
-    private final LdesFragmentRespository ldesFragmentRespository;
 
-    private final FragmentCreator fragmentCreator;
+    private final FragmentationQueueMediator fragmentationQueueMediator;
 
-    public MemberIngestServiceImpl(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository, LdesFragmentRespository ldesFragmentRespository, FragmentCreator fragmentCreator) {
-        this.ldesConfig = ldesConfig;
+    public MemberIngestServiceImpl(LdesMemberRepository ldesMemberRepository, FragmentationQueueMediator fragmentationQueueMediator) {
         this.ldesMemberRepository = ldesMemberRepository;
-        this.ldesFragmentRespository = ldesFragmentRespository;
-        this.fragmentCreator = fragmentCreator;
+        this.fragmentationQueueMediator = fragmentationQueueMediator;
     }
 
     @Override
-    public LdesMember addMember(LdesMember ldesMember) {
+    public void addMember(LdesMember ldesMember) {
         Optional<LdesMember> optionalLdesMember = ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId());
-        return optionalLdesMember.orElseGet(() -> addMemberToFragmentAndStore(ldesMember));
+        LdesMember savedLdesMember = optionalLdesMember.orElseGet(() -> storeLdesMember(ldesMember));
+        fragmentationQueueMediator.addLdesMember(savedLdesMember.getLdesMemberId());
     }
 
-    private LdesMember addMemberToFragmentAndStore(LdesMember ldesMember) {
+    private LdesMember storeLdesMember(LdesMember ldesMember) {
         ldesMember.removeTreeMember();
-        LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
-        ldesFragment.addMember(ldesMember.getLdesMemberId());
-        ldesFragmentRespository.saveFragment(ldesFragment);
         return ldesMemberRepository.saveLdesMember(ldesMember);
     }
 
 
-    private LdesFragment retrieveLastFragmentOrCreateNewFragment(LdesMember ldesMember) {
-        return ldesFragmentRespository.retrieveOpenFragment(ldesConfig.getCollectionName())
-                .map(fragment -> {
-                    if (fragmentCreator.needsToCreateNewFragment(fragment)) {
-                        return fragmentCreator.createNewFragment(Optional.of(fragment), ldesMember);
-                    } else {
-                        return fragment;
-                    }
-                })
-                .orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), ldesMember));
-    }
 }
