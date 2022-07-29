@@ -60,7 +60,7 @@ class FragmentationServiceImplTest {
     void when_MemberIsNotFoundInRepository_thenMemberNotFoundExceptionIsThrown() {
         MemberNotFoundException memberNotFoundException = assertThrows(MemberNotFoundException.class, () -> fragmentationService.addMemberToFragment("nonExistingMember"));
 
-        assertEquals("Member with id nonExistingMember not found in repository",memberNotFoundException.getMessage());
+        assertEquals("Member with id nonExistingMember not found in repository", memberNotFoundException.getMessage());
     }
 
     @Test

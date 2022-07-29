@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class FragmentationServiceImpl implements FragmentationService{
+public class FragmentationServiceImpl implements FragmentationService {
 
     private final LdesConfig ldesConfig;
     private final LdesFragmentRespository ldesFragmentRespository;
@@ -25,8 +25,8 @@ public class FragmentationServiceImpl implements FragmentationService{
         this.ldesMemberRepository = ldesMemberRepository;
     }
 
-    public void addMemberToFragment(String ldesMemberId){
-        LdesMember ldesMember=ldesMemberRepository.getLdesMemberById(ldesMemberId).orElseThrow(()->new MemberNotFoundException(ldesMemberId));
+    public void addMemberToFragment(String ldesMemberId) {
+        LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId).orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
         LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
         ldesFragment.addMember(ldesMember.getLdesMemberId());
         ldesFragmentRespository.saveFragment(ldesFragment);

@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
-public class FragmentationQueueMediatorImpl implements FragmentationQueueMediator{
+public class FragmentationQueueMediatorImpl implements FragmentationQueueMediator {
 
     private final Logger logger = LoggerFactory.getLogger(FragmentationQueueMediatorImpl.class);
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -22,17 +22,17 @@ public class FragmentationQueueMediatorImpl implements FragmentationQueueMediato
         this.fragmentationService = fragmentationService;
     }
 
-    public void addLdesMember(String memberId){
+    public void addLdesMember(String memberId) {
         ldesMembersToFragment.add(memberId);
-        executorService.submit(()->fragmentationService.addMemberToFragment(ldesMembersToFragment.poll()));
+        executorService.submit(() -> fragmentationService.addMemberToFragment(ldesMembersToFragment.poll()));
     }
 
-    public boolean queueIsEmtpy(){
+    public boolean queueIsEmtpy() {
         return ldesMembersToFragment.isEmpty();
     }
 
     @Scheduled(fixedDelay = 60000)
     private void reportWaitingMembers() {
-       logger.info("Number of Members queued for fragmentation:\t {}", ldesMembersToFragment.size());
+        logger.info("Number of Members queued for fragmentation:\t {}", ldesMembersToFragment.size());
     }
 }
