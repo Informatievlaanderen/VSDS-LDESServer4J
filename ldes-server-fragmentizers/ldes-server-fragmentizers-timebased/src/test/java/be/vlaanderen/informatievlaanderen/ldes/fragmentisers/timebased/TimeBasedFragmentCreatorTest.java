@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation;
+package be.vlaanderen.informatievlaanderen.ldes.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
@@ -25,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
-    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
-    private FragmentCreator fragmentCreator;
+    
+	private FragmentCreator fragmentCreator;
     private LdesFragmentRespository ldesFragmentRespository;
     private LdesMemberRepository ldesMemberRepository;
 
