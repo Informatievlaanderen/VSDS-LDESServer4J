@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+be.vlaanderen.informatievlaanderen.ldes.fragmentisers.SequentialFragmentationServiceAutoConfiguration

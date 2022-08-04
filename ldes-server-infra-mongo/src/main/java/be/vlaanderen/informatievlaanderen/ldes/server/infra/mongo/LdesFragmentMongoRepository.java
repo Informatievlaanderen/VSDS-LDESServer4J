@@ -1,15 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRespository;
+import java.util.Comparator;
+import java.util.Optional;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 
-import java.util.Comparator;
-import java.util.Optional;
+public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
-public class LdesFragmentMongoRepository implements LdesFragmentRespository {
     private final LdesFragmentEntityRepository repository;
 
     public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {

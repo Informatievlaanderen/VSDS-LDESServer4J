@@ -25,6 +25,7 @@ The LDES server was built in the context of the [VSDS project](https://vlaamseov
       - [Unit and integration tests](#unit-and-integration-tests)
       - [Only unit tests](#only-unit-tests)
       - [Only integration tests](#only-integration-tests)
+    + [Auto-configurable modules](#auto-configurable-modules)
 
 ## Set-up of the LDES Server
 
@@ -151,3 +152,12 @@ For running the integration tests of the project, execute the following command
 ```
 mvn clean verify -Dunittestskip=true
 ```
+
+#### Auto-configurable modules
+
+- ldes-server-infra-mongo
+- ldes-server-port-ingestion-rest
+- ldes-server-port-publication-rest
+- ldes-fragmentisers-impl
+- ldes-fragmentisers-sequential-timebased
+- ldes-fragmentisers-sequential-geospatial
