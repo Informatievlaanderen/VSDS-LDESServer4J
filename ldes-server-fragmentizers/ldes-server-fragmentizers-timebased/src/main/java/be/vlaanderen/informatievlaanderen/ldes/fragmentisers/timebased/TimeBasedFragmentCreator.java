@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.timebasedfragmentation;
+package be.vlaanderen.informatievlaanderen.ldes.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.FragmentInfo;
@@ -31,10 +31,10 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
     private final LdesFragmentRespository ldesFragmentRespository;
     private final LdesMemberRepository ldesMemberRepository;
 
-    public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimeBasedConfig timeBasedConfig, LdesFragmentRespository ldesFragmentRespository, LdesMemberRepository ldesMemberRepository) {
+    public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimeBasedConfig timeBasedConfig, LdesFragmentRespository ldesFragmentRepository, LdesMemberRepository ldesMemberRepository) {
         this.ldesConfig = ldesConfig;
         this.timeBasedConfig = timeBasedConfig;
-        this.ldesFragmentRespository = ldesFragmentRespository;
+        this.ldesFragmentRespository = ldesFragmentRepository;
         this.ldesMemberRepository = ldesMemberRepository;
     }
 

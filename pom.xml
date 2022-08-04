@@ -15,6 +15,7 @@
         <module>ldes-server-port-publication-rest</module>
         <module>ldes-server-application</module>
         <module>ldes-server-port-ingestion-rest</module>
+        <module>ldes-server-fragmentizers</module>
     </modules>
 	
     <properties>
@@ -103,6 +104,14 @@
 				<artifactId>jena-arq</artifactId>
 				<version>${apache-jena.version}</version>
 			</dependency>
+			
+			<!-- Concurrency -->
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitability.version}</version>
+				<scope>test</scope>
+			</dependency>
 
 			<!-- TESTING -->
 			<dependency>
@@ -143,12 +152,6 @@
 				<groupId>de.flapdoodle.embed</groupId>
 				<artifactId>de.flapdoodle.embed.mongo</artifactId>
 				<version>${de.flapdoodle.embed.mongo.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.awaitility</groupId>
-				<artifactId>awaitility</artifactId>
-				<version>${awaitability.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
