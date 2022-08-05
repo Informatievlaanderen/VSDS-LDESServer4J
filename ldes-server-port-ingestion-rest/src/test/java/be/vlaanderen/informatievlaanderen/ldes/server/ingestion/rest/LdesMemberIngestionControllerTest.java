@@ -52,7 +52,7 @@ class LdesMemberIngestionControllerTest {
 
     @ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
     @ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
-    void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, RDFFormat rdfFormat) throws Exception {
+    void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
         String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
 
         mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
@@ -63,7 +63,7 @@ class LdesMemberIngestionControllerTest {
     @Test
     @DisplayName("Requesting using another collection name returns 404")
     void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404() throws Exception {
-        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", RDFFormat.NQUADS);
+        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
 
         mockMvc.perform(post("/another-collection-name")
                         .contentType("application/n-quads")
@@ -71,7 +71,7 @@ class LdesMemberIngestionControllerTest {
                 .andDo(print()).andExpect(status().isNotFound());
     }
 
-    private String readLdesMemberDataFromFile(String fileName, RDFFormat rdfFormat) throws URISyntaxException, IOException {
+    private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat) throws URISyntaxException, IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
         String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
@@ -82,8 +82,8 @@ class LdesMemberIngestionControllerTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
-                    Arguments.of("application/n-quads", RDFFormat.NQUADS),
-                    Arguments.of("application/n-triples", RDFFormat.NTRIPLES)
+                    Arguments.of("application/n-quads", Lang.NQUADS),
+                    Arguments.of("application/n-triples", Lang.NTRIPLES)
             );
         }
     }

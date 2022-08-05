@@ -1,17 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.fragmentisers.sequential;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Component;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.MemberNotFoundException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class SequentialFragmentationService implements FragmentationService {
