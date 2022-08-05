@@ -13,75 +13,82 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasspathResource("features")
 public class GeospatialStepDefinitions {
 
-    // WHEN
+    private GeospatialBucketiser geospatialBucketiser;
+    private final GeospatialConfig geospatialConfig = new GeospatialConfig();
 
-    @When("^I configure it to calculate buckets based on property A$")
-    public void iConfigureItToCalculateBucketsBasedOnPropertyA() {
+    // GIVEN
+
+    @Given("a configured geo-spatial bucketising property {string}")
+    public void aConfiguredGeoSpatialBucketisingProperty(String propertyToBucketiseOn) {
+        geospatialConfig.setBucketiserProperty(propertyToBucketiseOn);
     }
 
-    @When("^a member contains a polygon spanning multiple tiles$")
+    @Given("a configured max zoom level at {int}")
+    public void aConfiguredMaxZoomLevelAt(int maxZoomLevel) {
+        geospatialConfig.setMaxZoomLevel(maxZoomLevel);
+    }
+
+    @Given("a configured member limit of {long} per fragment")
+    public void aConfiguredMemberLimitOfPerFragment(long memberLimit) {
+        geospatialConfig.setMemberLimit(memberLimit);
+    }
+
+    @Given("a geo-spatial bucketiser with the defined configuration")
+    public void aGeoSpatialBucketiserWithTheDefinedConfiguration() {
+        geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
+    }
+
+
+    @When("I bucketise a member {string}")
+    public void iBucketiseAMember(String arg0) {
+        
+    }
+
+    @Then("the bucketiser calculates a bucket based on {string}")
+    public void theBucketiserCalculatesABucketBasedOn(String arg0) {
+        
+    }
+
+    @When("a member contains a polygon spanning multiple tiles")
     public void aMemberContainsAPolygonSpanningMultipleTiles() {
+        
     }
 
-    @When("^it bucketizes$")
-    public void itBucketizes() {
-    }
-
-    @And("^I bucketize a member containing geographic properties A and B$")
-    public void iBucketizeAMemberContainingGeographicPropertiesAAndB() {
-    }
-
-    @Then("^the geo-spatial bucketizer calculates buckets based on property A$")
-    public void theGeoSpatialBucketizerCalculatesBucketsBasedOnPropertyA() {
-    }
-
-    @Given("^a geo-spatial bucketizer$")
-    public void aGeoSpatialBucketizer() {
-    }
-
-    @When("^I configure it to store (\\d+) members per fragment")
-    public void iConfigureItToStoreCountMembersPerFragment(int memberLimit) {
-    }
-
-    @When("^i configure the max zoom level at (\\d+)")
-    public void iConfigureTheMaxZoomLevelAtMaxZoomLevel(int maxZoomLevel) {
-    }
-
-    @When("^I bucketize a member at the boundingbox of zoom level (\\d+)")
-    public void iBucketizeAMemberAtTheBoundingboxOfZoomLevelHigherMemberZoomLevel(int higherMemberZoomLevel) {
-    }
-
-    // THEN
-
-    @Then("^the member buckets contain all these tiles\\.$")
+    @Then("the member buckets contain all these tiles.")
     public void theMemberBucketsContainAllTheseTiles() {
+        
     }
 
-    @Then("^it does not store the buckets$")
+    @Then("it does not store the buckets")
     public void itDoesNotStoreTheBuckets() {
     }
 
-    @Then("^I expect (\\d+) fragments to be created$")
-    public void iExpectFragmentsToBeCreated(int fragmentsCount) {
+
+    @Then("I expect {int} fragments to be created")
+    public void iExpectFragmentsToBeCreated(int arg0) {
+        
     }
 
-    @Then("^I expect following fragments \\((\\d+) root, (\\d+) tile, (\\d+) membersFragment\\)$")
-    public void iExpectFollowingFragmentsRootTileMembersFragment(int arg0, int arg1, int arg2) {
+    @And("first member fragment has {int} members")
+    public void firstMemberFragmentHasCountMembers(int memberCount) {
+        
     }
 
-    @And("^the second member fragment has (\\d+) members$")
+
+    @And("the second member fragment has {int} members")
     public void theSecondMemberFragmentHasMemberResidueMembers(int memberCount) {
     }
 
-    @And("^I pass it (\\d+) members belonging to the same tile")
-    public void iPassItMemberAmountMembersBelongingToTheSameTile(int memberAmount) {
+    @Then("I expect {long} root fragments, {long} tile fragments and {long} memberFragments")
+    public void iExpectRootCountRootFragmentsTileCountTileFragmentsAndMemberFragmentCountMemberFragments(long rootCount, long tileCount, long memberFragmentCount) {
+        
     }
 
-    @And("^first member fragment has (\\d+) members")
-    public void firstMemberFragmentHasCountMembers(int memberCount) {
+    @And("I expect the member to appear in all member fragments")
+    public void iExpectTheMemberToAppearInAllMemberFragments() {
     }
 
-    @And("^the second member fragment has (\\d+) member")
-    public void theSecondMemberFragmentHasMemberResidueMember(int memberResidue) {
+    @And("the fragments contain {long} members")
+    public void theFragmentsContainMaxMemberCountMembers(long memberCount) {
     }
 }
