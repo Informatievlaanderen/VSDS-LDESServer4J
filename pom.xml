@@ -15,7 +15,7 @@
         <module>ldes-server-port-publication-rest</module>
         <module>ldes-server-application</module>
         <module>ldes-server-port-ingestion-rest</module>
-        <module>ldes-server-fragmentizers</module>
+        <module>ldes-fragmentisers</module>
     </modules>
 	
     <properties>
@@ -44,13 +44,15 @@
 
 		<!-- TESTING -->
 		<junit.version>4.13.2</junit.version>
+		<junit-platform-suite.version>1.8.2</junit-platform-suite.version>
 		<junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
 		<jupiter.version>5.9.0</jupiter.version>
 		<mockito.version>4.6.1</mockito.version>
+		<cucumber.version>7.5.0</cucumber.version>
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.12</byte-buddy.version>
  		<de.flapdoodle.embed.mongo.version>3.4.8</de.flapdoodle.embed.mongo.version>
-		<awaitability.version>3.0.0</awaitability.version>
+		<awaitility.version>3.0.0</awaitility.version>
 
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.1</depencency-check-maven.version>
@@ -83,6 +85,11 @@
 				<artifactId>ldes-server-domain</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+	    	<dependency>
+	    		<groupId>${project.groupId}</groupId>
+	    		<artifactId>ldes-fragmentisers-impl</artifactId>
+	    		<version>${project.version}</version>
+	    	</dependency>
 
 	    	<!-- SPRING BOOT -->
 			<dependency>
@@ -104,13 +111,10 @@
 				<artifactId>jena-arq</artifactId>
 				<version>${apache-jena.version}</version>
 			</dependency>
-			
-			<!-- Concurrency -->
 			<dependency>
-				<groupId>org.awaitility</groupId>
-				<artifactId>awaitility</artifactId>
-				<version>${awaitability.version}</version>
-				<scope>test</scope>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-geosparql</artifactId>
+				<version>${apache-jena.version}</version>
 			</dependency>
 
 			<!-- TESTING -->
@@ -152,6 +156,30 @@
 				<groupId>de.flapdoodle.embed</groupId>
 				<artifactId>de.flapdoodle.embed.mongo</artifactId>
 				<version>${de.flapdoodle.embed.mongo.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.awaitility</groupId>
+				<artifactId>awaitility</artifactId>
+				<version>${awaitility.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.cucumber</groupId>
+				<artifactId>cucumber-java</artifactId>
+				<version>${cucumber.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.cucumber</groupId>
+				<artifactId>cucumber-junit-platform-engine</artifactId>
+				<version>${cucumber.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-suite</artifactId>
+				<version>${junit-platform-suite.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -261,6 +289,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skip>${unittestskip}</skip>
+					<properties>
+						<configurationParameters>
+							cucumber.junit-platform.naming-strategy=long
+						</configurationParameters>
+					</properties>
 				</configuration>
 			</plugin>
 			<plugin>
