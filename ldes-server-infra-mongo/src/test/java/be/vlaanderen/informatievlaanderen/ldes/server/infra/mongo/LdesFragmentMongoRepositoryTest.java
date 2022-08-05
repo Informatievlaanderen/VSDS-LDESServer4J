@@ -62,6 +62,17 @@ class LdesFragmentMongoRepositoryTest {
         assertEquals(expectedFragmentId, view.get().getFragmentId());
     }
 
+    @Test
+    void when_RetrieveAllFragments_AllFragmentsAreReturned() {
+        List<LdesFragmentEntity> ldesFragmentEntities = allMutable();
+        when(ldesFragmentEntityRepository.findAll()).thenReturn(ldesFragmentEntities);
+
+        List<LdesFragment> ldesFragments = ldesFragmentMongoRepository.retrieveAllFragments();
+
+        assertEquals(ldesFragmentEntities.size(), ldesFragments.size());
+        assertEquals(ldesFragmentEntities.stream().map(LdesFragmentEntity::getId).collect(Collectors.toList()), ldesFragments.stream().map(LdesFragment::getFragmentId).collect(Collectors.toList()));
+    }
+
 
     static class LdesFragmentEntityListProvider implements ArgumentsProvider {
 

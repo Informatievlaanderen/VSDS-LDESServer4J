@@ -22,12 +22,6 @@
     </properties>
 
     <dependencies>
-		<!-- VSDS -->
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>ldes-server-domain</artifactId>
-		</dependency>
-		
 		<!-- Jena -->
 		<dependency>
 			<groupId>org.apache.jena</groupId>

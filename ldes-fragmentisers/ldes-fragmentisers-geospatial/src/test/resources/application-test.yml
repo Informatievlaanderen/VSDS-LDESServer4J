@@ -1,0 +1,4 @@
+geospatial:
+  zoomLevel: 15
+  bucketiserproperty: "http://www.opengis.net/ont/geosparql#asWKT"
+  projection: "lambert72"

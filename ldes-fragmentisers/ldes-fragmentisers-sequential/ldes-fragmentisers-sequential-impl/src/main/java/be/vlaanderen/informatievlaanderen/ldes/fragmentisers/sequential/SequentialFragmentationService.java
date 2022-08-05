@@ -8,11 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
 public class SequentialFragmentationService implements FragmentationService {
 
     protected final LdesConfig ldesConfig;
@@ -29,21 +27,21 @@ public class SequentialFragmentationService implements FragmentationService {
 
     public void addMemberToFragment(String ldesMemberId) {
         LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId).orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
-        LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(ldesMember);
+        LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment();
         ldesFragment.addMember(ldesMember.getLdesMemberId());
         ldesFragmentRepository.saveFragment(ldesFragment);
     }
 
 
-    private LdesFragment retrieveLastFragmentOrCreateNewFragment(LdesMember ldesMember) {
+    private LdesFragment retrieveLastFragmentOrCreateNewFragment() {
         return ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName())
                 .map(fragment -> {
                     if (fragmentCreator.needsToCreateNewFragment(fragment)) {
-                        return fragmentCreator.createNewFragment(Optional.of(fragment), ldesMember);
+                        return fragmentCreator.createNewFragment(Optional.of(fragment), null);
                     } else {
                         return fragment;
                     }
                 })
-                .orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), ldesMember));
+                .orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), null));
     }
 }

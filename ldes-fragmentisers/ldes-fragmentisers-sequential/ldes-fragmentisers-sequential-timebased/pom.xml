@@ -18,9 +18,5 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>ldes-fragmentisers-sequential-impl</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>ldes-server-domain</artifactId>
-		</dependency>
 	</dependencies>
 </project>

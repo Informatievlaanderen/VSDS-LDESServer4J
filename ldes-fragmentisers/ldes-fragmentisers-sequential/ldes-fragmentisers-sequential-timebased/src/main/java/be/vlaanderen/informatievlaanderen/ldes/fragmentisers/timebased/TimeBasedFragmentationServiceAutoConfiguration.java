@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.fragmentisers.timebased;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import be.vlaanderen.informatievlaanderen.ldes.fragmentisers.sequential.SequentialFragmentationService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,31 +18,31 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 
 @Configuration
-@ConditionalOnClass(FragmentationService.class)
+@ConditionalOnProperty(
+        value = "fragmentation.type",
+        havingValue = "timebased",
+        matchIfMissing = true)
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes")
 public class TimeBasedFragmentationServiceAutoConfiguration {
 
-	@Bean
-	@ConditionalOnMissingBean(LdesFragmentNamingStrategy.class)
-	public LdesFragmentNamingStrategy fragmentNamingStrategy() {
-		return new TimeBasedFragmentNamingStrategy();
-	}
-	
-	@Bean
-	@ConditionalOnMissingBean(FragmentCreator.class)
-	public FragmentCreator fragmentCreator(LdesConfig ldesConfig, SequentialFragmentationConfig sequentialFragmentationConfig,
-		LdesFragmentNamingStrategy fragmentNamingStrategy, LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository) {
-		return new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, fragmentNamingStrategy, ldesMemberRepository, ldesFragmentRepository);
-	}
-	
-	@Bean
-	@ConditionalOnMissingBean(FragmentationService.class)
-	public FragmentationService timebasedFragmentationService(LdesConfig ldesConfig, SequentialFragmentationConfig sequentialFragmentationConfig,
-			LdesFragmentNamingStrategy fragmentNamingStrategy,
-			LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository) {
-		FragmentCreator fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, fragmentNamingStrategy, ldesMemberRepository, ldesFragmentRepository);
-				
-		return new TimeBasedFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository, ldesFragmentRepository);
-	}
+    @Bean
+    @ConditionalOnMissingBean(LdesFragmentNamingStrategy.class)
+    public LdesFragmentNamingStrategy fragmentNamingStrategy() {
+        return new TimeBasedFragmentNamingStrategy();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(FragmentCreator.class)
+    public FragmentCreator fragmentCreator(LdesConfig ldesConfig, SequentialFragmentationConfig sequentialFragmentationConfig,
+                                           LdesFragmentNamingStrategy fragmentNamingStrategy, LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository) {
+        return new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, fragmentNamingStrategy, ldesMemberRepository, ldesFragmentRepository);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(FragmentationService.class)
+    public FragmentationService sequentialFragmentationService(LdesConfig ldesConfig,
+                                                               LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator) {
+        return new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository, ldesFragmentRepository);
+    }
 }
