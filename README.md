@@ -34,13 +34,13 @@ The current implementation consists of 5 modules:
 - ldes-server-domain which contains the domain logic of the ldes server
 - ldes-server-infra-mongo which allows to store ldes members and fragments in a mongoDB
 - ldes-server-port-ingestion-rest which allows to ingest ldes members via http
-- ldes-server-port-publication-rest which allows to retrieve fragments via http
+- ldes-server-port-fetch-rest which allows to retrieve fragments via http
 
-The modules ldes-server-infra-mongo, ldes-server-port-ingestion-rest and ldes-server-port-publication-rest are built so that they can be replaced by other implementations without the need for code changes in ldes-server-domain.
+The modules ldes-server-infra-mongo, ldes-server-port-ingestion-rest and ldes-server-port-fetch-rest are built so that they can be replaced by other implementations without the need for code changes in ldes-server-domain.
 
 ## How to run
-We'll show you how to set up your own LDES Server both locally and via Docker using a mongo db for storage and a rest endpoint for ingestion and publication.
-Afterwards, you can change storage, ingestion and publication options by plugging in other components.
+We'll show you how to set up your own LDES Server both locally and via Docker using a mongo db for storage and a rest endpoint for ingestion and fetch.
+Afterwards, you can change storage, ingestion and fetch options by plugging in other components.
 
 ### Locally
 
@@ -65,17 +65,17 @@ This will start an empty LDES Server. To enrich this server, certain maven profi
 
 #### Profiles
 
-| Profile Group                              	| Profile name  	| Description                                                     	| Parameters 	                                                                    | Further info                                                                                                                        	|
-|--------------------------------------------	|---------------	|-----------------------------------------------------------------	|---------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------	|
-| **Http Endpoints (Publication/Ingestion)** 	| http-ingest   	| Enables a http endpoint for to insert LDES members.             	| [Http configuration](#example-http-ingest--publication-configuration)          	 | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" 	|
-| **Http Endpoints (Publication/Ingestion)** 	| http-publish  	| Enables a http endpoint to retrieve LDES fragments              	| [Http configuration](#example-http-ingest--publication-configuration)	          | Endpoint:<br>- URL: /{ldes.collection-name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"    	|
-| **Storage**                                	| storage-mongo 	| Allows the LDES Server to read and write from a mongo database. 	| [Mongo configuration](#example-mongo-configuration)	                            |                                                                                                                                     	|
+| Profile Group                              	 | Profile name  	 | Description                                                     	| Parameters 	                                                                     | Further info                                                                                                                        	|
+|----------------------------------------------|-----------------|-----------------------------------------------------------------	|----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------	|
+| **Http Endpoints (Fetch/Ingestion)** 	       | http-ingest   	 | Enables a http endpoint for to insert LDES members.             	| [Http configuration](#example-http-ingest--fetch-configuration)          	 | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" 	|
+| **Http Endpoints (Fetch/Ingestion)** 	 | http-fetch  	   | Enables a http endpoint to retrieve LDES fragments              	| [Http configuration](#example-http-ingest--fetch-configuration)	                 | Endpoint:<br>- URL: /{ldes.collection-name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"    	|
+| **Storage**                                	 | storage-mongo 	 | Allows the LDES Server to read and write from a mongo database. 	| [Mongo configuration](#example-mongo-configuration)	                             |                                                                                                                                     	|
 
 #### Application Configuration:
 Below are properties that are needed when applying certain profiles. 
 These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does not exist, create it)
 
-##### Example HTTP ingest & publication configuration
+##### Example HTTP ingest & fetch configuration
   ```yaml
   server.port: {http-port}
     ldes:

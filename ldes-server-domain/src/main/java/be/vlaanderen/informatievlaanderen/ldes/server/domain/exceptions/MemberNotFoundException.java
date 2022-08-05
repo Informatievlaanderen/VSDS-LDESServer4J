@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 public class MemberNotFoundException extends RuntimeException {
     private final String ldesMemberId;

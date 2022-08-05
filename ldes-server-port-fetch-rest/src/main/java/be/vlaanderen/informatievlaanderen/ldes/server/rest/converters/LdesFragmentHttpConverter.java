@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
 
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -17,7 +17,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import static org.apache.jena.riot.RDFFormat.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 
 public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
 
@@ -53,18 +54,9 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
             throws IOException, HttpMessageNotWritableException {
 
         OutputStream body = outputMessage.getBody();
-        RDFFormat rdfFormat = getRdfFormat(contentType);
+        Lang rdfFormat = getLang(contentType, FETCH);
         Model fragmentModel = ldesFragmentConverter.toModel(ldesFragment);
         String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
         body.write(outputString.getBytes());
-    }
-
-    private RDFFormat getRdfFormat(MediaType contentType) {
-        return switch (contentType.toString()) {
-            case "application/n-quads" -> NQUADS;
-            case "application/ld+json" -> JSONLD10;
-            case "application/turtle" -> TURTLE;
-            default -> JSONLD10;
-        };
     }
 }

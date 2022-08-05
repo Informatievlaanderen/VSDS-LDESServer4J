@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ldes-server-port-publication-rest</artifactId>
+    <artifactId>ldes-server-port-fetch-rest</artifactId>
 
     <dependencies>
         <!-- VSDS -->
