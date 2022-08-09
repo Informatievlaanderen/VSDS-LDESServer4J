@@ -1,12 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import org.awaitility.Duration;
+import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
@@ -28,8 +25,8 @@ class FragmentationQueueMediatorImplTest {
         fragmentationQueueMediator.addLdesMember("someMember");
 
         await()
-                .pollDelay(Duration.ONE_MILLISECOND)
-                .atMost(Duration.ONE_HUNDRED_MILLISECONDS)
+                .pollDelay(Durations.ONE_MILLISECOND)
+                .atMost(Durations.ONE_HUNDRED_MILLISECONDS)
                 .until(fragmentationQueueMediator::queueIsEmtpy);
         verify(fragmentationService, times(1)).addMemberToFragment("someMember");
     }

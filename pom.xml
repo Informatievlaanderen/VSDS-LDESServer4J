@@ -52,7 +52,7 @@
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.12</byte-buddy.version>
  		<de.flapdoodle.embed.mongo.version>3.4.8</de.flapdoodle.embed.mongo.version>
-		<awaitility.version>3.0.0</awaitility.version>
+		<awaitility.version>4.2.0</awaitility.version>
 
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.1</depencency-check-maven.version>
