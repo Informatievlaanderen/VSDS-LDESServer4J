@@ -12,9 +12,10 @@
     <modules>
         <module>ldes-server-domain</module>
         <module>ldes-server-infra-mongo</module>
-        <module>ldes-server-port-publication-rest</module>
+        <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-application</module>
         <module>ldes-server-port-ingestion-rest</module>
+        <module>ldes-fragmentisers</module>
     </modules>
 	
     <properties>
@@ -22,8 +23,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
 		<maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
@@ -43,13 +44,15 @@
 
 		<!-- TESTING -->
 		<junit.version>4.13.2</junit.version>
+		<junit-platform-suite.version>1.9.0</junit-platform-suite.version>
 		<junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
 		<jupiter.version>5.9.0</jupiter.version>
 		<mockito.version>4.6.1</mockito.version>
+		<cucumber.version>7.6.0</cucumber.version>
 		<wiremock-jre8.version>2.33.2</wiremock-jre8.version>
 		<byte-buddy.version>1.12.13</byte-buddy.version>
  		<de.flapdoodle.embed.mongo.version>3.4.8</de.flapdoodle.embed.mongo.version>
-		<awaitability.version>3.0.0</awaitability.version>
+		<awaitility.version>4.2.0</awaitility.version>
 
  		<!-- VULNERABILITY -->
 		<depencency-check-maven.version>7.1.1</depencency-check-maven.version>
@@ -82,6 +85,11 @@
 				<artifactId>ldes-server-domain</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+	    	<dependency>
+	    		<groupId>${project.groupId}</groupId>
+	    		<artifactId>ldes-fragmentisers-impl</artifactId>
+	    		<version>${project.version}</version>
+	    	</dependency>
 
 	    	<!-- SPRING BOOT -->
 			<dependency>
@@ -101,6 +109,11 @@
 			<dependency>
 				<groupId>org.apache.jena</groupId>
 				<artifactId>jena-arq</artifactId>
+				<version>${apache-jena.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.jena</groupId>
+				<artifactId>jena-geosparql</artifactId>
 				<version>${apache-jena.version}</version>
 			</dependency>
 
@@ -148,7 +161,25 @@
 			<dependency>
 				<groupId>org.awaitility</groupId>
 				<artifactId>awaitility</artifactId>
-				<version>${awaitability.version}</version>
+				<version>${awaitility.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.cucumber</groupId>
+				<artifactId>cucumber-java</artifactId>
+				<version>${cucumber.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>io.cucumber</groupId>
+				<artifactId>cucumber-junit-platform-engine</artifactId>
+				<version>${cucumber.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.platform</groupId>
+				<artifactId>junit-platform-suite</artifactId>
+				<version>${junit-platform-suite.version}</version>
 				<scope>test</scope>
 			</dependency>
 		</dependencies>
@@ -258,6 +289,11 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<skip>${unittestskip}</skip>
+					<properties>
+						<configurationParameters>
+							cucumber.junit-platform.naming-strategy=long
+						</configurationParameters>
+					</properties>
 				</configuration>
 			</plugin>
 			<plugin>

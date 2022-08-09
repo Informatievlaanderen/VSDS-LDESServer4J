@@ -14,7 +14,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 

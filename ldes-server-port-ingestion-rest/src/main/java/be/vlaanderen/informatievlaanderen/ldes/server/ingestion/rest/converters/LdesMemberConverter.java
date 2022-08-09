@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -19,7 +18,10 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.contants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.*;
 
@@ -40,20 +42,10 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember
     @Override
     protected LdesMember readInternal(Class<? extends LdesMember> clazz, HttpInputMessage inputMessage)
             throws IOException, HttpMessageNotReadableException {
-        Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()));
-        Model memberModel = RDFParserBuilder.create()
-                .fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8)).lang(lang)
-                .toModel();
+        Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), FETCH);
+        Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
         String memberId = extractMemberId(memberModel);
         return new LdesMember(memberId, memberModel);
-    }
-
-    private Lang getLang(MediaType contentType) {
-        return switch ("%s/%s".formatted(contentType.getType(), contentType.getSubtype())) {
-            case "application/n-quads" -> Lang.NQUADS;
-            case "application/n-triples" -> Lang.NTRIPLES;
-            default -> Lang.NQUADS;
-        };
     }
 
     private String extractMemberId(Model model) {
