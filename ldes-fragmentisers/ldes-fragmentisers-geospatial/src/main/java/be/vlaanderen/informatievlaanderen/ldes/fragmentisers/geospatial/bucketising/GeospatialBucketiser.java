@@ -28,7 +28,7 @@ public class GeospatialBucketiser implements Bucketiser {
         GeometryWrapper wrapper = (GeometryWrapper) member.getFragmentationObject(geospatialConfig.getBucketiserProperty());
         return Arrays.stream(wrapper.getXYGeometry().getCoordinates())
                 .map(coordinateConverter::convertCoordinate)
-                .map(coordinate -> coordinateToTileStringConverter.convertCoordinate(coordinate, geospatialConfig.getZoomLevel()))
+                .map(coordinate -> coordinateToTileStringConverter.convertCoordinate(coordinate, geospatialConfig.getMaxZoomLevel()))
                 .collect(Collectors.toSet());
     }
 }

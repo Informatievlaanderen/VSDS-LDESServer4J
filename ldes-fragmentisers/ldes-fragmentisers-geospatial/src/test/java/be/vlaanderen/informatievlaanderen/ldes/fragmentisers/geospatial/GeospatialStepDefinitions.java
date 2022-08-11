@@ -37,7 +37,7 @@ public class GeospatialStepDefinitions {
 
     @Given("a configured max zoom level at {int}")
     public void aConfiguredMaxZoomLevelAt(int maxZoomLevel) {
-        geospatialConfig.setZoomLevel(maxZoomLevel);
+        geospatialConfig.setMaxZoomLevel(maxZoomLevel);
     }
 
     @Given("a geo-spatial bucketiser with the defined configuration")

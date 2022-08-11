@@ -50,14 +50,14 @@ public class FragmentPathCreator {
 
     private Set<String> getHorizontalBuckets(Tile firstTile, Tile secondTile) {
         return IntStream.rangeClosed(Math.min(firstTile.getX(), secondTile.getX()), Math.max(firstTile.getX(), secondTile.getX()))
-                .mapToObj(xValue -> new Tile(geospatialConfig.getZoomLevel(), xValue, secondTile.getY()))
+                .mapToObj(xValue -> new Tile(geospatialConfig.getMaxZoomLevel(), xValue, secondTile.getY()))
                 .map(TileConverter::toString)
                 .collect(Collectors.toSet());
     }
 
     private Set<String> getVerticalBuckets(Tile firstTile, Tile secondTile) {
         return IntStream.rangeClosed(Math.min(firstTile.getY(), secondTile.getY()), Math.max(firstTile.getY(), secondTile.getY()))
-                .mapToObj(yValue -> new Tile(geospatialConfig.getZoomLevel(), firstTile.getX(), yValue))
+                .mapToObj(yValue -> new Tile(geospatialConfig.getMaxZoomLevel(), firstTile.getX(), yValue))
                 .map(TileConverter::toString)
                 .collect(Collectors.toSet());
     }

@@ -14,6 +14,12 @@ public class AdjacentLdesFragmentFilter implements Predicate<LdesFragment> {
         this.originLdesFragment = ldesFragment;
     }
 
+    /**
+     * Determines if the LdesFragment is adjacent to the origin LdesFragment
+     *
+     * @param ldesFragment the input argument
+     * @return true when the distance between the two LdesFragments is 1, i.d. they are adjacent.
+     */
     @Override
     public boolean test(LdesFragment ldesFragment) {
         return distanceBetween(originLdesFragment, ldesFragment) == 1.0;
