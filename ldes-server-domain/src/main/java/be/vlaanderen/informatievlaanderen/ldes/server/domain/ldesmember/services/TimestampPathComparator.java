@@ -14,8 +14,8 @@ public class TimestampPathComparator implements Comparator<LdesMember> {
 
     @Override
     public int compare(LdesMember firstLdesMember, LdesMember secondLdesMember) {
-        LocalDateTime dateTimeFirstLdesMember = LocalDateTime.parse(firstLdesMember.getFragmentationValue(PROV_GENERATED_AT_TIME), formatter);
-        LocalDateTime dateTimeSecondLdesMember = LocalDateTime.parse(secondLdesMember.getFragmentationValue(PROV_GENERATED_AT_TIME), formatter);
+        LocalDateTime dateTimeFirstLdesMember = LocalDateTime.parse(firstLdesMember.getFragmentationObject(PROV_GENERATED_AT_TIME).toString(), formatter);
+        LocalDateTime dateTimeSecondLdesMember = LocalDateTime.parse(secondLdesMember.getFragmentationObject(PROV_GENERATED_AT_TIME).toString(), formatter);
         return dateTimeFirstLdesMember.compareTo(dateTimeSecondLdesMember);
     }
 }

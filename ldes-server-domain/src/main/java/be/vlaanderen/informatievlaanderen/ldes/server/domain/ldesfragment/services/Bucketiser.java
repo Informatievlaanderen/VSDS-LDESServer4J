@@ -2,7 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 
+import java.util.Set;
+
 public interface Bucketiser {
 
-	String bucketise(LdesMember member);
+	Set<String> bucketise(LdesMember member);
 }

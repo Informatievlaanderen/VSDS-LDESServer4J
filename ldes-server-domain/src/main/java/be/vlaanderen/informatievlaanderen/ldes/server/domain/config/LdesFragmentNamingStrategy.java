@@ -5,9 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 public interface LdesFragmentNamingStrategy {
     
-	public FragmentPair getFragmentationValue();
+	FragmentPair getFragmentationValue();
 	
-	public default String generateFragmentName(LdesConfig config, FragmentInfo fragmentInfo) {		
+	default String generateFragmentName(LdesConfig config, FragmentInfo fragmentInfo) {
 		StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(config.getHostName()).append("/").append(fragmentInfo.getCollectionName());
         

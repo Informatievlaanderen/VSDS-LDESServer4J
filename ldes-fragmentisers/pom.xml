@@ -14,7 +14,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>ldes-fragmentisers-impl</module>
 		<module>ldes-fragmentisers-sequential</module>
 		<module>ldes-fragmentisers-geospatial</module>
 	</modules>

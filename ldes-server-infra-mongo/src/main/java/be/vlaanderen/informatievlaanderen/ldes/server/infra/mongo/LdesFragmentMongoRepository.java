@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -44,5 +45,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
                 .filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName().equals(collectionName))
                 .map(LdesFragmentEntity::toLdesFragment)
                 .min(Comparator.comparing(LdesFragment::getFragmentId));
+    }
+
+    @Override
+    public List<LdesFragment> retrieveAllFragments() {
+        return repository.findAll()
+                .stream()
+                .map(LdesFragmentEntity::toLdesFragment)
+                .toList();
     }
 }

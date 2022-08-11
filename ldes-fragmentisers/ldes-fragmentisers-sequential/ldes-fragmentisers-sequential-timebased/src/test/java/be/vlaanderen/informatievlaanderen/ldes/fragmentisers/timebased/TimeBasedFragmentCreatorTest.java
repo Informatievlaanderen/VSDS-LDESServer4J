@@ -69,7 +69,7 @@ class TimeBasedFragmentCreatorTest {
     void when_NoFragmentExists_thenNewFragmentIsCreated() {
         LdesMember ldesMember = createLdesMember();
 
-        LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), ldesMember);
+        LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), null);
 
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
@@ -86,7 +86,7 @@ class TimeBasedFragmentCreatorTest {
         existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
         when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.of(ldesMemberOfFragment));
 
-        LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), newLdesMember);
+        LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), null);
 
         verifyAssertionsOnAttributesOfFragment(newFragment);
         assertEquals(0, newFragment.getCurrentNumberOfMembers());
