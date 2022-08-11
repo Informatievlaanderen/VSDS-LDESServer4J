@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import org.apache.jena.datatypes.RDFDatatype;
+import org.apache.jena.datatypes.TypeMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -17,11 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class TreeRelationTest {
 
+
+
     @Test
     @DisplayName("Test Equality of TreeRelations")
     void test_EqualityOfTreeRelations() {
-        TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "relation");
-        TreeRelation otherTreeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "relation");
+        TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
+        TreeRelation otherTreeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
         assertEquals(treeRelation, otherTreeRelation);
         assertEquals(treeRelation, treeRelation);
         assertEquals(otherTreeRelation, otherTreeRelation);
@@ -30,7 +34,7 @@ class TreeRelationTest {
     @ParameterizedTest
     @ArgumentsSource(TreeRelationArgumentsProvider.class)
     void test_InequalityOfTreeRelations(Object otherTreeRelation) {
-        TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "relation");
+        TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
         assertNotEquals(treeRelation, otherTreeRelation);
     }
 
@@ -41,10 +45,11 @@ class TreeRelationTest {
             return Stream.of(
                     Arguments.of(new LdesMember("some_id", null)),
                     Arguments.of((Object) null),
-                    Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "treeNode", "differentTreeValue", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "differentRelation")));
+                    Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType", "relation")),
+                    Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType", "relation")),
+                    Arguments.of(new TreeRelation("treePath", "treeNode", "differentTreeValue", "treeValueType", "relation")),
+                    Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "differentTreeValueType", "relation")),
+                    Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "differentRelation")));
         }
     }
 

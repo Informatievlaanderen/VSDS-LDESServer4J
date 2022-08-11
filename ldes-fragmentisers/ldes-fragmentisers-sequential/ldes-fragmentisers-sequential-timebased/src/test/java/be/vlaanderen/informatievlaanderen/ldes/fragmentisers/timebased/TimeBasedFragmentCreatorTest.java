@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.fragmentisers.timebased;
 
+import static be.vlaanderen.informatievlaanderen.ldes.fragmentisers.timebased.TimeBasedFragmentCreator.DATE_TIME_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -127,7 +128,7 @@ class TimeBasedFragmentCreatorTest {
     private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode, String expectedTreeValue, String expectedRelation) {
         assertEquals(1, newFragment.getRelations().size());
         TreeRelation actualTreeRelationOnNewFragment = newFragment.getRelations().get(0);
-        TreeRelation expectedTreeRelationOnNewFragment = new TreeRelation(expectedTreePath, expectedTreeNode, expectedTreeValue, expectedRelation);
+        TreeRelation expectedTreeRelationOnNewFragment = new TreeRelation(expectedTreePath, expectedTreeNode, expectedTreeValue, DATE_TIME_TYPE, expectedRelation);
         assertEquals(expectedTreeRelationOnNewFragment.getTreePath(), actualTreeRelationOnNewFragment.getTreePath());
         assertEquals(expectedTreeRelationOnNewFragment.getRelation(), actualTreeRelationOnNewFragment.getRelation());
     }
