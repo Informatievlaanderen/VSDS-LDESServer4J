@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.fragmentisers.geospatial.constants.GeospatialConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.*;
 
 @Component
 public class GeospatialRelationsAttributer {
