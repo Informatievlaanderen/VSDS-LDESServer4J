@@ -18,7 +18,7 @@ services:
     image: mongo
     container_name: ldes.mongodb
     ports:
-      - "28018:27017"
+      - "27017:27017"
     restart: always
     networks:
       - ldes
@@ -34,19 +34,20 @@ services:
       - "13133:13133" # health_check extension
       - "4317:4317"   # OTLP gRPC receiver
       - "4318:4318"   # OTLP http receiver
-      - "55679:55679" # zpages extension
+      - "5567:55679" # zpages extension
     networks:
       - ldes
 
   jaeger:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/all-in-one:1.37
     environment:
-      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
       - COLLECTOR_OTLP_ENABLED=true
     ports:
       - "6831:6831/udp"
       - "16686:16686"
-      - "4318:4318"
+      - "4319:4317"
+      - "4320:4318"
+      - "14250:14250"
     networks:
       - ldes
 

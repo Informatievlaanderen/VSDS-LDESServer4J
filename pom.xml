@@ -37,6 +37,8 @@
 
         <!-- SPRING BOOT -->
         <spring-boot.version>2.7.2</spring-boot.version>
+		<spring-cloud-dependencies.version>2021.0.3</spring-cloud-dependencies.version>
+		<spring-cloud-sleuth-otel-dependencies.version>1.1.0-M6</spring-cloud-sleuth-otel-dependencies.version>
 
         <!-- JSON & RDF -->
         <json-simple.version>1.1.1</json-simple.version>
@@ -198,6 +200,20 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud-dependencies.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
+				<version>${spring-cloud-sleuth-otel-dependencies.version}</version>
+				<scope>import</scope>
+				<type>pom</type>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -350,7 +366,27 @@
             <id>github</id>
             <url>https://maven.pkg.github.com/Informatievlaanderen/VSDS-LDES</url>
         </repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
     </repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</pluginRepository>
+	</pluginRepositories>
 
     <profiles>
         <profile>

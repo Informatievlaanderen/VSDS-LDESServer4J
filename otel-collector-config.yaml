@@ -1,0 +1,25 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+exporters:
+  logging:
+    loglevel: debug
+  jaeger:
+    endpoint: "jaeger:14250"
+    tls:
+      insecure: true
+processors:
+  batch:
+extensions:
+  health_check:
+  pprof:
+  zpages:
+    endpoint: 0.0.0.0:5567
+service:
+  extensions: [health_check,pprof,zpages]
+  pipelines:
+    traces:
+      receivers: [ otlp ]
+      processors: [ batch ]
+      exporters: [ logging, jaeger ]
