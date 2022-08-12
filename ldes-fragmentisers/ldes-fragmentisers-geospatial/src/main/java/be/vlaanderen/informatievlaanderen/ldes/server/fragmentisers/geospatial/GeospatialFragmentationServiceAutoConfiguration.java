@@ -35,7 +35,7 @@ public class GeospatialFragmentationServiceAutoConfiguration {
                                                                GeospatialBucketiser geospatialBucketiser,
                                                                LdesFragmentNamingStrategy ldesFragmentNamingStrategy,
                                                                ConnectedFragmentsFinder connectedFragmentsFinder) {
-        logger.info("Fragmentation: Geospatial Fragmentation");
+        logger.info("Geospatial Fragmentation is configured");
         return new GeospatialFragmentationService(ldesConfig, ldesMemberRepository, ldesFragmentRepository, new GeospatialFragmentCreator(ldesConfig, ldesFragmentNamingStrategy), geospatialBucketiser, connectedFragmentsFinder);
     }
 

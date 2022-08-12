@@ -43,7 +43,7 @@ public class TimeBasedFragmentationServiceAutoConfiguration {
     @Bean
     public FragmentationService sequentialFragmentationService(LdesConfig ldesConfig,
                                                                LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator) {
-        logger.info("Fragmentation: Timebased Fragmentation");
+        logger.info("Timebased Fragmentation is configured");
         return new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository, ldesFragmentRepository);
     }
 }
