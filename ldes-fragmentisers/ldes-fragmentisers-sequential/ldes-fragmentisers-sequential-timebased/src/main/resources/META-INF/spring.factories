@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-be.vlaanderen.informatievlaanderen.ldes.fragmentisers.timebased.TimebasedFragmentationServiceAutoConfiguration
+be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TimebasedFragmentationServiceAutoConfiguration
