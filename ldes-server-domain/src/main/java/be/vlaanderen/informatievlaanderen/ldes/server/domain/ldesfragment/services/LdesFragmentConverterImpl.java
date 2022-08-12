@@ -1,34 +1,21 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_TIMESTAMP_PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_VERSION_OF;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PROV_GENERATED_AT_TIME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_SHAPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.VERSION_OF_URI;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Component;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import java.util.ArrayList;
+import java.util.List;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
 public class LdesFragmentConverterImpl implements LdesFragmentConverter {
@@ -92,11 +79,11 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
         return List.of();
     }
 
-    private List<Statement> getRelationStatementsOfRelation(Resource currrentFragmentId, TreeRelation treeRelation) {
+    private List<Statement> getRelationStatementsOfRelation(Resource currentFragmentId, TreeRelation treeRelation) {
         List<Statement> statements = new ArrayList<>();
         Resource treeRelationNode = createResource();
-        statements.add(createStatement(currrentFragmentId, TREE_RELATION, treeRelationNode));
-        statements.add(createStatement(treeRelationNode, TREE_VALUE, createResource(treeRelation.getTreeValue())));
+        statements.add(createStatement(currentFragmentId, TREE_RELATION, treeRelationNode));
+        statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(), TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
         statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
         statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
         statements

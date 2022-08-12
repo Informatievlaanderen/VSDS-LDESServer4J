@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 public class RdfFormatException extends RuntimeException {
-    String inputFormat;
-    LdesProcessDirection ldesProcessDirection;
+    private final String inputFormat;
+    private final LdesProcessDirection ldesProcessDirection;
 
     public RdfFormatException(String inputFormat, LdesProcessDirection ldesProcessDirection) {
         super();

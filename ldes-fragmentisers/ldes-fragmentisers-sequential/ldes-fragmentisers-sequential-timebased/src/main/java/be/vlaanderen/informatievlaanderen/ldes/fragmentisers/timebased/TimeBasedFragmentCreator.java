@@ -20,6 +20,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 
 public class TimeBasedFragmentCreator implements FragmentCreator {
 
+    public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
     protected final LdesConfig ldesConfig;
     protected final SequentialFragmentationConfig sequentialFragmentationConfig;
     protected final LdesFragmentNamingStrategy ldesFragmentNamingStrategy;
@@ -59,10 +60,10 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     protected void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment, LdesFragment newFragment) {
         completeLdesFragment.setImmutable(true);
-        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
+        completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(), newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), DATE_TIME_TYPE, TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
         String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
         ldesFragmentRepository.saveFragment(completeLdesFragment);
-        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), latestGeneratedAtTime, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
+        newFragment.addRelation(new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(), latestGeneratedAtTime, DATE_TIME_TYPE, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
     }
 
     private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {

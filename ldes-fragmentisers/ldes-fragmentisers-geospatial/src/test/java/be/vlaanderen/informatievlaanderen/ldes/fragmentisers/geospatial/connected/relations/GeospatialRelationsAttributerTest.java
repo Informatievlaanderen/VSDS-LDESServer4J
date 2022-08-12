@@ -25,7 +25,7 @@ class GeospatialRelationsAttributerTest {
     @DisplayName("Verify attribution of geospatial relations to neighbouring fragments")
     void when_FragmentsAreNeighbours_GeospatialRelationsAreAdded() {
         LdesFragment ldesFragment = getLdesFragment(FRAGMENT_ID);
-        ldesFragment.addRelation(new TreeRelation(GEOSPARQL_AS_WKT,  "15/4/3", "POLYGON ((-179.945068359375 85.04828470083632, -179.945068359375 85.04733631224822, -179.9560546875 85.04733631224822, -179.9560546875 85.04828470083632, -179.945068359375 85.04828470083632))", TREE_GEOSPATIALLY_CONTAINS_RELATION));
+        ldesFragment.addRelation(new TreeRelation(GEOSPARQL_AS_WKT,  "15/4/3", "<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POLYGON ((-179.945068359375 85.04828470083632, -179.945068359375 85.04733631224822, -179.9560546875 85.04733631224822, -179.9560546875 85.04828470083632, -179.945068359375 85.04828470083632))", WKT_DATA_TYPE, TREE_GEOSPATIALLY_CONTAINS_RELATION));
         List<LdesFragment> neighbourFragments = convertToFragments(NEIGHBOUR_FRAGMENT_IDS);
         List<LdesFragment> otherFragments = convertToFragments(OTHER_FRAGMENT_IDS);
         List<LdesFragment> potentialNeighbours = Stream.of(List.of(ldesFragment), neighbourFragments, otherFragments)

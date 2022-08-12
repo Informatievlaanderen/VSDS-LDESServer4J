@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.fragmentisers.geospatial.constants.GeospatialConstants.GEOSPARQL_AS_WKT;
-import static be.vlaanderen.informatievlaanderen.ldes.fragmentisers.geospatial.constants.GeospatialConstants.TREE_GEOSPATIALLY_CONTAINS_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.fragmentisers.geospatial.constants.GeospatialConstants.*;
 
 @Component
 public class GeospatialRelationsAttributer {
+
 
     public void addGeospatialRelationsToNeighbouringFragments(LdesFragment ldesFragment, List<LdesFragment> ldesFragments){
         AdjacentLdesFragmentFilter adjacentLdesFragmentFilter = new AdjacentLdesFragmentFilter(ldesFragment);
@@ -34,7 +34,7 @@ public class GeospatialRelationsAttributer {
         String targetWKT = getWKT(targetFragment);
 
         TreeRelation relationToTargetFragment = new TreeRelation(GEOSPARQL_AS_WKT, targetFragment.getFragmentId(),
-                targetWKT, TREE_GEOSPATIALLY_CONTAINS_RELATION);
+                WGS_84+" "+ targetWKT, WKT_DATA_TYPE, TREE_GEOSPATIALLY_CONTAINS_RELATION);
         if (!sourceFragment.getRelations().contains(relationToTargetFragment)) {
             sourceFragment.addRelation(relationToTargetFragment);
         }

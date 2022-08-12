@@ -3,18 +3,17 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 import java.util.Objects;
 
 public class TreeRelation {
-    private String treePath;
-    private String treeValue;
-    private String treeNode;
-    private String relation;
+    private final String treePath;
+    private final String treeValue;
+    private final String treeValueType;
+    private final String treeNode;
+    private final String relation;
 
-    private TreeRelation() {
-    }
-
-    public TreeRelation(String treePath, String treeNode, String treeValue, String relation) {
+    public TreeRelation(String treePath, String treeNode, String treeValue, String treeValueType, String relation) {
         this.treePath = treePath;
         this.treeNode = treeNode;
-        this.treeValue = treeValue + "^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+        this.treeValue = treeValue;
+        this.treeValueType = treeValueType;
         this.relation = relation;
     }
 
@@ -34,12 +33,16 @@ public class TreeRelation {
         return relation;
     }
 
+    public String getTreeValueType() {
+        return treeValueType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TreeRelation that = (TreeRelation) o;
-        return Objects.equals(treePath, that.treePath) && Objects.equals(treeValue, that.treeValue) && Objects.equals(treeNode, that.treeNode) && Objects.equals(relation, that.relation);
+        return Objects.equals(treePath, that.treePath) && Objects.equals(treeValue, that.treeValue) && Objects.equals(treeNode, that.treeNode) && Objects.equals(relation, that.relation) && Objects.equals(treeValueType, that.treeValueType);
     }
 
     @Override

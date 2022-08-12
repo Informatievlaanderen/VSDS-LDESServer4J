@@ -54,7 +54,7 @@ class LdesFragmentControllerTest {
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 
     private static final String GENERATED_AT_TIME = "generatedAtTime";
-    private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances?"+GENERATED_AT_TIME+"=" + FRAGMENTATION_VALUE_1;
+    private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances?" + GENERATED_AT_TIME + "=" + FRAGMENTATION_VALUE_1;
 
     @Autowired
     private MockMvc mockMvc;
@@ -72,7 +72,7 @@ class LdesFragmentControllerTest {
         when(fragmentFetchService.getInitialFragment(ldesFragmentRequest)).thenReturn(emptyFragment);
 
         ResultActions resultActions = mockMvc
-                .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
+                .perform(get("/{viewShortName}", ldesConfig.getCollectionName()).accept("application/ld+json"))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -98,7 +98,7 @@ class LdesFragmentControllerTest {
         when(fragmentFetchService.getInitialFragment(ldesFragmentRequest)).thenReturn(realFragment);
 
         ResultActions resultActions = mockMvc
-                .perform(get("/{viewShortName}", ldesConfig.getCollectionName()))
+                .perform(get("/{viewShortName}", ldesConfig.getCollectionName()).accept("application/ld+json"))
                 .andDo(print())
                 .andExpect(status().is3xxRedirection());
 
@@ -128,7 +128,8 @@ class LdesFragmentControllerTest {
 
         ResultActions resultActions = mockMvc
                 .perform(get("/{viewShortName}", ldesConfig.getCollectionName())
-                        .param("generatedAtTime", FRAGMENTATION_VALUE_1))
+                        .param("generatedAtTime", FRAGMENTATION_VALUE_1)
+                        .accept("application/ld+json"))
                 .andDo(print())
                 .andExpect(status().isOk());
 

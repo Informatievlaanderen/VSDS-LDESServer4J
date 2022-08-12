@@ -40,7 +40,7 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
     @Override
     public List<MediaType> getSupportedMediaTypes() {
-        return List.of(new MediaType("application/ld+json"), new MediaType("application/n-quads"), new MediaType("application/turtle"));
+        return List.of(new MediaType("application/turtle"), new MediaType("application/ld+json"), new MediaType("application/n-quads"));
     }
 
     @Override
