@@ -67,7 +67,7 @@ class LdesFragmentControllerTest {
     @DisplayName("Correct getting of an initial empty LdesFragment")
     void when_GETRequestIsPerformedOnBaseURLAndNoFragmentIsCreatedYet_ResponseContainsAnEmptyLDesFragment() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment emptyFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of()));
+        LdesFragment emptyFragment = new LdesFragment(fragmentId, new FragmentInfo(ldesConfig.getCollectionName(), List.of()));
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of());
         when(fragmentFetchService.getInitialFragment(ldesFragmentRequest)).thenReturn(emptyFragment);
 
@@ -93,7 +93,7 @@ class LdesFragmentControllerTest {
     @DisplayName("Correct redirecting to first fragment")
     void when_GETRequestIsPerformedOnBaseURLAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment realFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
+        LdesFragment realFragment = new LdesFragment(fragmentId, new FragmentInfo(ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of());
         when(fragmentFetchService.getInitialFragment(ldesFragmentRequest)).thenReturn(realFragment);
 
@@ -120,7 +120,7 @@ class LdesFragmentControllerTest {
     @DisplayName("Correct returning a complete fragment")
     void when_GETRequestIsPerformedAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect() throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        FragmentInfo fragmentInfo = new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+        FragmentInfo fragmentInfo = new FragmentInfo(ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
         fragmentInfo.setImmutable(true);
         LdesFragment realFragment = new LdesFragment(fragmentId, fragmentInfo);
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
@@ -151,7 +151,7 @@ class LdesFragmentControllerTest {
     @ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
     void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang) throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(String.format("%s/%s", ldesConfig.getHostName(), ldesConfig.getCollectionName()), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
+        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
 
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
         when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
@@ -187,7 +187,7 @@ class LdesFragmentControllerTest {
     void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
             throws Exception {
         String fragmentId = "%s/%s?generatedAtTime=%s".formatted(ldesConfig.getHostName(), ldesConfig.getCollectionName(), FRAGMENTATION_VALUE_1);
-        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(null, null, null, List.of()));
+        LdesFragment ldesFragment = new LdesFragment(fragmentId, new FragmentInfo(null, List.of()));
 
         LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
         when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
@@ -219,9 +219,9 @@ class LdesFragmentControllerTest {
     public static class LdesFragmentControllerTestConfiguration {
 
         @Bean
-        public LdesFragmentConverter ldesFragmentConverter() {
+        public LdesFragmentConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
             LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
-            return new LdesFragmentConverterImpl(ldesMemberRepository);
+            return new LdesFragmentConverterImpl(ldesMemberRepository, ldesConfig);
         }
     }
 }

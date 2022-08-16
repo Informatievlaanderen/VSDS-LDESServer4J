@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AdjacentLdesFragmentFilterTest {
 
-    LdesFragment ldesFragment = new LdesFragment("", new FragmentInfo("", "", "", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, "15/4/4"))));
+    LdesFragment ldesFragment = new LdesFragment("", new FragmentInfo("", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, "15/4/4"))));
 
     AdjacentLdesFragmentFilter adjacentLdesFragmentFilter = new AdjacentLdesFragmentFilter(ldesFragment);
 
@@ -47,7 +47,7 @@ class AdjacentLdesFragmentFilterTest {
         }
 
         private LdesFragment getLdesFragment(String fragmentValue) {
-            return new LdesFragment("", new FragmentInfo("", "", "", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, fragmentValue))));
+            return new LdesFragment("", new FragmentInfo("", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, fragmentValue))));
         }
     }
 

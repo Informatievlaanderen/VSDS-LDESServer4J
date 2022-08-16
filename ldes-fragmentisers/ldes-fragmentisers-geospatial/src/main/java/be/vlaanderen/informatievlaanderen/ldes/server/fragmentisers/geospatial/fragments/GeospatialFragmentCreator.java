@@ -32,8 +32,6 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 
 	protected LdesFragment createNewFragment(FragmentPair bucket) {
 		FragmentInfo fragmentInfo = new FragmentInfo(
-				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName(),
-				ldesConfig.getShape(),
 				ldesConfig.getCollectionName(),
 				List.of(bucket));
 

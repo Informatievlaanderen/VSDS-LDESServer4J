@@ -15,7 +15,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,7 +66,7 @@ class LdesFragmentMongoRepositoryIT {
     }
 
     private FragmentInfo fragmentInfo(String fragmentValue) {
-        return new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, List.of(new FragmentPair(PATH, fragmentValue)));
+        return new FragmentInfo(VIEW_SHORTNAME, List.of(new FragmentPair(PATH, fragmentValue)));
     }
 
 

@@ -5,16 +5,12 @@ import java.util.List;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 
 public class FragmentInfo {
-	
-    private final String view;
-    private final String shape;
+
     private final String collectionName;
     private final List<FragmentPair> fragmentPairs;
     private Boolean immutable;
 
-    public FragmentInfo(String view, String shape, String collectionName, List<FragmentPair> fragmentPairs) {
-        this.view = view;
-        this.shape = shape;
+    public FragmentInfo(String collectionName, List<FragmentPair> fragmentPairs) {
         this.collectionName = collectionName;
         this.fragmentPairs = fragmentPairs;
         this.immutable = false;
@@ -42,13 +38,5 @@ public class FragmentInfo {
 
     public void setImmutable(Boolean immutable) {
         this.immutable = immutable;
-    }
-
-    public String getView() {
-        return view;
-    }
-
-    public String getShape() {
-        return shape;
     }
 }
