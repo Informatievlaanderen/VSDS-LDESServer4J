@@ -14,6 +14,7 @@ RUN mvn install
 # RUN THE APPLICATION
 #
 FROM openjdk:18-ea-alpine
+RUN apk upgrade
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
 COPY --from=app-stage ldes-server-infra-mongo/target/ldes-server-infra-mongo-jar-with-dependencies.jar ./lib/
