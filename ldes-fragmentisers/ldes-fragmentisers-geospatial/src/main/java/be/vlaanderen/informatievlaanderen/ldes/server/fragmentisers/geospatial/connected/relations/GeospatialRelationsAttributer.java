@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.c
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.distance.AdjacentLdesFragmentFilter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.BoundingBoxConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.TileConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 
 import java.util.ArrayList;
 import java.util.List;
