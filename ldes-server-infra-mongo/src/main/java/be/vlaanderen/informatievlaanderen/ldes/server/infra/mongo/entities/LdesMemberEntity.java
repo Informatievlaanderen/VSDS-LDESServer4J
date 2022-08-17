@@ -13,31 +13,31 @@ import java.io.StringWriter;
 @Document("ldesmember")
 public class LdesMemberEntity {
 
-    @Id
-    private final String id;
+	@Id
+	private final String id;
 
-    private final String ldesMember;
+	private final String ldesMember;
 
-    public LdesMemberEntity(String id, final String ldesMember) {
-        this.id = id;
-        this.ldesMember = ldesMember;
-    }
+	public LdesMemberEntity(String id, final String ldesMember) {
+		this.id = id;
+		this.ldesMember = ldesMember;
+	}
 
-    public String getLdesMember() {
-        return this.ldesMember;
-    }
+	public String getLdesMember() {
+		return this.ldesMember;
+	}
 
-    public static LdesMemberEntity fromLdesMember(LdesMember ldesMember) {
-        StringWriter outputStream = new StringWriter();
-        RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.NQUADS);
-        String ldesMemberString = outputStream.toString();
+	public static LdesMemberEntity fromLdesMember(LdesMember ldesMember) {
+		StringWriter outputStream = new StringWriter();
+		RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.NQUADS);
+		String ldesMemberString = outputStream.toString();
 
-        return new LdesMemberEntity(ldesMember.getLdesMemberId(), ldesMemberString);
-    }
+		return new LdesMemberEntity(ldesMember.getLdesMemberId(), ldesMemberString);
+	}
 
-    public LdesMember toLdesMember() {
-        Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.NQUADS).toModel();
-        return new LdesMember(this.id, ldesMemberModel);
-    }
+	public LdesMember toLdesMember() {
+		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.NQUADS).toModel();
+		return new LdesMember(this.id, ldesMemberModel);
+	}
 
 }

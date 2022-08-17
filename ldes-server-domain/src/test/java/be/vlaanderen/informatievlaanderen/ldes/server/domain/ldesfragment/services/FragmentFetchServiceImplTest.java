@@ -25,84 +25,84 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {LdesConfig.class})
+@SpringBootTest(classes = { LdesConfig.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class FragmentFetchServiceImplTest {
 
-    private static final String VIEW_SHORTNAME = "exampleData";
-    private static final String VIEW = "http://localhost:8089/exampleData";
-    private static final String SHAPE = "http://localhost:8089/exampleData/shape";
-    private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
-    private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-    private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
-    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW_SHORTNAME, List.of(new FragmentPair(PATH,
-            FRAGMENTATION_VALUE_1)));
+	private static final String VIEW_SHORTNAME = "exampleData";
+	private static final String VIEW = "http://localhost:8089/exampleData";
+	private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
+	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+	private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
+	private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW_SHORTNAME,
+			List.of(new FragmentPair(PATH, FRAGMENTATION_VALUE_1)));
 
-    @Autowired
-    private LdesConfig ldesConfig;
+	@Autowired
+	private LdesConfig ldesConfig;
 
-    private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-    private final LdesFragmentNamingStrategy ldesFragmentNamingStrategy = mock(LdesFragmentNamingStrategy.class);
+	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final LdesFragmentNamingStrategy ldesFragmentNamingStrategy = mock(LdesFragmentNamingStrategy.class);
 
-    private FragmentFetchService fragmentFetchService;
+	private FragmentFetchService fragmentFetchService;
 
-    @BeforeEach
-    void setUp() {
-        fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig, ldesFragmentNamingStrategy, ldesFragmentRepository);
-    }
+	@BeforeEach
+	void setUp() {
+		fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig, ldesFragmentNamingStrategy,
+				ldesFragmentRepository);
+	}
 
-    @Test
-    void when_retrieveInitialFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
-        when(ldesFragmentRepository.retrieveInitialFragment(VIEW_SHORTNAME)).thenReturn(Optional.empty());
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
-        LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
+	@Test
+	void when_retrieveInitialFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
+		when(ldesFragmentRepository.retrieveInitialFragment(VIEW_SHORTNAME)).thenReturn(Optional.empty());
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
+		LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
 
-        assertEquals(0, returnedFragment.getMemberIds().size());
-        assertNull(returnedFragment.getFragmentInfo().getValue());
-        assertNull(returnedFragment.getFragmentInfo().getPath());
-    }
+		assertEquals(0, returnedFragment.getMemberIds().size());
+		assertNull(returnedFragment.getFragmentInfo().getValue());
+		assertNull(returnedFragment.getFragmentInfo().getPath());
+	}
 
-    @Test
-    void when_retrieveInitialFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
-        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        ldesFragment.addMember("firstMember");
+	@Test
+	void when_retrieveInitialFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
+		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
+		ldesFragment.addMember("firstMember");
 
-        when(ldesFragmentRepository.retrieveInitialFragment(VIEW_SHORTNAME))
-                .thenReturn(Optional.of(ldesFragment));
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
+		when(ldesFragmentRepository.retrieveInitialFragment(VIEW_SHORTNAME)).thenReturn(Optional.of(ldesFragment));
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of());
 
-        LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
+		LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
 
-        assertEquals(1, returnedFragment.getMemberIds().size());
-        assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
-        assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
-    }
+		assertEquals(1, returnedFragment.getMemberIds().size());
+		assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
+		assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+	}
 
-    @Test
-    void when_getFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of(new FragmentPair(PATH, FRAGMENTATION_VALUE_1)));
-        when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
+	@Test
+	void when_getFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME,
+				List.of(new FragmentPair(PATH, FRAGMENTATION_VALUE_1)));
+		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
 
-        LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
+		LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 
-        assertEquals(0, returnedFragment.getMemberIds().size());
-        assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
-        assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
-    }
+		assertEquals(0, returnedFragment.getMemberIds().size());
+		assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
+		assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+	}
 
-    @Test
-    void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
-        LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-        ldesFragment.addMember("firstMember");
-        LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME, List.of(new FragmentPair(PATH, FRAGMENTATION_VALUE_1)));
-        when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest))
-                .thenReturn(Optional.of(ldesFragment));
+	@Test
+	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
+		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
+		ldesFragment.addMember("firstMember");
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_SHORTNAME,
+				List.of(new FragmentPair(PATH, FRAGMENTATION_VALUE_1)));
+		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.of(ldesFragment));
 
-        LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
+		LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 
-        assertEquals(1, returnedFragment.getMemberIds().size());
-        assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
-        assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
-    }
+		assertEquals(1, returnedFragment.getMemberIds().size());
+		assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
+		assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+	}
 }

@@ -21,40 +21,46 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialFragmentationService implements FragmentationService {
 
-    private final LdesConfig ldesConfig;
-    private final LdesMemberRepository ldesMemberRepository;
-    private final LdesFragmentRepository ldesFragmentRepository;
-    private final FragmentCreator fragmentCreator;
-    private final GeospatialBucketiser geospatialBucketiser;
-    private final ConnectedFragmentsFinder connectedFragmentsFinder;
+	private final LdesConfig ldesConfig;
+	private final LdesMemberRepository ldesMemberRepository;
+	private final LdesFragmentRepository ldesFragmentRepository;
+	private final FragmentCreator fragmentCreator;
+	private final GeospatialBucketiser geospatialBucketiser;
+	private final ConnectedFragmentsFinder connectedFragmentsFinder;
 
-    public GeospatialFragmentationService(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator, GeospatialBucketiser geospatialBucketiser, ConnectedFragmentsFinder connectedFragmentsFinder) {
-        this.ldesConfig = ldesConfig;
-        this.ldesMemberRepository = ldesMemberRepository;
-        this.ldesFragmentRepository = ldesFragmentRepository;
-        this.fragmentCreator = fragmentCreator;
-        this.geospatialBucketiser = geospatialBucketiser;
-        this.connectedFragmentsFinder = connectedFragmentsFinder;
-    }
+	public GeospatialFragmentationService(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository,
+			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
+			GeospatialBucketiser geospatialBucketiser, ConnectedFragmentsFinder connectedFragmentsFinder) {
+		this.ldesConfig = ldesConfig;
+		this.ldesMemberRepository = ldesMemberRepository;
+		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.fragmentCreator = fragmentCreator;
+		this.geospatialBucketiser = geospatialBucketiser;
+		this.connectedFragmentsFinder = connectedFragmentsFinder;
+	}
 
-    @Override
-    public void addMemberToFragment(String ldesMemberId) {
-        LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId).orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
-        Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
-        List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(tiles);
-        ldesFragments.forEach(ldesFragment -> {
-            ldesFragment.addMember(ldesMemberId);
-            List<LdesFragment> connectedFragments = connectedFragmentsFinder.findConnectedFragments(ldesFragment);
-            connectedFragments.forEach(ldesFragmentRepository::saveFragment);
-        });
-    }
+	@Override
+	public void addMemberToFragment(String ldesMemberId) {
+		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
+				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
+		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
+		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(tiles);
+		ldesFragments.forEach(ldesFragment -> {
+			ldesFragment.addMember(ldesMemberId);
+			List<LdesFragment> connectedFragments = connectedFragmentsFinder.findConnectedFragments(ldesFragment);
+			connectedFragments.forEach(ldesFragmentRepository::saveFragment);
+		});
+	}
 
-    private List<LdesFragment> retrieveFragmentsOrCreateNewFragments(Set<String> tiles) {
-        return tiles
-                .stream().map(tile -> {
-                    Optional<LdesFragment> ldesFragment = ldesFragmentRepository.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of(new FragmentPair(FRAGMENT_KEY_TILE, tile))));
-                    return ldesFragment.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), new FragmentPair(FRAGMENT_KEY_TILE, tile)));
-                })
-                .toList();
-    }
+	private List<LdesFragment> retrieveFragmentsOrCreateNewFragments(Set<String> tiles) {
+		return tiles
+				.stream().map(tile -> {
+					Optional<LdesFragment> ldesFragment = ldesFragmentRepository
+							.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(),
+									List.of(new FragmentPair(FRAGMENT_KEY_TILE, tile))));
+					return ldesFragment.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
+							new FragmentPair(FRAGMENT_KEY_TILE, tile)));
+				})
+				.toList();
+	}
 }

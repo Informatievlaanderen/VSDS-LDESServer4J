@@ -17,39 +17,40 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AdjacentLdesFragmentFilterTest {
 
-    LdesFragment ldesFragment = new LdesFragment("", new FragmentInfo("", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, "15/4/4"))));
+	LdesFragment ldesFragment = new LdesFragment("",
+			new FragmentInfo("", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, "15/4/4"))));
 
-    AdjacentLdesFragmentFilter adjacentLdesFragmentFilter = new AdjacentLdesFragmentFilter(ldesFragment);
+	AdjacentLdesFragmentFilter adjacentLdesFragmentFilter = new AdjacentLdesFragmentFilter(ldesFragment);
 
-    @ParameterizedTest(name = "Fragment {0} is a real neighbour: {1}")
-    @ArgumentsSource(LdesFragmentArgumentsSource.class)
-    void when_DistanceBetweenTwoFragmentsIsOne_FragmentsAreNeighbours(LdesFragment potentialNeighbourFragment, boolean isNeighbour) {
-        assertEquals(isNeighbour, adjacentLdesFragmentFilter.test(potentialNeighbourFragment));
-    }
+	@ParameterizedTest(name = "Fragment {0} is a real neighbour: {1}")
+	@ArgumentsSource(LdesFragmentArgumentsSource.class)
+	void when_DistanceBetweenTwoFragmentsIsOne_FragmentsAreNeighbours(LdesFragment potentialNeighbourFragment,
+			boolean isNeighbour) {
+		assertEquals(isNeighbour, adjacentLdesFragmentFilter.test(potentialNeighbourFragment));
+	}
 
-    static class LdesFragmentArgumentsSource implements ArgumentsProvider {
+	static class LdesFragmentArgumentsSource implements ArgumentsProvider {
 
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-            return Stream.of(
-                    Arguments.of(getLdesFragment("15/4/4"), false),
-                    Arguments.of(getLdesFragment("15/4/3"), true),
-                    Arguments.of(getLdesFragment("15/3/4"), true),
-                    Arguments.of(getLdesFragment("15/4/5"), true),
-                    Arguments.of(getLdesFragment("15/5/4"), true),
-                    Arguments.of(getLdesFragment("15/3/3"), false),
-                    Arguments.of(getLdesFragment("15/3/5"), false),
-                    Arguments.of(getLdesFragment("15/5/3"), false),
-                    Arguments.of(getLdesFragment("15/5/5"), false),
-                    Arguments.of(getLdesFragment("15/9/10"), false),
-                    Arguments.of(getLdesFragment("15/0/0"), false)
-            );
-        }
+		@Override
+		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+			return Stream.of(
+					Arguments.of(getLdesFragment("15/4/4"), false),
+					Arguments.of(getLdesFragment("15/4/3"), true),
+					Arguments.of(getLdesFragment("15/3/4"), true),
+					Arguments.of(getLdesFragment("15/4/5"), true),
+					Arguments.of(getLdesFragment("15/5/4"), true),
+					Arguments.of(getLdesFragment("15/3/3"), false),
+					Arguments.of(getLdesFragment("15/3/5"), false),
+					Arguments.of(getLdesFragment("15/5/3"), false),
+					Arguments.of(getLdesFragment("15/5/5"), false),
+					Arguments.of(getLdesFragment("15/9/10"), false),
+					Arguments.of(getLdesFragment("15/0/0"), false));
+		}
 
-        private LdesFragment getLdesFragment(String fragmentValue) {
-            return new LdesFragment("", new FragmentInfo("", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, fragmentValue))));
-        }
-    }
-
+		private LdesFragment getLdesFragment(String fragmentValue) {
+			return new LdesFragment("", new FragmentInfo("",
+					List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, fragmentValue))));
+		}
+	}
 
 }

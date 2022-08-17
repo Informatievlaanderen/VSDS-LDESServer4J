@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LdesFragmentRepository {
-    LdesFragment saveFragment(LdesFragment ldesFragment);
+	LdesFragment saveFragment(LdesFragment ldesFragment);
 
-    Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
+	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
 
-    Optional<LdesFragment> retrieveOpenFragment(String collectionName);
+	Optional<LdesFragment> retrieveOpenFragment(String collectionName);
 
-    Optional<LdesFragment> retrieveInitialFragment(String collectionName);
+	Optional<LdesFragment> retrieveInitialFragment(String collectionName);
 
-    List<LdesFragment> retrieveAllFragments();
+	List<LdesFragment> retrieveAllFragments();
 }

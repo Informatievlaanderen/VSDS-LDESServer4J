@@ -7,9 +7,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class IngestionWebConfig {
-    @Bean
-    public LdesMemberConverter ldesMemberConverter(LdesConfig ldesConfig) {
-        return new LdesMemberConverter(ldesConfig);
-    }
+	@Bean
+	public LdesMemberConverter ldesMemberConverter(LdesConfig ldesConfig) {
+		return new LdesMemberConverter(ldesConfig);
+	}
 
 }

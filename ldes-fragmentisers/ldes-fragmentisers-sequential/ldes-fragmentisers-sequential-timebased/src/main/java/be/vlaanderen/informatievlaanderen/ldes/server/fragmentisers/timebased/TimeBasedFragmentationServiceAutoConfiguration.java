@@ -19,31 +19,33 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 
 @Configuration
-@ConditionalOnProperty(
-        value = "fragmentation.type",
-        havingValue = "timebased",
-        matchIfMissing = true)
+@ConditionalOnProperty(value = "fragmentation.type", havingValue = "timebased", matchIfMissing = true)
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class TimeBasedFragmentationServiceAutoConfiguration {
 
-    private final Logger logger = LoggerFactory.getLogger(TimeBasedFragmentationServiceAutoConfiguration.class);
+	private final Logger logger = LoggerFactory.getLogger(TimeBasedFragmentationServiceAutoConfiguration.class);
 
-    @Bean
-    public LdesFragmentNamingStrategy fragmentNamingStrategy() {
-        return new TimeBasedFragmentNamingStrategy();
-    }
+	@Bean
+	public LdesFragmentNamingStrategy fragmentNamingStrategy() {
+		return new TimeBasedFragmentNamingStrategy();
+	}
 
-    @Bean
-    public FragmentCreator fragmentCreator(LdesConfig ldesConfig, SequentialFragmentationConfig sequentialFragmentationConfig,
-                                           LdesFragmentNamingStrategy fragmentNamingStrategy, LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository) {
-        return new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, fragmentNamingStrategy, ldesMemberRepository, ldesFragmentRepository);
-    }
+	@Bean
+	public FragmentCreator fragmentCreator(LdesConfig ldesConfig,
+			SequentialFragmentationConfig sequentialFragmentationConfig,
+			LdesFragmentNamingStrategy fragmentNamingStrategy, LdesMemberRepository ldesMemberRepository,
+			LdesFragmentRepository ldesFragmentRepository) {
+		return new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, fragmentNamingStrategy,
+				ldesMemberRepository, ldesFragmentRepository);
+	}
 
-    @Bean
-    public FragmentationService sequentialFragmentationService(LdesConfig ldesConfig,
-                                                               LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator) {
-        logger.info("Timebased Fragmentation is configured");
-        return new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository, ldesFragmentRepository);
-    }
+	@Bean
+	public FragmentationService sequentialFragmentationService(LdesConfig ldesConfig,
+			LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository,
+			FragmentCreator fragmentCreator) {
+		logger.info("Timebased Fragmentation is configured");
+		return new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository,
+				ldesFragmentRepository);
+	}
 }

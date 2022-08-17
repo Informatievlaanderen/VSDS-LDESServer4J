@@ -10,25 +10,26 @@ import static org.mockito.Mockito.*;
 
 class FragmentationQueueMediatorImplTest {
 
-    private FragmentationQueueMediator fragmentationQueueMediator;
+	private FragmentationQueueMediator fragmentationQueueMediator;
 
-    private final FragmentationService fragmentationService = mock(FragmentationService.class);
+	private final FragmentationService fragmentationService = mock(FragmentationService.class);
 
-    @BeforeEach
-    void setUp() {
-        fragmentationQueueMediator = new FragmentationQueueMediatorImpl(fragmentationService);
-    }
+	@BeforeEach
+	void setUp() {
+		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(fragmentationService);
+	}
 
-    @Test
-    @DisplayName("Adding a member to the queue")
-    void when_MemberIsAddedForFragmentation_AThreadIsStartedWhichCallsTheFragmentationService() {
-        fragmentationQueueMediator.addLdesMember("someMember");
+	@Test
+	@DisplayName("Adding a member to the queue")
+	void when_MemberIsAddedForFragmentation_AThreadIsStartedWhichCallsTheFragmentationService() {
+		fragmentationQueueMediator.addLdesMember("someMember");
 
-        await()
-                .pollDelay(Durations.ONE_MILLISECOND)
-                .atMost(Durations.ONE_HUNDRED_MILLISECONDS)
-                .until(fragmentationQueueMediator::queueIsEmtpy);
-        verify(fragmentationService, times(1)).addMemberToFragment("someMember");
-    }
+		await()
+				.pollDelay(Durations.ONE_MILLISECOND)
+				.atMost(Durations.ONE_HUNDRED_MILLISECONDS)
+				.until(fragmentationQueueMediator::queueIsEmtpy);
+
+		verify(fragmentationService, times(1)).addMemberToFragment("someMember");
+	}
 
 }

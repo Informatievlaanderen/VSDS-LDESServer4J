@@ -19,33 +19,38 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class LdesMemberTest {
-    private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
+	private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 
-    @Test
-    @DisplayName("Test correct replacing of TreeMember statement")
-    void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", createModel(ldesMemberString, Lang.NQUADS));
+	@Test
+	@DisplayName("Test correct replacing of TreeMember statement")
+	void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
+		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+				StandardCharsets.UTF_8);
+		LdesMember ldesMember = new LdesMember(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				createModel(ldesMemberString, Lang.NQUADS));
 
-        ldesMember.removeTreeMember();
-        Statement statement = ldesMember.getModel()
-                .listStatements(null, TREE_MEMBER, (Resource) null)
-                .nextOptional()
-                .orElse(null);
+		ldesMember.removeTreeMember();
+		Statement statement = ldesMember.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
+				.orElse(null);
 
-        assertNull(statement);
-    }
+		assertNull(statement);
+	}
 
-    @Test
-    @DisplayName("Verify retrieving of member id from LdesMember")
-    void when_TreeMemberStatementIsAvailableInModel_LdesMemberId() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", createModel(ldesMemberString, Lang.NQUADS));
-        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", ldesMember.getLdesMemberId());
-    }
+	@Test
+	@DisplayName("Verify retrieving of member id from LdesMember")
+	void when_TreeMemberStatementIsAvailableInModel_LdesMemberId() throws IOException {
+		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+				StandardCharsets.UTF_8);
+		LdesMember ldesMember = new LdesMember(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				createModel(ldesMemberString, Lang.NQUADS));
+		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				ldesMember.getLdesMemberId());
+	}
 
-    private Model createModel(final String ldesMember, final Lang lang) {
-        return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
-    }
+	private Model createModel(final String ldesMember, final Lang lang) {
+		return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
+	}
 
 }

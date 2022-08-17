@@ -10,8 +10,9 @@ import org.springframework.http.converter.HttpMessageConverter;
 @Configuration
 public class WebConfig {
 
-    @Bean
-    public HttpMessageConverter<LdesFragment> ldesFragmentHttpConverter(final LdesFragmentConverter ldesFragmentConverter) {
-        return new LdesFragmentHttpConverter(ldesFragmentConverter);
-    }
+	@Bean
+	public HttpMessageConverter<LdesFragment> ldesFragmentHttpConverter(
+			final LdesFragmentConverter ldesFragmentConverter) {
+		return new LdesFragmentHttpConverter(ldesFragmentConverter);
+	}
 }

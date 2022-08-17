@@ -10,10 +10,10 @@ import java.util.List;
 @Component
 public class ClosestFragmentDiscoverer {
 
-    public LdesFragment getClosestFragment(LdesFragment ldesFragment, List<LdesFragment> availableFragments){
-        return availableFragments
-                .stream()
-                .min(new LdesFragmentDistanceComparator(ldesFragment))
-                .orElseThrow(()-> new NoClosestFragmentFoundException(ldesFragment, availableFragments));
-    }
+	public LdesFragment getClosestFragment(LdesFragment ldesFragment, List<LdesFragment> availableFragments) {
+		return availableFragments
+				.stream()
+				.min(new LdesFragmentDistanceComparator(ldesFragment))
+				.orElseThrow(() -> new NoClosestFragmentFoundException(ldesFragment, availableFragments));
+	}
 }

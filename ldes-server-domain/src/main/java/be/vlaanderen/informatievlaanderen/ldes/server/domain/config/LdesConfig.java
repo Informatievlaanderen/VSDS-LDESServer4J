@@ -6,58 +6,58 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
 public class LdesConfig {
-    private String hostName;
-    private String collectionName;
-    private String shape;
-    private String memberType;
-    private String timestampPath;
-    private String versionOf;
+	private String hostName;
+	private String collectionName;
+	private String shape;
+	private String memberType;
+	private String timestampPath;
+	private String versionOf;
 
-    public String getHostName() {
-        return hostName;
-    }
+	public String getHostName() {
+		return hostName;
+	}
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
-    }
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
 
-    public String getCollectionName() {
-        return collectionName;
-    }
+	public String getCollectionName() {
+		return collectionName;
+	}
 
-    public void setCollectionName(String collectionName) {
-        this.collectionName = collectionName;
-    }
+	public void setCollectionName(String collectionName) {
+		this.collectionName = collectionName;
+	}
 
-    public String getShape() {
-        return shape;
-    }
+	public String getShape() {
+		return shape;
+	}
 
-    public void setShape(String shape) {
-        this.shape = shape;
-    }
+	public void setShape(String shape) {
+		this.shape = shape;
+	}
 
-    public String getMemberType() {
-        return memberType;
-    }
+	public String getMemberType() {
+		return memberType;
+	}
 
-    public void setMemberType(String memberType) {
-        this.memberType = memberType;
-    }
+	public void setMemberType(String memberType) {
+		this.memberType = memberType;
+	}
 
-    public String getTimestampPath() {
-        return timestampPath;
-    }
+	public String getTimestampPath() {
+		return timestampPath;
+	}
 
-    public void setTimestampPath(String timestampPath) {
-        this.timestampPath = timestampPath;
-    }
+	public void setTimestampPath(String timestampPath) {
+		this.timestampPath = timestampPath;
+	}
 
-    public String getVersionOf() {
-        return versionOf;
-    }
+	public String getVersionOf() {
+		return versionOf;
+	}
 
-    public void setVersionOf(String versionOf) {
-        this.versionOf = versionOf;
-    }
+	public void setVersionOf(String versionOf) {
+		this.versionOf = versionOf;
+	}
 }

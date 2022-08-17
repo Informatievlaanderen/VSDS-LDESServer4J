@@ -5,58 +5,58 @@ import java.util.List;
 
 public class LdesFragment {
 
-    private final String fragmentId;
+	private final String fragmentId;
 
-    private final FragmentInfo fragmentInfo;
+	private final FragmentInfo fragmentInfo;
 
-    private final List<String> memberIds;
+	private final List<String> memberIds;
 
-    private final List<TreeRelation> relations;
-    
-    public LdesFragment(String fragmentId, FragmentInfo fragmentInfo) {
-        this.fragmentId = fragmentId;
-        this.fragmentInfo = fragmentInfo;
-        this.relations = new ArrayList<>();
-        this.memberIds = new ArrayList<>();
-    }
+	private final List<TreeRelation> relations;
 
-    public void addRelation(TreeRelation treeRelation) {
-        this.relations.add(treeRelation);
-    }
+	public LdesFragment(String fragmentId, FragmentInfo fragmentInfo) {
+		this.fragmentId = fragmentId;
+		this.fragmentInfo = fragmentInfo;
+		this.relations = new ArrayList<>();
+		this.memberIds = new ArrayList<>();
+	}
 
-    public String getFragmentId() {
-        return fragmentId;
-    }
+	public void addRelation(TreeRelation treeRelation) {
+		this.relations.add(treeRelation);
+	}
 
-    public FragmentInfo getFragmentInfo() {
-        return fragmentInfo;
-    }
+	public String getFragmentId() {
+		return fragmentId;
+	}
 
-    public List<TreeRelation> getRelations() {
-        return relations;
-    }
+	public FragmentInfo getFragmentInfo() {
+		return fragmentInfo;
+	}
 
-    public List<String> getMemberIds() {
-        return memberIds;
-    }
+	public List<TreeRelation> getRelations() {
+		return relations;
+	}
 
-    public void addMember(String ldesMemberId) {
-        memberIds.add(ldesMemberId);
-    }
+	public List<String> getMemberIds() {
+		return memberIds;
+	}
 
-    public int getCurrentNumberOfMembers() {
-        return memberIds.size();
-    }
+	public void addMember(String ldesMemberId) {
+		memberIds.add(ldesMemberId);
+	}
 
-    public void setImmutable(boolean immutable) {
-        this.fragmentInfo.setImmutable(immutable);
-    }
+	public int getCurrentNumberOfMembers() {
+		return memberIds.size();
+	}
 
-    public boolean isImmutable() {
-        return this.fragmentInfo.getImmutable();
-    }
+	public void setImmutable(boolean immutable) {
+		this.fragmentInfo.setImmutable(immutable);
+	}
 
-    public boolean isExistingFragment() {
-        return this.fragmentInfo.getValue()!=null;
-    }
+	public boolean isImmutable() {
+		return this.fragmentInfo.getImmutable();
+	}
+
+	public boolean isExistingFragment() {
+		return this.fragmentInfo.getValue() != null;
+	}
 }

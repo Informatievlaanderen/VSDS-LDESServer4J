@@ -37,98 +37,113 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {LdesConfig.class})
+@SpringBootTest(classes = { LdesConfig.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class SequentialFragmentationServiceTest {
 
-    @Autowired
-    private LdesConfig ldesConfig;
+	@Autowired
+	private LdesConfig ldesConfig;
 
-    private final LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
-    private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
+	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 
-    private final FragmentCreator fragmentCreator = mock(FragmentCreator.class);
+	private final FragmentCreator fragmentCreator = mock(FragmentCreator.class);
 
-    private FragmentationService fragmentationService;
+	private FragmentationService fragmentationService;
 
-    @BeforeEach
-    void setUp() {
-        fragmentationService = new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository, ldesFragmentRepository);
-    }
+	@BeforeEach
+	void setUp() {
+		fragmentationService = new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository,
+				ldesFragmentRepository);
+	}
 
-    @Test
-    @DisplayName("Member not found in repository")
-    void when_MemberIsNotFoundInRepository_thenMemberNotFoundExceptionIsThrown() {
-        MemberNotFoundException memberNotFoundException = assertThrows(MemberNotFoundException.class, () -> fragmentationService.addMemberToFragment("nonExistingMember"));
+	@Test
+	@DisplayName("Member not found in repository")
+	void when_MemberIsNotFoundInRepository_thenMemberNotFoundExceptionIsThrown() {
+		MemberNotFoundException memberNotFoundException = assertThrows(MemberNotFoundException.class,
+				() -> fragmentationService.addMemberToFragment("nonExistingMember"));
 
-        assertEquals("Member with id nonExistingMember not found in repository", memberNotFoundException.getMessage());
-    }
+		assertEquals("Member with id nonExistingMember not found in repository", memberNotFoundException.getMessage());
+	}
 
-    @Test
-    @DisplayName("Adding Member when there is no existing fragment")
-    void when_NoFragmentExists_thenFragmentIsCreatedAndMemberIsAdded() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment createdFragment = new LdesFragment("fragmentId", new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
-        when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
-                .thenReturn(Optional.empty());
-        when(fragmentCreator.createNewFragment(Optional.empty(), null))
-                .thenReturn(createdFragment);
+	@Test
+	@DisplayName("Adding Member when there is no existing fragment")
+	void when_NoFragmentExists_thenFragmentIsCreatedAndMemberIsAdded() throws IOException {
+		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+				StandardCharsets.UTF_8);
+		LdesMember ldesMember = new LdesMember(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+		LdesFragment createdFragment = new LdesFragment("fragmentId",
+				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
+		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
+		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
+				.thenReturn(Optional.empty());
+		when(fragmentCreator.createNewFragment(Optional.empty(), null))
+				.thenReturn(createdFragment);
 
-        fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
+		fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
 
-        InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
-        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-        inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
-        inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(), null);
-        inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(createdFragment);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
+		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
+		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(), null);
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(createdFragment);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    @Test
-    @DisplayName("Adding Member when there is an incomplete fragment")
-    void when_AnIncompleteFragmentExists_thenMemberIsAddedToFragment() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment existingLdesFragment = new LdesFragment("fragmentId", new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
-        when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
-                .thenReturn(Optional.of(existingLdesFragment));
+	@Test
+	@DisplayName("Adding Member when there is an incomplete fragment")
+	void when_AnIncompleteFragmentExists_thenMemberIsAddedToFragment() throws IOException {
+		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+				StandardCharsets.UTF_8);
+		LdesMember ldesMember = new LdesMember(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+		LdesFragment existingLdesFragment = new LdesFragment("fragmentId",
+				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
+		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
+		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
+				.thenReturn(Optional.of(existingLdesFragment));
 
-        fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
+		fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
 
-        InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
-        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-        inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
-        inOrder.verify(fragmentCreator, never()).createNewFragment(any(), any());
-        inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
+		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
+		inOrder.verify(fragmentCreator, never()).createNewFragment(any(), any());
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    @Test
-    @DisplayName("Adding Member when there is a complete fragment")
-    void when_AFullFragmentExists_thenANewFragmentIsCreatedAndMemberIsAddedToNewFragment() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"), StandardCharsets.UTF_8);
-        LdesMember ldesMember = new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-        LdesFragment existingLdesFragment = new LdesFragment("existingFragment", new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        LdesFragment newFragment = new LdesFragment("someId", new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
-        IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
-        when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
-        when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
-                .thenReturn(Optional.of(existingLdesFragment));
-        when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
-        when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), null)).thenReturn(newFragment);
+	@Test
+	@DisplayName("Adding Member when there is a complete fragment")
+	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndMemberIsAddedToNewFragment() throws IOException {
+		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+				StandardCharsets.UTF_8);
+		LdesMember ldesMember = new LdesMember(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+		LdesFragment existingLdesFragment = new LdesFragment("existingFragment",
+				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
+		LdesFragment newFragment = new LdesFragment("someId",
+				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
+		IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
+		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
+		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
+				.thenReturn(Optional.of(existingLdesFragment));
+		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
+		when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), null)).thenReturn(newFragment);
 
-        fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
+		fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
 
-        InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
-        inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-        inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
-        inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.of(existingLdesFragment), null);
-        inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
+		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
+		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.of(existingLdesFragment), null);
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
+		inOrder.verifyNoMoreInteractions();
+	}
 
 }

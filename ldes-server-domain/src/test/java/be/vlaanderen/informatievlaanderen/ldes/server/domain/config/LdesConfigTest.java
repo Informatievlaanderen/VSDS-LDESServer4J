@@ -9,22 +9,23 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {LdesConfig.class})
+@SpringBootTest(classes = { LdesConfig.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class LdesConfigTest {
 
-    @Autowired
-    private LdesConfig ldesConfig;
+	@Autowired
+	private LdesConfig ldesConfig;
 
-    @Test
-    @DisplayName("Verify content of LdesConfig")
-    void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig(){
-        assertEquals("exampleData", ldesConfig.getCollectionName());
-        assertEquals("http://localhost:8089", ldesConfig.getHostName());
-        assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", ldesConfig.getShape());
-        assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
-        assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
-        assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOf());
-    }
+	@Test
+	@DisplayName("Verify content of LdesConfig")
+	void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig() {
+		assertEquals("exampleData", ldesConfig.getCollectionName());
+		assertEquals("http://localhost:8089", ldesConfig.getHostName());
+		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
+				ldesConfig.getShape());
+		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
+		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
+		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOf());
+	}
 }

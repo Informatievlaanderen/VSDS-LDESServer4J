@@ -7,22 +7,22 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "geospatial")
 public class GeospatialConfig {
 
-    private String bucketiserProperty;
-    private int maxZoomLevel;
-    
-    public String getBucketiserProperty() {
-    	return bucketiserProperty;
-    }
-    
-    public void setBucketiserProperty(String bucketiserProperty) {
-    	this.bucketiserProperty = bucketiserProperty;
-    }
-    
-    public int getMaxZoomLevel() {
-    	return maxZoomLevel;
-    }
-    
-    public void setMaxZoomLevel(int zoomLevel) {
-    	this.maxZoomLevel = zoomLevel;
-    }
+	private String bucketiserProperty;
+	private int maxZoomLevel;
+
+	public String getBucketiserProperty() {
+		return bucketiserProperty;
+	}
+
+	public void setBucketiserProperty(String bucketiserProperty) {
+		this.bucketiserProperty = bucketiserProperty;
+	}
+
+	public int getMaxZoomLevel() {
+		return maxZoomLevel;
+	}
+
+	public void setMaxZoomLevel(int zoomLevel) {
+		this.maxZoomLevel = zoomLevel;
+	}
 }

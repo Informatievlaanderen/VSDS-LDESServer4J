@@ -7,24 +7,25 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import java.util.Comparator;
 
 public class LdesFragmentDistanceComparator implements Comparator<LdesFragment> {
-    private final Tile tile;
-    public LdesFragmentDistanceComparator(LdesFragment ldesFragment) {
-        tile = TileConverter.fromString(ldesFragment.getFragmentInfo().getValue());
-    }
+	private final Tile tile;
 
-    @Override
-    public int compare(LdesFragment o1, LdesFragment o2) {
-        Tile tile1 = TileConverter.fromString(o1.getFragmentInfo().getValue());
-        Tile tile2 = TileConverter.fromString(o2.getFragmentInfo().getValue());
+	public LdesFragmentDistanceComparator(LdesFragment ldesFragment) {
+		tile = TileConverter.fromString(ldesFragment.getFragmentInfo().getValue());
+	}
 
-        Double distanceToFirstFragment = getDistanceToFragment(tile1);
-        Double distanceToSecondFragment = getDistanceToFragment(tile2);
+	@Override
+	public int compare(LdesFragment o1, LdesFragment o2) {
+		Tile tile1 = TileConverter.fromString(o1.getFragmentInfo().getValue());
+		Tile tile2 = TileConverter.fromString(o2.getFragmentInfo().getValue());
 
-        return distanceToFirstFragment.compareTo(distanceToSecondFragment);
-    }
+		Double distanceToFirstFragment = getDistanceToFragment(tile1);
+		Double distanceToSecondFragment = getDistanceToFragment(tile2);
 
-    private double getDistanceToFragment(Tile tile1) {
-        return DistanceCalculator.calculateDistance(tile.getX(), tile.getY(), tile1.getX(), tile1.getY());
-    }
+		return distanceToFirstFragment.compareTo(distanceToSecondFragment);
+	}
+
+	private double getDistanceToFragment(Tile tile1) {
+		return DistanceCalculator.calculateDistance(tile.getX(), tile.getY(), tile1.getX(), tile1.getY());
+	}
 
 }

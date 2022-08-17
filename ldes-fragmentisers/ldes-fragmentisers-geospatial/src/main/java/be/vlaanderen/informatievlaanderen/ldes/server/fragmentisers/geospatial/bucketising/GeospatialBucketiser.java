@@ -13,22 +13,25 @@ import java.util.stream.Collectors;
 
 @Component
 public class GeospatialBucketiser implements Bucketiser {
-    private final GeospatialConfig geospatialConfig;
-    private final CoordinateConverter coordinateConverter;
-    private final CoordinateToTileStringConverter coordinateToTileStringConverter;
+	private final GeospatialConfig geospatialConfig;
+	private final CoordinateConverter coordinateConverter;
+	private final CoordinateToTileStringConverter coordinateToTileStringConverter;
 
-    public GeospatialBucketiser(GeospatialConfig geospatialConfig, CoordinateConverter coordinateConverter, CoordinateToTileStringConverter coordinateToTileStringConverter) {
-        this.geospatialConfig = geospatialConfig;
-        this.coordinateConverter = coordinateConverter;
-        this.coordinateToTileStringConverter = coordinateToTileStringConverter;
-    }
+	public GeospatialBucketiser(GeospatialConfig geospatialConfig, CoordinateConverter coordinateConverter,
+			CoordinateToTileStringConverter coordinateToTileStringConverter) {
+		this.geospatialConfig = geospatialConfig;
+		this.coordinateConverter = coordinateConverter;
+		this.coordinateToTileStringConverter = coordinateToTileStringConverter;
+	}
 
-    @Override
-    public Set<String> bucketise(LdesMember member) {
-        GeometryWrapper wrapper = (GeometryWrapper) member.getFragmentationObject(geospatialConfig.getBucketiserProperty());
-        return Arrays.stream(wrapper.getXYGeometry().getCoordinates())
-                .map(coordinateConverter::convertCoordinate)
-                .map(coordinate -> coordinateToTileStringConverter.convertCoordinate(coordinate, geospatialConfig.getMaxZoomLevel()))
-                .collect(Collectors.toSet());
-    }
+	@Override
+	public Set<String> bucketise(LdesMember member) {
+		GeometryWrapper wrapper = (GeometryWrapper) member
+				.getFragmentationObject(geospatialConfig.getBucketiserProperty());
+		return Arrays.stream(wrapper.getXYGeometry().getCoordinates())
+				.map(coordinateConverter::convertCoordinate)
+				.map(coordinate -> coordinateToTileStringConverter.convertCoordinate(coordinate,
+						geospatialConfig.getMaxZoomLevel()))
+				.collect(Collectors.toSet());
+	}
 }

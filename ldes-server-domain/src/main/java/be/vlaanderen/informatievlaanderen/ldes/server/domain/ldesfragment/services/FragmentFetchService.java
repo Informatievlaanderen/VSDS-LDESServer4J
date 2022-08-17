@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 public interface FragmentFetchService {
 
-    LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest);
+	LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest);
 
-    LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest);
+	LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest);
 }

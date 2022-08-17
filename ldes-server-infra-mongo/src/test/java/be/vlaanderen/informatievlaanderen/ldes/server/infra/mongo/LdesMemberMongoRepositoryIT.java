@@ -22,21 +22,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("mongo-test")
 class LdesMemberMongoRepositoryIT {
 
-    @Autowired
-    private LdesMemberMongoRepository ldesMemberMongoRepository;
+	@Autowired
+	private LdesMemberMongoRepository ldesMemberMongoRepository;
 
-    @Autowired
-    private LdesMemberEntityRepository ldesMemberEntityRepository;
+	@Autowired
+	private LdesMemberEntityRepository ldesMemberEntityRepository;
 
-    @DisplayName("given object to save" + " when save object using MongoDB template" + " then object is saved")
-    @Test
-    void when_LdesMembersAreStoredUsingRepository_ObjectsAreStoredInMongoDB() {
-        String member = String.format("""
-                <http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
+	@DisplayName("given object to save" + " when save object using MongoDB template" + " then object is saved")
+	@Test
+	void when_LdesMembersAreStoredUsingRepository_ObjectsAreStoredInMongoDB() {
+		String member = String.format("""
+				<http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
-        LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(member, Lang.NQUADS));
-        ldesMemberMongoRepository.saveLdesMember(ldesMember);
-        assertEquals(1, ldesMemberEntityRepository.findAll().size());
-        assertEquals(1, ldesMemberMongoRepository.fetchLdesMembers().size());
-    }
+		LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(member, Lang.NQUADS));
+		ldesMemberMongoRepository.saveLdesMember(ldesMember);
+		assertEquals(1, ldesMemberEntityRepository.findAll().size());
+		assertEquals(1, ldesMemberMongoRepository.fetchLdesMembers().size());
+	}
 }
