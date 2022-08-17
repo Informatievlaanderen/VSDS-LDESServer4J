@@ -61,9 +61,9 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
         List<Statement> statements = new ArrayList<>();
         statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesConfig.getShape())));
         statements
-                .add(createStatement(viewId, LDES_VERSION_OF, createResource(VERSION_OF_URI)));
+                .add(createStatement(viewId, LDES_VERSION_OF, createResource(ldesConfig.getVersionOf())));
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,
-                createResource(PROV_GENERATED_AT_TIME)));
+                createResource(ldesConfig.getTimestampPath())));
         statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
         return statements;
     }
