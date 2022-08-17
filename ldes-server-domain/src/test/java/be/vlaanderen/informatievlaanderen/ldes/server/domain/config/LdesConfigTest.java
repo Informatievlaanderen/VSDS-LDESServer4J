@@ -18,7 +18,7 @@ class LdesConfigTest {
     private LdesConfig ldesConfig;
 
     @Test
-    @DisplayName("Verify contect of LdesConfig")
+    @DisplayName("Verify content of LdesConfig")
     void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig(){
         assertEquals("exampleData", ldesConfig.getCollectionName());
         assertEquals("http://localhost:8089", ldesConfig.getHostName());
