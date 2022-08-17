@@ -9,8 +9,9 @@ public class LdesConfig {
     private String hostName;
     private String collectionName;
     private String shape;
-
     private String memberType;
+    private String timestampPath;
+    private String versionOf;
 
     public String getHostName() {
         return hostName;
@@ -27,7 +28,7 @@ public class LdesConfig {
     public void setCollectionName(String collectionName) {
         this.collectionName = collectionName;
     }
-    
+
     public String getShape() {
         return shape;
     }
@@ -42,5 +43,21 @@ public class LdesConfig {
 
     public void setMemberType(String memberType) {
         this.memberType = memberType;
+    }
+
+    public String getTimestampPath() {
+        return timestampPath;
+    }
+
+    public void setTimestampPath(String timestampPath) {
+        this.timestampPath = timestampPath;
+    }
+
+    public String getVersionOf() {
+        return versionOf;
+    }
+
+    public void setVersionOf(String versionOf) {
+        this.versionOf = versionOf;
     }
 }

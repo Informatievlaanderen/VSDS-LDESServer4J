@@ -88,9 +88,11 @@ These need to be added in the `application.yml` file in `ldes-server-application
   server.port: {http-port}
   ldes:
     collection-name: {short name of the collection}
-    host-name: {endpoint of LDES server}
+    host-name: {endpoint of LDES Server}
     member-type: {Defines the which syntax type is used to define the member id}
     shape: {URI to defined shape}
+    timestamp-path: {SHACL property path to the timestamp when the version object entered the event stream.}
+    version-of: {SHACL property path to the non-versioned identifier of the entity.}
   fragmentation:
     type: {timebased(default)/geospatial}
   ```
