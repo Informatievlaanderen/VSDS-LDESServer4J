@@ -8,19 +8,20 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 
 public class LdesMember {
 
-    private final Model memberModel;
-    private final String memberId;
+	private final Model memberModel;
+	private final String memberId;
 
-    public LdesMember(String memberId, final Model memberModel) {
-        this.memberId = memberId;
-        this.memberModel = memberModel;
-    }
+	public LdesMember(String memberId, final Model memberModel) {
+		this.memberId = memberId;
+		this.memberModel = memberModel;
+	}
 
-    public Model getModel() {
-        return memberModel;
-    }
+	public Model getModel() {
+		return memberModel;
+	}
 
-    public Object getFragmentationObject(String fragmentationProperty) {
+	public Object getFragmentationObject(String fragmentationProperty) {
+		// @formatter:off
         return memberModel
                 .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
                 .nextOptional()
@@ -28,19 +29,18 @@ public class LdesMember {
                 .map(RDFNode::asLiteral)
                 .map(Literal::getValue)
                 .orElse(null);
-    }
+        // @formatter:on
+	}
 
-    public String getLdesMemberId() {
-        return memberId;
-    }
+	public String getLdesMemberId() {
+		return memberId;
+	}
 
-    private Optional<Statement> getCurrentTreeMemberStatement() {
-        return memberModel
-                .listStatements(null, TREE_MEMBER, (Resource) null)
-                .nextOptional();
-    }
+	private Optional<Statement> getCurrentTreeMemberStatement() {
+		return memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
+	}
 
-    public void removeTreeMember() {
-        getCurrentTreeMemberStatement().ifPresent(memberModel::remove);
-    }
+	public void removeTreeMember() {
+		getCurrentTreeMemberStatement().ifPresent(memberModel::remove);
+	}
 }

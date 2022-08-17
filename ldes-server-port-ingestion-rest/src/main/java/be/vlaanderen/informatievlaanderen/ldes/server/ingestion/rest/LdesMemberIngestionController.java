@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LdesMemberIngestionController {
 
-    private final MemberIngestService memberIngestService;
+	private final MemberIngestService memberIngestService;
 
-    public LdesMemberIngestionController(final MemberIngestService memberIngestService) {
-        this.memberIngestService = memberIngestService;
-    }
+	public LdesMemberIngestionController(final MemberIngestService memberIngestService) {
+		this.memberIngestService = memberIngestService;
+	}
 
-    @PostMapping(value = "${ldes.collectionname}", consumes = {"application/n-quads", "application/n-triples"})
-    public void ingestLdesMember(@RequestBody LdesMember ldesMember) {
-        memberIngestService.addMember(ldesMember);
-    }
+	@PostMapping(value = "${ldes.collectionname}", consumes = { "application/n-quads", "application/n-triples" })
+	public void ingestLdesMember(@RequestBody LdesMember ldesMember) {
+		memberIngestService.addMember(ldesMember);
+	}
 }

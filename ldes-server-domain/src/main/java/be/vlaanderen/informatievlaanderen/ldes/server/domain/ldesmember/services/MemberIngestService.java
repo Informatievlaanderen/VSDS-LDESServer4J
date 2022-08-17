@@ -4,5 +4,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 
 public interface MemberIngestService {
 
-    void addMember(LdesMember ldesMember);
+	void addMember(LdesMember ldesMember);
 }

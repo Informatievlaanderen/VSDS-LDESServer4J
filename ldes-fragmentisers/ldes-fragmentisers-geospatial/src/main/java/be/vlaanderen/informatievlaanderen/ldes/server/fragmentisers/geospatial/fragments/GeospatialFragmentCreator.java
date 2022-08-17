@@ -15,7 +15,8 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 	private final LdesConfig ldesConfig;
 	protected final LdesFragmentNamingStrategy ldesFragmentNamingStrategy;
 
-	public GeospatialFragmentCreator(final LdesConfig ldesConfig, LdesFragmentNamingStrategy ldesFragmentNamingStrategy) {
+	public GeospatialFragmentCreator(final LdesConfig ldesConfig,
+			LdesFragmentNamingStrategy ldesFragmentNamingStrategy) {
 		this.ldesConfig = ldesConfig;
 		this.ldesFragmentNamingStrategy = ldesFragmentNamingStrategy;
 	}
@@ -35,6 +36,7 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 				ldesConfig.getCollectionName(),
 				List.of(bucket));
 
-		return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo), fragmentInfo);
+		return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
+				fragmentInfo);
 	}
 }

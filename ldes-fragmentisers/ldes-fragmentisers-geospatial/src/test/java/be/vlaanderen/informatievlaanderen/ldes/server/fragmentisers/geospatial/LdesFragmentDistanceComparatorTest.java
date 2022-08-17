@@ -15,23 +15,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LdesFragmentDistanceComparatorTest {
 
-    String ROOT_LOCATION = "15/0/0";
-    String FIRST_LOCATION = "15/1/0";
-    String SECOND_LOCATION = "15/1/5";
+	String ROOT_LOCATION = "15/0/0";
+	String FIRST_LOCATION = "15/1/0";
+	String SECOND_LOCATION = "15/1/5";
 
-    @Test
-    void testComparator() {
-        LdesFragment rootFragment = createFragment(ROOT_LOCATION);
-        LdesFragment firstFragment = createFragment(FIRST_LOCATION);
-        LdesFragment secondFragment = createFragment(SECOND_LOCATION);
+	@Test
+	void testComparator() {
+		LdesFragment rootFragment = createFragment(ROOT_LOCATION);
+		LdesFragment firstFragment = createFragment(FIRST_LOCATION);
+		LdesFragment secondFragment = createFragment(SECOND_LOCATION);
 
-        Optional<LdesFragment> closestFragment = Stream.of(firstFragment, secondFragment)
-                .min(new LdesFragmentDistanceComparator(rootFragment));
+		Optional<LdesFragment> closestFragment = Stream.of(firstFragment, secondFragment)
+				.min(new LdesFragmentDistanceComparator(rootFragment));
 
-        assertEquals(firstFragment, closestFragment.get());
-    }
+		assertEquals(firstFragment, closestFragment.get());
+	}
 
-    private LdesFragment createFragment(String tile) {
-        return new LdesFragment("x", new FragmentInfo("", List.of(new FragmentPair("tile", tile))));
-    }
+	private LdesFragment createFragment(String tile) {
+		return new LdesFragment("x", new FragmentInfo("", List.of(new FragmentPair("tile", tile))));
+	}
 }

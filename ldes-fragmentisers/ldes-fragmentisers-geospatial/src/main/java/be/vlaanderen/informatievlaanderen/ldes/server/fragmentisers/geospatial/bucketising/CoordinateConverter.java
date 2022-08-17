@@ -4,5 +4,5 @@ import org.locationtech.jts.geom.Coordinate;
 
 public interface CoordinateConverter {
 
-    Coordinate convertCoordinate(final Coordinate coordinate);
+	Coordinate convertCoordinate(final Coordinate coordinate);
 }

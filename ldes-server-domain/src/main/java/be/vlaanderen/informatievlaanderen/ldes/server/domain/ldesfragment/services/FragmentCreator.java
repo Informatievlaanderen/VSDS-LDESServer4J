@@ -6,7 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 
 public interface FragmentCreator {
-	
-    LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment, FragmentPair bucket);
-    boolean needsToCreateNewFragment(LdesFragment fragment);
+
+	LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment, FragmentPair bucket);
+
+	boolean needsToCreateNewFragment(LdesFragment fragment);
 }

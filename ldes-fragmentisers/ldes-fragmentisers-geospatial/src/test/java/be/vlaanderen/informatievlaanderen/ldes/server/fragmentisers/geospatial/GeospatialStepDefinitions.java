@@ -25,86 +25,85 @@ import static org.junit.Assert.assertEquals;
 @SelectClasspathResource("features")
 public class GeospatialStepDefinitions {
 
-    private GeospatialBucketiser geospatialBucketiser;
-    private final GeospatialConfig geospatialConfig = new GeospatialConfig();
+	private GeospatialBucketiser geospatialBucketiser;
+	private final GeospatialConfig geospatialConfig = new GeospatialConfig();
 
-    // GIVEN
+	// GIVEN
 
-    @Given("a configured geo-spatial bucketising property {string}")
-    public void aConfiguredGeoSpatialBucketisingProperty(String propertyToBucketiseOn) {
-        geospatialConfig.setBucketiserProperty(propertyToBucketiseOn);
-    }
+	@Given("a configured geo-spatial bucketising property {string}")
+	public void aConfiguredGeoSpatialBucketisingProperty(String propertyToBucketiseOn) {
+		geospatialConfig.setBucketiserProperty(propertyToBucketiseOn);
+	}
 
-    @Given("a configured max zoom level at {int}")
-    public void aConfiguredMaxZoomLevelAt(int maxZoomLevel) {
-        geospatialConfig.setMaxZoomLevel(maxZoomLevel);
-    }
+	@Given("a configured max zoom level at {int}")
+	public void aConfiguredMaxZoomLevelAt(int maxZoomLevel) {
+		geospatialConfig.setMaxZoomLevel(maxZoomLevel);
+	}
 
-    @Given("a geo-spatial bucketiser with the defined configuration")
-    public void aGeoSpatialBucketiserWithTheDefinedConfiguration() {
-        geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, null, null);
-    }
+	@Given("a geo-spatial bucketiser with the defined configuration")
+	public void aGeoSpatialBucketiserWithTheDefinedConfiguration() {
+		geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, null, null);
+	}
 
+	@When("I bucketise a member {string}")
+	public void iBucketiseAMember(String ldesMemberPath) {
+		LdesMember ldesMember = new LdesMember("id_1",
+				RdfModelConverter.fromString(getLdesMemberString(ldesMemberPath), Lang.NQUADS));
+		geospatialBucketiser.bucketise(ldesMember);
+	}
 
-    @When("I bucketise a member {string}")
-    public void iBucketiseAMember(String ldesMemberPath) {
-        LdesMember ldesMember = new LdesMember("id_1", RdfModelConverter.fromString(getLdesMemberString(ldesMemberPath), Lang.NQUADS));
-        geospatialBucketiser.bucketise(ldesMember);
-    }
+	@Then("the bucketiser calculates a bucket based on {string}")
+	public void theBucketiserCalculatesABucketBasedOn(String tile) {
 
-    @Then("the bucketiser calculates a bucket based on {string}")
-    public void theBucketiserCalculatesABucketBasedOn(String tile) {
+	}
 
-    }
+	@When("a member contains a polygon spanning multiple tiles")
+	public void aMemberContainsAPolygonSpanningMultipleTiles() {
 
-    @When("a member contains a polygon spanning multiple tiles")
-    public void aMemberContainsAPolygonSpanningMultipleTiles() {
-        
-    }
+	}
 
-    @Then("the member buckets contain all these tiles.")
-    public void theMemberBucketsContainAllTheseTiles() {
-        
-    }
+	@Then("the member buckets contain all these tiles.")
+	public void theMemberBucketsContainAllTheseTiles() {
 
-    @Then("it does not store the buckets")
-    public void itDoesNotStoreTheBuckets() {
-    }
+	}
 
+	@Then("it does not store the buckets")
+	public void itDoesNotStoreTheBuckets() {
+	}
 
-    @Then("I expect {int} fragments to be created")
-    public void iExpectFragmentsToBeCreated(int arg0) {
-        
-    }
+	@Then("I expect {int} fragments to be created")
+	public void iExpectFragmentsToBeCreated(int arg0) {
 
-    @And("first member fragment has {int} members")
-    public void firstMemberFragmentHasCountMembers(int memberCount) {
-        
-    }
+	}
 
+	@And("first member fragment has {int} members")
+	public void firstMemberFragmentHasCountMembers(int memberCount) {
 
-    @And("the second member fragment has {int} members")
-    public void theSecondMemberFragmentHasMemberResidueMembers(int memberCount) {
-    }
+	}
 
-    @Then("I expect {long} root fragments, {long} tile fragments and {long} memberFragments")
-    public void iExpectRootCountRootFragmentsTileCountTileFragmentsAndMemberFragmentCountMemberFragments(long rootCount, long tileCount, long memberFragmentCount) {
-        
-    }
+	@And("the second member fragment has {int} members")
+	public void theSecondMemberFragmentHasMemberResidueMembers(int memberCount) {
+	}
 
-    @And("I expect the member to appear in all member fragments")
-    public void iExpectTheMemberToAppearInAllMemberFragments() {
-    }
+	@Then("I expect {long} root fragments, {long} tile fragments and {long} memberFragments")
+	public void iExpectRootCountRootFragmentsTileCountTileFragmentsAndMemberFragmentCountMemberFragments(long rootCount,
+			long tileCount, long memberFragmentCount) {
 
-    @And("the fragments contain {long} members")
-    public void theFragmentsContainMaxMemberCountMembers(long memberCount) {
-    }
+	}
 
-    private static String getLdesMemberString(String filePath) {
-        try {
-            return FileUtils.readFileToString(ResourceUtils.getFile("classpath:"+filePath), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@And("I expect the member to appear in all member fragments")
+	public void iExpectTheMemberToAppearInAllMemberFragments() {
+	}
+
+	@And("the fragments contain {long} members")
+	public void theFragmentsContainMaxMemberCountMembers(long memberCount) {
+	}
+
+	private static String getLdesMemberString(String filePath) {
+		try {
+			return FileUtils.readFileToString(ResourceUtils.getFile("classpath:" + filePath), StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

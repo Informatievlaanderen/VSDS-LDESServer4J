@@ -6,37 +6,37 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 public class FragmentInfo {
 
-    private final String collectionName;
-    private final List<FragmentPair> fragmentPairs;
-    private Boolean immutable;
+	private final String collectionName;
+	private final List<FragmentPair> fragmentPairs;
+	private Boolean immutable;
 
-    public FragmentInfo(String collectionName, List<FragmentPair> fragmentPairs) {
-        this.collectionName = collectionName;
-        this.fragmentPairs = fragmentPairs;
-        this.immutable = false;
-    }
+	public FragmentInfo(String collectionName, List<FragmentPair> fragmentPairs) {
+		this.collectionName = collectionName;
+		this.fragmentPairs = fragmentPairs;
+		this.immutable = false;
+	}
 
-    public String getPath() {
-        return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
-    }
+	public String getPath() {
+		return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
+	}
 
-    public String getValue() {
-        return fragmentPairs.stream().map(FragmentPair::fragmentValue).findFirst().orElse(null);
-    }
+	public String getValue() {
+		return fragmentPairs.stream().map(FragmentPair::fragmentValue).findFirst().orElse(null);
+	}
 
-    public List<FragmentPair> getFragmentPairs() {
-        return fragmentPairs;
-    }
+	public List<FragmentPair> getFragmentPairs() {
+		return fragmentPairs;
+	}
 
-    public String getCollectionName() {
-        return collectionName;
-    }
+	public String getCollectionName() {
+		return collectionName;
+	}
 
-    public Boolean getImmutable() {
-        return immutable;
-    }
+	public Boolean getImmutable() {
+		return immutable;
+	}
 
-    public void setImmutable(Boolean immutable) {
-        this.immutable = immutable;
-    }
+	public void setImmutable(Boolean immutable) {
+		this.immutable = immutable;
+	}
 }

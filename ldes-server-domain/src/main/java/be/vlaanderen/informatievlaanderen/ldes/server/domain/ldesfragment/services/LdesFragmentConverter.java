@@ -6,5 +6,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 
 public interface LdesFragmentConverter {
 
-    Model toModel(final LdesFragment ldesFragment);
+	Model toModel(final LdesFragment ldesFragment);
 }

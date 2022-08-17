@@ -17,16 +17,16 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class MongoAutoConfiguration {
 
-    @Bean
-    @ConditionalOnMissingBean
-    public LdesMemberRepository ldesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository) {
-        return new LdesMemberMongoRepository(ldesMemberEntityRepository);
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public LdesMemberRepository ldesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository) {
+		return new LdesMemberMongoRepository(ldesMemberEntityRepository);
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public LdesFragmentRepository ldesFragmentMongoRepository(
-            final LdesFragmentEntityRepository ldesFragmentEntityRepository) {
-        return new LdesFragmentMongoRepository(ldesFragmentEntityRepository);
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public LdesFragmentRepository ldesFragmentMongoRepository(
+			final LdesFragmentEntityRepository ldesFragmentEntityRepository) {
+		return new LdesFragmentMongoRepository(ldesFragmentEntityRepository);
+	}
 }

@@ -19,30 +19,31 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {LdesConfig.class})
+@SpringBootTest(classes = { LdesConfig.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class TimeBasedFragmentNamingStrategyTest {
-	
+
 	@Autowired
 	private LdesConfig ldesConfig;
-	
+
 	private FragmentInfo fragmentInfo;
 	private LdesFragmentNamingStrategy ldesFragmentNamingStrategy;
-	
+
 	@BeforeEach
 	void setup() {
-		fragmentInfo = new FragmentInfo(ldesConfig.getCollectionName(), List.of(new FragmentPair("timestampPath", "2020-12-05T09:00:00.000Z")));
-		
+		fragmentInfo = new FragmentInfo(ldesConfig.getCollectionName(),
+				List.of(new FragmentPair("timestampPath", "2020-12-05T09:00:00.000Z")));
+
 		ldesFragmentNamingStrategy = new TimeBasedFragmentNamingStrategy();
 	}
-	
-    @Test
-    void when_FragmentIdConverter_ToFragmentId_ExpectCorrectFormat() {
-        String fragmentId = ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo);
 
-        String expectedFragmentId = "http://localhost:8080/testData?timestampPath=2020-12-05T09:00:00.000Z";
+	@Test
+	void when_FragmentIdConverter_ToFragmentId_ExpectCorrectFormat() {
+		String fragmentId = ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo);
 
-        assertEquals(expectedFragmentId, fragmentId);
-    }
+		String expectedFragmentId = "http://localhost:8080/testData?timestampPath=2020-12-05T09:00:00.000Z";
+
+		assertEquals(expectedFragmentId, fragmentId);
+	}
 }

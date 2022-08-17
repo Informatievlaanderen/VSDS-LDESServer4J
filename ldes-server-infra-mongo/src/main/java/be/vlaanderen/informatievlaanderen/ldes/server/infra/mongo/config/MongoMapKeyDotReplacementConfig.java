@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 @Configuration
 public class MongoMapKeyDotReplacementConfig {
 
-    @Autowired
-    public void setMapKeyDotReplacement(MappingMongoConverter mongoConverter) {
-        mongoConverter.setMapKeyDotReplacement("-");
-    }
+	@Autowired
+	public void setMapKeyDotReplacement(MappingMongoConverter mongoConverter) {
+		mongoConverter.setMapKeyDotReplacement("-");
+	}
 }
