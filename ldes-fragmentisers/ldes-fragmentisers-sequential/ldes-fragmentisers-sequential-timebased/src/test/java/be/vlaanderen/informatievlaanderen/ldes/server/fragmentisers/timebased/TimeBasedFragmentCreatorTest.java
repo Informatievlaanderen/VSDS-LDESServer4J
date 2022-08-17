@@ -73,7 +73,7 @@ class TimeBasedFragmentCreatorTest {
     void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
         LdesMember newLdesMember = createLdesMember();
         LdesMember ldesMemberOfFragment = createLdesMember();
-        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        LdesFragment existingLdesFragment = new LdesFragment("someId", new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
         existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
         when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId())).thenReturn(Optional.of(ldesMemberOfFragment));
 
@@ -90,7 +90,7 @@ class TimeBasedFragmentCreatorTest {
     @Test
     @DisplayName("Creating First Time-Based Fragment")
     void when_FragmentIsFull_NewFragmentNeedsToBeCreated() {
-        LdesFragment ldesFragment = new LdesFragment("someId", new FragmentInfo("view", "shape", "viewShortName", List.of(new FragmentPair("Path", "Value"))));
+        LdesFragment ldesFragment = new LdesFragment("someId", new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
         ldesFragment.addMember("member1");
         assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
         ldesFragment.addMember("member2");
@@ -101,8 +101,6 @@ class TimeBasedFragmentCreatorTest {
 
     private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
         assertEquals("http://localhost:8080/testData?generatedAtTime", ldesFragment.getFragmentId().split("=")[0]);
-        assertEquals("http://localhost:8080/testData", ldesFragment.getFragmentInfo().getView());
-        assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape", ldesFragment.getFragmentInfo().getShape());
         assertEquals("testData", ldesFragment.getFragmentInfo().getCollectionName());
         assertEquals("generatedAtTime", ldesFragment.getFragmentInfo().getPath());
     }

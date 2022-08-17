@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
@@ -21,9 +22,11 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
     private final LdesMemberRepository ldesMemberRepository;
+    private final LdesConfig ldesConfig;
 
-    public LdesFragmentConverterImpl(LdesMemberRepository ldesMemberRepository) {
+    public LdesFragmentConverterImpl(LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig) {
         this.ldesMemberRepository = ldesMemberRepository;
+        this.ldesConfig = ldesConfig;
     }
 
     public Model toModel(final LdesFragment ldesFragment) {
@@ -37,10 +40,10 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
     private List<Statement> addRelationAndMetaDataStatements(LdesFragment ldesFragment) {
         List<Statement> statements = new ArrayList<>();
-        Resource viewId = createResource(ldesFragment.getFragmentInfo().getView());
+        Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
         Resource currrentFragmentId = createResource(ldesFragment.getFragmentId());
 
-        statements.addAll(getGeneralLdesStatements(ldesFragment, viewId));
+        statements.addAll(getGeneralLdesStatements(viewId));
         statements.addAll(getViewStatements(ldesFragment, viewId, currrentFragmentId));
         statements.addAll(getRelationStatements(ldesFragment, currrentFragmentId));
         statements.addAll(getMemberStatements(ldesFragment, viewId));
@@ -54,9 +57,9 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
         return statements;
     }
 
-    private List<Statement> getGeneralLdesStatements(LdesFragment ldesFragment, Resource viewId) {
+    private List<Statement> getGeneralLdesStatements(Resource viewId) {
         List<Statement> statements = new ArrayList<>();
-        statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesFragment.getFragmentInfo().getShape())));
+        statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesConfig.getShape())));
         statements
                 .add(createStatement(viewId, LDES_VERSION_OF, createResource(VERSION_OF_URI)));
         statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH,

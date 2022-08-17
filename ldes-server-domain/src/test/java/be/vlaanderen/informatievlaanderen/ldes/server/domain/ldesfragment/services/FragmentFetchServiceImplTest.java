@@ -36,7 +36,7 @@ class FragmentFetchServiceImplTest {
     private static final String PATH = "http://www.w3.org/ns/prov#generatedAtTime";
     private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
     private static final String FRAGMENT_ID_1 = VIEW + "?generatedAtTime=" + FRAGMENTATION_VALUE_1;
-    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW, SHAPE, VIEW_SHORTNAME, List.of(new FragmentPair(PATH,
+    private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(VIEW_SHORTNAME, List.of(new FragmentPair(PATH,
             FRAGMENTATION_VALUE_1)));
 
     @Autowired
@@ -61,7 +61,6 @@ class FragmentFetchServiceImplTest {
         assertEquals(0, returnedFragment.getMemberIds().size());
         assertNull(returnedFragment.getFragmentInfo().getValue());
         assertNull(returnedFragment.getFragmentInfo().getPath());
-        assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }
 
     @Test
@@ -78,7 +77,6 @@ class FragmentFetchServiceImplTest {
         assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
-        assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }
 
     @Test
@@ -91,7 +89,6 @@ class FragmentFetchServiceImplTest {
         assertEquals(0, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
-        assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }
 
     @Test
@@ -107,6 +104,5 @@ class FragmentFetchServiceImplTest {
         assertEquals(1, returnedFragment.getMemberIds().size());
         assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
         assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
-        assertEquals(VIEW, returnedFragment.getFragmentInfo().getView());
     }
 }
