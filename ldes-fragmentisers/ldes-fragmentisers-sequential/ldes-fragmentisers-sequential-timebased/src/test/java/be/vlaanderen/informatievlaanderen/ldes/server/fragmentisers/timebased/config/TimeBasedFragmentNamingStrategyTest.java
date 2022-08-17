@@ -32,7 +32,7 @@ class TimeBasedFragmentNamingStrategyTest {
 	
 	@BeforeEach
 	void setup() {
-		fragmentInfo = new FragmentInfo(ldesConfig.getHostName(), ldesConfig.getShape(), ldesConfig.getCollectionName(), List.of(new FragmentPair("timestampPath", "2020-12-05T09:00:00.000Z")));
+		fragmentInfo = new FragmentInfo(ldesConfig.getCollectionName(), List.of(new FragmentPair("timestampPath", "2020-12-05T09:00:00.000Z")));
 		
 		ldesFragmentNamingStrategy = new TimeBasedFragmentNamingStrategy();
 	}

@@ -58,7 +58,7 @@ class GeospatialRelationsAttributerTest {
     }
 
     private LdesFragment getLdesFragment(String fragmentValue) {
-        return new LdesFragment(fragmentValue, new FragmentInfo("", "", "", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, fragmentValue))));
+        return new LdesFragment(fragmentValue, new FragmentInfo("", List.of(new FragmentPair(GeospatialConstants.FRAGMENT_KEY_TILE, fragmentValue))));
     }
 
 }

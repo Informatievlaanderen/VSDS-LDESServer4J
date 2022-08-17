@@ -4,20 +4,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -108,7 +102,7 @@ class LdesFragmentMongoRepositoryTest {
 
         private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, String collectionName, String value) {
             String fragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", collectionName, value);
-            FragmentInfo fragmentInfo = new FragmentInfo(null, null, collectionName, List.of());
+            FragmentInfo fragmentInfo = new FragmentInfo(collectionName, List.of());
             fragmentInfo.setImmutable(immutable);
             return new LdesFragmentEntity(fragmentId, fragmentInfo, List.of(), List.of());
         }

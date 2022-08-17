@@ -32,6 +32,6 @@ class LdesFragmentDistanceComparatorTest {
     }
 
     private LdesFragment createFragment(String tile) {
-        return new LdesFragment("x", new FragmentInfo("", "", "", List.of(new FragmentPair("tile", tile))));
+        return new LdesFragment("x", new FragmentInfo("", List.of(new FragmentPair("tile", tile))));
     }
 }

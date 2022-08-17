@@ -40,7 +40,7 @@ public class FragmentFetchServiceImpl implements FragmentFetchService {
     }
 
     private LdesFragment createEmptyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
-    	FragmentInfo fragmentInfo = new FragmentInfo(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName(), ldesConfig.getShape(), collectionName, fragmentationMap);
+    	FragmentInfo fragmentInfo = new FragmentInfo(collectionName, fragmentationMap);
     	
         return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo), fragmentInfo);
     }

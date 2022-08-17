@@ -50,8 +50,6 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
     protected LdesFragment createNewFragment() {
         FragmentInfo fragmentInfo = new FragmentInfo(
-                ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName(),
-                ldesConfig.getShape(),
                 ldesConfig.getCollectionName(),
                 List.of(ldesFragmentNamingStrategy.getFragmentationValue()));
 
