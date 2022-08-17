@@ -26,11 +26,11 @@ The LDES server was built in the context of the [VSDS project](https://vlaamseov
       - [Starting the Dockerized Application](#starting-the-dockerized-application)
   * [Developer Information](#developer-information)
     + [How To Build](#how-to-build)
-    + [How To Test](#how-to-test)
+    + [How To Test and View Coverage](#how-to-test-and-view-coverage)
       - [Unit and Integration Tests](#unit-and-integration-tests)
       - [Only Unit Tests](#only-unit-tests)
       - [Only Integration Tests](#only-integration-tests)
-      - [Auto-Configurable Modules](#auto-configurable-modules)
+    + [Auto-Configurable Modules](#auto-configurable-modules)
 
 ## Set-up of the LDES Server
 
@@ -150,7 +150,12 @@ For compilation of the source code, execute the following command
 mvn clean compile
 ```
 
-### How To Test
+### How To Test and View Coverage
+
+Below the three options to run tests (only unit test, only integration tests and both unit and integration tests) are listed.
+To view the coverage of each option it's sufficient to add the option `-Pcoverage` after the command.
+This generates a file in the `target` folder called `jacoco.exec`. This file reports the code coverage.
+The combined coverage can also be seen via SonarCloud.
 
 #### Unit and Integration Tests
 
