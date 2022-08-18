@@ -36,7 +36,7 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>2.7.2</spring-boot.version>
+        <spring-boot.version>2.7.3</spring-boot.version>
 
         <!-- JSON & RDF -->
         <json-simple.version>1.1.1</json-simple.version>
@@ -301,11 +301,13 @@
         </pluginManagement>
 
         <plugins>
+
             <!-- CODE FORMATTER -->
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
