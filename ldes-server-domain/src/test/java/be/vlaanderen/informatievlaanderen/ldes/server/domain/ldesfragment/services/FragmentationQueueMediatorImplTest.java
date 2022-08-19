@@ -16,8 +16,8 @@ class FragmentationQueueMediatorImplTest {
 
 	private final FragmentationService fragmentationService = mock(FragmentationService.class);
 
-    @MockBean(MeterRegistry.class)
-    private MeterRegistry meterRegistry;
+	@MockBean(MeterRegistry.class)
+	private MeterRegistry meterRegistry;
 
 	@BeforeEach
 	void setUp() {

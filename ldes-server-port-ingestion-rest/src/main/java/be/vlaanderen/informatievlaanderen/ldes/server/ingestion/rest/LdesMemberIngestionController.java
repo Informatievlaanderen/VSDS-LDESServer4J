@@ -15,18 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LdesMemberIngestionController {
 
-    private final MeterRegistry registry;
+	private final MeterRegistry registry;
 	private final MemberIngestService memberIngestService;
 
 	public LdesMemberIngestionController(final MeterRegistry meterRegistry,
-                                         final MemberIngestService memberIngestService) {
-        this.registry = meterRegistry;
-        this.memberIngestService = memberIngestService;
+			final MemberIngestService memberIngestService) {
+		this.registry = meterRegistry;
+		this.memberIngestService = memberIngestService;
 	}
 
 	@PostMapping(value = "${ldes.collectionname}", consumes = { "application/n-quads", "application/n-triples" })
 	public void ingestLdesMember(@RequestBody LdesMember ldesMember) {
-        registry.counter("saved_ldes_members").increment();
-        memberIngestService.addMember(ldesMember);
+		registry.counter("saved_ldes_members").increment();
+		memberIngestService.addMember(ldesMember);
 	}
 }
