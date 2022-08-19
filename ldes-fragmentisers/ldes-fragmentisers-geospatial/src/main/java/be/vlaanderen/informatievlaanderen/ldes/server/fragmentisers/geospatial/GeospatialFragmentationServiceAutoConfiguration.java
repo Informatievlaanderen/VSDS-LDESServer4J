@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.ConnectedFragmentsFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,12 +29,11 @@ public class GeospatialFragmentationServiceAutoConfiguration {
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository,
 			GeospatialBucketiser geospatialBucketiser,
-			LdesFragmentNamingStrategy ldesFragmentNamingStrategy,
-			ConnectedFragmentsFinder connectedFragmentsFinder) {
+			LdesFragmentNamingStrategy ldesFragmentNamingStrategy) {
 		logger.info("Geospatial Fragmentation is configured");
 		return new GeospatialFragmentationService(ldesConfig, ldesMemberRepository, ldesFragmentRepository,
-				new GeospatialFragmentCreator(ldesConfig, ldesFragmentNamingStrategy), geospatialBucketiser,
-				connectedFragmentsFinder);
+				new GeospatialFragmentCreator(ldesConfig, ldesFragmentNamingStrategy), geospatialBucketiser
+		);
 	}
 
 	@Bean
