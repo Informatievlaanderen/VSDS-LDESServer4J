@@ -43,17 +43,7 @@
             <artifactId>byte-buddy</artifactId>
         </dependency>
 
-        <!-- Sleuth with OpenTelemetry tracer implementation -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-sleuth</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.cloud</groupId>
-                    <artifactId>spring-cloud-sleuth-brave</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!-- TRACING -->
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
