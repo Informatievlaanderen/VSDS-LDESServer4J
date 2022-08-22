@@ -38,9 +38,5 @@ public class FragmentationQueueMediatorImpl implements FragmentationQueueMediato
 	@Scheduled(fixedDelay = 1000)
 	protected void reportWaitingMembers() {
 		ldesMembersToFragmentTracker.set(ldesMembersToFragment.size());
-		// TODO open discussion whether we also want to keep the logging together with
-		// the metric exporter
-		// logger.info("Number of Members queued for fragmentation:\t {}",
-		// ldesMembersToFragment.size());
 	}
 }
