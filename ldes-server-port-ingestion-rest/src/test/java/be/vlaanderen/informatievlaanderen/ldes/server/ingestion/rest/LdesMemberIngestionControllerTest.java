@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -38,7 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class })
+@ContextConfiguration(classes = { LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class,
+		SimpleMeterRegistry.class })
 class LdesMemberIngestionControllerTest {
 
 	@Autowired

@@ -73,8 +73,4 @@ class MemberIngestServiceImplTest {
 		inOrder.verify(fragmentationQueueMediator, times(1)).addLdesMember(ldesMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 	}
-
-	public void test() {
-
-	}
 }

@@ -26,7 +26,7 @@ public class LdesMemberIngestionController {
 
 	@PostMapping(value = "${ldes.collectionname}", consumes = { "application/n-quads", "application/n-triples" })
 	public void ingestLdesMember(@RequestBody LdesMember ldesMember) {
-		registry.counter("saved_ldes_members").increment();
+		registry.counter("ldes_server_ingested_members").increment();
 		memberIngestService.addMember(ldesMember);
 	}
 }
