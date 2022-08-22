@@ -58,7 +58,7 @@
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>7.1.1</depencency-check-maven.version>
+        <depencency-check-maven.version>7.1.2</depencency-check-maven.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
@@ -123,6 +123,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+
             <!-- Added to circumvent CVE-2020-36518 in jena-arq 4.5.0 -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
