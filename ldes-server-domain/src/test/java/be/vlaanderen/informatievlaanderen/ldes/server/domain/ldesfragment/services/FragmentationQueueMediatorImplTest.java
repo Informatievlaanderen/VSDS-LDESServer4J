@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,8 @@ class FragmentationQueueMediatorImplTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(fragmentationService);
+		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(new SimpleMeterRegistry(),
+				fragmentationService);
 	}
 
 	@Test

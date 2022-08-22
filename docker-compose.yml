@@ -18,11 +18,10 @@ services:
     image: mongo
     container_name: ldes.mongodb
     ports:
-      - "28018:27017"
+      - "27017:27017"
     restart: always
     networks:
       - ldes
-
 networks:
   ldes:
     driver: bridge
