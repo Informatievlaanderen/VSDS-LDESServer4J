@@ -38,8 +38,9 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 	}
 
 	@Override
-	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment, List<FragmentPair> bucket) {
-		LdesFragment newFragment = createNewFragment(bucket);
+	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment,
+			List<FragmentPair> fragmentPairsOfParent) {
+		LdesFragment newFragment = createNewFragment(fragmentPairsOfParent);
 		optionalLdesFragment
 				.ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
 		return newFragment;
@@ -67,9 +68,8 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		completeLdesFragment.setImmutable(true);
 		completeLdesFragment.addRelation(new TreeRelation(GENERATED_AT_TIME,
 				newFragment.getFragmentId(),
-				newFragment.getFragmentInfo().getFragmentPairs().stream()
-						.filter(fragmentPair -> fragmentPair.fragmentKey().equals("generatedAtTime"))
-						.map(FragmentPair::fragmentValue).findFirst().get(),
+				newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
+						() -> new MissingFragmentValueException(newFragment.getFragmentId(), GENERATED_AT_TIME)),
 				DATE_TIME_TYPE,
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);

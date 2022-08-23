@@ -8,7 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 public interface FragmentCreator {
 
-	LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment, List<FragmentPair> bucket);
+	LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment,
+			List<FragmentPair> fragmentPairsOfParent);
 
 	boolean needsToCreateNewFragment(LdesFragment fragment);
 }

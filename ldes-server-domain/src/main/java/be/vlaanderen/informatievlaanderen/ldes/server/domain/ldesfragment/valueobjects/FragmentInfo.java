@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
 
 import java.util.List;
+import java.util.Optional;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 
@@ -16,7 +17,15 @@ public class FragmentInfo {
 		this.immutable = false;
 	}
 
-	public String getPath() {
+	public Optional<String> getValueOfKey(String key) {
+		return fragmentPairs
+				.stream()
+				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(key))
+				.map(FragmentPair::fragmentValue)
+				.findFirst();
+	}
+
+	public String getKey() {
 		return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
 	}
 
