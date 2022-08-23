@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 import java.util.Objects;
 
 public class TreeRelation {
+
 	private final String treePath;
 	private final String treeValue;
 	private final String treeValueType;

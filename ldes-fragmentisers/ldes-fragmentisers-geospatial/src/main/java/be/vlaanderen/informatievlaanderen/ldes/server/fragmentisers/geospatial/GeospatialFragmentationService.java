@@ -1,5 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
@@ -12,13 +19,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.GeospatialRelationsAttributer;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 
 public class GeospatialFragmentationService implements FragmentationService {
 
@@ -40,12 +40,17 @@ public class GeospatialFragmentationService implements FragmentationService {
 
 	@Override
 	public void addMemberToFragment(String ldesMemberId) {
+		List<LdesFragment> tileFragments = setupTileFragments(ldesMemberId);
+
+		tileFragments.forEach(ldesFragment -> ldesFragment.addMember(ldesMemberId));
+		addRelationsToRootFragment(tileFragments);
+	}
+
+	private List<LdesFragment> setupTileFragments(String ldesMemberId) {
 		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
 				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
-		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(tiles);
-		ldesFragments.forEach(ldesFragment -> ldesFragment.addMember(ldesMemberId));
-		addRelationsToRootFragment(ldesFragments);
+		return retrieveFragmentsOrCreateNewFragments(tiles);
 	}
 
 	private void addRelationsToRootFragment(List<LdesFragment> ldesFragments) {
