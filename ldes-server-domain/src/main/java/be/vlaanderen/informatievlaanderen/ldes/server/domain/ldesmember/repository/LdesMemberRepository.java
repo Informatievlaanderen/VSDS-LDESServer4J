@@ -8,11 +8,11 @@ import java.util.stream.Stream;
 
 public interface LdesMemberRepository {
 
-    LdesMember saveLdesMember(LdesMember ldesMember);
+	LdesMember saveLdesMember(LdesMember ldesMember);
 
-    List<LdesMember> fetchLdesMembers();
+	List<LdesMember> fetchLdesMembers();
 
-    Optional<LdesMember> getLdesMemberById(String id);
+	Optional<LdesMember> getLdesMemberById(String id);
 
-    Stream<LdesMember> getLdesMembersByIds(List<String> ids);
+	Stream<LdesMember> getLdesMembersByIds(List<String> ids);
 }

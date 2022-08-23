@@ -5,50 +5,38 @@ import java.util.List;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 
 public class FragmentInfo {
-	
-    private final String view;
-    private final String shape;
-    private final String collectionName;
-    private final List<FragmentPair> fragmentPairs;
-    private Boolean immutable;
 
-    public FragmentInfo(String view, String shape, String collectionName, List<FragmentPair> fragmentPairs) {
-        this.view = view;
-        this.shape = shape;
-        this.collectionName = collectionName;
-        this.fragmentPairs = fragmentPairs;
-        this.immutable = false;
-    }
+	private final String collectionName;
+	private final List<FragmentPair> fragmentPairs;
+	private Boolean immutable;
 
-    public String getPath() {
-        return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
-    }
+	public FragmentInfo(String collectionName, List<FragmentPair> fragmentPairs) {
+		this.collectionName = collectionName;
+		this.fragmentPairs = fragmentPairs;
+		this.immutable = false;
+	}
 
-    public String getValue() {
-        return fragmentPairs.stream().map(FragmentPair::fragmentValue).findFirst().orElse(null);
-    }
+	public String getPath() {
+		return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
+	}
 
-    public List<FragmentPair> getFragmentPairs() {
-        return fragmentPairs;
-    }
+	public String getValue() {
+		return fragmentPairs.stream().map(FragmentPair::fragmentValue).findFirst().orElse(null);
+	}
 
-    public String getCollectionName() {
-        return collectionName;
-    }
+	public List<FragmentPair> getFragmentPairs() {
+		return fragmentPairs;
+	}
 
-    public Boolean getImmutable() {
-        return immutable;
-    }
+	public String getCollectionName() {
+		return collectionName;
+	}
 
-    public void setImmutable(Boolean immutable) {
-        this.immutable = immutable;
-    }
+	public Boolean getImmutable() {
+		return immutable;
+	}
 
-    public String getView() {
-        return view;
-    }
-
-    public String getShape() {
-        return shape;
-    }
+	public void setImmutable(Boolean immutable) {
+		this.immutable = immutable;
+	}
 }

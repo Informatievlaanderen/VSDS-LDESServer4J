@@ -14,22 +14,22 @@ import org.springframework.http.MediaType;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 
 public class RdfModelConverter {
-    private RdfModelConverter() {
-    }
+	private RdfModelConverter() {
+	}
 
-    public static Lang getLang(MediaType contentType, RdfFormatException.LdesProcessDirection ldesProcessDirection) {
-        return ofNullable(nameToLang(contentType.toString()))
-                .orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
-                        .orElseThrow(() -> new RdfFormatException(contentType.toString(), ldesProcessDirection)));
-    }
+	public static Lang getLang(MediaType contentType, RdfFormatException.LdesProcessDirection ldesProcessDirection) {
+		return ofNullable(nameToLang(contentType.toString()))
+				.orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
+						.orElseThrow(() -> new RdfFormatException(contentType.toString(), ldesProcessDirection)));
+	}
 
-    public static Model fromString(final String content, final Lang lang) {
-        return RDFParserBuilder.create().fromString(content).lang(lang).toModel();
-    }
+	public static Model fromString(final String content, final Lang lang) {
+		return RDFParserBuilder.create().fromString(content).lang(lang).toModel();
+	}
 
-    public static String toString(final Model model, final Lang lang) {
-        StringWriter stringWriter = new StringWriter();
-        RDFDataMgr.write(stringWriter, model, lang);
-        return stringWriter.toString();
-    }
+	public static String toString(final Model model, final Lang lang) {
+		StringWriter stringWriter = new StringWriter();
+		RDFDataMgr.write(stringWriter, model, lang);
+		return stringWriter.toString();
+	}
 }

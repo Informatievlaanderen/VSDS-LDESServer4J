@@ -6,19 +6,19 @@ import org.locationtech.jts.geom.GeometryFactory;
 
 public class BoundingBoxConverter {
 
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+	private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    private BoundingBoxConverter() {
-    }
+	private BoundingBoxConverter() {
+	}
 
-    public static String toWKT(BoundingBox boundingBox) {
-        Coordinate[] coordinates = new Coordinate[]{
-                new Coordinate(boundingBox.getEast(), boundingBox.getNorth()),
-                new Coordinate(boundingBox.getEast(), boundingBox.getSouth()),
-                new Coordinate(boundingBox.getWest(), boundingBox.getSouth()),
-                new Coordinate(boundingBox.getWest(), boundingBox.getNorth()),
-                new Coordinate(boundingBox.getEast(), boundingBox.getNorth())};
-        return GEOMETRY_FACTORY.createPolygon(coordinates).toText();
-    }
+	public static String toWKT(BoundingBox boundingBox) {
+		Coordinate[] coordinates = new Coordinate[] {
+				new Coordinate(boundingBox.getEast(), boundingBox.getNorth()),
+				new Coordinate(boundingBox.getEast(), boundingBox.getSouth()),
+				new Coordinate(boundingBox.getWest(), boundingBox.getSouth()),
+				new Coordinate(boundingBox.getWest(), boundingBox.getNorth()),
+				new Coordinate(boundingBox.getEast(), boundingBox.getNorth()) };
+		return GEOMETRY_FACTORY.createPolygon(coordinates).toText();
+	}
 
 }

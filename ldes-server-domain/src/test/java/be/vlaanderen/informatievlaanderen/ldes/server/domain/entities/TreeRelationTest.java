@@ -19,38 +19,40 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class TreeRelationTest {
 
+	@Test
+	@DisplayName("Test Equality of TreeRelations")
+	void test_EqualityOfTreeRelations() {
+		TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
+		TreeRelation otherTreeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType",
+				"relation");
+		assertEquals(treeRelation, otherTreeRelation);
+		assertEquals(treeRelation, treeRelation);
+		assertEquals(otherTreeRelation, otherTreeRelation);
+	}
 
+	@ParameterizedTest
+	@ArgumentsSource(TreeRelationArgumentsProvider.class)
+	void test_InequalityOfTreeRelations(Object otherTreeRelation) {
+		TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
+		assertNotEquals(treeRelation, otherTreeRelation);
+	}
 
-    @Test
-    @DisplayName("Test Equality of TreeRelations")
-    void test_EqualityOfTreeRelations() {
-        TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
-        TreeRelation otherTreeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
-        assertEquals(treeRelation, otherTreeRelation);
-        assertEquals(treeRelation, treeRelation);
-        assertEquals(otherTreeRelation, otherTreeRelation);
-    }
+	static class TreeRelationArgumentsProvider implements ArgumentsProvider {
 
-    @ParameterizedTest
-    @ArgumentsSource(TreeRelationArgumentsProvider.class)
-    void test_InequalityOfTreeRelations(Object otherTreeRelation) {
-        TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
-        assertNotEquals(treeRelation, otherTreeRelation);
-    }
-
-    static class TreeRelationArgumentsProvider implements ArgumentsProvider {
-
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-            return Stream.of(
-                    Arguments.of(new LdesMember("some_id", null)),
-                    Arguments.of((Object) null),
-                    Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "treeNode", "differentTreeValue", "treeValueType", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "differentTreeValueType", "relation")),
-                    Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "differentRelation")));
-        }
-    }
+		@Override
+		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+			return Stream.of(Arguments.of(new LdesMember("some_id", null)), Arguments.of((Object) null),
+					Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType",
+							"relation")),
+					Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType",
+							"relation")),
+					Arguments.of(new TreeRelation("treePath", "treeNode", "differentTreeValue", "treeValueType",
+							"relation")),
+					Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "differentTreeValueType",
+							"relation")),
+					Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType",
+							"differentRelation")));
+		}
+	}
 
 }

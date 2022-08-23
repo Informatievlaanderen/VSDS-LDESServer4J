@@ -38,53 +38,52 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class})
+@ContextConfiguration(classes = { LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class })
 class LdesMemberIngestionControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @MockBean
-    private MemberIngestService memberIngestService;
+	@MockBean
+	private MemberIngestService memberIngestService;
 
-    @Autowired
-    private LdesConfig ldesConfig;
+	@Autowired
+	private LdesConfig ldesConfig;
 
-    @ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
-    @ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
-    void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
-        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
+	@ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
+	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
+	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
 
-        mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
-                .andDo(print()).andExpect(status().isOk());
-        verify(memberIngestService, times(1)).addMember(any());
-    }
+		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
+				.andDo(print()).andExpect(status().isOk());
+		verify(memberIngestService, times(1)).addMember(any());
+	}
 
-    @Test
-    @DisplayName("Requesting using another collection name returns 404")
-    void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404() throws Exception {
-        String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
+	@Test
+	@DisplayName("Requesting using another collection name returns 404")
+	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404() throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
 
-        mockMvc.perform(post("/another-collection-name")
-                        .contentType("application/n-quads")
-                        .content(ldesMemberString))
-                .andDo(print()).andExpect(status().isNotFound());
-    }
+		mockMvc.perform(post("/another-collection-name")
+				.contentType("application/n-quads")
+				.content(ldesMemberString))
+				.andDo(print()).andExpect(status().isNotFound());
+	}
 
-    private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat) throws URISyntaxException, IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-        String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-        return RdfModelConverter.toString(RdfModelConverter.fromString(content, Lang.NQUADS), rdfFormat);
-    }
+	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat) throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+		return RdfModelConverter.toString(RdfModelConverter.fromString(content, Lang.NQUADS), rdfFormat);
+	}
 
-    static class ContentTypeRdfFormatLangArgumentsProvider implements ArgumentsProvider {
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-            return Stream.of(
-                    Arguments.of("application/n-quads", Lang.NQUADS),
-                    Arguments.of("application/n-triples", Lang.NTRIPLES)
-            );
-        }
-    }
+	static class ContentTypeRdfFormatLangArgumentsProvider implements ArgumentsProvider {
+		@Override
+		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+			return Stream.of(
+					Arguments.of("application/n-quads", Lang.NQUADS),
+					Arguments.of("application/n-triples", Lang.NTRIPLES));
+		}
+	}
 }

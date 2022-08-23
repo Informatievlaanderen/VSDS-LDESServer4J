@@ -12,27 +12,26 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Component
 public class FragmentationQueueMediatorImpl implements FragmentationQueueMediator {
 
-    private final Logger logger = LoggerFactory.getLogger(FragmentationQueueMediatorImpl.class);
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private final LinkedBlockingQueue<String> ldesMembersToFragment = new LinkedBlockingQueue<>();
-    private final FragmentationService fragmentationService;
+	private final Logger logger = LoggerFactory.getLogger(FragmentationQueueMediatorImpl.class);
+	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private final LinkedBlockingQueue<String> ldesMembersToFragment = new LinkedBlockingQueue<>();
+	private final FragmentationService fragmentationService;
 
+	public FragmentationQueueMediatorImpl(FragmentationService fragmentationService) {
+		this.fragmentationService = fragmentationService;
+	}
 
-    public FragmentationQueueMediatorImpl(FragmentationService fragmentationService) {
-        this.fragmentationService = fragmentationService;
-    }
+	public void addLdesMember(String memberId) {
+		ldesMembersToFragment.add(memberId);
+		executorService.submit(() -> fragmentationService.addMemberToFragment(ldesMembersToFragment.poll()));
+	}
 
-    public void addLdesMember(String memberId) {
-        ldesMembersToFragment.add(memberId);
-        executorService.submit(() -> fragmentationService.addMemberToFragment(ldesMembersToFragment.poll()));
-    }
+	public boolean queueIsEmtpy() {
+		return ldesMembersToFragment.isEmpty();
+	}
 
-    public boolean queueIsEmtpy() {
-        return ldesMembersToFragment.isEmpty();
-    }
-
-    @Scheduled(fixedDelay = 60000)
-    private void reportWaitingMembers() {
-        logger.info("Number of Members queued for fragmentation:\t {}", ldesMembersToFragment.size());
-    }
+	@Scheduled(fixedDelay = 60000)
+	private void reportWaitingMembers() {
+		logger.info("Number of Members queued for fragmentation:\t {}", ldesMembersToFragment.size());
+	}
 }
