@@ -65,10 +65,6 @@
             <artifactId>junit-platform-suite</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-sequential-timebased</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

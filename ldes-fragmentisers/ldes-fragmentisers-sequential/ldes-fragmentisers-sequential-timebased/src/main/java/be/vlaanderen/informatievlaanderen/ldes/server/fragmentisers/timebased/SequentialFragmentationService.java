@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;

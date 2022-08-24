@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import java.time.format.DateTimeFormatter;
 
