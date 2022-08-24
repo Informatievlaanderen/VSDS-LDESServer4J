@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragment
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.ConnectedFragmentsFinder;
@@ -21,12 +22,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Queue;
+import java.util.Stack;
+
 @Configuration
 @ConditionalOnProperty(value = "fragmentation.type", havingValue = "geospatial")
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class GeospatialFragmentationServiceAutoConfiguration {
-
 	private final Logger logger = LoggerFactory.getLogger(GeospatialFragmentationServiceAutoConfiguration.class);
 
 	@Bean
@@ -38,7 +41,7 @@ public class GeospatialFragmentationServiceAutoConfiguration {
 			ConnectedFragmentsFinder connectedFragmentsFinder, SequentialFragmentationConfig sequentialFragmentationConfig) {
 		TimeBasedFragmentCreator timeBasedFragmentCreator = new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, new TimeBasedFragmentNamingStrategy(),
 				ldesMemberRepository, ldesFragmentRepository);
-		SequentialFragmentationService sequentialFragmentationService = new SequentialFragmentationService(ldesConfig, timeBasedFragmentCreator, ldesMemberRepository,
+		SequentialFragmentationService sequentialFragmentationService = new SequentialFragmentationService(new FragmentationServiceImpl(ldesFragmentRepository, ldesMemberRepository, ldesConfig),ldesConfig, timeBasedFragmentCreator, ldesMemberRepository,
 				ldesFragmentRepository);
 		logger.info("Geospatial Fragmentation is configured");
 		return new GeospatialFragmentationService(sequentialFragmentationService,ldesConfig, ldesMemberRepository, ldesFragmentRepository,

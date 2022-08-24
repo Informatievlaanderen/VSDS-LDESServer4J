@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential.SequentialFragmentationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class TimeBasedFragmentationServiceAutoConfiguration {
 			LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository,
 			FragmentCreator fragmentCreator) {
 		logger.info("Timebased Fragmentation is configured");
-		return new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository,
+		return new SequentialFragmentationService(new FragmentationServiceImpl(ldesFragmentRepository, ldesMemberRepository, ldesConfig),ldesConfig, fragmentCreator, ldesMemberRepository,
 				ldesFragmentRepository);
 	}
 }

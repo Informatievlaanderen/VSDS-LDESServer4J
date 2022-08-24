@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
@@ -13,15 +14,16 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.reposito
 import java.util.List;
 import java.util.Optional;
 
-public class SequentialFragmentationService implements FragmentationService {
+public class SequentialFragmentationService extends FragmentationServiceDecorator {
 
     protected final LdesConfig ldesConfig;
     protected final FragmentCreator fragmentCreator;
     protected final LdesMemberRepository ldesMemberRepository;
     protected final LdesFragmentRepository ldesFragmentRepository;
 
-    public SequentialFragmentationService(LdesConfig ldesConfig, FragmentCreator fragmentCreator,
+    public SequentialFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig, FragmentCreator fragmentCreator,
                                           LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository) {
+        super(fragmentationService);
         this.ldesConfig = ldesConfig;
         this.fragmentCreator = fragmentCreator;
         this.ldesMemberRepository = ldesMemberRepository;
@@ -31,12 +33,9 @@ public class SequentialFragmentationService implements FragmentationService {
     public void addMemberToFragment(List<FragmentPair> fragmentPairList, String ldesMemberId) {
         LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(fragmentPairList);
         if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
-            LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
-                    .orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
-
             System.out.println("Added member to " + ldesFragment.getFragmentId());
-            ldesFragment.addMember(ldesMember.getLdesMemberId());
             ldesFragmentRepository.saveFragment(ldesFragment);
+            super.addMemberToFragment(ldesFragment.getFragmentInfo().getFragmentPairs(), ldesMemberId);
         }
     }
 
