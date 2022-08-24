@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +35,7 @@ public class FragmentPathCreator {
 		Set<String> bucketsInBetween = getBucketsInBetween(firstFragment, secondFragment, firstTile, secondTile);
 		return bucketsInBetween.stream()
 				.map(bucket -> fragmentCreator.createNewFragment(Optional.empty(),
-						new FragmentPair(FRAGMENT_KEY_TILE, bucket)))
+						List.of(new FragmentPair(FRAGMENT_KEY_TILE, bucket))))
 				.collect(Collectors.toSet());
 	}
 

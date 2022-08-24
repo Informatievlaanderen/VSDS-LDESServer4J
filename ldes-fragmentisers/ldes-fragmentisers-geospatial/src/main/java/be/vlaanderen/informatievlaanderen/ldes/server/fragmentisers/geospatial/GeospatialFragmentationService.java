@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.ConnectedFragmentsFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
@@ -19,7 +20,7 @@ import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 
-public class GeospatialFragmentationService implements FragmentationService {
+public class GeospatialFragmentationService extends FragmentationServiceDecorator {
 
 	private final LdesConfig ldesConfig;
 	private final LdesMemberRepository ldesMemberRepository;
@@ -28,9 +29,10 @@ public class GeospatialFragmentationService implements FragmentationService {
 	private final GeospatialBucketiser geospatialBucketiser;
 	private final ConnectedFragmentsFinder connectedFragmentsFinder;
 
-	public GeospatialFragmentationService(LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository,
+	public GeospatialFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig, LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser, ConnectedFragmentsFinder connectedFragmentsFinder) {
+		super(fragmentationService);
 		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -40,15 +42,18 @@ public class GeospatialFragmentationService implements FragmentationService {
 	}
 
 	@Override
-	public void addMemberToFragment(String ldesMemberId) {
+	public void addMemberToFragment(List<FragmentPair> fragmentPairList, String ldesMemberId) {
 		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
 				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
 		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(tiles);
 		ldesFragments.forEach(ldesFragment -> {
-			ldesFragment.addMember(ldesMemberId);
+//			ldesFragment.addMember(ldesMemberId);
 			List<LdesFragment> connectedFragments = connectedFragmentsFinder.findConnectedFragments(ldesFragment);
 			connectedFragments.forEach(ldesFragmentRepository::saveFragment);
+			connectedFragments.forEach(ldesFragment1 -> {
+				super.addMemberToFragment(ldesFragment1.getFragmentInfo().getFragmentPairs(), ldesMemberId);
+			});
 		});
 	}
 
@@ -59,7 +64,7 @@ public class GeospatialFragmentationService implements FragmentationService {
 							.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(),
 									List.of(new FragmentPair(FRAGMENT_KEY_TILE, tile))));
 					return ldesFragment.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
-							new FragmentPair(FRAGMENT_KEY_TILE, tile)));
+							List.of(new FragmentPair(FRAGMENT_KEY_TILE, tile))));
 				})
 				.toList();
 	}

@@ -43,7 +43,7 @@ class LdesFragmentMongoRepositoryTest {
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable()).collect(Collectors.toList()));
 
-		Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME);
+		Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME, fragmentPairList);
 
 		assertTrue(view.isPresent());
 		assertEquals(expectedFragmentId, view.get().getFragmentId());

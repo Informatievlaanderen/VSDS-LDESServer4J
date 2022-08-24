@@ -22,7 +22,7 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 	}
 
 	@Override
-	public LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment, FragmentPair bucket) {
+	public LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment, List<FragmentPair> bucket) {
 		return createNewFragment(bucket);
 	}
 
@@ -31,10 +31,10 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 		return true;
 	}
 
-	protected LdesFragment createNewFragment(FragmentPair bucket) {
+	protected LdesFragment createNewFragment(List<FragmentPair> bucket) {
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				ldesConfig.getCollectionName(),
-				List.of(bucket));
+				bucket);
 
 		return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);

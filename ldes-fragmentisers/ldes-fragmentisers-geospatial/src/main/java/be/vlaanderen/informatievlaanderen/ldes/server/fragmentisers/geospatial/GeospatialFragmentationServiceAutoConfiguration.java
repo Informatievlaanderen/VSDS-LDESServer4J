@@ -9,6 +9,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.ConnectedFragmentsFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential.SequentialFragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential.SequentialFragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TimeBasedFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimeBasedFragmentNamingStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,9 +35,13 @@ public class GeospatialFragmentationServiceAutoConfiguration {
 			LdesFragmentRepository ldesFragmentRepository,
 			GeospatialBucketiser geospatialBucketiser,
 			LdesFragmentNamingStrategy ldesFragmentNamingStrategy,
-			ConnectedFragmentsFinder connectedFragmentsFinder) {
+			ConnectedFragmentsFinder connectedFragmentsFinder, SequentialFragmentationConfig sequentialFragmentationConfig) {
+		TimeBasedFragmentCreator timeBasedFragmentCreator = new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, new TimeBasedFragmentNamingStrategy(),
+				ldesMemberRepository, ldesFragmentRepository);
+		SequentialFragmentationService sequentialFragmentationService = new SequentialFragmentationService(ldesConfig, timeBasedFragmentCreator, ldesMemberRepository,
+				ldesFragmentRepository);
 		logger.info("Geospatial Fragmentation is configured");
-		return new GeospatialFragmentationService(ldesConfig, ldesMemberRepository, ldesFragmentRepository,
+		return new GeospatialFragmentationService(sequentialFragmentationService,ldesConfig, ldesMemberRepository, ldesFragmentRepository,
 				new GeospatialFragmentCreator(ldesConfig, ldesFragmentNamingStrategy), geospatialBucketiser,
 				connectedFragmentsFinder);
 	}

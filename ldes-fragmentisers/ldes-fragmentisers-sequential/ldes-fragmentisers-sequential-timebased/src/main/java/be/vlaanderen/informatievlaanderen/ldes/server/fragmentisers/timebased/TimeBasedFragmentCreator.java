@@ -13,6 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.TimestampPathComparator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +39,8 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 	}
 
 	@Override
-	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment, FragmentPair bucket) {
-		LdesFragment newFragment = createNewFragment();
+	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment, List<FragmentPair> bucket) {
+		LdesFragment newFragment = createNewFragment(bucket);
 		optionalLdesFragment
 				.ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
 		return newFragment;
@@ -50,10 +51,12 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		return fragment.getCurrentNumberOfMembers() >= sequentialFragmentationConfig.getMemberLimit();
 	}
 
-	protected LdesFragment createNewFragment() {
+	protected LdesFragment createNewFragment(List<FragmentPair> bucket) {
+		List<FragmentPair> fragmentPairs = new ArrayList<>(bucket.stream().toList());
+		fragmentPairs.add(ldesFragmentNamingStrategy.getFragmentationValue());
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				ldesConfig.getCollectionName(),
-				List.of(ldesFragmentNamingStrategy.getFragmentationValue()));
+				fragmentPairs);
 
 		return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);
@@ -62,13 +65,13 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 	protected void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.setImmutable(true);
-		completeLdesFragment.addRelation(new TreeRelation(newFragment.getFragmentInfo().getPath(),
-				newFragment.getFragmentId(), newFragment.getFragmentInfo().getValue(), DATE_TIME_TYPE,
+		completeLdesFragment.addRelation(new TreeRelation("generatedAt",
+				newFragment.getFragmentId(), newFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair -> fragmentPair.fragmentKey().equals("generatedAtTime")).map(FragmentPair::fragmentValue).findFirst().get(), DATE_TIME_TYPE,
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
 		newFragment.addRelation(
-				new TreeRelation(completeLdesFragment.getFragmentInfo().getPath(), completeLdesFragment.getFragmentId(),
+				new TreeRelation("generatedAt", completeLdesFragment.getFragmentId(),
 						latestGeneratedAtTime, DATE_TIME_TYPE, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
 	}
 
