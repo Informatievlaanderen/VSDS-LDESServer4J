@@ -11,9 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential.SequentialFragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimeBasedFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
@@ -28,16 +26,11 @@ public class TimeBasedFragmentationServiceAutoConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(TimeBasedFragmentationServiceAutoConfiguration.class);
 
 	@Bean
-	public LdesFragmentNamingStrategy fragmentNamingStrategy() {
-		return new TimeBasedFragmentNamingStrategy();
-	}
-
-	@Bean
 	public FragmentCreator fragmentCreator(LdesConfig ldesConfig,
 			SequentialFragmentationConfig sequentialFragmentationConfig,
-			LdesFragmentNamingStrategy fragmentNamingStrategy, LdesMemberRepository ldesMemberRepository,
+										   LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository) {
-		return new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig, fragmentNamingStrategy,
+		return new TimeBasedFragmentCreator(ldesConfig, sequentialFragmentationConfig,
 				ldesMemberRepository, ldesFragmentRepository);
 	}
 

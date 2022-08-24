@@ -52,7 +52,7 @@ class TimeBasedFragmentCreatorTest {
 		LdesFragmentNamingStrategy timeBasedFragmentNamingStrategy = new TimeBasedFragmentNamingStrategy();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		ldesMemberRepository = mock(LdesMemberRepository.class);
-		fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig, timeBasedFragmentNamingStrategy,
+		fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig,
 				ldesMemberRepository, ldesFragmentRepository);
 	}
 

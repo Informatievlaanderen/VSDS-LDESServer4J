@@ -48,7 +48,7 @@ class FragmentFetchServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig, ldesFragmentNamingStrategy,
+		fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig,
 				ldesFragmentRepository);
 	}
 

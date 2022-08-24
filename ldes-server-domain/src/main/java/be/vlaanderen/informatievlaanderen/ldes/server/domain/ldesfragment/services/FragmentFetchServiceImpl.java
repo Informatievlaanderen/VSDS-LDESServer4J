@@ -15,13 +15,11 @@ import java.util.List;
 public class FragmentFetchServiceImpl implements FragmentFetchService {
 
 	private final LdesConfig ldesConfig;
-	private final LdesFragmentNamingStrategy ldesFragmentNamingStrategy;
 	private final LdesFragmentRepository ldesFragmentRepository;
 
-	public FragmentFetchServiceImpl(LdesConfig ldesConfig, LdesFragmentNamingStrategy ldesFragmentNamingStrategy,
-			LdesFragmentRepository ldesFragmentRepository) {
+	public FragmentFetchServiceImpl(LdesConfig ldesConfig,
+									LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesConfig = ldesConfig;
-		this.ldesFragmentNamingStrategy = ldesFragmentNamingStrategy;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
@@ -45,7 +43,7 @@ public class FragmentFetchServiceImpl implements FragmentFetchService {
 	private LdesFragment createEmptyFragment(String collectionName, List<FragmentPair> fragmentationMap) {
 		FragmentInfo fragmentInfo = new FragmentInfo(collectionName, fragmentationMap);
 
-		return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
+		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);
 	}
 }

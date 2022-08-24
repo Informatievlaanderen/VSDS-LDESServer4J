@@ -13,12 +13,9 @@ import java.util.Optional;
 public class GeospatialFragmentCreator implements FragmentCreator {
 
 	private final LdesConfig ldesConfig;
-	protected final LdesFragmentNamingStrategy ldesFragmentNamingStrategy;
 
-	public GeospatialFragmentCreator(final LdesConfig ldesConfig,
-			LdesFragmentNamingStrategy ldesFragmentNamingStrategy) {
+	public GeospatialFragmentCreator(final LdesConfig ldesConfig) {
 		this.ldesConfig = ldesConfig;
-		this.ldesFragmentNamingStrategy = ldesFragmentNamingStrategy;
 	}
 
 	@Override
@@ -36,7 +33,7 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 				ldesConfig.getCollectionName(),
 				bucket);
 
-		return new LdesFragment(ldesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
+		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);
 	}
 }

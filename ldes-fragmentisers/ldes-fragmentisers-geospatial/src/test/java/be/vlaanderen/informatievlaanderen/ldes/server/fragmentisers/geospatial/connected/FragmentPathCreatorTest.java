@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.GeospatialFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
