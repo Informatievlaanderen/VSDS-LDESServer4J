@@ -19,19 +19,24 @@ import java.util.List;
 public class FragmentationConfig {
 
     @Bean
-    public FragmentationService fragmentationService(ApplicationContext applicationContext, FragmentConfig fragmentConfig) {
+    public FragmentationService fragmentationService(ApplicationContext applicationContext,
+                                                     FragmentConfig fragmentConfig) {
         LdesMemberRepository ldesMemberRepository = applicationContext.getBean(LdesMemberRepository.class);
         LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
         LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
-        FragmentationService fragmentationService = new FragmentationServiceImpl(ldesFragmentRepository, ldesMemberRepository, ldesConfig);
+        FragmentationService fragmentationService = new FragmentationServiceImpl(ldesFragmentRepository,
+                ldesMemberRepository, ldesConfig);
 
         List<String> fragmentations = fragmentConfig.getFragmentations();
-        for (int i = fragmentations.size()-1; i >=0 ; i--) {
-            String fragmentation = fragmentations.get(i);
-            FragmentationUpdater fragmentationUpdater = (FragmentationUpdater) applicationContext.getBean(fragmentation);
-            fragmentationService = fragmentationUpdater.updateFragmentationService(applicationContext, fragmentationService);
+        if (fragmentations != null) {
+            for (int i = fragmentations.size() - 1; i >= 0; i--) {
+                String fragmentation = fragmentations.get(i);
+                FragmentationUpdater fragmentationUpdater = (FragmentationUpdater) applicationContext
+                        .getBean(fragmentation);
+                fragmentationService = fragmentationUpdater.updateFragmentationService(applicationContext,
+                        fragmentationService);
+            }
         }
-
-       return fragmentationService;
+        return fragmentationService;
     }
 }

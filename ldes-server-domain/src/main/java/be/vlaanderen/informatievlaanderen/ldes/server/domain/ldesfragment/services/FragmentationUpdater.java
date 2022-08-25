@@ -3,5 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import org.springframework.context.ApplicationContext;
 
 public interface FragmentationUpdater {
-    FragmentationService updateFragmentationService(ApplicationContext applicationContext, FragmentationService fragmentationService);
+	FragmentationService updateFragmentationService(ApplicationContext applicationContext,
+			FragmentationService fragmentationService);
 }

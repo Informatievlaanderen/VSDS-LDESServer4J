@@ -28,9 +28,8 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 	protected final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-
 	public TimeBasedFragmentCreator(LdesConfig ldesConfig, SequentialFragmentationConfig timeBasedConfig,
-									LdesMemberRepository ldesMemberRepository,
+			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesConfig = ldesConfig;
 		this.sequentialFragmentationConfig = timeBasedConfig;
@@ -54,7 +53,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 	protected LdesFragment createNewFragment(List<FragmentPair> bucket) {
 		List<FragmentPair> fragmentPairs = new ArrayList<>(bucket.stream().toList());
 		String fragmentationValue = LocalDateTime.now().format(formatter);
-		fragmentPairs.add( new FragmentPair(GENERATED_AT_TIME, fragmentationValue));
+		fragmentPairs.add(new FragmentPair(GENERATED_AT_TIME, fragmentationValue));
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				ldesConfig.getCollectionName(),
 				fragmentPairs);
@@ -67,7 +66,11 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 			LdesFragment newFragment) {
 		completeLdesFragment.setImmutable(true);
 		completeLdesFragment.addRelation(new TreeRelation(GENERATED_AT_TIME,
-				newFragment.getFragmentId(), newFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair -> fragmentPair.fragmentKey().equals("generatedAtTime")).map(FragmentPair::fragmentValue).findFirst().get(), DATE_TIME_TYPE,
+				newFragment.getFragmentId(),
+				newFragment.getFragmentInfo().getFragmentPairs().stream()
+						.filter(fragmentPair -> fragmentPair.fragmentKey().equals("generatedAtTime"))
+						.map(FragmentPair::fragmentValue).findFirst().get(),
+				DATE_TIME_TYPE,
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
 		ldesFragmentRepository.saveFragment(completeLdesFragment);

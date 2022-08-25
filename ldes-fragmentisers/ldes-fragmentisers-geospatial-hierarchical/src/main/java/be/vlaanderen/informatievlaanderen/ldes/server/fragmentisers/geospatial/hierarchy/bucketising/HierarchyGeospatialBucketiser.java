@@ -16,8 +16,9 @@ public class HierarchyGeospatialBucketiser implements Bucketiser {
 	private final CoordinateConverter coordinateConverter;
 	private final HierarchyCoordinateToTileStringConverter coordinateToTileStringConverter;
 
-	public HierarchyGeospatialBucketiser(HierarchyGeospatialConfig geospatialConfig, CoordinateConverter coordinateConverter,
-										 HierarchyCoordinateToTileStringConverter coordinateToTileStringConverter) {
+	public HierarchyGeospatialBucketiser(HierarchyGeospatialConfig geospatialConfig,
+			CoordinateConverter coordinateConverter,
+			HierarchyCoordinateToTileStringConverter coordinateToTileStringConverter) {
 		this.geospatialConfig = geospatialConfig;
 		this.coordinateConverter = coordinateConverter;
 		this.coordinateToTileStringConverter = coordinateToTileStringConverter;

@@ -61,11 +61,11 @@
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation-geospatial</id>
+            <id>fragmentation-geospatial-flat</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentisers-geospatial</artifactId>
+                    <artifactId>ldes-fragmentisers-geospatial-flat</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

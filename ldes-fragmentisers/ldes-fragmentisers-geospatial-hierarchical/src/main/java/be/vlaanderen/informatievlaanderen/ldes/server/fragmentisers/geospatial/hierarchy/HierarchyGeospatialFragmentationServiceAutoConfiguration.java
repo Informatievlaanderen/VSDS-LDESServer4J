@@ -13,12 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class HierarchyGeospatialFragmentationServiceAutoConfiguration {
 
-	@Bean("hierarchy-geospatial")
+	@Bean("geospatial-hierarchy")
 	public HierarchyGeospatialFragmentationUpdater geospatialFragmentationService() {
 		return new HierarchyGeospatialFragmentationUpdater();
 	}
 
-
-
 }
-

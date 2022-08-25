@@ -18,7 +18,7 @@ public class FragmentFetchServiceImpl implements FragmentFetchService {
 	private final LdesFragmentRepository ldesFragmentRepository;
 
 	public FragmentFetchServiceImpl(LdesConfig ldesConfig,
-									LdesFragmentRepository ldesFragmentRepository) {
+			LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesConfig = ldesConfig;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}

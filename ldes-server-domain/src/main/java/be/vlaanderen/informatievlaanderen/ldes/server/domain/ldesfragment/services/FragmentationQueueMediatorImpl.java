@@ -29,7 +29,7 @@ public class FragmentationQueueMediatorImpl implements FragmentationQueueMediato
 
 	public void addLdesMember(String memberId) {
 		ldesMembersToFragment.add(memberId);
-		executorService.submit(() -> fragmentationService.addMemberToFragment(List.of(),ldesMembersToFragment.poll()));
+		executorService.submit(() -> fragmentationService.addMemberToFragment(List.of(), ldesMembersToFragment.poll()));
 	}
 
 	public boolean queueIsEmtpy() {

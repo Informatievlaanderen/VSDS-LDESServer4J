@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.hierarchy.fragments;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;

@@ -4,16 +4,16 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 import java.util.List;
 
-public abstract class FragmentationServiceDecorator implements FragmentationService{
+public abstract class FragmentationServiceDecorator implements FragmentationService {
 
-    final FragmentationService fragmentationService;
+	final FragmentationService fragmentationService;
 
-    protected FragmentationServiceDecorator(FragmentationService fragmentationService) {
-        this.fragmentationService = fragmentationService;
-    }
+	protected FragmentationServiceDecorator(FragmentationService fragmentationService) {
+		this.fragmentationService = fragmentationService;
+	}
 
-    @Override
-    public void addMemberToFragment(List<FragmentPair> fragmentPairList, String ldesMemberId) {
-        fragmentationService.addMemberToFragment(fragmentPairList, ldesMemberId);
-    }
+	@Override
+	public void addMemberToFragment(List<FragmentPair> fragmentPairList, String ldesMemberId) {
+		fragmentationService.addMemberToFragment(fragmentPairList, ldesMemberId);
+	}
 }

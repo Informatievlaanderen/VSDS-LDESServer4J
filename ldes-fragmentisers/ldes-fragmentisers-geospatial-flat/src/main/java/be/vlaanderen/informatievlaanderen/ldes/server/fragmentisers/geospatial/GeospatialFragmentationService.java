@@ -1,27 +1,27 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.hierarchy;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.ConnectedFragmentsFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.hierarchy.bucketising.HierarchyGeospatialBucketiser;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.hierarchy.connected.relations.HierarchyGeospatialRelationsAttributer;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.hierarchy.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.hierarchy.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 
 public class GeospatialFragmentationService extends FragmentationServiceDecorator {
 
@@ -29,18 +29,20 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	private final LdesMemberRepository ldesMemberRepository;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final FragmentCreator fragmentCreator;
-	private final HierarchyGeospatialBucketiser geospatialBucketiser;
+	private final GeospatialBucketiser geospatialBucketiser;
+	private final ConnectedFragmentsFinder connectedFragmentsFinder;
 
 	public GeospatialFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig,
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
-			HierarchyGeospatialBucketiser geospatialBucketiser) {
+			GeospatialBucketiser geospatialBucketiser, ConnectedFragmentsFinder connectedFragmentsFinder) {
 		super(fragmentationService);
 		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.fragmentCreator = fragmentCreator;
 		this.geospatialBucketiser = geospatialBucketiser;
+		this.connectedFragmentsFinder = connectedFragmentsFinder;
 	}
 
 	@Override
@@ -49,31 +51,20 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
 		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(fragmentPairList, tiles);
-		addRelationsToRootFragment(fragmentPairList, ldesFragments);
-		ldesFragments
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment.getFragmentInfo().getFragmentPairs(),
-						ldesMemberId));
-	}
 
-	private void addRelationsToRootFragment(List<FragmentPair> fragmentPairList, List<LdesFragment> ldesFragments) {
-		LdesFragment rootFragment = ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(),
-						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))))
-				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
-						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))));
-
-		HierarchyGeospatialRelationsAttributer relationsAttributer = new HierarchyGeospatialRelationsAttributer();
 		LdesFragment parentFragment = retrieveParentFragment(fragmentPairList);
-		TreeRelation treeRelation = new TreeRelation("", rootFragment.getFragmentId(), "", "", "");
-		if (!parentFragment.getRelations().contains(treeRelation)) {
-			parentFragment.addRelation(treeRelation);
-			ldesFragmentRepository.saveFragment(parentFragment);
-		}
 
-		ldesFragments.forEach(
-				ldesFragment -> relationsAttributer.addRelationToParentFragment(rootFragment, ldesFragment));
-		ldesFragmentRepository.saveFragment(rootFragment);
-		ldesFragments.forEach(ldesFragmentRepository::saveFragment);
+		ldesFragments.forEach(ldesFragment -> {
+			List<LdesFragment> connectedFragments = connectedFragmentsFinder.findConnectedFragments(ldesFragment, fragmentPairList);
+			connectedFragments.forEach(ldesFragmentRepository::saveFragment);
+			TreeRelation treeRelation = new TreeRelation("", ldesFragment.getFragmentId(), "", "", "");
+			if (!parentFragment.getRelations().contains(treeRelation)) {
+				parentFragment.addRelation(treeRelation);
+				ldesFragmentRepository.saveFragment(parentFragment);
+			}
+			super.addMemberToFragment(ldesFragment.getFragmentInfo().getFragmentPairs(), ldesMemberId);
+
+		});
 	}
 
 	private LdesFragment retrieveParentFragment(List<FragmentPair> fragmentPairList) {

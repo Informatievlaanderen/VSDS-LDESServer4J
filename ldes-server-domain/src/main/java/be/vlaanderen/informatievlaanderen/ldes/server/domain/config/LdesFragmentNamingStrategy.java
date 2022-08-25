@@ -12,8 +12,9 @@ public class LdesFragmentNamingStrategy {
 
 		if (!fragmentInfo.getFragmentPairs().isEmpty()) {
 			stringBuilder.append("?");
-			stringBuilder.append(fragmentInfo.getFragmentPairs().stream().map(fragmentPair -> fragmentPair.fragmentKey()+
-					"="+fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
+			stringBuilder
+					.append(fragmentInfo.getFragmentPairs().stream().map(fragmentPair -> fragmentPair.fragmentKey() +
+							"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
 		}
 
 		return stringBuilder.toString();

@@ -15,7 +15,7 @@
 
 	<modules>
 		<module>ldes-fragmentisers-sequential</module>
-		<module>ldes-fragmentisers-geospatial</module>
+		<module>ldes-fragmentisers-geospatial-flat</module>
 		<module>ldes-fragmentisers-geospatial-hierarchical</module>
 	</modules>
 

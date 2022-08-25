@@ -87,7 +87,8 @@ class SequentialFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(), fragmentPairList);
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(),
+				fragmentPairList);
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(), null);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(createdFragment);
 		inOrder.verifyNoMoreInteractions();
@@ -111,7 +112,8 @@ class SequentialFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(), fragmentPairList);
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(),
+				fragmentPairList);
 		inOrder.verify(fragmentCreator, never()).createNewFragment(any(), any());
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
 		inOrder.verifyNoMoreInteractions();
@@ -140,7 +142,8 @@ class SequentialFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(), fragmentPairList);
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(),
+				fragmentPairList);
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.of(existingLdesFragment), null);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
