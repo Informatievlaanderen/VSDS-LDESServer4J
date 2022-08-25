@@ -11,6 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.RootFragmentService;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,20 +50,21 @@ class SequentialFragmentationServiceTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 
 	private final FragmentCreator fragmentCreator = mock(FragmentCreator.class);
+	private final RootFragmentService rootFragmentService = mock(RootFragmentService.class);
 
 	private FragmentationService fragmentationService;
 
 	@BeforeEach
 	void setUp() {
 		fragmentationService = new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository,
-				ldesFragmentRepository);
+				ldesFragmentRepository, rootFragmentService);
 	}
 
 	@Test
 	@DisplayName("Member not found in repository")
 	void when_MemberIsNotFoundInRepository_thenMemberNotFoundExceptionIsThrown() {
 		MemberNotFoundException memberNotFoundException = assertThrows(MemberNotFoundException.class,
-				() -> fragmentationService.addMemberToFragment("nonExistingMember"));
+				() -> fragmentationService.addMemberToFragment(List.of(), "nonExistingMember"));
 
 		assertEquals("Member with id nonExistingMember not found in repository", memberNotFoundException.getMessage());
 	}
@@ -78,16 +80,17 @@ class SequentialFragmentationServiceTest {
 		LdesFragment createdFragment = new LdesFragment("fragmentId",
 				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
 		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
-		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
+		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath()))
 				.thenReturn(Optional.empty());
 		when(fragmentCreator.createNewFragment(Optional.empty(), null))
 				.thenReturn(createdFragment);
 
-		fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
+		fragmentationService.addMemberToFragment(List.of(), ldesMember.getLdesMemberId());
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(),
+				ldesConfig.getTimestampPath());
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(), null);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(createdFragment);
 		inOrder.verifyNoMoreInteractions();
@@ -104,14 +107,15 @@ class SequentialFragmentationServiceTest {
 		LdesFragment existingLdesFragment = new LdesFragment("fragmentId",
 				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
 		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
-		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
+		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath()))
 				.thenReturn(Optional.of(existingLdesFragment));
 
-		fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
+		fragmentationService.addMemberToFragment(List.of(), ldesMember.getLdesMemberId());
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(),
+				ldesConfig.getTimestampPath());
 		inOrder.verify(fragmentCreator, never()).createNewFragment(any(), any());
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
 		inOrder.verifyNoMoreInteractions();
@@ -131,16 +135,17 @@ class SequentialFragmentationServiceTest {
 				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path", "Value"))));
 		IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
 		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(ldesMember));
-		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName()))
+		when(ldesFragmentRepository.retrieveOpenFragment(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath()))
 				.thenReturn(Optional.of(existingLdesFragment));
 		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
 		when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment), null)).thenReturn(newFragment);
 
-		fragmentationService.addMemberToFragment(ldesMember.getLdesMemberId());
+		fragmentationService.addMemberToFragment(List.of(), ldesMember.getLdesMemberId());
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator, ldesMemberRepository);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveOpenFragment(ldesConfig.getCollectionName(),
+				ldesConfig.getTimestampPath());
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.of(existingLdesFragment), null);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();

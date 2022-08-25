@@ -1,4 +1,7 @@
-geospatial:
-  maxZoomLevel: 15
-  bucketiserproperty: "http://www.opengis.net/ont/geosparql#asWKT"
-  projection: "lambert72"
+ldes:
+  fragmentations:
+    geospatial:
+      enabled: true
+      maxZoomLevel: 15
+      bucketiserproperty: "http://www.opengis.net/ont/geosparql#asWKT"
+      projection: "lambert72"

@@ -47,6 +47,10 @@ public class LdesFragment {
 		memberIds.add(ldesMemberId);
 	}
 
+	public void clearMembers() {
+		memberIds.clear();
+	}
+
 	public int getCurrentNumberOfMembers() {
 		return memberIds.size();
 	}

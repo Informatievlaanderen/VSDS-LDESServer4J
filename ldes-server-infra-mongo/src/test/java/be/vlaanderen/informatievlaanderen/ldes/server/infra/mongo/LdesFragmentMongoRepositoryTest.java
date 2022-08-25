@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,8 @@ class LdesFragmentMongoRepositoryTest {
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable()).collect(Collectors.toList()));
 
-		Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME);
+		Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME,
+				"generatedAtTime");
 
 		assertTrue(view.isPresent());
 		assertEquals(expectedFragmentId, view.get().getFragmentId());
@@ -107,7 +109,8 @@ class LdesFragmentMongoRepositoryTest {
 		private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, String collectionName,
 				String value) {
 			String fragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", collectionName, value);
-			FragmentInfo fragmentInfo = new FragmentInfo(collectionName, List.of());
+			FragmentInfo fragmentInfo = new FragmentInfo(collectionName,
+					List.of(new FragmentPair("generatedAtTime", value)));
 			fragmentInfo.setImmutable(immutable);
 			return new LdesFragmentEntity(fragmentId, fragmentInfo, List.of(), List.of());
 		}

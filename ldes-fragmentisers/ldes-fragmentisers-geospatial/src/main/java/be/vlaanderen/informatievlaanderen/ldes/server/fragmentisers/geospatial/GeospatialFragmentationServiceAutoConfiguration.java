@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.RootFragmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,7 +19,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.b
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 
 @Configuration
-@ConditionalOnProperty(value = "fragmentation.type", havingValue = "geospatial")
+@ConditionalOnProperty(value = "ldes.fragmentations.geospatial.enabled", havingValue = "true")
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class GeospatialFragmentationServiceAutoConfiguration {
@@ -26,14 +27,16 @@ public class GeospatialFragmentationServiceAutoConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(GeospatialFragmentationServiceAutoConfiguration.class);
 
 	@Bean
-	public FragmentationService geospatialFragmentationService(LdesConfig ldesConfig,
+	public FragmentationService geospatial(LdesConfig ldesConfig,
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository,
 			GeospatialBucketiser geospatialBucketiser,
-			LdesFragmentNamingStrategy ldesFragmentNamingStrategy) {
+			LdesFragmentNamingStrategy ldesFragmentNamingStrategy,
+			RootFragmentService rootFragmentService) {
 		logger.info("Geospatial Fragmentation is configured");
 		return new GeospatialFragmentationService(ldesConfig, ldesMemberRepository, ldesFragmentRepository,
-				new GeospatialFragmentCreator(ldesConfig, ldesFragmentNamingStrategy), geospatialBucketiser);
+				new GeospatialFragmentCreator(ldesConfig, ldesFragmentNamingStrategy), geospatialBucketiser,
+				rootFragmentService);
 	}
 
 	@Bean

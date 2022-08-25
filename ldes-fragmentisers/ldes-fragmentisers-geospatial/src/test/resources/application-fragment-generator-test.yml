@@ -3,7 +3,9 @@ ldes:
   collectionname: "mobility-hindrances"
   shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
   membertype: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
-geospatial:
-  maxZoomLevel: 15
-  bucketiserproperty: "http://www.opengis.net/ont/geosparql#asWKT"
-  projection: "lambert72"
+  fragmentations:
+    geospatial:
+      enabled: true
+      maxZoomLevel: 15
+      bucketiserproperty: "http://www.opengis.net/ont/geosparql#asWKT"
+      projection: "lambert72"

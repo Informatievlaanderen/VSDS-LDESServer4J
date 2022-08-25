@@ -1,14 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
@@ -33,9 +33,12 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenFragment(String collectionName) {
+	public Optional<LdesFragment> retrieveOpenFragment(String collectionName, String fragmentationPath) {
 		return repository.findAllByFragmentInfoImmutableAndFragmentInfo_CollectionName(false, collectionName)
 				.stream()
+				.filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getFragmentPairs().stream()
+						.anyMatch(fragmentPair -> fragmentPair.fragmentKey()
+								.equals(fragmentationPath)))
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}

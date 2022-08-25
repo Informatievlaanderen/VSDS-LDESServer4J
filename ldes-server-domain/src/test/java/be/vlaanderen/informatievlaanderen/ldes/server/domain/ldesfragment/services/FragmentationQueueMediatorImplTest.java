@@ -1,9 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ListableBeanFactory;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
@@ -12,11 +17,17 @@ class FragmentationQueueMediatorImplTest {
 
 	private FragmentationQueueMediator fragmentationQueueMediator;
 
+	private final ListableBeanFactory listableBeanFactory = mock(ListableBeanFactory.class);
+
 	private final FragmentationService fragmentationService = mock(FragmentationService.class);
 
 	@BeforeEach
 	void setUp() {
-		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(fragmentationService);
+		LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig.setFragmentations(Map.of("example", new Object()));
+		when(listableBeanFactory.getBeansOfType(FragmentationService.class))
+				.thenReturn(Map.of("example", fragmentationService));
+		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(listableBeanFactory, ldesConfig);
 	}
 
 	@Test
@@ -29,7 +40,7 @@ class FragmentationQueueMediatorImplTest {
 				.atMost(Durations.ONE_HUNDRED_MILLISECONDS)
 				.until(fragmentationQueueMediator::queueIsEmtpy);
 
-		verify(fragmentationService, times(1)).addMemberToFragment("someMember");
+		verify(fragmentationService, times(1)).addMemberToFragment(List.of(), "someMember");
 	}
 
 }

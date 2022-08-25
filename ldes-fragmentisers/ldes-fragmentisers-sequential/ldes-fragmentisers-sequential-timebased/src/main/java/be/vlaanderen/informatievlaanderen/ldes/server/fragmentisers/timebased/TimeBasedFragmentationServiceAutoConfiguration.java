@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.RootFragmentService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.sequential.SequentialFragmentationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 
 @Configuration
-@ConditionalOnProperty(value = "fragmentation.type", havingValue = "timebased", matchIfMissing = true)
+// @ConditionalOnProperty(value = "fragmentation.type", havingValue =
+// "timebased", matchIfMissing = false)
+@ConditionalOnProperty(value = "ldes.fragmentations.timebased.enabled", havingValue = "true")
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class TimeBasedFragmentationServiceAutoConfiguration {
@@ -41,11 +44,11 @@ public class TimeBasedFragmentationServiceAutoConfiguration {
 	}
 
 	@Bean
-	public FragmentationService sequentialFragmentationService(LdesConfig ldesConfig,
+	public FragmentationService timebased(LdesConfig ldesConfig,
 			LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository,
-			FragmentCreator fragmentCreator) {
+			FragmentCreator fragmentCreator, RootFragmentService rootFragmentService) {
 		logger.info("Timebased Fragmentation is configured");
 		return new SequentialFragmentationService(ldesConfig, fragmentCreator, ldesMemberRepository,
-				ldesFragmentRepository);
+				ldesFragmentRepository, rootFragmentService);
 	}
 }

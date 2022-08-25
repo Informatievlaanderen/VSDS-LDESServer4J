@@ -11,7 +11,7 @@ public interface LdesFragmentRepository {
 
 	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
 
-	Optional<LdesFragment> retrieveOpenFragment(String collectionName);
+	Optional<LdesFragment> retrieveOpenFragment(String collectionName, String fragmentationPath);
 
 	Optional<LdesFragment> retrieveInitialFragment(String collectionName);
 

@@ -16,7 +16,8 @@
 	<modules>
 		<module>ldes-fragmentisers-sequential</module>
 		<module>ldes-fragmentisers-geospatial</module>
-	</modules>
+        <module>ldes-fragmentisers-common</module>
+    </modules>
 
 	<dependencyManagement>
 		<dependencies>

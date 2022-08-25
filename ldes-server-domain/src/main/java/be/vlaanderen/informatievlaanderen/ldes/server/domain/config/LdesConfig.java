@@ -3,6 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+import java.util.Map;
+
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
 public class LdesConfig {
@@ -12,6 +15,7 @@ public class LdesConfig {
 	private String memberType;
 	private String timestampPath;
 	private String versionOf;
+	private Map<String, Object> fragmentations;
 
 	public String getHostName() {
 		return hostName;
@@ -59,5 +63,13 @@ public class LdesConfig {
 
 	public void setVersionOf(String versionOf) {
 		this.versionOf = versionOf;
+	}
+
+	public Map<String, Object> getFragmentations() {
+		return fragmentations;
+	}
+
+	public void setFragmentations(Map<String, Object> fragmentations) {
+		this.fragmentations = fragmentations;
 	}
 }
