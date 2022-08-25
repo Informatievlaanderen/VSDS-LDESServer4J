@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -23,14 +22,15 @@ public class FragmentationQueueMediatorImpl implements FragmentationQueueMediato
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final LinkedBlockingQueue<String> ldesMembersToFragment = new LinkedBlockingQueue<>();
 	private final Queue<FragmentationService> fragmentationServicesQueue;
-  
+
 	protected final AtomicInteger ldesMembersToFragmentTracker;
 
-	public FragmentationQueueMediatorImpl(ListableBeanFactory beanFactory, LdesConfig ldesConfig, MeterRegistry meterRegistry) {
+	public FragmentationQueueMediatorImpl(ListableBeanFactory beanFactory, LdesConfig ldesConfig,
+			MeterRegistry meterRegistry) {
 		Map<String, FragmentationService> availableServices = beanFactory.getBeansOfType(FragmentationService.class);
 		this.fragmentationServicesQueue = configureFragmentationServices(ldesConfig.getFragmentations().keySet(),
 				availableServices);
-    ldesMembersToFragmentTracker = meterRegistry.gauge("ldes_server_members_to_fragment", new AtomicInteger(0));
+		ldesMembersToFragmentTracker = meterRegistry.gauge("ldes_server_members_to_fragment", new AtomicInteger(0));
 	}
 
 	public void addLdesMember(String memberId) {
