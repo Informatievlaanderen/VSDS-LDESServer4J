@@ -1,6 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +30,7 @@ class FragmentationQueueMediatorImplTest {
 		ldesConfig.setFragmentations(Map.of("example", new Object()));
 		when(listableBeanFactory.getBeansOfType(FragmentationService.class))
 				.thenReturn(Map.of("example", fragmentationService));
-		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(listableBeanFactory, ldesConfig);
+		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(listableBeanFactory, ldesConfig, new SimpleMeterRegistry());
 	}
 
 	@Test
