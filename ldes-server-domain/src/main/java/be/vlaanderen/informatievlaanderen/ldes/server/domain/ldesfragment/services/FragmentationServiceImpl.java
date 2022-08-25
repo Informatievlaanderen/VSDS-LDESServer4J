@@ -44,7 +44,7 @@ public class FragmentationServiceImpl implements FragmentationService {
 				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), fragmentPairList))
 				.orElseThrow(() -> new RuntimeException(""));
 		ldesFragment.addMember(ldesMember.getLdesMemberId());
-		System.out.println("Added to "+ldesFragment.getFragmentId());
+		System.out.println("Added to " + ldesFragment.getFragmentId());
 		ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 

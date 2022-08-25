@@ -21,7 +21,8 @@ public class ConnectedFragmentsFinder {
 	private final GeospatialConfig geospatialConfig;
 
 	public ConnectedFragmentsFinder(LdesFragmentRepository ldesFragmentRepository,
-									GeospatialRelationsAttributer relationsAttributer, FragmentGenerator fragmentGenerator, GeospatialConfig geospatialConfig) {
+			GeospatialRelationsAttributer relationsAttributer, FragmentGenerator fragmentGenerator,
+			GeospatialConfig geospatialConfig) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.fragmentGenerator = fragmentGenerator;
 		this.relationsAttributer = relationsAttributer;
@@ -31,8 +32,13 @@ public class ConnectedFragmentsFinder {
 	public List<LdesFragment> findConnectedFragments(LdesFragment ldesFragment, List<FragmentPair> fragmentPairList) {
 		List<LdesFragment> availableFragments = ldesFragmentRepository.retrieveAllFragments()
 				.stream()
-				.filter(ldesFragment1 -> ldesFragment1.getFragmentInfo().getFragmentPairs().stream().anyMatch(fragmentPair -> fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)))
-				.filter(ldesFragment1 ->  TileConverter.fromString(ldesFragment1.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair ->fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)).findFirst().get().fragmentValue()).getZoom()==geospatialConfig.getMaxZoomLevel())
+				.filter(ldesFragment1 -> ldesFragment1.getFragmentInfo().getFragmentPairs().stream().anyMatch(
+						fragmentPair -> fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)))
+				.filter(ldesFragment1 -> TileConverter.fromString(ldesFragment1.getFragmentInfo().getFragmentPairs()
+						.stream()
+						.filter(fragmentPair -> fragmentPair.fragmentKey()
+								.equals(GeospatialConstants.FRAGMENT_KEY_TILE))
+						.findFirst().get().fragmentValue()).getZoom() == geospatialConfig.getMaxZoomLevel())
 				.toList();
 		if (availableFragments.isEmpty()) {
 			return List.of(ldesFragment);

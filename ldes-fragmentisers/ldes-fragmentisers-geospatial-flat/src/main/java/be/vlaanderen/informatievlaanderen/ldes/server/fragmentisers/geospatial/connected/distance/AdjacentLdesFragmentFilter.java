@@ -29,8 +29,12 @@ public class AdjacentLdesFragmentFilter implements Predicate<LdesFragment> {
 	}
 
 	private double distanceBetween(LdesFragment firstFragment, LdesFragment secondFragment) {
-		Tile firstTile = TileConverter.fromString(firstFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair ->fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)).findFirst().get().fragmentValue());
-		Tile secondTile = TileConverter.fromString(secondFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair ->fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)).findFirst().get().fragmentValue());
+		Tile firstTile = TileConverter.fromString(firstFragment.getFragmentInfo().getFragmentPairs().stream()
+				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE))
+				.findFirst().get().fragmentValue());
+		Tile secondTile = TileConverter.fromString(secondFragment.getFragmentInfo().getFragmentPairs().stream()
+				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE))
+				.findFirst().get().fragmentValue());
 		return DistanceCalculator.calculateDistance(firstTile.getX(), firstTile.getY(), secondTile.getX(),
 				secondTile.getY());
 	}

@@ -40,7 +40,8 @@ public class GeospatialRelationsAttributer {
 	}
 
 	private String getWKT(LdesFragment currentFragment) {
-		Tile currentTile = TileConverter.fromString(currentFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair -> fragmentPair.fragmentKey().equals("tile")).findFirst().get().fragmentValue());
+		Tile currentTile = TileConverter.fromString(currentFragment.getFragmentInfo().getFragmentPairs().stream()
+				.filter(fragmentPair -> fragmentPair.fragmentKey().equals("tile")).findFirst().get().fragmentValue());
 		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
 		return BoundingBoxConverter.toWKT(currentBoundingBox);
 	}

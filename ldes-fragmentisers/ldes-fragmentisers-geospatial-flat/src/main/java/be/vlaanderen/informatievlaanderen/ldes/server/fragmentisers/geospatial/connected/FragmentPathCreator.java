@@ -31,16 +31,22 @@ public class FragmentPathCreator {
 		this.fragmentCreator = fragmentCreator;
 	}
 
-	public Set<LdesFragment> createFragmentPath(LdesFragment firstFragment, LdesFragment secondFragment, List<FragmentPair> fragmentPairList) {
-		Tile firstTile = TileConverter.fromString(firstFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair ->fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)).findFirst().get().fragmentValue());
-		Tile secondTile = TileConverter.fromString(secondFragment.getFragmentInfo().getFragmentPairs().stream().filter(fragmentPair ->fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE)).findFirst().get().fragmentValue());
+	public Set<LdesFragment> createFragmentPath(LdesFragment firstFragment, LdesFragment secondFragment,
+			List<FragmentPair> fragmentPairList) {
+		Tile firstTile = TileConverter.fromString(firstFragment.getFragmentInfo().getFragmentPairs().stream()
+				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE))
+				.findFirst().get().fragmentValue());
+		Tile secondTile = TileConverter.fromString(secondFragment.getFragmentInfo().getFragmentPairs().stream()
+				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(GeospatialConstants.FRAGMENT_KEY_TILE))
+				.findFirst().get().fragmentValue());
 		Set<String> bucketsInBetween = getBucketsInBetween(firstFragment, secondFragment, firstTile, secondTile);
 		return bucketsInBetween.stream()
 				.map(bucket -> {
 					List<FragmentPair> fragmentPairs = new ArrayList<>(fragmentPairList.stream().toList());
 					fragmentPairs.add(new FragmentPair(FRAGMENT_KEY_TILE, bucket));
 					return fragmentCreator.createNewFragment(Optional.empty(),
-							fragmentPairs);})
+							fragmentPairs);
+				})
 				.collect(Collectors.toSet());
 	}
 

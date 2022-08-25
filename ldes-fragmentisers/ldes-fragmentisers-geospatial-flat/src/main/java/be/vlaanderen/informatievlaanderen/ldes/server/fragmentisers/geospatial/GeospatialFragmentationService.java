@@ -55,7 +55,8 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 		LdesFragment parentFragment = retrieveParentFragment(fragmentPairList);
 
 		ldesFragments.forEach(ldesFragment -> {
-			List<LdesFragment> connectedFragments = connectedFragmentsFinder.findConnectedFragments(ldesFragment, fragmentPairList);
+			List<LdesFragment> connectedFragments = connectedFragmentsFinder.findConnectedFragments(ldesFragment,
+					fragmentPairList);
 			connectedFragments.forEach(ldesFragmentRepository::saveFragment);
 			TreeRelation treeRelation = new TreeRelation("", ldesFragment.getFragmentId(), "", "", "");
 			if (!parentFragment.getRelations().contains(treeRelation)) {

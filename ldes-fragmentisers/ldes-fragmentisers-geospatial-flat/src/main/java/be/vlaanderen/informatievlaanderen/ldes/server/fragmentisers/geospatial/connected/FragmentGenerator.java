@@ -21,14 +21,15 @@ public class FragmentGenerator {
 	}
 
 	public List<LdesFragment> generateFragmentPathToClosestFragment(LdesFragment ldesFragment,
-																	List<LdesFragment> availableFragments, List<FragmentPair> fragmentPairList) {
+			List<LdesFragment> availableFragments, List<FragmentPair> fragmentPairList) {
 		List<LdesFragment> ldesFragments = new ArrayList<>();
 		ldesFragments.add(ldesFragment);
 		LdesFragment closestFragment = closestFragmentDiscoverer.getClosestFragment(ldesFragment, availableFragments);
 		ldesFragments.add(closestFragment);
-		Set<LdesFragment> inBetweenFragments = fragmentPathCreator.createFragmentPath(ldesFragment, closestFragment, fragmentPairList);
-		inBetweenFragments.forEach(fragment->{
-			if(!ldesFragments.stream().map(LdesFragment::getFragmentId).toList().contains(fragment.getFragmentId())){
+		Set<LdesFragment> inBetweenFragments = fragmentPathCreator.createFragmentPath(ldesFragment, closestFragment,
+				fragmentPairList);
+		inBetweenFragments.forEach(fragment -> {
+			if (!ldesFragments.stream().map(LdesFragment::getFragmentId).toList().contains(fragment.getFragmentId())) {
 				ldesFragments.add(fragment);
 			}
 		});
