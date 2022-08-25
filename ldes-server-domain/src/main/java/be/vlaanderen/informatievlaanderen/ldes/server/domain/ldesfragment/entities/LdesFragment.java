@@ -24,7 +24,10 @@ public class LdesFragment {
 	}
 
 	public void addRelation(TreeRelation treeRelation) {
-		this.relations.add(treeRelation);
+		if (this.relations.stream().noneMatch(relation -> relation.getTreeNode().equals(treeRelation.getTreeNode()))) {
+			this.relations.add(treeRelation);
+		}
+
 	}
 
 	public String getFragmentId() {

@@ -12,7 +12,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.RootFragmentService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.GeospatialRelationsAttributer;
 
 import java.util.List;
 import java.util.Optional;
@@ -61,9 +60,7 @@ public class GeospatialFragmentationService implements FragmentationService {
 	private List<LdesFragment> fragmentMember(LdesFragment parentFragment, String ldesMemberId) {
 		List<LdesFragment> modifiedFragments = setupTileFragments(ldesMemberId);
 
-		modifiedFragments.forEach(ldesFragment -> {
-			ldesFragment.addMember(ldesMemberId);
-		});
+		modifiedFragments.forEach(ldesFragment -> ldesFragment.addMember(ldesMemberId));
 		rootFragmentService.addRelationToParentFragment(parentFragment, modifiedFragments);
 
 		return modifiedFragments;
