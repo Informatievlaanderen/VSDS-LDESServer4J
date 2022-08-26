@@ -37,12 +37,12 @@
 
         <!-- SPRING BOOT -->
         <spring-boot.version>2.7.3</spring-boot.version>
-		    <spring-cloud-dependencies.version>2021.0.3</spring-cloud-dependencies.version>
-		    <spring-cloud-sleuth-otel-dependencies.version>1.1.0-M6</spring-cloud-sleuth-otel-dependencies.version>
+        <spring-cloud-dependencies.version>2021.0.3</spring-cloud-dependencies.version>
+        <spring-cloud-sleuth-otel-dependencies.version>1.1.0-M6</spring-cloud-sleuth-otel-dependencies.version>
 
         <!-- JSON & RDF -->
         <json-simple.version>1.1.1</json-simple.version>
-        <apache-jena.version>4.5.0</apache-jena.version>
+        <apache-jena.version>4.6.0</apache-jena.version>
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
@@ -54,7 +54,6 @@
         <byte-buddy.version>1.12.14</byte-buddy.version>
         <wiremock-jre8.version>2.33.2</wiremock-jre8.version>
         <de.flapdoodle.embed.mongo.version>3.4.8</de.flapdoodle.embed.mongo.version>
-        <jackson-databind.version>2.13.3</jackson-databind.version>
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
@@ -115,20 +114,6 @@
                 <groupId>org.apache.jena</groupId>
                 <artifactId>jena-arq</artifactId>
                 <version>${apache-jena.version}</version>
-                <exclusions>
-                    <!-- Excluded for CVE-2020-36518 in 4.5.0 -->
-                    <exclusion>
-                        <groupId>com.fasterxml.jackson.core</groupId>
-                        <artifactId>jackson-databind</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- Added to circumvent CVE-2020-36518 in jena-arq 4.5.0 -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>
