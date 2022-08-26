@@ -81,11 +81,16 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 		List<Statement> statements = new ArrayList<>();
 		Resource treeRelationNode = createResource();
 		statements.add(createStatement(currentFragmentId, TREE_RELATION, treeRelationNode));
-		statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(),
-				TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
-		statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
-		statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
-		statements.add(createStatement(treeRelationNode, RDF_SYNTAX_TYPE, createResource(treeRelation.getRelation())));
+		if (!treeRelation.getTreeValue().equals(""))
+			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(),
+					TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
+		if (!treeRelation.getTreePath().equals(""))
+			statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
+		if (!treeRelation.getTreeNode().equals(""))
+			statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
+		if (!treeRelation.getRelation().equals(""))
+			statements.add(
+					createStatement(treeRelationNode, RDF_SYNTAX_TYPE, createResource(treeRelation.getRelation())));
 		return statements;
 	}
 }
