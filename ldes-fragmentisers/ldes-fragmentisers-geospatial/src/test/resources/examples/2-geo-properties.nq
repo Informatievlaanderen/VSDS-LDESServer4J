@@ -1,3 +1,0 @@
-<id_1> <http://www.opengis.net/ont/geosparql#asWKT> "<http://www.opengis.net/def/crs/EPSG/9.9.1/31370> LINESTRING(3.1952657510251736 51.1962486648334,3.7500753213376736 51.05144439135353)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
-<id_1> <http://www.opengis.net/ont/geosparql#asSecondWKT> "<http://www.opengis.net/def/crs/EPSG/9.9.1/31370> LINESTRING(3.0 51.0,3.0 51.0)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
-<id_1> <http://purl.org/dc/terms/description> "omschrijving"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> .

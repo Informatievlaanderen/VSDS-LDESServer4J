@@ -5,6 +5,7 @@ public class GeospatialConstants {
 	}
 
 	public static final String FRAGMENT_KEY_TILE = "tile";
+	public static final String FRAGMENT_KEY_TILE_ROOT = "0/0/0";
 
 	public static final String GEOSPARQL_AS_WKT = "http://www.opengis.net/ont/geosparql#asWKT";
 

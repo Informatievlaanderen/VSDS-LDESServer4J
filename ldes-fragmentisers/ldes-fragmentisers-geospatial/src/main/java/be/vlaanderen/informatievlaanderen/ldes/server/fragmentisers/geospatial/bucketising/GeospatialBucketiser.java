@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
-import org.apache.jena.geosparql.implementation.GeometryWrapper;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.Bucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
+import org.apache.jena.geosparql.implementation.GeometryWrapper;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -17,7 +16,8 @@ public class GeospatialBucketiser implements Bucketiser {
 	private final CoordinateConverter coordinateConverter;
 	private final CoordinateToTileStringConverter coordinateToTileStringConverter;
 
-	public GeospatialBucketiser(GeospatialConfig geospatialConfig, CoordinateConverter coordinateConverter,
+	public GeospatialBucketiser(GeospatialConfig geospatialConfig,
+			CoordinateConverter coordinateConverter,
 			CoordinateToTileStringConverter coordinateToTileStringConverter) {
 		this.geospatialConfig = geospatialConfig;
 		this.coordinateConverter = coordinateConverter;
