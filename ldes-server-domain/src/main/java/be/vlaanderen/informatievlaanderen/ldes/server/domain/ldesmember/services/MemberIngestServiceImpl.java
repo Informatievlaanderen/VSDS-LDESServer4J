@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.service
 
 import java.util.Optional;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.stereotype.Component;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
@@ -15,17 +16,24 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
 	private final FragmentationQueueMediator fragmentationQueueMediator;
 
+	private final MeterRegistry registry;
+
 	public MemberIngestServiceImpl(LdesMemberRepository ldesMemberRepository,
-			FragmentationQueueMediator fragmentationQueueMediator) {
+			FragmentationQueueMediator fragmentationQueueMediator,
+			final MeterRegistry meterRegistry) {
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.fragmentationQueueMediator = fragmentationQueueMediator;
+		this.registry = meterRegistry;
 	}
 
 	@Override
 	public void addMember(LdesMember ldesMember) {
 		Optional<LdesMember> optionalLdesMember = ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId());
-		LdesMember savedLdesMember = optionalLdesMember.orElseGet(() -> storeLdesMember(ldesMember));
-		fragmentationQueueMediator.addLdesMember(savedLdesMember.getLdesMemberId());
+		if (optionalLdesMember.isEmpty()) {
+			registry.counter("ldes_server_ingested_members").increment();
+			LdesMember storedLdesMember = storeLdesMember(ldesMember);
+			fragmentationQueueMediator.addLdesMember(storedLdesMember.getLdesMemberId());
+		}
 	}
 
 	private LdesMember storeLdesMember(LdesMember ldesMember) {

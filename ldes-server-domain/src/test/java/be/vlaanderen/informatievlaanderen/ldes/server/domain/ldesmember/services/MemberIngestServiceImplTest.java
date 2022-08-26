@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,8 @@ class MemberIngestServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		memberIngestService = new MemberIngestServiceImpl(ldesMemberRepository, fragmentationQueueMediator);
+		memberIngestService = new MemberIngestServiceImpl(ldesMemberRepository, fragmentationQueueMediator,
+				new SimpleMeterRegistry());
 	}
 
 	@Test
@@ -47,8 +49,8 @@ class MemberIngestServiceImplTest {
 
 		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationQueueMediator);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(fragmentationQueueMediator, times(1)).addLdesMember(ldesMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
+		verifyNoInteractions(fragmentationQueueMediator);
 	}
 
 	@Test
