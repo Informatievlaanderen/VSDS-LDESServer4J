@@ -17,8 +17,8 @@ public class GeospatialBucketiser implements Bucketiser {
 	private final CoordinateToTileStringConverter coordinateToTileStringConverter;
 
 	public GeospatialBucketiser(GeospatialConfig geospatialConfig,
-								CoordinateConverter coordinateConverter,
-								CoordinateToTileStringConverter coordinateToTileStringConverter) {
+			CoordinateConverter coordinateConverter,
+			CoordinateToTileStringConverter coordinateToTileStringConverter) {
 		this.geospatialConfig = geospatialConfig;
 		this.coordinateConverter = coordinateConverter;
 		this.coordinateToTileStringConverter = coordinateToTileStringConverter;
