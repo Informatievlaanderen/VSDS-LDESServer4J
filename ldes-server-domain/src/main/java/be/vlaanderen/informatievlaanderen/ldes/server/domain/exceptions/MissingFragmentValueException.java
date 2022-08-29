@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 public class MissingFragmentValueException extends RuntimeException {
 	private final String fragmentId;

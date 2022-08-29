@@ -42,7 +42,6 @@ class FragmentFetchServiceImplTest {
 	private LdesConfig ldesConfig;
 
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-	private final LdesFragmentNamingStrategy ldesFragmentNamingStrategy = mock(LdesFragmentNamingStrategy.class);
 
 	private FragmentFetchService fragmentFetchService;
 

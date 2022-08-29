@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 public class LdesFragmentNamingStrategy {
 
+	private LdesFragmentNamingStrategy() {
+	}
+
 	public static String generateFragmentName(LdesConfig config, FragmentInfo fragmentInfo) {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append(config.getHostName()).append("/").append(fragmentInfo.getCollectionName());
