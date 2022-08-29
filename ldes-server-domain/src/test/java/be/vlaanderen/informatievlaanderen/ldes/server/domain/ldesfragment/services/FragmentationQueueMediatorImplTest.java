@@ -7,7 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
 
@@ -33,7 +35,7 @@ class FragmentationQueueMediatorImplTest {
 				.atMost(Durations.ONE_HUNDRED_MILLISECONDS)
 				.until(fragmentationQueueMediator::queueIsEmtpy);
 
-		verify(fragmentationService, times(1)).addMemberToFragment(List.of(), "someMember");
+		verify(fragmentationService, times(1)).addMemberToFragment(null, "someMember");
 	}
 
 }

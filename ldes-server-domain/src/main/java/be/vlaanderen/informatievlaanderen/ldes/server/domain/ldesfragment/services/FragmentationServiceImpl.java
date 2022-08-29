@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 
@@ -37,12 +35,9 @@ public class FragmentationServiceImpl implements FragmentationService {
 	}
 
 	@Override
-	public void addMemberToFragment(List<FragmentPair> fragmentPairList, String ldesMemberId) {
+	public void addMemberToFragment(LdesFragment ldesFragment, String ldesMemberId) {
 		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
 				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
-		LdesFragment ldesFragment = ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), fragmentPairList))
-				.orElseThrow(() -> new RuntimeException(""));
 		ldesFragment.addMember(ldesMember.getLdesMemberId());
 		ldesFragmentRepository.saveFragment(ldesFragment);
 	}

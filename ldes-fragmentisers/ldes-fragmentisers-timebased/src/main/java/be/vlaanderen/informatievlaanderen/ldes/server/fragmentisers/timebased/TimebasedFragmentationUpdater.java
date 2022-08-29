@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.context.ApplicationContext;
@@ -21,7 +20,7 @@ public class TimebasedFragmentationUpdater implements FragmentationUpdater {
 		TimeBasedFragmentCreator timeBasedFragmentCreator = new TimeBasedFragmentCreator(ldesConfig1,
 				sequentialFragmentationConfig,
 				ldesMemberRepository1, ldesFragmentRepository1);
-		return new SequentialFragmentationService(fragmentationService, ldesConfig1, timeBasedFragmentCreator,
+		return new TimebasedFragmentationService(fragmentationService, ldesConfig1, timeBasedFragmentCreator,
 				ldesMemberRepository1,
 				ldesFragmentRepository1);
 

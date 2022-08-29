@@ -75,7 +75,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentisers-sequential-timebased</artifactId>
+                    <artifactId>ldes-fragmentisers-timebased</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

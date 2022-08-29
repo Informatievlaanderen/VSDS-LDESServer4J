@@ -216,7 +216,7 @@ mvn clean verify -Dunittestskip=true
 - ldes-server-infra-mongo
 - ldes-server-port-ingestion-rest
 - ldes-server-port-publication-rest
-- ldes-fragmentisers-sequential-timebased
+- ldes-fragmentisers-timebased
 - ldes-fragmentisers-geospatial
 
 ### Tracing and Metrics

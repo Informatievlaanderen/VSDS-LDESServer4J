@@ -35,7 +35,7 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser) {
-		super(fragmentationService);
+		super(fragmentationService, ldesFragmentRepository, ldesConfig);
 		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -44,18 +44,18 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	}
 
 	@Override
-	public void addMemberToFragment(List<FragmentPair> fragmentPairList, String ldesMemberId) {
+	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId) {
+		List<FragmentPair> parentFragmentPairs = parentFragment.getFragmentInfo().getFragmentPairs();
 		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
 				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
-		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(fragmentPairList, tiles);
-		addRelationsToRootFragment(fragmentPairList, ldesFragments);
+		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(parentFragmentPairs, tiles);
+		addRelationsToRootFragment(parentFragment, ldesFragments);
 		ldesFragments
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment.getFragmentInfo().getFragmentPairs(),
-						ldesMemberId));
+				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMemberId));
 	}
 
-	private void addRelationsToRootFragment(List<FragmentPair> fragmentPairList, List<LdesFragment> ldesFragments) {
+	private void addRelationsToRootFragment(LdesFragment parentFragment, List<LdesFragment> ldesFragments) {
 		LdesFragment rootFragment = ldesFragmentRepository
 				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(),
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))))
@@ -63,7 +63,6 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))));
 
 		GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
-		LdesFragment parentFragment = retrieveParentFragment(fragmentPairList);
 		TreeRelation treeRelation = new TreeRelation("", rootFragment.getFragmentId(), "", "", "");
 		if (!parentFragment.getRelations().contains(treeRelation)) {
 			parentFragment.addRelation(treeRelation);
@@ -79,7 +78,7 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	private LdesFragment retrieveParentFragment(List<FragmentPair> fragmentPairList) {
 		return ldesFragmentRepository
 				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), fragmentPairList))
-				.orElseThrow(() -> new RuntimeException());
+				.orElseThrow(RuntimeException::new);
 	}
 
 	private List<LdesFragment> retrieveFragmentsOrCreateNewFragments(List<FragmentPair> fragmentPairList,
