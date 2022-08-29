@@ -6,8 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
 
@@ -15,12 +13,12 @@ class FragmentationQueueMediatorImplTest {
 
 	private FragmentationQueueMediator fragmentationQueueMediator;
 
-	private final FragmentationService fragmentationService = mock(FragmentationService.class);
+	private final FragmentationExecutor fragmentationExecutor = mock(FragmentationExecutor.class);
 
 	@BeforeEach
 	void setUp() {
 		fragmentationQueueMediator = new FragmentationQueueMediatorImpl(new SimpleMeterRegistry(),
-				fragmentationService);
+				fragmentationExecutor);
 	}
 
 	@Test
@@ -33,7 +31,7 @@ class FragmentationQueueMediatorImplTest {
 				.atMost(Durations.ONE_HUNDRED_MILLISECONDS)
 				.until(fragmentationQueueMediator::queueIsEmtpy);
 
-		verify(fragmentationService, times(1)).addMemberToFragment(List.of(), "someMember");
+		verify(fragmentationExecutor, times(1)).executeFragmentation("someMember");
 	}
 
 }

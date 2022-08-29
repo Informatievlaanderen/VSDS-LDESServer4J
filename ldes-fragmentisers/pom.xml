@@ -14,25 +14,15 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>ldes-fragmentisers-sequential</module>
 		<module>ldes-fragmentisers-geospatial</module>
-	</modules>
+        <module>ldes-fragmentisers-timebased</module>
+    </modules>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>ldes-fragmentisers-impl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>ldes-fragmentisers-sequential-impl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>ldes-fragmentisers-sequential-timebased</artifactId>
+				<artifactId>ldes-fragmentisers-timebased</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
