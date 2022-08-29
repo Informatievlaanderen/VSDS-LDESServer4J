@@ -46,7 +46,7 @@ public class LdesFragmentController {
 		LdesFragment initialFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, initialFragment);
 		if (initialFragment.isExistingFragment())
-			response.sendRedirect("/" + collectionName + "?" + initialFragment.getFragmentInfo().getPath() + "="
+			response.sendRedirect("/" + collectionName + "?" + initialFragment.getFragmentInfo().getKey() + "="
 					+ initialFragment.getFragmentInfo().getValue());
 		return initialFragment;
 	}

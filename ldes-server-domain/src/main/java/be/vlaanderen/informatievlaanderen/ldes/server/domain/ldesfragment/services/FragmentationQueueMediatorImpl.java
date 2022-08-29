@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class FragmentationQueueMediatorImpl implements FragmentationQueueMediator {
 
-	private final Logger logger = LoggerFactory.getLogger(FragmentationQueueMediatorImpl.class);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final LinkedBlockingQueue<String> ldesMembersToFragment = new LinkedBlockingQueue<>();
 	private final FragmentationService fragmentationService;

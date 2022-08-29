@@ -60,7 +60,7 @@ class FragmentFetchServiceImplTest {
 
 		assertEquals(0, returnedFragment.getMemberIds().size());
 		assertNull(returnedFragment.getFragmentInfo().getValue());
-		assertNull(returnedFragment.getFragmentInfo().getPath());
+		assertNull(returnedFragment.getFragmentInfo().getKey());
 	}
 
 	@Test
@@ -75,7 +75,7 @@ class FragmentFetchServiceImplTest {
 
 		assertEquals(1, returnedFragment.getMemberIds().size());
 		assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
-		assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+		assertEquals(PATH, returnedFragment.getFragmentInfo().getKey());
 	}
 
 	@Test
@@ -88,7 +88,7 @@ class FragmentFetchServiceImplTest {
 
 		assertEquals(0, returnedFragment.getMemberIds().size());
 		assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
-		assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+		assertEquals(PATH, returnedFragment.getFragmentInfo().getKey());
 	}
 
 	@Test
@@ -103,6 +103,6 @@ class FragmentFetchServiceImplTest {
 
 		assertEquals(1, returnedFragment.getMemberIds().size());
 		assertEquals(FRAGMENTATION_VALUE_1, returnedFragment.getFragmentInfo().getValue());
-		assertEquals(PATH, returnedFragment.getFragmentInfo().getPath());
+		assertEquals(PATH, returnedFragment.getFragmentInfo().getKey());
 	}
 }

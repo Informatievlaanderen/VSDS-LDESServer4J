@@ -20,8 +20,8 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 
 	@Override
 	public LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment,
-			List<FragmentPair> bucket) {
-		return createNewFragment(bucket);
+			List<FragmentPair> fragmentPairsOfParent) {
+		return createNewFragment(fragmentPairsOfParent);
 	}
 
 	@Override
