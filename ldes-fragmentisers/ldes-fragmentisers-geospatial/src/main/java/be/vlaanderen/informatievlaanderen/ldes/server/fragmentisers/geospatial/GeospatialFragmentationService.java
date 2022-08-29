@@ -35,7 +35,7 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser) {
-		super(fragmentationService, ldesFragmentRepository, ldesConfig);
+		super(fragmentationService);
 		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -73,12 +73,6 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 				ldesFragment -> relationsAttributer.addRelationToParentFragment(rootFragment, ldesFragment));
 		ldesFragmentRepository.saveFragment(rootFragment);
 		ldesFragments.forEach(ldesFragmentRepository::saveFragment);
-	}
-
-	private LdesFragment retrieveParentFragment(List<FragmentPair> fragmentPairList) {
-		return ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), fragmentPairList))
-				.orElseThrow(RuntimeException::new);
 	}
 
 	private List<LdesFragment> retrieveFragmentsOrCreateNewFragments(List<FragmentPair> fragmentPairList,

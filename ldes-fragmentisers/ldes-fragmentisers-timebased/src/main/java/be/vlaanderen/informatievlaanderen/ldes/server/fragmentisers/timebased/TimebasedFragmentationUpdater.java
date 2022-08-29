@@ -21,7 +21,6 @@ public class TimebasedFragmentationUpdater implements FragmentationUpdater {
 				sequentialFragmentationConfig,
 				ldesMemberRepository1, ldesFragmentRepository1);
 		return new TimebasedFragmentationService(fragmentationService, ldesConfig1, timeBasedFragmentCreator,
-				ldesMemberRepository1,
 				ldesFragmentRepository1);
 
 	}

@@ -14,18 +14,18 @@ public class FragmentationQueueMediatorImpl implements FragmentationQueueMediato
 
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final LinkedBlockingQueue<String> ldesMembersToFragment = new LinkedBlockingQueue<>();
-	private final FragmentationService fragmentationService;
+	private final FragmentationExecutor fragmentationExecutor;
 	protected final AtomicInteger ldesMembersToFragmentTracker;
 
 	public FragmentationQueueMediatorImpl(MeterRegistry meterRegistry,
-			FragmentationService fragmentationService) {
-		this.fragmentationService = fragmentationService;
+			FragmentationExecutor fragmentationExecutor) {
+		this.fragmentationExecutor = fragmentationExecutor;
 		ldesMembersToFragmentTracker = meterRegistry.gauge("ldes_server_members_to_fragment", new AtomicInteger(0));
 	}
 
 	public void addLdesMember(String memberId) {
 		ldesMembersToFragment.add(memberId);
-		executorService.submit(() -> fragmentationService.addMemberToFragment(null, ldesMembersToFragment.poll()));
+		executorService.submit(() -> fragmentationExecutor.executeFragmentation(ldesMembersToFragment.poll()));
 	}
 
 	public boolean queueIsEmtpy() {

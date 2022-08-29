@@ -1,14 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,21 +16,21 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 
 	protected final LdesConfig ldesConfig;
 	protected final FragmentCreator fragmentCreator;
-	protected final LdesMemberRepository ldesMemberRepository;
 	protected final LdesFragmentRepository ldesFragmentRepository;
 
 	public TimebasedFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig,
 			FragmentCreator fragmentCreator,
-			LdesMemberRepository ldesMemberRepository, LdesFragmentRepository ldesFragmentRepository) {
-		super(fragmentationService, ldesFragmentRepository, ldesConfig);
+			LdesFragmentRepository ldesFragmentRepository) {
+		super(fragmentationService);
 		this.ldesConfig = ldesConfig;
 		this.fragmentCreator = fragmentCreator;
-		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
+	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId) {
-		LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(parentFragment.getFragmentInfo().getFragmentPairs());
+		LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(
+				parentFragment.getFragmentInfo().getFragmentPairs());
 		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
 			ldesFragmentRepository.saveFragment(ldesFragment);
 			TreeRelation treeRelation = new TreeRelation("", ldesFragment.getFragmentId(), "", "", "");
