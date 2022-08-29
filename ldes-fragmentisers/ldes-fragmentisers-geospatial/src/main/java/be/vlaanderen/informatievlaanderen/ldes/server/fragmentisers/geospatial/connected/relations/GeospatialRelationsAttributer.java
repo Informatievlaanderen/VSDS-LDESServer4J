@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
@@ -24,8 +25,9 @@ public class GeospatialRelationsAttributer {
 	}
 
 	private String getWKT(LdesFragment currentFragment) {
-		Tile currentTile = TileConverter.fromString(currentFragment.getFragmentInfo().getFragmentPairs().stream()
-				.filter(fragmentPair -> fragmentPair.fragmentKey().equals("tile")).findFirst().get().fragmentValue());
+		String fragmentWKT = currentFragment.getFragmentInfo().getValueOfKey(FRAGMENT_KEY_TILE).orElseThrow(
+				() -> new MissingFragmentValueException(currentFragment.getFragmentId(), FRAGMENT_KEY_TILE));
+		Tile currentTile = TileConverter.fromString(fragmentWKT);
 		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
 		return BoundingBoxConverter.toWKT(currentBoundingBox);
 	}
