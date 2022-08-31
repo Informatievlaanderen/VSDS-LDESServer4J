@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.springframework.stereotype.Component;
 
-@Component
 public class CoordinateToTileStringConverter {
 
-	public String convertCoordinate(final Coordinate coordinate, final int zoom) {
+	private CoordinateToTileStringConverter() {
+	}
+
+	public static String convertCoordinate(final Coordinate coordinate, final int zoom) {
 		int xtile = (int) Math.floor((coordinate.x + 180) / 360 * (1 << zoom));
 		int ytile = (int) Math.floor(
 				(1 - Math.log(Math.tan(Math.toRadians(coordinate.y)) + 1 / Math.cos(Math.toRadians(coordinate.y)))
