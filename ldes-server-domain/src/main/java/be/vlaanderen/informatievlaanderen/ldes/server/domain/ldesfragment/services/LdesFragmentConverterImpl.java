@@ -6,10 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.jena.datatypes.TypeMapper;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -58,11 +55,21 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
 	private List<Statement> getGeneralLdesStatements(Resource viewId) {
 		List<Statement> statements = new ArrayList<>();
-		statements.add(createStatement(viewId, TREE_SHAPE, createResource(ldesConfig.getShape())));
-		statements.add(createStatement(viewId, LDES_VERSION_OF, createResource(ldesConfig.getVersionOf())));
-		statements.add(createStatement(viewId, LDES_TIMESTAMP_PATH, createResource(ldesConfig.getTimestampPath())));
+		addStatementIfMeaningful(statements, viewId, TREE_SHAPE, ldesConfig.getShape());
+		addStatementIfMeaningful(statements, viewId, LDES_VERSION_OF, ldesConfig.getVersionOf());
+		addStatementIfMeaningful(statements, viewId, LDES_TIMESTAMP_PATH, ldesConfig.getTimestampPath());
 		statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
 		return statements;
+	}
+
+	private void addStatementIfMeaningful(List<Statement> statements, Resource subject, Property predicate,
+			String objectContent) {
+		if (hasMeaningfulValue(objectContent))
+			statements.add(createStatement(subject, predicate, createResource(objectContent)));
+	}
+
+	private boolean hasMeaningfulValue(String objectContent) {
+		return objectContent != null && !objectContent.equals("");
 	}
 
 	private List<Statement> getRelationStatements(LdesFragment ldesFragment, Resource currrentFragmentId) {
@@ -81,16 +88,12 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 		List<Statement> statements = new ArrayList<>();
 		Resource treeRelationNode = createResource();
 		statements.add(createStatement(currentFragmentId, TREE_RELATION, treeRelationNode));
-		if (!treeRelation.getTreeValue().equals(""))
+		if (hasMeaningfulValue(treeRelation.getTreeValue()))
 			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(),
 					TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
-		if (!treeRelation.getTreePath().equals(""))
-			statements.add(createStatement(treeRelationNode, TREE_PATH, createResource(treeRelation.getTreePath())));
-		if (!treeRelation.getTreeNode().equals(""))
-			statements.add(createStatement(treeRelationNode, TREE_NODE, createResource(treeRelation.getTreeNode())));
-		if (!treeRelation.getRelation().equals(""))
-			statements.add(
-					createStatement(treeRelationNode, RDF_SYNTAX_TYPE, createResource(treeRelation.getRelation())));
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.getTreePath());
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE, treeRelation.getTreeNode());
+		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.getRelation());
 		return statements;
 	}
 }

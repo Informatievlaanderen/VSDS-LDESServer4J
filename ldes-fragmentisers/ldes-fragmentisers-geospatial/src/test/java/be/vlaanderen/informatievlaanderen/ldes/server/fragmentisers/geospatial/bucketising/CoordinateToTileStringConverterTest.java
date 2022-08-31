@@ -13,12 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CoordinateToTileStringConverterTest {
 
-	CoordinateToTileStringConverter converter = new CoordinateToTileStringConverter();
-
 	@ParameterizedTest(name = "Coordinate {0} at zoom level {1} is part of tile {2}")
 	@ArgumentsSource(CoordinateZoomLevelArgumentsProvider.class)
 	void test(Coordinate coordinate, int zoomLevel, String expectedTileString) {
-		String actualTileString = converter.convertCoordinate(coordinate, zoomLevel);
+		String actualTileString = CoordinateToTileStringConverter.convertCoordinate(coordinate, zoomLevel);
 		assertEquals(expectedTileString, actualTileString);
 	}
 
