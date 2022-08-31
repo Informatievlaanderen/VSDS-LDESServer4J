@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
@@ -35,7 +34,7 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser) {
-		super(fragmentationService);
+		super(fragmentationService, ldesFragmentRepository);
 		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -62,13 +61,9 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))));
 
-		GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
-		TreeRelation treeRelation = new TreeRelation("", rootFragment.getFragmentId(), "", "", "");
-		if (!parentFragment.getRelations().contains(treeRelation)) {
-			parentFragment.addRelation(treeRelation);
-			ldesFragmentRepository.saveFragment(parentFragment);
-		}
+		super.addRelationFromParentToChild(parentFragment, rootFragment);
 
+		GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
 		ldesFragments.forEach(
 				ldesFragment -> relationsAttributer.addRelationToParentFragment(rootFragment, ldesFragment));
 		ldesFragmentRepository.saveFragment(rootFragment);
