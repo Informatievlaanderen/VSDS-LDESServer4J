@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 	public TimebasedFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig,
 			FragmentCreator fragmentCreator,
 			LdesFragmentRepository ldesFragmentRepository) {
-		super(fragmentationService);
+		super(fragmentationService, ldesFragmentRepository);
 		this.ldesConfig = ldesConfig;
 		this.fragmentCreator = fragmentCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -33,11 +32,7 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 				parentFragment.getFragmentInfo().getFragmentPairs());
 		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
 			ldesFragmentRepository.saveFragment(ldesFragment);
-			TreeRelation treeRelation = new TreeRelation("", ldesFragment.getFragmentId(), "", "", "");
-			if (!parentFragment.getRelations().contains(treeRelation)) {
-				parentFragment.addRelation(treeRelation);
-				ldesFragmentRepository.saveFragment(parentFragment);
-			}
+			super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			super.addMemberToFragment(ldesFragment, ldesMemberId);
 		}
 	}
