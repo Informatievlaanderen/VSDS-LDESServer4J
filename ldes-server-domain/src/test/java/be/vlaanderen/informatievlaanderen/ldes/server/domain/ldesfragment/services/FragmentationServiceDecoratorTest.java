@@ -57,6 +57,15 @@ class FragmentationServiceDecoratorTest {
 		Mockito.verifyNoInteractions(fragmentRepository);
 	}
 
+	@Test
+	void when_DecoratorAddsMemberToFragment_WrappedFragmentationServiceIsCalled() {
+		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
+				new FragmentInfo(COLLECTION_NAME, List.of()));
+		String memberId = "memberId";
+		fragmentationServiceDecorator.addMemberToFragment(parentFragment, memberId);
+		Mockito.verify(fragmentationService, Mockito.times(1)).addMemberToFragment(parentFragment, memberId);
+	}
+
 	static class FragmentationServiceDecoratorTestImpl extends FragmentationServiceDecorator {
 
 		protected FragmentationServiceDecoratorTestImpl(FragmentationService fragmentationService,
