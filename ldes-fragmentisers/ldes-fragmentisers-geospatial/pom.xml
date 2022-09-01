@@ -12,15 +12,6 @@
     <artifactId>ldes-fragmentisers-geospatial</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <!-- MAVEN -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-    </properties>
-
     <dependencies>
         <!-- Spring Boot -->
         <dependency>
