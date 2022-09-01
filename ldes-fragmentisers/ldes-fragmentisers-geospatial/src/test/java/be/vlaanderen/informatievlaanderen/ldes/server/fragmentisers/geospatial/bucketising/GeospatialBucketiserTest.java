@@ -40,8 +40,7 @@ class GeospatialBucketiserTest {
 
 	@BeforeEach
 	void setUp() {
-		bucketiser = new GeospatialBucketiser(geospatialConfig, new Lambert72CoordinateConverter(),
-				new CoordinateToTileStringConverter());
+		bucketiser = new GeospatialBucketiser(geospatialConfig, new Lambert72CoordinateConverter());
 	}
 
 	@Test

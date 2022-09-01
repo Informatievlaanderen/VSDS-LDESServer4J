@@ -1,11 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
 import org.locationtech.jts.geom.Coordinate;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Component;
 
-@Component
-@ConditionalOnProperty(value = "geospatial.projection", havingValue = "lambert72", matchIfMissing = true)
 public class Lambert72CoordinateConverter implements CoordinateConverter {
 
 	private static final double N = 0.77164219;

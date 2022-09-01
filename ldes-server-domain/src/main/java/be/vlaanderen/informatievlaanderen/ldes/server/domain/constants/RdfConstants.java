@@ -28,4 +28,6 @@ public class RdfConstants {
 
 	public static final String TREE_GREATER_THAN_OR_EQUAL_TO_RELATION = "tree:GreaterThanOrEqualToRelation";
 	public static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = "tree:LessThanOrEqualToRelation";
+
+	public static final String GENERIC_TREE_RELATION = "tree:relation";
 }

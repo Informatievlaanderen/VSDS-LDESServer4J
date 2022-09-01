@@ -8,7 +8,9 @@ import org.springframework.context.annotation.Configuration;
 public class GeospatialConfig {
 
 	private String bucketiserProperty;
-	private int maxZoomLevel;
+	private Integer maxZoomLevel;
+
+	private String projection;
 
 	public String getBucketiserProperty() {
 		return bucketiserProperty;
@@ -22,7 +24,15 @@ public class GeospatialConfig {
 		return maxZoomLevel;
 	}
 
-	public void setMaxZoomLevel(int zoomLevel) {
+	public void setMaxZoomLevel(Integer zoomLevel) {
 		this.maxZoomLevel = zoomLevel;
+	}
+
+	public String getProjection() {
+		return projection;
+	}
+
+	public void setProjection(String projection) {
+		this.projection = projection;
 	}
 }
