@@ -109,8 +109,6 @@ not exist, create it)
     shape: { URI to defined shape }
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
-  fragmentation:
-    type: { timebased(default)/geospatial }
   ```
 
 ##### Example Mongo Configuration
@@ -120,18 +118,51 @@ not exist, create it)
     uri: mongodb://{docker-hostname}:{port}
     database: { database name }
   ```
+##### Example Views
+
+  ```yaml
+    views:
+      - name: {name of the view}
+        fragmentations:
+          - name: {type of fragmentation, currently "timebased" and "geospatial" supported}
+            config:
+              {Map of fragmentation properties}
+  ```
+
+An example of a view configuration with two view is shown below
+
+  ```yaml
+  views:
+    - name: "firstView"
+      fragmentations:
+        - name: "geospatial"
+          config:
+            maxZoomLevel: 15
+            bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+            projection: "lambert72"
+        - name: "timebased"
+          config:
+            memberLimit: 5
+    - name: "secondView"
+      fragmentations:
+        - name: "timebased"
+          config:
+            memberLimit: 3
+  ```
 
 ##### Example Timebased Fragmentation
 
   ```yaml
-  timebased:
+  name: "timebased"
+  config:
     memberLimit: { member limit > 0 }
   ```
 
 ##### Example Geospatial Fragmentation
 
   ```yaml
-  geospatial:
+  name: "geospatial"
+  config:
     maxZoomLevel: { Required zoom level }
     bucketiserproperty: { Defines which property will be used for bucketizing }
     projection: { "lambert72" (current only this projection is supported) }

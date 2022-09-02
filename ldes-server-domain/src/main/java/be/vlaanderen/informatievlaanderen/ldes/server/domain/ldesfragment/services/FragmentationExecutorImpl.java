@@ -4,34 +4,37 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class FragmentationExecutorImpl implements FragmentationExecutor {
 
-	private final FragmentationService fragmentationService;
+	private final Map<String, FragmentationService> fragmentationServices;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final LdesConfig ldesConfig;
 
-	public FragmentationExecutorImpl(FragmentationService fragmentationService,
+	public FragmentationExecutorImpl(Map<String, FragmentationService> fragmentationServices,
 			LdesFragmentRepository ldesFragmentRepository, LdesConfig ldesConfig) {
-		this.fragmentationService = fragmentationService;
+		this.fragmentationServices = fragmentationServices;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.ldesConfig = ldesConfig;
 	}
 
 	@Override
 	public void executeFragmentation(String memberId) {
-		LdesFragment rootFragment = retrieveRootFragment();
-		fragmentationService.addMemberToFragment(rootFragment, memberId);
+		fragmentationServices.forEach((key, fragmentationService) -> {
+			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(key);
+			fragmentationService.addMemberToFragment(rootFragmentOfView, memberId);
+		});
 	}
 
-	private LdesFragment retrieveRootFragment() {
+	private LdesFragment retrieveRootFragmentOfView(String viewName) {
 		return ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), List.of()))
+				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), viewName, List.of()))
 				.orElseThrow(() -> new MissingRootFragmentException(ldesConfig.getCollectionName()));
 	}
 }

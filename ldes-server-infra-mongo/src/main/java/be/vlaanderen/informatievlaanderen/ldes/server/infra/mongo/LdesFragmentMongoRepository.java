@@ -4,8 +4,8 @@ import java.util.*;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 
@@ -26,22 +26,29 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	@Override
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
 		return repository
-				.findLdesFragmentEntityByFragmentInfoCollectionNameAndFragmentInfo_FragmentPairs(
-						ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs())
+				.findLdesFragmentEntityByFragmentInfoCollectionNameAndFragmentInfoViewNameAndFragmentInfo_FragmentPairs(
+						ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
+						ldesFragmentRequest.fragmentPairs())
 				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenFragment(String collectionName, List<FragmentPair> fragmentPairList) {
-		return repository.findAllByFragmentInfoImmutableAndFragmentInfo_CollectionName(false, collectionName)
+	public Optional<LdesFragment> retrieveOpenFragment(String collectionName, String viewName,
+			List<FragmentPair> fragmentPairList) {
+		return repository
+				.findAllByFragmentInfoImmutableAndFragmentInfoCollectionNameAndFragmentInfoViewName(false,
+						collectionName, viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveChildFragment(String collectionName, List<FragmentPair> fragmentPairList) {
-		return repository.findAllByFragmentInfoImmutableAndFragmentInfo_CollectionName(false, collectionName)
+	public Optional<LdesFragment> retrieveChildFragment(String collectionName, String viewName,
+			List<FragmentPair> fragmentPairList) {
+		return repository
+				.findAllByFragmentInfoImmutableAndFragmentInfoCollectionNameAndFragmentInfoViewName(false,
+						collectionName, viewName)
 				.stream()
 				.filter(ldesFragmentEntity -> Collections
 						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1

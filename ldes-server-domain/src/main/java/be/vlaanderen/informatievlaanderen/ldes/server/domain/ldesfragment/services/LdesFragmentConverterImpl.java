@@ -79,7 +79,7 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 	}
 
 	private List<Statement> getViewStatements(LdesFragment ldesFragment, Resource viewId, Resource currrentFragmentId) {
-		if (ldesFragment.isExistingFragment())
+		if (ldesFragment.getFragmentInfo().getFragmentPairs().isEmpty())
 			return List.of(createStatement(viewId, TREE_VIEW, currrentFragmentId));
 		return List.of();
 	}
