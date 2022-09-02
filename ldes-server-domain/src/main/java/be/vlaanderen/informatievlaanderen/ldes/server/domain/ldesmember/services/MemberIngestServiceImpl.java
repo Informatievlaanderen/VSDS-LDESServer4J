@@ -1,13 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
-import java.util.Optional;
-
-import io.micrometer.core.instrument.MeterRegistry;
-import org.springframework.stereotype.Component;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @Component
 public class MemberIngestServiceImpl implements MemberIngestService {

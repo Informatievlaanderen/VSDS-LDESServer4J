@@ -36,7 +36,7 @@
         <!-- SPRING BOOT -->
         <spring-boot.version>2.7.3</spring-boot.version>
         <spring-cloud-dependencies.version>2021.0.3</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-otel-dependencies.version>1.1.0-M6</spring-cloud-sleuth-otel-dependencies.version>
+        <spring-cloud-sleuth-otel-dependencies.version>1.1.0-M7</spring-cloud-sleuth-otel-dependencies.version>
 
         <!-- JSON & RDF -->
         <json-simple.version>1.1.1</json-simple.version>
