@@ -45,7 +45,7 @@ class TimeBasedFragmentCreatorTest {
 
 	@BeforeEach
 	void setUp() {
-		SequentialFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
+		TimebasedFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		ldesMemberRepository = mock(LdesMemberRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig,
@@ -142,8 +142,8 @@ class TimeBasedFragmentCreatorTest {
 				actualTreeRelationOnNewFragment.getRelation());
 	}
 
-	private SequentialFragmentationConfig createSequentialFragmentationConfig() {
-		SequentialFragmentationConfig config = new SequentialFragmentationConfig();
+	private TimebasedFragmentationConfig createSequentialFragmentationConfig() {
+		TimebasedFragmentationConfig config = new TimebasedFragmentationConfig();
 		config.setMemberLimit(3L);
 		return config;
 	}

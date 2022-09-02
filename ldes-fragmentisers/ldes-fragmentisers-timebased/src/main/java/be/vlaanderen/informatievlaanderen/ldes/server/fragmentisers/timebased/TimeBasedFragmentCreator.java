@@ -24,16 +24,16 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
 	protected final LdesConfig ldesConfig;
-	protected final SequentialFragmentationConfig sequentialFragmentationConfig;
+	protected final TimebasedFragmentationConfig timebasedFragmentationConfig;
 	protected final LdesMemberRepository ldesMemberRepository;
 	protected final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-	public TimeBasedFragmentCreator(LdesConfig ldesConfig, SequentialFragmentationConfig timeBasedConfig,
+	public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimebasedFragmentationConfig timeBasedConfig,
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesConfig = ldesConfig;
-		this.sequentialFragmentationConfig = timeBasedConfig;
+		this.timebasedFragmentationConfig = timeBasedConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
@@ -49,7 +49,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 
 	@Override
 	public boolean needsToCreateNewFragment(LdesFragment fragment) {
-		return fragment.getCurrentNumberOfMembers() >= sequentialFragmentationConfig.getMemberLimit();
+		return fragment.getCurrentNumberOfMembers() >= timebasedFragmentationConfig.getMemberLimit();
 	}
 
 	protected LdesFragment createNewFragment(List<FragmentPair> bucket) {
@@ -84,7 +84,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		return ldesMemberRepository.getLdesMembersByIds(completeLdesFragment.getMemberIds())
 				.max(new TimestampPathComparator())
 				.map(ldesMember -> ldesMember.getFragmentationObject(PROV_GENERATED_AT_TIME).toString())
-				.orElseGet(() -> LocalDateTime.now().format(sequentialFragmentationConfig.getDatetimeFormatter()));
+				.orElseGet(() -> LocalDateTime.now().format(timebasedFragmentationConfig.getDatetimeFormatter()));
 	}
 
 }

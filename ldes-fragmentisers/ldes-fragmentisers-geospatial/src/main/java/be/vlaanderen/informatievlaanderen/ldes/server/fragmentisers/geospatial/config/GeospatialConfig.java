@@ -1,10 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-@ConfigurationProperties(prefix = "geospatial")
 public class GeospatialConfig {
 
 	private String bucketiserProperty;

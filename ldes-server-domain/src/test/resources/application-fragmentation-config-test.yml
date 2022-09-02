@@ -1,0 +1,10 @@
+fragmentation:
+  name: "geospatial"
+  config:
+    maxZoomLevel: 15
+    bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+    projection: "lambert72"
+  fragmentation:
+    name: "timebased"
+    config:
+      memberLimit: 5
