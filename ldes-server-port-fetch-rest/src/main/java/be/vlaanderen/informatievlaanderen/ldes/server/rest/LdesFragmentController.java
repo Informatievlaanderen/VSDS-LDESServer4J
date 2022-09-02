@@ -1,17 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
-import org.springframework.beans.factory.annotation.Value;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,37 +21,23 @@ public class LdesFragmentController {
 
 	private final FragmentFetchService fragmentFetchService;
 
-	@Value("${ldes.collectionname}")
-	private String collectionName;
-
 	public LdesFragmentController(FragmentFetchService fragmentFetchService) {
 		this.fragmentFetchService = fragmentFetchService;
 	}
 
-	@GetMapping(value = "${ldes.collectionname}", produces = { "application/turtle", "application/ld+json",
+	@GetMapping(value = "/{collection}/{view}", produces = { "application/turtle", "application/ld+json",
 			"application/n-quads" })
-	LdesFragment retrieveLdesFragment(HttpServletResponse response, @RequestParam Map<String, String> requestParameters)
-			throws IOException {
-		if (requestParameters.isEmpty()) {
-			return redirectToInitialFragment(response);
-		} else {
-			return returnRequestedFragment(response, requestParameters);
-		}
+	LdesFragment retrieveLdesFragment(HttpServletResponse response,
+			@PathVariable("collection") String collectionName, @PathVariable("view") String viewName,
+			@RequestParam Map<String, String> requestParameters) {
+		return returnRequestedFragment(response, collectionName, viewName, requestParameters);
 	}
 
-	private LdesFragment redirectToInitialFragment(HttpServletResponse response) throws IOException {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, List.of());
-		LdesFragment initialFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
-		setCacheControlHeader(response, initialFragment);
-		if (initialFragment.isExistingFragment())
-			response.sendRedirect("/" + collectionName + "?" + initialFragment.getFragmentInfo().getKey() + "="
-					+ initialFragment.getFragmentInfo().getValue());
-		return initialFragment;
-	}
-
-	private LdesFragment returnRequestedFragment(HttpServletResponse response, Map<String, String> fragmentationMap) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, fragmentationMap.entrySet()
-				.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
+	private LdesFragment returnRequestedFragment(HttpServletResponse response, String collectionName, String viewName,
+			Map<String, String> fragmentationMap) {
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, viewName,
+				fragmentationMap.entrySet()
+						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
 		LdesFragment fragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, fragment);
 		return fragment;

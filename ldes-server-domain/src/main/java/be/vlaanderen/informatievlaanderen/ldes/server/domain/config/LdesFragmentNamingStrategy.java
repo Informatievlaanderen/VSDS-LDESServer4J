@@ -11,7 +11,8 @@ public class LdesFragmentNamingStrategy {
 
 	public static String generateFragmentName(LdesConfig config, FragmentInfo fragmentInfo) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(config.getHostName()).append("/").append(fragmentInfo.getCollectionName());
+		stringBuilder.append(config.getHostName()).append("/").append(fragmentInfo.getCollectionName())
+				.append("/").append(fragmentInfo.getViewName());
 
 		if (!fragmentInfo.getFragmentPairs().isEmpty()) {
 			stringBuilder.append("?");

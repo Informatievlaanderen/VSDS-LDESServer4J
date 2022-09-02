@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragment
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +20,8 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 
 	@Override
 	public LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment,
-			List<FragmentPair> fragmentPairsOfParent) {
-		return createNewFragment(fragmentPairsOfParent);
+			FragmentInfo parentFragmentInfo) {
+		return createNewFragment(parentFragmentInfo);
 	}
 
 	@Override
@@ -29,10 +29,12 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 		return true;
 	}
 
-	protected LdesFragment createNewFragment(List<FragmentPair> bucket) {
+	protected LdesFragment createNewFragment(FragmentInfo parentFragmentInfo) {
+		List<FragmentPair> fragmentPairs = parentFragmentInfo.getFragmentPairs();
 		FragmentInfo fragmentInfo = new FragmentInfo(
-				ldesConfig.getCollectionName(),
-				bucket);
+				parentFragmentInfo.getCollectionName(),
+				parentFragmentInfo.getViewName(),
+				fragmentPairs);
 
 		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);

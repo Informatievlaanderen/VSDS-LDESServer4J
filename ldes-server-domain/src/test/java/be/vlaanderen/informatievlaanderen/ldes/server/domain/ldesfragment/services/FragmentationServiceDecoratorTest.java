@@ -19,8 +19,9 @@ class FragmentationServiceDecoratorTest {
 	private FragmentationServiceDecorator fragmentationServiceDecorator;
 
 	private static final String COLLECTION_NAME = "mobility-hindrances";
+	private static final String VIEW_NAME = "view";
 	private static final String PARENT_FRAGMENT_ID = "parent";
-	private static final String CHILD_FRAGMENT_ID = "mobility-hindrances";
+	private static final String CHILD_FRAGMENT_ID = "child";
 
 	@BeforeEach
 	void setUp() {
@@ -32,27 +33,35 @@ class FragmentationServiceDecoratorTest {
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, List.of()));
-		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID, new FragmentInfo(COLLECTION_NAME, List.of()));
+				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
+				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
 
-		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment, childFragment);
+		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment,
+				childFragment);
 
 		assertEquals(1, parentFragment.getRelations().size());
-		assertEquals(new TreeRelation("", CHILD_FRAGMENT_ID, "", "", GENERIC_TREE_RELATION),
+		assertEquals(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
+				GENERIC_TREE_RELATION),
 				parentFragment.getRelations().get(0));
-		Mockito.verify(fragmentRepository, Mockito.times(1)).saveFragment(parentFragment);
+		Mockito.verify(fragmentRepository,
+				Mockito.times(1)).saveFragment(parentFragment);
 	}
 
 	@Test
 	void when_ParentHasRelationToChild_DoNotAddNewRelation() {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, List.of()));
-		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID, new FragmentInfo(COLLECTION_NAME, List.of()));
-		parentFragment.addRelation(new TreeRelation("", CHILD_FRAGMENT_ID, "", "", GENERIC_TREE_RELATION));
-		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment, childFragment);
+				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
+				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+		parentFragment.addRelation(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
+				GENERIC_TREE_RELATION));
+		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment,
+				childFragment);
 
 		assertEquals(1, parentFragment.getRelations().size());
-		assertEquals(new TreeRelation("", CHILD_FRAGMENT_ID, "", "", GENERIC_TREE_RELATION),
+		assertEquals(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
+				GENERIC_TREE_RELATION),
 				parentFragment.getRelations().get(0));
 		Mockito.verifyNoInteractions(fragmentRepository);
 	}
@@ -60,13 +69,15 @@ class FragmentationServiceDecoratorTest {
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationServiceIsCalled() {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, List.of()));
+				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
 		String memberId = "memberId";
 		fragmentationServiceDecorator.addMemberToFragment(parentFragment, memberId);
-		Mockito.verify(fragmentationService, Mockito.times(1)).addMemberToFragment(parentFragment, memberId);
+		Mockito.verify(fragmentationService,
+				Mockito.times(1)).addMemberToFragment(parentFragment, memberId);
 	}
 
-	static class FragmentationServiceDecoratorTestImpl extends FragmentationServiceDecorator {
+	static class FragmentationServiceDecoratorTestImpl extends
+			FragmentationServiceDecorator {
 
 		protected FragmentationServiceDecoratorTestImpl(FragmentationService fragmentationService,
 				LdesFragmentRepository ldesFragmentRepository) {

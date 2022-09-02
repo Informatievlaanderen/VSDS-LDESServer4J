@@ -27,6 +27,8 @@ import static org.mockito.Mockito.when;
 class LdesFragmentMongoRepositoryTest {
 
 	private static final String COLLECTION_NAME = "mobility-hindrances";
+
+	private static final String VIEW_NAME = "view";
 	private static final String FIRST_VALUE = "2020-12-28T09:36:37.127Z";
 	private static final String SECOND_VALUE = "2020-12-29T09:36:37.127Z";
 	private static final String THIRD_VALUE = "2020-12-30T09:36:37.127Z";
@@ -42,16 +44,18 @@ class LdesFragmentMongoRepositoryTest {
 	@ArgumentsSource(LdesFragmentEntityListProvider.class)
 	void when_RetrieveOpenFragment_FirstFragmentThatIsOpenAndBelongsToCollectionIsReturned(
 			List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
-		when(ldesFragmentEntityRepository.findAllByFragmentInfoImmutableAndFragmentInfo_CollectionName(false,
-				COLLECTION_NAME))
+		when(ldesFragmentEntityRepository
+				.findAllByFragmentInfoImmutableAndFragmentInfoCollectionNameAndFragmentInfoViewName(false,
+						COLLECTION_NAME, VIEW_NAME))
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable()).collect(Collectors.toList()));
 
-		Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME,
+		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME,
+				VIEW_NAME,
 				List.of());
 
-		assertTrue(view.isPresent());
-		assertEquals(expectedFragmentId, view.get().getFragmentId());
+		assertTrue(ldesFragment.isPresent());
+		assertEquals(expectedFragmentId, ldesFragment.get().getFragmentId());
 	}
 
 	@Test
@@ -115,7 +119,8 @@ class LdesFragmentMongoRepositoryTest {
 				String value) {
 			String fragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", collectionName,
 					value);
-			FragmentInfo fragmentInfo = new FragmentInfo(collectionName, List.of());
+			FragmentInfo fragmentInfo = new FragmentInfo(collectionName, VIEW_NAME,
+					List.of());
 			fragmentInfo.setImmutable(immutable);
 			return new LdesFragmentEntity(fragmentId, fragmentInfo, List.of(),
 					List.of());
