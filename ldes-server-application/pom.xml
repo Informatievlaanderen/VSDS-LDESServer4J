@@ -79,11 +79,31 @@
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation-queue</id>
+            <id>fragmentation-queue-rabbit</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-fragmentiser-queue-rabbitmq</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>fragmentation-queue-none</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-fragmentiser-queue-none</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>fragmentation-queue-in-memory</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-fragmentiser-queue-in-memory</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

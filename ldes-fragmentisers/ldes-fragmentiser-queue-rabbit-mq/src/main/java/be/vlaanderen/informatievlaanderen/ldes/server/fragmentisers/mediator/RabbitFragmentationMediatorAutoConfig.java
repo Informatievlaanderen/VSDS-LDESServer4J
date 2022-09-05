@@ -1,31 +1,33 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.queue;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutorImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import org.springframework.amqp.core.Queue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.queue.FragmenterConstants.DEFAULT_LDES_MEMBER_FRAGMENTATION_QUEUE;
 
 @Configuration
 @EnableConfigurationProperties()
+@ConditionalOnProperty(name = "ldes.queue", havingValue = "rabbit-mq")
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
-public class RabbitAutoConfig {
+public class RabbitFragmentationMediatorAutoConfig {
 
 	@Autowired
 	FragmentationExecutor fragmentationExecutor;
 
 	@Bean
-	public Queue hello() {
-		return new Queue("hello");
+	public Queue defaultLdesMemberFragmentationQueue() {
+		return new Queue(DEFAULT_LDES_MEMBER_FRAGMENTATION_QUEUE);
 	}
 
 	@Bean
-	public FragmentationQueueMediator rabbitMQSender() {
+	public FragmentationMediator rabbitMQFragmentationMediator() {
 		return new RabbitMQFragmentationMediator(fragmentationExecutor);
 	}
 
