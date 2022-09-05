@@ -22,7 +22,7 @@ open data.
                 * [Example Mongo Configuration](#example-mongo-configuration)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
-        + [Docker](#docker)
+        + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
             - [The docker-compose File](#the-docker-compose-file)
@@ -33,8 +33,10 @@ open data.
             - [Unit and Integration Tests](#unit-and-integration-tests)
             - [Only Unit Tests](#only-unit-tests)
             - [Only Integration Tests](#only-integration-tests)
-        + [Auto-Configurable Modules](#auto-configurable-modules)
-        + [Tracing & Metrics](#tracing-and-metrics)
+            - [Auto-Configurable Modules](#auto-configurable-modules)
+        + [Tracing and Metrics](#tracing-and-metrics)
+            - [Local](#local)
+            - [Using Docker](#using-docker)
 
 ## Set-up of the LDES Server
 
@@ -60,7 +62,7 @@ Afterwards, you can change storage, ingestion and fetch options by plugging in o
 
 #### Maven
 
-To locally run the LDES server in Maven, move to the ldes-server-application directory and run the Spring Boot
+To locally run the LDES server in Maven, move to the `ldes-server-application` directory and run the Spring Boot
 application.
 
 This can be done as follows:
@@ -84,16 +86,11 @@ This will start an empty LDES server. To enrich this server, certain Maven profi
 
 | Profile Group                        | Profile Name             | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
 |--------------------------------------|--------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (
-Fetch/Ingestion)** | http-ingest              | Enables a http endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (
-Fetch/Ingestion)** | http-fetch               | Enables a http endpoint to retrieve LDES fragments              | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br>- URL: /{ldes.collection-name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"    |
-| **
-Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
-| **Timebased
-Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
-| **Geospatial
-Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **HTTP Endpoints (Fetch/Ingestion)** | http-ingest              | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br>- URL: /{ldes.collection-name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"    |
+| **Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
+| **Timebased Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
+| **Geospatial Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
 
 #### Application Configuration
 
@@ -106,9 +103,9 @@ not exist, create it)
   ```yaml
   server.port: { http-port }
   ldes:
-    collection-name: { short name of the collection }
-    host-name: { endpoint of LDES Server }
-    member-type: { Defines the which syntax type is used to define the member id }
+    collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
+    host-name: { hostname of LDES Server }
+    member-type: { Defines which syntax type is used to define the member id e.g. "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder" }
     shape: { URI to defined shape }
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
@@ -128,7 +125,7 @@ not exist, create it)
 
   ```yaml
   timebased:
-    memberLimit: { member limit }
+    memberLimit: { member limit > 0 }
   ```
 
 ##### Example Geospatial Fragmentation
@@ -140,7 +137,7 @@ not exist, create it)
     projection: { "lambert72" (current only this projection is supported) }
   ```
 
-### Docker
+### Docker Setup
 
 #### Docker-compose
 
@@ -250,7 +247,7 @@ spring:
     enabled: false
   ```
 
-#### Docker
+#### Using Docker
 
 ```
 SPRING_SLEUTH_OTEL_EXPORTER_OTLP_ENDPOINT="endpoint of collector"
