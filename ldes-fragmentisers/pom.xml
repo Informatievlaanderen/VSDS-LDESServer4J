@@ -12,6 +12,12 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>ldes-fragmentisers-common</module>
+
+		<module>ldes-fragmentiser-queue-none</module>
+		<module>ldes-fragmentiser-queue-inmemory</module>
+		<module>ldes-fragmentiser-queue-rabbitmq</module>
+
 		<module>ldes-fragmentisers-geospatial</module>
         <module>ldes-fragmentisers-timebased</module>
     </modules>

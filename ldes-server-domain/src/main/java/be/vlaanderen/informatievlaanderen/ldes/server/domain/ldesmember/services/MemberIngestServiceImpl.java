@@ -31,7 +31,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 		if (optionalLdesMember.isEmpty()) {
 			registry.counter("ldes_server_ingested_members").increment();
 			LdesMember storedLdesMember = storeLdesMember(ldesMember);
-			fragmentationQueueMediator.addLdesMember(storedLdesMember.getLdesMemberId());
+			fragmentationQueueMediator.addMemberToFragment(storedLdesMember.getLdesMemberId());
 		}
 	}
 

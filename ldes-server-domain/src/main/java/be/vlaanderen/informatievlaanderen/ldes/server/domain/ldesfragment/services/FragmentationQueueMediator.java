@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 public interface FragmentationQueueMediator {
 
-	void addLdesMember(String memberId);
+	void addMemberToFragment(String ldesMember);
 
-	boolean queueIsEmtpy();
+	void processMember(String ldesMember);
 }
