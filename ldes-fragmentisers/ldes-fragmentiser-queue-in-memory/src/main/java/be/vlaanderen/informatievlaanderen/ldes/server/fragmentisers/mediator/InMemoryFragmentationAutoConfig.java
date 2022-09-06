@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties()
-@ConditionalOnProperty(name = "ldes.queue", havingValue = "in-memory", matchIfMissing = true)
+@ConditionalOnProperty(name = "ldes.queue", havingValue = "in-memory")
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class InMemoryFragmentationAutoConfig {
 	@Autowired

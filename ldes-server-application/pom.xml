@@ -79,16 +79,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation-queue-rabbit</id>
-            <dependencies>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentiser-queue-rabbit-mq</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>fragmentation-queue-none</id>
             <dependencies>
                 <dependency>

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties()
-@ConditionalOnProperty(name = "ldes.queue", havingValue = "none")
+@ConditionalOnProperty(name = "ldes.queue", havingValue = "none", matchIfMissing = true)
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class DirectFragmentationMediatorAutoConfig {
 
