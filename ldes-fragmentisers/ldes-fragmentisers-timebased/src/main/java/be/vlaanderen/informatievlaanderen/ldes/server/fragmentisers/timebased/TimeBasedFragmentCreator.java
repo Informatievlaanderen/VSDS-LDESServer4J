@@ -73,11 +73,11 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 						() -> new MissingFragmentValueException(newFragment.getFragmentId(), GENERATED_AT_TIME)),
 				DATE_TIME_TYPE,
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
-		String latestGeneratedAtTime = getLatestGeneratedAtTime(completeLdesFragment);
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
 		newFragment.addRelation(
 				new TreeRelation(GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
-						latestGeneratedAtTime, DATE_TIME_TYPE, TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
+						completeLdesFragment.getFragmentInfo().getValue(), DATE_TIME_TYPE,
+						TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
 	}
 
 	private String getLatestGeneratedAtTime(LdesFragment completeLdesFragment) {
