@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,6 +16,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.queue
 @Configuration
 @EnableConfigurationProperties()
 @ConditionalOnProperty(name = "ldes.queue", havingValue = "rabbit-mq")
+@EnableRabbit
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class RabbitFragmentationMediatorAutoConfig {
 

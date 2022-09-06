@@ -83,7 +83,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentiser-queue-rabbitmq</artifactId>
+                    <artifactId>ldes-fragmentiser-queue-rabbit-mq</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

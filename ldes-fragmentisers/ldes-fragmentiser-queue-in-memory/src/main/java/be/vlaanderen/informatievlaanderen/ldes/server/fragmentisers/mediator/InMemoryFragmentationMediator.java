@@ -35,7 +35,7 @@ public class InMemoryFragmentationMediator implements FragmentationMediator {
 
 	@Override
 	public void processMember(String ldesMember) {
-		executorService.submit(() -> fragmentationExecutor.executeFragmentation(ldesMember));
+		executorService.submit(() -> fragmentationExecutor.executeFragmentation(ldesMembersToFragment.poll()));
 	}
 
 	@Scheduled(fixedDelay = 1000)
