@@ -86,9 +86,6 @@ class TimeBasedFragmentCreatorTest {
 				"http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z",
 				"2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
 		verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
-		verify(ldesMemberRepository,
-
-				times(1)).getLdesMembersByIds(List.of(ldesMemberOfFragment.getLdesMemberId()));
 	}
 
 	@Test
