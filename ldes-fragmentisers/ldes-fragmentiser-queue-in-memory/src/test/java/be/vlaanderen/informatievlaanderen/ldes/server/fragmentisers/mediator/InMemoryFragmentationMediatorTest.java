@@ -28,11 +28,11 @@ class InMemoryFragmentationMediatorTest {
 	void when_MemberIsAddedForFragmentation_AThreadIsStartedWhichCallsTheFragmentationService() {
 		fragmentationMediator.addMemberToFragment("someMember");
 
-		 await()
-		 .pollDelay(Durations.ONE_MILLISECOND)
-		 .atMost(Durations.ONE_HUNDRED_MILLISECONDS);
+		await()
+				.pollDelay(Durations.ONE_MILLISECOND)
+				.atMost(Durations.ONE_HUNDRED_MILLISECONDS);
 
-		 verify(fragmentationExecutor, times(1)).executeFragmentation("someMember");
+		verify(fragmentationExecutor, times(1)).executeFragmentation("someMember");
 	}
 
 }

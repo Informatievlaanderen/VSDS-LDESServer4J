@@ -42,8 +42,7 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 			span.end();
 			super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			super.addMemberToFragment(ldesFragment, ldesMemberId);
-		}
-		else {
+		} else {
 			span.end();
 		}
 	}

@@ -12,8 +12,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>ldes-fragmentisers-common</module>
-
 		<module>ldes-fragmentiser-queue-none</module>
 		<module>ldes-fragmentiser-queue-in-memory</module>
 
