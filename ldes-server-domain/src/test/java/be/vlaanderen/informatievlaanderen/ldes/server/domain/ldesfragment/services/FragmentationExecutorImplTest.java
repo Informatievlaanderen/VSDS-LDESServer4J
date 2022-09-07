@@ -14,6 +14,7 @@ import org.springframework.cloud.sleuth.Tracer;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -29,15 +30,9 @@ class FragmentationExecutorImplTest {
 	void setUp() {
 		LdesConfig ldesConfig = new LdesConfig();
 
-		Tracer tracer = mock(Tracer.class);
-		Span span = mock(Span.class);
-		when(tracer.nextSpan()).thenReturn(span);
-		when(span.name(anyString())).thenReturn(span);
-		when(span.start()).thenReturn(span);
-
 		ldesConfig.setCollectionName(COLLECTIONAME);
 		fragmentationExecutor = new FragmentationExecutorImpl(fragmentationService, ldesFragmentRepository,
-				ldesConfig, tracer);
+				ldesConfig, mockTracer());
 	}
 
 	@Test
