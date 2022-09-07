@@ -11,4 +11,12 @@
 
     <artifactId>ldes-fragmentiser-queue-in-memory</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>
