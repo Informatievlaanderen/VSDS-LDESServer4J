@@ -17,7 +17,8 @@ FROM openjdk:18-ea-alpine
 RUN apk upgrade
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
-COPY --from=app-stage ldes-server-infra-mongo/target/ldes-server-infra-mongo-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-mongo/ldes-server-infra-mongo-member/target/ldes-server-infra-mongo-member-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-mongo/ldes-server-infra-mongo-fragment/target/ldes-server-infra-mongo-fragment-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingestion-rest/target/ldes-server-port-ingestion-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-fetch-rest/target/ldes-server-port-fetch-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-geospatial/target/ldes-fragmentisers-geospatial-jar-with-dependencies.jar ./lib/

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+    <modules>
+        <module>ldes-server-infra-mongo-member</module>
+        <module>ldes-server-infra-mongo-fragment</module>
+    </modules>
+
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server</artifactId>
@@ -9,35 +13,13 @@
     </parent>
     
     <artifactId>ldes-server-infra-mongo</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
 	<dependencies>
 		<!-- VSDS -->
 		<dependency>
 			<groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
 			<artifactId>ldes-server-domain</artifactId>
-		</dependency>
-
-		<!-- SPRING BOOT -->
-		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-        </dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 
 		<!-- TESTING -->
@@ -59,13 +41,5 @@
 		</dependency>
     </dependencies>
 
-    <build>
-        <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+
 </project>

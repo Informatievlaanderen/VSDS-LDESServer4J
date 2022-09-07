@@ -29,11 +29,21 @@
 
     <profiles>
         <profile>
-            <id>storage-mongo</id>
+            <id>storage-mongo-member</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-infra-mongo</artifactId>
+                    <artifactId>ldes-server-infra-mongo-member</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>storage-mongo-fragment</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-server-infra-mongo-fragment</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
