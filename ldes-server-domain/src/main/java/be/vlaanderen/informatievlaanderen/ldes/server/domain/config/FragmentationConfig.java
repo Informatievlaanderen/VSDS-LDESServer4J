@@ -5,7 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,6 +19,8 @@ import java.util.List;
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class FragmentationConfig {
+	@Autowired
+	Tracer tracer;
 
 	@Bean
 	public FragmentationService fragmentationService(ApplicationContext applicationContext,
@@ -25,7 +29,7 @@ public class FragmentationConfig {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
 		FragmentationService fragmentationService = new FragmentationServiceImpl(ldesFragmentRepository,
-				ldesMemberRepository, ldesConfig);
+				ldesMemberRepository, ldesConfig, tracer);
 
 		List<String> fragmentations = fragmentConfig.getFragmentations();
 		if (fragmentations != null) {

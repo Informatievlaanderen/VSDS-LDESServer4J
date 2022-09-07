@@ -19,6 +19,7 @@ import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.ResourceUtils;
@@ -56,7 +57,7 @@ class TimebasedFragmentationServiceTest {
 				new FragmentInfo("test", List.of()));
 		fragmentationService = new TimebasedFragmentationService(wrappedService, ldesConfig,
 				fragmentCreator,
-				ldesFragmentRepository);
+				ldesFragmentRepository, mock(Tracer.class));
 	}
 
 	@Test

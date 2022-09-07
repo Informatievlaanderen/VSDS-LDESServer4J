@@ -8,10 +8,16 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
+
+	@Autowired
+	private Tracer tracer;
 
 	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {
 		this.repository = repository;
@@ -25,10 +31,14 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	@Override
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
+		Span span = tracer.nextSpan().name("Mongo FragmentEntity Retrieval").start();
 		return repository
 				.findLdesFragmentEntityByFragmentInfoCollectionNameAndFragmentInfo_FragmentPairs(
 						ldesFragmentRequest.collectionName(), ldesFragmentRequest.fragmentPairs())
-				.map(LdesFragmentEntity::toLdesFragment);
+				.map(ldesFragmentEntity -> {
+					span.end();
+					return ldesFragmentEntity.toLdesFragment();
+				});
 	}
 
 	@Override

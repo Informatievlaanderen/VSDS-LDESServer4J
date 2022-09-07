@@ -7,33 +7,44 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Optional;
 
 public class TimebasedFragmentationService extends FragmentationServiceDecorator {
-
 	protected final LdesConfig ldesConfig;
 	protected final FragmentCreator fragmentCreator;
 	protected final LdesFragmentRepository ldesFragmentRepository;
 
+	private final Tracer tracer;
+
 	public TimebasedFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig,
 			FragmentCreator fragmentCreator,
-			LdesFragmentRepository ldesFragmentRepository) {
+			LdesFragmentRepository ldesFragmentRepository,
+			Tracer tracer) {
 		super(fragmentationService, ldesFragmentRepository);
 		this.ldesConfig = ldesConfig;
 		this.fragmentCreator = fragmentCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.tracer = tracer;
 	}
 
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId) {
+		Span span = this.tracer.nextSpan().name("Timebased fragmentation").start();
 		LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(
 				parentFragment.getFragmentInfo().getFragmentPairs());
+		span.event("Fragment retrieved/created");
 		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
 			ldesFragmentRepository.saveFragment(ldesFragment);
+			span.end();
 			super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			super.addMemberToFragment(ldesFragment, ldesMemberId);
+		}
+		else {
+			span.end();
 		}
 	}
 
