@@ -18,14 +18,14 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	private final FragmentationService fragmentationService;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final LdesConfig ldesConfig;
-	@Autowired
 	private Tracer tracer;
 
 	public FragmentationExecutorImpl(FragmentationService fragmentationService,
-			LdesFragmentRepository ldesFragmentRepository, LdesConfig ldesConfig) {
+			LdesFragmentRepository ldesFragmentRepository, LdesConfig ldesConfig, Tracer tracer) {
 		this.fragmentationService = fragmentationService;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.ldesConfig = ldesConfig;
+		this.tracer = tracer;
 	}
 
 	@Override
