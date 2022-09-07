@@ -47,7 +47,7 @@
         <junit-platform-suite.version>1.9.0</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.9.0</jupiter.version>
-        <mockito.version>4.7.0</mockito.version>
+        <mockito.version>4.8.0</mockito.version>
         <cucumber.version>7.6.0</cucumber.version>
         <byte-buddy.version>1.12.14</byte-buddy.version>
         <wiremock-jre8.version>2.33.2</wiremock-jre8.version>
