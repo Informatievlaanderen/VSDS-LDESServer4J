@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -16,11 +15,11 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
 
-	@Autowired
-	private Tracer tracer;
+	private final Tracer tracer;
 
-	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {
+	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository, Tracer tracer) {
 		this.repository = repository;
+		this.tracer = tracer;
 	}
 
 	@Override
