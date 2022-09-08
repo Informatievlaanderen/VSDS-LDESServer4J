@@ -14,6 +14,7 @@
         <module>ldes-server-application</module>
         <module>ldes-server-port-ingestion-rest</module>
         <module>ldes-fragmentisers</module>
+        <module>ldes-queues</module>
     </modules>
 
     <properties>

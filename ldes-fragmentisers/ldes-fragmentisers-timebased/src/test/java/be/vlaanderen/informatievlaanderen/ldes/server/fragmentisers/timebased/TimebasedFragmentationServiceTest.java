@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TracerMockHelper.mockTracer;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
@@ -56,7 +57,7 @@ class TimebasedFragmentationServiceTest {
 				new FragmentInfo("test", List.of()));
 		fragmentationService = new TimebasedFragmentationService(wrappedService, ldesConfig,
 				fragmentCreator,
-				ldesFragmentRepository);
+				ldesFragmentRepository, mockTracer());
 	}
 
 	@Test

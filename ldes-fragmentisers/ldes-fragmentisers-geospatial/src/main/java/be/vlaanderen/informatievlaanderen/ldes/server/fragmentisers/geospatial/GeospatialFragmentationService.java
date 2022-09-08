@@ -13,6 +13,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.GeospatialRelationsAttributer;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,45 +31,58 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final FragmentCreator fragmentCreator;
 	private final GeospatialBucketiser geospatialBucketiser;
+	private final Tracer tracer;
+	private Span rootSpan;
 
 	public GeospatialFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig,
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
-			GeospatialBucketiser geospatialBucketiser) {
+			GeospatialBucketiser geospatialBucketiser, Tracer tracer) {
 		super(fragmentationService, ldesFragmentRepository);
 		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.fragmentCreator = fragmentCreator;
 		this.geospatialBucketiser = geospatialBucketiser;
+		this.tracer = tracer;
 	}
 
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId) {
+		rootSpan = this.tracer.nextSpan().name("Geobased fragmentation").start();
+		Span bucketisingSpan = this.tracer.nextSpan(rootSpan).name("Member Bucketising").start();
 		List<FragmentPair> parentFragmentPairs = parentFragment.getFragmentInfo().getFragmentPairs();
 		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
 				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
+		bucketisingSpan.end();
+		Span fragmentCreationSpan = this.tracer.nextSpan(rootSpan).name("Fragment Creation").start();
 		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(parentFragmentPairs, tiles);
+		fragmentCreationSpan.end();
 		addRelationsToRootFragment(parentFragment, ldesFragments);
-		ldesFragments
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMemberId));
+		rootSpan.end();
+		ldesFragments.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMemberId));
 	}
 
 	private void addRelationsToRootFragment(LdesFragment parentFragment, List<LdesFragment> ldesFragments) {
+		Span span = this.tracer.nextSpan(rootSpan).name("Add Relations to Root Fragment").start();
 		LdesFragment rootFragment = ldesFragmentRepository
 				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(),
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))))
 				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))));
+		span.event("retrieved root fragment");
 
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
+		span.event("add relation from parent to fragmenter root");
 
 		GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
 		ldesFragments.forEach(
 				ldesFragment -> relationsAttributer.addRelationToParentFragment(rootFragment, ldesFragment));
 		ldesFragmentRepository.saveFragment(rootFragment);
 		ldesFragments.forEach(ldesFragmentRepository::saveFragment);
+		span.event("add relation from root to individual fragments");
+		span.end();
 	}
 
 	private List<LdesFragment> retrieveFragmentsOrCreateNewFragments(List<FragmentPair> fragmentPairList,

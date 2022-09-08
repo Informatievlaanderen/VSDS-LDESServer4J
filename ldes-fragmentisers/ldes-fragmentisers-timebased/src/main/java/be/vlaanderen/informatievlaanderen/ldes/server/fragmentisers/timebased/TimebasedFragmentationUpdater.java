@@ -5,9 +5,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 public class TimebasedFragmentationUpdater implements FragmentationUpdater {
+
+	@Autowired
+	Tracer tracer;
 
 	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
 			FragmentationService fragmentationService) {
@@ -21,7 +26,7 @@ public class TimebasedFragmentationUpdater implements FragmentationUpdater {
 				sequentialFragmentationConfig,
 				ldesMemberRepository1, ldesFragmentRepository1);
 		return new TimebasedFragmentationService(fragmentationService, ldesConfig1, timeBasedFragmentCreator,
-				ldesFragmentRepository1);
+				ldesFragmentRepository1, tracer);
 
 	}
 }
