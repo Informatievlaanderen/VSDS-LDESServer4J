@@ -8,10 +8,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -21,13 +24,15 @@ class FragmentationExecutorImplTest {
 	private static final String COLLECTIONAME = "mobility-hindrances";
 	private final FragmentationService fragmentationService = mock(FragmentationService.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-	FragmentationExecutorImpl fragmentationExecutor;
+	private FragmentationExecutorImpl fragmentationExecutor;
 
 	@BeforeEach
 	void setUp() {
 		LdesConfig ldesConfig = new LdesConfig();
+
 		ldesConfig.setCollectionName(COLLECTIONAME);
-		fragmentationExecutor = new FragmentationExecutorImpl(fragmentationService, ldesFragmentRepository, ldesConfig);
+		fragmentationExecutor = new FragmentationExecutorImpl(fragmentationService, ldesFragmentRepository,
+				ldesConfig, mockTracer());
 	}
 
 	@Test
