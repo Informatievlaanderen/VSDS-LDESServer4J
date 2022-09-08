@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -23,12 +23,12 @@ class MemberIngestServiceImplTest {
 
 	private final LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
 
-	private final FragmentationQueueMediator fragmentationQueueMediator = mock(FragmentationQueueMediator.class);
+	private final FragmentationMediator fragmentationMediator = mock(FragmentationMediator.class);
 	private MemberIngestService memberIngestService;
 
 	@BeforeEach
 	void setUp() {
-		memberIngestService = new MemberIngestServiceImpl(ldesMemberRepository, fragmentationQueueMediator,
+		memberIngestService = new MemberIngestServiceImpl(ldesMemberRepository, fragmentationMediator,
 				new SimpleMeterRegistry());
 	}
 
@@ -47,10 +47,10 @@ class MemberIngestServiceImplTest {
 
 		memberIngestService.addMember(ldesMember);
 
-		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationQueueMediator);
+		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationMediator);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
-		verifyNoInteractions(fragmentationQueueMediator);
+		verifyNoInteractions(fragmentationMediator);
 	}
 
 	@Test
@@ -69,10 +69,10 @@ class MemberIngestServiceImplTest {
 
 		memberIngestService.addMember(ldesMember);
 
-		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationQueueMediator);
+		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationMediator);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
 		inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember);
-		inOrder.verify(fragmentationQueueMediator, times(1)).addLdesMember(ldesMember.getLdesMemberId());
+		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(ldesMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 	}
 }

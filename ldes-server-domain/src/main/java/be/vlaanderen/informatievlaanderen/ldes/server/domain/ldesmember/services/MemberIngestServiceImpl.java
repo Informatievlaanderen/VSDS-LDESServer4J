@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationQueueMediator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -13,15 +13,15 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
 	private final LdesMemberRepository ldesMemberRepository;
 
-	private final FragmentationQueueMediator fragmentationQueueMediator;
+	private final FragmentationMediator fragmentationMediator;
 
 	private final MeterRegistry registry;
 
 	public MemberIngestServiceImpl(LdesMemberRepository ldesMemberRepository,
-			FragmentationQueueMediator fragmentationQueueMediator,
+			FragmentationMediator fragmentationMediator,
 			final MeterRegistry meterRegistry) {
 		this.ldesMemberRepository = ldesMemberRepository;
-		this.fragmentationQueueMediator = fragmentationQueueMediator;
+		this.fragmentationMediator = fragmentationMediator;
 		this.registry = meterRegistry;
 	}
 
@@ -31,7 +31,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 		if (optionalLdesMember.isEmpty()) {
 			registry.counter("ldes_server_ingested_members").increment();
 			LdesMember storedLdesMember = storeLdesMember(ldesMember);
-			fragmentationQueueMediator.addLdesMember(storedLdesMember.getLdesMemberId());
+			fragmentationMediator.addMemberToFragment(storedLdesMember.getLdesMemberId());
 		}
 	}
 
