@@ -79,21 +79,21 @@
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation-queue-none</id>
+            <id>queue-none</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentiser-queue-none</artifactId>
+                    <artifactId>ldes-queue-none</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation-queue-in-memory</id>
+            <id>queue-in-memory</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentiser-queue-in-memory</artifactId>
+                    <artifactId>ldes-queue-in-memory</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

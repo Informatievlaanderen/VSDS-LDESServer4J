@@ -12,9 +12,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>ldes-fragmentiser-queue-none</module>
-		<module>ldes-fragmentiser-queue-in-memory</module>
-
 		<module>ldes-fragmentisers-geospatial</module>
         <module>ldes-fragmentisers-timebased</module>
     </modules>
