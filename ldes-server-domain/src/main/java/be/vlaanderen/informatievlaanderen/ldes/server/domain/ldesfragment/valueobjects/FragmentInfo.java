@@ -3,16 +3,16 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 import java.util.List;
 import java.util.Optional;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 public class FragmentInfo {
 
-	private final String collectionName;
+	private final String viewName;
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
 
-	public FragmentInfo(String collectionName, List<FragmentPair> fragmentPairs) {
-		this.collectionName = collectionName;
+	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs) {
+		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = false;
 	}
@@ -25,20 +25,12 @@ public class FragmentInfo {
 				.findFirst();
 	}
 
-	public String getKey() {
-		return fragmentPairs.stream().map(FragmentPair::fragmentKey).findFirst().orElse(null);
-	}
-
-	public String getValue() {
-		return fragmentPairs.stream().map(FragmentPair::fragmentValue).findFirst().orElse(null);
-	}
-
 	public List<FragmentPair> getFragmentPairs() {
 		return fragmentPairs;
 	}
 
-	public String getCollectionName() {
-		return collectionName;
+	public String getViewName() {
+		return viewName;
 	}
 
 	public Boolean getImmutable() {

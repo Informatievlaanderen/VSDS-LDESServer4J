@@ -6,12 +6,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
+import java.util.Optional;
 
 public class FragmentationServiceImpl implements FragmentationService {
 	private final LdesFragmentRepository ldesFragmentRepository;
@@ -20,18 +22,25 @@ public class FragmentationServiceImpl implements FragmentationService {
 	private final Tracer tracer;
 
 	public FragmentationServiceImpl(LdesFragmentRepository ldesFragmentRepository,
-			LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig, Tracer tracer) {
+			LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig, Tracer tracer, String name) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesConfig = ldesConfig;
 		this.tracer = tracer;
-		addRootFragment();
+		addRootFragment(name);
 	}
 
-	private void addRootFragment() {
+	private void addRootFragment(String viewName) {
+		Optional<LdesFragment> optionalRoot = ldesFragmentRepository
+				.retrieveFragment(new LdesFragmentRequest(viewName, List.of()));
+		if (optionalRoot.isEmpty()) {
+			createRoot(viewName);
+		}
+	}
+
+	private void createRoot(String viewName) {
 		FragmentInfo fragmentInfo = new FragmentInfo(
-				ldesConfig.getCollectionName(),
-				List.of());
+				viewName, List.of());
 		LdesFragment ldesFragment = new LdesFragment(
 				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);

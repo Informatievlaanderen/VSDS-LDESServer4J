@@ -1,15 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 
 public interface FragmentCreator {
 
 	LdesFragment createNewFragment(Optional<LdesFragment> optionalExistingLdesFragment,
-			List<FragmentPair> fragmentPairsOfParent);
+			FragmentInfo parentFragmentInfo);
 
 	boolean needsToCreateNewFragment(LdesFragment fragment);
 }

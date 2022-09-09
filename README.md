@@ -87,7 +87,7 @@ This will start an empty LDES server. To enrich this server, certain Maven profi
 | Profile Group                        | Profile Name             | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
 |--------------------------------------|--------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | **HTTP Endpoints (Fetch/Ingestion)** | http-ingest              | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br>- URL: /{ldes.collection-name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"    |
+| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"   |
 | **Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
 | **Timebased Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
 | **Geospatial Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
@@ -109,8 +109,6 @@ not exist, create it)
     shape: { URI to defined shape }
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
-  fragmentation:
-    type: { timebased(default)/geospatial }
   ```
 
 ##### Example Mongo Configuration
@@ -120,18 +118,51 @@ not exist, create it)
     uri: mongodb://{docker-hostname}:{port}
     database: { database name }
   ```
+##### Example Views Configuration
+
+  ```yaml
+    views:
+      - name: {name of the view}
+        fragmentations:
+          - name: {type of fragmentation, currently "timebased" and "geospatial" supported}
+            config:
+              {Map of fragmentation properties}
+  ```
+
+An example of a view configuration with two view is shown below
+
+  ```yaml
+  views:
+    - name: "firstView"
+      fragmentations:
+        - name: "geospatial"
+          config:
+            maxZoomLevel: 15
+            bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+            projection: "lambert72"
+        - name: "timebased"
+          config:
+            memberLimit: 5
+    - name: "secondView"
+      fragmentations:
+        - name: "timebased"
+          config:
+            memberLimit: 3
+  ```
 
 ##### Example Timebased Fragmentation
 
   ```yaml
-  timebased:
+  name: "timebased"
+  config:
     memberLimit: { member limit > 0 }
   ```
 
 ##### Example Geospatial Fragmentation
 
   ```yaml
-  geospatial:
+  name: "geospatial"
+  config:
     maxZoomLevel: { Required zoom level }
     bucketiserproperty: { Defines which property will be used for bucketizing }
     projection: { "lambert72" (current only this projection is supported) }

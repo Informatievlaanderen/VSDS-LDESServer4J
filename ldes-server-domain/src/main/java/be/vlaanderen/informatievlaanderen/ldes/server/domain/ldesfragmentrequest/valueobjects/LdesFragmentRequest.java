@@ -1,9 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
 
 import java.util.List;
 import java.util.Objects;
 
-public record LdesFragmentRequest(String collectionName,List<FragmentPair>fragmentPairs){
+public record LdesFragmentRequest(String viewName,List<FragmentPair>fragmentPairs){
 
 // @formatter:off
     @Override
@@ -15,7 +15,7 @@ public record LdesFragmentRequest(String collectionName,List<FragmentPair>fragme
                 return false;
             } else {
                 LdesFragmentRequest that = (LdesFragmentRequest) o;
-                return Objects.equals(collectionName, that.collectionName) && Objects.equals(fragmentPairs, that.fragmentPairs);
+                return Objects.equals(viewName, that.viewName) && Objects.equals(fragmentPairs, that.fragmentPairs);
             }
         }
     }

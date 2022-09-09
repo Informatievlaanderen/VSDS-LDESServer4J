@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.DisplayName;
@@ -17,13 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class LdesFragmentRequestTest {
 
+	private static final String VIEW_NAME = "view";
+	public static final String KEY = "key";
+	public static final String VALUE = "value";
+	public static final String KEY_2 = "key2";
+	public static final String VALUE_2 = "value2";
+
 	@Test
 	@DisplayName("Test Equality of LdesFragmentRequest")
 	void test_EqualityOfLdesFragmentRequests() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName",
-				List.of(new FragmentPair("key", "value"), new FragmentPair("key2", "value2")));
-		LdesFragmentRequest otherLdesFragmentRequest = new LdesFragmentRequest("collectionName",
-				List.of(new FragmentPair("key", "value"), new FragmentPair("key2", "value2")));
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
+						VALUE_2)));
+		LdesFragmentRequest otherLdesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
+						VALUE_2)));
 		assertEquals(ldesFragmentRequest, otherLdesFragmentRequest);
 		assertEquals(ldesFragmentRequest, ldesFragmentRequest);
 		assertEquals(otherLdesFragmentRequest, otherLdesFragmentRequest);
@@ -32,20 +40,25 @@ class LdesFragmentRequestTest {
 	@ParameterizedTest
 	@ArgumentsSource(LdesFragmentRequestArgumentsProvider.class)
 	void test_InequalityOfLdesFragmentRequests(Object otherLdesFragmentRequest) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName",
-				List.of(new FragmentPair("key", "value"), new FragmentPair("key2", "value2")));
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
+						VALUE_2)));
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
 	}
 
-	static class LdesFragmentRequestArgumentsProvider implements ArgumentsProvider {
+	static class LdesFragmentRequestArgumentsProvider implements
+			ArgumentsProvider {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new LdesMember("some_id", null)), Arguments.of((Object) null),
-					Arguments.of(new LdesFragmentRequest("otherCollectionName",
-							List.of(new FragmentPair("key", "value"), new FragmentPair("key2", "value2")))),
-					Arguments.of(new LdesFragmentRequest("collectionName",
-							List.of(new FragmentPair("key2", "value2"), new FragmentPair("key", "value")))));
+			return Stream.of(Arguments.of(new LdesMember("some_id", null)),
+					Arguments.of((Object) null),
+					Arguments.of(new LdesFragmentRequest("otherViewName",
+							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
+									VALUE_2)))),
+					Arguments.of(new LdesFragmentRequest(VIEW_NAME,
+							List.of(new FragmentPair(KEY_2, VALUE_2), new FragmentPair(KEY,
+									VALUE)))));
 		}
 	}
 

@@ -1,0 +1,16 @@
+views:
+  - name: "firstView"
+    fragmentations:
+      - name: "geospatial"
+        config:
+          maxZoomLevel: 15
+          bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+          projection: "lambert72"
+      - name: "timebased"
+        config:
+          memberLimit: 5
+  - name: "secondView"
+    fragmentations:
+      - name: "timebased"
+        config:
+          memberLimit: 3

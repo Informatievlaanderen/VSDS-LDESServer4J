@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.entities.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.apache.jena.rdf.model.Model;
@@ -37,6 +37,8 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 class TimeBasedFragmentCreatorTest {
 
+	private static final String VIEW = "view";
+
 	@Autowired
 	private LdesConfig ldesConfig;
 	private FragmentCreator fragmentCreator;
@@ -45,18 +47,18 @@ class TimeBasedFragmentCreatorTest {
 
 	@BeforeEach
 	void setUp() {
-		SequentialFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
+		TimebasedFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		ldesMemberRepository = mock(LdesMemberRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig,
-				ldesMemberRepository, ldesFragmentRepository);
+				ldesFragmentRepository);
 	}
 
 	@Test
 	@DisplayName("Creating First Time-Based Fragment")
 	void when_NoFragmentExists_thenNewFragmentIsCreated() {
-
-		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), List.of());
+		FragmentInfo parentFragmentInfo = new FragmentInfo(VIEW, List.of());
+		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), parentFragmentInfo);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
@@ -67,16 +69,18 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating New Time-BasedFragment")
 	void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
+		FragmentInfo parentFragmentInfo = new FragmentInfo(VIEW, List.of());
+
 		LdesMember ldesMemberOfFragment = createLdesMember();
 		LdesFragment existingLdesFragment = new LdesFragment("someId",
-				new FragmentInfo("viewShortName", List.of(new FragmentPair(GENERATED_AT_TIME,
+				new FragmentInfo(VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
 						"2020-12-28T09:36:37.127Z"))));
 		existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
 		when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId()))
 				.thenReturn(Optional.of(ldesMemberOfFragment));
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment),
-				List.of(new FragmentPair(GENERATED_AT_TIME, "2020-12-28T09:36:37.127Z")));
+				parentFragmentInfo);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
@@ -89,10 +93,10 @@ class TimeBasedFragmentCreatorTest {
 	}
 
 	@Test
-	@DisplayName("Creating First Time-Based Fragment")
+	@DisplayName("Creating New Time-Based Fragment")
 	void when_FragmentIsFull_NewFragmentNeedsToBeCreated() {
 		LdesFragment ldesFragment = new LdesFragment("someId",
-				new FragmentInfo("viewShortName", List.of(new FragmentPair("Path",
+				new FragmentInfo(VIEW, List.of(new FragmentPair("Path",
 						"Value"))));
 		ldesFragment.addMember("member1");
 		assertFalse(fragmentCreator.needsToCreateNewFragment(ldesFragment));
@@ -103,10 +107,10 @@ class TimeBasedFragmentCreatorTest {
 	}
 
 	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
-		assertEquals("http://localhost:8080/testData?generatedAtTime",
+		assertEquals("http://localhost:8080/view?generatedAtTime",
 				ldesFragment.getFragmentId().split("=")[0]);
-		assertEquals("testData", ldesFragment.getFragmentInfo().getCollectionName());
-		assertEquals("generatedAtTime", ldesFragment.getFragmentInfo().getKey());
+		assertEquals(VIEW, ldesFragment.getFragmentInfo().getViewName());
+		assertTrue(ldesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
 	}
 
 	private LdesMember createLdesMember() {
@@ -139,8 +143,8 @@ class TimeBasedFragmentCreatorTest {
 				actualTreeRelationOnNewFragment.getRelation());
 	}
 
-	private SequentialFragmentationConfig createSequentialFragmentationConfig() {
-		SequentialFragmentationConfig config = new SequentialFragmentationConfig();
+	private TimebasedFragmentationConfig createSequentialFragmentationConfig() {
+		TimebasedFragmentationConfig config = new TimebasedFragmentationConfig();
 		config.setMemberLimit(3L);
 		return config;
 	}

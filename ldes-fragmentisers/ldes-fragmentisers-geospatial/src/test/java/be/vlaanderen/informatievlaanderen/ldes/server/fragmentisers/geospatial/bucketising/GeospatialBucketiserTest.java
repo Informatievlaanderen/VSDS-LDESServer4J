@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.Bucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import org.apache.jena.geosparql.implementation.vocabulary.Geo;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -27,19 +28,15 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = { GeospatialConfig.class })
-@EnableConfigurationProperties
-@ActiveProfiles("test")
 class GeospatialBucketiserTest {
 
 	private Bucketiser bucketiser;
 
-	@Autowired
-	private GeospatialConfig geospatialConfig;
-
 	@BeforeEach
 	void setUp() {
+		GeospatialConfig geospatialConfig = new GeospatialConfig();
+		geospatialConfig.setBucketiserProperty("http://www.opengis.net/ont/geosparql#asWKT");
+		geospatialConfig.setMaxZoomLevel(15);
 		bucketiser = new GeospatialBucketiser(geospatialConfig, new Lambert72CoordinateConverter());
 	}
 

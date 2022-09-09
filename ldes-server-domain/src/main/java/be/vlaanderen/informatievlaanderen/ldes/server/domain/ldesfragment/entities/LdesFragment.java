@@ -59,7 +59,4 @@ public class LdesFragment {
 		return this.fragmentInfo.getImmutable();
 	}
 
-	public boolean isExistingFragment() {
-		return this.fragmentInfo.getValue() != null;
-	}
 }
