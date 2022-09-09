@@ -15,11 +15,8 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
 
-	private final Tracer tracer;
-
-	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository, Tracer tracer) {
+	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {
 		this.repository = repository;
-		this.tracer = tracer;
 	}
 
 	@Override
@@ -30,15 +27,11 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	@Override
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
-		Span span = tracer.nextSpan().name("Mongo FragmentEntity Retrieval").start();
 		return repository
 				.findLdesFragmentEntityByFragmentInfoViewNameAndFragmentInfo_FragmentPairs(
 						ldesFragmentRequest.viewName(),
 						ldesFragmentRequest.fragmentPairs())
-				.map(ldesFragmentEntity -> {
-					span.end();
-					return ldesFragmentEntity.toLdesFragment();
-				});
+				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
 	@Override

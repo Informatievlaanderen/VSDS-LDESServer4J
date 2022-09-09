@@ -32,11 +32,9 @@ class LdesFragmentMongoRepositoryTest {
 	private static final String THIRD_VALUE = "2020-12-30T09:36:37.127Z";
 
 	private final LdesFragmentEntityRepository ldesFragmentEntityRepository = mock(LdesFragmentEntityRepository.class);
-	@Autowired
-	private Tracer tracer;
 
 	private final LdesFragmentMongoRepository ldesFragmentMongoRepository = new LdesFragmentMongoRepository(
-			ldesFragmentEntityRepository, tracer);
+			ldesFragmentEntityRepository);
 
 	@ParameterizedTest
 	@ArgumentsSource(LdesFragmentEntityListProvider.class)

@@ -13,16 +13,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootApplication
 public class TestConfiguration {
-	@Bean
-	public Tracer tracer() {
-		Tracer tracer = mock(Tracer.class);
-		Span span = mock(Span.class);
-		when(tracer.nextSpan()).thenReturn(span);
-		when(span.name(anyString())).thenReturn(span);
-		when(span.start()).thenReturn(span);
-
-		return tracer;
-	}
 
 	@Bean
 	public LdesMemberMongoRepository ldesMemberMongoRepository(
@@ -31,8 +21,7 @@ public class TestConfiguration {
 	}
 
 	@Bean
-	public LdesFragmentMongoRepository ldesFragmentMongoRepository(final LdesFragmentEntityRepository repository,
-			Tracer tracer) {
-		return new LdesFragmentMongoRepository(repository, tracer);
+	public LdesFragmentMongoRepository ldesFragmentMongoRepository(final LdesFragmentEntityRepository repository) {
+		return new LdesFragmentMongoRepository(repository);
 	}
 }

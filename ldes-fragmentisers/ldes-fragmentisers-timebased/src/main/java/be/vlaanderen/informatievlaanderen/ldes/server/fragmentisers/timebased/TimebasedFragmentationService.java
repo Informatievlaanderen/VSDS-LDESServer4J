@@ -37,7 +37,8 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
 			ldesFragmentRepository.saveFragment(ldesFragment);
 			span.end();
-			if(parentFragment.getRelations().stream().noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))){
+			if (parentFragment.getRelations().stream()
+					.noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))) {
 				super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			}
 			super.addMemberToFragment(ldesFragment, ldesMemberId);
