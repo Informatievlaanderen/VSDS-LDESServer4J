@@ -11,6 +11,8 @@ import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
+
 public class TimebasedFragmentationService extends FragmentationServiceDecorator {
 	protected final FragmentCreator fragmentCreator;
 	protected final LdesFragmentRepository ldesFragmentRepository;
@@ -35,7 +37,9 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
 			ldesFragmentRepository.saveFragment(ldesFragment);
 			span.end();
-			super.addRelationFromParentToChild(parentFragment, ldesFragment);
+			if(parentFragment.getRelations().stream().noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))){
+				super.addRelationFromParentToChild(parentFragment, ldesFragment);
+			}
 			super.addMemberToFragment(ldesFragment, ldesMemberId);
 		} else {
 			span.end();
