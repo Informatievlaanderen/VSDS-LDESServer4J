@@ -2,13 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -17,14 +14,12 @@ import java.util.Optional;
 
 public class FragmentationServiceImpl implements FragmentationService {
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final LdesMemberRepository ldesMemberRepository;
 	private final LdesConfig ldesConfig;
 	private final Tracer tracer;
 
 	public FragmentationServiceImpl(LdesFragmentRepository ldesFragmentRepository,
-			LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig, Tracer tracer, String name) {
+			LdesConfig ldesConfig, Tracer tracer, String name) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesConfig = ldesConfig;
 		this.tracer = tracer;
 		addRootFragment(name);
@@ -32,7 +27,7 @@ public class FragmentationServiceImpl implements FragmentationService {
 
 	private void addRootFragment(String viewName) {
 		Optional<LdesFragment> optionalRoot = ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(viewName, List.of()));
+				.retrieveRootFragment(viewName);
 		if (optionalRoot.isEmpty()) {
 			createRoot(viewName);
 		}
@@ -50,9 +45,7 @@ public class FragmentationServiceImpl implements FragmentationService {
 	@Override
 	public void addMemberToFragment(LdesFragment ldesFragment, String ldesMemberId) {
 		Span newSpan = this.tracer.nextSpan().name("Member fragmentation").start();
-		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
-				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
-		ldesFragment.addMember(ldesMember.getLdesMemberId());
+		ldesFragment.addMember(ldesMemberId);
 		ldesFragmentRepository.saveFragment(ldesFragment);
 		newSpan.end();
 	}

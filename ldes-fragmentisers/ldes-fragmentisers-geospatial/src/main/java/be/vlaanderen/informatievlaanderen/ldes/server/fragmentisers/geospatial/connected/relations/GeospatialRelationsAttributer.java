@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.TileConverter;
@@ -14,6 +15,12 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 @Component
 public class GeospatialRelationsAttributer {
 
+	private final LdesFragmentRepository ldesFragmentRepository;
+
+	public GeospatialRelationsAttributer(LdesFragmentRepository ldesFragmentRepository) {
+		this.ldesFragmentRepository = ldesFragmentRepository;
+	}
+
 	public void addRelationToParentFragment(LdesFragment parentFragment, LdesFragment targetFragment) {
 		String targetWKT = getWKT(targetFragment);
 
@@ -21,6 +28,7 @@ public class GeospatialRelationsAttributer {
 				WGS_84 + " " + targetWKT, WKT_DATA_TYPE, TREE_GEOSPATIALLY_CONTAINS_RELATION);
 		if (!parentFragment.getRelations().contains(relationToTargetFragment)) {
 			parentFragment.addRelation(relationToTargetFragment);
+			ldesFragmentRepository.saveFragment(targetFragment);
 		}
 	}
 

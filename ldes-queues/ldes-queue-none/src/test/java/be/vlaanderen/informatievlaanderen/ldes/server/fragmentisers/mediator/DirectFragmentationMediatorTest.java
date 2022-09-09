@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-class InMemoryFragmentationMediatorTest {
+class DirectFragmentationMediatorTest {
 
 	private FragmentationMediator fragmentationMediator;
 

@@ -60,7 +60,7 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 		fragmentCreationSpan.end();
 		addRelationsToRootFragment(parentFragment, ldesFragments);
 		rootSpan.end();
-		ldesFragments.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMemberId));
+		ldesFragments.parallelStream().forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMemberId));
 	}
 
 	private void addRelationsToRootFragment(LdesFragment parentFragment, List<LdesFragment> ldesFragments) {
@@ -80,11 +80,10 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 		span.event("add relation from parent to fragmenter root");
 
-		GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
+		GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer(ldesFragmentRepository);
 		ldesFragments.forEach(
 				ldesFragment -> relationsAttributer.addRelationToParentFragment(rootFragment, ldesFragment));
 		ldesFragmentRepository.saveFragment(rootFragment);
-		ldesFragments.forEach(ldesFragmentRepository::saveFragment);
 		span.event("add relation from root to individual fragments");
 		span.end();
 	}
@@ -92,7 +91,7 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	private List<LdesFragment> retrieveFragmentsOrCreateNewFragments(FragmentInfo fragmentInfo,
 			Set<String> tiles) {
 		return tiles
-				.stream().map(tile -> {
+				.stream().parallel().map(tile -> {
 					List<FragmentPair> fragmentPairs = new ArrayList<>(fragmentInfo.getFragmentPairs());
 					fragmentPairs.add(new FragmentPair(FRAGMENT_KEY_TILE, tile));
 					Optional<LdesFragment> ldesFragment = ldesFragmentRepository
