@@ -29,7 +29,7 @@ class InMemoryFragmentationMediatorTest {
 
 		await()
 				.pollDelay(Durations.ONE_MILLISECOND)
-				.atMost(Durations.ONE_HUNDRED_MILLISECONDS);
+				.atMost(Durations.TEN_SECONDS);
 
 		verify(fragmentationExecutor, times(1)).executeFragmentation("someMember");
 	}
