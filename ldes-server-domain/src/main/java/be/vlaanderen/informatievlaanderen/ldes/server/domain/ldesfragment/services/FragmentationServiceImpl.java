@@ -22,7 +22,7 @@ public class FragmentationServiceImpl implements FragmentationService {
 	private final Tracer tracer;
 
 	public FragmentationServiceImpl(LdesFragmentRepository ldesFragmentRepository,
-			LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig,Tracer tracer, String name) {
+			LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig, Tracer tracer, String name) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesConfig = ldesConfig;
