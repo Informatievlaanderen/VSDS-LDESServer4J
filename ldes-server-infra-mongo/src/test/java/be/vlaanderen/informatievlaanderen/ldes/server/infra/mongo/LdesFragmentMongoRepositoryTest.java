@@ -26,8 +26,6 @@ import static org.mockito.Mockito.when;
 
 class LdesFragmentMongoRepositoryTest {
 
-	private static final String COLLECTION_NAME = "mobility-hindrances";
-
 	private static final String VIEW_NAME = "view";
 	private static final String FIRST_VALUE = "2020-12-28T09:36:37.127Z";
 	private static final String SECOND_VALUE = "2020-12-29T09:36:37.127Z";
@@ -45,29 +43,20 @@ class LdesFragmentMongoRepositoryTest {
 	void when_RetrieveOpenFragment_FirstFragmentThatIsOpenAndBelongsToCollectionIsReturned(
 			List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
 		when(ldesFragmentEntityRepository
-				.findAllByFragmentInfoImmutableAndFragmentInfoCollectionNameAndFragmentInfoViewName(false,
-						COLLECTION_NAME, VIEW_NAME))
+				.findAllByFragmentInfoImmutableAndFragmentInfoViewName(false,
+						VIEW_NAME))
 				.thenReturn(entitiesInRepository.stream()
-						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable()).collect(Collectors.toList()));
+						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
+						.filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getViewName()
+								.equals(VIEW_NAME))
+						.collect(Collectors.toList()));
 
-		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveOpenFragment(COLLECTION_NAME,
+		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveOpenFragment(
 				VIEW_NAME,
 				List.of());
 
 		assertTrue(ldesFragment.isPresent());
 		assertEquals(expectedFragmentId, ldesFragment.get().getFragmentId());
-	}
-
-	@Test
-	void when_RetrieveInitialFragment_FirstFragmentThatBelongsToCollectionIsReturned() {
-		when(ldesFragmentEntityRepository.findAll()).thenReturn(allMutable());
-		String expectedFragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", COLLECTION_NAME,
-				FIRST_VALUE);
-
-		Optional<LdesFragment> view = ldesFragmentMongoRepository.retrieveInitialFragment(COLLECTION_NAME);
-
-		assertTrue(view.isPresent());
-		assertEquals(expectedFragmentId, view.get().getFragmentId());
 	}
 
 	@Test
@@ -95,31 +84,31 @@ class LdesFragmentMongoRepositoryTest {
 
 		private List<LdesFragmentEntity> firstImmutableSecondOtherView() {
 			return List.of(
-					createLdesFragmentEntity(true, COLLECTION_NAME, FIRST_VALUE),
-					createLdesFragmentEntity(false, "other-view", SECOND_VALUE),
-					createLdesFragmentEntity(false, COLLECTION_NAME, THIRD_VALUE));
+					createLdesFragmentEntity(true, VIEW_NAME, FIRST_VALUE),
+					createLdesFragmentEntity(false, "otherView", SECOND_VALUE),
+					createLdesFragmentEntity(false, VIEW_NAME, THIRD_VALUE));
 		}
 
 		protected static List<LdesFragmentEntity> allMutable() {
 			return List.of(
-					createLdesFragmentEntity(false, COLLECTION_NAME, FIRST_VALUE),
-					createLdesFragmentEntity(false, COLLECTION_NAME, SECOND_VALUE),
-					createLdesFragmentEntity(false, COLLECTION_NAME, THIRD_VALUE));
+					createLdesFragmentEntity(false, VIEW_NAME, FIRST_VALUE),
+					createLdesFragmentEntity(false, VIEW_NAME, SECOND_VALUE),
+					createLdesFragmentEntity(false, VIEW_NAME, THIRD_VALUE));
 		}
 
 		private List<LdesFragmentEntity> firstImmutable() {
 			return List.of(
-					createLdesFragmentEntity(true, COLLECTION_NAME, FIRST_VALUE),
-					createLdesFragmentEntity(false, COLLECTION_NAME, SECOND_VALUE),
-					createLdesFragmentEntity(false, COLLECTION_NAME, THIRD_VALUE));
+					createLdesFragmentEntity(true, VIEW_NAME, FIRST_VALUE),
+					createLdesFragmentEntity(false, VIEW_NAME, SECOND_VALUE),
+					createLdesFragmentEntity(false, VIEW_NAME, THIRD_VALUE));
 		}
 
 		private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable,
-				String collectionName,
+				String viewName,
 				String value) {
-			String fragmentId = String.format("http://localhost:8080/%s?generatedAtTime=%s", collectionName,
+			String fragmentId = String.format("http://localhost:8080/view?generatedAtTime=%s",
 					value);
-			FragmentInfo fragmentInfo = new FragmentInfo(collectionName, VIEW_NAME,
+			FragmentInfo fragmentInfo = new FragmentInfo(viewName,
 					List.of());
 			fragmentInfo.setImmutable(immutable);
 			return new LdesFragmentEntity(fragmentId, fragmentInfo, List.of(),

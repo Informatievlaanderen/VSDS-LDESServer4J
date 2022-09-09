@@ -36,7 +36,7 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
 	private List<Statement> addRelationAndMetaDataStatements(LdesFragment ldesFragment) {
 		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
+		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesFragment.getFragmentInfo().getViewName());
 		Resource currrentFragmentId = createResource(ldesFragment.getFragmentId());
 
 		statements.addAll(getGeneralLdesStatements(viewId));

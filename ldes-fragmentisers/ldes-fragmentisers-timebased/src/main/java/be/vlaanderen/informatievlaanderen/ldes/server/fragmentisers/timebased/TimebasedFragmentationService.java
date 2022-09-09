@@ -44,7 +44,7 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 
 	private LdesFragment retrieveLastFragmentOrCreateNewFragment(FragmentInfo fragmentInfo) {
 		return ldesFragmentRepository
-				.retrieveChildFragment(fragmentInfo.getCollectionName(), fragmentInfo.getViewName(),
+				.retrieveChildFragment(fragmentInfo.getViewName(),
 						fragmentInfo.getFragmentPairs())
 				.map(fragment -> {
 					if (fragmentCreator.needsToCreateNewFragment(fragment)) {

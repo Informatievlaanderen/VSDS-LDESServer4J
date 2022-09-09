@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -17,14 +16,12 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private final Map<String, FragmentationService> fragmentationServices;
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final LdesConfig ldesConfig;
 	private final Tracer tracer;
 
 	public FragmentationExecutorImpl(Map<String, FragmentationService> fragmentationServices,
-			LdesFragmentRepository ldesFragmentRepository, LdesConfig ldesConfig, Tracer tracer) {
+			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
 		this.fragmentationServices = fragmentationServices;
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.ldesConfig = ldesConfig;
 		this.tracer = tracer;
 	}
 
@@ -40,7 +37,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private LdesFragment retrieveRootFragmentOfView(String viewName) {
 		return ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), viewName, List.of()))
-				.orElseThrow(() -> new MissingRootFragmentException(ldesConfig.getCollectionName()));
+				.retrieveFragment(new LdesFragmentRequest(viewName, List.of()))
+				.orElseThrow(() -> new MissingRootFragmentException(viewName));
 	}
 }

@@ -32,7 +32,6 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 	protected LdesFragment createNewFragment(FragmentInfo parentFragmentInfo) {
 		List<FragmentPair> fragmentPairs = parentFragmentInfo.getFragmentPairs();
 		FragmentInfo fragmentInfo = new FragmentInfo(
-				parentFragmentInfo.getCollectionName(),
 				parentFragmentInfo.getViewName(),
 				fragmentPairs);
 

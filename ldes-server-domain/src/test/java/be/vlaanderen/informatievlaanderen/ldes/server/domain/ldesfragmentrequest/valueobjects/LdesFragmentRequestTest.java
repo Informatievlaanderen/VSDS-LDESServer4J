@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class LdesFragmentRequestTest {
 
-	private static final String COLLECTION_NAME = "collectionName";
 	private static final String VIEW_NAME = "view";
 	public static final String KEY = "key";
 	public static final String VALUE = "value";
@@ -27,10 +26,10 @@ class LdesFragmentRequestTest {
 	@Test
 	@DisplayName("Test Equality of LdesFragmentRequest")
 	void test_EqualityOfLdesFragmentRequests() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
-		LdesFragmentRequest otherLdesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest otherLdesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
 		assertEquals(ldesFragmentRequest, otherLdesFragmentRequest);
@@ -41,7 +40,7 @@ class LdesFragmentRequestTest {
 	@ParameterizedTest
 	@ArgumentsSource(LdesFragmentRequestArgumentsProvider.class)
 	void test_InequalityOfLdesFragmentRequests(Object otherLdesFragmentRequest) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
@@ -54,13 +53,10 @@ class LdesFragmentRequestTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(Arguments.of(new LdesMember("some_id", null)),
 					Arguments.of((Object) null),
-					Arguments.of(new LdesFragmentRequest("otherCollectionName", VIEW_NAME,
+					Arguments.of(new LdesFragmentRequest("otherViewName",
 							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 									VALUE_2)))),
-					Arguments.of(new LdesFragmentRequest(COLLECTION_NAME, "otherViewName",
-							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
-									VALUE_2)))),
-					Arguments.of(new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+					Arguments.of(new LdesFragmentRequest(VIEW_NAME,
 							List.of(new FragmentPair(KEY_2, VALUE_2), new FragmentPair(KEY,
 									VALUE)))));
 		}

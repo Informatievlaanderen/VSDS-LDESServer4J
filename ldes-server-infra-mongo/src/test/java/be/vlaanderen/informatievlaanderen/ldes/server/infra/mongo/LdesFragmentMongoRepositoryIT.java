@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
 class LdesFragmentMongoRepositoryIT {
-	private static final String COLLECTION_NAME = "exampleData";
 	private static final String VIEW_NAME = "view";
 	private static final String FRAGMENT_VALUE_1 = "2022-03-03T00:00:00.000Z";
 	private static final String FRAGMENT_VALUE_2 = "2022-03-04T00:00:00.000Z";
@@ -48,7 +47,7 @@ class LdesFragmentMongoRepositoryIT {
 
 		ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1,
 				ldesFragmentEntity_2, ldesFragmentEntity_3));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, "2022-03-04T18:00:00.000Z")));
 		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(ldesFragmentRequest);
 
@@ -66,7 +65,7 @@ class LdesFragmentMongoRepositoryIT {
 
 		ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1,
 				ldesFragmentEntity_2, ldesFragmentEntity_3));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_2)));
 		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveFragment(ldesFragmentRequest);
 
@@ -76,7 +75,7 @@ class LdesFragmentMongoRepositoryIT {
 	}
 
 	private FragmentInfo fragmentInfo(String fragmentValue) {
-		return new FragmentInfo(COLLECTION_NAME, VIEW_NAME,
+		return new FragmentInfo(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, fragmentValue)));
 	}
 

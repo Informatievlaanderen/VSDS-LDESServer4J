@@ -25,17 +25,17 @@ public class LdesFragmentController {
 		this.fragmentFetchService = fragmentFetchService;
 	}
 
-	@GetMapping(value = "/{collection}/{view}", produces = { "application/turtle", "application/ld+json",
+	@GetMapping(value = "/{view}", produces = { "application/turtle", "application/ld+json",
 			"application/n-quads" })
 	LdesFragment retrieveLdesFragment(HttpServletResponse response,
-			@PathVariable("collection") String collectionName, @PathVariable("view") String viewName,
+			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters) {
-		return returnRequestedFragment(response, collectionName, viewName, requestParameters);
+		return returnRequestedFragment(response, viewName, requestParameters);
 	}
 
-	private LdesFragment returnRequestedFragment(HttpServletResponse response, String collectionName, String viewName,
+	private LdesFragment returnRequestedFragment(HttpServletResponse response, String viewName,
 			Map<String, String> fragmentationMap) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, viewName,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
 		LdesFragment fragment = fragmentFetchService.getFragment(ldesFragmentRequest);

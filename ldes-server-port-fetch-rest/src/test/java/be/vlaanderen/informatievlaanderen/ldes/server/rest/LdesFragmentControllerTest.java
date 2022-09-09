@@ -53,7 +53,6 @@ class LdesFragmentControllerTest {
 	private static final String LDES_EVENTSTREAM = "https://w3id.org/ldes#EventStream";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
-	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String SHAPE = "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape";
 	private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances/view?" + GENERATED_AT_TIME
 			+ "="
@@ -69,13 +68,13 @@ class LdesFragmentControllerTest {
 	void when_GETRequestAndNoFragmentIsCreatedYet_ResponseContainsAnEmptyLDesFragment()
 			throws Exception {
 		LdesFragment emptyFragment = new LdesFragment(FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME, List.of());
+				new FragmentInfo(VIEW_NAME, List.of()));
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME, List.of());
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(emptyFragment);
 
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}",
-						COLLECTION_NAME, VIEW_NAME).accept("application/ld+json"))
+				.perform(get("/{viewName}",
+						VIEW_NAME).accept("application/ld+json"))
 				.andDo(print())
 				.andExpect(status().isOk());
 
@@ -103,18 +102,18 @@ class LdesFragmentControllerTest {
 	@DisplayName("Correct returning a complete fragment")
 	void when_GETRequestIsPerformedAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect()
 			throws Exception {
-		FragmentInfo fragmentInfo = new FragmentInfo(COLLECTION_NAME,
+		FragmentInfo fragmentInfo = new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
 						FRAGMENTATION_VALUE_1)));
 		fragmentInfo.setImmutable(true);
 		LdesFragment realFragment = new LdesFragment(FRAGMENT_ID, fragmentInfo);
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(realFragment);
 
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}",
-						COLLECTION_NAME, VIEW_NAME)
+				.perform(get("/{viewName}",
+						VIEW_NAME)
 						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
 						.accept("application/ld+json"))
 				.andDo(print())
@@ -143,16 +142,16 @@ class LdesFragmentControllerTest {
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang) throws
 
 	Exception {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(COLLECTION_NAME,
+		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
 						FRAGMENTATION_VALUE_1))));
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
-		ResultActions resultActions = mockMvc.perform(get("/{collectionName}/{viewName}",
-				COLLECTION_NAME, VIEW_NAME)
+		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
+				VIEW_NAME)
 				.param("generatedAtTime",
 						FRAGMENTATION_VALUE_1)
 				.accept(mediaType)).andDo(print())
@@ -188,9 +187,9 @@ class LdesFragmentControllerTest {
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
 		LdesFragment ldesFragment = new LdesFragment("fragmentId",
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
@@ -201,7 +200,7 @@ class LdesFragmentControllerTest {
 	@Test
 	@DisplayName("Requesting using another collection name returns 404")
 	void when_GETRequestIsPerformedOnOtherCollectionName_ResponseIs404() throws Exception {
-		mockMvc.perform(get("/abba")
+		mockMvc.perform(get("/")
 				.param("generatedAtTime",
 						FRAGMENTATION_VALUE_1)
 				.accept("application/n-quads")).andDo(print())

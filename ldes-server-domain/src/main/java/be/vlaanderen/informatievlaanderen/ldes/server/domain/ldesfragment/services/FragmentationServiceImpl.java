@@ -32,7 +32,7 @@ public class FragmentationServiceImpl implements FragmentationService {
 
 	private void addRootFragment(String viewName) {
 		Optional<LdesFragment> optionalRoot = ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(), viewName, List.of()));
+				.retrieveFragment(new LdesFragmentRequest(viewName, List.of()));
 		if (optionalRoot.isEmpty()) {
 			createRoot(viewName);
 		}
@@ -40,7 +40,6 @@ public class FragmentationServiceImpl implements FragmentationService {
 
 	private void createRoot(String viewName) {
 		FragmentInfo fragmentInfo = new FragmentInfo(
-				ldesConfig.getCollectionName(),
 				viewName, List.of());
 		LdesFragment ldesFragment = new LdesFragment(
 				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),

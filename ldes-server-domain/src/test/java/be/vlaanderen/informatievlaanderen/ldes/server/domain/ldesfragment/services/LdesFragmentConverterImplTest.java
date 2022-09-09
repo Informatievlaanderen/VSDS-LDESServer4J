@@ -27,10 +27,9 @@ import static org.mockito.Mockito.when;
 
 class LdesFragmentConverterImplTest {
 
-	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-	private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances?generatedAtTime="
+	private static final String FRAGMENT_ID = "http://localhost:8080/view?generatedAtTime="
 			+ FRAGMENTATION_VALUE_1;
 	private static final String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
@@ -56,7 +55,7 @@ class LdesFragmentConverterImplTest {
 	@DisplayName("Verify correct conversion of Empty LdesFragment")
 	void when_LdesFragmentIsEmpty_ModelHasFourStatements() {
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 
 		Model model = ldesFragmentConverter.toModel(ldesFragment);
 
@@ -74,8 +73,9 @@ class LdesFragmentConverterImplTest {
 						.""")
 				.lang(Lang.NQUADS).toModel();
 		LdesMember ldesMember = new LdesMember("some_id", ldesMemberModel);
+		ldesMember.removeTreeMember();
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME,
+				new FragmentInfo(VIEW_NAME,
 						List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
 		ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
 		ldesFragment.addRelation(new TreeRelation("path", "node", "value",
@@ -96,7 +96,7 @@ class LdesFragmentConverterImplTest {
 
 	private void verifyRelationStatements(Model model, String relationObject) {
 		assertEquals(String.format(
-				"[http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z, https://w3id.org/tree#relation, %s]",
+				"[http://localhost:8080/view?generatedAtTime=2020-12-28T09:36:09.72Z, https://w3id.org/tree#relation, %s]",
 				relationObject), model.listStatements(null, TREE_RELATION, (Resource) null).nextStatement().toString());
 		assertEquals(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject),
 				model.listStatements(null, RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
@@ -114,13 +114,13 @@ class LdesFragmentConverterImplTest {
 
 	private void verifyMemberStatements(Model model) {
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, https://w3id.org/tree#member, https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165]",
+				"[http://localhost:8080/view, https://w3id.org/tree#member, https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165]",
 				model.listStatements(null, TREE_MEMBER, (Resource) null).nextStatement().toString());
 	}
 
 	private void verifyViewStatement(Model model) {
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, https://w3id.org/tree#view, http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z]",
+				"[http://localhost:8080/view, https://w3id.org/tree#view, http://localhost:8080/view?generatedAtTime=2020-12-28T09:36:09.72Z]",
 				model.listStatements(null, TREE_VIEW, (Resource) null).nextStatement().toString());
 	}
 
@@ -132,16 +132,16 @@ class LdesFragmentConverterImplTest {
 
 	private void verifyGeneralStatements(Model model) {
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, https://w3id.org/tree#shape, https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape]",
+				"[http://localhost:8080/view, https://w3id.org/tree#shape, https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape]",
 				model.listStatements(null, TREE_SHAPE, (Resource) null).nextStatement().toString());
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, https://w3id.org/ldes#versionOf, http://purl.org/dc/terms/isVersionOf]",
+				"[http://localhost:8080/view, https://w3id.org/ldes#versionOf, http://purl.org/dc/terms/isVersionOf]",
 				model.listStatements(null, LDES_VERSION_OF, (Resource) null).nextStatement().toString());
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
+				"[http://localhost:8080/view, https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
 				model.listStatements(null, LDES_TIMESTAMP_PATH, (Resource) null).nextStatement().toString());
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
+				"[http://localhost:8080/view, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
 				model.listStatements(null, RDF_SYNTAX_TYPE,
 						createResource(LDES_EVENT_STREAM_URI)).nextStatement()
 						.toString());

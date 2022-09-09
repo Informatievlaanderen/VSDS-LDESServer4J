@@ -27,23 +27,13 @@ public class FragmentFetchServiceImpl implements FragmentFetchService {
 	public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
 		return ldesFragmentRepository
 				.retrieveFragment(ldesFragmentRequest)
-				.orElseGet(() -> createEmptyFragment(ldesFragmentRequest.collectionName(),
-						ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs()));
-	}
-
-	@Override
-	public LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest) {
-		return ldesFragmentRepository
-				.retrieveInitialFragment(ldesFragmentRequest.collectionName())
 				.orElseGet(
-						() -> createEmptyFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
-								ldesFragmentRequest.fragmentPairs()));
-
+						() -> createEmptyFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs()));
 	}
 
-	private LdesFragment createEmptyFragment(String collectionName, String viewName,
+	private LdesFragment createEmptyFragment(String viewName,
 			List<FragmentPair> fragmentationMap) {
-		FragmentInfo fragmentInfo = new FragmentInfo(collectionName, viewName, fragmentationMap);
+		FragmentInfo fragmentInfo = new FragmentInfo(viewName, fragmentationMap);
 
 		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
 				fragmentInfo);

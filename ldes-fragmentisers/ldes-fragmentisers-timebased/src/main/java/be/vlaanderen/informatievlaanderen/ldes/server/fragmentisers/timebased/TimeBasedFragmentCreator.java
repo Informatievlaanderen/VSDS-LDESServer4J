@@ -51,7 +51,6 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		List<FragmentPair> parentFragmentInfoFragmentPairs = parentFragmentInfo.getFragmentPairs();
 		List<FragmentPair> fragmentPairs = updateParentFragmentPairs(parentFragmentInfoFragmentPairs);
 		FragmentInfo fragmentInfo = new FragmentInfo(
-				parentFragmentInfo.getCollectionName(),
 				parentFragmentInfo.getViewName(), fragmentPairs);
 
 		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),

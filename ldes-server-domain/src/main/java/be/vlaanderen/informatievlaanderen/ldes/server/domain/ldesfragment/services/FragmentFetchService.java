@@ -7,5 +7,4 @@ public interface FragmentFetchService {
 
 	LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest);
 
-	LdesFragment getInitialFragment(LdesFragmentRequest ldesFragmentRequest);
 }

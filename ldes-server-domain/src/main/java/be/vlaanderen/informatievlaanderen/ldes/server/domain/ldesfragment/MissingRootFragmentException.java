@@ -1,14 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment;
 
 public class MissingRootFragmentException extends RuntimeException {
-	private final String collectionName;
+	private final String viewName;
 
-	public MissingRootFragmentException(String collectionName) {
-		this.collectionName = collectionName;
+	public MissingRootFragmentException(String viewName) {
+		this.viewName = viewName;
 	}
 
 	@Override
 	public String getMessage() {
-		return "Could not retrieve root fragment for collection " + collectionName;
+		return "Could not retrieve root fragment for view " + viewName;
 	}
 }

@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 
 class TimebasedFragmentationServiceTest {
 
-	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
 
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
@@ -43,7 +42,7 @@ class TimebasedFragmentationServiceTest {
 	@BeforeEach
 	void setUp() {
 		ROOT_FRAGMENT = new LdesFragment("rootFragment",
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 		fragmentationService = new TimebasedFragmentationService(wrappedService,
 				fragmentCreator,
 				ldesFragmentRepository, mockTracer());
@@ -58,9 +57,9 @@ class TimebasedFragmentationServiceTest {
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
 		LdesFragment createdFragment = new LdesFragment("fragmentId",
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of(new FragmentPair("Path",
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
-		when(ldesFragmentRepository.retrieveChildFragment(COLLECTION_NAME, VIEW_NAME,
+		when(ldesFragmentRepository.retrieveChildFragment(VIEW_NAME,
 				List.of()))
 				.thenReturn(Optional.empty());
 		when(fragmentCreator.createNewFragment(Optional.empty(), ROOT_FRAGMENT.getFragmentInfo()))
@@ -71,7 +70,7 @@ class TimebasedFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveChildFragment(COLLECTION_NAME, VIEW_NAME,
+				times(1)).retrieveChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(),
 				ROOT_FRAGMENT.getFragmentInfo());
@@ -91,9 +90,9 @@ class TimebasedFragmentationServiceTest {
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
 		LdesFragment existingLdesFragment = new LdesFragment("fragmentId",
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of(new FragmentPair("Path",
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
-		when(ldesFragmentRepository.retrieveChildFragment(COLLECTION_NAME, VIEW_NAME,
+		when(ldesFragmentRepository.retrieveChildFragment(VIEW_NAME,
 				List.of()))
 				.thenReturn(Optional.of(existingLdesFragment));
 
@@ -102,7 +101,7 @@ class TimebasedFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveChildFragment(COLLECTION_NAME, VIEW_NAME,
+				times(1)).retrieveChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).saveFragment(existingLdesFragment);
@@ -121,14 +120,14 @@ class TimebasedFragmentationServiceTest {
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
 		LdesFragment existingLdesFragment = new LdesFragment("existingFragment",
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of(new FragmentPair("Path",
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
 		LdesFragment newFragment = new LdesFragment("someId",
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of(new FragmentPair("Path",
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
 		IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
 
-		when(ldesFragmentRepository.retrieveChildFragment(COLLECTION_NAME, VIEW_NAME,
+		when(ldesFragmentRepository.retrieveChildFragment(VIEW_NAME,
 				List.of()))
 				.thenReturn(Optional.of(existingLdesFragment));
 		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
@@ -140,7 +139,7 @@ class TimebasedFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveChildFragment(COLLECTION_NAME, VIEW_NAME,
+				times(1)).retrieveChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(fragmentCreator,
 				times(1)).createNewFragment(Optional.of(existingLdesFragment), ROOT_FRAGMENT.getFragmentInfo());

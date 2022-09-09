@@ -32,8 +32,8 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
 		Span span = tracer.nextSpan().name("Mongo FragmentEntity Retrieval").start();
 		return repository
-				.findLdesFragmentEntityByFragmentInfoCollectionNameAndFragmentInfoViewNameAndFragmentInfo_FragmentPairs(
-						ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
+				.findLdesFragmentEntityByFragmentInfoViewNameAndFragmentInfo_FragmentPairs(
+						ldesFragmentRequest.viewName(),
 						ldesFragmentRequest.fragmentPairs())
 				.map(ldesFragmentEntity -> {
 					span.end();
@@ -42,35 +42,26 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenFragment(String collectionName, String viewName,
+	public Optional<LdesFragment> retrieveOpenFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
-				.findAllByFragmentInfoImmutableAndFragmentInfoCollectionNameAndFragmentInfoViewName(false,
-						collectionName, viewName)
+				.findAllByFragmentInfoImmutableAndFragmentInfoViewName(false,
+						viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveChildFragment(String collectionName, String viewName,
+	public Optional<LdesFragment> retrieveChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
-				.findAllByFragmentInfoImmutableAndFragmentInfoCollectionNameAndFragmentInfoViewName(false,
-						collectionName, viewName)
+				.findAllByFragmentInfoImmutableAndFragmentInfoViewName(false,
+						viewName)
 				.stream()
 				.filter(ldesFragmentEntity -> Collections
 						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1
 						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
-				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentId));
-	}
-
-	@Override
-	public Optional<LdesFragment> retrieveInitialFragment(String collectionName) {
-		return repository.findAll().stream()
-				.filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getCollectionName()
-						.equals(collectionName))
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}

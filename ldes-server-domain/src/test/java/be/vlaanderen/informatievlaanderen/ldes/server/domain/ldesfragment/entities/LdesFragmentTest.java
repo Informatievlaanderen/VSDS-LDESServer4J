@@ -21,7 +21,7 @@ class LdesFragmentTest {
 	@DisplayName("Test if fragment is immutable or not")
 	void when_LdesFragmentIsImmutable_IsImmutableReturnsTrue() {
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME,
+				new FragmentInfo(VIEW_NAME,
 						List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
 		assertFalse(ldesFragment.isImmutable());
 		ldesFragment.setImmutable(true);
@@ -32,7 +32,7 @@ class LdesFragmentTest {
 	@DisplayName("Test current number of members")
 	void when_CurrentNumberOfMembersIsRequested_LdesFragmentsReturnsNumberOfMembers() {
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME,
+				new FragmentInfo(VIEW_NAME,
 						List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
 
 		assertEquals(0, ldesFragment.getCurrentNumberOfMembers());

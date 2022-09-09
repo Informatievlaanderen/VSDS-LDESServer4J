@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LdesFragmentEntityTest {
 
-	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances/view?generatedAtTime="
@@ -22,7 +21,7 @@ class LdesFragmentEntityTest {
 	@DisplayName("Verify conversion from LdesFragment to LdesFragmentEntity")
 	@Test
 	void when_LdesFragmentIsConvertedToLdesFragmentEntity_FragmentInfoAndMembersAndMutabilityAreTheSame() {
-		FragmentInfo fragmentInfo = new FragmentInfo(COLLECTION_NAME,
+		FragmentInfo fragmentInfo = new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1)));
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, fragmentInfo);
 		ldesFragment.addMember("member1");

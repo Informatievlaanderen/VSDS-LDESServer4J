@@ -17,8 +17,6 @@ class FragmentationServiceDecoratorTest {
 	FragmentationService fragmentationService = Mockito.mock(FragmentationService.class);
 	LdesFragmentRepository fragmentRepository = Mockito.mock(LdesFragmentRepository.class);
 	private FragmentationServiceDecorator fragmentationServiceDecorator;
-
-	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
 	private static final String PARENT_FRAGMENT_ID = "parent";
 	private static final String CHILD_FRAGMENT_ID = "child";
@@ -33,9 +31,9 @@ class FragmentationServiceDecoratorTest {
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 
 		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
@@ -51,9 +49,9 @@ class FragmentationServiceDecoratorTest {
 	@Test
 	void when_ParentHasRelationToChild_DoNotAddNewRelation() {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 		parentFragment.addRelation(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
 				GENERIC_TREE_RELATION));
 		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment,
@@ -69,7 +67,7 @@ class FragmentationServiceDecoratorTest {
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationServiceIsCalled() {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
-				new FragmentInfo(COLLECTION_NAME, VIEW_NAME, List.of()));
+				new FragmentInfo(VIEW_NAME, List.of()));
 		String memberId = "memberId";
 		fragmentationServiceDecorator.addMemberToFragment(parentFragment, memberId);
 		Mockito.verify(fragmentationService,

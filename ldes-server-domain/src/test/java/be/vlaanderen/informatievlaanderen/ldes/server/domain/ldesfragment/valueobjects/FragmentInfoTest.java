@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FragmentInfoTest {
 
-	public static final String COLLECTION_NAME = "collectionName";
 	public static final String VIEW = "view";
 	public static final String TILE = "tile";
 	public static final String TILE_VALUE = "tileValue";
@@ -19,7 +18,7 @@ class FragmentInfoTest {
 
 	@Test
 	void when_ValueIsPresent_GetValueOfKeyReturnsOptionalValue() {
-		FragmentInfo fragmentInfo = new FragmentInfo(COLLECTION_NAME,
+		FragmentInfo fragmentInfo = new FragmentInfo(
 				VIEW,
 				List.of(new FragmentPair(GENERATED_AT_TIME, GENERATED_AT_TIME_VALUE),
 						new FragmentPair(TILE, TILE_VALUE)));
@@ -30,7 +29,7 @@ class FragmentInfoTest {
 
 	@Test
 	void when_ValueIsAbsent_GetValueOfKeyReturnsOptionalEmpty() {
-		FragmentInfo fragmentInfo = new FragmentInfo(COLLECTION_NAME, VIEW,
+		FragmentInfo fragmentInfo = new FragmentInfo(VIEW,
 				List.of());
 		Optional<String> optionalValue = fragmentInfo.getValueOfKey("unexistingKey");
 		assertTrue(optionalValue.isEmpty());

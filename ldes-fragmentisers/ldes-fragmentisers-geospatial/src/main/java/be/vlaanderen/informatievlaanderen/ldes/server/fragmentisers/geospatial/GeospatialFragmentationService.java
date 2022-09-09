@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -27,7 +26,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialFragmentationService extends FragmentationServiceDecorator {
 
-	private final LdesConfig ldesConfig;
 	private final LdesMemberRepository ldesMemberRepository;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final FragmentCreator fragmentCreator;
@@ -35,12 +33,11 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	private final Tracer tracer;
 	private Span rootSpan;
 
-	public GeospatialFragmentationService(FragmentationService fragmentationService, LdesConfig ldesConfig,
+	public GeospatialFragmentationService(FragmentationService fragmentationService,
 			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser, Tracer tracer) {
 		super(fragmentationService, ldesFragmentRepository);
-		this.ldesConfig = ldesConfig;
 		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.fragmentCreator = fragmentCreator;
@@ -71,10 +68,10 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 
 		List<FragmentPair> fragmentPairs = new ArrayList<>(parentFragment.getFragmentInfo().getFragmentPairs());
 		fragmentPairs.add(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
-		FragmentInfo fragmentInfo = new FragmentInfo(parentFragment.getFragmentInfo().getCollectionName(),
+		FragmentInfo fragmentInfo = new FragmentInfo(
 				parentFragment.getFragmentInfo().getViewName(), fragmentPairs);
 		LdesFragment rootFragment = ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(ldesConfig.getCollectionName(),
+				.retrieveFragment(new LdesFragmentRequest(
 						parentFragment.getFragmentInfo().getViewName(),
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))))
 				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), fragmentInfo));
@@ -99,10 +96,9 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 					List<FragmentPair> fragmentPairs = new ArrayList<>(fragmentInfo.getFragmentPairs());
 					fragmentPairs.add(new FragmentPair(FRAGMENT_KEY_TILE, tile));
 					Optional<LdesFragment> ldesFragment = ldesFragmentRepository
-							.retrieveFragment(new LdesFragmentRequest(fragmentInfo.getCollectionName(),
-									fragmentInfo.getViewName(),
+							.retrieveFragment(new LdesFragmentRequest(fragmentInfo.getViewName(),
 									fragmentPairs));
-					FragmentInfo fragmentInfo1 = new FragmentInfo(fragmentInfo.getCollectionName(),
+					FragmentInfo fragmentInfo1 = new FragmentInfo(
 							fragmentInfo.getViewName(), fragmentPairs);
 					return ldesFragment.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
 							fragmentInfo1));

@@ -32,7 +32,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		CoordinateConverter coordinateConverter = CoordinateConverterFactory
 				.getCoordinateConverter(geospatialConfig.getProjection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
-		return new GeospatialFragmentationService(fragmentationService, ldesConfig1, ldesMemberRepository1,
+		return new GeospatialFragmentationService(fragmentationService, ldesMemberRepository1,
 				ldesFragmentRepository1,
 				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser, tracer);
 	}

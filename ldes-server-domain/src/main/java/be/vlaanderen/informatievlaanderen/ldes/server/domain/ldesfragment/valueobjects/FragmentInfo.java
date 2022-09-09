@@ -7,13 +7,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 public class FragmentInfo {
 
-	private final String collectionName;
 	private final String viewName;
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
 
-	public FragmentInfo(String collectionName, String viewName, List<FragmentPair> fragmentPairs) {
-		this.collectionName = collectionName;
+	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = false;
@@ -29,10 +27,6 @@ public class FragmentInfo {
 
 	public List<FragmentPair> getFragmentPairs() {
 		return fragmentPairs;
-	}
-
-	public String getCollectionName() {
-		return collectionName;
 	}
 
 	public String getViewName() {

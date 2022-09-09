@@ -39,7 +39,7 @@ class FragmentFetchServiceImplTest {
 	private static final String FRAGMENT_ID_1 = HOSTNAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME + "?generatedAtTime="
 			+
 			FRAGMENTATION_VALUE_1;
-	private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(COLLECTION_NAME,
+	private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(
 			VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 
 	@Autowired
@@ -56,34 +56,8 @@ class FragmentFetchServiceImplTest {
 	}
 
 	@Test
-	void when_retrieveInitialFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
-		when(ldesFragmentRepository.retrieveInitialFragment(COLLECTION_NAME)).thenReturn(Optional.empty());
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME, List.of());
-		LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
-
-		assertEquals(0, returnedFragment.getMemberIds().size());
-		assertEquals(0, returnedFragment.getFragmentInfo().getFragmentPairs().size());
-	}
-
-	@Test
-	void when_retrieveInitialFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
-		ldesFragment.addMember("firstMember");
-
-		when(ldesFragmentRepository.retrieveInitialFragment(COLLECTION_NAME)).thenReturn(Optional.of(ldesFragment));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME, List.of());
-
-		LdesFragment returnedFragment = fragmentFetchService.getInitialFragment(ldesFragmentRequest);
-
-		assertEquals(1, returnedFragment.getMemberIds().size());
-		assertTrue(returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
-		assertEquals(FRAGMENTATION_VALUE_1,
-				returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).get());
-	}
-
-	@Test
 	void when_getFragment_WhenNoFragmentExists_ThenReturnEmptyFragment() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
 
@@ -99,7 +73,7 @@ class FragmentFetchServiceImplTest {
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
 		ldesFragment.addMember("firstMember");
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.of(ldesFragment));
 

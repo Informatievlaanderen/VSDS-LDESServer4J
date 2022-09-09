@@ -12,13 +12,11 @@ public interface LdesFragmentRepository {
 
 	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
 
-	Optional<LdesFragment> retrieveChildFragment(String collectionName, String viewName,
+	Optional<LdesFragment> retrieveChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
 
-	Optional<LdesFragment> retrieveOpenFragment(String collectionName, String viewName,
+	Optional<LdesFragment> retrieveOpenFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
-
-	Optional<LdesFragment> retrieveInitialFragment(String collectionName);
 
 	List<LdesFragment> retrieveAllFragments();
 }
