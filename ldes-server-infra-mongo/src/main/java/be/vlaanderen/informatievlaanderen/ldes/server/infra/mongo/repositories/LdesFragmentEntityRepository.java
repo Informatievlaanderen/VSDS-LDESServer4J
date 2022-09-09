@@ -9,10 +9,13 @@ import java.util.Optional;
 
 @SuppressWarnings("java:S100")
 public interface LdesFragmentEntityRepository extends MongoRepository<LdesFragmentEntity, String> {
-	Optional<LdesFragmentEntity> findLdesFragmentEntityByFragmentInfoViewNameAndFragmentInfo_FragmentPairs(
+	Optional<LdesFragmentEntity> findLdesFragmentEntityByViewNameAndFragmentPairs(
 			String viewName, List<FragmentPair> fragmentPairs);
 
-	List<LdesFragmentEntity> findAllByFragmentInfoImmutableAndFragmentInfoViewName(
+	Optional<LdesFragmentEntity> findLdesFragmentEntityByRootAndViewName(
+			Boolean root, String viewName);
+
+	List<LdesFragmentEntity> findAllByImmutableAndViewName(
 			Boolean immutable, String viewName);
 
 }

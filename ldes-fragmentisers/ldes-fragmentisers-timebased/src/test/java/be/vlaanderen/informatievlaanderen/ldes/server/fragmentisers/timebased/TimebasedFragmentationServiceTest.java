@@ -59,7 +59,7 @@ class TimebasedFragmentationServiceTest {
 		LdesFragment createdFragment = new LdesFragment("fragmentId",
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
-		when(ldesFragmentRepository.retrieveChildFragment(VIEW_NAME,
+		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
 				List.of()))
 				.thenReturn(Optional.empty());
 		when(fragmentCreator.createNewFragment(Optional.empty(), ROOT_FRAGMENT.getFragmentInfo()))
@@ -70,7 +70,7 @@ class TimebasedFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveChildFragment(VIEW_NAME,
+				times(1)).retrieveOpenChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(),
 				ROOT_FRAGMENT.getFragmentInfo());
@@ -92,7 +92,7 @@ class TimebasedFragmentationServiceTest {
 		LdesFragment existingLdesFragment = new LdesFragment("fragmentId",
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
-		when(ldesFragmentRepository.retrieveChildFragment(VIEW_NAME,
+		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
 				List.of()))
 				.thenReturn(Optional.of(existingLdesFragment));
 
@@ -101,7 +101,7 @@ class TimebasedFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveChildFragment(VIEW_NAME,
+				times(1)).retrieveOpenChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).saveFragment(existingLdesFragment);
@@ -127,7 +127,7 @@ class TimebasedFragmentationServiceTest {
 						"Value"))));
 		IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
 
-		when(ldesFragmentRepository.retrieveChildFragment(VIEW_NAME,
+		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
 				List.of()))
 				.thenReturn(Optional.of(existingLdesFragment));
 		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
@@ -139,7 +139,7 @@ class TimebasedFragmentationServiceTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveChildFragment(VIEW_NAME,
+				times(1)).retrieveOpenChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(fragmentCreator,
 				times(1)).createNewFragment(Optional.of(existingLdesFragment), ROOT_FRAGMENT.getFragmentInfo());

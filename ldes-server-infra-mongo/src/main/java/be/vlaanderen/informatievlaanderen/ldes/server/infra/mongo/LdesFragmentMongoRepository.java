@@ -4,6 +4,8 @@ import java.util.*;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
@@ -32,7 +34,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
 		Span span = tracer.nextSpan().name("Mongo FragmentEntity Retrieval").start();
 		return repository
-				.findLdesFragmentEntityByFragmentInfoViewNameAndFragmentInfo_FragmentPairs(
+				.findLdesFragmentEntityByViewNameAndFragmentPairs(
 						ldesFragmentRequest.viewName(),
 						ldesFragmentRequest.fragmentPairs())
 				.map(ldesFragmentEntity -> {
@@ -45,7 +47,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public Optional<LdesFragment> retrieveOpenFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
-				.findAllByFragmentInfoImmutableAndFragmentInfoViewName(false,
+				.findAllByImmutableAndViewName(false,
 						viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
@@ -53,10 +55,10 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveChildFragment(String viewName,
+	public Optional<LdesFragment> retrieveOpenChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
-				.findAllByFragmentInfoImmutableAndFragmentInfoViewName(false,
+				.findAllByImmutableAndViewName(false,
 						viewName)
 				.stream()
 				.filter(ldesFragmentEntity -> Collections
@@ -73,4 +75,12 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 				.map(LdesFragmentEntity::toLdesFragment)
 				.toList();
 	}
+
+	@Override
+	public Optional<LdesFragment> retrieveRootFragment(String viewName) {
+		return repository
+				.findLdesFragmentEntityByRootAndViewName(true, viewName)
+				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
 }

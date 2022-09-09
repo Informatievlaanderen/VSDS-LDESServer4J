@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -8,8 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +26,6 @@ class FragmentationExecutorImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = new LdesConfig();
 		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationService),
 				ldesFragmentRepository, mockTracer());
 	}
@@ -37,13 +33,13 @@ class FragmentationExecutorImplTest {
 	@Test
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationServiceIsCalled() {
 		LdesFragment ldesFragment = new LdesFragment("id", new FragmentInfo(VIEW_NAME, List.of()));
-		when(ldesFragmentRepository.retrieveFragment(new LdesFragmentRequest(VIEW_NAME, List.of())))
+		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 
 		fragmentationExecutor.executeFragmentation("memberId");
 
 		verify(ldesFragmentRepository, times(1))
-				.retrieveFragment(new LdesFragmentRequest(VIEW_NAME, List.of()));
+				.retrieveRootFragment(VIEW_NAME);
 		verify(fragmentationService, times(1)).addMemberToFragment(ldesFragment,
 				"memberId");
 	}
@@ -59,7 +55,7 @@ class FragmentationExecutorImplTest {
 		assertEquals("Could not retrieve root fragment for view view",
 				missingRootFragmentException.getMessage());
 		verify(ldesFragmentRepository, times(1))
-				.retrieveFragment(new LdesFragmentRequest(VIEW_NAME, List.of()));
+				.retrieveRootFragment(VIEW_NAME);
 	}
 
 }

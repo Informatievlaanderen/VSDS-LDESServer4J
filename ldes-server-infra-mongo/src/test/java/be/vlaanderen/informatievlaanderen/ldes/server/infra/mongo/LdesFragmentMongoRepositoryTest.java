@@ -43,7 +43,7 @@ class LdesFragmentMongoRepositoryTest {
 	void when_RetrieveOpenFragment_FirstFragmentThatIsOpenAndBelongsToCollectionIsReturned(
 			List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
 		when(ldesFragmentEntityRepository
-				.findAllByFragmentInfoImmutableAndFragmentInfoViewName(false,
+				.findAllByImmutableAndViewName(false,
 						VIEW_NAME))
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
@@ -108,10 +108,8 @@ class LdesFragmentMongoRepositoryTest {
 				String value) {
 			String fragmentId = String.format("http://localhost:8080/view?generatedAtTime=%s",
 					value);
-			FragmentInfo fragmentInfo = new FragmentInfo(viewName,
-					List.of());
-			fragmentInfo.setImmutable(immutable);
-			return new LdesFragmentEntity(fragmentId, fragmentInfo, List.of(),
+			return new LdesFragmentEntity(fragmentId, false, viewName, List.of(),
+					immutable, List.of(),
 					List.of());
 		}
 
