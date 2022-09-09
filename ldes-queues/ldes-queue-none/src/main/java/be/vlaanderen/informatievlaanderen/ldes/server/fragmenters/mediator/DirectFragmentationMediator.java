@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DirectFragmentationMediator implements FragmentationMediator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentationMediator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DirectFragmentationMediator.class);
 	private final FragmentationExecutor fragmentationExecutor;
 
 	public DirectFragmentationMediator(FragmentationExecutor fragmentationExecutor) {

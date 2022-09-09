@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryFragmentationMediator implements FragmentationMediator {
-	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentationMediator.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryFragmentationMediator.class);
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	private final LinkedBlockingQueue<String> ldesMembersToFragment = new LinkedBlockingQueue<>();
 
