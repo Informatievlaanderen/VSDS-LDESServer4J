@@ -11,15 +11,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.b
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
 
 public class GeospatialFragmentationUpdater implements FragmentationUpdater {
-	@Autowired
-	Tracer tracer;
 
 	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
 			FragmentationService fragmentationService, FragmentationProperties properties) {
@@ -34,7 +30,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
 		return new GeospatialFragmentationService(fragmentationService, ldesMemberRepository1,
 				ldesFragmentRepository1,
-				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser, tracer);
+				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser);
 	}
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {

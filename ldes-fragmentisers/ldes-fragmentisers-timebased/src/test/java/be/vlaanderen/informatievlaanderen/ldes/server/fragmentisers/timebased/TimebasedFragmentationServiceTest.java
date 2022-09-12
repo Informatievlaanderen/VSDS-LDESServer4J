@@ -45,7 +45,7 @@ class TimebasedFragmentationServiceTest {
 				new FragmentInfo(VIEW_NAME, List.of()));
 		fragmentationService = new TimebasedFragmentationService(wrappedService,
 				fragmentCreator,
-				ldesFragmentRepository, mockTracer());
+				ldesFragmentRepository);
 	}
 
 	@Test
