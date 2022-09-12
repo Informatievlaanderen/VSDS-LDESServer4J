@@ -1,27 +1,23 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import java.util.*;
-
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
 
-	private final Tracer tracer;
-
-	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository, Tracer tracer) {
+	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {
 		this.repository = repository;
-		this.tracer = tracer;
 	}
 
 	@Override
@@ -32,15 +28,11 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	@Override
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
-		Span span = tracer.nextSpan().name("Mongo FragmentEntity Retrieval").start();
 		return repository
 				.findLdesFragmentEntityByViewNameAndFragmentPairs(
 						ldesFragmentRequest.viewName(),
 						ldesFragmentRequest.fragmentPairs())
-				.map(ldesFragmentEntity -> {
-					span.end();
-					return ldesFragmentEntity.toLdesFragment();
-				});
+				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
 	@Override
