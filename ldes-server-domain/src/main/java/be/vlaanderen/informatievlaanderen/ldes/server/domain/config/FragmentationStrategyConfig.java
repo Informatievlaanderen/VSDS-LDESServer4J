@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -47,10 +46,9 @@ public class FragmentationStrategyConfig {
 	private FragmentationService getFragmentationServiceImpl(ApplicationContext applicationContext, String name) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
-		Tracer tracer = applicationContext.getBean(Tracer.class);
 
 		return new FragmentationServiceImpl(ldesFragmentRepository,
-				ldesConfig, tracer, name);
+				ldesConfig, name);
 	}
 
 }

@@ -5,16 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TimebasedProperties.MEMBER_LIMIT;
 
 public class TimebasedFragmentationUpdater implements FragmentationUpdater {
-
-	@Autowired
-	Tracer tracer;
 
 	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
 			FragmentationService fragmentationService, FragmentationProperties properties) {
@@ -26,7 +21,7 @@ public class TimebasedFragmentationUpdater implements FragmentationUpdater {
 				timebasedFragmentationConfig,
 				ldesFragmentRepository1);
 		return new TimebasedFragmentationService(fragmentationService, timeBasedFragmentCreator,
-				ldesFragmentRepository1, tracer);
+				ldesFragmentRepository1);
 
 	}
 

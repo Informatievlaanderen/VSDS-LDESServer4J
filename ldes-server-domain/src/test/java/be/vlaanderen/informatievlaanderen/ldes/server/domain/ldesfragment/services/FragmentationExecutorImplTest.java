@@ -27,7 +27,7 @@ class FragmentationExecutorImplTest {
 	@BeforeEach
 	void setUp() {
 		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationService),
-				ldesFragmentRepository, mockTracer());
+				ldesFragmentRepository);
 	}
 
 	@Test
