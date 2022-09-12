@@ -22,4 +22,5 @@ public class FragmentationConfig {
 	public FragmentationProperties getProperties() {
 		return new FragmentationProperties(config);
 	}
+
 }
