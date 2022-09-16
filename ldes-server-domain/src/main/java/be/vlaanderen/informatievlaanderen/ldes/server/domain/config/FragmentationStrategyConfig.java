@@ -33,13 +33,14 @@ public class FragmentationStrategyConfig {
 			ViewSpecification viewSpecification) {
 		FragmentationService fragmentationService = getFragmentationServiceImpl(applicationContext,
 				viewSpecification.getName());
-		for (int i = viewSpecification.getFragmentations().size() - 1; i >= 0; i--) {
-			String fragmentation = viewSpecification.getFragmentations().get(i).getName();
-			FragmentationUpdater fragmentationUpdater = (FragmentationUpdater) applicationContext
-					.getBean(fragmentation);
-			fragmentationService = fragmentationUpdater.updateFragmentationService(applicationContext,
-					fragmentationService, viewSpecification.getFragmentations().get(i).getProperties());
-		}
+		if (viewSpecification.getFragmentations() != null)
+			for (int i = viewSpecification.getFragmentations().size() - 1; i >= 0; i--) {
+				String fragmentation = viewSpecification.getFragmentations().get(i).getName();
+				FragmentationUpdater fragmentationUpdater = (FragmentationUpdater) applicationContext
+						.getBean(fragmentation);
+				fragmentationService = fragmentationUpdater.updateFragmentationService(applicationContext,
+						fragmentationService, viewSpecification.getFragmentations().get(i).getProperties());
+			}
 		return fragmentationService;
 	}
 
