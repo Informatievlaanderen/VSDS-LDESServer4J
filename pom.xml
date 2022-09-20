@@ -37,11 +37,11 @@
         <!-- SPRING BOOT -->
         <spring-boot.version>2.7.3</spring-boot.version>
         <spring-cloud-dependencies.version>2021.0.4</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-otel-dependencies.version>1.1.0-M7</spring-cloud-sleuth-otel-dependencies.version>
+        <spring-cloud-sleuth-otel-dependencies.version>1.1.1-SNAPSHOT</spring-cloud-sleuth-otel-dependencies.version>
 
         <!-- JSON & RDF -->
-        <json-simple.version>1.1.1</json-simple.version>
         <apache-jena.version>4.6.1</apache-jena.version>
+        <json-simple.version>1.1.1</json-simple.version>
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
@@ -51,7 +51,7 @@
         <mockito.version>4.8.0</mockito.version>
         <cucumber.version>7.8.0</cucumber.version>
         <byte-buddy.version>1.12.16</byte-buddy.version>
-        <wiremock-jre8.version>2.33.2</wiremock-jre8.version>
+        <wiremock-jre8.version>2.34.0</wiremock-jre8.version>
         <de.flapdoodle.embed.mongo.version>3.4.9</de.flapdoodle.embed.mongo.version>
         <awaitility.version>4.2.0</awaitility.version>
 
