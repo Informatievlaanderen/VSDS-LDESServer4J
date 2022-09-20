@@ -13,9 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Document("ldesfragment")
-@CompoundIndexes({
-		@CompoundIndex(name = "index_view_fragmentPairs", def = "{'viewName' : 1, 'fragmentPairs': 1}")
-})
+@CompoundIndex(name = "index_view_fragmentPairs", def = "{'viewName' : 1, 'fragmentPairs': 1}")
 public class LdesFragmentEntity {
 	@Id
 	private final String id;
