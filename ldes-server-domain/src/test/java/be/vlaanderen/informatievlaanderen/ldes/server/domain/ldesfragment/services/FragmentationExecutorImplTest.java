@@ -7,6 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,7 @@ class FragmentationExecutorImplTest {
 	@BeforeEach
 	void setUp() {
 		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationService),
-				ldesFragmentRepository);
+				ldesFragmentRepository, mockTracer());
 	}
 
 	@Test
@@ -40,8 +42,8 @@ class FragmentationExecutorImplTest {
 
 		verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
-		verify(fragmentationService, times(1)).addMemberToFragment(ldesFragment,
-				"memberId");
+		verify(fragmentationService, times(1)).addMemberToFragment(eq(ldesFragment),
+				eq("memberId"), any());
 	}
 
 	@Test

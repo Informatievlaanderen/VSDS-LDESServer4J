@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.Optional;
 
@@ -15,16 +17,20 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 	protected final FragmentCreator fragmentCreator;
 	protected final LdesFragmentRepository ldesFragmentRepository;
 
+	private final Tracer tracer;
+
 	public TimebasedFragmentationService(FragmentationService fragmentationService,
 			FragmentCreator fragmentCreator,
-			LdesFragmentRepository ldesFragmentRepository) {
+			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
 		super(fragmentationService, ldesFragmentRepository);
 		this.fragmentCreator = fragmentCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.tracer = tracer;
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId) {
+	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId, Span parentSpan) {
+		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
 		LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(parentFragment.getFragmentInfo());
 
 		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
@@ -34,8 +40,9 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 					.noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))) {
 				super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			}
-			super.addMemberToFragment(ldesFragment, ldesMemberId);
+			super.addMemberToFragment(ldesFragment, ldesMemberId, timebasedFragmentationSpan);
 		}
+		timebasedFragmentationSpan.end();
 	}
 
 	private LdesFragment retrieveLastFragmentOrCreateNewFragment(FragmentInfo fragmentInfo) {
