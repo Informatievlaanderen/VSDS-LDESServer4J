@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -12,24 +14,32 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private final Map<String, FragmentationService> fragmentationServices;
 	private final LdesFragmentRepository ldesFragmentRepository;
+	private final Tracer tracer;
 
 	public FragmentationExecutorImpl(Map<String, FragmentationService> fragmentationServices,
-			LdesFragmentRepository ldesFragmentRepository) {
+			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
 		this.fragmentationServices = fragmentationServices;
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.tracer = tracer;
 	}
 
 	@Override
 	public void executeFragmentation(String memberId) {
-		fragmentationServices.entrySet().stream().parallel().forEach(entry -> {
-			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey());
-			entry.getValue().addMemberToFragment(rootFragmentOfView, memberId);
+		Span parentSpan = tracer.nextSpan().name("execute-fragmentation");
+		parentSpan.start();
+		fragmentationServices.entrySet().forEach(entry -> {
+			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentSpan);
+			entry.getValue().addMemberToFragment(rootFragmentOfView, memberId, parentSpan);
 		});
+		parentSpan.end();
 	}
 
-	private LdesFragment retrieveRootFragmentOfView(String viewName) {
-		return ldesFragmentRepository
+	private LdesFragment retrieveRootFragmentOfView(String viewName, Span name) {
+		Span start = tracer.nextSpan(name).name("Retrieve root of view " + viewName).start();
+		LdesFragment ldesFragment = ldesFragmentRepository
 				.retrieveRootFragment(viewName)
 				.orElseThrow(() -> new MissingRootFragmentException(viewName));
+		start.end();
+		return ldesFragment;
 	}
 }
