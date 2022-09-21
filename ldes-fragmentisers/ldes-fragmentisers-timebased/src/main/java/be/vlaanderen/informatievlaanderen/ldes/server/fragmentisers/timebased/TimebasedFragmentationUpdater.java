@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TimebasedProperties.MEMBER_LIMIT;
@@ -16,12 +17,13 @@ public class TimebasedFragmentationUpdater implements FragmentationUpdater {
 		LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
 		LdesFragmentRepository ldesFragmentRepository1 = applicationContext.getBean(LdesFragmentRepository.class);
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
+		Tracer tracer = applicationContext.getBean(Tracer.class);
 
 		TimeBasedFragmentCreator timeBasedFragmentCreator = new TimeBasedFragmentCreator(ldesConfig,
 				timebasedFragmentationConfig,
 				ldesFragmentRepository1);
 		return new TimebasedFragmentationService(fragmentationService, timeBasedFragmentCreator,
-				ldesFragmentRepository1);
+				ldesFragmentRepository1, tracer);
 
 	}
 

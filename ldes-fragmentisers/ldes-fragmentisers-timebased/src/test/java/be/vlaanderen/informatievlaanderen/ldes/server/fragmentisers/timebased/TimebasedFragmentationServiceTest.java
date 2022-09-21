@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.springframework.cloud.sleuth.Span;
 import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ class TimebasedFragmentationServiceTest {
 				new FragmentInfo(VIEW_NAME, List.of()));
 		fragmentationService = new TimebasedFragmentationService(wrappedService,
 				fragmentCreator,
-				ldesFragmentRepository);
+				ldesFragmentRepository, mockTracer());
 	}
 
 	@Test
@@ -66,7 +67,7 @@ class TimebasedFragmentationServiceTest {
 				.thenReturn(createdFragment);
 
 		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember.getLdesMemberId());
+				ldesMember.getLdesMemberId(), mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
@@ -97,7 +98,7 @@ class TimebasedFragmentationServiceTest {
 				.thenReturn(Optional.of(existingLdesFragment));
 
 		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember.getLdesMemberId());
+				ldesMember.getLdesMemberId(), mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
@@ -135,7 +136,7 @@ class TimebasedFragmentationServiceTest {
 				ROOT_FRAGMENT.getFragmentInfo())).thenReturn(newFragment);
 
 		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember.getLdesMemberId());
+				ldesMember.getLdesMemberId(), mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
