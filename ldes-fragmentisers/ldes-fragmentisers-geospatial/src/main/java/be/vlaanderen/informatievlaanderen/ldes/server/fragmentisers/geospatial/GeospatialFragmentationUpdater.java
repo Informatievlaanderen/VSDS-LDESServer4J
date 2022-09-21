@@ -11,6 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.b
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
@@ -22,6 +23,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		LdesConfig ldesConfig1 = applicationContext.getBean(LdesConfig.class);
 		LdesMemberRepository ldesMemberRepository1 = applicationContext.getBean(LdesMemberRepository.class);
 		LdesFragmentRepository ldesFragmentRepository1 = applicationContext.getBean(LdesFragmentRepository.class);
+		Tracer tracer = applicationContext.getBean(Tracer.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(properties);
 
@@ -30,7 +32,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
 		return new GeospatialFragmentationService(fragmentationService, ldesMemberRepository1,
 				ldesFragmentRepository1,
-				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser);
+				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser, tracer);
 	}
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {
