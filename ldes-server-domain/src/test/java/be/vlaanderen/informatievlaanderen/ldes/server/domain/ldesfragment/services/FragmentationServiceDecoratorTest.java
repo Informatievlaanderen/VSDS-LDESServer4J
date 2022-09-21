@@ -7,15 +7,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 class FragmentationServiceDecoratorTest {
-	FragmentationService fragmentationService = Mockito.mock(FragmentationService.class);
-	LdesFragmentRepository fragmentRepository = Mockito.mock(LdesFragmentRepository.class);
+	FragmentationService fragmentationService = mock(FragmentationService.class);
+	LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
 	private FragmentationServiceDecorator fragmentationServiceDecorator;
 	private static final String VIEW_NAME = "view";
 	private static final String PARENT_FRAGMENT_ID = "parent";
@@ -69,9 +72,10 @@ class FragmentationServiceDecoratorTest {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
 				new FragmentInfo(VIEW_NAME, List.of()));
 		String memberId = "memberId";
-		fragmentationServiceDecorator.addMemberToFragment(parentFragment, memberId);
+		Span span = mock(Span.class);
+		fragmentationServiceDecorator.addMemberToFragment(parentFragment, memberId, span);
 		Mockito.verify(fragmentationService,
-				Mockito.times(1)).addMemberToFragment(parentFragment, memberId);
+				Mockito.times(1)).addMemberToFragment(parentFragment, memberId, span);
 	}
 
 	static class FragmentationServiceDecoratorTestImpl extends
