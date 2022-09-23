@@ -53,7 +53,9 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				parentFragmentInfo.getViewName(), fragmentPairs);
 
-		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
+		return new LdesFragment(
+				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig.getHostName(), fragmentInfo.getViewName(),
+						fragmentInfo.getFragmentPairs()),
 				fragmentInfo);
 	}
 

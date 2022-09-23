@@ -35,7 +35,9 @@ public class GeospatialFragmentCreator implements FragmentCreator {
 				parentFragmentInfo.getViewName(),
 				fragmentPairs);
 
-		return new LdesFragment(LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
+		return new LdesFragment(
+				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig.getHostName(), fragmentInfo.getViewName(),
+						fragmentInfo.getFragmentPairs()),
 				fragmentInfo);
 	}
 }

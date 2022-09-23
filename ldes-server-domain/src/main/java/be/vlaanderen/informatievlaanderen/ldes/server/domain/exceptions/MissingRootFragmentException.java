@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 public class MissingRootFragmentException extends RuntimeException {
 	private final String viewName;
