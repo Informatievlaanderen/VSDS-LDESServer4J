@@ -72,7 +72,7 @@ class MemberIngestServiceImplTest {
 		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationMediator);
 		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
 		inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember);
-		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(ldesMember.getLdesMemberId());
+		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(savedLdesMember);
 		inOrder.verifyNoMoreInteractions();
 	}
 }

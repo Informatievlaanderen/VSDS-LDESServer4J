@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -29,18 +30,18 @@ public class TimebasedFragmentationService extends FragmentationServiceDecorator
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId, Span parentSpan) {
+	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
 		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
 		LdesFragment ldesFragment = retrieveLastFragmentOrCreateNewFragment(parentFragment.getFragmentInfo());
 
-		if (!ldesFragment.getMemberIds().contains(ldesMemberId)) {
+		if (!ldesFragment.getMemberIds().contains(ldesMember.getLdesMemberId())) {
 			ldesFragmentRepository.saveFragment(ldesFragment);
 
 			if (parentFragment.getRelations().stream()
 					.noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))) {
 				super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			}
-			super.addMemberToFragment(ldesFragment, ldesMemberId, timebasedFragmentationSpan);
+			super.addMemberToFragment(ldesFragment, ldesMember, timebasedFragmentationSpan);
 		}
 		timebasedFragmentationSpan.end();
 	}

@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
@@ -10,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.GeospatialRelationsAttributer;
 import org.springframework.cloud.sleuth.Span;
@@ -26,18 +24,15 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialFragmentationService extends FragmentationServiceDecorator {
 
-	private final LdesMemberRepository ldesMemberRepository;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final FragmentCreator fragmentCreator;
 	private final GeospatialBucketiser geospatialBucketiser;
 	private final Tracer tracer;
 
 	public GeospatialFragmentationService(FragmentationService fragmentationService,
-			LdesMemberRepository ldesMemberRepository,
 			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser, Tracer tracer) {
 		super(fragmentationService, ldesFragmentRepository);
-		this.ldesMemberRepository = ldesMemberRepository;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.fragmentCreator = fragmentCreator;
 		this.geospatialBucketiser = geospatialBucketiser;
@@ -45,16 +40,14 @@ public class GeospatialFragmentationService extends FragmentationServiceDecorato
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, String ldesMemberId, Span parentSpan) {
+	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
 		Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
-		LdesMember ldesMember = ldesMemberRepository.getLdesMemberById(ldesMemberId)
-				.orElseThrow(() -> new MemberNotFoundException(ldesMemberId));
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
 		List<LdesFragment> ldesFragments = retrieveFragmentsOrCreateNewFragments(parentFragment.getFragmentInfo(),
 				tiles);
 		addRelationsToRootFragment(parentFragment, ldesFragments);
 		ldesFragments.parallelStream().forEach(
-				ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMemberId, geospatialFragmentationSpan));
+				ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMember, geospatialFragmentationSpan));
 		geospatialFragmentationSpan.end();
 	}
 

@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+
 public interface FragmentationMediator {
 
-	void addMemberToFragment(String ldesMember);
+	void addMemberToFragment(LdesMember ldesMember);
 
-	void processMember(String ldesMember);
+	void processMember(LdesMember ldesMember);
 }

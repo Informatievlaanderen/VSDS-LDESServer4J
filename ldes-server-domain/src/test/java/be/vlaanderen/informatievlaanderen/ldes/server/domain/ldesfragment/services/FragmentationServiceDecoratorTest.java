@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -71,11 +72,11 @@ class FragmentationServiceDecoratorTest {
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationServiceIsCalled() {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
 				new FragmentInfo(VIEW_NAME, List.of()));
-		String memberId = "memberId";
+		LdesMember ldesMember = mock(LdesMember.class);
 		Span span = mock(Span.class);
-		fragmentationServiceDecorator.addMemberToFragment(parentFragment, memberId, span);
+		fragmentationServiceDecorator.addMemberToFragment(parentFragment, ldesMember, span);
 		Mockito.verify(fragmentationService,
-				Mockito.times(1)).addMemberToFragment(parentFragment, memberId, span);
+				Mockito.times(1)).addMemberToFragment(parentFragment, ldesMember, span);
 	}
 
 	static class FragmentationServiceDecoratorTestImpl extends

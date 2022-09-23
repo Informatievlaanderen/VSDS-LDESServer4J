@@ -21,7 +21,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
 			FragmentationService fragmentationService, FragmentationProperties properties) {
 		LdesConfig ldesConfig1 = applicationContext.getBean(LdesConfig.class);
-		LdesMemberRepository ldesMemberRepository1 = applicationContext.getBean(LdesMemberRepository.class);
+
 		LdesFragmentRepository ldesFragmentRepository1 = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
@@ -30,7 +30,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		CoordinateConverter coordinateConverter = CoordinateConverterFactory
 				.getCoordinateConverter(geospatialConfig.getProjection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
-		return new GeospatialFragmentationService(fragmentationService, ldesMemberRepository1,
+		return new GeospatialFragmentationService(fragmentationService,
 				ldesFragmentRepository1,
 				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser, tracer);
 	}
