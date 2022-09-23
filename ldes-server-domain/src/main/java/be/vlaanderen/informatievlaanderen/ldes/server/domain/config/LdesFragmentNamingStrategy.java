@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class LdesFragmentNamingStrategy {
@@ -9,15 +10,15 @@ public class LdesFragmentNamingStrategy {
 	private LdesFragmentNamingStrategy() {
 	}
 
-	public static String generateFragmentName(LdesConfig config, FragmentInfo fragmentInfo) {
+	public static String generateFragmentName(String hostname, String viewname, List<FragmentPair> fragmentPairs) {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append(config.getHostName())
-				.append("/").append(fragmentInfo.getViewName());
+		stringBuilder.append(hostname)
+				.append("/").append(viewname);
 
-		if (!fragmentInfo.getFragmentPairs().isEmpty()) {
+		if (!fragmentPairs.isEmpty()) {
 			stringBuilder.append("?");
 			stringBuilder
-					.append(fragmentInfo.getFragmentPairs().stream().map(fragmentPair -> fragmentPair.fragmentKey() +
+					.append(fragmentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
 							"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
 		}
 

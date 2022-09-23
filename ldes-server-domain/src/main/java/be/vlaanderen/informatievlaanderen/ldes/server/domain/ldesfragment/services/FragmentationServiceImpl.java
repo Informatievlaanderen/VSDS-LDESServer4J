@@ -36,7 +36,8 @@ public class FragmentationServiceImpl implements FragmentationService {
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				viewName, List.of());
 		LdesFragment ldesFragment = new LdesFragment(
-				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig, fragmentInfo),
+				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig.getHostName(), fragmentInfo.getViewName(),
+						fragmentInfo.getFragmentPairs()),
 				fragmentInfo);
 		ldesFragmentRepository.saveFragment(ldesFragment);
 	}
