@@ -24,7 +24,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	}
 
 	@Override
-	public void executeFragmentation(String memberId) {
+	public synchronized void executeFragmentation(String memberId) {
 		Span parentSpan = tracer.nextSpan().name("execute-fragmentation");
 		parentSpan.start();
 		fragmentationServices.entrySet().parallelStream().forEach(entry -> {

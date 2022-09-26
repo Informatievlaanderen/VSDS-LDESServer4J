@@ -7,10 +7,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,6 +58,24 @@ class FragmentationExecutorImplTest {
 				missingRootFragmentException.getMessage());
 		verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
+	}
+
+	@Test
+	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
+		LdesFragment ldesFragment = new LdesFragment("id", new FragmentInfo(VIEW_NAME, List.of()));
+		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
+				.thenReturn(Optional.of(ldesFragment));
+		IntStream.range(0, 100).parallel().forEach(i -> fragmentationExecutor.executeFragmentation("memberId" + i));
+
+		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationService);
+		IntStream.range(0, 100).forEach(i -> {
+			inOrder.verify(ldesFragmentRepository, times(1))
+					.retrieveRootFragment(VIEW_NAME);
+			inOrder.verify(fragmentationService, times(1)).addMemberToFragment(eq(ldesFragment),
+					any(), any());
+		});
+		inOrder.verifyNoMoreInteractions();
+
 	}
 
 }
