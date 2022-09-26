@@ -197,6 +197,11 @@ COMPOSE_DOCKER_CLI_BUILD=1 docker-compose build
 docker-compose up
 ```
 
+> **Note**: Using Docker Desktop might fail because of incorrect environment variable interpretation.
+> 
+> ```unexpected character "-" in variable name near ...```
+
+
 ## Developer Information
 
 ### How To Build
