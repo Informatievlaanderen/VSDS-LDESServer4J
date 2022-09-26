@@ -255,7 +255,7 @@ mvn clean verify -Dunittestskip=true
 ### Tracing and Metrics
 
 Additionally, it is possible to keep track of metrics and tracings of the LDES Server.
-This will be done through a Spring OTEL exporter for traces and a Prometheus endpoint for Metrics.
+This will be done through a Jaeger exporter for traces and a Prometheus endpoint for Metrics.
 
 To achieve this, the following properties are expected
 
@@ -266,7 +266,7 @@ spring:
   sleuth:
     otel:
       exporter:
-        otlp:
+        jaeger:
           endpoint: "endpoint of collector"
 management:
   endpoints:
@@ -286,7 +286,7 @@ spring:
 #### Using Docker
 
 ```
-SPRING_SLEUTH_OTEL_EXPORTER_OTLP_ENDPOINT="endpoint of collector"
+SPRING_SLEUTH_OTEL_EXPORTER_JAEGER_ENDPOINT="endpoint of collector"
 MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="prometheus"
 ```
 The export of traces can be disabled with the following parameter:
