@@ -23,7 +23,7 @@ class DirectFragmentationMediatorTest {
 
 	@Test
 	@DisplayName("Adding a member to the queue")
-	void when_MemberIsAddedForFragmentation_AThreadIsStartedWhichCallsTheFragmentationService() {
+	void when_MemberIsAddedForFragmentation_FragmentationExecutorIsCalled() {
 		LdesMember ldesMember = mock(LdesMember.class);
 		fragmentationMediator.addMemberToFragment(ldesMember);
 

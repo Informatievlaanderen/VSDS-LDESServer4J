@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

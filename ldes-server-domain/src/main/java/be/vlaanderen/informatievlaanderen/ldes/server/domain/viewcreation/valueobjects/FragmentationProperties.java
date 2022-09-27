@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingConfigurationException;
 

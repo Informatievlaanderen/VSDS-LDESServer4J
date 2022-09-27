@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
-public class GeospatialFragmentationServiceAutoConfiguration {
+public class GeospatialFragmentationStrategyAutoConfiguration {
 
 	@Bean("geospatial")
-	public GeospatialFragmentationUpdater geospatialFragmentationService() {
-		return new GeospatialFragmentationUpdater();
+	public GeospatialFragmentationStrategyWrapper geospatialFragmentationStrategyWrapper() {
+		return new GeospatialFragmentationStrategyWrapper();
 	}
 
 }

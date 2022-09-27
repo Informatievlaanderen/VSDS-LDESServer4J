@@ -13,13 +13,13 @@ import java.util.Map;
 @Component
 public class FragmentationExecutorImpl implements FragmentationExecutor {
 
-	private final Map<String, FragmentationService> fragmentationServices;
+	private final Map<String, FragmentationStrategy> fragmentationStrategyMap;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final Tracer tracer;
 
-	public FragmentationExecutorImpl(Map<String, FragmentationService> fragmentationServices,
+	public FragmentationExecutorImpl(Map<String, FragmentationStrategy> fragmentationStrategyMap,
 			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
-		this.fragmentationServices = fragmentationServices;
+		this.fragmentationStrategyMap = fragmentationStrategyMap;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.tracer = tracer;
 	}
@@ -28,7 +28,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	public synchronized void executeFragmentation(LdesMember memberId) {
 		Span parentSpan = tracer.nextSpan().name("execute-fragmentation");
 		parentSpan.start();
-		fragmentationServices.entrySet().parallelStream().forEach(entry -> {
+		fragmentationStrategyMap.entrySet().parallelStream().forEach(entry -> {
 			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentSpan);
 			entry.getValue().addMemberToFragment(rootFragmentOfView, memberId, parentSpan);
 		});

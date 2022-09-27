@@ -17,11 +17,6 @@ public class DirectFragmentationMediator implements FragmentationMediator {
 
 	@Override
 	public void addMemberToFragment(LdesMember ldesMember) {
-		this.processMember(ldesMember);
-	}
-
-	@Override
-	public void processMember(LdesMember ldesMember) {
 		fragmentationExecutor.executeFragmentation(ldesMember);
 	}
 }

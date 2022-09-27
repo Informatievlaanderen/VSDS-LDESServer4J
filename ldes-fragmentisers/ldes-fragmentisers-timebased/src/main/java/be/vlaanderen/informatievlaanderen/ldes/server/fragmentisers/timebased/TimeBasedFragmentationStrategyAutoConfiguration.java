@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
-public class TimeBasedFragmentationServiceAutoConfiguration {
+public class TimeBasedFragmentationStrategyAutoConfiguration {
 
 	@Bean("timebased")
-	public TimebasedFragmentationUpdater geospatialFragmentationService() {
-		return new TimebasedFragmentationUpdater();
+	public TimebasedFragmentationStrategyWrapper timebasedFragmentationStrategyWrapper() {
+		return new TimebasedFragmentationStrategyWrapper();
 	}
 }

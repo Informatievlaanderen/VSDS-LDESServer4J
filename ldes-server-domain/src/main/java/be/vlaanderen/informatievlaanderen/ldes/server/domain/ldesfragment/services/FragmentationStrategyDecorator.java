@@ -8,20 +8,20 @@ import org.springframework.cloud.sleuth.Span;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
-public abstract class FragmentationServiceDecorator implements FragmentationService {
+public abstract class FragmentationStrategyDecorator implements FragmentationStrategy {
 
-	private final FragmentationService fragmentationService;
+	private final FragmentationStrategy fragmentationStrategy;
 	private final LdesFragmentRepository ldesFragmentRepository;
 
-	protected FragmentationServiceDecorator(FragmentationService fragmentationService,
+	protected FragmentationStrategyDecorator(FragmentationStrategy fragmentationStrategy,
 			LdesFragmentRepository ldesFragmentRepository) {
-		this.fragmentationService = fragmentationService;
+		this.fragmentationStrategy = fragmentationStrategy;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
-		fragmentationService.addMemberToFragment(parentFragment, ldesMember, parentSpan);
+		fragmentationStrategy.addMemberToFragment(parentFragment, ldesMember, parentSpan);
 	}
 
 	protected void addRelationFromParentToChild(LdesFragment parentFragment, LdesFragment childFragment) {

@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationServiceDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.springframework.cloud.sleuth.Span;
@@ -14,16 +14,16 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
-public class TimebasedFragmentationService extends FragmentationServiceDecorator {
+public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
 	protected final FragmentCreator fragmentCreator;
 	protected final LdesFragmentRepository ldesFragmentRepository;
 
 	private final Tracer tracer;
 
-	public TimebasedFragmentationService(FragmentationService fragmentationService,
+	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			FragmentCreator fragmentCreator,
 			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
-		super(fragmentationService, ldesFragmentRepository);
+		super(fragmentationStrategy, ldesFragmentRepository);
 		this.fragmentCreator = fragmentCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.tracer = tracer;

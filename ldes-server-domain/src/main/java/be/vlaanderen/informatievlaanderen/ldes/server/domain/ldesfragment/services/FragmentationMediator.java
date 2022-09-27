@@ -5,6 +5,4 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities
 public interface FragmentationMediator {
 
 	void addMemberToFragment(LdesMember ldesMember);
-
-	void processMember(LdesMember ldesMember);
 }
