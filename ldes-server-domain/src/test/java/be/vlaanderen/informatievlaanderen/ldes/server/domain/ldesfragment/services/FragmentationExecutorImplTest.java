@@ -68,7 +68,8 @@ class FragmentationExecutorImplTest {
 		LdesFragment ldesFragment = new LdesFragment("id", new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
-		IntStream.range(0, 100).parallel().forEach(i -> fragmentationExecutor.executeFragmentation("memberId" + i));
+		IntStream.range(0, 100).parallel()
+				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(LdesMember.class)));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationService);
 		IntStream.range(0, 100).forEach(i -> {
