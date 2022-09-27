@@ -1,29 +1,23 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import org.apache.commons.io.FileUtils;
-import org.apache.jena.riot.Lang;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.cloud.sleuth.Span;
-import org.springframework.util.ResourceUtils;
+import org.springframework.cloud.sleuth.Tracer;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TracerMockHelper.mockTracer;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static org.mockito.Mockito.*;
 
 class TimebasedFragmentationStrategyTest {
@@ -31,121 +25,94 @@ class TimebasedFragmentationStrategyTest {
 	private static final String VIEW_NAME = "view";
 
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-
-	private final FragmentCreator fragmentCreator = mock(FragmentCreator.class);
-
+	private final OpenFragmentProvider openFragmentProvider = mock(OpenFragmentProvider.class);
+	private final FragmentationStrategy wrappedService = mock(FragmentationStrategy.class);
+	private final Tracer tracer = mock(Tracer.class);
 	private FragmentationStrategy fragmentationStrategy;
 
-	private final FragmentationStrategy wrappedService = mock(FragmentationStrategy.class);
-
-	private static LdesFragment ROOT_FRAGMENT;
+	private static LdesFragment PARENT_FRAGMENT;
+	private static LdesFragment OPEN_FRAGMENT;
 
 	@BeforeEach
 	void setUp() {
-		ROOT_FRAGMENT = new LdesFragment("rootFragment",
+		PARENT_FRAGMENT = new LdesFragment("parentFragment",
 				new FragmentInfo(VIEW_NAME, List.of()));
+		OPEN_FRAGMENT = new LdesFragment("openFragment",
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("generatedAtTime", "someTime"))));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(wrappedService,
-				fragmentCreator,
-				ldesFragmentRepository, mockTracer());
+				ldesFragmentRepository, openFragmentProvider, tracer);
 	}
 
 	@Test
-	@DisplayName("Adding Member when there is no existing fragment")
-	void when_NoFragmentExists_thenFragmentIsCreatedAndMemberIsAdded() throws IOException {
-		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-				StandardCharsets.UTF_8);
-		LdesMember ldesMember = new LdesMember(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		LdesFragment createdFragment = new LdesFragment("fragmentId",
-				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
-						"Value"))));
-		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
-				List.of()))
-				.thenReturn(Optional.empty());
-		when(fragmentCreator.createNewFragment(Optional.empty(), ROOT_FRAGMENT.getFragmentInfo()))
-				.thenReturn(createdFragment);
+	@DisplayName("Member Not Yet Added and No parent relation")
+	void when_MemberisNotYetAddedAndNoParentRelation_thenFragmentationIsAppliedAndRelationCreated() {
+		LdesMember ldesMember = mock(LdesMember.class);
+		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
+		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo()))
+				.thenReturn(OPEN_FRAGMENT);
+		Span parentSpan = mock(Span.class);
+		Span childSpan = mock(Span.class);
+		when(tracer.nextSpan(parentSpan)).thenReturn(childSpan);
+		when(childSpan.name("timebased fragmentation")).thenReturn(childSpan);
+		when(childSpan.start()).thenReturn(childSpan);
 
-		fragmentationStrategy.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember, mock(Span.class));
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
+				ldesMember, parentSpan);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
+		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
+		inOrder.verify(openFragmentProvider,
+				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo());
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveOpenChildFragment(VIEW_NAME,
-						List.of());
-		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(),
-				ROOT_FRAGMENT.getFragmentInfo());
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).saveFragment(createdFragment);
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).saveFragment(ROOT_FRAGMENT);
+				times(1)).saveFragment(PARENT_FRAGMENT);
+		inOrder.verify(wrappedService, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember, childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	@DisplayName("Adding Member when there is an incomplete fragment")
-	void when_AnIncompleteFragmentExists_thenMemberIsAddedToFragment() throws IOException {
-		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-				StandardCharsets.UTF_8);
-		LdesMember ldesMember = new LdesMember(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		LdesFragment existingLdesFragment = new LdesFragment("fragmentId",
-				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
-						"Value"))));
-		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
-				List.of()))
-				.thenReturn(Optional.of(existingLdesFragment));
+	@DisplayName("Member Not Yet Added but already parent relation")
+	void when_MemberisNotYetAddedButAlreadyParentRelation_thenFragmentationIsApplied() {
+		LdesMember ldesMember = mock(LdesMember.class);
+		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
+		PARENT_FRAGMENT.addRelation(new TreeRelation("", OPEN_FRAGMENT.getFragmentId(), "", "",
+				GENERIC_TREE_RELATION));
+		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo()))
+				.thenReturn(OPEN_FRAGMENT);
+		Span parentSpan = mock(Span.class);
+		Span childSpan = mock(Span.class);
+		when(tracer.nextSpan(parentSpan)).thenReturn(childSpan);
+		when(childSpan.name("timebased fragmentation")).thenReturn(childSpan);
+		when(childSpan.start()).thenReturn(childSpan);
 
-		fragmentationStrategy.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember, mock(Span.class));
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
+				ldesMember, parentSpan);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveOpenChildFragment(VIEW_NAME,
-						List.of());
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).saveFragment(existingLdesFragment);
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).saveFragment(ROOT_FRAGMENT);
+		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
+		inOrder.verify(openFragmentProvider,
+				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo());
+		inOrder.verify(wrappedService, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember, childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	@DisplayName("Adding Member when there is a complete fragment")
-	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndMemberIsAddedToNewFragment()
-			throws IOException {
-		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-				StandardCharsets.UTF_8);
-		LdesMember ldesMember = new LdesMember(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		LdesFragment existingLdesFragment = new LdesFragment("existingFragment",
-				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
-						"Value"))));
-		LdesFragment newFragment = new LdesFragment("someId",
-				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
-						"Value"))));
-		IntStream.range(0, 5).forEach(index -> existingLdesFragment.addMember("memberId"));
+	@DisplayName("Member Already Added")
+	void when_MemberIsAlreadyAdded_thenNoFragmentationIsApplied() {
+		LdesMember ldesMember = mock(LdesMember.class);
+		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
+		OPEN_FRAGMENT.addMember("memberId");
+		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo()))
+				.thenReturn(OPEN_FRAGMENT);
+		Span parentSpan = mock(Span.class);
+		Span childSpan = mock(Span.class);
+		when(tracer.nextSpan(parentSpan)).thenReturn(childSpan);
+		when(childSpan.name("timebased fragmentation")).thenReturn(childSpan);
+		when(childSpan.start()).thenReturn(childSpan);
 
-		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
-				List.of()))
-				.thenReturn(Optional.of(existingLdesFragment));
-		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
-		when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment),
-				ROOT_FRAGMENT.getFragmentInfo())).thenReturn(newFragment);
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
+				ldesMember, parentSpan);
 
-		fragmentationStrategy.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember, mock(Span.class));
-
-		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveOpenChildFragment(VIEW_NAME,
-						List.of());
-		inOrder.verify(fragmentCreator,
-				times(1)).createNewFragment(Optional.of(existingLdesFragment), ROOT_FRAGMENT.getFragmentInfo());
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(ROOT_FRAGMENT);
+		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
+		inOrder.verify(openFragmentProvider,
+				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo());
 		inOrder.verifyNoMoreInteractions();
 	}
 

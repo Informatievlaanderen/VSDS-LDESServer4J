@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
@@ -11,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.GeospatialRelationsAttributer;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -25,12 +25,12 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 public class GeospatialFragmentationStrategy extends FragmentationStrategyDecorator {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final FragmentCreator fragmentCreator;
+	private final GeospatialFragmentCreator fragmentCreator;
 	private final GeospatialBucketiser geospatialBucketiser;
 	private final Tracer tracer;
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository, FragmentCreator fragmentCreator,
+			LdesFragmentRepository ldesFragmentRepository, GeospatialFragmentCreator fragmentCreator,
 			GeospatialBucketiser geospatialBucketiser, Tracer tracer) {
 		super(fragmentationStrategy, ldesFragmentRepository);
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -61,7 +61,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.retrieveFragment(new LdesFragmentRequest(
 						parentFragment.getFragmentInfo().getViewName(),
 						List.of(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT))))
-				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), fragmentInfo));
+				.orElseGet(() -> fragmentCreator.createNewFragment(fragmentInfo));
 
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 
@@ -82,7 +82,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 									fragmentPairs));
 					FragmentInfo fragmentInfo1 = new FragmentInfo(
 							fragmentInfo.getViewName(), fragmentPairs);
-					return ldesFragment.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(),
+					return ldesFragment.orElseGet(() -> fragmentCreator.createNewFragment(
 							fragmentInfo1));
 				})
 				.toList();
