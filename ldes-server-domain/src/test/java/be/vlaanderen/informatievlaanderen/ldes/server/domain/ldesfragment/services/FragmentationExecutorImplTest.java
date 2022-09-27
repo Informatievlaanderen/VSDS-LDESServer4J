@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -37,22 +38,24 @@ class FragmentationExecutorImplTest {
 		LdesFragment ldesFragment = new LdesFragment("id", new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
+		LdesMember ldesMember = mock(LdesMember.class);
 
-		fragmentationExecutor.executeFragmentation("memberId");
+		fragmentationExecutor.executeFragmentation(ldesMember);
 
 		verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
 		verify(fragmentationService, times(1)).addMemberToFragment(eq(ldesFragment),
-				eq("memberId"), any());
+				eq(ldesMember), any());
 	}
 
 	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
 		when(ldesFragmentRepository.retrieveFragment(new LdesFragmentRequest(VIEW_NAME, List.of())))
 				.thenReturn(Optional.empty());
+		LdesMember ldesMember = mock(LdesMember.class);
 
 		MissingRootFragmentException missingRootFragmentException = assertThrows(MissingRootFragmentException.class,
-				() -> fragmentationExecutor.executeFragmentation("memberId"));
+				() -> fragmentationExecutor.executeFragmentation(ldesMember));
 
 		assertEquals("Could not retrieve root fragment for view view",
 				missingRootFragmentException.getMessage());
@@ -65,7 +68,8 @@ class FragmentationExecutorImplTest {
 		LdesFragment ldesFragment = new LdesFragment("id", new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
-		IntStream.range(0, 100).parallel().forEach(i -> fragmentationExecutor.executeFragmentation("memberId" + i));
+		IntStream.range(0, 100).parallel()
+				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(LdesMember.class)));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationService);
 		IntStream.range(0, 100).forEach(i -> {

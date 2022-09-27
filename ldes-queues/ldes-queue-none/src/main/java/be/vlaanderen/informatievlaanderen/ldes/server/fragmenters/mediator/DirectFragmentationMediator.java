@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmenters.mediator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +16,12 @@ public class DirectFragmentationMediator implements FragmentationMediator {
 	}
 
 	@Override
-	public void addMemberToFragment(String ldesMember) {
+	public void addMemberToFragment(LdesMember ldesMember) {
 		this.processMember(ldesMember);
 	}
 
 	@Override
-	public void processMember(String ldesMember) {
+	public void processMember(LdesMember ldesMember) {
 		fragmentationExecutor.executeFragmentation(ldesMember);
 	}
 }

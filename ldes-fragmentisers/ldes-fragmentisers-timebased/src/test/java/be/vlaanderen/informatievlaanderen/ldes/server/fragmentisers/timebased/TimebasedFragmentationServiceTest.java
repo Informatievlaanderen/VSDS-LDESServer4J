@@ -67,7 +67,7 @@ class TimebasedFragmentationServiceTest {
 				.thenReturn(createdFragment);
 
 		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember.getLdesMemberId(), mock(Span.class));
+				ldesMember, mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
@@ -98,7 +98,7 @@ class TimebasedFragmentationServiceTest {
 				.thenReturn(Optional.of(existingLdesFragment));
 
 		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember.getLdesMemberId(), mock(Span.class));
+				ldesMember, mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
@@ -136,7 +136,7 @@ class TimebasedFragmentationServiceTest {
 				ROOT_FRAGMENT.getFragmentInfo())).thenReturn(newFragment);
 
 		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
-				ldesMember.getLdesMemberId(), mock(Span.class));
+				ldesMember, mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,

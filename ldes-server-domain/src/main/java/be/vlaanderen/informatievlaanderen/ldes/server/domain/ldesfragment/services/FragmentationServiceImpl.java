@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragment
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -43,9 +44,9 @@ public class FragmentationServiceImpl implements FragmentationService {
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment ldesFragment, String ldesMemberId, Span parentSpan) {
+	public void addMemberToFragment(LdesFragment ldesFragment, LdesMember ldesMember, Span parentSpan) {
 		Span finalSpan = tracer.nextSpan(parentSpan).name("add Member to fragment").start();
-		ldesFragment.addMember(ldesMemberId);
+		ldesFragment.addMember(ldesMember.getLdesMemberId());
 		ldesFragmentRepository.saveFragment(ldesFragment);
 		finalSpan.end();
 	}

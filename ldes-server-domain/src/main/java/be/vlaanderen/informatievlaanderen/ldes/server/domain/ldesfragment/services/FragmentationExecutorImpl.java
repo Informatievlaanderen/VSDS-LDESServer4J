@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	}
 
 	@Override
-	public synchronized void executeFragmentation(String memberId) {
+	public synchronized void executeFragmentation(LdesMember memberId) {
 		Span parentSpan = tracer.nextSpan().name("execute-fragmentation");
 		parentSpan.start();
 		fragmentationServices.entrySet().parallelStream().forEach(entry -> {

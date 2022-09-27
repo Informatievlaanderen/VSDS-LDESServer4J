@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverterFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
@@ -21,7 +20,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
 			FragmentationService fragmentationService, FragmentationProperties properties) {
 		LdesConfig ldesConfig1 = applicationContext.getBean(LdesConfig.class);
-		LdesMemberRepository ldesMemberRepository1 = applicationContext.getBean(LdesMemberRepository.class);
+
 		LdesFragmentRepository ldesFragmentRepository1 = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
@@ -30,7 +29,7 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		CoordinateConverter coordinateConverter = CoordinateConverterFactory
 				.getCoordinateConverter(geospatialConfig.getProjection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
-		return new GeospatialFragmentationService(fragmentationService, ldesMemberRepository1,
+		return new GeospatialFragmentationService(fragmentationService,
 				ldesFragmentRepository1,
 				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser, tracer);
 	}
