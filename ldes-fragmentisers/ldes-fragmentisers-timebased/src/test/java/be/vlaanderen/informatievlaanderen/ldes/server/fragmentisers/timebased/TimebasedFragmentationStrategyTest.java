@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TracerMockHelper.mockTracer;
 import static org.mockito.Mockito.*;
 
-class TimebasedFragmentationServiceTest {
+class TimebasedFragmentationStrategyTest {
 
 	private static final String VIEW_NAME = "view";
 
@@ -34,9 +34,9 @@ class TimebasedFragmentationServiceTest {
 
 	private final FragmentCreator fragmentCreator = mock(FragmentCreator.class);
 
-	private FragmentationService fragmentationService;
+	private FragmentationStrategy fragmentationStrategy;
 
-	private final FragmentationService wrappedService = mock(FragmentationService.class);
+	private final FragmentationStrategy wrappedService = mock(FragmentationStrategy.class);
 
 	private static LdesFragment ROOT_FRAGMENT;
 
@@ -44,7 +44,7 @@ class TimebasedFragmentationServiceTest {
 	void setUp() {
 		ROOT_FRAGMENT = new LdesFragment("rootFragment",
 				new FragmentInfo(VIEW_NAME, List.of()));
-		fragmentationService = new TimebasedFragmentationService(wrappedService,
+		fragmentationStrategy = new TimebasedFragmentationStrategy(wrappedService,
 				fragmentCreator,
 				ldesFragmentRepository, mockTracer());
 	}
@@ -66,7 +66,7 @@ class TimebasedFragmentationServiceTest {
 		when(fragmentCreator.createNewFragment(Optional.empty(), ROOT_FRAGMENT.getFragmentInfo()))
 				.thenReturn(createdFragment);
 
-		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
+		fragmentationStrategy.addMemberToFragment(ROOT_FRAGMENT,
 				ldesMember, mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
@@ -97,7 +97,7 @@ class TimebasedFragmentationServiceTest {
 				List.of()))
 				.thenReturn(Optional.of(existingLdesFragment));
 
-		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
+		fragmentationStrategy.addMemberToFragment(ROOT_FRAGMENT,
 				ldesMember, mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
@@ -135,7 +135,7 @@ class TimebasedFragmentationServiceTest {
 		when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment),
 				ROOT_FRAGMENT.getFragmentInfo())).thenReturn(newFragment);
 
-		fragmentationService.addMemberToFragment(ROOT_FRAGMENT,
+		fragmentationStrategy.addMemberToFragment(ROOT_FRAGMENT,
 				ldesMember, mock(Span.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);

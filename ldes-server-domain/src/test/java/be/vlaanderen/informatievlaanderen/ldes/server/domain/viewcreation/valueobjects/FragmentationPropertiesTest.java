@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingConfigurationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
@@ -42,13 +42,21 @@ class FragmentationPropertiesTest {
 
 	@Test
 	void test_Equality() {
+		FragmentationProperties otherFragmentationProperties = new FragmentationProperties(Map.of("key", "value"));
+		assertEquals(otherFragmentationProperties, fragmentationProperties);
+		assertEquals(otherFragmentationProperties.hashCode(), fragmentationProperties.hashCode());
 		assertEquals(fragmentationProperties, fragmentationProperties);
+		assertEquals(fragmentationProperties.hashCode(), fragmentationProperties.hashCode());
+		assertEquals(otherFragmentationProperties, otherFragmentationProperties);
+		assertEquals(otherFragmentationProperties.hashCode(), otherFragmentationProperties.hashCode());
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(FragmentationPropertiesArgumentsProvider.class)
 	void test_Inequality(Object otherFragmentationProperties) {
 		assertNotEquals(fragmentationProperties, otherFragmentationProperties);
+		if (otherFragmentationProperties != null)
+			assertNotEquals(fragmentationProperties.hashCode(), otherFragmentationProperties.hashCode());
 	}
 
 	static class FragmentationPropertiesArgumentsProvider implements ArgumentsProvider {

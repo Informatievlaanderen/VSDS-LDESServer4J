@@ -1,19 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.FragmentationProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TimebasedProperties.MEMBER_LIMIT;
 
-public class TimebasedFragmentationUpdater implements FragmentationUpdater {
+public class TimebasedFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
-	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
-			FragmentationService fragmentationService, FragmentationProperties properties) {
+	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
+			FragmentationStrategy fragmentationStrategy, FragmentationProperties properties) {
 		LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
 		LdesFragmentRepository ldesFragmentRepository1 = applicationContext.getBean(LdesFragmentRepository.class);
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
@@ -22,7 +22,7 @@ public class TimebasedFragmentationUpdater implements FragmentationUpdater {
 		TimeBasedFragmentCreator timeBasedFragmentCreator = new TimeBasedFragmentCreator(ldesConfig,
 				timebasedFragmentationConfig,
 				ldesFragmentRepository1);
-		return new TimebasedFragmentationService(fragmentationService, timeBasedFragmentCreator,
+		return new TimebasedFragmentationStrategy(fragmentationStrategy, timeBasedFragmentCreator,
 				ldesFragmentRepository1, tracer);
 
 	}

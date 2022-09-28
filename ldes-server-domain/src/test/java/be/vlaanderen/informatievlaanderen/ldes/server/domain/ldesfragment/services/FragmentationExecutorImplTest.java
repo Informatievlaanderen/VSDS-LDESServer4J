@@ -23,18 +23,18 @@ import static org.mockito.Mockito.*;
 class FragmentationExecutorImplTest {
 
 	private static final String VIEW_NAME = "view";
-	private final FragmentationService fragmentationService = mock(FragmentationService.class);
+	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private FragmentationExecutorImpl fragmentationExecutor;
 
 	@BeforeEach
 	void setUp() {
-		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationService),
+		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationStrategy),
 				ldesFragmentRepository, mockTracer());
 	}
 
 	@Test
-	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationServiceIsCalled() {
+	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
 		LdesFragment ldesFragment = new LdesFragment("id", new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
@@ -44,7 +44,7 @@ class FragmentationExecutorImplTest {
 
 		verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
-		verify(fragmentationService, times(1)).addMemberToFragment(eq(ldesFragment),
+		verify(fragmentationStrategy, times(1)).addMemberToFragment(eq(ldesFragment),
 				eq(ldesMember), any());
 	}
 
@@ -71,11 +71,11 @@ class FragmentationExecutorImplTest {
 		IntStream.range(0, 100).parallel()
 				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(LdesMember.class)));
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationService);
+		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
 		IntStream.range(0, 100).forEach(i -> {
 			inOrder.verify(ldesFragmentRepository, times(1))
 					.retrieveRootFragment(VIEW_NAME);
-			inOrder.verify(fragmentationService, times(1)).addMemberToFragment(eq(ldesFragment),
+			inOrder.verify(fragmentationStrategy, times(1)).addMemberToFragment(eq(ldesFragment),
 					any(), any());
 		});
 		inOrder.verifyNoMoreInteractions();

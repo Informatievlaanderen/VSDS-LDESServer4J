@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 
@@ -17,17 +16,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-class FragmentationServiceDecoratorTest {
-	FragmentationService fragmentationService = mock(FragmentationService.class);
+class FragmentationStrategyDecoratorTest {
+	FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
-	private FragmentationServiceDecorator fragmentationServiceDecorator;
+	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
 	private static final String VIEW_NAME = "view";
 	private static final String PARENT_FRAGMENT_ID = "parent";
 	private static final String CHILD_FRAGMENT_ID = "child";
 
 	@BeforeEach
 	void setUp() {
-		fragmentationServiceDecorator = new FragmentationServiceDecoratorTestImpl(fragmentationService,
+		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
 				fragmentRepository);
 	}
 
@@ -39,7 +38,7 @@ class FragmentationServiceDecoratorTest {
 		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
 				new FragmentInfo(VIEW_NAME, List.of()));
 
-		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment,
+		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
 		assertEquals(1, parentFragment.getRelations().size());
@@ -58,7 +57,7 @@ class FragmentationServiceDecoratorTest {
 				new FragmentInfo(VIEW_NAME, List.of()));
 		parentFragment.addRelation(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
 				GENERIC_TREE_RELATION));
-		fragmentationServiceDecorator.addRelationFromParentToChild(parentFragment,
+		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
 		assertEquals(1, parentFragment.getRelations().size());
@@ -69,22 +68,22 @@ class FragmentationServiceDecoratorTest {
 	}
 
 	@Test
-	void when_DecoratorAddsMemberToFragment_WrappedFragmentationServiceIsCalled() {
+	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
 		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
 				new FragmentInfo(VIEW_NAME, List.of()));
 		LdesMember ldesMember = mock(LdesMember.class);
 		Span span = mock(Span.class);
-		fragmentationServiceDecorator.addMemberToFragment(parentFragment, ldesMember, span);
-		Mockito.verify(fragmentationService,
+		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, ldesMember, span);
+		Mockito.verify(fragmentationStrategy,
 				Mockito.times(1)).addMemberToFragment(parentFragment, ldesMember, span);
 	}
 
-	static class FragmentationServiceDecoratorTestImpl extends
-			FragmentationServiceDecorator {
+	static class FragmentationStrategyDecoratorTestImpl extends
+			FragmentationStrategyDecorator {
 
-		protected FragmentationServiceDecoratorTestImpl(FragmentationService fragmentationService,
+		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
 				LdesFragmentRepository ldesFragmentRepository) {
-			super(fragmentationService, ldesFragmentRepository);
+			super(fragmentationStrategy, ldesFragmentRepository);
 		}
 	}
 }

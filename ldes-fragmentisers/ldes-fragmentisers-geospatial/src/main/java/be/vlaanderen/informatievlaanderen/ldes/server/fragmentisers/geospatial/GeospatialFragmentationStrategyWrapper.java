@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.FragmentationProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationUpdater;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverterFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
@@ -15,13 +15,12 @@ import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
 
-public class GeospatialFragmentationUpdater implements FragmentationUpdater {
+public class GeospatialFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
-	public FragmentationService updateFragmentationService(ApplicationContext applicationContext,
-			FragmentationService fragmentationService, FragmentationProperties properties) {
-		LdesConfig ldesConfig1 = applicationContext.getBean(LdesConfig.class);
-
-		LdesFragmentRepository ldesFragmentRepository1 = applicationContext.getBean(LdesFragmentRepository.class);
+	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
+			FragmentationStrategy fragmentationStrategy, FragmentationProperties properties) {
+		LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
+		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(properties);
@@ -29,9 +28,9 @@ public class GeospatialFragmentationUpdater implements FragmentationUpdater {
 		CoordinateConverter coordinateConverter = CoordinateConverterFactory
 				.getCoordinateConverter(geospatialConfig.getProjection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
-		return new GeospatialFragmentationService(fragmentationService,
-				ldesFragmentRepository1,
-				new GeospatialFragmentCreator(ldesConfig1), geospatialBucketiser, tracer);
+		return new GeospatialFragmentationStrategy(fragmentationStrategy,
+				ldesFragmentRepository,
+				new GeospatialFragmentCreator(ldesConfig), geospatialBucketiser, tracer);
 	}
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {

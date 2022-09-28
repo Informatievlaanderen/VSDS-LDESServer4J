@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryFragmentationMediator implements FragmentationMediator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryFragmentationMediator.class);
-	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+	private final ExecutorService executorService;
 	private final LinkedBlockingQueue<LdesMember> ldesMembersToFragment = new LinkedBlockingQueue<>();
 
 	private final FragmentationExecutor fragmentationExecutor;
@@ -24,6 +24,7 @@ public class InMemoryFragmentationMediator implements FragmentationMediator {
 			MeterRegistry meterRegistry) {
 		LOGGER.info("Server has been configured to queue ldes members for fragmentation IN MEMORY");
 		this.fragmentationExecutor = fragmentationExecutor;
+		this.executorService = Executors.newSingleThreadExecutor();
 		ldesMembersToFragmentTracker = meterRegistry.gauge("ldes_server_members_to_fragment", new AtomicInteger(0));
 	}
 
@@ -31,11 +32,6 @@ public class InMemoryFragmentationMediator implements FragmentationMediator {
 	public void addMemberToFragment(LdesMember ldesMember) {
 		ldesMembersToFragment.add(ldesMember);
 		ldesMembersToFragmentTracker.set(ldesMembersToFragment.size());
-		processMember(ldesMember);
-	}
-
-	@Override
-	public void processMember(LdesMember ldesMember) {
 		executorService.submit(() -> {
 			fragmentationExecutor.executeFragmentation(ldesMembersToFragment.poll());
 			ldesMembersToFragmentTracker.set(ldesMembersToFragment.size());
