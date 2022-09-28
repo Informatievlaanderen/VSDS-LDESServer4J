@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import org.springframework.http.HttpHeaders;

@@ -31,7 +31,6 @@ public class LdesMemberEntity {
 		StringWriter outputStream = new StringWriter();
 		RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.NQUADS);
 		String ldesMemberString = outputStream.toString();
-
 		return new LdesMemberEntity(ldesMember.getLdesMemberId(), ldesMemberString);
 	}
 

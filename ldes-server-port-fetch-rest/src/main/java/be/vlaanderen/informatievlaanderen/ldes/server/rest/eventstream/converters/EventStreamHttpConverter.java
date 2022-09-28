@@ -1,9 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.converters;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpInputMessage;
@@ -20,12 +19,12 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 
-public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
+public class EventStreamHttpConverter implements HttpMessageConverter<EventStream> {
 
-	private final LdesFragmentConverter ldesFragmentConverter;
+	private final EventStreamConverter eventStreamConverter;
 
-	public LdesFragmentHttpConverter(LdesFragmentConverter ldesFragmentConverter) {
-		this.ldesFragmentConverter = ldesFragmentConverter;
+	public EventStreamHttpConverter(EventStreamConverter eventStreamConverter) {
+		this.eventStreamConverter = eventStreamConverter;
 	}
 
 	@Override
@@ -35,7 +34,7 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
 	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-		return clazz.isAssignableFrom(LdesFragment.class);
+		return clazz.isAssignableFrom(EventStream.class);
 	}
 
 	@Override
@@ -45,19 +44,20 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 	}
 
 	@Override
-	public LdesFragment read(Class<? extends LdesFragment> clazz, HttpInputMessage inputMessage)
+	public EventStream read(Class<? extends EventStream> clazz, HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
 		return null;
 	}
 
 	@Override
-	public void write(LdesFragment ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
+	public void write(EventStream eventStream, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 
 		OutputStream body = outputMessage.getBody();
 		Lang rdfFormat = getLang(contentType, FETCH);
-		Model fragmentModel = ldesFragmentConverter.toModel(ldesFragment);
+		Model fragmentModel = eventStreamConverter.toModel(eventStream);
 		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
 		body.write(outputString.getBytes());
 	}
+
 }
