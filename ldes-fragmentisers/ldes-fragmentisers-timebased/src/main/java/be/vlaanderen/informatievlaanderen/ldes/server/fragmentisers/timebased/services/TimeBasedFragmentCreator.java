@@ -67,7 +67,7 @@ public class TimeBasedFragmentCreator {
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.setImmutable(true);
-		completeLdesFragment.addRelation(new TreeRelation(GENERATED_AT_TIME,
+		completeLdesFragment.addRelation(new TreeRelation(PROV_GENERATED_AT_TIME,
 				newFragment.getFragmentId(),
 				newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
 						() -> new MissingFragmentValueException(newFragment.getFragmentId(), GENERATED_AT_TIME)),
@@ -75,7 +75,7 @@ public class TimeBasedFragmentCreator {
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
 		newFragment.addRelation(
-				new TreeRelation(GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
+				new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
 						completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
 								() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
 										GENERATED_AT_TIME)),

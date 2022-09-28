@@ -25,8 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator.DATE_TIME_TYPE;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,11 +84,11 @@ class TimeBasedFragmentCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
-		verifyRelationOfFragment(newFragment, GENERATED_AT_TIME, "someId", "Value",
-				"tree:LessThanOrEqualToRelation");
-		verifyRelationOfFragment(existingLdesFragment, "generatedAtTime",
+		verifyRelationOfFragment(newFragment, PROV_GENERATED_AT_TIME, "someId", "Value",
+				TREE_LESSER_THAN_OR_EQUAL_TO_RELATION);
+		verifyRelationOfFragment(existingLdesFragment, PROV_GENERATED_AT_TIME,
 				"http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z",
-				"2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
+				"2020-12-28T09:36:37.127Z", TREE_GREATER_THAN_OR_EQUAL_TO_RELATION);
 		verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
 	}
 

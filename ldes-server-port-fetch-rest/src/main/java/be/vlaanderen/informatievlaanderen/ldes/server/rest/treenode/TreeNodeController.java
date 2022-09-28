@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 @RestController
-public class LdesFragmentController {
+public class TreeNodeController {
 
 	private static final String CACHE_CONTROL_HEADER = "Cache-Control";
 	private static final String CACHE_CONTROL_IMMUTABLE = "public, max-age=604800, immutable";
@@ -21,7 +21,7 @@ public class LdesFragmentController {
 
 	private final FragmentFetchService fragmentFetchService;
 
-	public LdesFragmentController(FragmentFetchService fragmentFetchService) {
+	public TreeNodeController(FragmentFetchService fragmentFetchService) {
 		this.fragmentFetchService = fragmentFetchService;
 	}
 
@@ -38,9 +38,11 @@ public class LdesFragmentController {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
+
 		LdesFragment fragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, fragment);
 		return fragment;
+
 	}
 
 	private void setCacheControlHeader(HttpServletResponse response, LdesFragment fragment) {

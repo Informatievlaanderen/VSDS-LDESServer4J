@@ -1,14 +1,14 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.converters.LdesFragmentHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.converters.LdesFragmentHttpConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 
 @Configuration
-public class WebConfig {
+public class TreeViewWebConfig {
 
 	@Bean
 	public HttpMessageConverter<LdesFragment> ldesFragmentHttpConverter(

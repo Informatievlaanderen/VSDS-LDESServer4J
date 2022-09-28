@@ -1,16 +1,20 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.WebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -37,7 +41,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,14 +51,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-@Import(LdesFragmentControllerTest.LdesFragmentControllerTestConfiguration.class)
-@ContextConfiguration(classes = { LdesFragmentController.class,
-		LdesConfig.class, WebConfig.class })
-class LdesFragmentControllerTest {
-	private static final String LDES_EVENTSTREAM = "https://w3id.org/ldes#EventStream";
+@Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
+@ContextConfiguration(classes = { TreeNodeController.class,
+		LdesConfig.class, TreeViewWebConfig.class, RestResponseEntityExceptionHandler.class })
+class TreeNodeControllerTest {
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
-	private static final String SHAPE = "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape";
 	private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances/view?" + GENERATED_AT_TIME
 			+ "="
 			+ FRAGMENTATION_VALUE_1;
@@ -63,89 +66,16 @@ class LdesFragmentControllerTest {
 	@MockBean
 	private FragmentFetchService fragmentFetchService;
 
-	@Test
-	@DisplayName("Correct getting of an initial empty LdesFragment")
-	void when_GETRequestAndNoFragmentIsCreatedYet_ResponseContainsAnEmptyLDesFragment()
-			throws Exception {
-		LdesFragment emptyFragment = new LdesFragment(FRAGMENT_ID,
-				new FragmentInfo(VIEW_NAME, List.of()));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME, List.of());
-		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(emptyFragment);
-
-		ResultActions resultActions = mockMvc
-				.perform(get("/{viewName}",
-						VIEW_NAME).accept("application/ld+json"))
-				.andDo(print())
-				.andExpect(status().isOk());
-
-		MvcResult result = resultActions.andReturn();
-		String headerValue = result.getResponse().getHeader("Cache-Control");
-		assertEquals("public, max-age=60", headerValue);
-		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString())
-				.lang(Lang.JSONLD11)
-				.toModel();
-		assertEquals(SHAPE, getObjectURI(resultModel,
-				RdfConstants.TREE_SHAPE));
-		assertEquals(PROV_GENERATED_AT_TIME, getObjectURI(resultModel,
-				RdfConstants.LDES_TIMESTAMP_PATH));
-		assertEquals(VERSION_OF_URI, getObjectURI(resultModel,
-				RdfConstants.LDES_VERSION_OF));
-		assertEquals(FRAGMENT_ID, getObjectURI(resultModel, RdfConstants.TREE_VIEW));
-		assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel,
-				RdfConstants.RDF_SYNTAX_TYPE));
-		verify(fragmentFetchService,
-				times(1)).getFragment(ldesFragmentRequest);
-		verifyNoMoreInteractions(fragmentFetchService);
-	}
-
-	@Test
-	@DisplayName("Correct returning a complete fragment")
-	void when_GETRequestIsPerformedAndFragmentIsAvailable_FragmentIsReturnedAndResponseContainsRedirect()
-			throws Exception {
-		FragmentInfo fragmentInfo = new FragmentInfo(
-				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
-						FRAGMENTATION_VALUE_1)));
-		fragmentInfo.setImmutable(true);
-		LdesFragment realFragment = new LdesFragment(FRAGMENT_ID, fragmentInfo);
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
-				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(realFragment);
-
-		ResultActions resultActions = mockMvc
-				.perform(get("/{viewName}",
-						VIEW_NAME)
-						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
-						.accept("application/ld+json"))
-				.andDo(print())
-				.andExpect(status().isOk());
-
-		MvcResult result = resultActions.andReturn();
-		String headerValue = result.getResponse().getHeader("Cache-Control");
-		assertEquals("public, max-age=604800, immutable", headerValue);
-		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString())
-				.lang(Lang.JSONLD11)
-				.toModel();
-		assertEquals(SHAPE, getObjectURI(resultModel,
-				RdfConstants.TREE_SHAPE));
-		assertEquals(PROV_GENERATED_AT_TIME, getObjectURI(resultModel,
-				RdfConstants.LDES_TIMESTAMP_PATH));
-		assertEquals(VERSION_OF_URI, getObjectURI(resultModel,
-				RdfConstants.LDES_VERSION_OF));
-		assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel,
-				RdfConstants.RDF_SYNTAX_TYPE));
-		verify(fragmentFetchService, times(1)).getFragment(ldesFragmentRequest);
-		verifyNoMoreInteractions(fragmentFetchService);
-	}
-
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
-	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang) throws
+	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
+			String expectedHeaderValue) throws
 
 	Exception {
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
 						FRAGMENTATION_VALUE_1))));
-
+		ldesFragment.setImmutable(immutable);
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
@@ -158,20 +88,16 @@ class LdesFragmentControllerTest {
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
+		String headerValue = result.getResponse().getHeader("Cache-Control");
+		assertEquals(expectedHeaderValue, headerValue);
 		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
 				.toModel();
-		assertEquals(SHAPE, getObjectURI(resultModel,
-				RdfConstants.TREE_SHAPE));
-		assertEquals(PROV_GENERATED_AT_TIME, getObjectURI(resultModel,
-				RdfConstants.LDES_TIMESTAMP_PATH));
-		assertEquals(VERSION_OF_URI, getObjectURI(resultModel,
-				RdfConstants.LDES_VERSION_OF));
-		assertEquals(LDES_EVENTSTREAM, getObjectURI(resultModel,
+		assertEquals(TREE_NODE_RESOURCE, getObjectURI(resultModel,
 				RdfConstants.RDF_SYNTAX_TYPE));
 		verify(fragmentFetchService, times(1)).getFragment(ldesFragmentRequest);
 	}
 
-	public String getObjectURI(Model model, Property property) {
+	private String getObjectURI(Model model, Property property) {
 		return model
 				.listStatements(null, property, (Resource) null)
 				.nextOptional()
@@ -198,6 +124,21 @@ class LdesFragmentControllerTest {
 	}
 
 	@Test
+	void when_GETRequestButMissingFragmentExceptionIsThrown_NotFoundIsReturned()
+			throws Exception {
+
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+				List.of());
+		when(fragmentFetchService.getFragment(ldesFragmentRequest))
+				.thenThrow(new MissingFragmentException("fragmentId"));
+
+		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
+				.andExpect(status().isNotFound());
+		assertEquals("No fragment exists with fragment identifier: fragmentId",
+				resultActions.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
 	@DisplayName("Requesting using another collection name returns 404")
 	void when_GETRequestIsPerformedOnOtherCollectionName_ResponseIs404() throws Exception {
 		mockMvc.perform(get("/")
@@ -212,19 +153,21 @@ class LdesFragmentControllerTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of("application/n-quads", Lang.NQUADS),
-					Arguments.of("application/ld+json", Lang.JSONLD11),
-					Arguments.of("application/turtle", Lang.TURTLE));
+			return Stream.of(
+					Arguments.of("application/n-quads", Lang.NQUADS, true, "public, max-age=604800, immutable"),
+					Arguments.of("application/ld+json", Lang.JSONLD11, true, "public, max-age=604800, immutable"),
+					Arguments.of("application/turtle", Lang.TURTLE, false, "public, max-age=60"));
 		}
 	}
 
 	@TestConfiguration
-	public static class LdesFragmentControllerTestConfiguration {
+	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
 		public LdesFragmentConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
 			LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
-			return new LdesFragmentConverterImpl(ldesMemberRepository, ldesConfig);
+			PrefixAdder prefixAdder = new PrefixAdderImpl();
+			return new LdesFragmentConverterImpl(ldesMemberRepository, prefixAdder, ldesConfig);
 		}
 	}
 }
