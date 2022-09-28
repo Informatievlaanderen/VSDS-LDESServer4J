@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config;
 
 public class TimebasedProperties {
 	private TimebasedProperties() {

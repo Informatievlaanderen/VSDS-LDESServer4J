@@ -1,14 +1,14 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 
-public class TimeBasedFragmentCreator implements FragmentCreator {
+public class TimeBasedFragmentCreator {
 
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
 	protected final LdesConfig ldesConfig;
@@ -33,7 +33,6 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
-	@Override
 	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment,
 			FragmentInfo parentFragmentInfo) {
 		LdesFragment newFragment = createNewFragment(parentFragmentInfo);
@@ -42,7 +41,6 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		return newFragment;
 	}
 
-	@Override
 	public boolean needsToCreateNewFragment(LdesFragment fragment) {
 		return fragment.getCurrentNumberOfMembers() >= timebasedFragmentationConfig.getMemberLimit();
 	}
@@ -66,7 +64,7 @@ public class TimeBasedFragmentCreator implements FragmentCreator {
 		return fragmentPairs;
 	}
 
-	protected void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
+	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.setImmutable(true);
 		completeLdesFragment.addRelation(new TreeRelation(GENERATED_AT_TIME,
