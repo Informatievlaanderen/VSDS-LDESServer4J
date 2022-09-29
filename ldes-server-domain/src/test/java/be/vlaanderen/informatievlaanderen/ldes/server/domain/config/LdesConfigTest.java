@@ -26,6 +26,6 @@ class LdesConfigTest {
 				ldesConfig.getShape());
 		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
 		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
-		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOf());
+		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOfPath());
 	}
 }

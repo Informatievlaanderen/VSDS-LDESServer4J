@@ -79,7 +79,7 @@ class EventStreamControllerTest {
 						<http://localhost:8080/collection> <https://w3id.org/tree#view> <http://localhost:8080/viewTwo> .
 						<http://localhost:8080/collection> <https://w3id.org/tree#view> <http://localhost:8080/viewOne> .
 						<http://localhost:8080/collection> <https://w3id.org/ldes#timestampPath> <timestampPath> .
-						<http://localhost:8080/collection> <https://w3id.org/ldes#versionOf> <versionOf> .
+						<http://localhost:8080/collection> <https://w3id.org/ldes#versionOfPath> <versionOf> .
 						<http://localhost:8080/collection> <https://w3id.org/tree#shape> <shape> .
 						<http://localhost:8080/collection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .""",
 				Lang.NQUADS);

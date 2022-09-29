@@ -18,9 +18,7 @@ public class RdfConstants {
 	public static final Property TREE_MEMBER = createProperty(TREE, "member");
 	public static final String TREE_NODE_RESOURCE = TREE + "Node";
 	public static final String LDES = "https://w3id.org/ldes#";
-	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOf");
-	public static final String DC_TERMS = "http://purl.org/dc/terms/";
-	public static final String VERSION_OF_URI = DC_TERMS + "isVersionOf";
+	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOfPath");
 	public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");

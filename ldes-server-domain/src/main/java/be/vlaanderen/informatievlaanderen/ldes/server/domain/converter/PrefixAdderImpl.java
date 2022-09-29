@@ -28,7 +28,8 @@ public class PrefixAdderImpl implements PrefixAdder {
 
 	private void addPotentialPrefixToNamespaceMap(Map<String, String> nameSpaceMap, String predicateNameSpace) {
 		String candidateForPrefix = getPrefixCandidate(predicateNameSpace);
-		nameSpaceMap.put(candidateForPrefix, predicateNameSpace);
+		if (!candidateForPrefix.contains("."))
+			nameSpaceMap.put(candidateForPrefix, predicateNameSpace);
 	}
 
 	private String getPrefixCandidate(String nameSpace) {

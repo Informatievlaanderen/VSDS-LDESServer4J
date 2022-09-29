@@ -53,7 +53,7 @@ class EventStreamConverterImplTest {
 				model.listStatements(createResource(id), LDES_TIMESTAMP_PATH, (Resource) null).nextStatement()
 						.toString());
 		assertEquals(
-				"[http://localhost:8080/mobility-hindrances, https://w3id.org/ldes#versionOf, http://purl.org/dc/terms/isVersionOf]",
+				"[http://localhost:8080/mobility-hindrances, https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
 				model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement()
 						.toString());
 		assertEquals(
