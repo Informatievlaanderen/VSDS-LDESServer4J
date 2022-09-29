@@ -18,13 +18,18 @@ public class PrefixAdderImpl implements PrefixAdder {
 		Map<String, String> nameSpaceMap = new HashMap<>();
 		Map<String, String> localNamesMap = new HashMap<>();
 		model.listStatements().forEach(statement -> extractNamespaces(nameSpaceMap, localNamesMap, statement));
+		removePrefixesForWhichLocalNameDoesIsNotCompliant(nameSpaceMap, localNamesMap);
+		addNameSpacesAsPrefix(model, nameSpaceMap);
+		return model;
+	}
+
+	private void removePrefixesForWhichLocalNameDoesIsNotCompliant(Map<String, String> nameSpaceMap,
+			Map<String, String> localNamesMap) {
 		localNamesMap.forEach((localName, prefix) -> {
 			if (!localName.matches(VALID_LOCALNAME_REGEX)) {
 				nameSpaceMap.remove(prefix);
 			}
 		});
-		addNameSpacesAsPrefix(model, nameSpaceMap);
-		return model;
 	}
 
 	private void extractNamespaces(Map<String, String> nameSpaceMap, Map<String, String> localNamesMap,
