@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
@@ -14,11 +12,9 @@ import java.util.Optional;
 public class RootFragmentCreatorImpl implements RootFragmentCreator {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final LdesConfig ldesConfig;
 
-	public RootFragmentCreatorImpl(LdesFragmentRepository ldesFragmentRepository, LdesConfig ldesConfig) {
+	public RootFragmentCreatorImpl(LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.ldesConfig = ldesConfig;
 	}
 
 	@Override
@@ -34,8 +30,7 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				viewName, List.of());
 		LdesFragment ldesFragment = new LdesFragment(
-				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig.getHostName(), fragmentInfo.getViewName(),
-						fragmentInfo.getFragmentPairs()),
+
 				fragmentInfo);
 		ldesFragmentRepository.saveFragment(ldesFragment);
 	}

@@ -43,7 +43,7 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
 	private List<Statement> addTreeNodeStatements(LdesFragment ldesFragment) {
 		List<Statement> statements = new ArrayList<>();
-		Resource currrentFragmentId = createResource(ldesFragment.getFragmentId());
+		Resource currrentFragmentId = createResource(ldesConfig.getHostName() + ldesFragment.getFragmentId());
 		statements.add(createStatement(currrentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(ldesFragment, currrentFragmentId));
 		return statements;
@@ -94,7 +94,8 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(),
 					TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.getTreePath());
-		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE, treeRelation.getTreeNode());
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
+				ldesConfig.getHostName() + treeRelation.getTreeNode());
 		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.getRelation());
 		return statements;
 	}

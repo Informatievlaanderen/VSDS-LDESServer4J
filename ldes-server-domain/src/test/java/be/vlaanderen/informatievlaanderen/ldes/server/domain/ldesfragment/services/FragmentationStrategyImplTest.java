@@ -23,7 +23,7 @@ class FragmentationStrategyImplTest {
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
-		LdesFragment ldesFragment = new LdesFragment("fragmentId", new FragmentInfo("view", List.of()));
+		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo("view", List.of()));
 		LdesMember ldesMember = mock(LdesMember.class);
 		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
 		Span parentSpan = mock(Span.class);

@@ -56,7 +56,7 @@ class LdesFragmentConverterImplTest {
 	@Test
 	@DisplayName("Verify correct conversion of an LdesFragment without Members ")
 	void when_LdesFragmentHasNoMembers_ModelHasOneStatement() {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID,
+		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 
 		Model model = ldesFragmentConverter.toModel(ldesFragment);
@@ -74,11 +74,11 @@ class LdesFragmentConverterImplTest {
 						.""")
 				.lang(Lang.NQUADS).toModel();
 		LdesMember ldesMember = new LdesMember("some_id", ldesMemberModel);
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID,
+		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME,
-						List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1))));
+						List.of()));
 		ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
-		ldesFragment.addRelation(new TreeRelation("path", "node", "value",
+		ldesFragment.addRelation(new TreeRelation("path", "/node", "value",
 				DATE_TIME_TYPE, "relation"));
 		when(ldesMemberRepository.getLdesMembersByIds(
 				List.of("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165")))
@@ -105,7 +105,7 @@ class LdesFragmentConverterImplTest {
 		assertEquals(String.format("[%s, https://w3id.org/tree#path, path]",
 				relationObject),
 				model.listStatements(relationObject, TREE_PATH, (Resource) null).nextStatement().toString());
-		assertEquals(String.format("[%s, https://w3id.org/tree#node, node]",
+		assertEquals(String.format("[%s, https://w3id.org/tree#node, http://localhost:8080/node]",
 				relationObject),
 				model.listStatements(relationObject, TREE_NODE, (Resource) null).nextStatement().toString());
 		assertEquals(

@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -21,14 +19,12 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 public class TimeBasedFragmentCreator {
 
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
-	protected final LdesConfig ldesConfig;
-	protected final TimebasedFragmentationConfig timebasedFragmentationConfig;
-	protected final LdesFragmentRepository ldesFragmentRepository;
+	private final TimebasedFragmentationConfig timebasedFragmentationConfig;
+	private final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-	public TimeBasedFragmentCreator(LdesConfig ldesConfig, TimebasedFragmentationConfig timeBasedConfig,
+	public TimeBasedFragmentCreator(TimebasedFragmentationConfig timeBasedConfig,
 			LdesFragmentRepository ldesFragmentRepository) {
-		this.ldesConfig = ldesConfig;
 		this.timebasedFragmentationConfig = timeBasedConfig;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
@@ -52,8 +48,7 @@ public class TimeBasedFragmentCreator {
 				parentFragmentInfo.getViewName(), fragmentPairs);
 
 		return new LdesFragment(
-				LdesFragmentNamingStrategy.generateFragmentName(ldesConfig.getHostName(), fragmentInfo.getViewName(),
-						fragmentInfo.getFragmentPairs()),
+
 				fragmentInfo);
 	}
 

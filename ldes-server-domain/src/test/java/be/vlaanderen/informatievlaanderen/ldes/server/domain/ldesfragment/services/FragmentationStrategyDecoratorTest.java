@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,6 @@ class FragmentationStrategyDecoratorTest {
 	LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
 	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
 	private static final String VIEW_NAME = "view";
-	private static final String PARENT_FRAGMENT_ID = "parent";
-	private static final String CHILD_FRAGMENT_ID = "child";
 
 	@BeforeEach
 	void setUp() {
@@ -33,16 +32,16 @@ class FragmentationStrategyDecoratorTest {
 	@Test
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
-		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
+		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
-		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
-				new FragmentInfo(VIEW_NAME, List.of()));
+		LdesFragment childFragment = new LdesFragment(
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("key", "value"))));
 
 		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
 		assertEquals(1, parentFragment.getRelations().size());
-		assertEquals(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
+		assertEquals(new TreeRelation("", childFragment.getFragmentId(), "", "",
 				GENERIC_TREE_RELATION),
 				parentFragment.getRelations().get(0));
 		Mockito.verify(fragmentRepository,
@@ -51,17 +50,17 @@ class FragmentationStrategyDecoratorTest {
 
 	@Test
 	void when_ParentHasRelationToChild_DoNotAddNewRelation() {
-		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
+		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
-		LdesFragment childFragment = new LdesFragment(CHILD_FRAGMENT_ID,
-				new FragmentInfo(VIEW_NAME, List.of()));
-		parentFragment.addRelation(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
+		LdesFragment childFragment = new LdesFragment(
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("key", "value"))));
+		parentFragment.addRelation(new TreeRelation("", childFragment.getFragmentId(), "", "",
 				GENERIC_TREE_RELATION));
 		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
 		assertEquals(1, parentFragment.getRelations().size());
-		assertEquals(new TreeRelation("", CHILD_FRAGMENT_ID, "", "",
+		assertEquals(new TreeRelation("", childFragment.getFragmentId(), "", "",
 				GENERIC_TREE_RELATION),
 				parentFragment.getRelations().get(0));
 		Mockito.verifyNoInteractions(fragmentRepository);
@@ -69,7 +68,7 @@ class FragmentationStrategyDecoratorTest {
 
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
-		LdesFragment parentFragment = new LdesFragment(PARENT_FRAGMENT_ID,
+		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 		LdesMember ldesMember = mock(LdesMember.class);
 		Span span = mock(Span.class);

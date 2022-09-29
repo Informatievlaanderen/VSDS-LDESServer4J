@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
@@ -62,5 +63,20 @@ public class FragmentInfo {
 	@Override
 	public int hashCode() {
 		return Objects.hash(viewName, fragmentPairs, immutable);
+	}
+
+	public String generateFragmentId() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder
+				.append("/").append(viewName);
+
+		if (!fragmentPairs.isEmpty()) {
+			stringBuilder.append("?");
+			stringBuilder
+					.append(fragmentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
+							"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
+		}
+
+		return stringBuilder.toString();
 	}
 }

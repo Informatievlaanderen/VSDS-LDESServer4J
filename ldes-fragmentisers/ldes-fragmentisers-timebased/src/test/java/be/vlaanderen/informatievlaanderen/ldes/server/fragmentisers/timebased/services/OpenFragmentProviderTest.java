@@ -32,7 +32,7 @@ class OpenFragmentProviderTest {
 	@Test
 	@DisplayName("No existing fragment")
 	void when_NoFragmentExists_thenFragmentIsCreated() {
-		LdesFragment createdFragment = new LdesFragment("fragmentId",
+		LdesFragment createdFragment = new LdesFragment(
 				new FragmentInfo("view", List.of(new FragmentPair("Path",
 						"Value"))));
 		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT_INFO.getViewName(),
@@ -56,7 +56,7 @@ class OpenFragmentProviderTest {
 	@Test
 	@DisplayName("Incomplete Open Fragment")
 	void when_AnIncompleteOpenFragmentExists_thenFragmentIsReturned() {
-		LdesFragment existingLdesFragment = new LdesFragment("fragmentId",
+		LdesFragment existingLdesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
 		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
@@ -79,10 +79,10 @@ class OpenFragmentProviderTest {
 	@Test
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
-		LdesFragment existingLdesFragment = new LdesFragment("existingFragment",
+		LdesFragment existingLdesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
-		LdesFragment newFragment = new LdesFragment("someId",
+		LdesFragment newFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
 
