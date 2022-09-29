@@ -18,7 +18,8 @@ public class EventStreamFetcherImpl implements EventStreamFetcher {
 
 	@Override
 	public EventStream fetchEventStream() {
-		return new EventStream(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath(), ldesConfig.getVersionOf(),
+		return new EventStream(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath(),
+				ldesConfig.getVersionOfPath(),
 				ldesConfig.getShape(), viewConfig.getViews().stream().map(ViewSpecification::getName).toList());
 	}
 }

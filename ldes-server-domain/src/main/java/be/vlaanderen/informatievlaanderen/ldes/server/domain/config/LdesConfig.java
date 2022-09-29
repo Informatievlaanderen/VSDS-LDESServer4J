@@ -53,7 +53,7 @@ public class LdesConfig {
 		this.timestampPath = timestampPath;
 	}
 
-	public String getVersionOf() {
+	public String getVersionOfPath() {
 		return versionOf;
 	}
 
