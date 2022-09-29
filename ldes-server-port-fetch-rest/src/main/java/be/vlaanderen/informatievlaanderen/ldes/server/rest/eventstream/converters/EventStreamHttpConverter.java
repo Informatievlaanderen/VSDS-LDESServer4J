@@ -39,8 +39,8 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(new MediaType("application/turtle"), new MediaType("application/ld+json"),
-				new MediaType("application/n-quads"));
+		return List.of(MediaType.valueOf("text/turtle"), MediaType.valueOf("application/ld+json"),
+				MediaType.valueOf("application/n-quads"));
 	}
 
 	@Override

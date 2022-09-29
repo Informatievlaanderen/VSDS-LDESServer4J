@@ -4,10 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -18,6 +17,10 @@ public class TreeNodeController {
 	private static final String CACHE_CONTROL_HEADER = "Cache-Control";
 	private static final String CACHE_CONTROL_IMMUTABLE = "public, max-age=604800, immutable";
 	private static final String CACHE_CONTROL_MUTABLE = "public, max-age=60";
+	private static final String CONTENT_TYPE_HEADER = "Content-Type";
+	private static final String TEXT_TURTLE = "text/turtle";
+	private static final String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
+	private static final String INLINE = "inline";
 
 	private final FragmentFetchService fragmentFetchService;
 
@@ -25,11 +28,12 @@ public class TreeNodeController {
 		this.fragmentFetchService = fragmentFetchService;
 	}
 
-	@GetMapping(value = "/{view}", produces = { "application/turtle", "application/ld+json",
-			"application/n-quads" })
-	LdesFragment retrieveLdesFragment(HttpServletResponse response,
+	@GetMapping(value = "/{view}")
+	public LdesFragment retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
-			@RequestParam Map<String, String> requestParameters) {
+			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {
+		setContentTypeHeader(language, response);
+		response.setHeader(CONTENT_DISPOSITION_HEADER, INLINE);
 		return returnRequestedFragment(response, viewName, requestParameters);
 	}
 
@@ -51,6 +55,13 @@ public class TreeNodeController {
 		} else {
 			response.setHeader(CACHE_CONTROL_HEADER, CACHE_CONTROL_MUTABLE);
 		}
+	}
+
+	private void setContentTypeHeader(String language, HttpServletResponse response) {
+		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE))
+			response.setHeader(CONTENT_TYPE_HEADER, TEXT_TURTLE);
+		else
+			response.setHeader(CONTENT_TYPE_HEADER, language);
 	}
 
 }

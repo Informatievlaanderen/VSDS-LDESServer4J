@@ -14,7 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.exceptionhandling.RestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -116,11 +116,12 @@ class TreeNodeControllerTest {
 				new FragmentInfo(VIEW_NAME, List.of()));
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
-				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+				List.of());
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
-		mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())
-				.andExpect(status().is4xxClientError());
+		mockMvc.perform(get("/{viewName}",
+				VIEW_NAME).accept("application/json")).andDo(print())
+				.andExpect(status().isUnsupportedMediaType());
 	}
 
 	@Test
@@ -156,7 +157,8 @@ class TreeNodeControllerTest {
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS, true, "public, max-age=604800, immutable"),
 					Arguments.of("application/ld+json", Lang.JSONLD11, true, "public, max-age=604800, immutable"),
-					Arguments.of("application/turtle", Lang.TURTLE, false, "public, max-age=60"));
+					Arguments.of("application/turtle", Lang.TURTLE, false, "public, max-age=60"),
+					Arguments.of("*/*", Lang.TURTLE, false, "public, max-age=60"));
 		}
 	}
 
