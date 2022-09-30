@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class InMemoryFragmentationMediator implements FragmentationMediator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryFragmentationMediator.class);
 	private final ExecutorService executorService;
-	private final LinkedBlockingQueue<LdesMember> ldesMembersToFragment = new LinkedBlockingQueue<>();
+	protected final LinkedBlockingQueue<LdesMember> ldesMembersToFragment = new LinkedBlockingQueue<>();
 
 	private final FragmentationExecutor fragmentationExecutor;
 	protected final AtomicInteger ldesMembersToFragmentTracker;
