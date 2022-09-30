@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model;
 
 public class Tile {
 	private final int zoom;

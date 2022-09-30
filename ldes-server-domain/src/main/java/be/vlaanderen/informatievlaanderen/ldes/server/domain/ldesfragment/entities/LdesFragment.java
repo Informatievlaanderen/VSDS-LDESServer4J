@@ -9,16 +9,19 @@ import java.util.List;
 
 public class LdesFragment {
 
+	private final String fragmentId;
+
 	private final FragmentInfo fragmentInfo;
 
 	private final List<String> memberIds;
 
 	private final List<TreeRelation> relations;
 
-	public LdesFragment(FragmentInfo fragmentInfo) {
+	public LdesFragment(final FragmentInfo fragmentInfo) {
 		this.fragmentInfo = fragmentInfo;
 		this.relations = new ArrayList<>();
 		this.memberIds = new ArrayList<>();
+		this.fragmentId = fragmentInfo.generateFragmentId();
 	}
 
 	public void addRelation(TreeRelation treeRelation) {
@@ -26,7 +29,7 @@ public class LdesFragment {
 	}
 
 	public String getFragmentId() {
-		return fragmentInfo.generateFragmentId();
+		return fragmentId;
 	}
 
 	public FragmentInfo getFragmentInfo() {

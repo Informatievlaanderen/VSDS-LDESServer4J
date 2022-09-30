@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.Tile;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.Tile;
 
 public class TileConverter {
 
