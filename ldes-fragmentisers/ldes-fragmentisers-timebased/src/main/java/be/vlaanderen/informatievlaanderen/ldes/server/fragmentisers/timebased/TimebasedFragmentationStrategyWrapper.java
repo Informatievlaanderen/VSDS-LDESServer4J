@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
@@ -20,25 +19,24 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
-		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(applicationContext, properties,
+		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(properties,
 				ldesFragmentRepository);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository, openFragmentProvider, tracer);
 
 	}
 
-	private OpenFragmentProvider getOpenFragmentProvider(ApplicationContext applicationContext,
-			FragmentationProperties properties, LdesFragmentRepository ldesFragmentRepository) {
-		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(applicationContext, properties,
+	private OpenFragmentProvider getOpenFragmentProvider(FragmentationProperties properties,
+			LdesFragmentRepository ldesFragmentRepository) {
+		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(properties,
 				ldesFragmentRepository);
 		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository);
 	}
 
-	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(ApplicationContext applicationContext,
-			FragmentationProperties properties, LdesFragmentRepository ldesFragmentRepository) {
-		LdesConfig ldesConfig = applicationContext.getBean(LdesConfig.class);
+	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(FragmentationProperties properties,
+			LdesFragmentRepository ldesFragmentRepository) {
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
-		return new TimeBasedFragmentCreator(ldesConfig,
+		return new TimeBasedFragmentCreator(
 				timebasedFragmentationConfig,
 				ldesFragmentRepository);
 	}

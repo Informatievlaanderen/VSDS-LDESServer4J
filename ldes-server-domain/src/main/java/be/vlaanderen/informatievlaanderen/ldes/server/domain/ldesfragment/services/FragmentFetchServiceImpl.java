@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesFragmentNamingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,8 @@ public class FragmentFetchServiceImpl implements FragmentFetchService {
 				.retrieveFragment(ldesFragmentRequest)
 				.orElseThrow(
 						() -> new MissingFragmentException(
-								LdesFragmentNamingStrategy.generateFragmentName(ldesConfig.getHostName(),
-										ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())));
+
+								ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
+										ldesFragmentRequest.fragmentPairs()).generateFragmentId()));
 	}
 }

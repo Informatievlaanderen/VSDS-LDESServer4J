@@ -57,9 +57,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TreeNodeControllerTest {
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
-	private static final String FRAGMENT_ID = "http://localhost:8080/mobility-hindrances/view?" + GENERATED_AT_TIME
-			+ "="
-			+ FRAGMENTATION_VALUE_1;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -72,7 +69,7 @@ class TreeNodeControllerTest {
 			String expectedHeaderValue) throws
 
 	Exception {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, new FragmentInfo(
+		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
 						FRAGMENTATION_VALUE_1))));
 		ldesFragment.setImmutable(immutable);
@@ -112,7 +109,7 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesFragment ldesFragment = new LdesFragment("fragmentId",
+		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,

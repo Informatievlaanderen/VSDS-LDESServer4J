@@ -60,7 +60,7 @@ class FragmentFetchServiceImplTest {
 
 	@Test
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID_1, FRAGMENT_INFO);
+		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_INFO);
 		ldesFragment.addMember("firstMember");
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));

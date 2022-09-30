@@ -24,6 +24,7 @@ class FragmentInfoTest {
 						new FragmentPair(TILE, TILE_VALUE)));
 		assertValueEquals(fragmentInfo, GENERATED_AT_TIME, GENERATED_AT_TIME_VALUE);
 		assertValueEquals(fragmentInfo, TILE, TILE_VALUE);
+		assertEquals("/view?generatedAtTime=someTime&tile=tileValue", fragmentInfo.generateFragmentId());
 
 	}
 
