@@ -35,9 +35,9 @@ class TimebasedFragmentationStrategyTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment("parentFragment",
+		PARENT_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
-		OPEN_FRAGMENT = new LdesFragment("openFragment",
+		OPEN_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("generatedAtTime", "someTime"))));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(wrappedService,
 				ldesFragmentRepository, openFragmentProvider, tracer);

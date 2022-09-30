@@ -61,7 +61,7 @@ public class LdesFragmentEntity {
 	}
 
 	public LdesFragment toLdesFragment() {
-		LdesFragment ldesFragment = new LdesFragment(id, getFragmentInfo());
+		LdesFragment ldesFragment = new LdesFragment(getFragmentInfo());
 		relations.forEach(ldesFragment::addRelation);
 		members.forEach(ldesFragment::addMember);
 		return ldesFragment;

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
@@ -19,29 +20,39 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
 	private final LdesMemberRepository ldesMemberRepository;
+	private final PrefixAdder prefixAdder;
 	private final LdesConfig ldesConfig;
 
-	public LdesFragmentConverterImpl(LdesMemberRepository ldesMemberRepository, LdesConfig ldesConfig) {
+	public LdesFragmentConverterImpl(LdesMemberRepository ldesMemberRepository, PrefixAdder prefixAdder,
+			LdesConfig ldesConfig) {
 		this.ldesMemberRepository = ldesMemberRepository;
+		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
 	}
 
 	public Model toModel(final LdesFragment ldesFragment) {
 		Model model = ModelFactory.createDefaultModel();
-		model.add(addRelationAndMetaDataStatements(ldesFragment));
-		ldesMemberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(LdesMember::getModel)
-				.forEach(model::add);
-		return model;
+		model.add(addTreeNodeStatements(ldesFragment));
+		if (!ldesFragment.getMemberIds().isEmpty()) {
+			model.add(addEventStreamStatements(ldesFragment));
+			ldesMemberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(LdesMember::getModel)
+					.forEach(model::add);
+		}
+		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addRelationAndMetaDataStatements(LdesFragment ldesFragment) {
+	private List<Statement> addTreeNodeStatements(LdesFragment ldesFragment) {
 		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesFragment.getFragmentInfo().getViewName());
-		Resource currrentFragmentId = createResource(ldesFragment.getFragmentId());
-
-		statements.addAll(getGeneralLdesStatements(viewId));
-		statements.addAll(getViewStatements(ldesFragment, viewId, currrentFragmentId));
+		Resource currrentFragmentId = createResource(ldesConfig.getHostName() + ldesFragment.getFragmentId());
+		statements.add(createStatement(currrentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(ldesFragment, currrentFragmentId));
+		return statements;
+	}
+
+	private List<Statement> addEventStreamStatements(LdesFragment ldesFragment) {
+		List<Statement> statements = new ArrayList<>();
+		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
+		statements.addAll(getEventStreamStatements(viewId));
 		statements.addAll(getMemberStatements(ldesFragment, viewId));
 		return statements;
 	}
@@ -53,11 +64,8 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 		return statements;
 	}
 
-	private List<Statement> getGeneralLdesStatements(Resource viewId) {
+	private List<Statement> getEventStreamStatements(Resource viewId) {
 		List<Statement> statements = new ArrayList<>();
-		addStatementIfMeaningful(statements, viewId, TREE_SHAPE, ldesConfig.getShape());
-		addStatementIfMeaningful(statements, viewId, LDES_VERSION_OF, ldesConfig.getVersionOf());
-		addStatementIfMeaningful(statements, viewId, LDES_TIMESTAMP_PATH, ldesConfig.getTimestampPath());
 		statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
 		return statements;
 	}
@@ -78,12 +86,6 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 				.toList();
 	}
 
-	private List<Statement> getViewStatements(LdesFragment ldesFragment, Resource viewId, Resource currrentFragmentId) {
-		if (ldesFragment.getFragmentInfo().getFragmentPairs().isEmpty())
-			return List.of(createStatement(viewId, TREE_VIEW, currrentFragmentId));
-		return List.of();
-	}
-
 	private List<Statement> getRelationStatementsOfRelation(Resource currentFragmentId, TreeRelation treeRelation) {
 		List<Statement> statements = new ArrayList<>();
 		Resource treeRelationNode = createResource();
@@ -92,7 +94,8 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(),
 					TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.getTreePath());
-		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE, treeRelation.getTreeNode());
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
+				ldesConfig.getHostName() + treeRelation.getTreeNode());
 		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.getRelation());
 		return statements;
 	}

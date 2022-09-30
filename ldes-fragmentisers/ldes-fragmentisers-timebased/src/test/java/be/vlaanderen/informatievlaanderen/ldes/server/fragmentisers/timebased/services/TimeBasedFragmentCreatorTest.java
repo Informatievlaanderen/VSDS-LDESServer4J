@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
@@ -9,39 +8,24 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator.DATE_TIME_TYPE;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = { LdesConfig.class })
-@EnableConfigurationProperties
-@ActiveProfiles("test")
 class TimeBasedFragmentCreatorTest {
 
 	private static final String VIEW = "view";
-
-	@Autowired
-	private LdesConfig ldesConfig;
 	private TimeBasedFragmentCreator fragmentCreator;
 	private LdesMemberRepository ldesMemberRepository;
 	private LdesFragmentRepository ldesFragmentRepository;
@@ -51,7 +35,7 @@ class TimeBasedFragmentCreatorTest {
 		TimebasedFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		ldesMemberRepository = mock(LdesMemberRepository.class);
-		fragmentCreator = new TimeBasedFragmentCreator(ldesConfig, timeBasedConfig,
+		fragmentCreator = new TimeBasedFragmentCreator(timeBasedConfig,
 				ldesFragmentRepository);
 	}
 
@@ -73,7 +57,7 @@ class TimeBasedFragmentCreatorTest {
 		FragmentInfo parentFragmentInfo = new FragmentInfo(VIEW, List.of());
 
 		LdesMember ldesMemberOfFragment = createLdesMember();
-		LdesFragment existingLdesFragment = new LdesFragment("someId",
+		LdesFragment existingLdesFragment = new LdesFragment(
 				new FragmentInfo(VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
 						"2020-12-28T09:36:37.127Z"))));
 		existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
@@ -85,18 +69,18 @@ class TimeBasedFragmentCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
-		verifyRelationOfFragment(newFragment, GENERATED_AT_TIME, "someId", "Value",
-				"tree:LessThanOrEqualToRelation");
-		verifyRelationOfFragment(existingLdesFragment, "generatedAtTime",
+		verifyRelationOfFragment(newFragment, PROV_GENERATED_AT_TIME, "someId", "Value",
+				TREE_LESSER_THAN_OR_EQUAL_TO_RELATION);
+		verifyRelationOfFragment(existingLdesFragment, PROV_GENERATED_AT_TIME,
 				"http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z",
-				"2020-12-28T09:36:37.127Z", "tree:GreaterThanOrEqualToRelation");
+				"2020-12-28T09:36:37.127Z", TREE_GREATER_THAN_OR_EQUAL_TO_RELATION);
 		verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
 	}
 
 	@Test
 	@DisplayName("Creating New Time-Based Fragment")
 	void when_FragmentIsFull_NewFragmentNeedsToBeCreated() {
-		LdesFragment ldesFragment = new LdesFragment("someId",
+		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo(VIEW, List.of(new FragmentPair("Path",
 						"Value"))));
 		ldesFragment.addMember("member1");
@@ -108,7 +92,7 @@ class TimeBasedFragmentCreatorTest {
 	}
 
 	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
-		assertEquals("http://localhost:8080/view?generatedAtTime",
+		assertEquals("/view?generatedAtTime",
 				ldesFragment.getFragmentId().split("=")[0]);
 		assertEquals(VIEW, ldesFragment.getFragmentInfo().getViewName());
 		assertTrue(ldesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());

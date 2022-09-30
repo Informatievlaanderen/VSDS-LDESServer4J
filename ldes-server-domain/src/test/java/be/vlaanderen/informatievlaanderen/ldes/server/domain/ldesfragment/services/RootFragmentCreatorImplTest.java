@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +17,7 @@ class RootFragmentCreatorImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("hostname");
-		rootFragmentCreator = new RootFragmentCreatorImpl(ldesFragmentRepository, ldesConfig);
+		rootFragmentCreator = new RootFragmentCreatorImpl(ldesFragmentRepository);
 	}
 
 	@Test

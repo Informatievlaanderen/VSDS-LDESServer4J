@@ -23,7 +23,7 @@ class LdesFragmentEntityTest {
 	void when_LdesFragmentIsConvertedToLdesFragmentEntity_FragmentInfoAndMembersAndMutabilityAreTheSame() {
 		FragmentInfo fragmentInfo = new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(TIMESTAMP_PATH, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_ID, fragmentInfo);
+		LdesFragment ldesFragment = new LdesFragment(fragmentInfo);
 		ldesFragment.addMember("member1");
 		ldesFragment.addMember("member2");
 
