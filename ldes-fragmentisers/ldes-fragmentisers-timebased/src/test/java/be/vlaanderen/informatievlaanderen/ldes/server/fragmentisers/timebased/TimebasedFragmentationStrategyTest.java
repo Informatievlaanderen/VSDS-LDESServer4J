@@ -48,7 +48,7 @@ class TimebasedFragmentationStrategyTest {
 	void when_MemberisNotYetAddedAndNoParentRelation_thenFragmentationIsAppliedAndRelationCreated() {
 		LdesMember ldesMember = mock(LdesMember.class);
 		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
-		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo()))
+		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(OPEN_FRAGMENT);
 		Span parentSpan = mock(Span.class);
 		Span childSpan = mock(Span.class);
@@ -61,7 +61,7 @@ class TimebasedFragmentationStrategyTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
 		inOrder.verify(openFragmentProvider,
-				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo());
+				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).saveFragment(PARENT_FRAGMENT);
 		inOrder.verify(wrappedService, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember, childSpan);
@@ -75,7 +75,7 @@ class TimebasedFragmentationStrategyTest {
 		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
 		PARENT_FRAGMENT.addRelation(new TreeRelation("", OPEN_FRAGMENT.getFragmentId(), "", "",
 				GENERIC_TREE_RELATION));
-		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo()))
+		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(OPEN_FRAGMENT);
 		Span parentSpan = mock(Span.class);
 		Span childSpan = mock(Span.class);
@@ -88,7 +88,7 @@ class TimebasedFragmentationStrategyTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
 		inOrder.verify(openFragmentProvider,
-				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo());
+				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verify(wrappedService, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember, childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -99,7 +99,7 @@ class TimebasedFragmentationStrategyTest {
 		LdesMember ldesMember = mock(LdesMember.class);
 		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
 		OPEN_FRAGMENT.addMember("memberId");
-		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo()))
+		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(OPEN_FRAGMENT);
 		Span parentSpan = mock(Span.class);
 		Span childSpan = mock(Span.class);
@@ -112,7 +112,7 @@ class TimebasedFragmentationStrategyTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
 		inOrder.verify(openFragmentProvider,
-				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentInfo());
+				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verifyNoMoreInteractions();
 	}
 

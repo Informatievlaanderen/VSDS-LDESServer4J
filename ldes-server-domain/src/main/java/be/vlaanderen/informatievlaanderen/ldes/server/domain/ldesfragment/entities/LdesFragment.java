@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entit
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,10 @@ public class LdesFragment {
 
 	public boolean isImmutable() {
 		return this.fragmentInfo.getImmutable();
+	}
+
+	public LdesFragment createChild(FragmentPair fragmentPair) {
+		return new LdesFragment(fragmentInfo.createChild(fragmentPair));
 	}
 
 }

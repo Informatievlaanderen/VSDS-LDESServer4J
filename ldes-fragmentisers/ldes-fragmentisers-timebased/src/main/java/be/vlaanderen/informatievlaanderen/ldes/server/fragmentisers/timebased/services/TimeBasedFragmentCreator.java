@@ -3,15 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -30,8 +27,10 @@ public class TimeBasedFragmentCreator {
 	}
 
 	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment,
-			FragmentInfo parentFragmentInfo) {
-		LdesFragment newFragment = createNewFragment(parentFragmentInfo);
+			LdesFragment parentFragment) {
+		String fragmentationValue = LocalDateTime.now().format(formatter);
+		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(GENERATED_AT_TIME, fragmentationValue));
+
 		optionalLdesFragment
 				.ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
 		return newFragment;
@@ -39,24 +38,6 @@ public class TimeBasedFragmentCreator {
 
 	public boolean needsToCreateNewFragment(LdesFragment fragment) {
 		return fragment.getCurrentNumberOfMembers() >= timebasedFragmentationConfig.getMemberLimit();
-	}
-
-	protected LdesFragment createNewFragment(FragmentInfo parentFragmentInfo) {
-		List<FragmentPair> parentFragmentInfoFragmentPairs = parentFragmentInfo.getFragmentPairs();
-		List<FragmentPair> fragmentPairs = updateParentFragmentPairs(parentFragmentInfoFragmentPairs);
-		FragmentInfo fragmentInfo = new FragmentInfo(
-				parentFragmentInfo.getViewName(), fragmentPairs);
-
-		return new LdesFragment(
-
-				fragmentInfo);
-	}
-
-	private List<FragmentPair> updateParentFragmentPairs(List<FragmentPair> parentFragmentInfoFragmentPairs) {
-		List<FragmentPair> fragmentPairs = new ArrayList<>(parentFragmentInfoFragmentPairs.stream().toList());
-		String fragmentationValue = LocalDateTime.now().format(formatter);
-		fragmentPairs.add(new FragmentPair(GENERATED_AT_TIME, fragmentationValue));
-		return fragmentPairs;
 	}
 
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,

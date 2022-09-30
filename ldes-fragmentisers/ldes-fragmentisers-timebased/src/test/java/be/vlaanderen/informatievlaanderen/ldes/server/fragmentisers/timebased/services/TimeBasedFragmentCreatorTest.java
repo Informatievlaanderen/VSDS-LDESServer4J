@@ -42,10 +42,11 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating First Time-Based Fragment")
 	void when_NoFragmentExists_thenNewFragmentIsCreated() {
-		FragmentInfo parentFragmentInfo = new FragmentInfo(VIEW, List.of());
-		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), parentFragmentInfo);
+		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW, List.of()));
+		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
+		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
 		assertEquals(0, newFragment.getRelations().size());
 		verifyNoInteractions(ldesFragmentRepository);
@@ -54,7 +55,7 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating New Time-BasedFragment")
 	void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
-		FragmentInfo parentFragmentInfo = new FragmentInfo(VIEW, List.of());
+		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW, List.of()));
 
 		LdesMember ldesMemberOfFragment = createLdesMember();
 		LdesFragment existingLdesFragment = new LdesFragment(
@@ -65,9 +66,10 @@ class TimeBasedFragmentCreatorTest {
 				.thenReturn(Optional.of(ldesMemberOfFragment));
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment),
-				parentFragmentInfo);
+				parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
+		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
 		verifyRelationOfFragment(newFragment, PROV_GENERATED_AT_TIME, "someId", "Value",
 				TREE_LESSER_THAN_OR_EQUAL_TO_RELATION);

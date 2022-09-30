@@ -1,21 +1,26 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 
-import java.util.List;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 
 public class GeospatialFragmentCreator {
 
-	public LdesFragment createNewFragment(FragmentInfo parentFragmentInfo) {
-		List<FragmentPair> fragmentPairs = parentFragmentInfo.getFragmentPairs();
-		FragmentInfo fragmentInfo = new FragmentInfo(
-				parentFragmentInfo.getViewName(),
-				fragmentPairs);
+	private final LdesFragmentRepository ldesFragmentRepository;
 
-		return new LdesFragment(
+	public GeospatialFragmentCreator(LdesFragmentRepository ldesFragmentRepository) {
+		this.ldesFragmentRepository = ldesFragmentRepository;
+	}
 
-				fragmentInfo);
+	public LdesFragment getOrCreateGeospatialFragment(LdesFragment parentFragment, String tile) {
+		LdesFragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
+		return ldesFragmentRepository
+				.retrieveFragment(new LdesFragmentRequest(
+						child.getFragmentInfo().getViewName(),
+						child.getFragmentInfo().getFragmentPairs()))
+				.orElse(child);
 	}
 }

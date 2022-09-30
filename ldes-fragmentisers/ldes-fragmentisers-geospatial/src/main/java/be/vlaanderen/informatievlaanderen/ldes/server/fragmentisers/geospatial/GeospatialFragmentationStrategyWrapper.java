@@ -25,9 +25,10 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 		CoordinateConverter coordinateConverter = CoordinateConverterFactory
 				.getCoordinateConverter(geospatialConfig.getProjection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
+		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository,
-				new GeospatialFragmentCreator(), geospatialBucketiser, tracer);
+				geospatialBucketiser, geospatialFragmentCreator, tracer);
 	}
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {
