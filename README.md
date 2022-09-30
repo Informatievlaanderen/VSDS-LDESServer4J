@@ -272,7 +272,8 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus
+        include: 
+          - prometheus
 ```
 
 The export of traces can be disabled with the following parameter:
@@ -293,4 +294,59 @@ The export of traces can be disabled with the following parameter:
 
 ```
 SPRING_SLEUTH_ENABLED=false
+```
+
+### Health and Info
+
+To allow more visibility for the application, it is possible to enable a health and info endpoint.
+
+This health endpoint provides a basic JSON output that can be found at `/actuator/health` that provides a summary of the status of all needed services.
+
+An additional info endpoint is also available which shows which version of the application running and its deploy date.
+
+#### Local
+
+The following config allows you to enable both the info and health endpoints.
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+  health:
+    defaults:
+      enabled: false
+    mongo:
+      enabled: true
+  endpoint:
+    health:
+      show-details: always
+  ```
+
+Additionally, to provide a more clean health check report, the Spring Cloud discoveryComposite can be disabled by adding
+
+```yaml
+spring:
+  cloud:
+    discovery:
+      client:
+        composite-indicator:
+          enabled: false
+```
+
+#### Docker
+
+```
+MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="health, info"
+MANAGEMENT_HEALTH_DEFAULTS_ENABLED=false
+MANAGEMENT_HEALTH_MONGO_ENABLED=true
+MANAGEMENT_ENDPOINT_HEALTH_SHOW-DETAILS="always"
+```
+
+Additionally, to provide a more clean health check report, the Spring Cloud discoveryComposite can be disabled by adding
+
+```
+SPRING_CLOUD_DISCOVERY_CLIENT_COMPOSITE-INDICATOR_ENABLED=false
 ```
