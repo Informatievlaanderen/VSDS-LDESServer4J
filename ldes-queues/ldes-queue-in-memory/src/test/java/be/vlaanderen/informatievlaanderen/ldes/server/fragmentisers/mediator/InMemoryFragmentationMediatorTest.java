@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 
 class InMemoryFragmentationMediatorTest {
 
-	private FragmentationMediator fragmentationMediator;
+	private InMemoryFragmentationMediator fragmentationMediator;
 
 	private final FragmentationExecutor fragmentationExecutor = mock(FragmentationExecutor.class);
 
@@ -31,7 +31,9 @@ class InMemoryFragmentationMediatorTest {
 		LdesMember ldesMember = mock(LdesMember.class);
 		fragmentationMediator.addMemberToFragment(ldesMember);
 
-		await().pollDelay(Durations.ONE_MILLISECOND).atMost(Durations.ONE_HUNDRED_MILLISECONDS);
+		await().pollDelay(Durations.ONE_MILLISECOND)
+				.atMost(Durations.ONE_HUNDRED_MILLISECONDS)
+				.until(() -> fragmentationMediator.ldesMembersToFragment.isEmpty());
 
 		verify(fragmentationExecutor, times(1)).executeFragmentation(ldesMember);
 	}
