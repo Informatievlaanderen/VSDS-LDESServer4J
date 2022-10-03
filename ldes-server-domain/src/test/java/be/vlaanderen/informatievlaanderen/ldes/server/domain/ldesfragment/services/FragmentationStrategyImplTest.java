@@ -10,12 +10,13 @@ import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class FragmentationStrategyImplTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-	private final Tracer tracer = mock(Tracer.class);
+	private final Tracer tracer = mockTracer();
 
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			ldesFragmentRepository,
@@ -26,18 +27,10 @@ class FragmentationStrategyImplTest {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo("view", List.of()));
 		LdesMember ldesMember = mock(LdesMember.class);
 		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
-		Span parentSpan = mock(Span.class);
-		Span childSpan = mock(Span.class);
-		when(tracer.nextSpan(parentSpan)).thenReturn(childSpan);
-		when(childSpan.name("add Member to fragment")).thenReturn(childSpan);
-		when(childSpan.start()).thenReturn(childSpan);
 
-		fragmentationStrategy.addMemberToFragment(ldesFragment, ldesMember, parentSpan);
+		fragmentationStrategy.addMemberToFragment(ldesFragment, ldesMember, any());
 
-		verify(tracer, times(1)).nextSpan(parentSpan);
 		verify(ldesFragmentRepository, times(1)).saveFragment(ldesFragment);
 		assertEquals(List.of("memberId"), ldesFragment.getMemberIds());
-		verify(childSpan, times(1)).start();
-		verify(childSpan, times(1)).end();
 	}
 }
