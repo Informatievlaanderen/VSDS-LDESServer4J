@@ -26,7 +26,7 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
 		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
 		LdesFragment ldesFragment = openFragmentProvider
-				.retrieveOpenFragmentOrCreateNewFragment(parentFragment.getFragmentInfo());
+				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		if (!ldesFragment.getMemberIds().contains(ldesMember.getLdesMemberId())) {
 			if (parentFragment.getRelations().stream()
 					.noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))) {

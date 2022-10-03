@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 
 import java.util.Optional;
 
@@ -17,17 +16,17 @@ public class OpenFragmentProvider {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
-	public LdesFragment retrieveOpenFragmentOrCreateNewFragment(FragmentInfo fragmentInfo) {
+	public LdesFragment retrieveOpenFragmentOrCreateNewFragment(LdesFragment parentFragment) {
 		return ldesFragmentRepository
-				.retrieveOpenChildFragment(fragmentInfo.getViewName(),
-						fragmentInfo.getFragmentPairs())
+				.retrieveOpenChildFragment(parentFragment.getFragmentInfo().getViewName(),
+						parentFragment.getFragmentInfo().getFragmentPairs())
 				.map(fragment -> {
 					if (fragmentCreator.needsToCreateNewFragment(fragment)) {
-						return fragmentCreator.createNewFragment(Optional.of(fragment), fragmentInfo);
+						return fragmentCreator.createNewFragment(Optional.of(fragment), parentFragment);
 					} else {
 						return fragment;
 					}
 				})
-				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), fragmentInfo));
+				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), parentFragment));
 	}
 }

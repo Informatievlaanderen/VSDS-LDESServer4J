@@ -1,11 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 public class FragmentInfo {
 
@@ -47,6 +48,12 @@ public class FragmentInfo {
 
 	public void setImmutable(Boolean immutable) {
 		this.immutable = immutable;
+	}
+
+	public FragmentInfo createChild(FragmentPair fragmentPair) {
+		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
+		childFragmentPairs.add(fragmentPair);
+		return new FragmentInfo(viewName, childFragmentPairs);
 	}
 
 	@Override
