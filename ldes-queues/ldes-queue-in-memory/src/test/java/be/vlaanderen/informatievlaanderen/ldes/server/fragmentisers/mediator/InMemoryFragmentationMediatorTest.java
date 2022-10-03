@@ -30,7 +30,7 @@ class InMemoryFragmentationMediatorTest {
 		fragmentationMediator.addMemberToFragment(ldesMember);
 
 		await().pollDelay(Durations.ONE_MILLISECOND)
-				.atMost(Durations.ONE_HUNDRED_MILLISECONDS)
+				.atMost(Durations.TEN_SECONDS)
 				.until(() -> fragmentationMediator.ldesMembersToFragment.isEmpty());
 
 		verify(fragmentationExecutor, times(1)).executeFragmentation(ldesMember);
