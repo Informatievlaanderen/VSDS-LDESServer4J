@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,12 +20,11 @@ public class InMemoryFragmentationMediator implements FragmentationMediator {
 	private final FragmentationExecutor fragmentationExecutor;
 	protected final AtomicInteger ldesMembersToFragmentTracker;
 
-	public InMemoryFragmentationMediator(FragmentationExecutor fragmentationExecutor,
-			MeterRegistry meterRegistry) {
+	public InMemoryFragmentationMediator(FragmentationExecutor fragmentationExecutor) {
 		LOGGER.info("Server has been configured to queue ldes members for fragmentation IN MEMORY");
 		this.fragmentationExecutor = fragmentationExecutor;
 		this.executorService = Executors.newSingleThreadExecutor();
-		ldesMembersToFragmentTracker = meterRegistry.gauge("ldes_server_members_to_fragment", new AtomicInteger(0));
+		ldesMembersToFragmentTracker = Metrics.gauge("ldes_server_members_to_fragment_total", new AtomicInteger(0));
 	}
 
 	@Override

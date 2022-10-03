@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
-import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class InMemoryFragmentationAutoConfig {
 	@Bean
-	public FragmentationMediator inMemoryFragmentationMediator(FragmentationExecutor fragmentationExecutor,
-			MeterRegistry meterRegistry) {
-		return new InMemoryFragmentationMediator(fragmentationExecutor, meterRegistry);
+	public FragmentationMediator inMemoryFragmentationMediator(FragmentationExecutor fragmentationExecutor) {
+		return new InMemoryFragmentationMediator(fragmentationExecutor);
 	}
 }

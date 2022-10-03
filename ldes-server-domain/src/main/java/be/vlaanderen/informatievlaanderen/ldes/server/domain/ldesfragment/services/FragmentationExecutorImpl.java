@@ -25,18 +25,20 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	}
 
 	@Override
-	public synchronized void executeFragmentation(LdesMember memberId) {
-		Span parentSpan = tracer.nextSpan().name("execute-fragmentation");
-		parentSpan.start();
+	public synchronized void executeFragmentation(LdesMember ldesMember) {
+		Span parentSpan = tracer.nextSpan()
+				.name("execute fragmentation")
+				.tag("memberId", ldesMember.getLdesMemberId())
+				.start();
 		fragmentationStrategyMap.entrySet().parallelStream().forEach(entry -> {
 			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentSpan);
-			entry.getValue().addMemberToFragment(rootFragmentOfView, memberId, parentSpan);
+			entry.getValue().addMemberToFragment(rootFragmentOfView, ldesMember, parentSpan);
 		});
 		parentSpan.end();
 	}
 
 	private LdesFragment retrieveRootFragmentOfView(String viewName, Span name) {
-		Span start = tracer.nextSpan(name).name("Retrieve root of view " + viewName).start();
+		Span start = tracer.nextSpan(name).name("retrieve root of view " + viewName).start();
 		LdesFragment ldesFragment = ldesFragmentRepository
 				.retrieveRootFragment(viewName)
 				.orElseThrow(() -> new MissingRootFragmentException(viewName));

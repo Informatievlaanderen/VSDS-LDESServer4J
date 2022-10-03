@@ -1,9 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +19,7 @@ class InMemoryFragmentationMediatorTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentationMediator = new InMemoryFragmentationMediator(fragmentationExecutor, new SimpleMeterRegistry());
+		fragmentationMediator = new InMemoryFragmentationMediator(fragmentationExecutor);
 	}
 
 	@Test
