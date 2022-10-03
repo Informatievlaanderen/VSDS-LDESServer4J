@@ -15,6 +15,7 @@ public class TracerMockHelper {
 		when(tracer.nextSpan()).thenReturn(span);
 		when(tracer.nextSpan(any())).thenReturn(span);
 		when(span.name(anyString())).thenReturn(span);
+		when(span.tag(anyString(), any())).thenReturn(span);
 		when(span.start()).thenReturn(span);
 
 		return tracer;

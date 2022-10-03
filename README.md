@@ -257,6 +257,11 @@ mvn clean verify -Dunittestskip=true
 Additionally, it is possible to keep track of metrics and tracings of the LDES Server.
 This will be done through a Jaeger exporter for traces and a Prometheus endpoint for Metrics.
 
+The exposed metrics can be found at `/actuator/metrics`.
+
+Both traces and metrics are based on [OpenTelemetry standard](https://opentelemetry.io/docs/concepts/what-is-opentelemetry/)
+
+
 To achieve this, the following properties are expected
 
 #### Local
@@ -265,6 +270,8 @@ To achieve this, the following properties are expected
 spring:
   sleuth:
     otel:
+      config:
+        trace-id-ratio-based: 1.0
       exporter:
         jaeger:
           endpoint: "endpoint of collector"
