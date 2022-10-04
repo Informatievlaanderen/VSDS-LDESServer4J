@@ -20,8 +20,10 @@ open data.
             - [Application Configuration](#application-configuration)
                 * [Example HTTP Ingest-Fetch Configuration](#example-http-ingest-fetch-configuration)
                 * [Example Mongo Configuration](#example-mongo-configuration)
+                * [Example Views Configuration](#example-views-configuration)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
+                * [Example Substring Fragmentation](#example-substring-fragmentation)
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
@@ -35,8 +37,11 @@ open data.
             - [Only Integration Tests](#only-integration-tests)
             - [Auto-Configurable Modules](#auto-configurable-modules)
         + [Tracing and Metrics](#tracing-and-metrics)
-            - [Local](#local)
+            - [Local Tracing and Metrics](#local-tracing-and-metrics)
             - [Using Docker](#using-docker)
+        + [Health and Info](#health-and-info)
+            - [Local Health and Info](#local-health-and-info)
+            - [Docker](#docker)
 
 ## Set-up of the LDES Server
 
@@ -91,6 +96,7 @@ This will start an empty LDES server. To enrich this server, certain Maven profi
 | **Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
 | **Timebased Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
 | **Geospatial Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **Substring Fragmentation**          | fragmentation-substring  | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
 
 #### Application Configuration
 
@@ -166,6 +172,15 @@ An example of a view configuration with two view is shown below
     maxZoomLevel: { Required zoom level }
     bucketiserproperty: { Defines which property will be used for bucketizing }
     projection: { "lambert72" (current only this projection is supported) }
+  ```
+
+##### Example Substring Fragmentation
+
+  ```yaml
+  name: "substring"
+  config:
+    substringProperty: { Defines which property will be used for bucketizing }
+    memberLimit: { member limit > 0 }
   ```
 
 ### Docker Setup
@@ -264,7 +279,7 @@ Both traces and metrics are based on [OpenTelemetry standard](https://openteleme
 
 To achieve this, the following properties are expected
 
-#### Local
+#### Local Tracing and Metrics
 
 ```yaml
 spring:
@@ -311,7 +326,7 @@ This health endpoint provides a basic JSON output that can be found at `/actuato
 
 An additional info endpoint is also available which shows which version of the application running and its deploy date.
 
-#### Local
+#### Local Health and Info
 
 The following config allows you to enable both the info and health endpoints.
 ```yaml
