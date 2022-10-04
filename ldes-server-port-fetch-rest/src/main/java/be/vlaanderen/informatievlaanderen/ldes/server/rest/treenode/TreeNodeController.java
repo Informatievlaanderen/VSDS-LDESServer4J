@@ -28,7 +28,7 @@ public class TreeNodeController {
 		this.fragmentFetchService = fragmentFetchService;
 	}
 
-	@CrossOrigin(origins = "", allowedHeaders = "")
+	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "/{view}")
 	public LdesFragment retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,

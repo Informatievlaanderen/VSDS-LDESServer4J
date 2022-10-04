@@ -30,7 +30,7 @@ public class EventStreamController {
 		this.eventStreamFetcher = eventStreamFetcher;
 	}
 
-	@CrossOrigin(origins = "", allowedHeaders = "")
+	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "${ldes.collectionname}")
 	public EventStream retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response) {
