@@ -14,6 +14,7 @@
 	<modules>
 		<module>ldes-fragmentisers-geospatial</module>
         <module>ldes-fragmentisers-timebased</module>
+        <module>ldes-fragmentisers-substring</module>
     </modules>
 
 	<dependencyManagement>
