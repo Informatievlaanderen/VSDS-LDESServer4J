@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entitie
 
 import org.apache.jena.rdf.model.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
@@ -30,6 +31,19 @@ public class LdesMember {
                 .map(Literal::getValue)
                 .orElse(null);
         // @formatter:on
+	}
+
+	public List<Object> getFragmentationObjects(String fragmentationProperty) {
+		// @formatter:off
+		return memberModel
+				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+				.toList()
+				.stream()
+				.map(Statement::getObject)
+				.map(RDFNode::asLiteral)
+				.map(Literal::getValue)
+				.toList();
+		// @formatter:on
 	}
 
 	public String getLdesMemberId() {

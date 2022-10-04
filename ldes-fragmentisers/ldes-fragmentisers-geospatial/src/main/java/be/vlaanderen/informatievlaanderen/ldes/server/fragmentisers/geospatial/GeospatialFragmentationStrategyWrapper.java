@@ -7,12 +7,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverterFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.Projections;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.Projections.NOOP;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
 
 public class GeospatialFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
@@ -36,7 +38,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {
 		GeospatialConfig geospatialConfig = new GeospatialConfig();
-		geospatialConfig.setProjection(properties.get(PROJECTION));
+		geospatialConfig.setProjection(properties.getOrDefault(PROJECTION, NOOP.name()));
 		geospatialConfig.setBucketiserProperty(properties.get(BUCKETISER_PROPERTY));
 		geospatialConfig.setMaxZoomLevel(Integer.valueOf(properties.get(MAX_ZOOM_LEVEL)));
 		return geospatialConfig;
