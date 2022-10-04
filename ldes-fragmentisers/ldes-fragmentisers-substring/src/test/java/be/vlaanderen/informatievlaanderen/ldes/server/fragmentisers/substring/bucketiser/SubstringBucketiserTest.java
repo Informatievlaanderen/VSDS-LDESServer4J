@@ -35,8 +35,8 @@ class SubstringBucketiserTest {
 
 		List<String> buckets = substringBucketiser.bucketise(ldesMember);
 
-		assertEquals(List.of("\"o\"", "\"om\"", "\"oms\"", "\"omsc\"", "\"omsch\"", "\"omschr\"", "\"omschri\"",
-				"\"omschrij\"", "\"omschrijv\"", "\"omschrijvi\"", "\"omschrijvin\"", "\"omschrijving\""), buckets);
+		assertEquals(List.of("o", "om", "oms", "omsc", "omsch", "omschr", "omschri",
+				"omschrij", "omschrijv", "omschrijvi", "omschrijvin", "omschrijving"), buckets);
 	}
 
 	private LdesMember readLdesMemberFromFile()

@@ -53,8 +53,8 @@ class SubstringFragmentationStrategyTest {
 		when(childSpan.name("substring fragmentation")).thenReturn(childSpan);
 		when(childSpan.start()).thenReturn(childSpan);
 		when(substringBucketiser.bucketise(ldesMember)).thenReturn(List.of("a", "ab", "abc"));
-		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
-		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT, "\"\"")).thenReturn(rootFragment);
+		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
+		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT, "")).thenReturn(rootFragment);
 		LdesFragment childFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentFinder.getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT, rootFragment,
 				List.of("a", "ab", "abc"))).thenReturn(childFragment);
@@ -64,7 +64,7 @@ class SubstringFragmentationStrategyTest {
 		InOrder inOrder = inOrder(ldesFragmentRepository, substringBucketiser, substringFragmentCreator,
 				substringFragmentFinder, decoratedFragmentationStrategy);
 		inOrder.verify(substringBucketiser, times(1)).bucketise(ldesMember);
-		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "\"\"");
+		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "");
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(PARENT_FRAGMENT);
 		inOrder.verify(substringFragmentFinder, times(1)).getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab", "abc"));

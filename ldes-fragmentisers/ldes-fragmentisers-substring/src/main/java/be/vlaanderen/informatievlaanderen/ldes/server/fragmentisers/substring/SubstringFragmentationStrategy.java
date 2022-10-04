@@ -36,7 +36,7 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
 		Span substringFragmentationSpan = tracer.nextSpan(parentSpan).name("substring fragmentation").start();
 		List<String> buckets = substringBucketiser.bucketise(ldesMember);
-		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, "\"\"");
+		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, "");
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 		LdesFragment substringFragment = substringFragmentFinder
 				.getOpenLdesFragmentOrLastPossibleFragment(parentFragment, rootFragment, buckets);
