@@ -31,7 +31,7 @@ public class SubstringBucketiser {
 	private List<String> createSubstringSet(String substringTarget) {
 		return IntStream
 				.rangeClosed(1, substringTarget.length())
-				.mapToObj(index -> "\"" + substringTarget.substring(0, index) + "\"")
+				.mapToObj(index -> substringTarget.substring(0, index))
 				.toList();
 	}
 }
