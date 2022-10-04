@@ -24,17 +24,19 @@ class GeospatialBucketiserTest {
 
 	private GeospatialBucketiser bucketiser;
 
+	private final GeospatialConfig geospatialConfig = new GeospatialConfig();
+
 	@BeforeEach
 	void setUp() {
-		GeospatialConfig geospatialConfig = new GeospatialConfig();
 		geospatialConfig.setBucketiserProperty("http://www.opengis.net/ont/geosparql#asWKT");
 		geospatialConfig.setMaxZoomLevel(15);
-		bucketiser = new GeospatialBucketiser(geospatialConfig, new Lambert72CoordinateConverter());
 	}
 
 	@Test
-	@DisplayName("Bucketising of LdesMember")
+	@DisplayName("Bucketising of LdesMember with Lambert72 conversion")
 	void when_MemberIsBucketized_CorrectBucketsAreReturned() throws URISyntaxException, IOException {
+		bucketiser = new GeospatialBucketiser(geospatialConfig, new Lambert72CoordinateConverter());
+
 		Set<String> expectedBuckets = Set.of("15/16743/11009", "15/16744/11009",
 				"15/16743/11010", "15/16742/11010");
 		LdesMember ldesMember = readLdesMemberFromFile(getClass().getClassLoader(),
@@ -43,6 +45,21 @@ class GeospatialBucketiserTest {
 		Set<String> actualBuckets = bucketiser.bucketise(ldesMember);
 
 		assertEquals(4, actualBuckets.size());
+		assertEquals(expectedBuckets, actualBuckets);
+	}
+
+	@Test
+	@DisplayName("Bucketising of LdesMember with 2 geo properties")
+	void when_MemberWith2GeoPropertiesIsBucketized_CorrectBucketsAreReturned() throws URISyntaxException, IOException {
+		bucketiser = new GeospatialBucketiser(geospatialConfig, new NoopCoordinateConverter());
+
+		Set<String> expectedBuckets = Set.of("15/16884/10974", "15/16882/10975");
+		LdesMember ldesMember = readLdesMemberFromFile(getClass().getClassLoader(),
+				"examples/ldes-member-2-geo-props-bucketising.nq");
+
+		Set<String> actualBuckets = bucketiser.bucketise(ldesMember);
+
+		assertEquals(2, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
 	}
 

@@ -3,10 +3,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import org.apache.jena.geosparql.implementation.GeometryWrapper;
+import org.locationtech.jts.geom.Coordinate;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 public class GeospatialBucketiser {
 	private final GeospatialConfig geospatialConfig;
@@ -19,9 +24,14 @@ public class GeospatialBucketiser {
 	}
 
 	public Set<String> bucketise(LdesMember member) {
-		GeometryWrapper wrapper = (GeometryWrapper) member
-				.getFragmentationObject(geospatialConfig.getBucketiserProperty());
-		return Arrays.stream(wrapper.getXYGeometry().getCoordinates())
+		List<Coordinate> coordinates = new ArrayList<>();
+
+		member.getFragmentationObjects(geospatialConfig.getBucketiserProperty())
+				.stream()
+				.map(o -> (GeometryWrapper) o)
+				.forEach(geometryWrapper -> coordinates.addAll(
+						stream(geometryWrapper.getXYGeometry().getCoordinates()).toList()));
+		return coordinates.stream()
 				.map(coordinateConverter::convertCoordinate)
 				.map(coordinate -> CoordinateToTileStringConverter.convertCoordinate(coordinate,
 						geospatialConfig.getMaxZoomLevel()))

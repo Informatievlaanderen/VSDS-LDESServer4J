@@ -36,7 +36,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {
 		GeospatialConfig geospatialConfig = new GeospatialConfig();
-		geospatialConfig.setProjection(properties.get(PROJECTION));
+		geospatialConfig.setProjection(properties.getOrDefault(PROJECTION, NOOP));
 		geospatialConfig.setBucketiserProperty(properties.get(BUCKETISER_PROPERTY));
 		geospatialConfig.setMaxZoomLevel(Integer.valueOf(properties.get(MAX_ZOOM_LEVEL)));
 		return geospatialConfig;
