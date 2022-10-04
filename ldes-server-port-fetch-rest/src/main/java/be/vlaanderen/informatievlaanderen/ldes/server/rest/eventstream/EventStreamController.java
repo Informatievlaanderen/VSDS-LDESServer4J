@@ -44,6 +44,6 @@ public class EventStreamController {
 		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE))
 			response.setHeader(CONTENT_TYPE_HEADER, TEXT_TURTLE);
 		else
-			response.setHeader(CONTENT_TYPE_HEADER, language);
+			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
 	}
 }
