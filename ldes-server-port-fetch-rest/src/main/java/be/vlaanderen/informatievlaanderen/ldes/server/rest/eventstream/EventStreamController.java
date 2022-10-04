@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueob
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,7 @@ public class EventStreamController {
 		this.eventStreamFetcher = eventStreamFetcher;
 	}
 
+	@CrossOrigin(origins = "", allowedHeaders = "")
 	@GetMapping(value = "${ldes.collectionname}")
 	public EventStream retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response) {
