@@ -26,7 +26,7 @@ class TimebasedFragmentationStrategyTest {
 
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final OpenFragmentProvider openFragmentProvider = mock(OpenFragmentProvider.class);
-	private final FragmentationStrategy wrappedService = mock(FragmentationStrategy.class);
+	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 	private final Tracer tracer = mock(Tracer.class);
 	private FragmentationStrategy fragmentationStrategy;
 
@@ -39,7 +39,7 @@ class TimebasedFragmentationStrategyTest {
 				new FragmentInfo(VIEW_NAME, List.of()));
 		OPEN_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("generatedAtTime", "someTime"))));
-		fragmentationStrategy = new TimebasedFragmentationStrategy(wrappedService,
+		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
 				ldesFragmentRepository, openFragmentProvider, tracer);
 	}
 
@@ -59,12 +59,13 @@ class TimebasedFragmentationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				ldesMember, parentSpan);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
+		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).saveFragment(PARENT_FRAGMENT);
-		inOrder.verify(wrappedService, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember, childSpan);
+		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember,
+				childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -86,10 +87,11 @@ class TimebasedFragmentationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				ldesMember, parentSpan);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
+		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
-		inOrder.verify(wrappedService, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember, childSpan);
+		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember,
+				childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -110,7 +112,7 @@ class TimebasedFragmentationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				ldesMember, parentSpan);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, wrappedService);
+		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verifyNoMoreInteractions();

@@ -14,7 +14,7 @@ public class FragmentInfo {
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
 
-	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs) {
+	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = false;

@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.b
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateConverterFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
@@ -26,9 +27,11 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 				.getCoordinateConverter(geospatialConfig.getProjection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
 		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
+		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
+				ldesFragmentRepository);
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository,
-				geospatialBucketiser, geospatialFragmentCreator, tracer);
+				geospatialBucketiser, geospatialFragmentCreator, tileFragmentRelationsAttributer, tracer);
 	}
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {

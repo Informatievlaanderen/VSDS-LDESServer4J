@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.Tile;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.Tile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
