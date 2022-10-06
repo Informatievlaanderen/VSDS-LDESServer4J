@@ -56,7 +56,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 		} else {
 			return tileFragments
 					.parallelStream()
-					.map(TileFragment::getLdesFragment)
+					.map(TileFragment::ldesFragment)
 					.toList();
 		}
 	}
@@ -64,12 +64,12 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	private boolean hasCreatedTiles(List<TileFragment> tileFragments) {
 		return tileFragments
 				.stream()
-				.anyMatch(TileFragment::isCreated);
+				.anyMatch(TileFragment::created);
 	}
 
 	private LdesFragment getRootTileFragment(LdesFragment parentFragment) {
 		LdesFragment tileRootFragment = fragmentCreator.getOrCreateGeospatialFragment(parentFragment,
-				FRAGMENT_KEY_TILE_ROOT).getLdesFragment();
+				FRAGMENT_KEY_TILE_ROOT).ldesFragment();
 		super.addRelationFromParentToChild(parentFragment, tileRootFragment);
 		return tileRootFragment;
 	}

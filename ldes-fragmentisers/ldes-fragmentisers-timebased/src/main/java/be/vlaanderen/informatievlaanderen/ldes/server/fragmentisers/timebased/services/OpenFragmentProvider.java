@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 
-
 public class OpenFragmentProvider {
 
 	private final TimeBasedFragmentCreator fragmentCreator;

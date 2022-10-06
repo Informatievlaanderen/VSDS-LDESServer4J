@@ -13,6 +13,6 @@ public class TileConverter {
 	}
 
 	public static String toString(final Tile tile) {
-		return tile.getZoom() + "/" + tile.getX() + "/" + tile.getY();
+		return tile.zoom() + "/" + tile.x() + "/" + tile.y();
 	}
 }

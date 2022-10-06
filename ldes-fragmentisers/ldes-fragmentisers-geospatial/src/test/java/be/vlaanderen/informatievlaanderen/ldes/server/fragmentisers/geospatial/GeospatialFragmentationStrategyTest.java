@@ -59,18 +59,18 @@ class GeospatialFragmentationStrategyTest {
 		TileFragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2", false);
 		TileFragment tileFragmentThree = mockCreationGeospatialFragment("3/3/3", true);
 		TileFragment rootTileFragment = mockCreationGeospatialFragment("0/0/0", false);
-		when(tileFragmentRelationsAttributer.addRelationsFromRootToBottom(eq(rootTileFragment.getLdesFragment()),
+		when(tileFragmentRelationsAttributer.addRelationsFromRootToBottom(eq(rootTileFragment.ldesFragment()),
 				anyList()))
-				.thenReturn(List.of(tileFragmentOne.getLdesFragment(), tileFragmentTwo.getLdesFragment(),
-						tileFragmentThree.getLdesFragment()));
+				.thenReturn(List.of(tileFragmentOne.ldesFragment(), tileFragmentTwo.ldesFragment(),
+						tileFragmentThree.ldesFragment()));
 
 		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, ldesMember, parentSpan);
 
-		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentOne.getLdesFragment(),
+		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentOne.ldesFragment(),
 				ldesMember, childSpan);
-		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentTwo.getLdesFragment(),
+		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentTwo.ldesFragment(),
 				ldesMember, childSpan);
-		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentThree.getLdesFragment(),
+		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentThree.ldesFragment(),
 				ldesMember, childSpan);
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 		verify(childSpan, times(1)).end();
@@ -92,11 +92,11 @@ class GeospatialFragmentationStrategyTest {
 		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, ldesMember, parentSpan);
 
 		verifyNoInteractions(tileFragmentRelationsAttributer);
-		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentOne.getLdesFragment(),
+		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentOne.ldesFragment(),
 				ldesMember, childSpan);
-		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentTwo.getLdesFragment(),
+		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentTwo.ldesFragment(),
 				ldesMember, childSpan);
-		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentThree.getLdesFragment(),
+		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentThree.ldesFragment(),
 				ldesMember, childSpan);
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 		verify(childSpan, times(1)).end();

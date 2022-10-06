@@ -20,15 +20,15 @@ public class TileFragmentRelationsAttributer {
 		addRelationsFromRootToCreatedTiles(rootFragment, getCreatedTiles(tileFragments));
 		return tileFragments
 				.parallelStream()
-				.map(TileFragment::getLdesFragment)
+				.map(TileFragment::ldesFragment)
 				.toList();
 	}
 
 	private List<LdesFragment> getCreatedTiles(List<TileFragment> tileFragments) {
 		return tileFragments
 				.stream()
-				.filter(TileFragment::isCreated)
-				.map(TileFragment::getLdesFragment)
+				.filter(TileFragment::created)
+				.map(TileFragment::ldesFragment)
 				.toList();
 	}
 

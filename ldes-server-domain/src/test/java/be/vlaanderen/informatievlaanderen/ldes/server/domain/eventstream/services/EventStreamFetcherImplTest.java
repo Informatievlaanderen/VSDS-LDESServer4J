@@ -24,12 +24,12 @@ class EventStreamFetcherImplTest {
 	@Test
 	void test() {
 		EventStream eventStream = eventStreamFetcher.fetchEventStream();
-		assertEquals("mobility-hindrances", eventStream.getCollection());
+		assertEquals("mobility-hindrances", eventStream.collection());
 		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
-				eventStream.getShape());
-		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", eventStream.getTimestampPath());
-		assertEquals("http://purl.org/dc/terms/isVersionOf", eventStream.getVersionOf());
-		assertEquals(List.of("firstView", "secondView"), eventStream.getViews());
+				eventStream.shape());
+		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", eventStream.timestampPath());
+		assertEquals("http://purl.org/dc/terms/isVersionOf", eventStream.versionOf());
+		assertEquals(List.of("firstView", "secondView"), eventStream.views());
 	}
 
 	private ViewConfig getViewConfig() {

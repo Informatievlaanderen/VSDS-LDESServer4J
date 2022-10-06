@@ -9,10 +9,10 @@ public class BoundingBox {
 	private final double west;
 
 	public BoundingBox(Tile tile) {
-		north = tile2lat(tile.getY(), tile.getZoom());
-		south = tile2lat(tile.getY() + 1, tile.getZoom());
-		west = tile2lon(tile.getX(), tile.getZoom());
-		east = tile2lon(tile.getX() + 1, tile.getZoom());
+		north = tile2lat(tile.y(), tile.zoom());
+		south = tile2lat(tile.y() + 1, tile.zoom());
+		west = tile2lon(tile.x(), tile.zoom());
+		east = tile2lon(tile.x() + 1, tile.zoom());
 	}
 
 	static double tile2lon(int x, int z) {

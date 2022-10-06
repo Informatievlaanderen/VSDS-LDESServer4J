@@ -123,10 +123,10 @@ class TimeBasedFragmentCreatorTest {
 		TreeRelation actualTreeRelationOnNewFragment = newFragment.getRelations().get(0);
 		TreeRelation expectedTreeRelationOnNewFragment = new TreeRelation(expectedTreePath, expectedTreeNode,
 				expectedTreeValue, DATE_TIME_TYPE, expectedRelation);
-		assertEquals(expectedTreeRelationOnNewFragment.getTreePath(),
-				actualTreeRelationOnNewFragment.getTreePath());
-		assertEquals(expectedTreeRelationOnNewFragment.getRelation(),
-				actualTreeRelationOnNewFragment.getRelation());
+		assertEquals(expectedTreeRelationOnNewFragment.treePath(),
+				actualTreeRelationOnNewFragment.treePath());
+		assertEquals(expectedTreeRelationOnNewFragment.relation(),
+				actualTreeRelationOnNewFragment.relation());
 	}
 
 	private TimebasedFragmentationConfig createSequentialFragmentationConfig() {

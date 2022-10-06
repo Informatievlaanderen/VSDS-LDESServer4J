@@ -27,12 +27,12 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 	public Model toModel(final EventStream eventStream) {
 		Model model = ModelFactory.createDefaultModel();
 		List<Statement> statements = new ArrayList<>();
-		Resource collectionResource = createResource(ldesConfig.getHostName() + "/" + eventStream.getCollection());
+		Resource collectionResource = createResource(ldesConfig.getHostName() + "/" + eventStream.collection());
 		statements.add(createStatement(collectionResource, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
-		addStatementIfMeaningful(statements, collectionResource, TREE_SHAPE, eventStream.getShape());
-		addStatementIfMeaningful(statements, collectionResource, LDES_VERSION_OF, eventStream.getVersionOf());
-		addStatementIfMeaningful(statements, collectionResource, LDES_TIMESTAMP_PATH, eventStream.getTimestampPath());
-		eventStream.getViews().forEach(view -> addStatementIfMeaningful(statements, collectionResource, TREE_VIEW,
+		addStatementIfMeaningful(statements, collectionResource, TREE_SHAPE, eventStream.shape());
+		addStatementIfMeaningful(statements, collectionResource, LDES_VERSION_OF, eventStream.versionOf());
+		addStatementIfMeaningful(statements, collectionResource, LDES_TIMESTAMP_PATH, eventStream.timestampPath());
+		eventStream.views().forEach(view -> addStatementIfMeaningful(statements, collectionResource, TREE_VIEW,
 				ldesConfig.getHostName() + "/" + view));
 		model.add(statements);
 		return prefixAdder.addPrefixesToModel(model);
