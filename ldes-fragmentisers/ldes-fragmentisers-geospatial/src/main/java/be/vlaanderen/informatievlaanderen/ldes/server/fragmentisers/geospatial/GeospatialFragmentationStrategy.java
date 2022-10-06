@@ -55,7 +55,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 			return tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, tileFragments);
 		} else {
 			return tileFragments
-					.parallelStream()
+					.parallelStream() // TODO: is parallelisation worth the effort here? TileFragment::ldesFragment
+										// seems to be quite lightweight.
 					.map(TileFragment::ldesFragment)
 					.toList();
 		}
