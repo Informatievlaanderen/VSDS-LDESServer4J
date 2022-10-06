@@ -19,7 +19,7 @@ public class TileFragmentRelationsAttributer {
 			List<TileFragment> tileFragments) {
 		addRelationsFromRootToCreatedTiles(rootFragment, getCreatedTiles(tileFragments));
 		return tileFragments
-				.parallelStream()
+				.parallelStream()   // TODO: is parallelisation worth the effort here? TileFragment::ldesFragment seems to be quite lightweight.
 				.map(TileFragment::ldesFragment)
 				.toList();
 	}
