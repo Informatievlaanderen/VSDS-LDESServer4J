@@ -25,7 +25,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(properties);
 		CoordinateConverter coordinateConverter = CoordinateConverterFactory
-				.getCoordinateConverter(geospatialConfig.getProjection());
+				.getCoordinateConverter(geospatialConfig.projection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig, coordinateConverter);
 		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
@@ -36,11 +36,10 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 	}
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {
-		GeospatialConfig geospatialConfig = new GeospatialConfig();
-		geospatialConfig.setProjection(properties.getOrDefault(PROJECTION, NOOP.name()));
-		geospatialConfig.setBucketiserProperty(properties.get(BUCKETISER_PROPERTY));
-		geospatialConfig.setMaxZoomLevel(Integer.valueOf(properties.get(MAX_ZOOM_LEVEL)));
-		return geospatialConfig;
+		return new GeospatialConfig(
+				properties.get(BUCKETISER_PROPERTY),
+				Integer.parseInt(properties.get(MAX_ZOOM_LEVEL)),
+				properties.getOrDefault(PROJECTION, NOOP.name()));
 	}
 
 }

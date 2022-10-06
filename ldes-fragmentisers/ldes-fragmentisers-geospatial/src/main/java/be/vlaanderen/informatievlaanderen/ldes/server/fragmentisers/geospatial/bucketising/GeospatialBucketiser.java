@@ -23,7 +23,7 @@ public class GeospatialBucketiser {
 	public Set<String> bucketise(LdesMember member) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
-		member.getFragmentationObjects(geospatialConfig.getBucketiserProperty())
+		member.getFragmentationObjects(geospatialConfig.bucketiserProperty())
 				.stream()
 				.map(o -> (GeometryWrapper) o)
 				.forEach(geometryWrapper -> coordinates.addAll(
@@ -31,7 +31,7 @@ public class GeospatialBucketiser {
 		return coordinates.stream()
 				.map(coordinateConverter::convertCoordinate)
 				.map(coordinate -> CoordinateToTileStringConverter.convertCoordinate(coordinate,
-						geospatialConfig.getMaxZoomLevel()))
+						geospatialConfig.maxZoomLevel()))
 				.collect(Collectors.toSet());
 	}
 }

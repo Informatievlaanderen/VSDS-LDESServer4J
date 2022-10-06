@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.c
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,13 +23,8 @@ class GeospatialBucketiserTest {
 
 	private GeospatialBucketiser bucketiser;
 
-	private final GeospatialConfig geospatialConfig = new GeospatialConfig();
-
-	@BeforeEach
-	void setUp() {
-		geospatialConfig.setBucketiserProperty("http://www.opengis.net/ont/geosparql#asWKT");
-		geospatialConfig.setMaxZoomLevel(15);
-	}
+	private final GeospatialConfig geospatialConfig = new GeospatialConfig("http://www.opengis.net/ont/geosparql#asWKT",
+			15, null);
 
 	@Test
 	@DisplayName("Bucketising of LdesMember with Lambert72 conversion")
