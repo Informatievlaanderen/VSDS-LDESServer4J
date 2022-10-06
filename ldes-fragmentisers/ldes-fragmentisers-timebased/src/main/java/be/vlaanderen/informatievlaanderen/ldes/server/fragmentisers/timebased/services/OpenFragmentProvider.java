@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 
-import java.util.Optional;
 
 public class OpenFragmentProvider {
 
@@ -22,11 +21,11 @@ public class OpenFragmentProvider {
 						parentFragment.getFragmentInfo().getFragmentPairs())
 				.map(fragment -> {
 					if (fragmentCreator.needsToCreateNewFragment(fragment)) {
-						return fragmentCreator.createNewFragment(Optional.of(fragment), parentFragment);
+						return fragmentCreator.createNewFragment(fragment, parentFragment);
 					} else {
 						return fragment;
 					}
 				})
-				.orElseGet(() -> fragmentCreator.createNewFragment(Optional.empty(), parentFragment));
+				.orElseGet(() -> fragmentCreator.createNewFragment(parentFragment));
 	}
 }

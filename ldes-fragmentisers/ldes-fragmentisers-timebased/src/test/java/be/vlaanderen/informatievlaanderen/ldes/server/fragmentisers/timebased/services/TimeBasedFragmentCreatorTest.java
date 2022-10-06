@@ -43,7 +43,7 @@ class TimeBasedFragmentCreatorTest {
 	@DisplayName("Creating First Time-Based Fragment")
 	void when_NoFragmentExists_thenNewFragmentIsCreated() {
 		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW, List.of()));
-		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.empty(), parentFragment);
+		LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
@@ -65,8 +65,7 @@ class TimeBasedFragmentCreatorTest {
 		when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId()))
 				.thenReturn(Optional.of(ldesMemberOfFragment));
 
-		LdesFragment newFragment = fragmentCreator.createNewFragment(Optional.of(existingLdesFragment),
-				parentFragment);
+		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));

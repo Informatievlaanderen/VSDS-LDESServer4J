@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.co
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 
@@ -26,13 +25,18 @@ public class TimeBasedFragmentCreator {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
-	public LdesFragment createNewFragment(Optional<LdesFragment> optionalLdesFragment,
+	public LdesFragment createNewFragment(LdesFragment parentFragment) {
+		return createNewFragment(null, parentFragment);
+	}
+
+	public LdesFragment createNewFragment(LdesFragment ldesFragment,
 			LdesFragment parentFragment) {
 		String fragmentationValue = LocalDateTime.now().format(formatter);
 		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(GENERATED_AT_TIME, fragmentationValue));
 
-		optionalLdesFragment
-				.ifPresent(ldesFragment -> makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment));
+		if (ldesFragment != null) {
+			makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment);
+		}
 		return newFragment;
 	}
 

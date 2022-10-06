@@ -38,7 +38,7 @@ class OpenFragmentProviderTest {
 		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentInfo().getViewName(),
 				PARENT_FRAGMENT.getFragmentInfo().getFragmentPairs()))
 				.thenReturn(Optional.empty());
-		when(fragmentCreator.createNewFragment(Optional.empty(), PARENT_FRAGMENT))
+		when(fragmentCreator.createNewFragment(PARENT_FRAGMENT))
 				.thenReturn(createdFragment);
 
 		LdesFragment ldesFragment = openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
@@ -48,8 +48,7 @@ class OpenFragmentProviderTest {
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).retrieveOpenChildFragment(VIEW_NAME,
 						List.of());
-		inOrder.verify(fragmentCreator, times(1)).createNewFragment(Optional.empty(),
-				PARENT_FRAGMENT);
+		inOrder.verify(fragmentCreator, times(1)).createNewFragment(PARENT_FRAGMENT);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -90,7 +89,7 @@ class OpenFragmentProviderTest {
 				List.of()))
 				.thenReturn(Optional.of(existingLdesFragment));
 		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
-		when(fragmentCreator.createNewFragment(Optional.of(existingLdesFragment),
+		when(fragmentCreator.createNewFragment(existingLdesFragment,
 				PARENT_FRAGMENT)).thenReturn(newFragment);
 
 		LdesFragment ldesFragment = openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
@@ -103,7 +102,7 @@ class OpenFragmentProviderTest {
 		inOrder.verify(fragmentCreator,
 				times(1)).needsToCreateNewFragment(existingLdesFragment);
 		inOrder.verify(fragmentCreator,
-				times(1)).createNewFragment(Optional.of(existingLdesFragment), PARENT_FRAGMENT);
+				times(1)).createNewFragment(existingLdesFragment, PARENT_FRAGMENT);
 		inOrder.verifyNoMoreInteractions();
 	}
 
