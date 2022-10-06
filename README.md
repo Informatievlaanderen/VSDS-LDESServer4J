@@ -324,7 +324,7 @@ To allow more visibility for the application, it is possible to enable a health 
 
 This health endpoint provides a basic JSON output that can be found at `/actuator/health` that provides a summary of the status of all needed services.
 
-An additional info endpoint is also available which shows which version of the application running and its deploy date.
+An additional info endpoint is also available which shows which version of the application running and its deployment date.
 
 #### Local Health and Info
 
