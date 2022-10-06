@@ -130,8 +130,6 @@ class TimeBasedFragmentCreatorTest {
 	}
 
 	private TimebasedFragmentationConfig createSequentialFragmentationConfig() {
-		TimebasedFragmentationConfig config = new TimebasedFragmentationConfig();
-		config.setMemberLimit(3L);
-		return config;
+		return new TimebasedFragmentationConfig(3L);
 	}
 }

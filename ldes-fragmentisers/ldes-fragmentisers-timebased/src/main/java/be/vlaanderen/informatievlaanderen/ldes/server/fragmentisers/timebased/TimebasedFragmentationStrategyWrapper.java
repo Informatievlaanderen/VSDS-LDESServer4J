@@ -42,8 +42,6 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 	}
 
 	private TimebasedFragmentationConfig createTimebasedFragmentationConfig(FragmentationProperties properties) {
-		TimebasedFragmentationConfig timebasedFragmentationConfig = new TimebasedFragmentationConfig();
-		timebasedFragmentationConfig.setMemberLimit(Long.valueOf(properties.get(MEMBER_LIMIT)));
-		return timebasedFragmentationConfig;
+		return new TimebasedFragmentationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)));
 	}
 }
