@@ -11,6 +11,11 @@ public interface LdesMemberRepository {
 	LdesMember saveLdesMember(LdesMember ldesMember);
 
 	List<LdesMember> fetchLdesMembers();
+	// TODO: consider making this method return Stream<LdesMember>, to avoid memory
+	// problems
+	// In case of the underlying mongo repository, this might be achieved by using
+	// its method
+	// Page<T> findAll(Pageable pageable), then stream the elements of the pages
 
 	Optional<LdesMember> getLdesMemberById(String id);
 
