@@ -19,6 +19,8 @@ public interface LdesFragmentRepository {
 			List<FragmentPair> fragmentPairList);
 
 	List<LdesFragment> retrieveAllFragments();
+	// TODO: it might be interesting to return Stream<LdesFragment> here,
+	// since a List will load everything into memory.
 
 	Optional<LdesFragment> retrieveRootFragment(String viewName);
 
