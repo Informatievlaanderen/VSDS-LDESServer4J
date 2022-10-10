@@ -1,13 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities;
 
 import org.apache.jena.rdf.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 
 public class LdesMember {
+	private static final Logger LOGGER = LoggerFactory.getLogger(LdesMember.class);
 
 	private final Model memberModel;
 	private final String memberId;
@@ -29,7 +33,10 @@ public class LdesMember {
                 .map(Statement::getObject)
                 .map(RDFNode::asLiteral)
                 .map(Literal::getValue)
-                .orElse(null);
+                .orElseGet(() -> {
+					LOGGER.error( "[ member: " + memberId + "] No properties were found for descriptor " + fragmentationProperty);
+					return null;
+				});
         // @formatter:on
 	}
 
@@ -42,7 +49,12 @@ public class LdesMember {
 				.map(Statement::getObject)
 				.map(RDFNode::asLiteral)
 				.map(Literal::getValue)
-				.toList();
+				.collect(Collectors.collectingAndThen(Collectors.toList(), result -> {
+					if (result.isEmpty()) {
+						LOGGER.error( "[ member: " + memberId + "] No properties were found for descriptor " + fragmentationProperty);
+					}
+					return result;
+				}));
 		// @formatter:on
 	}
 
