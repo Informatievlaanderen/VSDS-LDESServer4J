@@ -6,7 +6,6 @@ import org.apache.jena.geosparql.implementation.GeometryWrapper;
 import org.locationtech.jts.geom.Coordinate;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,7 +25,8 @@ public class GeospatialBucketiser {
 	public Set<String> bucketise(LdesMember member) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
-		member.getFragmentationObjects(geospatialConfig.getBucketiserProperty())
+		member.getFragmentationObjects(geospatialConfig.getFragmenterSubjectFilter(),
+				geospatialConfig.getFragmenterProperty())
 				.stream()
 				.map(o -> (GeometryWrapper) o)
 				.forEach(geometryWrapper -> coordinates.addAll(

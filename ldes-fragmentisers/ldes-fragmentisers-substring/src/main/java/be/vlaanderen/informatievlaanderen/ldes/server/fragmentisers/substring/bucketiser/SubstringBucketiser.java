@@ -15,7 +15,8 @@ public class SubstringBucketiser {
 	}
 
 	public List<String> bucketise(LdesMember member) {
-		String substringTarget = (String) member.getFragmentationObject(substringConfig.getSubstringProperty());
+		String substringTarget = (String) member.getFragmentationObject(substringConfig.getFragmenterSubjectFilter(),
+				substringConfig.getFragmenterProperty());
 		String normalizedSubstringTarget = normalize(substringTarget);
 		return createSubstringSet(normalizedSubstringTarget);
 	}

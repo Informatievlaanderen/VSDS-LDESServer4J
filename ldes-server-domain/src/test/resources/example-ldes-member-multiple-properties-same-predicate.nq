@@ -1,0 +1,9 @@
+<http://localhost:8080/collection> <https://w3id.org/tree#member> <http://localhost:8080/member/1> .
+<http://localhost:8080/member/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .
+<http://localhost:8080/member/1> <http://www.w3.org/2004/02/skos/core#prefLabel> "Description on root"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> .
+<http://localhost:8080/member/1> <http://www.w3.org/2004/02/skos/core#embedded> _:b0 .
+<http://localhost:8080/member/1> <http://www.w3.org/2004/02/skos/core#embedded> _:b1 .
+<http://localhost:8080/member/1> <http://www.w3.org/2004/02/skos/core#embedded> _:b2 .
+_:b0 <http://www.w3.org/2004/02/skos/core#prefLabel> "Description on embedded 0"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> .
+_:b1 <http://www.w3.org/2004/02/skos/core#prefLabel> "Description on embedded 1"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> .
+_:b2 <http://www.w3.org/2004/02/skos/core#prefLabel> "Description on embedded 2"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#langString> .

@@ -28,7 +28,7 @@ class GeospatialBucketiserTest {
 
 	@BeforeEach
 	void setUp() {
-		geospatialConfig.setBucketiserProperty("http://www.opengis.net/ont/geosparql#asWKT");
+		geospatialConfig.setFragmenterProperty("http://www.opengis.net/ont/geosparql#asWKT");
 		geospatialConfig.setMaxZoomLevel(15);
 	}
 

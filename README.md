@@ -144,7 +144,7 @@ An example of a view configuration with two view is shown below
         - name: "geospatial"
           config:
             maxZoomLevel: 15
-            bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+            fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
             projection: "lambert72"
         - name: "timebased"
           config:
@@ -170,7 +170,7 @@ An example of a view configuration with two view is shown below
   name: "geospatial"
   config:
     maxZoomLevel: { Required zoom level }
-    bucketiserproperty: { Defines which property will be used for bucketizing }
+    fragmenterProperty: { Defines which property will be used for bucketizing }
     projection: { "lambert72" (current only this projection is supported) }
   ```
 
@@ -179,7 +179,7 @@ An example of a view configuration with two view is shown below
   ```yaml
   name: "substring"
   config:
-    substringProperty: { Defines which property will be used for bucketizing }
+    fragmenterProperty: { Defines which property will be used for bucketizing }
     memberLimit: { member limit > 0 }
   ```
 

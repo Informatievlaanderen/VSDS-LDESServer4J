@@ -13,7 +13,7 @@ import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.MEMBER_LIMIT;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.SUBSTRING_PROPERTY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.FRAGMENTER_PROPERTY;
 
 public class SubstringFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -36,7 +36,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 
 	private SubstringConfig createSubstringConfig(FragmentationProperties properties) {
 		SubstringConfig substringConfig = new SubstringConfig();
-		substringConfig.setSubstringProperty(properties.get(SUBSTRING_PROPERTY));
+		substringConfig.setFragmenterProperty(properties.get(FRAGMENTER_PROPERTY));
 		substringConfig.setMemberLimit(Integer.valueOf(properties.get(MEMBER_LIMIT)));
 		return substringConfig;
 	}
