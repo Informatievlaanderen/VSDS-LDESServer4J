@@ -1,18 +1,25 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config;
 
 public class GeospatialConfig {
-
-	private String bucketiserProperty;
+	private String fragmenterSubjectFilter = ".*";
+	private String fragmenterProperty;
 	private Integer maxZoomLevel;
-
 	private String projection;
 
-	public String getBucketiserProperty() {
-		return bucketiserProperty;
+	public String getFragmenterSubjectFilter() {
+		return fragmenterSubjectFilter;
 	}
 
-	public void setBucketiserProperty(String bucketiserProperty) {
-		this.bucketiserProperty = bucketiserProperty;
+	public void setFragmenterSubjectFilter(String fragmenterSubjectFilter) {
+		this.fragmenterSubjectFilter = fragmenterSubjectFilter;
+	}
+
+	public String getFragmenterProperty() {
+		return fragmenterProperty;
+	}
+
+	public void setFragmenterProperty(String fragmenterProperty) {
+		this.fragmenterProperty = fragmenterProperty;
 	}
 
 	public int getMaxZoomLevel() {

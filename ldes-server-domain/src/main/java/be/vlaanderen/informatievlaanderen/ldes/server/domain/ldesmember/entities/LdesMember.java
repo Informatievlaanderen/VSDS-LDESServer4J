@@ -21,24 +21,22 @@ public class LdesMember {
 		return memberModel;
 	}
 
-	public Object getFragmentationObject(String fragmentationProperty) {
+	public Object getFragmentationObject(String subjectFilter, String fragmentationPredicate) {
 		// @formatter:off
-        return memberModel
-                .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
-                .nextOptional()
-                .map(Statement::getObject)
-                .map(RDFNode::asLiteral)
-                .map(Literal::getValue)
-                .orElse(null);
+        return getFragmentationObjects(subjectFilter, fragmentationPredicate)
+				.stream()
+				.findFirst()
+				.orElse(null);
         // @formatter:on
 	}
 
-	public List<Object> getFragmentationObjects(String fragmentationProperty) {
+	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationProperty) {
 		// @formatter:off
 		return memberModel
 				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
 				.toList()
 				.stream()
+				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
 				.map(Statement::getObject)
 				.map(RDFNode::asLiteral)
 				.map(Literal::getValue)

@@ -4,7 +4,7 @@ views:
       - name: "geospatial"
         config:
           maxZoomLevel: 15
-          bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+          fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
           projection: "lambert72"
       - name: "timebased"
         config:

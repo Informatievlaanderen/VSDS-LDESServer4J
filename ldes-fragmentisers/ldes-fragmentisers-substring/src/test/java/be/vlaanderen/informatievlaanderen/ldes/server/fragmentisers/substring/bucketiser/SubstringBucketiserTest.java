@@ -25,7 +25,7 @@ class SubstringBucketiserTest {
 	@BeforeEach
 	void setUp() {
 		SubstringConfig substringConfig = new SubstringConfig();
-		substringConfig.setSubstringProperty("http://purl.org/dc/terms/description");
+		substringConfig.setFragmenterProperty("http://purl.org/dc/terms/description");
 		substringBucketiser = new SubstringBucketiser(substringConfig);
 	}
 
