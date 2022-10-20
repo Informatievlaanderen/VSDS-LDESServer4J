@@ -27,7 +27,7 @@ open data.
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
-            - [The docker-compose File](#the-docker-compose-file)
+            - [The docker compose File](#the-docker-compose-file)
             - [Starting the Dockerized Application](#starting-the-dockerized-application)
     * [Developer Information](#developer-information)
         + [How To Build](#how-to-build)
@@ -190,7 +190,7 @@ An example of a view configuration with two view is shown below
 There are 2 files where you can configure the dockerized application:
 
 - [The config files](#the-config-files)
-- [The docker-compose file](#the-docker-compose-file)
+- [The docker compose file](#the-docker-compose-file)
 
 #### The Config Files
 
@@ -198,9 +198,9 @@ Runtime settings can be defined in the configuration files. Use [config.env](doc
 setup and be sure not to commit this file, as it contains secrets. For a local setup,
 use [config.local.env](docker-compose/config.local.env).
 
-#### The docker-compose File
+#### The docker compose File
 
-Change the `env_file` to `config.env` or `config.local.env` in [docker-compose.yml](docker-compose.yml) according to
+Change the `env_file` to `config.env` or `config.local.env` in [compose.yml](compose.yml) according to
 your needs.
 
 #### Starting the Dockerized Application
