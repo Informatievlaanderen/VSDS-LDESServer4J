@@ -33,11 +33,11 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Build and analyze
-        if: ${{ github.repository == 'Informatievlaanderen/VSDS-LDESServer4J' }}
+        if: github.repository == 'Informatievlaanderen/VSDS-LDESServer4J'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
       - name: Build (Forks) # https://portal.productboard.com/sonarsource/1-sonarcloud/c/50-sonarcloud-analyzes-external-pull-request
-        if: ${{ github.repository != 'Informatievlaanderen/VSDS-LDESServer4J' }}
+        if: github.repository != 'Informatievlaanderen/VSDS-LDESServer4J'
         run: mvn -B verify -Dintegrationtestskip=true
