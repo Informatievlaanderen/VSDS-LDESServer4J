@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
-
 public class GeospatialBucketiser {
 	private final GeospatialConfig geospatialConfig;
 	private final CoordinateConverter coordinateConverter;
@@ -25,16 +23,16 @@ public class GeospatialBucketiser {
 	public Set<String> bucketise(LdesMember member) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
-		member.getFragmentationObjects(geospatialConfig.getFragmenterSubjectFilter(),
-				geospatialConfig.getFragmenterProperty())
+		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
+				geospatialConfig.fragmenterProperty())
 				.stream()
 				.map(o -> (GeometryWrapper) o)
 				.forEach(geometryWrapper -> coordinates.addAll(
-						stream(geometryWrapper.getXYGeometry().getCoordinates()).toList()));
+						List.of(geometryWrapper.getXYGeometry().getCoordinates())));
 		return coordinates.stream()
 				.map(coordinateConverter::convertCoordinate)
 				.map(coordinate -> CoordinateToTileStringConverter.convertCoordinate(coordinate,
-						geospatialConfig.getMaxZoomLevel()))
+						geospatialConfig.maxZoomLevel()))
 				.collect(Collectors.toSet());
 	}
 }

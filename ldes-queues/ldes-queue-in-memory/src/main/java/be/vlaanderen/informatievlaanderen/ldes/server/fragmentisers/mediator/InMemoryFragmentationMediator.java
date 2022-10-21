@@ -9,14 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryFragmentationMediator implements FragmentationMediator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryFragmentationMediator.class);
 	private final ExecutorService executorService;
-	protected final LinkedBlockingQueue<LdesMember> ldesMembersToFragment = new LinkedBlockingQueue<>();
-
 	private final FragmentationExecutor fragmentationExecutor;
 	protected final AtomicInteger ldesMembersToFragmentTracker;
 
@@ -29,11 +26,10 @@ public class InMemoryFragmentationMediator implements FragmentationMediator {
 
 	@Override
 	public void addMemberToFragment(LdesMember ldesMember) {
-		ldesMembersToFragment.add(ldesMember);
-		ldesMembersToFragmentTracker.set(ldesMembersToFragment.size());
-		executorService.submit(() -> {
-			fragmentationExecutor.executeFragmentation(ldesMembersToFragment.poll());
-			ldesMembersToFragmentTracker.set(ldesMembersToFragment.size());
+		executorService.execute(() -> {
+			ldesMembersToFragmentTracker.incrementAndGet();
+			fragmentationExecutor.executeFragmentation(ldesMember);
+			ldesMembersToFragmentTracker.decrementAndGet();
 		});
 	}
 }

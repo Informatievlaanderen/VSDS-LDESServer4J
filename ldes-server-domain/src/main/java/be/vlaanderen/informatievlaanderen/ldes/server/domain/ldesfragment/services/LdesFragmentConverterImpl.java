@@ -90,13 +90,13 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 		List<Statement> statements = new ArrayList<>();
 		Resource treeRelationNode = createResource();
 		statements.add(createStatement(currentFragmentId, TREE_RELATION, treeRelationNode));
-		if (hasMeaningfulValue(treeRelation.getTreeValue()))
-			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.getTreeValue(),
-					TypeMapper.getInstance().getTypeByName(treeRelation.getTreeValueType()))));
-		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.getTreePath());
+		if (hasMeaningfulValue(treeRelation.treeValue()))
+			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.treeValue(),
+					TypeMapper.getInstance().getTypeByName(treeRelation.treeValueType()))));
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.treePath());
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
-				ldesConfig.getHostName() + treeRelation.getTreeNode());
-		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.getRelation());
+				ldesConfig.getHostName() + treeRelation.treeNode());
+		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.relation());
 		return statements;
 	}
 }

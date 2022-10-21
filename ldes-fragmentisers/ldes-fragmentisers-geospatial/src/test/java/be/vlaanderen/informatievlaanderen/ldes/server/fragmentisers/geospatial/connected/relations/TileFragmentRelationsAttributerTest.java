@@ -37,12 +37,12 @@ class TileFragmentRelationsAttributerTest {
 		TileFragment tileFragmentThree = createTileFragment("3/3/3", false);
 
 		List<LdesFragment> ldesFragments = tileFragmentRelationsAttributer.addRelationsFromRootToBottom(
-				rootFragment.getLdesFragment(), List.of(tileFragmentOne, tileFragmentTwo, tileFragmentThree));
+				rootFragment.ldesFragment(), List.of(tileFragmentOne, tileFragmentTwo, tileFragmentThree));
 
-		assertEquals(2, rootFragment.getLdesFragment().getRelations().size());
-		assertEquals(List.of(tileFragmentOne.getLdesFragment(), tileFragmentTwo.getLdesFragment(),
-				tileFragmentThree.getLdesFragment()), ldesFragments);
-		verify(ldesFragmentRepository, times(1)).saveFragment(rootFragment.getLdesFragment());
+		assertEquals(2, rootFragment.ldesFragment().getRelations().size());
+		assertEquals(List.of(tileFragmentOne.ldesFragment(), tileFragmentTwo.ldesFragment(),
+				tileFragmentThree.ldesFragment()), ldesFragments);
+		verify(ldesFragmentRepository, times(1)).saveFragment(rootFragment.ldesFragment());
 	}
 
 	private TileFragment createTileFragment(String tile, boolean created) {

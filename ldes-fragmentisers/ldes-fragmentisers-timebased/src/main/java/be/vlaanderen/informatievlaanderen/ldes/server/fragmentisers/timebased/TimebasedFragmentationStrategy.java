@@ -29,7 +29,7 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		if (!ldesFragment.getMemberIds().contains(ldesMember.getLdesMemberId())) {
 			if (parentFragment.getRelations().stream()
-					.noneMatch(relation -> relation.getRelation().equals(GENERIC_TREE_RELATION))) {
+					.noneMatch(relation -> relation.relation().equals(GENERIC_TREE_RELATION))) {
 				super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			}
 			super.addMemberToFragment(ldesFragment, ldesMember, timebasedFragmentationSpan);
