@@ -6,6 +6,6 @@ public class GeospatialProperties {
 	}
 
 	public static final String PROJECTION = "projection";
-	public static final String BUCKETISER_PROPERTY = "bucketiserProperty";
+	public static final String FRAGMENTER_PROPERTY = "fragmenterProperty";
 	public static final String MAX_ZOOM_LEVEL = "maxZoomLevel";
 }

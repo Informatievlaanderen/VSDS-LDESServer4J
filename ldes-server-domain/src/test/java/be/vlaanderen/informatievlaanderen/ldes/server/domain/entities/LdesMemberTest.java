@@ -49,6 +49,22 @@ class LdesMemberTest {
 				ldesMember.getLdesMemberId());
 	}
 
+	@Test
+	void when_getFragmentationObjects_returnCorrespondingStatements() throws IOException {
+		String ldesMemberString = FileUtils.readFileToString(
+				ResourceUtils.getFile("classpath:example-ldes-member-multiple-properties-same-predicate.nq"),
+				StandardCharsets.UTF_8);
+
+		LdesMember ldesMember = new LdesMember(
+				"http://localhost:8080/member/1",
+				createModel(ldesMemberString, Lang.NQUADS));
+
+		assertEquals(4, ldesMember.getFragmentationObjects(".*",
+				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
+		assertEquals(1, ldesMember.getFragmentationObjects(".*/member/.*",
+				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
+	}
+
 	private Model createModel(final String ldesMember, final Lang lang) {
 		return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
 	}

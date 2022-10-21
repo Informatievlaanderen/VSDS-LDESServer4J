@@ -37,6 +37,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 
 	private GeospatialConfig createGeospatialConfig(FragmentationProperties properties) {
 		return new GeospatialConfig(
+        properties.getOrDefault("fragmenterSubjectFilter", ".*"),
 				properties.get(BUCKETISER_PROPERTY),
 				Integer.parseInt(properties.get(MAX_ZOOM_LEVEL)),
 				properties.getOrDefault(PROJECTION, NOOP.name()));

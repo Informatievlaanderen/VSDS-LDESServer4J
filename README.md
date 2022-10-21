@@ -27,7 +27,7 @@ open data.
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
-            - [The docker-compose File](#the-docker-compose-file)
+            - [The docker compose File](#the-docker-compose-file)
             - [Starting the Dockerized Application](#starting-the-dockerized-application)
     * [Developer Information](#developer-information)
         + [How To Build](#how-to-build)
@@ -144,7 +144,7 @@ An example of a view configuration with two view is shown below
         - name: "geospatial"
           config:
             maxZoomLevel: 15
-            bucketiserProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+            fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
             projection: "lambert72"
         - name: "timebased"
           config:
@@ -170,7 +170,7 @@ An example of a view configuration with two view is shown below
   name: "geospatial"
   config:
     maxZoomLevel: { Required zoom level }
-    bucketiserproperty: { Defines which property will be used for bucketizing }
+    fragmenterProperty: { Defines which property will be used for bucketizing }
     projection: { "lambert72" (current only this projection is supported) }
   ```
 
@@ -179,7 +179,7 @@ An example of a view configuration with two view is shown below
   ```yaml
   name: "substring"
   config:
-    substringProperty: { Defines which property will be used for bucketizing }
+    fragmenterProperty: { Defines which property will be used for bucketizing }
     memberLimit: { member limit > 0 }
   ```
 
@@ -190,7 +190,7 @@ An example of a view configuration with two view is shown below
 There are 2 files where you can configure the dockerized application:
 
 - [The config files](#the-config-files)
-- [The docker-compose file](#the-docker-compose-file)
+- [The docker compose file](#the-docker-compose-file)
 
 #### The Config Files
 
@@ -198,9 +198,9 @@ Runtime settings can be defined in the configuration files. Use [config.env](doc
 setup and be sure not to commit this file, as it contains secrets. For a local setup,
 use [config.local.env](docker-compose/config.local.env).
 
-#### The docker-compose File
+#### The docker compose File
 
-Change the `env_file` to `config.env` or `config.local.env` in [docker-compose.yml](docker-compose.yml) according to
+Change the `env_file` to `config.env` or `config.local.env` in [compose.yml](compose.yml) according to
 your needs.
 
 #### Starting the Dockerized Application
