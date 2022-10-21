@@ -37,6 +37,5 @@ class LdesMemberMongoRepositoryIT {
 		LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(member, Lang.NQUADS));
 		ldesMemberMongoRepository.saveLdesMember(ldesMember);
 		assertEquals(1, ldesMemberEntityRepository.findAll().size());
-		assertEquals(1, ldesMemberMongoRepository.fetchLdesMembers().size());
 	}
 }

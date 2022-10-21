@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.TileFragment;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 public class TileFragmentRelationsAttributer {
 
@@ -15,14 +16,12 @@ public class TileFragmentRelationsAttributer {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
-	public List<LdesFragment> addRelationsFromRootToBottom(LdesFragment rootFragment,
+	public Stream<LdesFragment> addRelationsFromRootToBottom(LdesFragment rootFragment,
 			List<TileFragment> tileFragments) {
 		addRelationsFromRootToCreatedTiles(rootFragment, getCreatedTiles(tileFragments));
 		return tileFragments
-				.parallelStream() // TODO: is parallelisation worth the effort here? TileFragment::ldesFragment
-									// seems to be quite lightweight.
-				.map(TileFragment::ldesFragment)
-				.toList();
+				.stream()
+				.map(TileFragment::ldesFragment);
 	}
 
 	private List<LdesFragment> getCreatedTiles(List<TileFragment> tileFragments) {

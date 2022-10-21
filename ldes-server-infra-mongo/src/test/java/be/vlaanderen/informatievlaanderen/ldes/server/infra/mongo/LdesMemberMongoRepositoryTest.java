@@ -38,29 +38,6 @@ class LdesMemberMongoRepositoryTest {
 		verify(ldesMemberEntityRepository, times(1)).save(any());
 	}
 
-	@DisplayName("Correct retrieval of all LdesMembers from MongoDB")
-	@Test
-	void when_LdesMembersAreRetrieved_ListOfAllLdesMemberInDbIsReturned() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(String.format("""
-				<http://one.example/subject1> <%s> <http://one.example/object1> .""", TREE_MEMBER)).lang(Lang.NQUADS)
-				.toModel();
-
-		LdesMember ldesMember = new LdesMember("some_id", ldesMemberModel);
-		LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(ldesMember);
-
-		Model ldesMemberModel2 = RDFParserBuilder.create().fromString(String.format("""
-				<http://one.example/subject1> <%s> <http://one.example/object2> .""", TREE_MEMBER)).lang(Lang.NQUADS)
-				.toModel();
-		LdesMember ldesMember2 = new LdesMember("some_id_2", ldesMemberModel2);
-		LdesMemberEntity ldesMemberEntity2 = LdesMemberEntity.fromLdesMember(ldesMember2);
-		when(ldesMemberEntityRepository.findAll()).thenReturn(List.of(ldesMemberEntity, ldesMemberEntity2));
-
-		List<LdesMember> actualLdesMembers = ldesMemberMongoRepository.fetchLdesMembers();
-
-		assertEquals(2, actualLdesMembers.size());
-		verify(ldesMemberEntityRepository, times(1)).findAll();
-	}
-
 	@DisplayName("Correct retrieval of LdesMembers by Id from MongoDB")
 	@Test
 	void when_LdesMemberByIdIsRequested_LdesMemberIsReturnedWhenExisting() {
