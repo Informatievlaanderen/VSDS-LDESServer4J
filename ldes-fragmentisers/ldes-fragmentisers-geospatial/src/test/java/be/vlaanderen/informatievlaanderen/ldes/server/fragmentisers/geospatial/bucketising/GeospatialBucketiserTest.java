@@ -23,7 +23,8 @@ class GeospatialBucketiserTest {
 
 	private GeospatialBucketiser bucketiser;
 
-	private final GeospatialConfig geospatialConfig = new GeospatialConfig(".*", "http://www.opengis.net/ont/geosparql#asWKT",
+	private final GeospatialConfig geospatialConfig = new GeospatialConfig(".*",
+			"http://www.opengis.net/ont/geosparql#asWKT",
 			15, null);
 
 	@Test

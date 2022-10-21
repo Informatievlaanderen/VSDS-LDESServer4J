@@ -23,7 +23,8 @@ public class GeospatialBucketiser {
 	public Set<String> bucketise(LdesMember member) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
-		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(), geospatialConfig.fragmenterProperty())
+		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
+				geospatialConfig.fragmenterProperty())
 				.stream()
 				.map(o -> (GeometryWrapper) o)
 				.forEach(geometryWrapper -> coordinates.addAll(
