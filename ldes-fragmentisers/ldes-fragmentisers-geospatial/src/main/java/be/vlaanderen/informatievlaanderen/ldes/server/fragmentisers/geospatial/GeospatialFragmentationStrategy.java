@@ -14,6 +14,7 @@ import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 
@@ -40,15 +41,15 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 		Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
 		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
 		List<TileFragment> tileFragments = getTileFragments(parentFragment, tiles);
-		List<LdesFragment> ldesFragments = addRelationsToCreatedFragments(parentFragment, tileFragments);
+		Stream<LdesFragment> ldesFragments = addRelationsToCreatedFragments(parentFragment, tileFragments);
 		ldesFragments
-				.parallelStream()
+				.parallel()
 				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMember,
 						geospatialFragmentationSpan));
 		geospatialFragmentationSpan.end();
 	}
 
-	private List<LdesFragment> addRelationsToCreatedFragments(LdesFragment parentFragment,
+	private Stream<LdesFragment> addRelationsToCreatedFragments(LdesFragment parentFragment,
 			List<TileFragment> tileFragments) {
 		if (hasCreatedTiles(tileFragments)) {
 			LdesFragment rootTileFragment = getRootTileFragment(parentFragment);
@@ -57,8 +58,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 			return tileFragments
 					.parallelStream() // TODO: is parallelisation worth the effort here? TileFragment::ldesFragment
 										// seems to be quite lightweight.
-					.map(TileFragment::ldesFragment)
-					.toList();
+					.map(TileFragment::ldesFragment);
 		}
 	}
 

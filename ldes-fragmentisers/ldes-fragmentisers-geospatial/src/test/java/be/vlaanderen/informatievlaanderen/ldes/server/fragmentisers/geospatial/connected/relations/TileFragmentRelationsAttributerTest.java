@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -36,12 +38,12 @@ class TileFragmentRelationsAttributerTest {
 		TileFragment tileFragmentTwo = createTileFragment("2/2/2", true);
 		TileFragment tileFragmentThree = createTileFragment("3/3/3", false);
 
-		List<LdesFragment> ldesFragments = tileFragmentRelationsAttributer.addRelationsFromRootToBottom(
+		Stream<LdesFragment> ldesFragments = tileFragmentRelationsAttributer.addRelationsFromRootToBottom(
 				rootFragment.ldesFragment(), List.of(tileFragmentOne, tileFragmentTwo, tileFragmentThree));
 
 		assertEquals(2, rootFragment.ldesFragment().getRelations().size());
 		assertEquals(List.of(tileFragmentOne.ldesFragment(), tileFragmentTwo.ldesFragment(),
-				tileFragmentThree.ldesFragment()), ldesFragments);
+				tileFragmentThree.ldesFragment()), ldesFragments.collect(Collectors.toList()));
 		verify(ldesFragmentRepository, times(1)).saveFragment(rootFragment.ldesFragment());
 	}
 

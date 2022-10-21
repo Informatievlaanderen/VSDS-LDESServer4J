@@ -17,6 +17,7 @@ import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
 
@@ -61,7 +62,7 @@ class GeospatialFragmentationStrategyTest {
 		TileFragment rootTileFragment = mockCreationGeospatialFragment("0/0/0", false);
 		when(tileFragmentRelationsAttributer.addRelationsFromRootToBottom(eq(rootTileFragment.ldesFragment()),
 				anyList()))
-				.thenReturn(List.of(tileFragmentOne.ldesFragment(), tileFragmentTwo.ldesFragment(),
+				.thenReturn(Stream.of(tileFragmentOne.ldesFragment(), tileFragmentTwo.ldesFragment(),
 						tileFragmentThree.ldesFragment()));
 
 		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, ldesMember, parentSpan);

@@ -61,14 +61,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public List<LdesFragment> retrieveAllFragments() {
-		return repository.findAll()
-				.stream()
-				.map(LdesFragmentEntity::toLdesFragment)
-				.toList();
-	}
-
-	@Override
 	public Optional<LdesFragment> retrieveRootFragment(String viewName) {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
