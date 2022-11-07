@@ -52,7 +52,7 @@
         <cucumber.version>7.8.1</cucumber.version>
         <byte-buddy.version>1.12.17</byte-buddy.version>
         <wiremock-jre8.version>2.34.0</wiremock-jre8.version>
-        <de.flapdoodle.embed.mongo.version>3.4.11</de.flapdoodle.embed.mongo.version>
+        <de.flapdoodle.embed.mongo.version>3.5.2</de.flapdoodle.embed.mongo.version>
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
