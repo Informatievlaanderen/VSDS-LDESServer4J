@@ -56,7 +56,7 @@
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>7.2.1</depencency-check-maven.version>
+        <depencency-check-maven.version>7.3.0</depencency-check-maven.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
