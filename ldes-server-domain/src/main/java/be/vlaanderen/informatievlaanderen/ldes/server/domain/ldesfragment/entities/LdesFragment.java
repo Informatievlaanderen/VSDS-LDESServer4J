@@ -52,8 +52,8 @@ public class LdesFragment {
 		return memberIds.size();
 	}
 
-	public void setImmutable(boolean immutable) {
-		this.fragmentInfo.setImmutable(immutable);
+	public void makeImmutable() {
+		this.fragmentInfo.makeImmutable();
 	}
 
 	public boolean isImmutable() {

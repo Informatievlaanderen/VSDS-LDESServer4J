@@ -72,7 +72,9 @@ class TreeNodeControllerTest {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(
 				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
 						FRAGMENTATION_VALUE_1))));
-		ldesFragment.setImmutable(immutable);
+		if (immutable) {
+			ldesFragment.makeImmutable();
+		}
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
