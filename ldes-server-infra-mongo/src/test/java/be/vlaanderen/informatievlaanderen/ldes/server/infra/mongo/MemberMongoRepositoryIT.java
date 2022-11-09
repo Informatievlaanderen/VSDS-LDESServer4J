@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration
 @ActiveProfiles("mongo-test")
-class LdesMemberMongoRepositoryIT {
+class MemberMongoRepositoryIT {
 
 	@Autowired
-	private LdesMemberMongoRepository ldesMemberMongoRepository;
+	private MemberMongoRepository ldesMemberMongoRepository;
 
 	@Autowired
 	private LdesMemberEntityRepository ldesMemberEntityRepository;
@@ -34,8 +34,8 @@ class LdesMemberMongoRepositoryIT {
 		String member = String.format("""
 				<http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
-		LdesMember ldesMember = new LdesMember("some_id", RdfModelConverter.fromString(member, Lang.NQUADS));
-		ldesMemberMongoRepository.saveLdesMember(ldesMember);
+		Member treeMember = new Member("some_id", RdfModelConverter.fromString(member, Lang.NQUADS));
+		ldesMemberMongoRepository.saveLdesMember(treeMember);
 		assertEquals(1, ldesMemberEntityRepository.findAll().size());
 	}
 }

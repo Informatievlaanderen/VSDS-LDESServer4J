@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities;
 
 import org.apache.jena.rdf.model.*;
 
@@ -7,12 +7,12 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 
-public class LdesMember {
+public class Member {
 
 	private final Model memberModel;
 	private final String memberId;
 
-	public LdesMember(String memberId, final Model memberModel) {
+	public Member(String memberId, final Model memberModel) {
 		this.memberId = memberId;
 		this.memberModel = memberModel;
 	}

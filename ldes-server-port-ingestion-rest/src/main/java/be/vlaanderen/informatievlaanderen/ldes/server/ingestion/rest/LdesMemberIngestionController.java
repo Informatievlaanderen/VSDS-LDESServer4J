@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.MemberIngestService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,8 +17,8 @@ public class LdesMemberIngestionController {
 	}
 
 	@PostMapping(value = "${ldes.collectionname}", consumes = { "application/n-quads", "application/n-triples" })
-	public void ingestLdesMember(@RequestBody LdesMember ldesMember) {
+	public void ingestLdesMember(@RequestBody Member member) {
 
-		memberIngestService.addMember(ldesMember);
+		memberIngestService.addMember(member);
 	}
 }

@@ -1,9 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,14 +20,14 @@ import static org.mockito.Mockito.*;
 
 class MemberIngestServiceImplTest {
 
-	private final LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
+	private final MemberRepository memberRepository = mock(MemberRepository.class);
 
 	private final FragmentationMediator fragmentationMediator = mock(FragmentationMediator.class);
 	private MemberIngestService memberIngestService;
 
 	@BeforeEach
 	void setUp() {
-		memberIngestService = new MemberIngestServiceImpl(ldesMemberRepository, fragmentationMediator);
+		memberIngestService = new MemberIngestServiceImpl(memberRepository, fragmentationMediator);
 	}
 
 	@Test
@@ -35,18 +35,18 @@ class MemberIngestServiceImplTest {
 	void when_TheMemberAlreadyExists_thenMemberIsReturned() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
-		LdesMember ldesMember = new LdesMember(
+		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		LdesMember savedMember = new LdesMember(
+		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.of(savedMember));
+		when(memberRepository.getLdesMemberById(member.getLdesMemberId())).thenReturn(Optional.of(savedMember));
 
-		memberIngestService.addMember(ldesMember);
+		memberIngestService.addMember(member);
 
-		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationMediator);
-		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
+		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
+		inOrder.verify(memberRepository, times(1)).getLdesMemberById(member.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 		verifyNoInteractions(fragmentationMediator);
 	}
@@ -56,21 +56,21 @@ class MemberIngestServiceImplTest {
 	void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
-		LdesMember ldesMember = new LdesMember(
+		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		LdesMember savedLdesMember = new LdesMember(
+		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		when(ldesMemberRepository.getLdesMemberById(ldesMember.getLdesMemberId())).thenReturn(Optional.empty());
-		when(ldesMemberRepository.saveLdesMember(ldesMember)).thenReturn(savedLdesMember);
+		when(memberRepository.getLdesMemberById(member.getLdesMemberId())).thenReturn(Optional.empty());
+		when(memberRepository.saveLdesMember(member)).thenReturn(savedMember);
 
-		memberIngestService.addMember(ldesMember);
+		memberIngestService.addMember(member);
 
-		InOrder inOrder = inOrder(ldesMemberRepository, fragmentationMediator);
-		inOrder.verify(ldesMemberRepository, times(1)).getLdesMemberById(ldesMember.getLdesMemberId());
-		inOrder.verify(ldesMemberRepository, times(1)).saveLdesMember(ldesMember);
-		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(savedLdesMember);
+		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
+		inOrder.verify(memberRepository, times(1)).getLdesMemberById(member.getLdesMemberId());
+		inOrder.verify(memberRepository, times(1)).saveLdesMember(member);
+		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(savedMember);
 		inOrder.verifyNoMoreInteractions();
 	}
 }

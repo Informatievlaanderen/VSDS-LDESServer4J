@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
@@ -49,13 +49,13 @@ class GeospatialFragmentationStrategyTest {
 
 	@Test
 	void when_TileFragmentsAreCreated_RelationsAreAttributedAndDecoratedServiceIsCalled() {
-		LdesMember ldesMember = mock(LdesMember.class);
+		Member member = mock(Member.class);
 		Span parentSpan = mock(Span.class);
 		Span childSpan = mock(Span.class);
 		when(tracer.nextSpan(parentSpan)).thenReturn(childSpan);
 		when(childSpan.name("geospatial fragmentation")).thenReturn(childSpan);
 		when(childSpan.start()).thenReturn(childSpan);
-		when(geospatialBucketiser.bucketise(ldesMember)).thenReturn(Set.of("1/1/1", "2/2/2", "3/3/3"));
+		when(geospatialBucketiser.bucketise(member)).thenReturn(Set.of("1/1/1", "2/2/2", "3/3/3"));
 		TileFragment tileFragmentOne = mockCreationGeospatialFragment("1/1/1", true);
 		TileFragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2", false);
 		TileFragment tileFragmentThree = mockCreationGeospatialFragment("3/3/3", true);
@@ -65,40 +65,40 @@ class GeospatialFragmentationStrategyTest {
 				.thenReturn(Stream.of(tileFragmentOne.ldesFragment(), tileFragmentTwo.ldesFragment(),
 						tileFragmentThree.ldesFragment()));
 
-		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, ldesMember, parentSpan);
+		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member, parentSpan);
 
 		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentOne.ldesFragment(),
-				ldesMember, childSpan);
+				member, childSpan);
 		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentTwo.ldesFragment(),
-				ldesMember, childSpan);
+				member, childSpan);
 		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentThree.ldesFragment(),
-				ldesMember, childSpan);
+				member, childSpan);
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 		verify(childSpan, times(1)).end();
 	}
 
 	@Test
 	void when_TileFragmentsExist_DecoratedServiceIsCalled() {
-		LdesMember ldesMember = mock(LdesMember.class);
+		Member member = mock(Member.class);
 		Span parentSpan = mock(Span.class);
 		Span childSpan = mock(Span.class);
 		when(tracer.nextSpan(parentSpan)).thenReturn(childSpan);
 		when(childSpan.name("geospatial fragmentation")).thenReturn(childSpan);
 		when(childSpan.start()).thenReturn(childSpan);
-		when(geospatialBucketiser.bucketise(ldesMember)).thenReturn(Set.of("1/1/1", "2/2/2", "3/3/3"));
+		when(geospatialBucketiser.bucketise(member)).thenReturn(Set.of("1/1/1", "2/2/2", "3/3/3"));
 		TileFragment tileFragmentOne = mockCreationGeospatialFragment("1/1/1", false);
 		TileFragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2", false);
 		TileFragment tileFragmentThree = mockCreationGeospatialFragment("3/3/3", false);
 
-		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, ldesMember, parentSpan);
+		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member, parentSpan);
 
 		verifyNoInteractions(tileFragmentRelationsAttributer);
 		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentOne.ldesFragment(),
-				ldesMember, childSpan);
+				member, childSpan);
 		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentTwo.ldesFragment(),
-				ldesMember, childSpan);
+				member, childSpan);
 		verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(tileFragmentThree.ldesFragment(),
-				ldesMember, childSpan);
+				member, childSpan);
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 		verify(childSpan, times(1)).end();
 	}

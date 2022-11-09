@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
@@ -19,13 +19,13 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 @Component
 public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
-	private final LdesMemberRepository ldesMemberRepository;
+	private final MemberRepository memberRepository;
 	private final PrefixAdder prefixAdder;
 	private final LdesConfig ldesConfig;
 
-	public LdesFragmentConverterImpl(LdesMemberRepository ldesMemberRepository, PrefixAdder prefixAdder,
+	public LdesFragmentConverterImpl(MemberRepository memberRepository, PrefixAdder prefixAdder,
 			LdesConfig ldesConfig) {
-		this.ldesMemberRepository = ldesMemberRepository;
+		this.memberRepository = memberRepository;
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
 	}
@@ -35,7 +35,7 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 		model.add(addTreeNodeStatements(ldesFragment));
 		if (!ldesFragment.getMemberIds().isEmpty()) {
 			model.add(addEventStreamStatements(ldesFragment));
-			ldesMemberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(LdesMember::getModel)
+			memberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(Member::getModel)
 					.forEach(model::add);
 		}
 		return prefixAdder.addPrefixesToModel(model);

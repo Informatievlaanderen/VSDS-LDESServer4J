@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -27,16 +27,16 @@ public class LdesMemberEntity {
 		return this.ldesMember;
 	}
 
-	public static LdesMemberEntity fromLdesMember(LdesMember ldesMember) {
+	public static LdesMemberEntity fromLdesMember(Member member) {
 		StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, ldesMember.getModel(), Lang.NQUADS);
+		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
 		String ldesMemberString = outputStream.toString();
-		return new LdesMemberEntity(ldesMember.getLdesMemberId(), ldesMemberString);
+		return new LdesMemberEntity(member.getLdesMemberId(), ldesMemberString);
 	}
 
-	public LdesMember toLdesMember() {
+	public Member toLdesMember() {
 		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.NQUADS).toModel();
-		return new LdesMember(this.id, ldesMemberModel);
+		return new Member(this.id, ldesMemberModel);
 	}
 
 }
