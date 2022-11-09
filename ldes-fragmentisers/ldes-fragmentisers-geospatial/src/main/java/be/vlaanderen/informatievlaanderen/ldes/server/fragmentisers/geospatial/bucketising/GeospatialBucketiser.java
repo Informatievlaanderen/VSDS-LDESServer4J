@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import org.apache.jena.geosparql.implementation.GeometryWrapper;
 import org.locationtech.jts.geom.Coordinate;
@@ -20,13 +20,13 @@ public class GeospatialBucketiser {
 		this.coordinateConverter = coordinateConverter;
 	}
 
-	public Set<String> bucketise(LdesMember member) {
+	public Set<String> bucketise(Member member) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
 		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
 				geospatialConfig.fragmenterProperty())
 				.stream()
-				.map(o -> (GeometryWrapper) o)
+				.map(GeometryWrapper.class::cast)
 				.forEach(geometryWrapper -> coordinates.addAll(
 						List.of(geometryWrapper.getXYGeometry().getCoordinates())));
 		return coordinates.stream()

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -51,7 +51,7 @@ class LdesFragmentRequestTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new LdesMember("some_id", null)),
+			return Stream.of(Arguments.of(new Member("some_id", null)),
 					Arguments.of((Object) null),
 					Arguments.of(new LdesFragmentRequest("otherViewName",
 							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,

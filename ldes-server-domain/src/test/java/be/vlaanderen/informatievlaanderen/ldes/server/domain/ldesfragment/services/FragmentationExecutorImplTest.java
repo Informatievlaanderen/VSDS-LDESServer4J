@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -38,24 +38,24 @@ class FragmentationExecutorImplTest {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
-		LdesMember ldesMember = mock(LdesMember.class);
+		Member member = mock(Member.class);
 
-		fragmentationExecutor.executeFragmentation(ldesMember);
+		fragmentationExecutor.executeFragmentation(member);
 
 		verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
 		verify(fragmentationStrategy, times(1)).addMemberToFragment(eq(ldesFragment),
-				eq(ldesMember), any());
+				eq(member), any());
 	}
 
 	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
 		when(ldesFragmentRepository.retrieveFragment(new LdesFragmentRequest(VIEW_NAME, List.of())))
 				.thenReturn(Optional.empty());
-		LdesMember ldesMember = mock(LdesMember.class);
+		Member member = mock(Member.class);
 
 		MissingRootFragmentException missingRootFragmentException = assertThrows(MissingRootFragmentException.class,
-				() -> fragmentationExecutor.executeFragmentation(ldesMember));
+				() -> fragmentationExecutor.executeFragmentation(member));
 
 		assertEquals("Could not retrieve root fragment for view view",
 				missingRootFragmentException.getMessage());
@@ -69,7 +69,7 @@ class FragmentationExecutorImplTest {
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 		IntStream.range(0, 100).parallel()
-				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(LdesMember.class)));
+				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(Member.class)));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
 		IntStream.range(0, 100).forEach(i -> {

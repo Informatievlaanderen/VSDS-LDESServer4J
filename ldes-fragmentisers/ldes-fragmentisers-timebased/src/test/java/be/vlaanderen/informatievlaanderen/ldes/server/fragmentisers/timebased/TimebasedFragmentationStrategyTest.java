@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,8 +46,8 @@ class TimebasedFragmentationStrategyTest {
 	@Test
 	@DisplayName("Member Not Yet Added and No parent relation")
 	void when_MemberisNotYetAddedAndNoParentRelation_thenFragmentationIsAppliedAndRelationCreated() {
-		LdesMember ldesMember = mock(LdesMember.class);
-		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
+		Member member = mock(Member.class);
+		when(member.getLdesMemberId()).thenReturn("memberId");
 		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(OPEN_FRAGMENT);
 		Span parentSpan = mock(Span.class);
@@ -57,14 +57,14 @@ class TimebasedFragmentationStrategyTest {
 		when(childSpan.start()).thenReturn(childSpan);
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				ldesMember, parentSpan);
+				member, parentSpan);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).saveFragment(PARENT_FRAGMENT);
-		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember,
+		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, member,
 				childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -72,8 +72,8 @@ class TimebasedFragmentationStrategyTest {
 	@Test
 	@DisplayName("Member Not Yet Added but already parent relation")
 	void when_MemberisNotYetAddedButAlreadyParentRelation_thenFragmentationIsApplied() {
-		LdesMember ldesMember = mock(LdesMember.class);
-		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
+		Member member = mock(Member.class);
+		when(member.getLdesMemberId()).thenReturn("memberId");
 		PARENT_FRAGMENT.addRelation(new TreeRelation("", OPEN_FRAGMENT.getFragmentId(), "", "",
 				GENERIC_TREE_RELATION));
 		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
@@ -85,12 +85,12 @@ class TimebasedFragmentationStrategyTest {
 		when(childSpan.start()).thenReturn(childSpan);
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				ldesMember, parentSpan);
+				member, parentSpan);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
-		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, ldesMember,
+		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, member,
 				childSpan);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -98,8 +98,8 @@ class TimebasedFragmentationStrategyTest {
 	@Test
 	@DisplayName("Member Already Added")
 	void when_MemberIsAlreadyAdded_thenNoFragmentationIsApplied() {
-		LdesMember ldesMember = mock(LdesMember.class);
-		when(ldesMember.getLdesMemberId()).thenReturn("memberId");
+		Member member = mock(Member.class);
+		when(member.getLdesMemberId()).thenReturn("memberId");
 		OPEN_FRAGMENT.addMember("memberId");
 		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(OPEN_FRAGMENT);
@@ -110,7 +110,7 @@ class TimebasedFragmentationStrategyTest {
 		when(childSpan.start()).thenReturn(childSpan);
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				ldesMember, parentSpan);
+				member, parentSpan);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, openFragmentProvider, decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,

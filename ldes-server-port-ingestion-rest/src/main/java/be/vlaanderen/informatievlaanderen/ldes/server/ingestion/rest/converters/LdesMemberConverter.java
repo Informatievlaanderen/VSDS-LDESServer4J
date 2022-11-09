@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -23,9 +23,9 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.riot.RDFFormat.*;
+import static org.apache.jena.riot.RDFFormat.NQUADS;
 
-public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember> {
+public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 	private final LdesConfig ldesConfig;
 
@@ -36,16 +36,16 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(LdesMember.class);
+		return clazz.isAssignableFrom(Member.class);
 	}
 
 	@Override
-	protected LdesMember readInternal(Class<? extends LdesMember> clazz, HttpInputMessage inputMessage)
+	protected Member readInternal(Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), FETCH);
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 		String memberId = extractMemberId(memberModel);
-		return new LdesMember(memberId, memberModel);
+		return new Member(memberId, memberModel);
 	}
 
 	private String extractMemberId(Model model) {
@@ -57,9 +57,9 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<LdesMember
 	}
 
 	@Override
-	protected void writeInternal(LdesMember ldesMember, HttpOutputMessage outputMessage)
+	protected void writeInternal(Member member, HttpOutputMessage outputMessage)
 			throws UnsupportedOperationException, HttpMessageNotWritableException, IOException {
-		Model fragmentModel = ldesMember.getModel();
+		Model fragmentModel = member.getModel();
 
 		StringWriter outputStream = new StringWriter();
 

@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
@@ -37,14 +37,14 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
 		Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
-		Set<String> tiles = geospatialBucketiser.bucketise(ldesMember);
+		Set<String> tiles = geospatialBucketiser.bucketise(member);
 		List<TileFragment> tileFragments = getTileFragments(parentFragment, tiles);
 		Stream<LdesFragment> ldesFragments = addRelationsToCreatedFragments(parentFragment, tileFragments);
 		ldesFragments
 				.parallel()
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, ldesMember,
+				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
 						geospatialFragmentationSpan));
 		geospatialFragmentationSpan.end();
 	}
@@ -56,8 +56,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 			return tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, tileFragments);
 		} else {
 			return tileFragments
-					.parallelStream() // TODO: is parallelisation worth the effort here? TileFragment::ldesFragment
-										// seems to be quite lightweight.
+					.stream()
 					.map(TileFragment::ldesFragment);
 		}
 	}

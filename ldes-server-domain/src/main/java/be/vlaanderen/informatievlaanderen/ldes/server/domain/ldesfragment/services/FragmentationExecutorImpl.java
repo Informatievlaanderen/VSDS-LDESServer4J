@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
@@ -25,14 +25,14 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	}
 
 	@Override
-	public synchronized void executeFragmentation(LdesMember ldesMember) {
+	public synchronized void executeFragmentation(Member member) {
 		Span parentSpan = tracer.nextSpan()
 				.name("execute fragmentation")
-				.tag("memberId", ldesMember.getLdesMemberId())
+				.tag("memberId", member.getLdesMemberId())
 				.start();
 		fragmentationStrategyMap.entrySet().parallelStream().forEach(entry -> {
 			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentSpan);
-			entry.getValue().addMemberToFragment(rootFragmentOfView, ldesMember, parentSpan);
+			entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentSpan);
 		});
 		parentSpan.end();
 	}
