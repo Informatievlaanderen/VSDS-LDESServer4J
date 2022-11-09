@@ -14,49 +14,49 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FragmentationPropertiesTest {
+class ConfigPropertiesTest {
 
-	private final FragmentationProperties fragmentationProperties = new FragmentationProperties(Map.of("key", "value"));
+	private final ConfigProperties configProperties = new ConfigProperties(Map.of("key", "value"));
 
 	@Test
 	void when_ValueOfKeyExists_ThenGetReturnsValue() {
-		assertEquals("value", fragmentationProperties.get("key"));
+		assertEquals("value", configProperties.get("key"));
 	}
 
 	@Test
 	void when_ValueOfKeyDoesNotExist_ThenMissingConfigurationExceptionIsThrown() {
 		MissingConfigurationException missingConfigurationException = assertThrows(MissingConfigurationException.class,
-				() -> fragmentationProperties.get("otherKey"));
+				() -> configProperties.get("otherKey"));
 		assertEquals("Configuration key otherKey is missing.", missingConfigurationException.getMessage());
 	}
 
 	@Test
 	void when_ValueOfKeyExists_ThenGetOrDefaultReturnsValue() {
-		assertEquals("value", fragmentationProperties.getOrDefault("key", "otherValue"));
+		assertEquals("value", configProperties.getOrDefault("key", "otherValue"));
 	}
 
 	@Test
 	void when_ValueOfKeyDoesNotExist_ThenGetOrDefaultReturnsDefaultValue() {
-		assertEquals("otherValue", fragmentationProperties.getOrDefault("otherKey", "otherValue"));
+		assertEquals("otherValue", configProperties.getOrDefault("otherKey", "otherValue"));
 	}
 
 	@Test
 	void test_Equality() {
-		FragmentationProperties otherFragmentationProperties = new FragmentationProperties(Map.of("key", "value"));
-		assertEquals(otherFragmentationProperties, fragmentationProperties);
-		assertEquals(otherFragmentationProperties.hashCode(), fragmentationProperties.hashCode());
-		assertEquals(fragmentationProperties, fragmentationProperties);
-		assertEquals(fragmentationProperties.hashCode(), fragmentationProperties.hashCode());
-		assertEquals(otherFragmentationProperties, otherFragmentationProperties);
-		assertEquals(otherFragmentationProperties.hashCode(), otherFragmentationProperties.hashCode());
+		ConfigProperties otherConfigProperties = new ConfigProperties(Map.of("key", "value"));
+		assertEquals(otherConfigProperties, configProperties);
+		assertEquals(otherConfigProperties.hashCode(), configProperties.hashCode());
+		assertEquals(configProperties, configProperties);
+		assertEquals(configProperties.hashCode(), configProperties.hashCode());
+		assertEquals(otherConfigProperties, otherConfigProperties);
+		assertEquals(otherConfigProperties.hashCode(), otherConfigProperties.hashCode());
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(FragmentationPropertiesArgumentsProvider.class)
 	void test_Inequality(Object otherFragmentationProperties) {
-		assertNotEquals(fragmentationProperties, otherFragmentationProperties);
+		assertNotEquals(configProperties, otherFragmentationProperties);
 		if (otherFragmentationProperties != null)
-			assertNotEquals(fragmentationProperties.hashCode(), otherFragmentationProperties.hashCode());
+			assertNotEquals(configProperties.hashCode(), otherFragmentationProperties.hashCode());
 	}
 
 	static class FragmentationPropertiesArgumentsProvider implements ArgumentsProvider {

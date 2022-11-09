@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,13 +60,13 @@ class FragmentationStrategyCreatorImplTest {
 		when(applicationContext.getBean(TIMEBASED)).thenReturn(timebasedFragmentationStrategyWrapper);
 		FragmentationStrategy timebasedFragmentationStrategy = mock(FragmentationStrategy.class);
 		when(timebasedFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext), any(),
-				eq(new FragmentationProperties(TIMEBASED_PROPERTIES)))).thenReturn(timebasedFragmentationStrategy);
+				eq(new ConfigProperties(TIMEBASED_PROPERTIES)))).thenReturn(timebasedFragmentationStrategy);
 
 		FragmentationStrategyWrapper geospatialFragmentationStrategyWrapper = mock(FragmentationStrategyWrapper.class);
 		when(applicationContext.getBean(GEOSPATIAL)).thenReturn(geospatialFragmentationStrategyWrapper);
 		FragmentationStrategy geospatialFragmentationStrategy = mock(FragmentationStrategy.class);
 		when(geospatialFragmentationStrategyWrapper.wrapFragmentationStrategy(applicationContext,
-				timebasedFragmentationStrategy, new FragmentationProperties(GEOSPATIAL_PROPERTIES)))
+				timebasedFragmentationStrategy, new ConfigProperties(GEOSPATIAL_PROPERTIES)))
 				.thenReturn(geospatialFragmentationStrategy);
 
 		ViewSpecification viewSpecification = getViewSpecification();

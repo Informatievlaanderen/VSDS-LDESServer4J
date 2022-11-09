@@ -2,12 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.value
 
 import java.util.Map;
 
-public class FragmentationConfig {
+public class RetentionConfig {
 
 	private String name;
 	private Map<String, String> config;
 
-	public String getName() {
+	public String getRetentionPolicyName() {
 		return name;
 	}
 
@@ -22,5 +22,4 @@ public class FragmentationConfig {
 	public ConfigProperties getProperties() {
 		return new ConfigProperties(config);
 	}
-
 }
