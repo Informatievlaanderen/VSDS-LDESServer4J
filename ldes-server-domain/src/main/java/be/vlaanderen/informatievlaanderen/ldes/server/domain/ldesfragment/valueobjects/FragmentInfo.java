@@ -57,8 +57,6 @@ public class FragmentInfo {
 	public void makeImmutable() {
 		this.immutable = true;
 		this.immutableTimestamp = LocalDateTime.now();
-		if (Boolean.TRUE.equals(immutable))
-			immutableTimestamp = LocalDateTime.now();
 	}
 
 	public FragmentInfo createChild(FragmentPair fragmentPair) {
