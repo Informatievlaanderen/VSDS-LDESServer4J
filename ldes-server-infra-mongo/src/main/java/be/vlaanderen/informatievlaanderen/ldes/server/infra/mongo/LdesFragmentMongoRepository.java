@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
@@ -64,6 +65,14 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public Optional<LdesFragment> retrieveRootFragment(String viewName) {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
+				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public Stream<LdesFragment> retrieveImmutableFragmentsOfView(String viewName) {
+		return repository
+				.findAllByImmutableAndViewName(true, viewName)
+				.stream()
 				.map(LdesFragmentEntity::toLdesFragment);
 	}
 

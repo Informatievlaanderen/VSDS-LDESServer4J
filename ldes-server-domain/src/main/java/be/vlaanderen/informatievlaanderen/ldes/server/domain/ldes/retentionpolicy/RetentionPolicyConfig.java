@@ -28,7 +28,7 @@ public class RetentionPolicyConfig {
 				.stream()
 				.collect(Collectors.toMap(ViewSpecification::getName,
 						viewSpecification -> viewSpecification
-								.getRetentionPolicies()
+								.getRetentionConfigs()
 								.stream()
 								.map(this::getRetentionPolicy)
 								.toList()));
