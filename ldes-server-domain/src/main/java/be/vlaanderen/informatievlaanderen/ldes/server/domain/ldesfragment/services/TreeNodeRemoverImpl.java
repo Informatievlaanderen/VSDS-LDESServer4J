@@ -35,7 +35,7 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	public void removeTreeNodes() {
 		retentionPolicyMap.forEach((view, retentionPolicies) -> {
 			List<LdesFragment> ldesFragments = ldesFragmentRepository
-					.retrieveImmutableFragmentsOfView(view)
+					.retrieveNonDeletedImmutableFragmentsOfView(view)
 					.filter(ldesFragment -> retentionPolicies
 							.stream()
 							.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(ldesFragment)))
