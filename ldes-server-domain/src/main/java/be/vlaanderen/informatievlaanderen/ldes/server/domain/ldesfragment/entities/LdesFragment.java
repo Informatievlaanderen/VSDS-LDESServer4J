@@ -60,10 +60,6 @@ public class LdesFragment {
 		this.fragmentInfo.setSoftDeleted(softDeleted);
 	}
 
-	public void setSoftDeleted(boolean softDeleted) {
-		this.fragmentInfo.setSoftDeleted(softDeleted);
-	}
-
 	public boolean isImmutable() {
 		return this.fragmentInfo.getImmutable();
 	}
@@ -72,4 +68,7 @@ public class LdesFragment {
 		return new LdesFragment(fragmentInfo.createChild(fragmentPair));
 	}
 
+	public void removeRelation(TreeRelation treeRelation) {
+		relations.remove(treeRelation);
+	}
 }

@@ -24,8 +24,9 @@ class TreeNodeRemoverImplTest {
 			List.of(new TimeBasedRetentionPolicy(0)));
 	private final MemberReferencesRepository referencesRepository = mock(MemberReferencesRepository.class);
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
+	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);
 	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, retentionPolicyMap,
-			referencesRepository, treeMemberRemover);
+			referencesRepository, treeMemberRemover, parentUpdater);
 
 	@Test
 	void when_NodeIsImmutableAndSatisfiesRetentionPoliciesOfView_NodeCanBeSoftDeleted() {
@@ -40,6 +41,8 @@ class TreeNodeRemoverImplTest {
 		verify(fragmentRepository, times(1)).saveFragment(readyToDeleteFragment);
 		assertTrue(readyToDeleteFragment.getFragmentInfo().getSoftDeleted());
 		verifyNoMoreInteractions(fragmentRepository);
+		verify(parentUpdater, times(1)).updateParent(readyToDeleteFragment);
+		verifyNoMoreInteractions(parentUpdater);
 		verify(referencesRepository, times(1)).removeMemberReference("memberId", "/view");
 		verifyNoMoreInteractions(referencesRepository);
 		verify(treeMemberRemover, times(1)).tryRemovingMember("memberId");

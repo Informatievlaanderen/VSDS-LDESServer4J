@@ -71,14 +71,6 @@ public class FragmentInfo {
 		this.softDeleted = softDeleted;
 	}
 
-	public Boolean getSoftDeleted() {
-		return softDeleted;
-	}
-
-	public void setSoftDeleted(Boolean softDeleted) {
-		this.softDeleted = softDeleted;
-	}
-
 	public FragmentInfo createChild(FragmentPair fragmentPair) {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
 		childFragmentPairs.add(fragmentPair);

@@ -37,7 +37,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenFragment(String viewName,
+	public Optional<LdesFragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
 				.findAllByImmutableAndViewName(false,
@@ -74,6 +74,20 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 				.findAllByImmutableAndViewName(true, viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
+			List<FragmentPair> fragmentPairList) {
+		return repository
+				.findAllBySoftDeletedAndViewName(false,
+						viewName)
+				.stream()
+				.filter(ldesFragmentEntity -> Collections
+						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1
+						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
+				.map(LdesFragmentEntity::toLdesFragment)
+				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}
 
 }
