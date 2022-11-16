@@ -15,16 +15,15 @@ public class LdesMemberEntity {
 
 	@Id
 	private final String id;
+	private final String model;
 
-	private final String ldesMember;
-
-	public LdesMemberEntity(String id, final String ldesMember) {
+	public LdesMemberEntity(String id, final String model) {
 		this.id = id;
-		this.ldesMember = ldesMember;
+		this.model = model;
 	}
 
-	public String getLdesMember() {
-		return this.ldesMember;
+	public String getModel() {
+		return this.model;
 	}
 
 	public static LdesMemberEntity fromLdesMember(Member member) {
@@ -35,7 +34,7 @@ public class LdesMemberEntity {
 	}
 
 	public Member toLdesMember() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.ldesMember).lang(Lang.NQUADS).toModel();
+		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.NQUADS).toModel();
 		return new Member(this.id, ldesMemberModel);
 	}
 

@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator.DATE_TIME_TYPE;
@@ -27,14 +25,12 @@ class TimeBasedFragmentCreatorTest {
 
 	private static final String VIEW = "view";
 	private TimeBasedFragmentCreator fragmentCreator;
-	private MemberRepository memberRepository;
 	private LdesFragmentRepository ldesFragmentRepository;
 
 	@BeforeEach
 	void setUp() {
 		TimebasedFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		memberRepository = mock(MemberRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(timeBasedConfig,
 				ldesFragmentRepository);
 	}
@@ -62,8 +58,6 @@ class TimeBasedFragmentCreatorTest {
 				new FragmentInfo(VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
 						"2020-12-28T09:36:37.127Z"))));
 		existingLdesFragment.addMember(memberOfFragment.getLdesMemberId());
-		when(memberRepository.getLdesMemberById(memberOfFragment.getLdesMemberId()))
-				.thenReturn(Optional.of(memberOfFragment));
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);
 
