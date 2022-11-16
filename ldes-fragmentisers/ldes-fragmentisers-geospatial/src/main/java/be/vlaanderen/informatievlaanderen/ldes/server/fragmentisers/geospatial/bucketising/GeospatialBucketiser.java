@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.exceptions.RdfGeometryException;
 import org.apache.jena.geosparql.implementation.GeometryWrapper;
 import org.apache.jena.geosparql.implementation.vocabulary.SRS_URI;
 import org.locationtech.jts.geom.Coordinate;
@@ -31,7 +32,7 @@ public class GeospatialBucketiser {
 					try {
 						return geometryWrapper.convertSRS(SRS_URI.WGS84_CRS);
 					} catch (FactoryException | TransformException e) {
-						throw new RuntimeException(e);
+						throw new RdfGeometryException(geometryWrapper, SRS_URI.WGS84_CRS);
 					}
 				})
 				.forEach(geometryWrapper -> coordinates.addAll(

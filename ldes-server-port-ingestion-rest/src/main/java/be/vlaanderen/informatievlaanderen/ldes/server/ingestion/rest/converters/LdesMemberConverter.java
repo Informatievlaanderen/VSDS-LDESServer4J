@@ -24,13 +24,12 @@ import java.util.Objects;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.riot.RDFFormat.NQ;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
+	private static final String APPLICATION = "application";
 
 	@Autowired
 	Environment environment;
@@ -38,8 +37,8 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 	private final LdesConfig ldesConfig;
 
 	public LdesMemberConverter(LdesConfig ldesConfig) {
-		super(new MediaType("application", "n-quads"), new MediaType("application", "n-triples"),
-				new MediaType("application", "ld+json"));
+		super(new MediaType(APPLICATION, "n-quads"), new MediaType(APPLICATION, "n-triples"),
+				new MediaType(APPLICATION, "ld+json"));
 		this.ldesConfig = ldesConfig;
 	}
 
