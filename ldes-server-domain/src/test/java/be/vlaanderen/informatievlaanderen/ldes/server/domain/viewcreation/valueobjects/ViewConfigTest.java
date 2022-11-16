@@ -29,8 +29,7 @@ class ViewConfigTest {
 		assertEquals("firstView", firstViewSpecification.getName());
 		assertEquals(2, firstViewSpecification.getFragmentations().size());
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(0), "geospatial",
-				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT",
-						"projection", "lambert72"));
+				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(1), "timebased",
 				Map.of("memberLimit", "5"));
 		assertEquals(1, firstViewSpecification.getRetentionPolicies().size());

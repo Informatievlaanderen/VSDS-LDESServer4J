@@ -320,6 +320,9 @@
                             cucumber.junit-platform.naming-strategy=long
                         </configurationParameters>
                     </properties>
+                    <environmentVariables>
+                        <SIS_DATA>./</SIS_DATA>
+                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>

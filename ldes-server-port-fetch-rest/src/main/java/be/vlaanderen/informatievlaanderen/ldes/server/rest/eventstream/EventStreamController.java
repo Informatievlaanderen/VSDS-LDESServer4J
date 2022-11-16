@@ -2,7 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,6 +27,9 @@ public class EventStreamController {
 	private String collectionName;
 
 	private final EventStreamFetcher eventStreamFetcher;
+
+	@Autowired
+	private ConfigurableEnvironment myEnv;
 
 	public EventStreamController(EventStreamFetcher eventStreamFetcher) {
 		this.eventStreamFetcher = eventStreamFetcher;
