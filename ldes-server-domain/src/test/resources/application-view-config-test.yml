@@ -8,6 +8,10 @@ views:
       - name: "timebased"
         config:
           memberLimit: 5
+    retention-policies:
+      - name: "timebased"
+        config:
+          durationInSeconds: 100
   - name: "secondView"
     fragmentations:
       - name: "timebased"

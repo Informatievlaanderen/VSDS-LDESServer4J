@@ -1,14 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 class GeospatialFragmentationStrategyWrapperTest {
@@ -24,8 +24,8 @@ class GeospatialFragmentationStrategyWrapperTest {
 
 	@Test
 	void when_FragmentationStrategyIsUpdated_GeospatialFragmentationStrategyIsReturned() {
-		FragmentationProperties properties = new FragmentationProperties(
-				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
+		ConfigProperties properties = new ConfigProperties(
+				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT");
 		FragmentationStrategy decoratedFragmentationStrategy = geospatialFragmentationUpdater
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
 		assertTrue(decoratedFragmentationStrategy instanceof GeospatialFragmentationStrategy);

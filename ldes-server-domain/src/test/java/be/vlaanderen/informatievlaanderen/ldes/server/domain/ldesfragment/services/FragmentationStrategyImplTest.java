@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -15,11 +16,12 @@ import static org.mockito.Mockito.*;
 
 class FragmentationStrategyImplTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final MemberReferencesRepository memberReferencesRepository = mock(MemberReferencesRepository.class);
 	private final Tracer tracer = mockTracer();
 
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			ldesFragmentRepository,
-			tracer);
+			memberReferencesRepository, tracer);
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
@@ -30,6 +32,7 @@ class FragmentationStrategyImplTest {
 		fragmentationStrategy.addMemberToFragment(ldesFragment, member, any());
 
 		verify(ldesFragmentRepository, times(1)).saveFragment(ldesFragment);
+		verify(memberReferencesRepository, times(1)).saveMemberReference("memberId", "/view");
 		assertEquals(List.of("memberId"), ldesFragment.getMemberIds());
 	}
 }
