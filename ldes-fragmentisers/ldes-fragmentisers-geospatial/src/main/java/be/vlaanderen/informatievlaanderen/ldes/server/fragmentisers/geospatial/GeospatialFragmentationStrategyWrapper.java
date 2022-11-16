@@ -20,10 +20,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
-
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
-		CoordinateConverter coordinateConverter = CoordinateConverterFactory
-				.getCoordinateConverter(geospatialConfig.projection());
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
