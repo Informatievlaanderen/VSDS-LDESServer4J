@@ -5,6 +5,7 @@ import java.util.List;
 public class ViewSpecification {
 
 	private String name;
+	private List<RetentionConfig> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
 	public String getName() {
@@ -21,5 +22,13 @@ public class ViewSpecification {
 
 	public void setFragmentations(List<FragmentationConfig> fragmentations) {
 		this.fragmentations = fragmentations;
+	}
+
+	public List<RetentionConfig> getRetentionPolicies() {
+		return retentionPolicies;
+	}
+
+	public void setRetentionPolicies(List<RetentionConfig> retentionPolicies) {
+		this.retentionPolicies = retentionPolicies;
 	}
 }

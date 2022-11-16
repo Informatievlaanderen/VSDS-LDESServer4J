@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +24,7 @@ class SubstringFragmentationStrategyWrapperTest {
 
 	@Test
 	void when_FragmentationStrategyIsUpdated_TimebasedFragmentationStrategyIsReturned() {
-		FragmentationProperties properties = new FragmentationProperties(
+		ConfigProperties properties = new ConfigProperties(
 				Map.of("memberLimit", "5", "fragmenterProperty", "http://purl.org/dc/terms/description"));
 		FragmentationStrategy decoratedFragmentationStrategy = substringFragmentationStrategyWrapper
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
