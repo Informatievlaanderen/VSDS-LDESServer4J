@@ -13,11 +13,14 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 class GeospatialBucketiserTest {
 
@@ -25,12 +28,12 @@ class GeospatialBucketiserTest {
 
 	private final GeospatialConfig geospatialConfig = new GeospatialConfig(".*",
 			"http://www.opengis.net/ont/geosparql#asWKT",
-			15, null);
+			15);
 
 	@Test
 	@DisplayName("Bucketising of LdesMember with Lambert72 conversion")
 	void when_MemberIsBucketized_CorrectBucketsAreReturned() throws URISyntaxException, IOException {
-		bucketiser = new GeospatialBucketiser(geospatialConfig, new Lambert72CoordinateConverter());
+		bucketiser = new GeospatialBucketiser(geospatialConfig);
 
 		Set<String> expectedBuckets = Set.of("15/16743/11009", "15/16744/11009",
 				"15/16743/11010", "15/16742/11010");
@@ -46,7 +49,7 @@ class GeospatialBucketiserTest {
 	@Test
 	@DisplayName("Bucketising of LdesMember with 2 geo properties")
 	void when_MemberWith2GeoPropertiesIsBucketized_CorrectBucketsAreReturned() throws URISyntaxException, IOException {
-		bucketiser = new GeospatialBucketiser(geospatialConfig, new NoopCoordinateConverter());
+		bucketiser = new GeospatialBucketiser(geospatialConfig);
 
 		Set<String> expectedBuckets = Set.of("15/16884/10974", "15/16882/10975");
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
