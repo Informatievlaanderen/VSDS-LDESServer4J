@@ -1,6 +1,9 @@
+# !!! WARNING !!! #
+# This workflow is reused in all LDES Java projects. Edit with caution #
 name: Build & Publish Project
 
 on:
+  workflow_call:
   push:
     branches:
       - main
@@ -9,6 +12,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: Informatievlaanderen/ldes-server
+  SKIP_DOCKER: false
 
 jobs:
   build:
@@ -33,6 +37,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_ENV
 
       - name: Log in to the Container registry
+        if: ${{ env.SKIP_DOCKER != 'true' }}
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
@@ -40,6 +45,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
+        if: ${{ env.SKIP_DOCKER != 'true' }}
         id: meta
         uses: docker/metadata-action@v4
         with:
@@ -54,6 +60,7 @@ jobs:
             latest=true
 
       - name: Build and push Docker image
+        if: ${{ env.SKIP_DOCKER != 'true' }}
         uses: docker/build-push-action@v3
         with:
           context: .

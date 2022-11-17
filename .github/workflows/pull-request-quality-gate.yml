@@ -2,6 +2,7 @@
 # This workflow is reused in all LDES Java projects. Edit with caution #
 name: Pull Request Quality Gate
 on:
+  workflow_call:
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -48,6 +49,7 @@ jobs:
         if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
         run: mvn -B verify -Dintegrationtestskip=true
       - name: Build Docker image
+        if: ${{ env.SKIP_DOCKER != 'true' }}
         uses: docker/build-push-action@v3
         with:
           context: .
