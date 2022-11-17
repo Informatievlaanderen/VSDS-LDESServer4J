@@ -10,6 +10,3 @@ jobs:
     uses: ./.github/workflows/build-publish.yml
     with:
       IMAGE_NAME: Informatievlaanderen/ldes-server
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
