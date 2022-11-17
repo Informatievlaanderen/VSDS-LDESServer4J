@@ -6,4 +6,7 @@ on:
 
 jobs:
   pull-request-quality-gate:
-    uses: ./.github/workflows/templates/pull-request-quality-gate.yml
+    uses: ./.github/workflows/pull-request-quality-gate.yml
+  secrets:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

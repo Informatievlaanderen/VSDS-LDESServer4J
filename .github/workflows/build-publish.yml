@@ -20,9 +20,6 @@ on:
         required: false
       GITHUB_TOKEN_REF:
         required: false
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 env:
