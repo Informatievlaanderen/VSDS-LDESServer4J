@@ -7,10 +7,13 @@ on:
     inputs:
       SETTINGS_FILE:
         required: false
+        type: string
       SKIP_DOCKER:
         required: false
+        type: string
       IMAGE_NAME:
         required: true
+        type: string
     secrets:
       GITHUB_USER_REF:
         required: false
