@@ -24,6 +24,7 @@ class TreeMemberRemoverImplTest {
 		treeMemberRemover.tryRemovingMember("memberId");
 
 		verify(memberRepository, times(1)).deleteMember("memberId");
+		verify(memberReferencesRepository, times(1)).deleteMemberReference("memberId");
 	}
 
 	@Test
@@ -32,6 +33,8 @@ class TreeMemberRemoverImplTest {
 		treeMemberRemover.tryRemovingMember("memberId");
 
 		verifyNoInteractions(memberRepository);
+		verify(memberReferencesRepository, times(1)).hasMemberReferences("memberId");
+		verifyNoMoreInteractions(memberReferencesRepository);
 	}
 
 }

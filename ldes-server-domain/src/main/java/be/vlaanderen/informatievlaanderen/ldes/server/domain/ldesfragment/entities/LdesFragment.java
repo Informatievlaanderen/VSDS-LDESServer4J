@@ -71,4 +71,8 @@ public class LdesFragment {
 	public void removeRelation(TreeRelation treeRelation) {
 		relations.remove(treeRelation);
 	}
+
+	public boolean isSoftDeleted() {
+		return this.getFragmentInfo().getSoftDeleted();
+	}
 }

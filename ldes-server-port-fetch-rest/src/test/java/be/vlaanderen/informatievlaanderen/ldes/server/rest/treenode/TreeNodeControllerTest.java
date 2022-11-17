@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
@@ -135,6 +136,21 @@ class TreeNodeControllerTest {
 		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
 				.andExpect(status().isNotFound());
 		assertEquals("No fragment exists with fragment identifier: fragmentId",
+				resultActions.andReturn().getResponse().getContentAsString());
+	}
+
+	@Test
+	void when_GETRequestButDeletedFragmentExceptionIsThrown_NotFoundIsReturned()
+			throws Exception {
+
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+				List.of());
+		when(fragmentFetchService.getFragment(ldesFragmentRequest))
+				.thenThrow(new DeletedFragmentException("fragmentId"));
+
+		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
+				.andExpect(status().isGone());
+		assertEquals("Fragment with following identifier has been deleted: fragmentId",
 				resultActions.andReturn().getResponse().getContentAsString());
 	}
 
