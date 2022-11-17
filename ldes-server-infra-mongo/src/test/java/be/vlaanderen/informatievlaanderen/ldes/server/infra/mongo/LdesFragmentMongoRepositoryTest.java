@@ -47,7 +47,7 @@ class LdesFragmentMongoRepositoryTest {
 								.equals(VIEW_NAME))
 						.collect(Collectors.toList()));
 
-		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveOpenFragment(
+		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveMutableFragment(
 				VIEW_NAME,
 				List.of());
 

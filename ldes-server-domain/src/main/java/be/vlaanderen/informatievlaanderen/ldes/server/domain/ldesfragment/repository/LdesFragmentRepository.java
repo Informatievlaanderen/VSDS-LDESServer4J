@@ -16,11 +16,13 @@ public interface LdesFragmentRepository {
 	Optional<LdesFragment> retrieveOpenChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
 
-	Optional<LdesFragment> retrieveOpenFragment(String viewName,
+	Optional<LdesFragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
 
 	Optional<LdesFragment> retrieveRootFragment(String viewName);
 
 	Stream<LdesFragment> retrieveImmutableFragmentsOfView(String viewName);
 
+	Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
+			List<FragmentPair> fragmentPairList);
 }
