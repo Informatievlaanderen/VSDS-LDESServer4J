@@ -27,12 +27,24 @@ jobs:
         with:
           distribution: zulu
           java-version: 18
+      - name: Define Sonar Project Name
+        uses: mad9000/actions-find-and-replace-string@1
+        id: sonar-name
+        with:
+          source: ${{ github.repository }}
+          find: '/'
+          replace: '_'
+      - name: Set Optional Maven Settings Variable
+          if: ${{ env.SETTINGS_FILE =! '' }}
+          ## Reference your environment variables
+          run: |
+            echo "SETTINGS_ARG=--settings + ${{ env.SETTINGS_FILE }}" >> $GITHUB_ENV
       - name: Test, Analyse And Publish Jar to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B verify deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
+          mvn ${{ env.SETTINGS_ARG  }} -B verify deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=${{ steps.sonar-name.outputs.value  }} -Pcoverage
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_ENV
 
