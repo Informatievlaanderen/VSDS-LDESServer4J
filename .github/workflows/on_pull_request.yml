@@ -6,4 +6,4 @@ on:
 
 jobs:
   pull-request-quality-gate:
-    uses: ./.github/workflows/templates/pull-request-quality-gate.yml@main
+    uses: ./.github/workflows/templates/pull-request-quality-gate.yml

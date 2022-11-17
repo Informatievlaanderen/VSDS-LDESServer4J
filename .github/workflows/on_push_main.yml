@@ -7,6 +7,6 @@ on:
 
 jobs:
   build-publish-project:
-    uses: ./.github/workflows/templates/build-publish.yml@main
+    uses: ./.github/workflows/templates/build-publish.yml
     with:
       IMAGE_NAME: Informatievlaanderen/ldes-server
