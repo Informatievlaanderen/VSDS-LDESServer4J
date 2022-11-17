@@ -24,7 +24,7 @@ public class ViewSpecification {
 		this.fragmentations = fragmentations;
 	}
 
-	public List<RetentionConfig> getRetentionPolicies() {
+	public List<RetentionConfig> getRetentionConfigs() {
 		return retentionPolicies;
 	}
 

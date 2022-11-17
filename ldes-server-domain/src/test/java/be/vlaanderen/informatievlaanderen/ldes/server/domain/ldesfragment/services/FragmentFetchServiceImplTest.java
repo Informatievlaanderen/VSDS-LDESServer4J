@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -20,24 +21,18 @@ import static org.mockito.Mockito.when;
 
 class FragmentFetchServiceImplTest {
 
-	private static final String COLLECTION_NAME = "exampleData";
-
 	private static final String VIEW_NAME = "view";
-
-	private static final String HOSTNAME = "http://localhost:8089/";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-	private static final String FRAGMENT_ID_1 = HOSTNAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME + "?generatedAtTime="
-			+
-			FRAGMENTATION_VALUE_1;
-	private static final FragmentInfo FRAGMENT_INFO = new FragmentInfo(
-			VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+	private static FragmentInfo FRAGMENT_INFO;
 
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-
+	private LdesFragmentRepository ldesFragmentRepository;
 	private FragmentFetchService fragmentFetchService;
 
 	@BeforeEach
 	void setUp() {
+		FRAGMENT_INFO = new FragmentInfo(
+				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("http://localhost:8089");
 		fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig,
@@ -56,6 +51,21 @@ class FragmentFetchServiceImplTest {
 		assertEquals(
 				"No fragment exists with fragment identifier: http://localhost:8089/view?generatedAtTime=2020-12-28T09:36:09.72Z",
 				missingFragmentException.getMessage());
+	}
+
+	@Test
+	void when_getFragment_WhenFragmentIsDeleted_ThenDeletedFragmentExceptionIsThrown() {
+		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_INFO);
+		ldesFragment.setSoftDeleted(true);
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.of(ldesFragment));
+
+		DeletedFragmentException deletedFragmentException = assertThrows(DeletedFragmentException.class,
+				() -> fragmentFetchService.getFragment(ldesFragmentRequest));
+		assertEquals(
+				"Fragment with following identifier has been deleted: http://localhost:8089/view?generatedAtTime=2020-12-28T09:36:09.72Z",
+				deletedFragmentException.getMessage());
 	}
 
 	@Test

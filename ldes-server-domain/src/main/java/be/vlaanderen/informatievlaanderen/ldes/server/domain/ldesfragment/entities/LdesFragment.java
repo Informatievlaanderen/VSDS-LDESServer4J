@@ -52,8 +52,12 @@ public class LdesFragment {
 		return memberIds.size();
 	}
 
-	public void setImmutable(boolean immutable) {
-		this.fragmentInfo.setImmutable(immutable);
+	public void makeImmutable() {
+		this.fragmentInfo.makeImmutable();
+	}
+
+	public void setSoftDeleted(boolean softDeleted) {
+		this.fragmentInfo.setSoftDeleted(softDeleted);
 	}
 
 	public boolean isImmutable() {
@@ -64,4 +68,11 @@ public class LdesFragment {
 		return new LdesFragment(fragmentInfo.createChild(fragmentPair));
 	}
 
+	public void removeRelation(TreeRelation treeRelation) {
+		relations.remove(treeRelation);
+	}
+
+	public boolean isSoftDeleted() {
+		return this.getFragmentInfo().getSoftDeleted();
+	}
 }

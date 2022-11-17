@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
@@ -36,7 +37,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenFragment(String viewName,
+	public Optional<LdesFragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
 				.findAllByImmutableAndViewName(false,
@@ -65,6 +66,28 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
 				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName) {
+		return repository
+				.findAllByImmutableAndSoftDeletedAndViewName(true, false, viewName)
+				.stream()
+				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
+			List<FragmentPair> fragmentPairList) {
+		return repository
+				.findAllBySoftDeletedAndViewName(false,
+						viewName)
+				.stream()
+				.filter(ldesFragmentEntity -> Collections
+						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1
+						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
+				.map(LdesFragmentEntity::toLdesFragment)
+				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}
 
 }

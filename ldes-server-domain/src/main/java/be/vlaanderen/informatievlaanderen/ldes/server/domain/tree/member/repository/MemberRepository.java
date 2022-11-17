@@ -13,4 +13,6 @@ public interface MemberRepository {
 	Optional<Member> getLdesMemberById(String id);
 
 	Stream<Member> getLdesMembersByIds(List<String> ids);
+
+	void deleteMember(String memberId);
 }

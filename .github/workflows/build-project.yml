@@ -1,8 +1,5 @@
-name: 1.a Build & Test Project
+name: 1.a Pull Request Build & Test
 on:
-  push:
-    branches:
-      - main
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
