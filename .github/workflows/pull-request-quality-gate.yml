@@ -29,12 +29,13 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: define Sonar Project name
-        uses: bluwy/substitute-string-action@v1
+      - name: Define Sonar Project Name
+        uses: mad9000/actions-find-and-replace-string@1
         id: sonar-name
         with:
-          _input-text: $ {{ github.repository }}
-          /: _
+          source: ${{ github.repository }}
+          find: '/'
+          replace: '_'
       - name: Build and analyze
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         env:
