@@ -44,7 +44,7 @@ jobs:
         if: ${{ inputs.SETTINGS_FILE != '' }}
         ## Reference your environment variables
         run: |
-          echo "SETTINGS_ARG=--settings + ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
+          echo "SETTINGS_ARG=--settings ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
       - name: Test, Analyse And Publish Jar to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

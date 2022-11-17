@@ -50,7 +50,7 @@ jobs:
         if: ${{ inputs.SETTINGS_FILE =! '' }}
         ## Reference your environment variables
         run: |
-          echo "SETTINGS_ARG=--settings + ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
+          echo "SETTINGS_ARG=--settings ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
       - name: Build and analyze
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         env:
