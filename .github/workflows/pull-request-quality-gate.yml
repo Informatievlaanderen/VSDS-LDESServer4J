@@ -1,3 +1,5 @@
+# !!! WARNING !!! #
+# This workflow is reused in all LDES Java projects. Edit with caution #
 name: Pull Request Quality Gate
 on:
   pull_request:

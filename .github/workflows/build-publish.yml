@@ -1,4 +1,4 @@
-name: Build & Deploy Project
+name: Build & Publish Project
 
 on:
   push:
@@ -50,6 +50,8 @@ jobs:
             type=ref,event=pr
             type=raw,value=${{env.version}}
             type=raw,value={{date 'YYYYMMDDTHHmm'}}
+          flavor: |
+            latest=true
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
