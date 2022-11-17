@@ -23,11 +23,12 @@ jobs:
         with:
           distribution: zulu
           java-version: 18
-      - name: Publish Jar to GitHub Packages
+      - name: Test, Analyse And Publish Jar to GitHub Packages
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn deploy
+          mvn -B verify deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
           echo "version=$VERSION" >> $GITHUB_ENV
 
