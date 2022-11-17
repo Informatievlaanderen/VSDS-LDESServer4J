@@ -7,7 +7,7 @@ public class RetentionConfig {
 	private String name;
 	private Map<String, String> config;
 
-	public String getRetentionPolicyName() {
+	public String getName() {
 		return name;
 	}
 

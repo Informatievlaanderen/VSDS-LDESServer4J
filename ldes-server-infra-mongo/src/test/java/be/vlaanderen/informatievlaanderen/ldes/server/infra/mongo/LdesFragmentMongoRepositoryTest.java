@@ -5,19 +5,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.LdesFragmentMongoRepositoryTest.LdesFragmentEntityListProvider.allMutable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -92,7 +91,7 @@ class LdesFragmentMongoRepositoryTest {
 				String viewName,
 				String value) {
 			FragmentInfo fragmentInfo = new FragmentInfo(viewName, List.of(new FragmentPair("generatedAtTime", value)),
-					immutable);
+					immutable, LocalDateTime.now());
 			LdesFragment ldesFragment = new LdesFragment(fragmentInfo);
 			return LdesFragmentEntity.fromLdesFragment(ldesFragment);
 		}
