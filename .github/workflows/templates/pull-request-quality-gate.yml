@@ -10,8 +10,11 @@ on:
       SKIP_DOCKER:
         required: false
         type: string
-  pull_request:
-    types: [opened, synchronize, reopened]
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+      SONAR_TOKEN:
+        required: true
   workflow_dispatch:
 
 jobs:

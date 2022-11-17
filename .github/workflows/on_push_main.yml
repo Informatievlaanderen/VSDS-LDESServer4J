@@ -1,0 +1,12 @@
+name: Build & Publish Project
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-publish-project:
+    uses: ./.github/workflows/templates/build-publish.yml@main
+    with:
+      IMAGE_NAME: Informatievlaanderen/ldes-server
