@@ -35,7 +35,7 @@ jobs:
           find: '/'
           replace: '_'
       - name: Set Optional Maven Settings Variable
-        if: ${{ env.SETTINGS_FILE =! '' }}
+        if: ${{ env.SETTINGS_FILE != '' }}
         ## Reference your environment variables
         run: |
           echo "SETTINGS_ARG=--settings + ${{ env.SETTINGS_FILE }}" >> $GITHUB_ENV
