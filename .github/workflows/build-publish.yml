@@ -12,10 +12,6 @@ on:
       IMAGE_NAME:
         required: true
     secrets:
-      GITHUB_TOKEN:
-        required: true
-      SONAR_TOKEN:
-        required: true
       GITHUB_USER_REF:
         required: false
       GITHUB_TOKEN_REF:
