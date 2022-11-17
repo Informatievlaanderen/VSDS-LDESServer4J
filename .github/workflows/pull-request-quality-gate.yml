@@ -3,6 +3,13 @@
 name: Pull Request Quality Gate
 on:
   workflow_call:
+    inputs:
+      SETTINGS_FILE:
+        required: false
+        type: string
+      SKIP_DOCKER:
+        required: false
+        type: string
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
@@ -40,10 +47,10 @@ jobs:
           find: '/'
           replace: '_'
       - name: Set Optional Maven Settings Variable
-        if: ${{ env.SETTINGS_FILE =! '' }}
+        if: ${{ inputs.SETTINGS_FILE =! '' }}
         ## Reference your environment variables
         run: |
-          echo "SETTINGS_ARG=--settings + ${{ env.SETTINGS_FILE }}" >> $GITHUB_ENV
+          echo "SETTINGS_ARG=--settings + ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
       - name: Build and analyze
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         env:
@@ -54,7 +61,7 @@ jobs:
         if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
         run: mvn -B verify -Dintegrationtestskip=true
       - name: Build Docker image
-        if: ${{ env.SKIP_DOCKER != 'true' }}
+        if: ${{ inputs.SKIP_DOCKER != 'true' }}
         uses: docker/build-push-action@v3
         with:
           context: .

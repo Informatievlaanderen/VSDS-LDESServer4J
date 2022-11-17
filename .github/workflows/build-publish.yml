@@ -4,6 +4,13 @@ name: Build & Publish Project
 
 on:
   workflow_call:
+    inputs:
+      SETTINGS_FILE:
+        required: false
+        type: string
+      SKIP_DOCKER:
+        required: false
+        type: string
   push:
     branches:
       - main
@@ -12,7 +19,6 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: Informatievlaanderen/ldes-server
-  SKIP_DOCKER: false
 
 jobs:
   build:
@@ -35,10 +41,10 @@ jobs:
           find: '/'
           replace: '_'
       - name: Set Optional Maven Settings Variable
-        if: ${{ env.SETTINGS_FILE != '' }}
+        if: ${{ inputs.SETTINGS_FILE != '' }}
         ## Reference your environment variables
         run: |
-          echo "SETTINGS_ARG=--settings + ${{ env.SETTINGS_FILE }}" >> $GITHUB_ENV
+          echo "SETTINGS_ARG=--settings + ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
       - name: Test, Analyse And Publish Jar to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,7 +55,7 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_ENV
 
       - name: Log in to the Container registry
-        if: ${{ env.SKIP_DOCKER != 'true' }}
+        if: ${{ inputs.SKIP_DOCKER != 'true' }}
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
@@ -57,7 +63,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
-        if: ${{ env.SKIP_DOCKER != 'true' }}
+        if: ${{ inputs.SKIP_DOCKER != 'true' }}
         id: meta
         uses: docker/metadata-action@v4
         with:
@@ -72,7 +78,7 @@ jobs:
             latest=true
 
       - name: Build and push Docker image
-        if: ${{ env.SKIP_DOCKER != 'true' }}
+        if: ${{ inputs.SKIP_DOCKER != 'true' }}
         uses: docker/build-push-action@v3
         with:
           context: .
