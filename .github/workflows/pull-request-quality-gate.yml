@@ -39,12 +39,17 @@ jobs:
           source: ${{ github.repository }}
           find: '/'
           replace: '_'
+      - name: Set Optional Maven Settings Variable
+        if: ${{ env.SETTINGS_FILE =! '' }}
+        ## Reference your environment variables
+        run: |
+          echo "SETTINGS_ARG=--settings + ${{ env.SETTINGS_FILE }}" >> $GITHUB_ENV
       - name: Build and analyze
         if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=${{ steps.sonar-name.outputs.value  }} -Pcoverage
+        run: mvn ${{ env.SETTINGS_ARG  }} -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=${{ steps.sonar-name.outputs.value  }} -Pcoverage
       - name: Build (Forks) # https://portal.productboard.com/sonarsource/1-sonarcloud/c/50-sonarcloud-analyzes-external-pull-request
         if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
         run: mvn -B verify -Dintegrationtestskip=true
