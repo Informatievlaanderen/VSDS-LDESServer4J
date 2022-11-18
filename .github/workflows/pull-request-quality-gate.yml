@@ -11,6 +11,10 @@ on:
         required: false
         type: string
     secrets:
+      SDK_USERNAME:
+        required: false
+      SDK_PASSWORD:
+        required: false
       GITHUB_TOKEN:
         required: true
       SONAR_TOKEN:
@@ -59,6 +63,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SDK_USERNAME: ${{ secrets.SDK_USERNAME }} # Temporary hack to get around PAT for github packages
+          SDK_PASSWORD: ${{ secrets.SDK_PASSWORD }} # Temporary hack to get around PAT for github packages
         run: mvn ${{ env.SETTINGS_ARG  }} -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=${{ steps.sonar-name.outputs.value  }} -Pcoverage
       - name: Build (Forks) # https://portal.productboard.com/sonarsource/1-sonarcloud/c/50-sonarcloud-analyzes-external-pull-request
         if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
