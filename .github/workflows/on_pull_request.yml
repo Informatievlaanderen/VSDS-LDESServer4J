@@ -1,0 +1,12 @@
+name: Pull Request Quality Gate
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+jobs:
+  pull-request-quality-gate:
+    uses: ./.github/workflows/pull-request-quality-gate.yml
+    secrets:
+      GITHUB_TOKEN_EXT: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN_EXT: ${{ secrets.SONAR_TOKEN }}
