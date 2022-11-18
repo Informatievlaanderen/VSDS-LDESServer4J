@@ -19,9 +19,7 @@ on:
         required: false
       SDK_PASSWORD:
         required: false
-      GITHUB_TOKEN_EXT:
-        required: true
-      SONAR_TOKEN_EXT:
+      SONAR_TOKEN:
         required: true
   workflow_dispatch:
 
