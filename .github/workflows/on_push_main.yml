@@ -1,0 +1,15 @@
+name: Build & Publish Project
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-publish-project:
+    uses: ./.github/workflows/build-publish.yml
+    with:
+      IMAGE_NAME: Informatievlaanderen/ldes-server
+    secrets:
+      GITHUB_TOKEN_EXT: ${{ secrets.GITHUB_TOKEN }}
+      SONAR_TOKEN_EXT: ${{ secrets.SONAR_TOKEN }}
