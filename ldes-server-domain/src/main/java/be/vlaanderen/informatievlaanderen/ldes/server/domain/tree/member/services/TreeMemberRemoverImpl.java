@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
+import io.micrometer.core.instrument.Metrics;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,6 +21,7 @@ public class TreeMemberRemoverImpl implements TreeMemberRemover {
 		if (!memberReferencesRepository.hasMemberReferences(memberId)) {
 			memberRepository.deleteMember(memberId);
 			memberReferencesRepository.deleteMemberReference(memberId);
+			Metrics.counter("ldes_server_deleted_members_count").increment();
 		}
 	}
 }

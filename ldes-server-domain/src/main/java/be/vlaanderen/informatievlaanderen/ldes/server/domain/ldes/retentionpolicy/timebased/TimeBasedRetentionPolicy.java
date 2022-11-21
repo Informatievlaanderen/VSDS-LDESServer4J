@@ -3,19 +3,20 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpoli
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class TimeBasedRetentionPolicy implements RetentionPolicy {
-	private final long durationInSeconds;
+	private final String duration;
 
-	public TimeBasedRetentionPolicy(long durationInSeconds) {
-		this.durationInSeconds = durationInSeconds;
+	public TimeBasedRetentionPolicy(String duration) {
+		this.duration = duration;
 	}
 
 	@Override
 	public boolean matchesPolicy(LdesFragment ldesFragment) {
 		LocalDateTime immutableTimestamp = ldesFragment.getFragmentInfo().getImmutableTimestamp();
 		return immutableTimestamp != null
-				&& LocalDateTime.now().isAfter(immutableTimestamp.plusSeconds(durationInSeconds));
+				&& LocalDateTime.now().isAfter(immutableTimestamp.plus(Duration.parse(duration)));
 	}
 }

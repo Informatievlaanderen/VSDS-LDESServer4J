@@ -11,7 +11,7 @@ views:
     retention-policies:
       - name: "timebased"
         config:
-          durationInSeconds: 100
+          duration: PT1M
   - name: "secondView"
     fragmentations:
       - name: "timebased"
