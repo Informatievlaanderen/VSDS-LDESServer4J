@@ -14,4 +14,4 @@ _:Bdfb7e9d001c2f76fdacc91827c53be2f <http://www.opengis.net/ont/geosparql#asWKT>
 _:B6d6151daf809cfb8e19b0042133ebf90 <http://data.europa.eu/m8g/endTime> "2021-03-27T15:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 _:B6d6151daf809cfb8e19b0042133ebf90 <http://data.europa.eu/m8g/startTime> "2021-01-04T06:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 <https://private-api.gipod.beta-vlaanderen.be/api/v1/ldes/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483> .
-<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .
+<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder>  .
