@@ -33,25 +33,32 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 
 	@Scheduled(fixedDelay = 10000)
 	public void removeTreeNodes() {
-		retentionPolicyMap.forEach((view, retentionPolicies) -> {
-			List<LdesFragment> ldesFragments = ldesFragmentRepository
-					.retrieveNonDeletedImmutableFragmentsOfView(view)
-					.filter(ldesFragment -> retentionPolicies
-							.stream()
-							.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(ldesFragment)))
-					.toList();
-			ldesFragments.forEach(ldesFragment -> {
-				ldesFragment.setSoftDeleted(true);
-				ldesFragmentRepository.saveFragment(ldesFragment);
-				parentUpdater.updateParent(ldesFragment);
-				ldesFragment
-						.getMemberIds()
-						.forEach(memberId -> {
-							memberReferencesRepository.removeMemberReference(memberId, ldesFragment.getFragmentId());
-							treeMemberRemover.tryRemovingMember(memberId);
-						});
-			});
-		});
+		retentionPolicyMap
+				.entrySet()
+				.stream()
+				.filter(stringListEntry -> !stringListEntry.getValue().isEmpty())
+				.forEach(entry -> {
+					String view = entry.getKey();
+					List<RetentionPolicy> retentionPolicies = entry.getValue();
+					List<LdesFragment> ldesFragments = ldesFragmentRepository
+							.retrieveNonDeletedImmutableFragmentsOfView(view)
+							.filter(ldesFragment -> retentionPolicies
+									.stream()
+									.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(ldesFragment)))
+							.toList();
+					ldesFragments.forEach(ldesFragment -> {
+						ldesFragment.setSoftDeleted(true);
+						ldesFragmentRepository.saveFragment(ldesFragment);
+						parentUpdater.updateParent(ldesFragment);
+						ldesFragment
+								.getMemberIds()
+								.forEach(memberId -> {
+									memberReferencesRepository.removeMemberReference(memberId,
+											ldesFragment.getFragmentId());
+									treeMemberRemover.tryRemovingMember(memberId);
+								});
+					});
+				});
 	}
 
 }
