@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TimeBasedRetentionPolicyTest {
 
-	RetentionPolicy retentionPolicy = new TimeBasedRetentionPolicy(1);
+	RetentionPolicy retentionPolicy = new TimeBasedRetentionPolicy("PT1S");
 
 	@Test
 	void when_FragmentIsLongEnoughImmutable_ItMatchesTheTimebasedRetentionPolicy() {

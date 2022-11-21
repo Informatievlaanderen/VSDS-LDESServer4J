@@ -21,7 +21,7 @@ class TreeNodeRemoverImplTest {
 
 	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap = Map.of("view",
-			List.of(new TimeBasedRetentionPolicy(0)));
+			List.of(new TimeBasedRetentionPolicy("PT0S")));
 	private final MemberReferencesRepository referencesRepository = mock(MemberReferencesRepository.class);
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
 	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);

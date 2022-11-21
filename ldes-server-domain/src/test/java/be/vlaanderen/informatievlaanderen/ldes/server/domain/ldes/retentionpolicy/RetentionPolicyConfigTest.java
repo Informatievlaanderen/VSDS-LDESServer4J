@@ -41,7 +41,7 @@ class RetentionPolicyConfigTest {
 		viewSpecification.setName("firstView");
 		RetentionConfig retentionConfig = new RetentionConfig();
 		retentionConfig.setName(policiyName);
-		retentionConfig.setConfig(Map.of("durationInSeconds", "100"));
+		retentionConfig.setConfig(Map.of("duration", "PT1M"));
 		viewSpecification.setRetentionPolicies(List.of(retentionConfig));
 		return viewSpecification;
 	}
