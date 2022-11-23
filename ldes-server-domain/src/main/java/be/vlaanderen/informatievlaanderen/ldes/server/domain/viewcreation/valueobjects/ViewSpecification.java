@@ -25,7 +25,7 @@ public class ViewSpecification {
 	}
 
 	public List<RetentionConfig> getRetentionConfigs() {
-		return retentionPolicies;
+		return retentionPolicies == null ? List.of() : retentionPolicies;
 	}
 
 	public void setRetentionPolicies(List<RetentionConfig> retentionPolicies) {
