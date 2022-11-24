@@ -4,16 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class MemberMongoRepositoryTest {
@@ -39,55 +35,23 @@ class MemberMongoRepositoryTest {
 
 	@DisplayName("Correct retrieval of LdesMembers by Id from MongoDB")
 	@Test
-	void when_LdesMemberByIdIsRequested_LdesMemberIsReturnedWhenExisting() {
+	void when_LdesMemberExistsByIdIsRequested_ReturnsTrueWhenExisting() {
 		String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(
-				"""
-						<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""")
-				.lang(Lang.NQUADS).toModel();
-		Member expectedMember = new Member(memberId, ldesMemberModel);
-		LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedMember);
 
-		when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));
+		when(ldesMemberEntityRepository.existsById(memberId)).thenReturn(true);
 
-		Optional<Member> actualLdesMember = ldesMemberMongoRepository.getLdesMemberById(memberId);
-
-		assertTrue(actualLdesMember.isPresent());
-		assertEquals(expectedMember.getLdesMemberId(),
-				actualLdesMember.get().getLdesMemberId());
-		verify(ldesMemberEntityRepository, times(1)).findById(memberId);
+		assertTrue(ldesMemberMongoRepository.memberExists(memberId));
+		verify(ldesMemberEntityRepository, times(1)).existsById(memberId);
 	}
 
-	@DisplayName("Throwing of LdesMemberNotFoundException")
+	@DisplayName("Correct exist check of LdesMembers by Ids from MongoDB")
 	@Test
-	void when_LdesMemberByIdAndLdesMemberDoesNotExist_EmptyOptionalIsReturned() {
+	void when_LdesMemberExistByIdsIsRequested_LdesMembersAreReturned() {
 		String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
-		when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.empty());
 
-		Optional<Member> ldesMemberById = ldesMemberMongoRepository.getLdesMemberById(memberId);
+		when(ldesMemberEntityRepository.existsById(memberId)).thenReturn(true);
 
-		assertFalse(ldesMemberById.isPresent());
-		verify(ldesMemberEntityRepository, times(1)).findById(memberId);
-	}
-
-	@DisplayName("Correct retrieval of LdesMembers by Ids from MongoDB")
-	@Test
-	void when_LdesMemberByIdsIsRequested_LdesMembersAreReturned() {
-		String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(
-				"""
-						<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member> <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165> .""")
-				.lang(Lang.NQUADS).toModel();
-		Member expectedMember = new Member(memberId, ldesMemberModel);
-		LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(expectedMember);
-
-		when(ldesMemberEntityRepository.findById(memberId)).thenReturn(Optional.of(ldesMemberEntity));
-
-		Optional<Member> actualLdesMember = ldesMemberMongoRepository.getLdesMemberById(memberId);
-
-		assertTrue(actualLdesMember.isPresent());
-		assertEquals(expectedMember.getLdesMemberId(),
-				actualLdesMember.get().getLdesMemberId());
-		verify(ldesMemberEntityRepository, times(1)).findById(memberId);
+		assertTrue(ldesMemberMongoRepository.memberExists(memberId));
+		verify(ldesMemberEntityRepository, times(1)).existsById(memberId);
 	}
 }

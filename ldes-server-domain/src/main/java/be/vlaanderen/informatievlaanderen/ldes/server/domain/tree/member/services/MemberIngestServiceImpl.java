@@ -6,8 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
 @Component
 public class MemberIngestServiceImpl implements MemberIngestService {
 
@@ -23,8 +21,8 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
 	@Override
 	public void addMember(Member member) {
-		Optional<Member> optionalLdesMember = memberRepository.getLdesMemberById(member.getLdesMemberId());
-		if (optionalLdesMember.isEmpty()) {
+		boolean memberExists = memberRepository.memberExists(member.getLdesMemberId());
+		if (!memberExists) {
 			Metrics.counter("ldes_server_ingested_members_count").increment();
 			Member storedMember = storeLdesMember(member);
 			fragmentationMediator.addMemberToFragment(storedMember);

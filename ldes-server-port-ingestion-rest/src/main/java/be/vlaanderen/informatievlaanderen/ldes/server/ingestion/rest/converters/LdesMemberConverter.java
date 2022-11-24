@@ -7,6 +7,8 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.sleuth.Span;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -35,6 +37,9 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 	@Autowired
 	Environment environment;
 
+	@Autowired
+	Tracer tracer;
+
 	private final LdesConfig ldesConfig;
 
 	public LdesMemberConverter(LdesConfig ldesConfig) {
@@ -52,7 +57,9 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 	protected Member readInternal(Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
+		Span convertSpan = tracer.nextSpan().name("Converting to model").start();
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
+		convertSpan.end();
 		String memberId = extractMemberId(memberModel);
 		return new Member(memberId, memberModel);
 	}
