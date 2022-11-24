@@ -14,7 +14,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -41,12 +40,12 @@ class MemberIngestServiceImplTest {
 		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		when(memberRepository.getLdesMemberById(member.getLdesMemberId())).thenReturn(Optional.of(savedMember));
+		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(true);
 
 		memberIngestService.addMember(member);
 
 		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
-		inOrder.verify(memberRepository, times(1)).getLdesMemberById(member.getLdesMemberId());
+		inOrder.verify(memberRepository, times(1)).memberExists(member.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 		verifyNoInteractions(fragmentationMediator);
 	}
@@ -62,13 +61,13 @@ class MemberIngestServiceImplTest {
 		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		when(memberRepository.getLdesMemberById(member.getLdesMemberId())).thenReturn(Optional.empty());
+		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(false);
 		when(memberRepository.saveLdesMember(member)).thenReturn(savedMember);
 
 		memberIngestService.addMember(member);
 
 		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
-		inOrder.verify(memberRepository, times(1)).getLdesMemberById(member.getLdesMemberId());
+		inOrder.verify(memberRepository, times(1)).memberExists(member.getLdesMemberId());
 		inOrder.verify(memberRepository, times(1)).saveLdesMember(member);
 		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(savedMember);
 		inOrder.verifyNoMoreInteractions();

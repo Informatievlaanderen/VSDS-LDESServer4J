@@ -248,3 +248,7 @@ $RECYCLE.BIN/
 ### MacOS
 ###
 .DS_Store
+
+
+# Apache SIS database
+Databases

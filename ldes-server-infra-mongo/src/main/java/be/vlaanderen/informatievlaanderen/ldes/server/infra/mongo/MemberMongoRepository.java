@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.L
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -27,10 +26,8 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public Optional<Member> getLdesMemberById(String memberId) {
-		return repository
-				.findById(memberId)
-				.map(LdesMemberEntity::toLdesMember);
+	public boolean memberExists(String memberId) {
+		return repository.existsById(memberId);
 	}
 
 	@Override
