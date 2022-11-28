@@ -21,7 +21,6 @@ public class LdesFragmentEntity {
 	private final Boolean root;
 	@Indexed
 	private final String viewName;
-	@Indexed
 	private final List<FragmentPair> fragmentPairs;
 	@Indexed
 	private final Boolean immutable;
