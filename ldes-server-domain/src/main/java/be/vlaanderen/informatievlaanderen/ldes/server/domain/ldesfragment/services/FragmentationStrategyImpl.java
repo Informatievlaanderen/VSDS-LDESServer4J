@@ -23,8 +23,10 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Span parentSpan) {
 		Span finalSpan = tracer.nextSpan(parentSpan).name("add member to fragment").start();
 		ldesFragment.addMember(member.getLdesMemberId());
-		ldesFragmentRepository.saveFragment(ldesFragment);
-		memberReferencesRepository.saveMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId());
+		ldesFragmentRepository.addMemberToFragment(ldesFragment, member.getLdesMemberId());
+//		ldesFragmentRepository.saveFragment(ldesFragment);
+		memberReferencesRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId());
+//		memberReferencesRepository.saveMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId());
 		finalSpan.end();
 	}
 

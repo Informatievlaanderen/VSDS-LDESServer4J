@@ -25,4 +25,6 @@ public interface LdesFragmentRepository {
 
 	Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
+
+	void addMemberToFragment(LdesFragment ldesFragment, String memberId);
 }

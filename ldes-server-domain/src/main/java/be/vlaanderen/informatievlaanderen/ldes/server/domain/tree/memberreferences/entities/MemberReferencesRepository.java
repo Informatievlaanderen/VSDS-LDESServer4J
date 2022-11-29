@@ -9,4 +9,6 @@ public interface MemberReferencesRepository {
 	boolean hasMemberReferences(final String memberId);
 
 	void deleteMemberReference(String memberId);
+
+    void addMemberReference(String ldesMemberId, String fragmentId);
 }
