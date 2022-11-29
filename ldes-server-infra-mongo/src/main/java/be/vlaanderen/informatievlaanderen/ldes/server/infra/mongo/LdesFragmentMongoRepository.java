@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,12 +23,14 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public LdesFragment saveFragment(LdesFragment ldesFragment) {
 		repository.save(LdesFragmentEntity.fromLdesFragment(ldesFragment));
 		return ldesFragment;
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
 		return repository
 				.findLdesFragmentEntityByViewNameAndFragmentPairs(
@@ -37,6 +40,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<LdesFragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
@@ -48,6 +52,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<LdesFragment> retrieveOpenChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
@@ -62,6 +67,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<LdesFragment> retrieveRootFragment(String viewName) {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
@@ -69,6 +75,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName) {
 		return repository
 				.findAllByImmutableAndSoftDeletedAndViewName(true, false, viewName)
@@ -77,6 +84,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository

@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.MemberReferencesEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.MemberReferencesEntityRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,7 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 	}
 
 	@Override
+	@Transactional
 	public synchronized void saveMemberReference(String memberId, String treeNodeId) {
 		MemberReferencesEntity memberReferencesEntity = repository.findById(memberId)
 				.orElseGet(() -> new MemberReferencesEntity(memberId, new ArrayList<>()));
@@ -24,6 +26,7 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 	}
 
 	@Override
+	@Transactional
 	public synchronized void removeMemberReference(String memberId, String treeNodeId) {
 		MemberReferencesEntity memberReferencesEntity = repository
 				.findById(memberId)
@@ -33,6 +36,7 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public synchronized boolean hasMemberReferences(String memberId) {
 		return repository
 				.findById(memberId)
@@ -41,6 +45,7 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 	}
 
 	@Override
+	@Transactional
 	public synchronized void deleteMemberReference(String memberId) {
 		repository.deleteById(memberId);
 	}
