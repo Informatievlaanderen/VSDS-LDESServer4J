@@ -4,6 +4,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MemberNo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.MemberReferencesEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.MemberReferencesEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -11,6 +16,9 @@ import java.util.ArrayList;
 public class MemberReferencesMongoRepository implements MemberReferencesRepository {
 
 	private final MemberReferencesEntityRepository repository;
+
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	public MemberReferencesMongoRepository(MemberReferencesEntityRepository repository) {
 		this.repository = repository;
@@ -48,5 +56,14 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 	@Transactional
 	public synchronized void deleteMemberReference(String memberId) {
 		repository.deleteById(memberId);
+	}
+
+	@Override
+	public void addMemberReference(String ldesMemberId, String fragmentId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(ldesMemberId));
+		Update update = new Update();
+		update.push("treeNodesRefences",fragmentId);
+		mongoTemplate.updateFirst(query,update, MemberReferencesEntity.class);
 	}
 }

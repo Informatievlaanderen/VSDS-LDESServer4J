@@ -6,6 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
@@ -17,6 +22,9 @@ import java.util.stream.Stream;
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
+
+	@Autowired
+	MongoTemplate mongoTemplate;
 
 	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {
 		this.repository = repository;
@@ -96,6 +104,15 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
+	}
+
+	@Override
+	public void addMemberToFragment(LdesFragment ldesFragment, String memberId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(ldesFragment.getFragmentId()));
+		Update update = new Update();
+		update.push("members",memberId);
+		mongoTemplate.updateFirst(query,update, LdesFragmentEntity.class);
 	}
 
 }
