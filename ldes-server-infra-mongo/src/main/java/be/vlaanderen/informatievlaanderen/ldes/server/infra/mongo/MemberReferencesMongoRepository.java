@@ -63,7 +63,7 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(ldesMemberId));
 		Update update = new Update();
-		update.push("treeNodesRefences",fragmentId);
-		mongoTemplate.updateFirst(query,update, MemberReferencesEntity.class);
+		update.push("treeNodesReferences", fragmentId);
+		mongoTemplate.upsert(query, update, MemberReferencesEntity.class, "memberReferences");
 	}
 }

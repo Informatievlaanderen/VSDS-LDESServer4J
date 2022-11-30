@@ -13,5 +13,9 @@ public interface MemberRepository {
 
 	Stream<Member> getLdesMembersByIds(List<String> ids);
 
-	void deleteMember(String memberId);
+	boolean deleteMember(String memberId);
+
+	void addMemberReference(String ldesMemberId, String fragmentId);
+
+	void removeMemberReference(String memberId, String fragmentId);
 }

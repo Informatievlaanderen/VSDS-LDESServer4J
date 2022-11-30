@@ -14,10 +14,10 @@ import java.util.List;
 
 @Document("ldesfragment")
 @CompoundIndex(name = "index_view_fragmentPairs", def = "{'viewName' : 1, 'fragmentPairs': 1}")
+@CompoundIndex(name = "index_view_root", def = "{'viewName' : 1, 'root': 1}")
 public class LdesFragmentEntity {
 	@Id
 	private final String id;
-	@Indexed
 	private final Boolean root;
 	@Indexed
 	private final String viewName;

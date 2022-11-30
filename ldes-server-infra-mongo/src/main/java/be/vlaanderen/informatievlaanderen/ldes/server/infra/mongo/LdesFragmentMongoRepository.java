@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
@@ -35,6 +36,23 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public LdesFragment saveFragment(LdesFragment ldesFragment) {
 		repository.save(LdesFragmentEntity.fromLdesFragment(ldesFragment));
 		return ldesFragment;
+	}
+
+	@Override
+	public void addRelationToFragment(LdesFragment fragment, TreeRelation treeRelation) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragment.getFragmentId()));
+		Update update = new Update();
+		update.addToSet("relations", treeRelation);
+		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment");
+	}
+
+	@Override public void setSoftDeleted(LdesFragment fragment) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragment.getFragmentId()));
+		Update update = new Update();
+		update.push("softDeleted", true);
+		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment");
 	}
 
 	@Override
@@ -107,12 +125,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public void addMemberToFragment(LdesFragment ldesFragment, String memberId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(ldesFragment.getFragmentId()));
 		Update update = new Update();
-		update.push("members",memberId);
-		mongoTemplate.updateFirst(query,update, LdesFragmentEntity.class);
+		update.push("members", memberId);
+		mongoTemplate.upsert(query, update, LdesFragmentEntity.class, "ldesfragment");
 	}
 
 }

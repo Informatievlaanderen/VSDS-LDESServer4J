@@ -23,6 +23,9 @@ public class GeospatialFragmentCreator {
 						child.getFragmentInfo().getViewName(),
 						child.getFragmentInfo().getFragmentPairs()))
 				.map(ldesFragment -> new TileFragment(ldesFragment, false))
-				.orElseGet(() -> new TileFragment(child, true));
+				.orElseGet(() -> {
+					ldesFragmentRepository.saveFragment(child);
+					return new TileFragment(child, true);
+				});
 	}
 }

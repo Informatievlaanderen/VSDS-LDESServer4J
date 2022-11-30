@@ -41,5 +41,6 @@ public class ParentUpdaterImpl implements ParentUpdater {
 			parent.addRelation(new TreeRelation("", newChild.getFragmentId(), "", "", GENERIC_TREE_RELATION));
 			ldesFragmentRepository.saveFragment(parent);
 		}
+
 	}
 }

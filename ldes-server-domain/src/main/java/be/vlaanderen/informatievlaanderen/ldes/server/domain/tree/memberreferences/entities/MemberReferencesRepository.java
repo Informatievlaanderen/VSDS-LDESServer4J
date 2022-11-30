@@ -10,5 +10,5 @@ public interface MemberReferencesRepository {
 
 	void deleteMemberReference(String memberId);
 
-    void addMemberReference(String ldesMemberId, String fragmentId);
+	void addMemberReference(String ldesMemberId, String fragmentId);
 }

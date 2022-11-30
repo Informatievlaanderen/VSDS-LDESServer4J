@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,16 +18,18 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
 	private final MemberReferencesRepository memberReferencesRepository;
+	private final MemberRepository memberRepository;
 	private final TreeMemberRemover treeMemberRemover;
 	private final ParentUpdater parentUpdater;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			Map<String, List<RetentionPolicy>> retentionPolicyMap,
-			MemberReferencesRepository memberReferencesRepository, TreeMemberRemover treeMemberRemover,
+			MemberReferencesRepository memberReferencesRepository, MemberRepository memberRepository, TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
 		this.memberReferencesRepository = memberReferencesRepository;
+		this.memberRepository = memberRepository;
 		this.treeMemberRemover = treeMemberRemover;
 		this.parentUpdater = parentUpdater;
 	}
@@ -47,13 +50,12 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 									.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(ldesFragment)))
 							.toList();
 					ldesFragments.forEach(ldesFragment -> {
-						ldesFragment.setSoftDeleted(true);
-						ldesFragmentRepository.saveFragment(ldesFragment);
+						ldesFragmentRepository.setSoftDeleted(ldesFragment);
 						parentUpdater.updateParent(ldesFragment);
 						ldesFragment
 								.getMemberIds()
 								.forEach(memberId -> {
-									memberReferencesRepository.removeMemberReference(memberId,
+									memberRepository.removeMemberReference(memberId,
 											ldesFragment.getFragmentId());
 									treeMemberRemover.tryRemovingMember(memberId);
 								});

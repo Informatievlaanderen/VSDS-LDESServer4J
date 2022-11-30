@@ -29,7 +29,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 		boolean memberExists = memberRepository.memberExists(member.getLdesMemberId());
 		if (!memberExists) {
 			Metrics.counter("ldes_server_ingested_members_count").increment();
-			executor.submit(()->storeLdesMember(member));
+			executor.submit(() -> storeLdesMember(member));
 			fragmentationMediator.addMemberToFragment(member);
 		}
 	}

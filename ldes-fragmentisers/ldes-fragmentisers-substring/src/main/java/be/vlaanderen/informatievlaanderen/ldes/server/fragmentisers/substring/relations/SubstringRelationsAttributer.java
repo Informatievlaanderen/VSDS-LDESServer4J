@@ -23,10 +23,8 @@ public class SubstringRelationsAttributer {
 		TreeRelation parentChildRelation = new TreeRelation(null, childFragment.getFragmentId(),
 				substringValue, STRING_TYPE,
 				TREE_SUBSTRING_RELATION);
-		if (!parentFragment.getRelations().contains(parentChildRelation)) {
-			parentFragment.addRelation(parentChildRelation);
-			ldesFragmentRepository.saveFragment(parentFragment);
-		}
+
+		ldesFragmentRepository.addRelationToFragment(parentFragment, parentChildRelation);
 	}
 
 	private String getSubstringValue(LdesFragment childFragment) {

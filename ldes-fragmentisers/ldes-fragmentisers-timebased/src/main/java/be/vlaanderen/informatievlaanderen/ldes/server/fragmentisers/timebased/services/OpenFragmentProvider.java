@@ -25,6 +25,10 @@ public class OpenFragmentProvider {
 						return fragment;
 					}
 				})
-				.orElseGet(() -> fragmentCreator.createNewFragment(parentFragment));
+				.orElseGet(() -> {
+					LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
+					ldesFragmentRepository.saveFragment(newFragment);
+					return newFragment;
+				});
 	}
 }

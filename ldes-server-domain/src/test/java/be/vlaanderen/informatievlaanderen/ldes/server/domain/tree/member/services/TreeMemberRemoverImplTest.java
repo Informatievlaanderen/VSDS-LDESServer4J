@@ -15,7 +15,7 @@ class TreeMemberRemoverImplTest {
 
 	@BeforeEach
 	void setUp() {
-		treeMemberRemover = new TreeMemberRemoverImpl(memberReferencesRepository, memberRepository);
+		treeMemberRemover = new TreeMemberRemoverImpl(memberRepository);
 	}
 
 	@Test
@@ -24,7 +24,7 @@ class TreeMemberRemoverImplTest {
 		treeMemberRemover.tryRemovingMember("memberId");
 
 		verify(memberRepository, times(1)).deleteMember("memberId");
-		verify(memberReferencesRepository, times(1)).deleteMemberReference("memberId");
+//		verify(memberReferencesRepository, times(1)).deleteMemberReference("memberId");
 	}
 
 	@Test

@@ -27,11 +27,8 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 	}
 
 	private void createRoot(String viewName) {
-		FragmentInfo fragmentInfo = new FragmentInfo(
-				viewName, List.of());
-		LdesFragment ldesFragment = new LdesFragment(
-
-				fragmentInfo);
+		FragmentInfo fragmentInfo = new FragmentInfo(viewName, List.of());
+		LdesFragment ldesFragment = new LdesFragment(fragmentInfo);
 		ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 }

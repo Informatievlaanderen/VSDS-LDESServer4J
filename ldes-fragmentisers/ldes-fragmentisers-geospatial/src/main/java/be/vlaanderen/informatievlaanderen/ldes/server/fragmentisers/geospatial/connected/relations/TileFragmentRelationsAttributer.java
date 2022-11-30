@@ -35,8 +35,7 @@ public class TileFragmentRelationsAttributer {
 	private void addRelationsFromRootToCreatedTiles(LdesFragment tileRootFragment, List<LdesFragment> tileFragments) {
 		tileFragments.stream()
 				.parallel()
-				.forEach(ldesFragment -> relationsAttributer.addRelationToParentFragment(tileRootFragment,
-						ldesFragment));
-		ldesFragmentRepository.saveFragment(tileRootFragment);
+				.forEach(ldesFragment -> ldesFragmentRepository.addRelationToFragment(tileRootFragment,
+						relationsAttributer.addRelationToParentFragment(ldesFragment)));
 	}
 }

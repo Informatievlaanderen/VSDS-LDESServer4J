@@ -9,22 +9,22 @@ import java.util.List;
 public class MemberReferencesEntity {
 	@Id
 	private final String id;
-	private final List<String> treeNodesRefences;
+	private final List<String> treeNodesReferences;
 
-	public MemberReferencesEntity(String id, List<String> treeNodesRefences) {
+	public MemberReferencesEntity(String id, List<String> treeNodesReferences) {
 		this.id = id;
-		this.treeNodesRefences = treeNodesRefences;
+		this.treeNodesReferences = treeNodesReferences;
 	}
 
 	public void addMemberReference(String treeNodeId) {
-		treeNodesRefences.add(treeNodeId);
+		treeNodesReferences.add(treeNodeId);
 	}
 
 	public boolean hasMemberReferences() {
-		return !treeNodesRefences.isEmpty();
+		return !treeNodesReferences.isEmpty();
 	}
 
 	public void removeMemberReference(String treeNodeId) {
-		treeNodesRefences.remove(treeNodeId);
+		treeNodesReferences.remove(treeNodeId);
 	}
 }
