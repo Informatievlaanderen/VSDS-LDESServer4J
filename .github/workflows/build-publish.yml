@@ -52,12 +52,16 @@ jobs:
         ## Reference your environment variables
         run: |
           echo "SETTINGS_ARG=--settings ${{ inputs.SETTINGS_FILE }}" >> $GITHUB_ENV
+      - uses: s4u/maven-settings-action@v2.5.0
+        with:
+          servers: '[
+          {"id": "github","configuration": {"httpHeaders": {"property": {"name": "Authorization","value": "Bearer ${{ secrets.GITHUB_TOKEN }}"}}}}]'
       - name: Test, Analyse And Publish Jar to GitHub Packages
         env:
           SDK_USERNAME: ${{ secrets.SDK_USERNAME }} # Temporary hack to get around PAT for github packages
           SDK_PASSWORD: ${{ secrets.SDK_PASSWORD }} # Temporary hack to get around PAT for github packages
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN_EXT }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_EXT }}
         run: |
           mvn ${{ env.SETTINGS_ARG  }} -B verify deploy org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dintegrationtestskip=true -Dsonar.projectKey=${{ steps.sonar-name.outputs.value  }} -Pcoverage
           export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
