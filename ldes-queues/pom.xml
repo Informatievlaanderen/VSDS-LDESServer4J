@@ -4,7 +4,7 @@
     <parent>
         <artifactId>ldes-server</artifactId>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-        <version>0.0.3-SNAPSHOT</version>
+        <version>0.0.3</version>
     </parent>
 
     <artifactId>ldes-queues</artifactId>
