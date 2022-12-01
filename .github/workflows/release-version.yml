@@ -1,4 +1,4 @@
-name: Release 1. Build, Deploy and Release Project
+name: 3. Build, Deploy and Release Project
 
 on:
   workflow_dispatch:
