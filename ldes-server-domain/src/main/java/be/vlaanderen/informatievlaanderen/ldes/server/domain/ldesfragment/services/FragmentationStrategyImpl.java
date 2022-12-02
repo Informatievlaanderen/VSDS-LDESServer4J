@@ -13,17 +13,20 @@ import java.util.concurrent.Executors;
 
 public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final MemberRepository memberRepository;
+	private final LdesFragmentRepository ldesFragmentRepository;
 	private final ExecutorService executor;
 
 	public FragmentationStrategyImpl(LdesFragmentRepository ldesFragmentRepository,
 									 MemberReferencesRepository memberReferencesRepository, Tracer tracer, MemberRepository memberRepository) {
 		this.memberRepository = memberRepository;
 		this.executor = Executors.newSingleThreadExecutor();
+		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
 	@Override
 	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Span parentSpan) {
 		executor.submit(()->memberRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId()));
+		executor.submit(()->ldesFragmentRepository.incrementNumberOfMembers(ldesFragment.getFragmentId()));
 	}
 
 }

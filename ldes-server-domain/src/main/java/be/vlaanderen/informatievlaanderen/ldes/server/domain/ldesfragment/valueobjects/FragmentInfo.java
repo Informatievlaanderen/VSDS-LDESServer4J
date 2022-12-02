@@ -18,20 +18,24 @@ public class FragmentInfo {
 
 	private Boolean softDeleted;
 
+	private final int numberOfMembers;
+
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = false;
 		this.softDeleted = false;
+		this.numberOfMembers = 0;
 	}
 
 	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
-			LocalDateTime immutableTimestamp, Boolean softDeleted) {
+			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.immutableTimestamp = immutableTimestamp;
 		this.softDeleted = softDeleted;
+		this.numberOfMembers = numberOfMembers;
 	}
 
 	public Optional<String> getValueOfKey(String key) {
@@ -69,6 +73,10 @@ public class FragmentInfo {
 
 	public void setSoftDeleted(Boolean softDeleted) {
 		this.softDeleted = softDeleted;
+	}
+
+	public int getNumberOfMembers() {
+		return numberOfMembers;
 	}
 
 	public FragmentInfo createChild(FragmentPair fragmentPair) {

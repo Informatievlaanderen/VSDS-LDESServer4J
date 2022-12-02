@@ -9,6 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.co
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 
@@ -18,10 +20,12 @@ public class TimeBasedFragmentCreator {
 	private final TimebasedFragmentationConfig timebasedFragmentationConfig;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	private final ExecutorService executorService;
 
 	public TimeBasedFragmentCreator(TimebasedFragmentationConfig timeBasedConfig,
 			LdesFragmentRepository ldesFragmentRepository) {
 		this.timebasedFragmentationConfig = timeBasedConfig;
+		this.executorService = Executors.newSingleThreadExecutor();
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
@@ -53,7 +57,7 @@ public class TimeBasedFragmentCreator {
 						() -> new MissingFragmentValueException(newFragment.getFragmentId(), GENERATED_AT_TIME)),
 				DATE_TIME_TYPE,
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
-		ldesFragmentRepository.saveFragment(completeLdesFragment);
+		executorService.submit(()->ldesFragmentRepository.saveFragment(completeLdesFragment));
 		newFragment.addRelation(
 				new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
 						completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(

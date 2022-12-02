@@ -107,4 +107,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		mongoTemplate.updateFirst(query,update, LdesFragmentEntity.class);
 	}
 
+	@Override
+	public void incrementNumberOfMembers(String fragmentId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragmentId));
+
+		Update update = new Update().inc("numberOfMembers", 1);
+		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
+	}
+
 }

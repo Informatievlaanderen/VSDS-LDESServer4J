@@ -27,4 +27,6 @@ public interface LdesFragmentRepository {
 			List<FragmentPair> fragmentPairList);
 
 	void addMemberToFragment(LdesFragment ldesFragment, String memberId);
+
+	void incrementNumberOfMembers(String fragmentId);
 }

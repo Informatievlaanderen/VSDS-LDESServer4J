@@ -49,7 +49,7 @@ public class LdesFragment {
 	}
 
 	public int getCurrentNumberOfMembers() {
-		return memberIds.size();
+		return fragmentInfo.getNumberOfMembers();
 	}
 
 	public void makeImmutable() {
