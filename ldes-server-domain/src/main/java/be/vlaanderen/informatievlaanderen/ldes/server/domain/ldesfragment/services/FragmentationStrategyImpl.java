@@ -3,31 +3,27 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class FragmentationStrategyImpl implements FragmentationStrategy {
-	private final LdesFragmentRepository ldesFragmentRepository;
-	private final MemberReferencesRepository memberReferencesRepository;
-	private final Tracer tracer;
+	private final MemberRepository memberRepository;
+	private final ExecutorService executor;
 
 	public FragmentationStrategyImpl(LdesFragmentRepository ldesFragmentRepository,
-			MemberReferencesRepository memberReferencesRepository, Tracer tracer) {
-		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.memberReferencesRepository = memberReferencesRepository;
-		this.tracer = tracer;
+									 MemberReferencesRepository memberReferencesRepository, Tracer tracer, MemberRepository memberRepository) {
+		this.memberRepository = memberRepository;
+		this.executor = Executors.newSingleThreadExecutor();
 	}
 
 	@Override
 	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Span parentSpan) {
-		Span finalSpan = tracer.nextSpan(parentSpan).name("add member to fragment").start();
-		ldesFragment.addMember(member.getLdesMemberId());
-		ldesFragmentRepository.addMemberToFragment(ldesFragment, member.getLdesMemberId());
-//		ldesFragmentRepository.saveFragment(ldesFragment);
-		memberReferencesRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId());
-//		memberReferencesRepository.saveMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId());
-		finalSpan.end();
+		executor.submit(()->memberRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId()));
 	}
 
 }

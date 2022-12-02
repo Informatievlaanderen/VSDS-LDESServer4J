@@ -63,7 +63,7 @@ class ConfigPropertiesTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null)),
+			return Stream.of(Arguments.of(new Member("some_id", null, treeNodeReferences)),
 					Arguments.of((Object) null));
 		}
 	}

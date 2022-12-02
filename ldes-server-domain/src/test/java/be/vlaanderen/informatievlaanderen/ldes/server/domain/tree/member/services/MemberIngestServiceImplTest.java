@@ -36,10 +36,10 @@ class MemberIngestServiceImplTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(true);
 
 		memberIngestService.addMember(member);
@@ -57,10 +57,10 @@ class MemberIngestServiceImplTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(false);
 		when(memberRepository.saveLdesMember(member)).thenReturn(savedMember);
 

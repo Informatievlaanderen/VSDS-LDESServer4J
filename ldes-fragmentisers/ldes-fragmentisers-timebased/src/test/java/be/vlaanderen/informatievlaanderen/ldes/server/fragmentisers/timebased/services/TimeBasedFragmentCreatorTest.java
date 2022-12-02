@@ -108,7 +108,7 @@ class TimeBasedFragmentCreatorTest {
 				createResource(
 						"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483")));
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",
-				ldesMemberModel);
+				ldesMemberModel, treeNodeReferences);
 	}
 
 	private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode,

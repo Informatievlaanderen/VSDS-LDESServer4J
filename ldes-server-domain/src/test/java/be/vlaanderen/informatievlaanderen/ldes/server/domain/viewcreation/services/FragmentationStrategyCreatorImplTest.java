@@ -37,7 +37,7 @@ class FragmentationStrategyCreatorImplTest {
 	@BeforeEach
 	void setUp() {
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, ldesFragmentRepository, memberReferencesRepository, rootFragmentCreator, tracer);
+				applicationContext, ldesFragmentRepository, memberReferencesRepository, rootFragmentCreator, memberRepository, tracer);
 	}
 
 	@Test

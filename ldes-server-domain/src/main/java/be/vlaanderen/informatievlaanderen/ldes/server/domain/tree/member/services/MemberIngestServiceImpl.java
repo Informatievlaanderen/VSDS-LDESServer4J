@@ -21,7 +21,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 			FragmentationMediator fragmentationMediator) {
 		this.memberRepository = memberRepository;
 		this.fragmentationMediator = fragmentationMediator;
-		this.executor = Executors.newFixedThreadPool(10);
+		this.executor = Executors.newSingleThreadExecutor();
 	}
 
 	@Override

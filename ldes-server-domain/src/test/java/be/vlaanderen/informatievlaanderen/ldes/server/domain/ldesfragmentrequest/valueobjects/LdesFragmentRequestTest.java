@@ -51,7 +51,7 @@ class LdesFragmentRequestTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null)),
+			return Stream.of(Arguments.of(new Member("some_id", null, treeNodeReferences)),
 					Arguments.of((Object) null),
 					Arguments.of(new LdesFragmentRequest("otherViewName",
 							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,

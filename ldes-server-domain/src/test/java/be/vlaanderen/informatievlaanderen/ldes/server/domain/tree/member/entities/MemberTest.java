@@ -26,7 +26,7 @@ class MemberTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				createModel(ldesMemberString, Lang.NQUADS));
+				createModel(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 
 		member.removeTreeMember();
 		Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
@@ -42,7 +42,7 @@ class MemberTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				createModel(ldesMemberString, Lang.NQUADS));
+				createModel(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				member.getLdesMemberId());
 	}
@@ -55,7 +55,7 @@ class MemberTest {
 
 		Member member = new Member(
 				"http://localhost:8080/member/1",
-				createModel(ldesMemberString, Lang.NQUADS));
+				createModel(ldesMemberString, Lang.NQUADS), treeNodeReferences);
 
 		assertEquals(4, member.getFragmentationObjects(
 				"PREFIX core: <http://www.w3.org/2004/02/skos/core#> SELECT ?x WHERE { ?s core:prefLabel ?x . }")

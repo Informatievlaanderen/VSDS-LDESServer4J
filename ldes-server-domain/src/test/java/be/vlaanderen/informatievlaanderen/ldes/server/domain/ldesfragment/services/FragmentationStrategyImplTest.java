@@ -21,7 +21,7 @@ class FragmentationStrategyImplTest {
 
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			ldesFragmentRepository,
-			memberReferencesRepository, tracer);
+			memberReferencesRepository, tracer, memberRepository);
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {

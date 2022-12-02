@@ -47,7 +47,7 @@ class SubstringBucketiserTest {
 
 		return new Member("a", RDFParserBuilder.create()
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
-				.toModel());
+				.toModel(), treeNodeReferences);
 	}
 
 }

@@ -61,7 +61,7 @@ class MemberEntityTest {
 				.toModel();
 
 		return LdesMemberEntity.fromLdesMember(new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", outputModel));
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", outputModel, treeNodeReferences));
 	}
 
 	private Member readLdesMemberFromFile(ClassLoader classLoader, String fileName)
@@ -73,6 +73,6 @@ class MemberEntityTest {
 				.toModel();
 
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				outputModel);
+				outputModel, treeNodeReferences);
 	}
 }

@@ -72,7 +72,7 @@ class LdesFragmentConverterImplTest {
 						<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 						.""")
 				.lang(Lang.NQUADS).toModel();
-		Member member = new Member("some_id", ldesMemberModel);
+		Member member = new Member("some_id", ldesMemberModel, treeNodeReferences);
 		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME,
 						List.of()));

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
@@ -61,7 +62,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 		convertSpan.end();
 		String memberId = extractMemberId(memberModel);
-		return new Member(memberId, memberModel);
+		return new Member(memberId, memberModel, List.of());
 	}
 
 	private String extractMemberId(Model model) {
