@@ -21,8 +21,7 @@ public class OpenFragmentProvider {
 
     public LdesFragment retrieveOpenFragmentOrCreateNewFragment(LdesFragment parentFragment) {
         return ldesFragmentRepository
-                .retrieveOpenChildFragment(parentFragment.getFragmentInfo().getViewName(),
-                        parentFragment.getFragmentInfo().getFragmentPairs())
+                .retrieveOpenChildFragment(parentFragment.getFragmentInfo().generateFragmentId())
                 .map(fragment -> {
                     if (fragmentCreator.needsToCreateNewFragment(fragment)) {
                         LdesFragment newFragment = fragmentCreator.createNewFragment(fragment, parentFragment);

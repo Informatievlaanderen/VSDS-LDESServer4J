@@ -35,8 +35,8 @@ class OpenFragmentProviderTest {
 		LdesFragment createdFragment = new LdesFragment(
 				new FragmentInfo("view", List.of(new FragmentPair("Path",
 						"Value"))));
-		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentInfo().getViewName(),
-				PARENT_FRAGMENT.getFragmentInfo().getFragmentPairs()))
+		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentInfo().getViewName()
+        ))
 				.thenReturn(Optional.empty());
 		when(fragmentCreator.createNewFragment(PARENT_FRAGMENT))
 				.thenReturn(createdFragment);
@@ -46,8 +46,8 @@ class OpenFragmentProviderTest {
 		assertEquals(createdFragment, ldesFragment);
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveOpenChildFragment(VIEW_NAME,
-						List.of());
+				times(1)).retrieveOpenChildFragment(VIEW_NAME
+        );
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(PARENT_FRAGMENT);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -58,8 +58,8 @@ class OpenFragmentProviderTest {
 		LdesFragment existingLdesFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
-		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
-				List.of()))
+		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME
+        ))
 				.thenReturn(Optional.of(existingLdesFragment));
 		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(false);
 
@@ -68,8 +68,8 @@ class OpenFragmentProviderTest {
 		assertEquals(existingLdesFragment, ldesFragment);
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveOpenChildFragment(VIEW_NAME,
-						List.of());
+				times(1)).retrieveOpenChildFragment(VIEW_NAME
+        );
 		inOrder.verify(fragmentCreator,
 				times(1)).needsToCreateNewFragment(existingLdesFragment);
 		inOrder.verifyNoMoreInteractions();
@@ -85,8 +85,8 @@ class OpenFragmentProviderTest {
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("Path",
 						"Value"))));
 
-		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME,
-				List.of()))
+		when(ldesFragmentRepository.retrieveOpenChildFragment(VIEW_NAME
+        ))
 				.thenReturn(Optional.of(existingLdesFragment));
 		when(fragmentCreator.needsToCreateNewFragment(existingLdesFragment)).thenReturn(true);
 		when(fragmentCreator.createNewFragment(existingLdesFragment,
@@ -97,8 +97,8 @@ class OpenFragmentProviderTest {
 		assertEquals(newFragment, ldesFragment);
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).retrieveOpenChildFragment(VIEW_NAME,
-						List.of());
+				times(1)).retrieveOpenChildFragment(VIEW_NAME
+        );
 		inOrder.verify(fragmentCreator,
 				times(1)).needsToCreateNewFragment(existingLdesFragment);
 		inOrder.verify(fragmentCreator,

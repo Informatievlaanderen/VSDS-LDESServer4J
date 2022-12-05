@@ -56,15 +56,11 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenChildFragment(String viewName,
-			List<FragmentPair> fragmentPairList) {
+	public Optional<LdesFragment> retrieveOpenChildFragment(String parentId) {
 		return repository
-				.findAllByImmutableAndViewName(false,
-						viewName)
+				.findAllByImmutableAndParentId(false,
+						parentId)
 				.stream()
-				.filter(ldesFragmentEntity -> Collections
-						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1
-						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}
