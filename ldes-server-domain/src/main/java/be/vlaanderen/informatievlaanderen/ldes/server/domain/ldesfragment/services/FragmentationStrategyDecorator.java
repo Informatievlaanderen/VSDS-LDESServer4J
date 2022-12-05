@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import org.springframework.cloud.sleuth.Span;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
@@ -12,11 +13,13 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 
 	private final FragmentationStrategy fragmentationStrategy;
 	private final LdesFragmentRepository ldesFragmentRepository;
+	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
 
 	protected FragmentationStrategyDecorator(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository) {
+											 LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 	}
 
 	@Override
@@ -26,10 +29,7 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 
 	protected void addRelationFromParentToChild(LdesFragment parentFragment, LdesFragment childFragment) {
 		TreeRelation treeRelation = new TreeRelation("", childFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
-		if (!parentFragment.getRelations().contains(treeRelation)) {
-			parentFragment.addRelation(treeRelation);
-			ldesFragmentRepository.saveFragment(parentFragment);
-		}
+		treeNodeRelationsRepository.addTreeNodeRelation(parentFragment.getFragmentId(), treeRelation);
 	}
 
 }

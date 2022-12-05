@@ -40,7 +40,7 @@ class TimebasedFragmentationStrategyTest {
 		OPEN_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("generatedAtTime", "someTime"))));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
-				ldesFragmentRepository, openFragmentProvider, tracer);
+				ldesFragmentRepository, openFragmentProvider, tracer, treeNodeRelationsRepository);
 	}
 
 	@Test

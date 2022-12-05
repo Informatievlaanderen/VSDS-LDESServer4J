@@ -82,7 +82,7 @@ class FragmentationStrategyDecoratorTest {
 
 		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
 				LdesFragmentRepository ldesFragmentRepository) {
-			super(fragmentationStrategy, ldesFragmentRepository);
+			super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
 		}
 	}
 }

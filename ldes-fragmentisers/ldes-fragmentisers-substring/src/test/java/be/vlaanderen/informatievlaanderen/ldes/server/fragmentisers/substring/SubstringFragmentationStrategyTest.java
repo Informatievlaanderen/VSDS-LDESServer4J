@@ -41,7 +41,7 @@ class SubstringFragmentationStrategyTest {
 		substringFragmentFinder = mock(SubstringFragmentFinder.class);
 		substringFragmentCreator = mock(SubstringFragmentCreator.class);
 		substringFragmentationStrategy = new SubstringFragmentationStrategy(decoratedFragmentationStrategy,
-				ldesFragmentRepository, tracer, substringBucketiser, substringFragmentFinder, substringFragmentCreator);
+				ldesFragmentRepository, tracer, substringBucketiser, substringFragmentFinder, substringFragmentCreator, treeNodeRelationsRepository);
 	}
 
 	@Test

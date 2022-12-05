@@ -36,6 +36,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
+	public Optional<LdesFragment> retrieveFragment(String fragmentId) {
+		return repository
+				.findById(fragmentId)
+				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
 	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
 		return repository
 				.findLdesFragmentEntityByViewNameAndFragmentPairs(
@@ -109,15 +116,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		query.addCriteria(Criteria.where("_id").is(fragmentId));
 
 		Update update = new Update().inc("numberOfMembers", 1);
-		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
-	}
-
-	@Override
-	public void makeImmutable(LdesFragment completeLdesFragment) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(completeLdesFragment.getFragmentId()));
-
-		Update update = new Update().set("immutable", true);
 		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
 	}
 

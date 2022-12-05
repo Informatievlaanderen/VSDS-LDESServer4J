@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 
 import java.time.LocalDateTime;
@@ -21,10 +22,12 @@ public class TimeBasedFragmentCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private final ExecutorService executorService;
+	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
 
 	public TimeBasedFragmentCreator(TimebasedFragmentationConfig timeBasedConfig,
-			LdesFragmentRepository ldesFragmentRepository) {
+									LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
 		this.timebasedFragmentationConfig = timeBasedConfig;
+		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 		this.executorService = Executors.newSingleThreadExecutor();
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
@@ -51,20 +54,19 @@ public class TimeBasedFragmentCreator {
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.makeImmutable();
-		completeLdesFragment.addRelation(new TreeRelation(PROV_GENERATED_AT_TIME,
+		treeNodeRelationsRepository.addTreeNodeRelation(completeLdesFragment.getFragmentId(),new TreeRelation(PROV_GENERATED_AT_TIME,
 				newFragment.getFragmentId(),
 				newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
 						() -> new MissingFragmentValueException(newFragment.getFragmentId(), GENERATED_AT_TIME)),
 				DATE_TIME_TYPE,
 				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
-		newFragment.addRelation(
-				new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
-						completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
-								() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
-										GENERATED_AT_TIME)),
-						DATE_TIME_TYPE,
-						TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
+		treeNodeRelationsRepository.addTreeNodeRelation(newFragment.getFragmentId(), new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
+				completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
+						() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
+								GENERATED_AT_TIME)),
+				DATE_TIME_TYPE,
+				TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
 	}
 
 }

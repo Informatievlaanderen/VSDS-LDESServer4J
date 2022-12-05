@@ -44,7 +44,7 @@ class GeospatialFragmentationStrategyTest {
 		PARENT_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 		geospatialFragmentationStrategy = new GeospatialFragmentationStrategy(decoratedFragmentationStrategy,
-				ldesFragmentRepository, geospatialBucketiser, fragmentCreator, tileFragmentRelationsAttributer, tracer);
+				ldesFragmentRepository, geospatialBucketiser, fragmentCreator, tileFragmentRelationsAttributer, tracer, treeNodeRelationsRepository);
 	}
 
 	@Test

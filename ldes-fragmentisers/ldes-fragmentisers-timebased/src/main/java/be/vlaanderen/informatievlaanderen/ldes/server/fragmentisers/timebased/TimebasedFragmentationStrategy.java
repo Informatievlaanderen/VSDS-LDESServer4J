@@ -5,34 +5,45 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
 public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
-	private final OpenFragmentProvider openFragmentProvider;
-	private final Tracer tracer;
+    private final OpenFragmentProvider openFragmentProvider;
+    private final Tracer tracer;
 
-	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository, OpenFragmentProvider openFragmentProvider, Tracer tracer) {
-		super(fragmentationStrategy, ldesFragmentRepository);
-		this.openFragmentProvider = openFragmentProvider;
-		this.tracer = tracer;
-	}
+    private final TreeNodeRelationsRepository treeNodeRelationsRepository;
+    private final ExecutorService executors;
 
-	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
-		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
-		LdesFragment ldesFragment = openFragmentProvider
-				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
-			if (parentFragment.getRelations().stream()
-					.noneMatch(relation -> relation.relation().equals(GENERIC_TREE_RELATION))) {
-				super.addRelationFromParentToChild(parentFragment, ldesFragment);
-			}
-			super.addMemberToFragment(ldesFragment, member, timebasedFragmentationSpan);
-		timebasedFragmentationSpan.end();
-	}
+    public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
+                                          LdesFragmentRepository ldesFragmentRepository, OpenFragmentProvider openFragmentProvider, Tracer tracer, TreeNodeRelationsRepository treeNodeRelationsRepository) {
+        super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
+        this.openFragmentProvider = openFragmentProvider;
+        this.tracer = tracer;
+        this.treeNodeRelationsRepository = treeNodeRelationsRepository;
+        this.executors = Executors.newSingleThreadExecutor();
+    }
+
+    @Override
+    public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
+        Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
+        LdesFragment ldesFragment = openFragmentProvider
+                .retrieveOpenFragmentOrCreateNewFragment(parentFragment);
+        executors.submit(() -> {
+            if (treeNodeRelationsRepository.getRelations(parentFragment.getFragmentId()).stream()
+                    .noneMatch(relation -> relation.relation().equals(GENERIC_TREE_RELATION))) {
+                super.addRelationFromParentToChild(parentFragment, ldesFragment);
+            }
+        });
+        super.addMemberToFragment(ldesFragment, member, timebasedFragmentationSpan);
+        timebasedFragmentationSpan.end();
+    }
 
 }

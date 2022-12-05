@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
@@ -19,6 +20,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
+		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext.getBean(TreeNodeRelationsRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
@@ -28,7 +30,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 				ldesFragmentRepository);
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository,
-				geospatialBucketiser, geospatialFragmentCreator, tileFragmentRelationsAttributer, tracer);
+				geospatialBucketiser, geospatialFragmentCreator, tileFragmentRelationsAttributer, tracer, treeNodeRelationsRepository);
 	}
 
 	private GeospatialConfig createGeospatialConfig(ConfigProperties properties) {

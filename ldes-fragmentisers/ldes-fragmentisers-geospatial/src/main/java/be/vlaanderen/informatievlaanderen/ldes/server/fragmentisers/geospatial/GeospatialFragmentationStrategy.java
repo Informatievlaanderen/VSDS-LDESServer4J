@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
@@ -26,10 +27,10 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 	private final Tracer tracer;
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository,
-			GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
-			TileFragmentRelationsAttributer tileFragmentRelationsAttributer, Tracer tracer) {
-		super(fragmentationStrategy, ldesFragmentRepository);
+										   LdesFragmentRepository ldesFragmentRepository,
+										   GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
+										   TileFragmentRelationsAttributer tileFragmentRelationsAttributer, Tracer tracer, TreeNodeRelationsRepository treeNodeRelationsRepository) {
+		super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
 		this.geospatialBucketiser = geospatialBucketiser;
 		this.fragmentCreator = fragmentCreator;
 		this.tileFragmentRelationsAttributer = tileFragmentRelationsAttributer;

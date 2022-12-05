@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 public interface LdesFragmentRepository {
 	LdesFragment saveFragment(LdesFragment ldesFragment);
 
+	Optional<LdesFragment> retrieveFragment(String fragmentId);
+
 	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
 
 	Optional<LdesFragment> retrieveOpenChildFragment(String parentId);
@@ -29,5 +31,4 @@ public interface LdesFragmentRepository {
 
 	void incrementNumberOfMembers(String fragmentId);
 
-	void makeImmutable(LdesFragment completeLdesFragment);
 }
