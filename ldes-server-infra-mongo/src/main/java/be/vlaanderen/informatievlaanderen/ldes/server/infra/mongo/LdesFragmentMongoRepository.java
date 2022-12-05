@@ -112,4 +112,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
 	}
 
+	@Override
+	public void makeImmutable(LdesFragment completeLdesFragment) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(completeLdesFragment.getFragmentId()));
+
+		Update update = new Update().set("immutable", true);
+		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
+	}
+
 }

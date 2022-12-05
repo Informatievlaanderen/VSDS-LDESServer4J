@@ -28,4 +28,6 @@ public interface LdesFragmentRepository {
 	void addMemberToFragment(LdesFragment ldesFragment, String memberId);
 
 	void incrementNumberOfMembers(String fragmentId);
+
+	void makeImmutable(LdesFragment completeLdesFragment);
 }
