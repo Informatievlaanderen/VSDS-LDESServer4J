@@ -25,7 +25,7 @@ public class OpenFragmentProvider {
                 .map(fragment -> {
                     if (fragmentCreator.needsToCreateNewFragment(fragment)) {
                         LdesFragment newFragment = fragmentCreator.createNewFragment(fragment, parentFragment);
-                        executors.submit(() -> ldesFragmentRepository.saveFragment(newFragment));
+                        ldesFragmentRepository.saveFragment(newFragment);
                         return newFragment;
                     } else {
                         return fragment;
@@ -33,7 +33,7 @@ public class OpenFragmentProvider {
                 })
                 .orElseGet(() -> {
                     LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
-                    executors.submit(() -> ldesFragmentRepository.saveFragment(newFragment));
+                    ldesFragmentRepository.saveFragment(newFragment);
                     return newFragment;
                 });
     }

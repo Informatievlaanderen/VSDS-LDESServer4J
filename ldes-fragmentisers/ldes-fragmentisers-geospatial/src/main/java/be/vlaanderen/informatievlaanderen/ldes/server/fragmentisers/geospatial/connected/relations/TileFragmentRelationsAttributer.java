@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.TileFragment;
 
 import java.util.List;
@@ -12,8 +14,11 @@ public class TileFragmentRelationsAttributer {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
 
-	public TileFragmentRelationsAttributer(LdesFragmentRepository ldesFragmentRepository) {
+	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
+
+	public TileFragmentRelationsAttributer(LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 	}
 
 	public Stream<LdesFragment> addRelationsFromRootToBottom(LdesFragment rootFragment,
@@ -35,8 +40,12 @@ public class TileFragmentRelationsAttributer {
 	private void addRelationsFromRootToCreatedTiles(LdesFragment tileRootFragment, List<LdesFragment> tileFragments) {
 		tileFragments.stream()
 				.parallel()
-				.forEach(ldesFragment -> relationsAttributer.addRelationToParentFragment(tileRootFragment,
-						ldesFragment));
-		ldesFragmentRepository.saveFragment(tileRootFragment);
+				.forEach(ldesFragment -> {
+					TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
+							ldesFragment);
+					if(!treeNodeRelationsRepository.getRelations(tileRootFragment.getFragmentId()).contains(relationToParentFragment)){
+						treeNodeRelationsRepository.addTreeNodeRelation(tileRootFragment.getFragmentId(), relationToParentFragment);
+					}
+				});
 	}
 }

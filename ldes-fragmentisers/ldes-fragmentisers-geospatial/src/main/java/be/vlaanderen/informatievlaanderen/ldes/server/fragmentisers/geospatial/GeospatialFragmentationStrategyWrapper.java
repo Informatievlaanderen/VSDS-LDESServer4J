@@ -27,7 +27,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
-				ldesFragmentRepository);
+				ldesFragmentRepository, treeNodeRelationsRepository);
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository,
 				geospatialBucketiser, geospatialFragmentCreator, tileFragmentRelationsAttributer, tracer, treeNodeRelationsRepository);

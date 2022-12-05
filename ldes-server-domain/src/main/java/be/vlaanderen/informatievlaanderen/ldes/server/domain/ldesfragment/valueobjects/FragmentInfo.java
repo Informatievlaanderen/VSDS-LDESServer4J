@@ -131,7 +131,7 @@ public class FragmentInfo {
 
                 stringBuilder.append("?");
                 stringBuilder
-                        .append(fragmentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
+                        .append(parentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
                                 "=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
             }
             return stringBuilder.toString();

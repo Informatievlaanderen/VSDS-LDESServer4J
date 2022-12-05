@@ -4,14 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,7 +37,6 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
         LdesFragment ldesFragment = openFragmentProvider
                 .retrieveOpenFragmentOrCreateNewFragment(parentFragment);
         executors.submit(() -> {
-            List<TreeRelation> relations = treeNodeRelationsRepository.getRelations(parentFragment.getFragmentId());
             if (treeNodeRelationsRepository.getRelations(parentFragment.getFragmentId()).stream()
                     .noneMatch(relation -> relation.relation().equals(GENERIC_TREE_RELATION))) {
                 super.addRelationFromParentToChild(parentFragment, ldesFragment);

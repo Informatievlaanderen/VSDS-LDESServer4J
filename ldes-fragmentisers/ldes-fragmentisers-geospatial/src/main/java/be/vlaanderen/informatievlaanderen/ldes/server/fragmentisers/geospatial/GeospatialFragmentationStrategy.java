@@ -15,72 +15,72 @@ import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 
 public class GeospatialFragmentationStrategy extends FragmentationStrategyDecorator {
 
-	private final GeospatialBucketiser geospatialBucketiser;
-	private final GeospatialFragmentCreator fragmentCreator;
-	private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
-	private final Tracer tracer;
+    private final GeospatialBucketiser geospatialBucketiser;
+    private final GeospatialFragmentCreator fragmentCreator;
+    private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
+    private final Tracer tracer;
+    private final ExecutorService executors;
 
-	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-										   LdesFragmentRepository ldesFragmentRepository,
-										   GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
-										   TileFragmentRelationsAttributer tileFragmentRelationsAttributer, Tracer tracer, TreeNodeRelationsRepository treeNodeRelationsRepository) {
-		super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
-		this.geospatialBucketiser = geospatialBucketiser;
-		this.fragmentCreator = fragmentCreator;
-		this.tileFragmentRelationsAttributer = tileFragmentRelationsAttributer;
-		this.tracer = tracer;
-	}
+    private LdesFragment rootTileFragment = null;
 
-	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
-		Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
-		Set<String> tiles = geospatialBucketiser.bucketise(member);
-		List<TileFragment> tileFragments = getTileFragments(parentFragment, tiles);
-		Stream<LdesFragment> ldesFragments = addRelationsToCreatedFragments(parentFragment, tileFragments);
-		ldesFragments
-				.parallel()
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
-						geospatialFragmentationSpan));
-		geospatialFragmentationSpan.end();
-	}
+    public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
+                                           LdesFragmentRepository ldesFragmentRepository,
+                                           GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
+                                           TileFragmentRelationsAttributer tileFragmentRelationsAttributer, Tracer tracer, TreeNodeRelationsRepository treeNodeRelationsRepository) {
+        super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
+        this.geospatialBucketiser = geospatialBucketiser;
+        this.fragmentCreator = fragmentCreator;
+        this.tileFragmentRelationsAttributer = tileFragmentRelationsAttributer;
+        this.tracer = tracer;
+        this.executors = Executors.newSingleThreadExecutor();
+    }
 
-	private Stream<LdesFragment> addRelationsToCreatedFragments(LdesFragment parentFragment,
-			List<TileFragment> tileFragments) {
-		if (hasCreatedTiles(tileFragments)) {
-			LdesFragment rootTileFragment = getRootTileFragment(parentFragment);
-			return tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, tileFragments);
-		} else {
-			return tileFragments
-					.stream()
-					.map(TileFragment::ldesFragment);
-		}
-	}
+    @Override
+    public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
+        Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
+        Set<String> tiles = geospatialBucketiser.bucketise(member);
+        List<TileFragment> tileFragments = getTileFragments(parentFragment, tiles);
+        executors.submit(()->  addRelationsToCreatedFragments(parentFragment, tileFragments));
+        tileFragments
+                .stream()
+                .map(TileFragment::ldesFragment)
+                .parallel()
+                .forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
+                        geospatialFragmentationSpan));
+        geospatialFragmentationSpan.end();
+    }
 
-	private boolean hasCreatedTiles(List<TileFragment> tileFragments) {
-		return tileFragments
-				.stream()
-				.anyMatch(TileFragment::created);
-	}
+    private void addRelationsToCreatedFragments(LdesFragment parentFragment,
+                                                                List<TileFragment> tileFragments) {
 
-	private LdesFragment getRootTileFragment(LdesFragment parentFragment) {
-		LdesFragment tileRootFragment = fragmentCreator.getOrCreateGeospatialFragment(parentFragment,
-				FRAGMENT_KEY_TILE_ROOT).ldesFragment();
-		super.addRelationFromParentToChild(parentFragment, tileRootFragment);
-		return tileRootFragment;
-	}
+            LdesFragment rootTileFragment = getRootTileFragment(parentFragment);
+            tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, tileFragments);
+    }
 
-	private List<TileFragment> getTileFragments(LdesFragment parentFragment,
-			Set<String> tiles) {
-		return tiles
-				.stream()
-				.parallel()
-				.map(tile -> fragmentCreator.getOrCreateGeospatialFragment(parentFragment, tile))
-				.toList();
-	}
+    private LdesFragment getRootTileFragment(LdesFragment parentFragment) {
+        if (rootTileFragment == null) {
+            LdesFragment tileRootFragment = fragmentCreator.getOrCreateGeospatialFragment(parentFragment,
+                    FRAGMENT_KEY_TILE_ROOT).ldesFragment();
+            super.addRelationFromParentToChild(parentFragment, tileRootFragment);
+            rootTileFragment = tileRootFragment;
+            return tileRootFragment;
+        }
+        return rootTileFragment;
+    }
+
+    private List<TileFragment> getTileFragments(LdesFragment parentFragment,
+                                                Set<String> tiles) {
+        return tiles
+                .stream()
+                .parallel()
+                .map(tile -> fragmentCreator.getOrCreateGeospatialFragment(parentFragment, tile))
+                .toList();
+    }
 }

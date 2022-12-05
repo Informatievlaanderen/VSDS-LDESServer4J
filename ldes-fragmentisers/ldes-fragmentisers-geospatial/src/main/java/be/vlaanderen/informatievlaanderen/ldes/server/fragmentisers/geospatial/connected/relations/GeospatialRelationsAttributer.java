@@ -12,14 +12,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialRelationsAttributer {
 
-	public void addRelationToParentFragment(LdesFragment parentFragment, LdesFragment childFragment) {
+	public TreeRelation getRelationToParentFragment(LdesFragment childFragment) {
 		String targetWKT = getWKT(childFragment);
 
 		TreeRelation relationToTargetFragment = new TreeRelation(GEOSPARQL_AS_WKT, childFragment.getFragmentId(),
 				WGS_84 + " " + targetWKT, WKT_DATA_TYPE, TREE_GEOSPATIALLY_CONTAINS_RELATION);
-		if (!parentFragment.getRelations().contains(relationToTargetFragment)) {
-			parentFragment.addRelation(relationToTargetFragment);
-		}
+			return relationToTargetFragment;
+
 	}
 
 	private String getWKT(LdesFragment currentFragment) {
