@@ -39,6 +39,9 @@ public class TreeNodeRelationsMongoRepository implements TreeNodeRelationsReposi
     public List<TreeRelation> getRelations(String fragmentId) {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(fragmentId));
-       return mongoTemplate.findOne(query, TreeNodeRelationsEntity.class).getRelations();
+       return mongoTemplate.find(query, TreeNodeRelationsEntity.class)
+               .stream()
+               .findFirst()
+               .map(TreeNodeRelationsEntity::getRelations).orElseGet(List::of);
     }
 }
