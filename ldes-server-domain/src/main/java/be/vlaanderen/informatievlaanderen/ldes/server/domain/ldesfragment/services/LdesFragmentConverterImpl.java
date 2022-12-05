@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.*;
@@ -33,11 +32,12 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 	public Model toModel(final LdesFragment ldesFragment) {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(addTreeNodeStatements(ldesFragment));
-		if (!ldesFragment.getMemberIds().isEmpty()) {
-			model.add(addEventStreamStatements(ldesFragment));
-			memberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(Member::getModel)
-					.forEach(model::add);
-		}
+		//TODO fix
+//		if (!ldesFragment.getMemberIds().isEmpty()) {
+//			model.add(addEventStreamStatements(ldesFragment));
+//			memberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(Member::getModel)
+//					.forEach(model::add);
+//		}
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
@@ -59,8 +59,9 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 
 	private List<Statement> getMemberStatements(LdesFragment ldesFragment, Resource viewId) {
 		List<Statement> statements = new ArrayList<>();
-		ldesFragment.getMemberIds()
-				.forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER, createResource(memberId))));
+		//TODO fix
+//		ldesFragment.getMemberIds()
+//				.forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER, createResource(memberId))));
 		return statements;
 	}
 
