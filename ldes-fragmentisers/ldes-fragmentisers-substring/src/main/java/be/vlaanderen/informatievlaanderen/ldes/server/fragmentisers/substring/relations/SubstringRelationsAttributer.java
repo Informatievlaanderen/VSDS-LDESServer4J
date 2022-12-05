@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingF
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.STRING_TYPE;
@@ -13,11 +14,14 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.subst
 public class SubstringRelationsAttributer {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
+	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
 	private final SubstringConfig substringConfig;
 
+	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
 	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
 			SubstringConfig substringConfig) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 		this.substringConfig = substringConfig;
 	}
 
@@ -28,9 +32,8 @@ public class SubstringRelationsAttributer {
 				childFragment.getFragmentId(),
 				substringValue, STRING_TYPE,
 				TREE_SUBSTRING_RELATION);
-		if (!parentFragment.getRelations().contains(parentChildRelation)) {
-			parentFragment.addRelation(parentChildRelation);
-			ldesFragmentRepository.saveFragment(parentFragment);
+		if (!treeNodeRelationsRepository.getRelations(parentFragment.getFragmentId()).contains(parentChildRelation)) {
+			treeNodeRelationsRepository.addTreeNodeRelation(parentFragment.getFragmentId(), parentChildRelation);
 		}
 	}
 

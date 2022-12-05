@@ -82,9 +82,12 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 	}
 
 	private List<Statement> getRelationStatements(LdesFragment ldesFragment, Resource currrentFragmentId) {
-		return ldesFragment.getRelations().stream()
-				.flatMap(treeRelation -> getRelationStatementsOfRelation(currrentFragmentId, treeRelation).stream())
-				.toList();
+
+		//TODO fix
+//		return ldesFragment.getRelations().stream()
+//				.flatMap(treeRelation -> getRelationStatementsOfRelation(currrentFragmentId, treeRelation).stream())
+//				.toList();
+		return List.of();
 	}
 
 	private List<Statement> getRelationStatementsOfRelation(Resource currentFragmentId, TreeRelation treeRelation) {

@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repos
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +11,6 @@ public interface LdesFragmentRepository {
 	LdesFragment saveFragment(LdesFragment ldesFragment);
 
 	Optional<LdesFragment> retrieveFragment(String fragmentId);
-
-	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
 
 	Optional<LdesFragment> retrieveOpenChildFragment(String parentId);
 
@@ -30,5 +27,7 @@ public interface LdesFragmentRepository {
 	void addMemberToFragment(LdesFragment ldesFragment, String memberId);
 
 	void incrementNumberOfMembers(String fragmentId);
+
+	void makeImmutable(String fragmentId);
 
 }

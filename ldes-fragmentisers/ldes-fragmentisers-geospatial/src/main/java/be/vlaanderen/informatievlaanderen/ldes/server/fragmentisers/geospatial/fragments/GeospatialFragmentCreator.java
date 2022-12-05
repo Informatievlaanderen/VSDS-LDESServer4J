@@ -28,7 +28,7 @@ public class GeospatialFragmentCreator {
 				.orElseGet(() -> {
 
 					TileFragment tileFragment = new TileFragment(child, true);
-					executors.submit(() -> ldesFragmentRepository.saveFragment(child));
+					ldesFragmentRepository.saveFragment(child);
 					return tileFragment;
 				});
 	}

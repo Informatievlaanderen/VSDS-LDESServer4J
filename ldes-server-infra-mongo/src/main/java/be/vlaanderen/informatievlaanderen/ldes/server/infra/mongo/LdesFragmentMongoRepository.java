@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +38,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public Optional<LdesFragment> retrieveFragment(String fragmentId) {
 		return repository
 				.findById(fragmentId)
-				.map(LdesFragmentEntity::toLdesFragment);
-	}
-
-	@Override
-	public Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest) {
-		return repository
-				.findLdesFragmentEntityByViewNameAndFragmentPairs(
-						ldesFragmentRequest.viewName(),
-						ldesFragmentRequest.fragmentPairs())
 				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
@@ -116,6 +106,15 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		query.addCriteria(Criteria.where("_id").is(fragmentId));
 
 		Update update = new Update().inc("numberOfMembers", 1);
+		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
+	}
+
+	@Override
+	public void makeImmutable(String fragmentId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragmentId));
+
+		Update update = new Update().set("immutable", true);
 		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
 	}
 

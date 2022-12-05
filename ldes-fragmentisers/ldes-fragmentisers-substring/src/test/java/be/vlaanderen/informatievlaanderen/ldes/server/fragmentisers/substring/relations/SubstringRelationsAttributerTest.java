@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class SubstringRelationsAttributerTest {
@@ -38,6 +36,7 @@ class SubstringRelationsAttributerTest {
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "ab"))));
 
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository, treeNodeRelationsRepository);
 		SubstringConfig substringConfig = mock(SubstringConfig.class);
 		when(substringConfig.getFragmenterPropertyQuery()).thenReturn(FRAGMENTER_PROPERTY);
 		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository, substringConfig);

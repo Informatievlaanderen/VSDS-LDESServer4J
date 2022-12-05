@@ -45,7 +45,9 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	public boolean memberExists(String memberId) {
-		return repository.existsById(memberId);
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(memberId));
+		return mongoTemplate.exists(query, LdesMemberEntity.class,"ldesmember");
 	}
 
 	@Override
