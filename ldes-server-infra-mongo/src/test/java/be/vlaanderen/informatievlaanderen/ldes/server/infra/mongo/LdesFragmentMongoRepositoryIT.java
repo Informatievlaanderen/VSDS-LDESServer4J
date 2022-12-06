@@ -94,12 +94,12 @@ class LdesFragmentMongoRepositoryIT {
 
 		operationSucceeded = ldesFragmentMongoRepository.addRelationToFragment(ldesFragment, relation);
 
-		//Relation added already
+		// Relation added already
 		assertFalse(operationSucceeded);
 	}
 
 	@Test
-	void when_removeRelationFromFragment_removesRelationship(){
+	void when_removeRelationFromFragment_removesRelationship() {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo("viewName", List.of()));
 		TreeRelation relation = new TreeRelation("", "fragmentId", "", "",
 				GENERIC_TREE_RELATION);
@@ -117,7 +117,7 @@ class LdesFragmentMongoRepositoryIT {
 
 		operationSucceeded = ldesFragmentMongoRepository.removeRelationFromFragment(ldesFragment, relation);
 
-		//Relation added already
+		// Relation added already
 		assertFalse(operationSucceeded);
 	}
 
@@ -186,7 +186,7 @@ class LdesFragmentMongoRepositoryIT {
 
 		operationSucceeded = ldesFragmentMongoRepository.addMemberToFragment(ldesFragment, "memberId");
 
-		//Member added already
+		// Member added already
 		assertFalse(operationSucceeded);
 	}
 

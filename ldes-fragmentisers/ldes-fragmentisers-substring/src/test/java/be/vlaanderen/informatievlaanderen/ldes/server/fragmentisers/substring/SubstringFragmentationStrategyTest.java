@@ -66,7 +66,8 @@ class SubstringFragmentationStrategyTest {
 				substringFragmentFinder, decoratedFragmentationStrategy);
 		inOrder.verify(substringBucketiser, times(1)).bucketise(member);
 		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "");
-		inOrder.verify(ldesFragmentRepository, times(1)).addRelationToFragment(eq(PARENT_FRAGMENT), any(TreeRelation.class));
+		inOrder.verify(ldesFragmentRepository, times(1)).addRelationToFragment(eq(PARENT_FRAGMENT),
+				any(TreeRelation.class));
 		inOrder.verify(substringFragmentFinder, times(1)).getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab", "abc"));
 		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(childFragment, member,

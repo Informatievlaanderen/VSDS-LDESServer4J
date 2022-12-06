@@ -72,7 +72,8 @@ class TimeBasedFragmentCreatorTest {
 						TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		verify(ldesFragmentRepository, times(1)).addRelationToFragment(newFragment,
 				new TreeRelation(PROV_GENERATED_AT_TIME, existingLdesFragment.getFragmentId(),
-						existingLdesFragment.getFragmentInfo().getFragmentPairs().get(0).fragmentValue(), DATE_TIME_TYPE,
+						existingLdesFragment.getFragmentInfo().getFragmentPairs().get(0).fragmentValue(),
+						DATE_TIME_TYPE,
 						TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
 
 		verifyNoMoreInteractions(ldesFragmentRepository);
