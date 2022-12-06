@@ -16,7 +16,7 @@ public class DirectFragmentationMediator implements FragmentationMediator {
 	}
 
 	@Override
-	public void addMemberToFragment(Member member) {
+	public synchronized void addMemberToFragment(Member member) {
 		fragmentationExecutor.executeFragmentation(member);
 	}
 }

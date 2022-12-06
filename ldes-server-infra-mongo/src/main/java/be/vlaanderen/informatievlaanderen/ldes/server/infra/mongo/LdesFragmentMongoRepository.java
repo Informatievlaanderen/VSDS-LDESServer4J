@@ -92,29 +92,11 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment ldesFragment, String memberId) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(ldesFragment.getFragmentId()));
-		Update update = new Update();
-		update.push("members",memberId);
-		mongoTemplate.updateFirst(query,update, LdesFragmentEntity.class);
-	}
-
-	@Override
 	public void incrementNumberOfMembers(String fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(fragmentId));
 
 		Update update = new Update().inc("numberOfMembers", 1);
-		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
-	}
-
-	@Override
-	public void makeImmutable(String fragmentId) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(fragmentId));
-
-		Update update = new Update().set("immutable", true);
 		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
 	}
 
