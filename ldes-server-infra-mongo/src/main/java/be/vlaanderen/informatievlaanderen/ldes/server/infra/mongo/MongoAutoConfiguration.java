@@ -11,6 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
 @ConditionalOnClass(MemberMongoRepository.class)
@@ -20,8 +21,9 @@ public class MongoAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MemberRepository ldesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository) {
-		return new MemberMongoRepository(ldesMemberEntityRepository);
+	public MemberRepository ldesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository,
+			MongoTemplate mongoTemplate) {
+		return new MemberMongoRepository(ldesMemberEntityRepository, mongoTemplate);
 	}
 
 	@Bean

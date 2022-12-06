@@ -14,8 +14,10 @@ import org.springframework.cloud.sleuth.Span;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class FragmentationStrategyDecoratorTest {
 	FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
@@ -37,33 +39,38 @@ class FragmentationStrategyDecoratorTest {
 		LdesFragment childFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("key", "value"))));
 
-		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
+		TreeRelation expectedRelation = new TreeRelation("", childFragment.getFragmentId(), "",
+				"", GENERIC_TREE_RELATION);
+
+		// Response from repository due to relation not being present
+		when(fragmentRepository.addRelationToFragment(eq(parentFragment), eq(expectedRelation))).thenReturn(true);
+
+		boolean relationAdded = fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
-		assertEquals(1, parentFragment.getRelations().size());
-		assertEquals(new TreeRelation("", childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION),
-				parentFragment.getRelations().get(0));
-		Mockito.verify(fragmentRepository,
-				Mockito.times(1)).saveFragment(parentFragment);
+		verify(fragmentRepository, Mockito.times(1))
+				.addRelationToFragment(eq(parentFragment), eq(expectedRelation));
+		assertTrue(relationAdded);
 	}
 
 	@Test
 	void when_ParentHasRelationToChild_DoNotAddNewRelation() {
-		LdesFragment parentFragment = new LdesFragment(
-				new FragmentInfo(VIEW_NAME, List.of()));
+		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
 		LdesFragment childFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("key", "value"))));
-		parentFragment.addRelation(new TreeRelation("", childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION));
-		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
+
+		TreeRelation expectedRelation = new TreeRelation("", childFragment.getFragmentId(), "",
+				"", GENERIC_TREE_RELATION);
+
+		// Response from repository due to relation already being present
+		when(fragmentRepository.addRelationToFragment(eq(parentFragment), eq(expectedRelation))).thenReturn(false);
+
+		boolean relationAdded = fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
-		assertEquals(1, parentFragment.getRelations().size());
-		assertEquals(new TreeRelation("", childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION),
-				parentFragment.getRelations().get(0));
-		Mockito.verifyNoInteractions(fragmentRepository);
+		verify(fragmentRepository, Mockito.times(1))
+				.addRelationToFragment(eq(parentFragment), eq(expectedRelation));
+		assertFalse(relationAdded);
 	}
 
 	@Test

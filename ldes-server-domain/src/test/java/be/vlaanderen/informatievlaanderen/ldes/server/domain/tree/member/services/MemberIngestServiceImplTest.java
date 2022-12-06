@@ -37,15 +37,12 @@ class MemberIngestServiceImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		Member savedMember = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(true);
+		when(memberRepository.saveLdesMember(member)).thenReturn(false);
 
 		memberIngestService.addMember(member);
 
 		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
-		inOrder.verify(memberRepository, times(1)).memberExists(member.getLdesMemberId());
+		inOrder.verify(memberRepository, times(1)).saveLdesMember(member);
 		inOrder.verifyNoMoreInteractions();
 		verifyNoInteractions(fragmentationMediator);
 	}
@@ -61,15 +58,13 @@ class MemberIngestServiceImplTest {
 		Member savedMember = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS));
-		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(false);
-		when(memberRepository.saveLdesMember(member)).thenReturn(savedMember);
+		when(memberRepository.saveLdesMember(member)).thenReturn(true);
 
 		memberIngestService.addMember(member);
 
 		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
-		inOrder.verify(memberRepository, times(1)).memberExists(member.getLdesMemberId());
 		inOrder.verify(memberRepository, times(1)).saveLdesMember(member);
-		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(savedMember);
+		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(member);
 		inOrder.verifyNoMoreInteractions();
 	}
 }

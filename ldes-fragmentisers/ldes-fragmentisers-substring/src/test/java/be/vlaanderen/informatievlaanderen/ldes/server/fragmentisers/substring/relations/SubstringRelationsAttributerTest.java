@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class SubstringRelationsAttributerTest {
@@ -41,22 +39,8 @@ class SubstringRelationsAttributerTest {
 
 	@Test
 	void when_ParentHasNotYetRelation_AddRelation() {
-		substringRelationsAttributer.addSubstringRelation(PARENT_FRAGMENT, CHILD_FRAGMENT);
+		substringRelationsAttributer.generateSubstringRelation(PARENT_FRAGMENT, CHILD_FRAGMENT);
 
-		assertTrue(CHILD_FRAGMENT.getRelations().isEmpty());
-		assertEquals(List.of(EXPECTED_RELATION), PARENT_FRAGMENT.getRelations());
-		verify(ldesFragmentRepository, times(1)).saveFragment(PARENT_FRAGMENT);
-
-	}
-
-	@Test
-	void when_ParentHasAlreadyRelation_DoNotAddRelation() {
-		PARENT_FRAGMENT.addRelation(EXPECTED_RELATION);
-
-		substringRelationsAttributer.addSubstringRelation(PARENT_FRAGMENT, CHILD_FRAGMENT);
-
-		assertTrue(CHILD_FRAGMENT.getRelations().isEmpty());
-		assertEquals(List.of(EXPECTED_RELATION), PARENT_FRAGMENT.getRelations());
-		verifyNoInteractions(ldesFragmentRepository);
+		verify(ldesFragmentRepository, times(1)).addRelationToFragment(PARENT_FRAGMENT, EXPECTED_RELATION);
 	}
 }

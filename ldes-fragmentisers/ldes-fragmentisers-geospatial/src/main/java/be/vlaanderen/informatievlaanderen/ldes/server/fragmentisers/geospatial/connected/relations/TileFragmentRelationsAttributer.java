@@ -36,6 +36,6 @@ public class TileFragmentRelationsAttributer {
 		tileFragments.stream()
 				.parallel()
 				.forEach(ldesFragment -> ldesFragmentRepository.addRelationToFragment(tileRootFragment,
-						relationsAttributer.addRelationToParentFragment(ldesFragment)));
+						relationsAttributer.generateRelationToParentFragment(ldesFragment)));
 	}
 }

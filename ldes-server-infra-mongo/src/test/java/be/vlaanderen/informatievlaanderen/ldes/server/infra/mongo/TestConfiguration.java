@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -26,8 +27,8 @@ public class TestConfiguration {
 
 	@Bean
 	public MemberMongoRepository ldesMemberMongoRepository(
-			final LdesMemberEntityRepository ldesMemberEntityRepository) {
-		return new MemberMongoRepository(ldesMemberEntityRepository);
+			final LdesMemberEntityRepository ldesMemberEntityRepository, MongoTemplate mongoTemplate) {
+		return new MemberMongoRepository(ldesMemberEntityRepository, mongoTemplate);
 	}
 
 	@Bean

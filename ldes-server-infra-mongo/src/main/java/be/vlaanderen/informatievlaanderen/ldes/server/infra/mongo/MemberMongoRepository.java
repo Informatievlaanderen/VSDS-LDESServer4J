@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,25 +21,22 @@ import java.util.stream.StreamSupport;
 public class MemberMongoRepository implements MemberRepository {
 
 	private final LdesMemberEntityRepository repository;
+	private final MongoTemplate mongoTemplate;
 
-	@Autowired
-	MongoTemplate mongoTemplate;
-
-	public MemberMongoRepository(final LdesMemberEntityRepository repository) {
+	public MemberMongoRepository(final LdesMemberEntityRepository repository, MongoTemplate mongoTemplate) {
 		this.repository = repository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
 	@Transactional
-	public Member saveLdesMember(Member member) {
-		repository.save(LdesMemberEntity.fromLdesMember(member));
-		return member;
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public boolean memberExists(String memberId) {
-		return repository.existsById(memberId);
+	public boolean saveLdesMember(Member member) {
+		try {
+			mongoTemplate.insert(LdesMemberEntity.fromLdesMember(member));
+			return true;
+		} catch (DuplicateKeyException e) {
+			return false;
+		}
 	}
 
 	@Override
@@ -54,27 +51,30 @@ public class MemberMongoRepository implements MemberRepository {
 	public boolean deleteMember(String memberId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(memberId));
-		query.addCriteria(Criteria.where("treeNodesReferences").elemMatch(new Criteria().exists(false)));
-		return mongoTemplate.remove(query, LdesMemberEntity.class, "ldesmember").getDeletedCount()==1;
-	}
-
-	@Override
-	public void addMemberReference(String memberId, String fragmentId) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(memberId));
-		Update update = new Update();
-		update.push("treeNodesReferences", fragmentId);
-		mongoTemplate.upsert(query, update, LdesMemberEntity.class, "ldesmember");
+		query.addCriteria(Criteria.where("treeNodesReferences").size(0));
+		return mongoTemplate.remove(query, LdesMemberEntity.class, "ldesmember").getDeletedCount() == 1;
 	}
 
 	@Override
 	@Transactional
-	public synchronized void removeMemberReference(String memberId, String treeNodeId) {
+	public boolean addMemberReference(String memberId, String fragmentId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(memberId));
+		Update update = new Update();
+		update.push("treeNodesReferences", fragmentId);
+		return mongoTemplate.updateFirst(query, update, LdesMemberEntity.class, "ldesmember")
+				.getModifiedCount() == 1;
+	}
+
+	@Override
+	@Transactional
+	public synchronized boolean removeMemberReference(String memberId, String treeNodeId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(memberId));
 		Update update = new Update();
 		update.pull("treeNodesReferences", treeNodeId);
 
-		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesmember");
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesmember")
+				.getModifiedCount() == 1;
 	}
 }

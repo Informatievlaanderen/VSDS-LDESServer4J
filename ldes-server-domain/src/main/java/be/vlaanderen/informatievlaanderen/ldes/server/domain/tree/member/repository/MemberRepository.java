@@ -7,15 +7,13 @@ import java.util.stream.Stream;
 
 public interface MemberRepository {
 
-	Member saveLdesMember(Member member);
-
-	boolean memberExists(String id);
+	boolean saveLdesMember(Member member);
 
 	Stream<Member> getLdesMembersByIds(List<String> ids);
 
 	boolean deleteMember(String memberId);
 
-	void addMemberReference(String ldesMemberId, String fragmentId);
+	boolean addMemberReference(String ldesMemberId, String fragmentId);
 
-	void removeMemberReference(String memberId, String fragmentId);
+	boolean removeMemberReference(String memberId, String fragmentId);
 }

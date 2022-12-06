@@ -17,7 +17,7 @@ public class SubstringRelationsAttributer {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
-	public void addSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
+	public void generateSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
 
 		String substringValue = getSubstringValue(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(null, childFragment.getFragmentId(),

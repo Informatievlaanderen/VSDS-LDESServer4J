@@ -15,7 +15,7 @@ public class GeospatialRelationsAttributer {
 	public GeospatialRelationsAttributer() {
 	}
 
-	public TreeRelation addRelationToParentFragment(LdesFragment childFragment) {
+	public TreeRelation generateRelationToParentFragment(LdesFragment childFragment) {
 		String targetWKT = getWKT(childFragment);
 
 		return new TreeRelation(GEOSPARQL_AS_WKT, childFragment.getFragmentId(),

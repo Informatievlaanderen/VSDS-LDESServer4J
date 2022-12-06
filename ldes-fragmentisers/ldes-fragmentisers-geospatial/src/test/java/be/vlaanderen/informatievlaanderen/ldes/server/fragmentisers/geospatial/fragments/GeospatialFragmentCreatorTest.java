@@ -40,6 +40,7 @@ class GeospatialFragmentCreatorTest {
 		assertEquals("/view?substring=a&tile=15/101/202", childFragment.ldesFragment().getFragmentId());
 		assertTrue(childFragment.created());
 		verify(ldesFragmentRepository, times(1)).retrieveFragment(ldesFragmentRequest);
+		verify(ldesFragmentRepository, times(1)).saveFragment(childFragment.ldesFragment());
 		verifyNoMoreInteractions(ldesFragmentRepository);
 	}
 

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
+
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
@@ -39,20 +41,48 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public void addRelationToFragment(LdesFragment fragment, TreeRelation treeRelation) {
+	@Transactional
+	public boolean removeRelationFromFragment(LdesFragment fragment, TreeRelation treeRelation) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragment.getFragmentId()));
+		Update update = new Update();
+		update.pull("relations", treeRelation);
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment")
+				.getModifiedCount() == 1;
+	}
+
+	@Override
+	@Transactional
+	public boolean addRelationToFragment(LdesFragment fragment, TreeRelation treeRelation) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(fragment.getFragmentId()));
 		Update update = new Update();
 		update.addToSet("relations", treeRelation);
-		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment");
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment")
+				.getModifiedCount() == 1;
 	}
 
-	@Override public void setSoftDeleted(LdesFragment fragment) {
+	@Override
+	@Transactional
+	public boolean closeFragmentAndAddNewRelation(LdesFragment completeFragment, TreeRelation treeRelation) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(completeFragment.getFragmentId()));
+		Update update = new Update();
+		update.set("immutable", true);
+		update.addToSet("relations", treeRelation);
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment")
+				.getModifiedCount() == 1;
+	}
+
+	@Override
+	@Transactional
+	public boolean setSoftDeleted(LdesFragment fragment) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(fragment.getFragmentId()));
 		Update update = new Update();
-		update.push("softDeleted", true);
-		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment");
+		update.set("softDeleted", true);
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment")
+				.getModifiedCount() == 1;
 	}
 
 	@Override
@@ -81,15 +111,12 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	@Transactional(readOnly = true)
 	public Optional<LdesFragment> retrieveOpenChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
-		return repository
-				.findAllByImmutableAndViewName(false,
-						viewName)
-				.stream()
-				.filter(ldesFragmentEntity -> Collections
-						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1
-						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
-				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentId));
+		Query query = new Query();
+		query.addCriteria(Criteria.where("viewName").is(viewName).and("immutable").is(false));
+		query.addCriteria(Criteria.where("fragmentPairs").ne(fragmentPairList).in(fragmentPairList));
+
+		return ofNullable(mongoTemplate.findOne(query, LdesFragmentEntity.class, "ldesfragment"))
+				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
 	@Override
@@ -126,12 +153,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	@Override
 	@Transactional
-	public void addMemberToFragment(LdesFragment ldesFragment, String memberId) {
+	public boolean addMemberToFragment(LdesFragment ldesFragment, String memberId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(ldesFragment.getFragmentId()));
 		Update update = new Update();
-		update.push("members", memberId);
-		mongoTemplate.upsert(query, update, LdesFragmentEntity.class, "ldesfragment");
+		update.addToSet("members", memberId);
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesfragment")
+				.getModifiedCount() == 1;
 	}
 
 }

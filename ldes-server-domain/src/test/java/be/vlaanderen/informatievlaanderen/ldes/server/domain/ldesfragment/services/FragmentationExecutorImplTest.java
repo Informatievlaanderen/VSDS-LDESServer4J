@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 
 import java.util.List;
 import java.util.Map;
@@ -71,15 +70,9 @@ class FragmentationExecutorImplTest {
 		IntStream.range(0, 100).parallel()
 				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(Member.class)));
 
-		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
-		IntStream.range(0, 100).forEach(i -> {
-			inOrder.verify(ldesFragmentRepository, times(1))
-					.retrieveRootFragment(VIEW_NAME);
-			inOrder.verify(fragmentationStrategy, times(1)).addMemberToFragment(eq(ldesFragment),
-					any(), any());
-		});
-		inOrder.verifyNoMoreInteractions();
-
+		verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME);
+		verify(fragmentationStrategy, times(100)).addMemberToFragment(eq(ldesFragment),
+				any(), any());
 	}
 
 }

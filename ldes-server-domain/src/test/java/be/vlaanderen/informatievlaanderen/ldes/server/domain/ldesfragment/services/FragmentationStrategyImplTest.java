@@ -12,7 +12,6 @@ import org.springframework.cloud.sleuth.Tracer;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class FragmentationStrategyImplTest {
@@ -33,8 +32,7 @@ class FragmentationStrategyImplTest {
 
 		fragmentationStrategy.addMemberToFragment(ldesFragment, member, any());
 
-		verify(ldesFragmentRepository, times(1)).saveFragment(ldesFragment);
-		verify(memberReferencesRepository, times(1)).saveMemberReference("memberId", "/view");
-		assertEquals(List.of("memberId"), ldesFragment.getMemberIds());
+		verify(ldesFragmentRepository, times(1)).addMemberToFragment(ldesFragment, "memberId");
+		verify(memberRepository, times(1)).addMemberReference("memberId", "/view");
 	}
 }

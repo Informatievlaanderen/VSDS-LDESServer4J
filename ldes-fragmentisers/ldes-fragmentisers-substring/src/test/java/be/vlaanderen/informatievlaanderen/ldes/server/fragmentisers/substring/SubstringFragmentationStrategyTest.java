@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.bucketiser.SubstringBucketiser;
@@ -65,7 +66,7 @@ class SubstringFragmentationStrategyTest {
 				substringFragmentFinder, decoratedFragmentationStrategy);
 		inOrder.verify(substringBucketiser, times(1)).bucketise(member);
 		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "");
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(PARENT_FRAGMENT);
+		inOrder.verify(ldesFragmentRepository, times(1)).addRelationToFragment(eq(PARENT_FRAGMENT), any(TreeRelation.class));
 		inOrder.verify(substringFragmentFinder, times(1)).getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab", "abc"));
 		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(childFragment, member,

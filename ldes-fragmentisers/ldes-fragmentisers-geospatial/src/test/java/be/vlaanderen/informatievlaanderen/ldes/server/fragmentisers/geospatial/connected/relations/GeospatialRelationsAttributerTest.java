@@ -35,16 +35,15 @@ class GeospatialRelationsAttributerTest {
 
 	@Test
 	void when_ParentHasNotYetRelation_AddRelation() {
-		geospatialRelationsAttributer.addRelationToParentFragment(CHILD_FRAGMENT);
-		assertTrue(CHILD_FRAGMENT.getRelations().isEmpty());
-		assertEquals(List.of(EXPECTED_RELATION), PARENT_FRAGMENT.getRelations());
+		TreeRelation newParentRelation = geospatialRelationsAttributer.generateRelationToParentFragment(CHILD_FRAGMENT);
+		assertEquals(EXPECTED_RELATION, newParentRelation);
 	}
 
 	@Test
 	void when_ParentHasAlreadyRelation_DoNotAddRelation() {
 		PARENT_FRAGMENT.addRelation(EXPECTED_RELATION);
 
-		geospatialRelationsAttributer.addRelationToParentFragment(CHILD_FRAGMENT);
+		geospatialRelationsAttributer.generateRelationToParentFragment(CHILD_FRAGMENT);
 		assertTrue(CHILD_FRAGMENT.getRelations().isEmpty());
 		assertEquals(List.of(EXPECTED_RELATION), PARENT_FRAGMENT.getRelations());
 	}

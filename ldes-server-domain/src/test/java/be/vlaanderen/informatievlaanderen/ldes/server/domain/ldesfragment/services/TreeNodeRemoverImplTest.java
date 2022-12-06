@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class TreeNodeRemoverImplTest {
@@ -40,12 +39,11 @@ class TreeNodeRemoverImplTest {
 		treeNodeRemover.removeTreeNodes();
 
 		verify(fragmentRepository, times(1)).retrieveNonDeletedImmutableFragmentsOfView("view");
-		verify(fragmentRepository, times(1)).saveFragment(readyToDeleteFragment);
-		assertTrue(readyToDeleteFragment.getFragmentInfo().getSoftDeleted());
+		verify(fragmentRepository, times(1)).setSoftDeleted(readyToDeleteFragment);
 		verifyNoMoreInteractions(fragmentRepository);
 		verify(parentUpdater, times(1)).updateParent(readyToDeleteFragment);
 		verifyNoMoreInteractions(parentUpdater);
-		verify(referencesRepository, times(1)).removeMemberReference("memberId", "/view");
+		verify(memberRepository, times(1)).removeMemberReference("memberId", "/view");
 		verifyNoMoreInteractions(referencesRepository);
 		verify(treeMemberRemover, times(1)).tryRemovingMember("memberId");
 		verifyNoMoreInteractions(treeMemberRemover);

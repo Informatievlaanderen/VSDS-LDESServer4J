@@ -64,12 +64,18 @@ class TimeBasedFragmentCreatorTest {
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
 		assertEquals(0, newFragment.getCurrentNumberOfMembers());
-		verifyRelationOfFragment(newFragment, PROV_GENERATED_AT_TIME, "someId", "Value",
-				TREE_LESSER_THAN_OR_EQUAL_TO_RELATION);
-		verifyRelationOfFragment(existingLdesFragment, PROV_GENERATED_AT_TIME,
-				"http://localhost:8080/mobility-hindrances?generatedAtTime=2020-12-28T09:36:37.127Z",
-				"2020-12-28T09:36:37.127Z", TREE_GREATER_THAN_OR_EQUAL_TO_RELATION);
-		verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
+
+		verify(ldesFragmentRepository, times(1)).closeFragmentAndAddNewRelation(existingLdesFragment,
+				new TreeRelation(PROV_GENERATED_AT_TIME,
+						newFragment.getFragmentId(),
+						newFragment.getFragmentInfo().getFragmentPairs().get(0).fragmentValue(), DATE_TIME_TYPE,
+						TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
+		verify(ldesFragmentRepository, times(1)).addRelationToFragment(newFragment,
+				new TreeRelation(PROV_GENERATED_AT_TIME, existingLdesFragment.getFragmentId(),
+						existingLdesFragment.getFragmentInfo().getFragmentPairs().get(0).fragmentValue(), DATE_TIME_TYPE,
+						TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));
+
+		verifyNoMoreInteractions(ldesFragmentRepository);
 	}
 
 	@Test
@@ -109,18 +115,6 @@ class TimeBasedFragmentCreatorTest {
 						"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483")));
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",
 				ldesMemberModel);
-	}
-
-	private void verifyRelationOfFragment(LdesFragment newFragment, String expectedTreePath, String expectedTreeNode,
-			String expectedTreeValue, String expectedRelation) {
-		assertEquals(1, newFragment.getRelations().size());
-		TreeRelation actualTreeRelationOnNewFragment = newFragment.getRelations().get(0);
-		TreeRelation expectedTreeRelationOnNewFragment = new TreeRelation(expectedTreePath, expectedTreeNode,
-				expectedTreeValue, DATE_TIME_TYPE, expectedRelation);
-		assertEquals(expectedTreeRelationOnNewFragment.treePath(),
-				actualTreeRelationOnNewFragment.treePath());
-		assertEquals(expectedTreeRelationOnNewFragment.relation(),
-				actualTreeRelationOnNewFragment.relation());
 	}
 
 	private TimebasedFragmentationConfig createSequentialFragmentationConfig() {

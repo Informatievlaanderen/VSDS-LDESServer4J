@@ -63,9 +63,9 @@ class SubstringFragmentFinderTest {
 
 		InOrder inOrder = inOrder(substringFragmentCreator, substringRelationsAttributer);
 		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "a");
-		inOrder.verify(substringRelationsAttributer, times(1)).addSubstringRelation(rootFragment, aFragment);
+		inOrder.verify(substringRelationsAttributer, times(1)).generateSubstringRelation(rootFragment, aFragment);
 		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "ab");
-		inOrder.verify(substringRelationsAttributer, times(1)).addSubstringRelation(aFragment, abFragment);
+		inOrder.verify(substringRelationsAttributer, times(1)).generateSubstringRelation(aFragment, abFragment);
 		inOrder.verifyNoMoreInteractions();
 
 	}

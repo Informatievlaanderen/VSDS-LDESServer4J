@@ -24,9 +24,9 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 		fragmentationStrategy.addMemberToFragment(parentFragment, member, parentSpan);
 	}
 
-	protected void addRelationFromParentToChild(LdesFragment parentFragment, LdesFragment childFragment) {
+	protected boolean addRelationFromParentToChild(LdesFragment parentFragment, LdesFragment childFragment) {
 		TreeRelation treeRelation = new TreeRelation("", childFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
-		ldesFragmentRepository.addRelationToFragment(parentFragment, treeRelation);
+		return ldesFragmentRepository.addRelationToFragment(parentFragment, treeRelation);
 	}
 
 }

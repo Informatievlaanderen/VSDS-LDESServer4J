@@ -12,9 +12,13 @@ import java.util.stream.Stream;
 public interface LdesFragmentRepository {
 	LdesFragment saveFragment(LdesFragment ldesFragment);
 
-	void addRelationToFragment(LdesFragment fragment, TreeRelation treeRelation);
+	boolean removeRelationFromFragment(LdesFragment fragment, TreeRelation treeRelation);
 
-	void setSoftDeleted(LdesFragment fragment);
+	boolean addRelationToFragment(LdesFragment fragment, TreeRelation treeRelation);
+
+	boolean closeFragmentAndAddNewRelation(LdesFragment completeFragment, TreeRelation treeRelation);
+
+	boolean setSoftDeleted(LdesFragment fragment);
 
 	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
 
@@ -31,5 +35,5 @@ public interface LdesFragmentRepository {
 	Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
 
-	void addMemberToFragment(LdesFragment ldesFragment, String memberId);
+	boolean addMemberToFragment(LdesFragment ldesFragment, String memberId);
 }

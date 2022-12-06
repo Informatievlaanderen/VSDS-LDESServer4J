@@ -13,9 +13,11 @@ public class TreeMemberRemoverImpl implements TreeMemberRemover {
 		this.memberRepository = memberRepository;
 	}
 
-	public void tryRemovingMember(String memberId) {
+	public boolean tryRemovingMember(String memberId) {
 		if (memberRepository.deleteMember(memberId)) {
 			Metrics.counter("ldes_server_deleted_members_count").increment();
+			return true;
 		}
+		return false;
 	}
 }

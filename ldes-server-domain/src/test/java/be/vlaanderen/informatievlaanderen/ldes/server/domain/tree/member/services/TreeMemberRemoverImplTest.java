@@ -5,6 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferenc
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class TreeMemberRemoverImplTest {
@@ -20,21 +22,20 @@ class TreeMemberRemoverImplTest {
 
 	@Test
 	void when_memberHasNoReferences_ItCanBeDeleted() {
-		when(memberReferencesRepository.hasMemberReferences("memberId")).thenReturn(false);
-		treeMemberRemover.tryRemovingMember("memberId");
+		when(memberRepository.deleteMember("memberId")).thenReturn(true);
+		boolean memberDeleted = treeMemberRemover.tryRemovingMember("memberId");
 
+		assertTrue(memberDeleted);
 		verify(memberRepository, times(1)).deleteMember("memberId");
-//		verify(memberReferencesRepository, times(1)).deleteMemberReference("memberId");
 	}
 
 	@Test
 	void when_memberHasReferences_ItCanNotBeDeleted() {
-		when(memberReferencesRepository.hasMemberReferences("memberId")).thenReturn(true);
-		treeMemberRemover.tryRemovingMember("memberId");
+		when(memberRepository.deleteMember("memberId")).thenReturn(false);
+		boolean memberDeleted = treeMemberRemover.tryRemovingMember("memberId");
 
-		verifyNoInteractions(memberRepository);
-		verify(memberReferencesRepository, times(1)).hasMemberReferences("memberId");
-		verifyNoMoreInteractions(memberReferencesRepository);
+		assertFalse(memberDeleted);
+		verify(memberRepository, times(1)).deleteMember("memberId");
 	}
 
 }

@@ -24,7 +24,8 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			Map<String, List<RetentionPolicy>> retentionPolicyMap,
-			MemberReferencesRepository memberReferencesRepository, MemberRepository memberRepository, TreeMemberRemover treeMemberRemover,
+			MemberReferencesRepository memberReferencesRepository, MemberRepository memberRepository,
+			TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
