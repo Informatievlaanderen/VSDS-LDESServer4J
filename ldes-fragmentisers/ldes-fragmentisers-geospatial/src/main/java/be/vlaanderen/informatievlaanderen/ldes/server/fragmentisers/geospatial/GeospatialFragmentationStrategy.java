@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelati
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.TileFragment;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 
@@ -46,11 +45,10 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
     public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
         Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
         Set<String> tiles = geospatialBucketiser.bucketise(member);
-        List<TileFragment> tileFragments = getTileFragments(parentFragment, tiles);
+        List<LdesFragment> tileFragments = getTileFragments(parentFragment, tiles);
         executors.submit(()->  addRelationsToCreatedFragments(parentFragment, tileFragments));
         tileFragments
                 .stream()
-                .map(TileFragment::ldesFragment)
                 .parallel()
                 .forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
                         geospatialFragmentationSpan));
@@ -58,16 +56,16 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
     }
 
     private void addRelationsToCreatedFragments(LdesFragment parentFragment,
-                                                                List<TileFragment> tileFragments) {
+                                                                List<LdesFragment> tileFragments) {
 
-            LdesFragment rootTileFragment = getRootTileFragment(parentFragment);
-            tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, tileFragments);
+            LdesFragment chachedRootTile = getRootTileFragment(parentFragment);
+            tileFragmentRelationsAttributer.addRelationsFromRootToBottom(chachedRootTile, tileFragments);
     }
 
     private LdesFragment getRootTileFragment(LdesFragment parentFragment) {
         if (rootTileFragment == null) {
             LdesFragment tileRootFragment = fragmentCreator.getOrCreateGeospatialFragment(parentFragment,
-                    FRAGMENT_KEY_TILE_ROOT).ldesFragment();
+                    FRAGMENT_KEY_TILE_ROOT);
             super.addRelationFromParentToChild(parentFragment, tileRootFragment);
             rootTileFragment = tileRootFragment;
             return tileRootFragment;
@@ -75,7 +73,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
         return rootTileFragment;
     }
 
-    private List<TileFragment> getTileFragments(LdesFragment parentFragment,
+    private List<LdesFragment> getTileFragments(LdesFragment parentFragment,
                                                 Set<String> tiles) {
         return tiles
                 .stream()
