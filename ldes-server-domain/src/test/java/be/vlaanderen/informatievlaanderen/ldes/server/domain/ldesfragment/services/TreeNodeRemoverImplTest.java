@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -22,12 +21,11 @@ class TreeNodeRemoverImplTest {
 	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap = Map.of("view",
 			List.of(new TimeBasedRetentionPolicy("PT0S")));
-	private final MemberReferencesRepository referencesRepository = mock(MemberReferencesRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
 	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);
 	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, retentionPolicyMap,
-			referencesRepository, memberRepository, treeMemberRemover, parentUpdater);
+			memberRepository, treeMemberRemover, parentUpdater);
 
 	@Test
 	void when_NodeIsImmutableAndSatisfiesRetentionPoliciesOfView_NodeCanBeSoftDeleted() {
@@ -44,7 +42,6 @@ class TreeNodeRemoverImplTest {
 		verify(parentUpdater, times(1)).updateParent(readyToDeleteFragment);
 		verifyNoMoreInteractions(parentUpdater);
 		verify(memberRepository, times(1)).removeMemberReference("memberId", "/view");
-		verifyNoMoreInteractions(referencesRepository);
 		verify(treeMemberRemover, times(1)).tryRemovingMember("memberId");
 		verifyNoMoreInteractions(treeMemberRemover);
 	}

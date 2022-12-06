@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +16,17 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
-	private final MemberReferencesRepository memberReferencesRepository;
 	private final MemberRepository memberRepository;
 	private final TreeMemberRemover treeMemberRemover;
 	private final ParentUpdater parentUpdater;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			Map<String, List<RetentionPolicy>> retentionPolicyMap,
-			MemberReferencesRepository memberReferencesRepository, MemberRepository memberRepository,
+			MemberRepository memberRepository,
 			TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
-		this.memberReferencesRepository = memberReferencesRepository;
 		this.memberRepository = memberRepository;
 		this.treeMemberRemover = treeMemberRemover;
 		this.parentUpdater = parentUpdater;

@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.springframework.cloud.sleuth.Tracer;
@@ -18,19 +17,17 @@ import java.util.List;
 public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCreator {
 	private final ApplicationContext applicationContext;
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final MemberReferencesRepository memberReferencesRepository;
 	private final MemberRepository memberRepository;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final Tracer tracer;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
 			LdesFragmentRepository ldesFragmentRepository,
-			MemberReferencesRepository memberReferencesRepository, MemberRepository memberRepository,
+			MemberRepository memberRepository,
 			RootFragmentCreator rootFragmentCreator,
 			Tracer tracer) {
 		this.applicationContext = applicationContext;
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.memberReferencesRepository = memberReferencesRepository;
 		this.memberRepository = memberRepository;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.tracer = tracer;

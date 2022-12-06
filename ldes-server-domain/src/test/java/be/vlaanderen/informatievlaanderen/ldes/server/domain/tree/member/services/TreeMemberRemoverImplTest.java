@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.*;
 
 class TreeMemberRemoverImplTest {
 
-	private final MemberReferencesRepository memberReferencesRepository = mock(MemberReferencesRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private TreeMemberRemover treeMemberRemover;
 

@@ -170,6 +170,7 @@ An example of a view configuration with two view is shown below
   config:
     maxZoomLevel: { Required zoom level }
     fragmenterProperty: { Defines which property will be used for bucketizing }
+    fragmenterSubjectFilter: { Optional regex expression to filter out geoproperties based on its subject }
   ```
 
 ##### Example Substring Fragmentation
