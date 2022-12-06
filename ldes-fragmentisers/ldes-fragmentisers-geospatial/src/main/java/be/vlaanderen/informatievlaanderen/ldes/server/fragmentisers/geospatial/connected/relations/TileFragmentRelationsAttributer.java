@@ -4,9 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 
-import java.util.List;
-import java.util.stream.Stream;
-
 public class TileFragmentRelationsAttributer {
 
 	private final GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
@@ -17,22 +14,12 @@ public class TileFragmentRelationsAttributer {
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 	}
 
-	public Stream<LdesFragment> addRelationsFromRootToBottom(LdesFragment rootFragment,
-			List<LdesFragment> tileFragments) {
-		addRelationsFromRootToCreatedTiles(rootFragment, tileFragments);
-		return tileFragments
-				.stream();
-	}
-
-	private void addRelationsFromRootToCreatedTiles(LdesFragment tileRootFragment, List<LdesFragment> tileFragments) {
-		tileFragments.stream()
-				.parallel()
-				.forEach(ldesFragment -> {
-					TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
-							ldesFragment);
-					if(!treeNodeRelationsRepository.getRelations(tileRootFragment.getFragmentId()).contains(relationToParentFragment)){
-						treeNodeRelationsRepository.addTreeNodeRelation(tileRootFragment.getFragmentId(), relationToParentFragment);
-					}
-				});
+	public void addRelationsFromRootToBottom(LdesFragment rootFragment,
+			LdesFragment tileFragments) {
+		TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
+				tileFragments);
+		if(!treeNodeRelationsRepository.getRelations(rootFragment.getFragmentId()).contains(relationToParentFragment)){
+			treeNodeRelationsRepository.addTreeNodeRelation(rootFragment.getFragmentId(), relationToParentFragment);
+		}
 	}
 }

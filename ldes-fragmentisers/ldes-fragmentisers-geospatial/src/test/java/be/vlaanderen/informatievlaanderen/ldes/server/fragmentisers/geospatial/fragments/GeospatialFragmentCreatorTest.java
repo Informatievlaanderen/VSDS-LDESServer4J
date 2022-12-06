@@ -23,7 +23,7 @@ class GeospatialFragmentCreatorTest {
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
+		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository, tileFragmentRelationsAttributer);
 	}
 
 	@Test
@@ -35,7 +35,7 @@ class GeospatialFragmentCreatorTest {
 		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
 
 		TileFragment childFragment = geospatialFragmentCreator.getOrCreateGeospatialFragment(ldesFragment,
-				"15/101/202");
+				"15/101/202", rootTileFragment);
 
 		assertEquals("/view?substring=a&tile=15/101/202", childFragment.ldesFragment().getFragmentId());
 		assertTrue(childFragment.created());
@@ -53,7 +53,7 @@ class GeospatialFragmentCreatorTest {
 				.thenReturn(Optional.of(ldesFragment.createChild(new FragmentPair("tile", "15/101/202"))));
 
 		TileFragment childFragment = geospatialFragmentCreator.getOrCreateGeospatialFragment(ldesFragment,
-				"15/101/202");
+				"15/101/202", rootTileFragment);
 
 		assertEquals("/view?substring=a&tile=15/101/202", childFragment.ldesFragment().getFragmentId());
 		assertFalse(childFragment.created());
