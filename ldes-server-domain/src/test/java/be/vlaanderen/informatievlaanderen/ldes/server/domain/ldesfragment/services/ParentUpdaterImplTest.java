@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -42,8 +43,10 @@ class ParentUpdaterImplTest {
 
 		parentUpdater.updateParent(DELETED_CHILD);
 
-		verify(ldesFragmentRepository, times(1)).saveFragment(PARENT);
-		assertEquals(NON_DELETED_CHILD.getFragmentId(), PARENT.getRelations().get(0).treeNode());
+		verify(ldesFragmentRepository, times(1)).removeRelationFromFragment(eq(PARENT),
+				eq(new TreeRelation("", DELETED_CHILD.getFragmentId(), "", "", "")));
+		verify(ldesFragmentRepository, times(1)).addRelationToFragment(eq(PARENT),
+				eq(new TreeRelation("", NON_DELETED_CHILD.getFragmentId(), "", "", GENERIC_TREE_RELATION)));
 	}
 
 	@Test

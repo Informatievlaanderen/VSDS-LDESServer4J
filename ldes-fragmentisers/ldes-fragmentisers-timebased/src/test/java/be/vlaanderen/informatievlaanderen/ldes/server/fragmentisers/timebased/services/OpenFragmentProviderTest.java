@@ -49,6 +49,7 @@ class OpenFragmentProviderTest {
 				times(1)).retrieveOpenChildFragment(VIEW_NAME,
 						List.of());
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(PARENT_FRAGMENT);
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(any(LdesFragment.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 

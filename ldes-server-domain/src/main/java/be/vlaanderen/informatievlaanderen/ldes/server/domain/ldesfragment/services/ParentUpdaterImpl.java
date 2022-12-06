@@ -37,7 +37,6 @@ public class ParentUpdaterImpl implements ParentUpdater {
 			LdesFragment newChild = ldesFragmentRepository
 					.retrieveNonDeletedChildFragment(parent.getFragmentInfo().getViewName(), parentPairs)
 					.orElseThrow(() -> new RuntimeException("No non-deleted child"));
-//			parent.removeRelation(oldTreeRelation);
 			TreeRelation newTreeRelation = new TreeRelation("", newChild.getFragmentId(), "", "",
 					GENERIC_TREE_RELATION);
 			ldesFragmentRepository.removeRelationFromFragment(parent, oldTreeRelation);

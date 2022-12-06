@@ -63,7 +63,7 @@ class TimebasedFragmentationStrategyTest {
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verify(ldesFragmentRepository,
-				times(1)).saveFragment(PARENT_FRAGMENT);
+				times(1)).addRelationToFragment(eq(PARENT_FRAGMENT), any(TreeRelation.class));
 		inOrder.verify(decoratedFragmentationStrategy, times(1)).addMemberToFragment(OPEN_FRAGMENT, member,
 				childSpan);
 		inOrder.verifyNoMoreInteractions();
