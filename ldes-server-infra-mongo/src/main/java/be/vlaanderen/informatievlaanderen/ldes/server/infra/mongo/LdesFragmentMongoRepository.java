@@ -162,4 +162,15 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 				.getModifiedCount() == 1;
 	}
 
+	@Override
+	@Transactional
+	public boolean incrementNumberOfMembers(LdesFragment fragment) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragment.getFragmentId()));
+
+		Update update = new Update().inc("numberOfMembers", 1);
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class)
+				.getModifiedCount() == 1;
+	}
+
 }

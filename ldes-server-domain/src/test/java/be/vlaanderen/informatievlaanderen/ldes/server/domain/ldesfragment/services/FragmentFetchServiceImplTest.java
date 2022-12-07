@@ -78,7 +78,6 @@ class FragmentFetchServiceImplTest {
 
 		LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 
-		assertEquals(1, returnedFragment.getMemberIds().size());
 		assertTrue(returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
 		assertEquals(FRAGMENTATION_VALUE_1,
 				returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).get());

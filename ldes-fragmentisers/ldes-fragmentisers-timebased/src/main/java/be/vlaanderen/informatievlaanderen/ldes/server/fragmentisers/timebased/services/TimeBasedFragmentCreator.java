@@ -41,7 +41,7 @@ public class TimeBasedFragmentCreator {
 	}
 
 	public boolean needsToCreateNewFragment(LdesFragment fragment) {
-		return fragment.getCurrentNumberOfMembers() >= timebasedFragmentationConfig.memberLimit();
+		return fragment.getFragmentInfo().getNumberOfMembers() >= timebasedFragmentationConfig.memberLimit();
 	}
 
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,

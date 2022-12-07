@@ -28,12 +28,11 @@ public class LdesFragmentEntity {
 	private final Boolean softDeleted;
 	private final LocalDateTime immutableTimestamp;
 	private final List<TreeRelation> relations;
-
-	private final List<String> members;
+	private final int numberOfMembers;
 
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable,
-			Boolean softDeleted, LocalDateTime immutableTimestamp, List<TreeRelation> relations, List<String> members) {
+			Boolean softDeleted, LocalDateTime immutableTimestamp, List<TreeRelation> relations, int numberOfMembers) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -42,7 +41,7 @@ public class LdesFragmentEntity {
 		this.softDeleted = softDeleted;
 		this.immutableTimestamp = immutableTimestamp;
 		this.relations = relations;
-		this.members = members;
+		this.numberOfMembers = numberOfMembers;
 	}
 
 	public String getId() {
@@ -50,15 +49,15 @@ public class LdesFragmentEntity {
 	}
 
 	public FragmentInfo getFragmentInfo() {
-		return new FragmentInfo(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted);
+		return new FragmentInfo(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted, numberOfMembers);
 	}
 
 	public Boolean isImmutable() {
 		return immutable;
 	}
 
-	public List<String> getMembers() {
-		return members;
+	public int getNumberOfMembers() {
+		return numberOfMembers;
 	}
 
 	public List<TreeRelation> getRelations() {
@@ -68,7 +67,6 @@ public class LdesFragmentEntity {
 	public LdesFragment toLdesFragment() {
 		LdesFragment ldesFragment = new LdesFragment(getFragmentInfo());
 		relations.forEach(ldesFragment::addRelation);
-		members.forEach(ldesFragment::addMember);
 		return ldesFragment;
 	}
 
@@ -79,6 +77,6 @@ public class LdesFragmentEntity {
 				ldesFragment.getFragmentInfo().getFragmentPairs(), ldesFragment.getFragmentInfo().getImmutable(),
 				ldesFragment.getFragmentInfo().getSoftDeleted(), ldesFragment.getFragmentInfo().getImmutableTimestamp(),
 				ldesFragment.getRelations(),
-				ldesFragment.getMemberIds());
+				ldesFragment.getFragmentInfo().getNumberOfMembers());
 	}
 }

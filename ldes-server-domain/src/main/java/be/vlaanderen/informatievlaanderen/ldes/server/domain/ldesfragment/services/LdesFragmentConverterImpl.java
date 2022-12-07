@@ -33,10 +33,10 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 	public Model toModel(final LdesFragment ldesFragment) {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(addTreeNodeStatements(ldesFragment));
-		if (!ldesFragment.getMemberIds().isEmpty()) {
-			model.add(addEventStreamStatements(ldesFragment));
-			memberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(Member::getModel)
-					.forEach(model::add);
+		if (ldesFragment.getFragmentInfo().getNumberOfMembers() != 0) {
+			List<Member> members = memberRepository.getLdesMembersByFragment(ldesFragment).toList();
+			model.add(addEventStreamStatements(ldesFragment, members));
+
 		}
 		return prefixAdder.addPrefixesToModel(model);
 	}
@@ -49,18 +49,17 @@ public class LdesFragmentConverterImpl implements LdesFragmentConverter {
 		return statements;
 	}
 
-	private List<Statement> addEventStreamStatements(LdesFragment ldesFragment) {
+	private List<Statement> addEventStreamStatements(LdesFragment ldesFragment, List<Member> members) {
 		List<Statement> statements = new ArrayList<>();
 		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
 		statements.addAll(getEventStreamStatements(viewId));
-		statements.addAll(getMemberStatements(ldesFragment, viewId));
+		statements.addAll(getMemberStatements(members, viewId));
 		return statements;
 	}
 
-	private List<Statement> getMemberStatements(LdesFragment ldesFragment, Resource viewId) {
+	private List<Statement> getMemberStatements(List<Member> members, Resource viewId) {
 		List<Statement> statements = new ArrayList<>();
-		ldesFragment.getMemberIds()
-				.forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER, createResource(memberId))));
+		members.forEach(member -> statements.add(createStatement(viewId, TREE_MEMBER, createResource(member.getLdesMemberId()))));
 		return statements;
 	}
 

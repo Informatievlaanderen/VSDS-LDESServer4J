@@ -13,14 +13,11 @@ public class LdesFragment {
 
 	private final FragmentInfo fragmentInfo;
 
-	private final List<String> memberIds;
-
 	private final List<TreeRelation> relations;
 
 	public LdesFragment(final FragmentInfo fragmentInfo) {
 		this.fragmentInfo = fragmentInfo;
 		this.relations = new ArrayList<>();
-		this.memberIds = new ArrayList<>();
 		this.fragmentId = fragmentInfo.generateFragmentId();
 	}
 
@@ -40,17 +37,9 @@ public class LdesFragment {
 		return relations;
 	}
 
-	public List<String> getMemberIds() {
-		return memberIds;
-	}
-
-	public void addMember(String ldesMemberId) {
-		memberIds.add(ldesMemberId);
-	}
-
-	public int getCurrentNumberOfMembers() {
-		return memberIds.size();
-	}
+//	public void addMember(String ldesMemberId) {
+//		memberIds.add(ldesMemberId);
+//	}
 
 	public void makeImmutable() {
 		this.fragmentInfo.makeImmutable();

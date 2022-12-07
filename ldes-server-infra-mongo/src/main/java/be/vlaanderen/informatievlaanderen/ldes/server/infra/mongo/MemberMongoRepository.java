@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
@@ -13,9 +14,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Component
 public class MemberMongoRepository implements MemberRepository {
@@ -41,8 +40,12 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	@Transactional(readOnly = true)
-	public Stream<Member> getLdesMembersByIds(List<String> ids) {
-		return StreamSupport.stream(repository.findAllById(ids).spliterator(), false)
+	public Stream<Member> getLdesMembersByFragment(LdesFragment ldesFragment) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("treeNodesReferences").in(ldesFragment.getFragmentId()));
+
+		return mongoTemplate.find(query, LdesMemberEntity.class, "ldesmember")
+				.stream()
 				.map(LdesMemberEntity::toLdesMember);
 	}
 
@@ -77,4 +80,28 @@ public class MemberMongoRepository implements MemberRepository {
 		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesmember")
 				.getModifiedCount() == 1;
 	}
+
+	@Override
+	@Transactional
+	public boolean removeMemberReferencesForFragment(LdesFragment ldesFragment) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("treeNodesReferences").in(ldesFragment.getFragmentId()));
+		Update update = new Update();
+		update.pull("treeNodesReferences", ldesFragment.getFragmentId());
+
+		return mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class, "ldesmember")
+				.getModifiedCount() == 1;
+	}
+
+	@Override
+	@Transactional
+	public long removeMembersWithNoReferences() {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("treeNodesReferences").size(0));
+
+		return mongoTemplate.remove(query, LdesFragmentEntity.class, "ldesmember")
+				.getDeletedCount();
+	}
+
+
 }

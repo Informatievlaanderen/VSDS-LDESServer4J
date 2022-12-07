@@ -32,12 +32,12 @@ class LdesFragmentTest {
 				new FragmentInfo(VIEW_NAME,
 						List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
 
-		assertEquals(0, ldesFragment.getCurrentNumberOfMembers());
+		assertEquals(0, ldesFragment.getFragmentInfo().getNumberOfMembers());
 		ldesFragment.addMember("some_id");
-		assertEquals(1, ldesFragment.getCurrentNumberOfMembers());
+		assertEquals(1, ldesFragment.getFragmentInfo().getNumberOfMembers());
 		ldesFragment.addMember("some_id_2");
 		ldesFragment.addMember("some_id_3");
-		assertEquals(3, ldesFragment.getCurrentNumberOfMembers());
+		assertEquals(3, ldesFragment.getFragmentInfo().getNumberOfMembers());
 	}
 
 	@Test
@@ -49,7 +49,6 @@ class LdesFragmentTest {
 		LdesFragment child = ldesFragment.createChild(new FragmentPair("a", "b"));
 		assertEquals("/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&a=b", child.getFragmentId());
 		assertFalse(child.isImmutable());
-		assertEquals(0, child.getMemberIds().size());
 		assertEquals(0, child.getRelations().size());
 		assertEquals(List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1), new FragmentPair("a", "b")),
 				child.getFragmentInfo().getFragmentPairs());

@@ -98,12 +98,16 @@ class FragmentInfoTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of(new FragmentInfo("otherView", List.of(PARENT_FRAGMENT_PAIR), false, null, false)),
-					Arguments.of(new FragmentInfo(VIEW, List.of(), false, null, false)),
-					Arguments.of(new FragmentInfo(VIEW, List.of(PARENT_FRAGMENT_PAIR), true, null, false)),
+					Arguments.of(new FragmentInfo("otherView", List.of(PARENT_FRAGMENT_PAIR), false, null, false,
+							numberOfMembers)),
+					Arguments.of(new FragmentInfo(VIEW, List.of(), false, null, false, numberOfMembers)),
+					Arguments.of(new FragmentInfo(VIEW, List.of(PARENT_FRAGMENT_PAIR), true, null, false,
+							numberOfMembers)),
 					Arguments.of(
-							new FragmentInfo(VIEW, List.of(PARENT_FRAGMENT_PAIR), false, LocalDateTime.now(), false)),
-					Arguments.of(new FragmentInfo(VIEW, List.of(PARENT_FRAGMENT_PAIR), false, null, true)),
+							new FragmentInfo(VIEW, List.of(PARENT_FRAGMENT_PAIR), false, LocalDateTime.now(), false,
+									numberOfMembers)),
+					Arguments.of(new FragmentInfo(VIEW, List.of(PARENT_FRAGMENT_PAIR), false, null, true,
+							numberOfMembers)),
 					Arguments.of((Object) null),
 					Arguments.of(List.of()));
 		}

@@ -43,7 +43,7 @@ class TimeBasedFragmentCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
-		assertEquals(0, newFragment.getCurrentNumberOfMembers());
+		assertEquals(0, newFragment.getFragmentInfo().getNumberOfMembers());
 		assertEquals(0, newFragment.getRelations().size());
 		verifyNoInteractions(ldesFragmentRepository);
 	}
@@ -63,7 +63,7 @@ class TimeBasedFragmentCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
-		assertEquals(0, newFragment.getCurrentNumberOfMembers());
+		assertEquals(0, newFragment.getFragmentInfo().getNumberOfMembers());
 
 		verify(ldesFragmentRepository, times(1)).closeFragmentAndAddNewRelation(existingLdesFragment,
 				new TreeRelation(PROV_GENERATED_AT_TIME,

@@ -36,4 +36,6 @@ public interface LdesFragmentRepository {
 			List<FragmentPair> fragmentPairList);
 
 	boolean addMemberToFragment(LdesFragment ldesFragment, String memberId);
+
+	boolean incrementNumberOfMembers(LdesFragment fragmentId);
 }

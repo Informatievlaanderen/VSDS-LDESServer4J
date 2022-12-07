@@ -18,20 +18,24 @@ public class FragmentInfo {
 
 	private Boolean softDeleted;
 
+	private final int numberOfMembers;
+
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = false;
 		this.softDeleted = false;
+		this.numberOfMembers = 0;
 	}
 
 	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
-			LocalDateTime immutableTimestamp, Boolean softDeleted) {
+			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.immutableTimestamp = immutableTimestamp;
 		this.softDeleted = softDeleted;
+		this.numberOfMembers = numberOfMembers;
 	}
 
 	public Optional<String> getValueOfKey(String key) {
@@ -71,6 +75,10 @@ public class FragmentInfo {
 		this.softDeleted = softDeleted;
 	}
 
+	public int getNumberOfMembers() {
+		return numberOfMembers;
+	}
+
 	public FragmentInfo createChild(FragmentPair fragmentPair) {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
 		childFragmentPairs.add(fragmentPair);
@@ -108,5 +116,27 @@ public class FragmentInfo {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public String getParentId() {
+
+
+		if (!fragmentPairs.isEmpty()) {
+			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
+			parentPairs.remove(parentPairs.size() - 1);
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder
+					.append("/").append(viewName);
+			if (!parentPairs.isEmpty()) {
+
+				stringBuilder.append("?");
+				stringBuilder
+						.append(parentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
+								"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
+			}
+			return stringBuilder.toString();
+		}
+
+		return "root";
 	}
 }

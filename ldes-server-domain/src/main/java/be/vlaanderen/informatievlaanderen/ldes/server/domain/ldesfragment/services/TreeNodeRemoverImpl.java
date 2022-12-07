@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
+import io.micrometer.core.instrument.Metrics;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,18 +17,15 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
 	private final MemberRepository memberRepository;
-	private final TreeMemberRemover treeMemberRemover;
 	private final ParentUpdater parentUpdater;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			Map<String, List<RetentionPolicy>> retentionPolicyMap,
 			MemberRepository memberRepository,
-			TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
 		this.memberRepository = memberRepository;
-		this.treeMemberRemover = treeMemberRemover;
 		this.parentUpdater = parentUpdater;
 	}
 
@@ -50,13 +47,13 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 					ldesFragments.forEach(ldesFragment -> {
 						ldesFragmentRepository.setSoftDeleted(ldesFragment);
 						parentUpdater.updateParent(ldesFragment);
-						ldesFragment
-								.getMemberIds()
-								.forEach(memberId -> {
-									memberRepository.removeMemberReference(memberId,
-											ldesFragment.getFragmentId());
-									treeMemberRemover.tryRemovingMember(memberId);
-								});
+
+						memberRepository.removeMemberReferencesForFragment(ldesFragment);
+						long deletedCount = memberRepository.removeMembersWithNoReferences();
+
+						for (int i=0; i<deletedCount; i++){
+							Metrics.counter("ldes_server_deleted_members_count").increment();
+						}
 					});
 				});
 	}

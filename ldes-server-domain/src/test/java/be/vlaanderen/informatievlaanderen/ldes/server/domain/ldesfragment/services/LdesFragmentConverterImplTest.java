@@ -79,7 +79,7 @@ class LdesFragmentConverterImplTest {
 		ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
 		ldesFragment.addRelation(new TreeRelation("path", "/node", "value",
 				DATE_TIME_TYPE, "relation"));
-		when(memberRepository.getLdesMembersByIds(
+		when(memberRepository.getLdesMembersByFragment(
 				List.of("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165")))
 				.thenReturn(Stream.of(member));
 
