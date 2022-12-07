@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyImpl;
@@ -37,8 +38,9 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
+		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(ldesFragmentRepository,
-				memberReferencesRepository, tracer, memberRepository);
+				memberReferencesRepository, tracer, memberRepository, nonCriticalTasksExecutor);
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);

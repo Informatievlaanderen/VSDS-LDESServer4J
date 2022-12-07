@@ -32,7 +32,7 @@ class TimeBasedFragmentCreatorTest {
 		TimebasedFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(timeBasedConfig,
-				ldesFragmentRepository, treeNodeRelationsRepository);
+				ldesFragmentRepository, treeNodeRelationsRepository, nonCriticalTasksExecutor);
 	}
 
 	@Test

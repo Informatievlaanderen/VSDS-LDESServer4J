@@ -26,7 +26,7 @@ class MemberIngestServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		memberIngestService = new MemberIngestServiceImpl(memberRepository, fragmentationMediator);
+		memberIngestService = new MemberIngestServiceImpl(memberRepository, fragmentationMediator, nonCriticalTasksExecutor);
 	}
 
 	@Test

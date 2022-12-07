@@ -10,15 +10,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class TreeNodeRelationsMongoRepository implements TreeNodeRelationsRepository {
 
-    private final ExecutorService executorService;
-
     public TreeNodeRelationsMongoRepository() {
-        this.executorService = Executors.newSingleThreadExecutor();
+
     }
 
     @Autowired
@@ -26,13 +22,11 @@ public class TreeNodeRelationsMongoRepository implements TreeNodeRelationsReposi
 
     @Override
     public void addTreeNodeRelation(String treeNodeId, TreeRelation relation) {
-        executorService.submit(() -> {
             Query query = new Query();
             query.addCriteria(Criteria.where("_id").is(treeNodeId));
             Update update = new Update();
             update.addToSet("relations", relation);
             mongoTemplate.upsert(query, update, TreeNodeRelationsEntity.class);
-        });
     }
 
     @Override
