@@ -25,9 +25,9 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	private final Tracer tracer;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-											LdesFragmentRepository ldesFragmentRepository,
-											MemberReferencesRepository memberReferencesRepository, RootFragmentCreator rootFragmentCreator,
-											MemberRepository memberRepository, Tracer tracer) {
+			LdesFragmentRepository ldesFragmentRepository,
+			MemberReferencesRepository memberReferencesRepository, RootFragmentCreator rootFragmentCreator,
+			MemberRepository memberRepository, Tracer tracer) {
 		this.applicationContext = applicationContext;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberReferencesRepository = memberReferencesRepository;

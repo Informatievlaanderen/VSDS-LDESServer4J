@@ -23,7 +23,8 @@ class GeospatialFragmentCreatorTest {
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository, tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
+		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
+				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
 	}
 
 	@Test

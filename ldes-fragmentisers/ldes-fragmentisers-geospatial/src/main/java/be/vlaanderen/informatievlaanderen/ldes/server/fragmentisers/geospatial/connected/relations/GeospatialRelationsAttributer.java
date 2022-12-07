@@ -17,7 +17,7 @@ public class GeospatialRelationsAttributer {
 
 		TreeRelation relationToTargetFragment = new TreeRelation(GEOSPARQL_AS_WKT, childFragment.getFragmentId(),
 				WGS_84 + " " + targetWKT, WKT_DATA_TYPE, TREE_GEOSPATIALLY_CONTAINS_RELATION);
-			return relationToTargetFragment;
+		return relationToTargetFragment;
 
 	}
 

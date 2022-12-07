@@ -61,7 +61,8 @@ class MemberEntityTest {
 				.toModel();
 
 		return LdesMemberEntity.fromLdesMember(new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", outputModel, treeNodeReferences));
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", outputModel,
+				treeNodeReferences));
 	}
 
 	private Member readLdesMemberFromFile(ClassLoader classLoader, String fileName)

@@ -16,7 +16,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	public MemberIngestServiceImpl(MemberRepository memberRepository,
-								   FragmentationMediator fragmentationMediator, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			FragmentationMediator fragmentationMediator, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.memberRepository = memberRepository;
 		this.fragmentationMediator = fragmentationMediator;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
@@ -27,7 +27,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 		boolean memberExists = memberRepository.memberExists(member.getLdesMemberId());
 		if (!memberExists) {
 			Metrics.counter("ldes_server_ingested_members_count").increment();
-			nonCriticalTasksExecutor.submit(()->storeLdesMember(member));
+			nonCriticalTasksExecutor.submit(() -> storeLdesMember(member));
 			fragmentationMediator.addMemberToFragment(member);
 		}
 	}

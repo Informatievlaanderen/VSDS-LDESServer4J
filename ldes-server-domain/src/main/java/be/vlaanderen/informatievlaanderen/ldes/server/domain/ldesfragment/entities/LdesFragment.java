@@ -14,8 +14,6 @@ public class LdesFragment {
 		this.fragmentId = fragmentInfo.generateFragmentId();
 	}
 
-
-
 	public String getFragmentId() {
 		return fragmentId;
 	}

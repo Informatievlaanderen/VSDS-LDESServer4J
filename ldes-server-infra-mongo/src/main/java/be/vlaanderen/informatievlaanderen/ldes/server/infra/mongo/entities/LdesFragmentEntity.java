@@ -30,8 +30,8 @@ public class LdesFragmentEntity {
 	private final int numberOfMembers;
 
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
-							  Boolean immutable,
-							  Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, int numberOfMembers) {
+			Boolean immutable,
+			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, int numberOfMembers) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -66,6 +66,6 @@ public class LdesFragmentEntity {
 				fragmentInfo.getViewName(),
 				fragmentInfo.getFragmentPairs(), fragmentInfo.getImmutable(),
 				fragmentInfo.getSoftDeleted(), fragmentInfo.getParentId(), fragmentInfo.getImmutableTimestamp(),
-				 fragmentInfo.getNumberOfMembers());
+				fragmentInfo.getNumberOfMembers());
 	}
 }

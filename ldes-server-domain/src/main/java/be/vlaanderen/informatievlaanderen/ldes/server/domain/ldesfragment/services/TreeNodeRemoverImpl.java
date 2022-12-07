@@ -50,14 +50,14 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 						ldesFragment.setSoftDeleted(true);
 						ldesFragmentRepository.saveFragment(ldesFragment);
 						parentUpdater.updateParent(ldesFragment);
-						//TODO fix
-//						ldesFragment
-//								.getMemberIds()
-//								.forEach(memberId -> {
-//									memberReferencesRepository.removeMemberReference(memberId,
-//											ldesFragment.getFragmentId());
-//									treeMemberRemover.tryRemovingMember(memberId);
-//								});
+						// TODO fix
+						// ldesFragment
+						// .getMemberIds()
+						// .forEach(memberId -> {
+						// memberReferencesRepository.removeMemberReference(memberId,
+						// ldesFragment.getFragmentId());
+						// treeMemberRemover.tryRemovingMember(memberId);
+						// });
 					});
 				});
 	}

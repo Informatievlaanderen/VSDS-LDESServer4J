@@ -44,7 +44,8 @@ class GeospatialFragmentationStrategyTest {
 		PARENT_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 		geospatialFragmentationStrategy = new GeospatialFragmentationStrategy(decoratedFragmentationStrategy,
-				ldesFragmentRepository, geospatialBucketiser, fragmentCreator, tileFragmentRelationsAttributer, tracer, treeNodeRelationsRepository);
+				ldesFragmentRepository, geospatialBucketiser, fragmentCreator, tileFragmentRelationsAttributer, tracer,
+				treeNodeRelationsRepository);
 	}
 
 	@Test
@@ -106,7 +107,8 @@ class GeospatialFragmentationStrategyTest {
 	private TileFragment mockCreationGeospatialFragment(String tile, boolean created) {
 		TileFragment tileFragment = new TileFragment(PARENT_FRAGMENT.createChild(new FragmentPair("tile", tile)),
 				created);
-		when(fragmentCreator.getOrCreateGeospatialFragment(PARENT_FRAGMENT, tile, rootTileFragment)).thenReturn(tileFragment);
+		when(fragmentCreator.getOrCreateGeospatialFragment(PARENT_FRAGMENT, tile, rootTileFragment))
+				.thenReturn(tileFragment);
 		return tileFragment;
 	}
 }

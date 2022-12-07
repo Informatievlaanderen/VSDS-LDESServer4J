@@ -26,18 +26,22 @@ public class ParentUpdaterImpl implements ParentUpdater {
 				.orElseThrow(() -> new MissingFragmentException(
 						new FragmentInfo(currentChild.getFragmentInfo().getViewName(), parentPairs)
 								.generateFragmentId()));
-		//TODO fix
-//		Optional<TreeRelation> optionalOldTreeRelation = parent.getRelations().stream()
-//				.filter(treeRelation -> treeRelation.treeNode().equals(currentChild.getFragmentId())).findFirst();
-//		if (optionalOldTreeRelation.isPresent()) {
-//			TreeRelation oldTreeRelation = optionalOldTreeRelation.get();
-//			LdesFragment newChild = ldesFragmentRepository
-//					.retrieveNonDeletedChildFragment(parent.getFragmentInfo().getViewName(), parentPairs)
-//					.orElseThrow(() -> new RuntimeException("No non-deleted child"));
-			//TODO fix
-//			parent.removeRelation(oldTreeRelation);
-//			parent.addRelation(new TreeRelation("", newChild.getFragmentId(), "", "", GENERIC_TREE_RELATION));
-//			ldesFragmentRepository.saveFragment(parent);
-//		}
+		// TODO fix
+		// Optional<TreeRelation> optionalOldTreeRelation =
+		// parent.getRelations().stream()
+		// .filter(treeRelation ->
+		// treeRelation.treeNode().equals(currentChild.getFragmentId())).findFirst();
+		// if (optionalOldTreeRelation.isPresent()) {
+		// TreeRelation oldTreeRelation = optionalOldTreeRelation.get();
+		// LdesFragment newChild = ldesFragmentRepository
+		// .retrieveNonDeletedChildFragment(parent.getFragmentInfo().getViewName(),
+		// parentPairs)
+		// .orElseThrow(() -> new RuntimeException("No non-deleted child"));
+		// TODO fix
+		// parent.removeRelation(oldTreeRelation);
+		// parent.addRelation(new TreeRelation("", newChild.getFragmentId(), "", "",
+		// GENERIC_TREE_RELATION));
+		// ldesFragmentRepository.saveFragment(parent);
+		// }
 	}
 }

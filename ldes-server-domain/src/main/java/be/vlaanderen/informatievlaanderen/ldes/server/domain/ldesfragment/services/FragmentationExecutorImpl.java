@@ -20,7 +20,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	private final Tracer tracer;
 
 	public FragmentationExecutorImpl(Map<String, FragmentationStrategy> fragmentationStrategyMap,
-									 LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
+			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
 		this.rootFragmentMap = new HashMap<>();
 		this.ldesFragmentRepository = ldesFragmentRepository;

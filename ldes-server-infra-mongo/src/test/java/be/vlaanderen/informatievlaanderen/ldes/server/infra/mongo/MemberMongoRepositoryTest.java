@@ -23,7 +23,8 @@ class MemberMongoRepositoryTest {
 		String member = String.format("""
 				<http://one.example/subject1> <%s> <http://one.example/object1>.""", TREE_MEMBER);
 
-		Member treeMember = new Member("some_id", RdfModelConverter.fromString(member, Lang.NQUADS), treeNodeReferences);
+		Member treeMember = new Member("some_id", RdfModelConverter.fromString(member, Lang.NQUADS),
+				treeNodeReferences);
 		LdesMemberEntity ldesMemberEntity = LdesMemberEntity.fromLdesMember(treeMember);
 		when(ldesMemberEntityRepository.save(any())).thenReturn(ldesMemberEntity);
 

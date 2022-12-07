@@ -21,7 +21,8 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
-		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext.getBean(TreeNodeRelationsRepository.class);
+		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext
+				.getBean(TreeNodeRelationsRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
@@ -34,7 +35,8 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository,
-				tracer, substringBucketiser, substringFragmentFinder, substringFragmentCreator, treeNodeRelationsRepository);
+				tracer, substringBucketiser, substringFragmentFinder, substringFragmentCreator,
+				treeNodeRelationsRepository);
 	}
 
 	private SubstringConfig createSubstringConfig(ConfigProperties properties) {

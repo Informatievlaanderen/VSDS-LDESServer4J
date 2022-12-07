@@ -13,29 +13,29 @@ import java.util.List;
 
 public class TreeNodeRelationsMongoRepository implements TreeNodeRelationsRepository {
 
-    public TreeNodeRelationsMongoRepository() {
+	public TreeNodeRelationsMongoRepository() {
 
-    }
+	}
 
-    @Autowired
-    MongoTemplate mongoTemplate;
+	@Autowired
+	MongoTemplate mongoTemplate;
 
-    @Override
-    public void addTreeNodeRelation(String treeNodeId, TreeRelation relation) {
-            Query query = new Query();
-            query.addCriteria(Criteria.where("_id").is(treeNodeId));
-            Update update = new Update();
-            update.addToSet("relations", relation);
-            mongoTemplate.upsert(query, update, TreeNodeRelationsEntity.class);
-    }
+	@Override
+	public void addTreeNodeRelation(String treeNodeId, TreeRelation relation) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(treeNodeId));
+		Update update = new Update();
+		update.addToSet("relations", relation);
+		mongoTemplate.upsert(query, update, TreeNodeRelationsEntity.class);
+	}
 
-    @Override
-    public List<TreeRelation> getRelations(String fragmentId) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(fragmentId));
-       return mongoTemplate.find(query, TreeNodeRelationsEntity.class)
-               .stream()
-               .findFirst()
-               .map(TreeNodeRelationsEntity::getRelations).orElseGet(List::of);
-    }
+	@Override
+	public List<TreeRelation> getRelations(String fragmentId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragmentId));
+		return mongoTemplate.find(query, TreeNodeRelationsEntity.class)
+				.stream()
+				.findFirst()
+				.map(TreeNodeRelationsEntity::getRelations).orElseGet(List::of);
+	}
 }

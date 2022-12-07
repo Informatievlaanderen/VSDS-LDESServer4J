@@ -14,19 +14,23 @@ public class GeospatialFragmentCreator {
 	private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
-	public GeospatialFragmentCreator(LdesFragmentRepository ldesFragmentRepository, TileFragmentRelationsAttributer tileFragmentRelationsAttributer, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+	public GeospatialFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
+			TileFragmentRelationsAttributer tileFragmentRelationsAttributer,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.tileFragmentRelationsAttributer = tileFragmentRelationsAttributer;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 	}
 
-	public LdesFragment getOrCreateGeospatialFragment(LdesFragment parentFragment, String tile, LdesFragment rootTileFragment) {
+	public LdesFragment getOrCreateGeospatialFragment(LdesFragment parentFragment, String tile,
+			LdesFragment rootTileFragment) {
 		LdesFragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
 		return ldesFragmentRepository
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {
 					ldesFragmentRepository.saveFragment(child);
-					nonCriticalTasksExecutor.submit(()->tileFragmentRelationsAttributer.addRelationsFromRootToBottom(rootTileFragment, child));
+					nonCriticalTasksExecutor.submit(() -> tileFragmentRelationsAttributer
+							.addRelationsFromRootToBottom(rootTileFragment, child));
 					return child;
 				});
 	}

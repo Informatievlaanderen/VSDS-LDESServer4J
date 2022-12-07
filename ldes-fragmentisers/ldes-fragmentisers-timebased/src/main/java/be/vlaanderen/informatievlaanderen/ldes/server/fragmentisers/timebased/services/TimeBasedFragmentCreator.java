@@ -24,7 +24,8 @@ public class TimeBasedFragmentCreator {
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	public TimeBasedFragmentCreator(TimebasedFragmentationConfig timeBasedConfig,
-									LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.timebasedFragmentationConfig = timeBasedConfig;
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 
@@ -54,19 +55,24 @@ public class TimeBasedFragmentCreator {
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.makeImmutable();
-		nonCriticalTasksExecutor.submit(()->treeNodeRelationsRepository.addTreeNodeRelation(completeLdesFragment.getFragmentId(),new TreeRelation(PROV_GENERATED_AT_TIME,
-				newFragment.getFragmentId(),
-				newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
-						() -> new MissingFragmentValueException(newFragment.getFragmentId(), GENERATED_AT_TIME)),
-				DATE_TIME_TYPE,
-				TREE_GREATER_THAN_OR_EQUAL_TO_RELATION)));
+		nonCriticalTasksExecutor
+				.submit(() -> treeNodeRelationsRepository.addTreeNodeRelation(completeLdesFragment.getFragmentId(),
+						new TreeRelation(PROV_GENERATED_AT_TIME,
+								newFragment.getFragmentId(),
+								newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
+										() -> new MissingFragmentValueException(newFragment.getFragmentId(),
+												GENERATED_AT_TIME)),
+								DATE_TIME_TYPE,
+								TREE_GREATER_THAN_OR_EQUAL_TO_RELATION)));
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
-		nonCriticalTasksExecutor.submit(()->treeNodeRelationsRepository.addTreeNodeRelation(newFragment.getFragmentId(), new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
-				completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
-						() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
-								GENERATED_AT_TIME)),
-				DATE_TIME_TYPE,
-				TREE_LESSER_THAN_OR_EQUAL_TO_RELATION)));
+		nonCriticalTasksExecutor
+				.submit(() -> treeNodeRelationsRepository.addTreeNodeRelation(newFragment.getFragmentId(),
+						new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
+								completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
+										() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
+												GENERATED_AT_TIME)),
+								DATE_TIME_TYPE,
+								TREE_LESSER_THAN_OR_EQUAL_TO_RELATION)));
 	}
 
 }

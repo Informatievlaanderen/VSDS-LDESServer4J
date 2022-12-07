@@ -17,7 +17,8 @@ public class SubstringRelationsAttributer {
 	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
 	private final SubstringConfig substringConfig;
 
-	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
+	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
+			TreeNodeRelationsRepository treeNodeRelationsRepository) {
 	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
 			SubstringConfig substringConfig) {
 		this.ldesFragmentRepository = ldesFragmentRepository;

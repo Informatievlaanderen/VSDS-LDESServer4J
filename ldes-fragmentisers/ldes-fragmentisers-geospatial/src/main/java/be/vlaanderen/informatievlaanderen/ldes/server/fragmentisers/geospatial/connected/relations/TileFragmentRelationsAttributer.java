@@ -18,7 +18,8 @@ public class TileFragmentRelationsAttributer {
 			LdesFragment tileFragments) {
 		TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
 				tileFragments);
-		if(!treeNodeRelationsRepository.getRelations(rootFragment.getFragmentId()).contains(relationToParentFragment)){
+		if (!treeNodeRelationsRepository.getRelations(rootFragment.getFragmentId())
+				.contains(relationToParentFragment)) {
 			treeNodeRelationsRepository.addTreeNodeRelation(rootFragment.getFragmentId(), relationToParentFragment);
 		}
 	}

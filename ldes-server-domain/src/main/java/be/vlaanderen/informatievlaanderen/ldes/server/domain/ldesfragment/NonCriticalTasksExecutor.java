@@ -8,13 +8,13 @@ import java.util.concurrent.Executors;
 @Component
 public class NonCriticalTasksExecutor {
 
-    private final ExecutorService executors;
+	private final ExecutorService executors;
 
-    public NonCriticalTasksExecutor() {
-        this.executors = Executors.newCachedThreadPool();
-    }
+	public NonCriticalTasksExecutor() {
+		this.executors = Executors.newCachedThreadPool();
+	}
 
-    public void submit(Runnable task){
-        executors.submit(task);
-    }
+	public void submit(Runnable task) {
+		executors.submit(task);
+	}
 }

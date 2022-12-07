@@ -41,8 +41,7 @@ public class MongoAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public TreeNodeRelationsRepository treeNodeRelationsRepository(
-			) {
+	public TreeNodeRelationsRepository treeNodeRelationsRepository() {
 		return new TreeNodeRelationsMongoRepository();
 	}
 }

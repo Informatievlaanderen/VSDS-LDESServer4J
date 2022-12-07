@@ -22,10 +22,11 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	private final SubstringFragmentCreator substringFragmentCreator;
 
 	public SubstringFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-										  LdesFragmentRepository ldesFragmentRepository,
-										  Tracer tracer,
-										  SubstringBucketiser substringBucketiser,
-										  SubstringFragmentFinder substringFragmentFinder, SubstringFragmentCreator substringFragmentCreator, TreeNodeRelationsRepository treeNodeRelationsRepository) {
+			LdesFragmentRepository ldesFragmentRepository,
+			Tracer tracer,
+			SubstringBucketiser substringBucketiser,
+			SubstringFragmentFinder substringFragmentFinder, SubstringFragmentCreator substringFragmentCreator,
+			TreeNodeRelationsRepository treeNodeRelationsRepository) {
 		super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
 		this.tracer = tracer;
 		this.substringBucketiser = substringBucketiser;

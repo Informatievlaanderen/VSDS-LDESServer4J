@@ -12,27 +12,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class FragmentFetchServiceImpl implements FragmentFetchService {
 
-    private final LdesConfig ldesConfig;
-    private final LdesFragmentRepository ldesFragmentRepository;
+	private final LdesConfig ldesConfig;
+	private final LdesFragmentRepository ldesFragmentRepository;
 
-    public FragmentFetchServiceImpl(LdesConfig ldesConfig,
-                                    LdesFragmentRepository ldesFragmentRepository) {
-        this.ldesConfig = ldesConfig;
-        this.ldesFragmentRepository = ldesFragmentRepository;
-    }
+	public FragmentFetchServiceImpl(LdesConfig ldesConfig,
+			LdesFragmentRepository ldesFragmentRepository) {
+		this.ldesConfig = ldesConfig;
+		this.ldesFragmentRepository = ldesFragmentRepository;
+	}
 
-    @Override
-    public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
-        LdesFragment ldesFragment = ldesFragmentRepository
-                .retrieveFragment(new FragmentInfo(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs()).generateFragmentId())
-                .orElseThrow(
-                        () -> new MissingFragmentException(
-                                ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
-                                        ldesFragmentRequest.fragmentPairs()).generateFragmentId()));
-        if (ldesFragment.isSoftDeleted())
-            throw new DeletedFragmentException(
-                    ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
-                            ldesFragmentRequest.fragmentPairs()).generateFragmentId());
-        return ldesFragment;
-    }
+	@Override
+	public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
+		LdesFragment ldesFragment = ldesFragmentRepository
+				.retrieveFragment(new FragmentInfo(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
+						.generateFragmentId())
+				.orElseThrow(
+						() -> new MissingFragmentException(
+								ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
+										ldesFragmentRequest.fragmentPairs()).generateFragmentId()));
+		if (ldesFragment.isSoftDeleted())
+			throw new DeletedFragmentException(
+					ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
+							ldesFragmentRequest.fragmentPairs()).generateFragmentId());
+		return ldesFragment;
+	}
 }

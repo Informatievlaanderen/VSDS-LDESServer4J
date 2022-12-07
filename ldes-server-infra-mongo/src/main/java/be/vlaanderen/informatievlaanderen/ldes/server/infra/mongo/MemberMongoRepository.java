@@ -38,8 +38,8 @@ public class MemberMongoRepository implements MemberRepository {
 		StringWriter outputStream = new StringWriter();
 		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
 		String ldesMemberString = outputStream.toString();
-		update.set("model",ldesMemberString);
-		mongoTemplate.upsert(query,update, LdesMemberEntity.class);
+		update.set("model", ldesMemberString);
+		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
 		return member;
 	}
 
@@ -47,7 +47,7 @@ public class MemberMongoRepository implements MemberRepository {
 	public boolean memberExists(String memberId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(memberId));
-		return mongoTemplate.exists(query, LdesMemberEntity.class,"ldesmember");
+		return mongoTemplate.exists(query, LdesMemberEntity.class, "ldesmember");
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class MemberMongoRepository implements MemberRepository {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(ldesMemberId));
 		Update update = new Update();
-		update.push("treeNodeReferences",fragmentId);
-		mongoTemplate.upsert(query,update, LdesMemberEntity.class);
+		update.push("treeNodeReferences", fragmentId);
+		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
 	}
 }

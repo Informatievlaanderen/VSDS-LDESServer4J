@@ -21,7 +21,8 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
-		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext.getBean(TreeNodeRelationsRepository.class);
+		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext
+				.getBean(TreeNodeRelationsRepository.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
@@ -29,7 +30,8 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
 				treeNodeRelationsRepository);
-		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository, tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
+		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
+				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository,

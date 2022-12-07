@@ -20,25 +20,29 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
-		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext.getBean(TreeNodeRelationsRepository.class);
+		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext
+				.getBean(TreeNodeRelationsRepository.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
 				ldesFragmentRepository, treeNodeRelationsRepository, nonCriticalTasksExecutor);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
-				ldesFragmentRepository, openFragmentProvider, tracer,treeNodeRelationsRepository, nonCriticalTasksExecutor);
+				ldesFragmentRepository, openFragmentProvider, tracer, treeNodeRelationsRepository,
+				nonCriticalTasksExecutor);
 
 	}
 
 	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
-														 LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(properties,
 				ldesFragmentRepository, treeNodeRelationsRepository, nonCriticalTasksExecutor);
 		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository);
 	}
 
 	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(ConfigProperties properties,
-																 LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		return new TimeBasedFragmentCreator(
 				timebasedFragmentationConfig,

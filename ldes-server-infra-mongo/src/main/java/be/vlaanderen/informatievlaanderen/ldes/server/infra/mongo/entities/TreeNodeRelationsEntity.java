@@ -8,18 +8,18 @@ import java.util.List;
 
 @Document("relations")
 public class TreeNodeRelationsEntity {
-    @Id
-    private final String id;
+	@Id
+	private final String id;
 
-    private final List<TreeRelation> relations;
+	private final List<TreeRelation> relations;
 
-    public List<TreeRelation> getRelations() {
-        return relations;
-    }
+	public List<TreeRelation> getRelations() {
+		return relations;
+	}
 
-    public TreeNodeRelationsEntity(String id, List<TreeRelation> relations) {
-        this.id = id;
-        this.relations = relations;
-    }
+	public TreeNodeRelationsEntity(String id, List<TreeRelation> relations) {
+		this.id = id;
+		this.relations = relations;
+	}
 
 }

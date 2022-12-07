@@ -15,7 +15,8 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	public FragmentationStrategyImpl(LdesFragmentRepository ldesFragmentRepository,
-									 MemberReferencesRepository memberReferencesRepository, Tracer tracer, MemberRepository memberRepository, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			MemberReferencesRepository memberReferencesRepository, Tracer tracer, MemberRepository memberRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.memberRepository = memberRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -23,7 +24,8 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 
 	@Override
 	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Span parentSpan) {
-		nonCriticalTasksExecutor.submit(()->memberRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId()));
+		nonCriticalTasksExecutor.submit(
+				() -> memberRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId()));
 		ldesFragmentRepository.incrementNumberOfMembers(ldesFragment.getFragmentId());
 	}
 

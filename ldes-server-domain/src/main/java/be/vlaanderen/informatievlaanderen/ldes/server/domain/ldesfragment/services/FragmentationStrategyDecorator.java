@@ -16,7 +16,7 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
 
 	protected FragmentationStrategyDecorator(FragmentationStrategy fragmentationStrategy,
-											 LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
+			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository) {
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;

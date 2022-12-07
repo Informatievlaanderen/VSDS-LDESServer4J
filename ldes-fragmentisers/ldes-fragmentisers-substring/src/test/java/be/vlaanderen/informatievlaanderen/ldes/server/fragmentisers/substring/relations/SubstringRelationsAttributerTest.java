@@ -36,7 +36,8 @@ class SubstringRelationsAttributerTest {
 				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "ab"))));
 
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository, treeNodeRelationsRepository);
+		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository,
+				treeNodeRelationsRepository);
 		SubstringConfig substringConfig = mock(SubstringConfig.class);
 		when(substringConfig.getFragmenterPropertyQuery()).thenReturn(FRAGMENTER_PROPERTY);
 		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository, substringConfig);

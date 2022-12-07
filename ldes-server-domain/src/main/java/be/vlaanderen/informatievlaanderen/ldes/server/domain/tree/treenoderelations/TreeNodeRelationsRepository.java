@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import java.util.List;
 
 public interface TreeNodeRelationsRepository {
-    void addTreeNodeRelation(String treeNodeId, TreeRelation relation);
+	void addTreeNodeRelation(String treeNodeId, TreeRelation relation);
 
-    List<TreeRelation> getRelations(String fragmentId);
+	List<TreeRelation> getRelations(String fragmentId);
 }
