@@ -5,9 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 
 public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final MemberRepository memberRepository;
@@ -15,7 +13,7 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	public FragmentationStrategyImpl(LdesFragmentRepository ldesFragmentRepository,
-			MemberReferencesRepository memberReferencesRepository, Tracer tracer, MemberRepository memberRepository,
+			MemberRepository memberRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.memberRepository = memberRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;

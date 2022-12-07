@@ -43,7 +43,8 @@ class FragmentFetchServiceImplTest {
 	void when_getFragment_WhenNoFragmentExists_ThenMissingFragmentExceptionIsThrown() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
+		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest.generateFragmentId()))
+				.thenReturn(Optional.empty());
 
 		MissingFragmentException missingFragmentException = assertThrows(MissingFragmentException.class,
 				() -> fragmentFetchService.getFragment(ldesFragmentRequest));
@@ -59,7 +60,8 @@ class FragmentFetchServiceImplTest {
 		ldesFragment.setSoftDeleted(true);
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.of(ldesFragment));
+		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest.generateFragmentId()))
+				.thenReturn(Optional.of(ldesFragment));
 
 		DeletedFragmentException deletedFragmentException = assertThrows(DeletedFragmentException.class,
 				() -> fragmentFetchService.getFragment(ldesFragmentRequest));
@@ -71,14 +73,13 @@ class FragmentFetchServiceImplTest {
 	@Test
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
 		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_INFO);
-		ldesFragment.addMember("firstMember");
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.of(ldesFragment));
+		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest.generateFragmentId()))
+				.thenReturn(Optional.of(ldesFragment));
 
 		LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
 
-		assertEquals(1, returnedFragment.getMemberIds().size());
 		assertTrue(returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
 		assertEquals(FRAGMENTATION_VALUE_1,
 				returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).get());
