@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -68,6 +70,18 @@ class MemberIngestionControllerTest {
 				.contentType("application/n-quads")
 				.content(ldesMemberString))
 				.andDo(print()).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
+	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
+
+		MalformedMemberIdException malformedMemberIdException = assertThrows
+		mockMvc.perform(post("/mobility-hindrances")
+						.contentType("application/n-quads")
+						.content(ldesMemberString))
+				.andDo(print()).andExpect();
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat) throws URISyntaxException, IOException {
