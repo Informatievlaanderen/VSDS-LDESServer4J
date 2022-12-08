@@ -31,8 +31,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		SubstringBucketiser substringBucketiser = new SubstringBucketiser(substringConfig);
 		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 		SubstringRelationsAttributer substringRelationsAttributer = new SubstringRelationsAttributer(
-				treeNodeRelationsRepository, nonCriticalTasksExecutor);
-				ldesFragmentRepository, substringConfig);
+				treeNodeRelationsRepository, nonCriticalTasksExecutor, substringConfig);
 		SubstringFragmentFinder substringFragmentFinder = new SubstringFragmentFinder(substringFragmentCreator,
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +29,10 @@ class SubstringRelationsAttributerTest {
 
 		TreeNodeRelationsRepository treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
 		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
+		SubstringConfig substringConfig = new SubstringConfig();
+		substringConfig.setFragmenterSubjectFilter("somefilter");
 		substringRelationsAttributer = new SubstringRelationsAttributer(treeNodeRelationsRepository,
-				nonCriticalTasksExecutor);
+				nonCriticalTasksExecutor, substringConfig);
 	}
 
 	@Test

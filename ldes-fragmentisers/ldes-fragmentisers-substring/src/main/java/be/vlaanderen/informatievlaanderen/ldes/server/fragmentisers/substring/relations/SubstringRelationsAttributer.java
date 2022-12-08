@@ -18,12 +18,8 @@ public class SubstringRelationsAttributer {
 	private final SubstringConfig substringConfig;
 
 	public SubstringRelationsAttributer(TreeNodeRelationsRepository treeNodeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
-			TreeNodeRelationsRepository treeNodeRelationsRepository) {
-	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor,
 			SubstringConfig substringConfig) {
-		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 		this.substringConfig = substringConfig;
