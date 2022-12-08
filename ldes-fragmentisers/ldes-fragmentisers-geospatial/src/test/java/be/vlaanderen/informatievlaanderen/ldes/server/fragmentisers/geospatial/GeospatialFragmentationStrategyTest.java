@@ -77,7 +77,7 @@ class GeospatialFragmentationStrategyTest {
 	}
 
 	private LdesFragment mockCreationGeospatialFragment(String tile) {
-		LdesFragment tileFragment = PARENT_FRAGMENT.createChild(new FragmentPair("tile", tile));
+		LdesFragment tileFragment = PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
 		when(fragmentCreator.getOrCreateTileFragment(PARENT_FRAGMENT, tile,
 				ROOT_TILE_FRAGMENT))
 				.thenReturn(tileFragment);
