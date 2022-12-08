@@ -34,7 +34,6 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		SubstringFragmentFinder substringFragmentFinder = new SubstringFragmentFinder(substringFragmentCreator,
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,
-				ldesFragmentRepository,
 				tracer, substringBucketiser, substringFragmentFinder, substringFragmentCreator,
 				treeNodeRelationsRepository);
 	}

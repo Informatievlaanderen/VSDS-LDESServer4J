@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -21,10 +20,10 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository, OpenFragmentProvider openFragmentProvider, Tracer tracer,
+			OpenFragmentProvider openFragmentProvider, Tracer tracer,
 			TreeNodeRelationsRepository treeNodeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		super(fragmentationStrategy, ldesFragmentRepository, treeNodeRelationsRepository);
+		super(fragmentationStrategy, treeNodeRelationsRepository);
 		this.openFragmentProvider = openFragmentProvider;
 		this.tracer = tracer;
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;

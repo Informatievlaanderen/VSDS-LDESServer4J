@@ -34,7 +34,6 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
-				ldesFragmentRepository,
 				geospatialBucketiser, geospatialFragmentCreator, tracer, treeNodeRelationsRepository);
 	}
 
