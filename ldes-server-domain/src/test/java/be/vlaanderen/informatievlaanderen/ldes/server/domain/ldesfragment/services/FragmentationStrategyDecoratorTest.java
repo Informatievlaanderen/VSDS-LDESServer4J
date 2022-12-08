@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,14 +18,14 @@ import static org.mockito.Mockito.mock;
 
 class FragmentationStrategyDecoratorTest {
 	FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
-	TreeNodeRelationsRepository treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
+	TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
 	private static final String VIEW_NAME = "view";
 
 	@BeforeEach
 	void setUp() {
 		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
-				treeNodeRelationsRepository);
+				treeRelationsRepository);
 	}
 
 	@Test
@@ -40,8 +40,8 @@ class FragmentationStrategyDecoratorTest {
 		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
 				childFragment);
 
-		Mockito.verify(treeNodeRelationsRepository,
-				Mockito.times(1)).addTreeNodeRelation(parentFragment.getFragmentId(), expectedRelation);
+		Mockito.verify(treeRelationsRepository,
+				Mockito.times(1)).addTreeRelation(parentFragment.getFragmentId(), expectedRelation);
 	}
 
 	@Test
@@ -59,9 +59,9 @@ class FragmentationStrategyDecoratorTest {
 	static class FragmentationStrategyDecoratorTestImpl extends
 			FragmentationStrategyDecorator {
 		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
-				TreeNodeRelationsRepository treeNodeRelationsRepository) {
+				TreeRelationsRepository treeRelationsRepository) {
 			super(fragmentationStrategy,
-					treeNodeRelationsRepository);
+					treeRelationsRepository);
 		}
 	}
 }

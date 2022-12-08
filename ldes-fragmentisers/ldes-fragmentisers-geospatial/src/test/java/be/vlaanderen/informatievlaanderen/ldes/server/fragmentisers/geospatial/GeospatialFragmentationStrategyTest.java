@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ class GeospatialFragmentationStrategyTest {
 	private GeospatialBucketiser geospatialBucketiser;
 	private GeospatialFragmentCreator fragmentCreator;
 	private Tracer tracer;
-	private final TreeNodeRelationsRepository treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
+	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 	private FragmentationStrategy decoratedFragmentationStrategy;
 	private GeospatialFragmentationStrategy geospatialFragmentationStrategy;
 
@@ -43,7 +43,7 @@ class GeospatialFragmentationStrategyTest {
 		when(fragmentCreator.getOrCreateRootFragment(PARENT_FRAGMENT, FRAGMENT_KEY_TILE_ROOT))
 				.thenReturn(ROOT_TILE_FRAGMENT);
 		geospatialFragmentationStrategy = new GeospatialFragmentationStrategy(decoratedFragmentationStrategy,
-				geospatialBucketiser, fragmentCreator, tracer, treeNodeRelationsRepository);
+				geospatialBucketiser, fragmentCreator, tracer, treeRelationsRepository);
 	}
 
 	@Test

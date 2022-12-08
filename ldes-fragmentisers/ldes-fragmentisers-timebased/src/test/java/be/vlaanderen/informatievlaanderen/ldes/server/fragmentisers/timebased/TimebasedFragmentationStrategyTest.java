@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class TimebasedFragmentationStrategyTest {
 	private FragmentationStrategy fragmentationStrategy;
 	private static LdesFragment PARENT_FRAGMENT;
 	private static LdesFragment OPEN_FRAGMENT;
-	private final TreeNodeRelationsRepository treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
+	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 
 	@BeforeEach
@@ -36,7 +36,7 @@ class TimebasedFragmentationStrategyTest {
 		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair("generatedAtTime", "someTime"));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
 				openFragmentProvider, tracer,
-				treeNodeRelationsRepository,
+				treeRelationsRepository,
 				nonCriticalTasksExecutor);
 	}
 

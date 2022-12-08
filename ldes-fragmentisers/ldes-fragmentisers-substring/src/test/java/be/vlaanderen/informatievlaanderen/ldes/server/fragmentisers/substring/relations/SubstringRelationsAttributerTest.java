@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.NonCri
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,16 +27,16 @@ class SubstringRelationsAttributerTest {
 				new FragmentInfo(VIEW_NAME, List.of()));
 		CHILD_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 
-		TreeNodeRelationsRepository treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
+		TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setFragmenterSubjectFilter("somefilter");
-		substringRelationsAttributer = new SubstringRelationsAttributer(treeNodeRelationsRepository,
+		substringRelationsAttributer = new SubstringRelationsAttributer(treeRelationsRepository,
 				nonCriticalTasksExecutor, substringConfig);
 	}
 
 	@Test
-	void when_SubstringRelationIsAdded_TreeNodeRelationsRepositoryAddsARelation() {
+	void when_SubstringRelationIsAdded_TreeRelationsRepositoryAddsARelation() {
 		substringRelationsAttributer.addSubstringRelation(PARENT_FRAGMENT,
 				CHILD_FRAGMENT);
 

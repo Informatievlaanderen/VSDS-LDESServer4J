@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
@@ -15,17 +15,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
 	private final OpenFragmentProvider openFragmentProvider;
 	private final Tracer tracer;
-	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
+	private final TreeRelationsRepository treeRelationsRepository;
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			OpenFragmentProvider openFragmentProvider, Tracer tracer,
-			TreeNodeRelationsRepository treeNodeRelationsRepository,
+			TreeRelationsRepository treeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		super(fragmentationStrategy, treeNodeRelationsRepository);
+		super(fragmentationStrategy, treeRelationsRepository);
 		this.openFragmentProvider = openFragmentProvider;
 		this.tracer = tracer;
-		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
+		this.treeRelationsRepository = treeRelationsRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 	}
 
@@ -34,7 +34,7 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
 		LdesFragment ldesFragment = openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		nonCriticalTasksExecutor.submit(() -> {
-			if (treeNodeRelationsRepository.getRelations(parentFragment.getFragmentId()).stream()
+			if (treeRelationsRepository.getRelations(parentFragment.getFragmentId()).stream()
 					.noneMatch(relation -> relation.relation().equals(GENERIC_TREE_RELATION))) {
 				super.addRelationFromParentToChild(parentFragment, ldesFragment);
 			}

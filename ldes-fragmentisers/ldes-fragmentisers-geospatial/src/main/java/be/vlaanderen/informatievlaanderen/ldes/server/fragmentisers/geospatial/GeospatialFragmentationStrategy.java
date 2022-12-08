@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import org.springframework.cloud.sleuth.Span;
@@ -24,8 +24,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
-			Tracer tracer, TreeNodeRelationsRepository treeNodeRelationsRepository) {
-		super(fragmentationStrategy, treeNodeRelationsRepository);
+			Tracer tracer, TreeRelationsRepository treeRelationsRepository) {
+		super(fragmentationStrategy, treeRelationsRepository);
 		this.geospatialBucketiser = geospatialBucketiser;
 		this.fragmentCreator = fragmentCreator;
 		this.tracer = tracer;

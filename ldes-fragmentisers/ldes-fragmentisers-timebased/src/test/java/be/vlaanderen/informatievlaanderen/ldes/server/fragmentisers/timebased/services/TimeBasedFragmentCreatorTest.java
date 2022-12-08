@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,10 @@ class TimeBasedFragmentCreatorTest {
 	@BeforeEach
 	void setUp() {
 		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
-		TreeNodeRelationsRepository treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
+		TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(
-				ldesFragmentRepository, treeNodeRelationsRepository,
+				ldesFragmentRepository, treeRelationsRepository,
 				nonCriticalTasksExecutor);
 	}
 

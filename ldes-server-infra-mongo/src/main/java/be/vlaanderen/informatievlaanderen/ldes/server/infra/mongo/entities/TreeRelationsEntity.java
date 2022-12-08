@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.List;
 
 @Document("relations")
-public class TreeNodeRelationsEntity {
+public class TreeRelationsEntity {
 	@Id
 	private final String id;
 
@@ -17,7 +17,7 @@ public class TreeNodeRelationsEntity {
 		return relations;
 	}
 
-	public TreeNodeRelationsEntity(String id, List<TreeRelation> relations) {
+	public TreeRelationsEntity(String id, List<TreeRelation> relations) {
 		this.id = id;
 		this.relations = relations;
 	}

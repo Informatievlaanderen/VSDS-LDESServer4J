@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,14 +19,14 @@ class TileFragmentRelationsAttributerTest {
 	private static final String VIEW_NAME = "view";
 	private TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 
-	private TreeNodeRelationsRepository treeNodeRelationsRepository;
+	private TreeRelationsRepository treeRelationsRepository;
 
 	@BeforeEach
 	void setUp() {
-		treeNodeRelationsRepository = mock(TreeNodeRelationsRepository.class);
+		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		PARENT_FRAGMENT = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
-		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(treeNodeRelationsRepository);
+		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(treeRelationsRepository);
 	}
 
 	@Test
@@ -42,8 +42,8 @@ class TileFragmentRelationsAttributerTest {
 		tileFragmentRelationsAttributer.addRelationsFromRootToBottom(
 				rootFragment, tileFragment);
 
-		verify(treeNodeRelationsRepository,
-				times(1)).addTreeNodeRelation(rootFragment.getFragmentId(), expectedRelation);
+		verify(treeRelationsRepository,
+				times(1)).addTreeRelation(rootFragment.getFragmentId(), expectedRelation);
 	}
 
 	private LdesFragment createTileFragment(String tile) {
