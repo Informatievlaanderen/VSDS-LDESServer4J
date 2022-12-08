@@ -47,7 +47,7 @@ class GeospatialFragmentationStrategyTest {
 	}
 
 	@Test
-	void when_TileFragmentsAreCreated_RelationsAreAttributedAndDecoratedServiceIsCalled() {
+	void when_MemberIsAddedToFragment_GeospatialFragmentationIsApplied() {
 		Member member = mock(Member.class);
 		Span parentSpan = mock(Span.class);
 		Span childSpan = mock(Span.class);
