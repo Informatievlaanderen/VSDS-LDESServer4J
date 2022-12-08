@@ -18,6 +18,9 @@ public class SubstringFragmentCreator {
 		LdesFragment child = parentFragment.createChild(new FragmentPair(SUBSTRING, substring));
 		return ldesFragmentRepository
 				.retrieveFragment(child.getFragmentId())
-				.orElse(child);
+				.orElseGet(() -> {
+					ldesFragmentRepository.saveFragment(child);
+					return child;
+				});
 	}
 }
