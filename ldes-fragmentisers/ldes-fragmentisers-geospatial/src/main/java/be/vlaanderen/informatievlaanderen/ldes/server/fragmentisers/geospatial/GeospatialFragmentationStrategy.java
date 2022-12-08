@@ -39,7 +39,7 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 		tiles
 				.stream()
 				.parallel()
-				.map(tile -> fragmentCreator.getOrCreateGeospatialFragment(parentFragment, tile, rootTileFragment))
+				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment))
 				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
 						geospatialFragmentationSpan));
 		geospatialFragmentationSpan.end();
@@ -47,8 +47,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 	private void getRootTileFragment(LdesFragment parentFragment) {
 		if (rootTileFragment == null) {
-			LdesFragment tileRootFragment = fragmentCreator.getOrCreateGeospatialFragment(parentFragment,
-					FRAGMENT_KEY_TILE_ROOT, rootTileFragment);
+			LdesFragment tileRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment,
+					FRAGMENT_KEY_TILE_ROOT);
 			super.addRelationFromParentToChild(parentFragment, tileRootFragment);
 			rootTileFragment = tileRootFragment;
 		}

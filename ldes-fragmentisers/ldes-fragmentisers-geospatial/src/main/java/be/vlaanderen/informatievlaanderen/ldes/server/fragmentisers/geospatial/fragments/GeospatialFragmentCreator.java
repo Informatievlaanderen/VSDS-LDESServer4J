@@ -22,7 +22,7 @@ public class GeospatialFragmentCreator {
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 	}
 
-	public LdesFragment getOrCreateGeospatialFragment(LdesFragment parentFragment, String tile,
+	public LdesFragment getOrCreateTileFragment(LdesFragment parentFragment, String tile,
 			LdesFragment rootTileFragment) {
 		LdesFragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
 		return ldesFragmentRepository
@@ -31,6 +31,16 @@ public class GeospatialFragmentCreator {
 					ldesFragmentRepository.saveFragment(child);
 					nonCriticalTasksExecutor.submit(() -> tileFragmentRelationsAttributer
 							.addRelationsFromRootToBottom(rootTileFragment, child));
+					return child;
+				});
+	}
+
+	public LdesFragment getOrCreateRootFragment(LdesFragment parentFragment, String tile) {
+		LdesFragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
+		return ldesFragmentRepository
+				.retrieveFragment(child.getFragmentId())
+				.orElseGet(() -> {
+					ldesFragmentRepository.saveFragment(child);
 					return child;
 				});
 	}
