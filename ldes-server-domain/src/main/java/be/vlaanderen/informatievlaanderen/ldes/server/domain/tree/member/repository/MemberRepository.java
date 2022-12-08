@@ -16,4 +16,6 @@ public interface MemberRepository {
 	void deleteMember(String memberId);
 
 	void addMemberReference(String ldesMemberId, String fragmentId);
+
+	List<Member> getMembersByReference(String treeNodeId);
 }

@@ -69,4 +69,11 @@ public class MemberMongoRepository implements MemberRepository {
 		update.push("treeNodeReferences", fragmentId);
 		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
 	}
+
+	@Override
+	public List<Member> getMembersByReference(String treeNodeId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("treeNodeReferences").is(treeNodeId));
+		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(LdesMemberEntity::toLdesMember).toList();
+	}
 }

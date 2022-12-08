@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpInputMessage;
@@ -20,12 +19,12 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 
-public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragment> {
+public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
-	private final LdesFragmentConverter ldesFragmentConverter;
+	private final TreeNodeConverter treeNodeConverter;
 
-	public LdesFragmentHttpConverter(LdesFragmentConverter ldesFragmentConverter) {
-		this.ldesFragmentConverter = ldesFragmentConverter;
+	public TreeNodeHttpConverter(TreeNodeConverter treeNodeConverter) {
+		this.treeNodeConverter = treeNodeConverter;
 	}
 
 	@Override
@@ -35,7 +34,7 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 
 	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-		return clazz.isAssignableFrom(LdesFragment.class);
+		return clazz.isAssignableFrom(TreeNode.class);
 	}
 
 	@Override
@@ -45,17 +44,17 @@ public class LdesFragmentHttpConverter implements HttpMessageConverter<LdesFragm
 	}
 
 	@Override
-	public LdesFragment read(Class<? extends LdesFragment> clazz, HttpInputMessage inputMessage)
+	public TreeNode read(Class<? extends TreeNode> clazz, HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
 		return null;
 	}
 
 	@Override
-	public void write(LdesFragment ldesFragment, MediaType contentType, HttpOutputMessage outputMessage)
+	public void write(TreeNode treeNode, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		OutputStream body = outputMessage.getBody();
 		Lang rdfFormat = getLang(contentType, FETCH);
-		Model fragmentModel = ldesFragmentConverter.toModel(ldesFragment);
+		Model fragmentModel = treeNodeConverter.toModel(treeNode);
 		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
 		body.write(outputString.getBytes());
 	}
