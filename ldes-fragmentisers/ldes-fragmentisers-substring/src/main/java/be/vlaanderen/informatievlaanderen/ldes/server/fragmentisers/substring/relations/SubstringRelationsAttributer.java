@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
@@ -13,29 +13,30 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.subst
 
 public class SubstringRelationsAttributer {
 
-	private final LdesFragmentRepository ldesFragmentRepository;
 	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
+	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 	private final SubstringConfig substringConfig;
 
+	public SubstringRelationsAttributer(TreeNodeRelationsRepository treeNodeRelationsRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
 			TreeNodeRelationsRepository treeNodeRelationsRepository) {
 	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
 			SubstringConfig substringConfig) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
+		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 		this.substringConfig = substringConfig;
 	}
 
 	public void addSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
-
 		String substringValue = getSubstringValue(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(substringConfig.getFragmenterPropertyQuery(),
 				childFragment.getFragmentId(),
 				substringValue, STRING_TYPE,
 				TREE_SUBSTRING_RELATION);
-		if (!treeNodeRelationsRepository.getRelations(parentFragment.getFragmentId()).contains(parentChildRelation)) {
-			treeNodeRelationsRepository.addTreeNodeRelation(parentFragment.getFragmentId(), parentChildRelation);
-		}
+		nonCriticalTasksExecutor.submit(() -> treeNodeRelationsRepository
+				.addTreeNodeRelation(parentFragment.getFragmentId(), parentChildRelation));
 	}
 
 	private String getSubstringValue(LdesFragment childFragment) {

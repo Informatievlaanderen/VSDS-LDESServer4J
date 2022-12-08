@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
@@ -24,12 +25,13 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		TreeNodeRelationsRepository treeNodeRelationsRepository = applicationContext
 				.getBean(TreeNodeRelationsRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
+		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
 		SubstringBucketiser substringBucketiser = new SubstringBucketiser(substringConfig);
 		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 		SubstringRelationsAttributer substringRelationsAttributer = new SubstringRelationsAttributer(
-				ldesFragmentRepository, treeNodeRelationsRepository);
+				treeNodeRelationsRepository, nonCriticalTasksExecutor);
 				ldesFragmentRepository, substringConfig);
 		SubstringFragmentFinder substringFragmentFinder = new SubstringFragmentFinder(substringFragmentCreator,
 				substringConfig, substringRelationsAttributer);
