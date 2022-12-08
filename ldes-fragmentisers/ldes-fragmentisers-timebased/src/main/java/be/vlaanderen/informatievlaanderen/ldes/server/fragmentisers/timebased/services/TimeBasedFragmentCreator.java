@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.treenoderelations.TreeNodeRelationsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,16 +16,14 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 public class TimeBasedFragmentCreator {
 
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
-	private final TimebasedFragmentationConfig timebasedFragmentationConfig;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private final TreeNodeRelationsRepository treeNodeRelationsRepository;
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
-	public TimeBasedFragmentCreator(TimebasedFragmentationConfig timeBasedConfig,
-			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository,
+	public TimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
+			TreeNodeRelationsRepository treeNodeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		this.timebasedFragmentationConfig = timeBasedConfig;
 		this.treeNodeRelationsRepository = treeNodeRelationsRepository;
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -46,10 +43,6 @@ public class TimeBasedFragmentCreator {
 			makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment);
 		}
 		return newFragment;
-	}
-
-	public boolean needsToCreateNewFragment(LdesFragment fragment) {
-		return fragment.getCurrentNumberOfMembers() >= timebasedFragmentationConfig.memberLimit();
 	}
 
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,

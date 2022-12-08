@@ -35,17 +35,16 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
 			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(properties,
+		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(
 				ldesFragmentRepository, treeNodeRelationsRepository, nonCriticalTasksExecutor);
-		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository);
+		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
+		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository, timebasedFragmentationConfig);
 	}
 
-	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(ConfigProperties properties,
-			LdesFragmentRepository ldesFragmentRepository, TreeNodeRelationsRepository treeNodeRelationsRepository,
+	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
+			TreeNodeRelationsRepository treeNodeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		return new TimeBasedFragmentCreator(
-				timebasedFragmentationConfig,
 				ldesFragmentRepository, treeNodeRelationsRepository, nonCriticalTasksExecutor);
 	}
 
