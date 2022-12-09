@@ -42,7 +42,7 @@ class TreeNodeFactoryImplTest {
 	}
 
 	@Test
-	void test() {
+	void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
 		MissingFragmentException treeNodeId = assertThrows(MissingFragmentException.class,
 				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID));
@@ -52,7 +52,7 @@ class TreeNodeFactoryImplTest {
 	}
 
 	@Test
-	void test2() {
+	void when_LdesFragmentExists_ReturnTreeNode() {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
 		List<Member> members = List.of(new Member("member", null, List.of()));
