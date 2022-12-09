@@ -21,12 +21,13 @@ import static org.mockito.Mockito.*;
 class TreeNodeRemoverImplTest {
 
 	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
-    private final MemberRepository memberRepository = mock(MemberRepository.class);
-    private final Map<String, List<RetentionPolicy>> retentionPolicyMap = Map.of("view",
+	private final MemberRepository memberRepository = mock(MemberRepository.class);
+	private final Map<String, List<RetentionPolicy>> retentionPolicyMap = Map.of("view",
 			List.of(new TimeBasedRetentionPolicy("PT0S")));
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
 	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);
-	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, memberRepository, retentionPolicyMap,
+	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, memberRepository,
+			retentionPolicyMap,
 			treeMemberRemover, parentUpdater);
 
 	@Test
@@ -35,7 +36,8 @@ class TreeNodeRemoverImplTest {
 		LdesFragment readyToDeleteFragment = readyToDeleteFragment();
 		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("view"))
 				.thenReturn(Stream.of(notReadyToDeleteFragment, readyToDeleteFragment));
-        when(memberRepository.getMembersByReference("/view")).thenReturn(List.of(new Member("memberId",null, List.of())));
+		when(memberRepository.getMembersByReference("/view"))
+				.thenReturn(List.of(new Member("memberId", null, List.of())));
 
 		treeNodeRemover.removeTreeNodes();
 
@@ -56,8 +58,8 @@ class TreeNodeRemoverImplTest {
 	}
 
 	private LdesFragment readyToDeleteFragment() {
-        return new LdesFragment(
-                new FragmentInfo("view", List.of(), true, LocalDateTime.now(), false, 0));
+		return new LdesFragment(
+				new FragmentInfo("view", List.of(), true, LocalDateTime.now(), false, 0));
 	}
 
 }
