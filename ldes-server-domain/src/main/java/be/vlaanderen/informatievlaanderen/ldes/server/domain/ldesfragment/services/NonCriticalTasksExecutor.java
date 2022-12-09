@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import org.springframework.stereotype.Component;
 

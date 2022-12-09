@@ -34,4 +34,13 @@ public class TreeRelationsMongoRepository implements TreeRelationsRepository {
 				.findFirst()
 				.map(TreeRelationsEntity::getRelations).orElseGet(List::of);
 	}
+
+	@Override
+	public void deleteTreeRelation(String treeNodeId, TreeRelation relation) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(treeNodeId));
+		Update update = new Update();
+		update.pull("relations", relation);
+		mongoTemplate.upsert(query, update, TreeRelationsEntity.class);
+	}
 }

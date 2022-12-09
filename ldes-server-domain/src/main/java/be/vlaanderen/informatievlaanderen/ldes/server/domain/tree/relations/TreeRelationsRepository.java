@@ -8,4 +8,6 @@ public interface TreeRelationsRepository {
 	void addTreeRelation(String treeNodeId, TreeRelation relation);
 
 	List<TreeRelation> getRelations(String fragmentId);
+
+	void deleteTreeRelation(String treeNodeId, TreeRelation relation);
 }
