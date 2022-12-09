@@ -27,8 +27,7 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
 				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
-				openFragmentProvider, tracer, treeRelationsRepository,
-				nonCriticalTasksExecutor);
+				openFragmentProvider, tracer, treeRelationsRepository);
 
 	}
 

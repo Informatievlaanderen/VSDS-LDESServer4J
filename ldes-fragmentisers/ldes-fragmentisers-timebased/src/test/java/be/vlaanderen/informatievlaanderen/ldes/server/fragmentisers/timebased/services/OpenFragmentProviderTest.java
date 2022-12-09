@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ import org.mockito.InOrder;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OpenFragmentProviderTest {
@@ -42,9 +43,11 @@ class OpenFragmentProviderTest {
 		when(fragmentCreator.createNewFragment(PARENT_FRAGMENT))
 				.thenReturn(createdFragment);
 
-		LdesFragment ldesFragment = openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
+		Pair<LdesFragment, Boolean> ldesFragment = openFragmentProvider
+				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 
-		assertEquals(createdFragment, ldesFragment);
+		assertTrue(ldesFragment.getRight());
+		assertEquals(createdFragment, ldesFragment.getKey());
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
@@ -61,9 +64,11 @@ class OpenFragmentProviderTest {
 		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
 				.thenReturn(Optional.of(existingLdesFragment));
 
-		LdesFragment ldesFragment = openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
+		Pair<LdesFragment, Boolean> ldesFragment = openFragmentProvider
+				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 
-		assertEquals(existingLdesFragment, ldesFragment);
+		assertFalse(ldesFragment.getRight());
+		assertEquals(existingLdesFragment, ldesFragment.getKey());
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
@@ -82,9 +87,11 @@ class OpenFragmentProviderTest {
 				.thenReturn(Optional.of(completeFragment));
 		when(fragmentCreator.createNewFragment(completeFragment, PARENT_FRAGMENT)).thenReturn(newFragment);
 
-		LdesFragment ldesFragment = openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
+		Pair<LdesFragment, Boolean> ldesFragment = openFragmentProvider
+				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 
-		assertEquals(newFragment, ldesFragment);
+		assertFalse(ldesFragment.getRight());
+		assertEquals(newFragment, ldesFragment.getKey());
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentCreator);
 		inOrder.verify(ldesFragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
