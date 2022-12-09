@@ -1,70 +1,62 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class FragmentFetchServiceImplTest {
-
+class TreeNodeFetcherImplTest {
 	private static final String VIEW_NAME = "view";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-	private static FragmentInfo FRAGMENT_INFO;
-
-	private LdesFragmentRepository ldesFragmentRepository;
-	private FragmentFetchService fragmentFetchService;
+	private TreeNodeFactory treeNodeFactory;
+	private TreeNodeFetcherImpl treeNodeFetcher;
 
 	@BeforeEach
 	void setUp() {
-		FRAGMENT_INFO = new FragmentInfo(
-				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		treeNodeFactory = mock(TreeNodeFactory.class);
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("http://localhost:8089");
-		fragmentFetchService = new FragmentFetchServiceImpl(ldesConfig,
-				ldesFragmentRepository);
+		treeNodeFetcher = new TreeNodeFetcherImpl(ldesConfig,
+				treeNodeFactory);
 	}
 
 	@Test
 	void when_getFragment_WhenNoFragmentExists_ThenMissingFragmentExceptionIsThrown() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest.generateFragmentId()))
-				.thenReturn(Optional.empty());
+		when(treeNodeFactory.getTreeNode(ldesFragmentRequest.generateFragmentId()))
+				.thenThrow(new MissingFragmentException(ldesFragmentRequest.generateFragmentId()));
 
 		MissingFragmentException missingFragmentException = assertThrows(MissingFragmentException.class,
-				() -> fragmentFetchService.getFragment(ldesFragmentRequest));
+				() -> treeNodeFetcher.getFragment(ldesFragmentRequest));
 
 		assertEquals(
-				"No fragment exists with fragment identifier: http://localhost:8089/view?generatedAtTime=2020-12-28T09:36:09.72Z",
+				"No fragment exists with fragment identifier: /view?generatedAtTime=2020-12-28T09:36:09.72Z",
 				missingFragmentException.getMessage());
 	}
 
 	@Test
 	void when_getFragment_WhenFragmentIsDeleted_ThenDeletedFragmentExceptionIsThrown() {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_INFO);
-		ldesFragment.setSoftDeleted(true);
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest.generateFragmentId()))
-				.thenReturn(Optional.of(ldesFragment));
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, true, List.of(), List.of());
+		when(treeNodeFactory.getTreeNode(ldesFragmentRequest.generateFragmentId()))
+				.thenReturn(treeNode);
 
 		DeletedFragmentException deletedFragmentException = assertThrows(DeletedFragmentException.class,
-				() -> fragmentFetchService.getFragment(ldesFragmentRequest));
+				() -> treeNodeFetcher.getFragment(ldesFragmentRequest));
 		assertEquals(
 				"Fragment with following identifier has been deleted: http://localhost:8089/view?generatedAtTime=2020-12-28T09:36:09.72Z",
 				deletedFragmentException.getMessage());
@@ -72,16 +64,14 @@ class FragmentFetchServiceImplTest {
 
 	@Test
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
-		LdesFragment ldesFragment = new LdesFragment(FRAGMENT_INFO);
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest.generateFragmentId()))
-				.thenReturn(Optional.of(ldesFragment));
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, false, List.of(), List.of());
+		when(treeNodeFactory.getTreeNode(ldesFragmentRequest.generateFragmentId()))
+				.thenReturn(treeNode);
 
-		LdesFragment returnedFragment = fragmentFetchService.getFragment(ldesFragmentRequest);
+		TreeNode returnedTreeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 
-		assertTrue(returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
-		assertEquals(FRAGMENTATION_VALUE_1,
-				returnedFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).get());
+		assertEquals(treeNode, returnedTreeNode);
 	}
 }
