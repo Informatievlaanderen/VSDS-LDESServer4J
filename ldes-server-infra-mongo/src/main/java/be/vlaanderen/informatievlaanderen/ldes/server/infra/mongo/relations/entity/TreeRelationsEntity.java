@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.relations.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import org.springframework.data.annotation.Id;

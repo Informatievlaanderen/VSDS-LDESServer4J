@@ -1,12 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesMemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,12 +21,11 @@ public class MemberMongoRepository implements MemberRepository {
 
 	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	private final LdesMemberEntityRepository repository;
+	private final MongoTemplate mongoTemplate;
 
-	@Autowired
-	MongoTemplate mongoTemplate;
-
-	public MemberMongoRepository(final LdesMemberEntityRepository repository) {
+	public MemberMongoRepository(final LdesMemberEntityRepository repository, MongoTemplate mongoTemplate) {
 		this.repository = repository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override

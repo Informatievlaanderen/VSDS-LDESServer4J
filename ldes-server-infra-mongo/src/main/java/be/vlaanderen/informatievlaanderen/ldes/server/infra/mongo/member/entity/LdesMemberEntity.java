@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.jena.rdf.model.Model;

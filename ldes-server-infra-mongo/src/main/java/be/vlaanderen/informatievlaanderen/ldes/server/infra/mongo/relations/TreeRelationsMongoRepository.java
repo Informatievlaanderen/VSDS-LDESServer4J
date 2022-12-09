@@ -1,8 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.TreeRelationsEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.relations.entity.TreeRelationsEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
