@@ -15,12 +15,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
 import java.util.List;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import java.util.Optional;
 
 @Component
 public class MemberMongoRepository implements MemberRepository {
 
+	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	private final LdesMemberEntityRepository repository;
 
 	@Autowired
@@ -51,9 +51,8 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public Stream<Member> getLdesMembersByIds(List<String> ids) {
-		return StreamSupport.stream(repository.findAllById(ids).spliterator(), false)
-				.map(LdesMemberEntity::toLdesMember);
+	public Optional<Member> getMember(String id) {
+		return repository.findById(id).map(LdesMemberEntity::toLdesMember);
 	}
 
 	@Override
@@ -62,18 +61,27 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public synchronized void addMemberReference(String ldesMemberId, String fragmentId) {
+	public synchronized void addMemberReference(String memberId, String fragmentId) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(ldesMemberId));
+		query.addCriteria(Criteria.where("_id").is(memberId));
 		Update update = new Update();
-		update.push("treeNodeReferences", fragmentId);
+		update.push(TREE_NODE_REFERENCES, fragmentId);
+		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
+	}
+
+	@Override
+	public void removeMemberReference(String memberId, String fragmentId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(memberId));
+		Update update = new Update();
+		update.pull(TREE_NODE_REFERENCES, fragmentId);
 		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
 	}
 
 	@Override
 	public List<Member> getMembersByReference(String treeNodeId) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("treeNodeReferences").is(treeNodeId));
+		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId));
 		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(LdesMemberEntity::toLdesMember).toList();
 	}
 }

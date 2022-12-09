@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Optional;
 
 public interface MemberRepository {
 
@@ -11,11 +11,13 @@ public interface MemberRepository {
 
 	boolean memberExists(String id);
 
-	Stream<Member> getLdesMembersByIds(List<String> ids);
+	Optional<Member> getMember(String id);
 
 	void deleteMember(String memberId);
 
-	void addMemberReference(String ldesMemberId, String fragmentId);
+	void addMemberReference(String memberId, String fragmentId);
 
 	List<Member> getMembersByReference(String treeNodeId);
+
+	void removeMemberReference(String memberId, String fragmentId);
 }

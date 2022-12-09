@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesMemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.MemberReferencesEntityRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,13 +29,6 @@ public class MongoAutoConfiguration {
 	public LdesFragmentRepository ldesFragmentMongoRepository(
 			final LdesFragmentEntityRepository ldesFragmentEntityRepository) {
 		return new LdesFragmentMongoRepository(ldesFragmentEntityRepository);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public MemberReferencesMongoRepository memberReferencesMongoRepository(
-			final MemberReferencesEntityRepository memberReferencesEntityRepository) {
-		return new MemberReferencesMongoRepository(memberReferencesEntityRepository);
 	}
 
 	@Bean
