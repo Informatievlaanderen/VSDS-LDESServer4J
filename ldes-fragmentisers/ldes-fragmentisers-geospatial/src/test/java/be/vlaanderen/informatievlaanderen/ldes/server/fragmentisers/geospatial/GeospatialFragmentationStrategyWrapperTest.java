@@ -25,7 +25,7 @@ class GeospatialFragmentationStrategyWrapperTest {
 	@Test
 	void when_FragmentationStrategyIsUpdated_GeospatialFragmentationStrategyIsReturned() {
 		ConfigProperties properties = new ConfigProperties(
-				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
+				Map.of("maxZoomLevel", "15", "fragmenterPropertyQuery", "http://www.opengis.net/ont/geosparql#asWKT"));
 		FragmentationStrategy decoratedFragmentationStrategy = geospatialFragmentationUpdater
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
 		assertTrue(decoratedFragmentationStrategy instanceof GeospatialFragmentationStrategy);
