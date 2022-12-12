@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 
@@ -45,13 +44,13 @@ public class Member {
 					.stream()
 					.map(querySolution -> {
 						List<RDFNode> rdfNodes = new ArrayList<>();
-						query.getResultVars().forEach(var -> rdfNodes.add(querySolution.get(var)));
+						query.getResultVars().forEach(resultVar -> rdfNodes.add(querySolution.get(resultVar)));
 						return rdfNodes;
 					})
 					.flatMap(Collection::stream)
 					.map(RDFNode::asLiteral)
 					.map(Literal::getValue)
-					.collect(Collectors.toList());
+					.toList();
 		}
 	}
 
