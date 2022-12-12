@@ -13,7 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -30,6 +29,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -76,12 +77,21 @@ class MemberIngestionControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
+		String ldesMemberType = ldesConfig.getMemberType();
+		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,ldesMemberType.substring(0,ldesMemberType.length() - 1));
 
-		MalformedMemberIdException malformedMemberIdException = assertThrows
-		mockMvc.perform(post("/mobility-hindrances")
-						.contentType("application/n-quads")
-						.content(ldesMemberString))
-				.andDo(print()).andExpect();
+		Exception actualException = assertThrows(MalformedMemberIdException.class, () -> {
+			try {
+				mockMvc.perform(post("/mobility-hindrances")
+								.contentType("application/n-quads")
+								.content(ldesMemberStringWrongType))
+						.andDo(print());
+			} catch (Exception e) {
+				//throw nested exception
+				throw e.getCause();
+			}
+		});
+		assertEquals(actualException.getMessage(), new MalformedMemberIdException(ldesMemberType).getMessage());
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat) throws URISyntaxException, IOException {
