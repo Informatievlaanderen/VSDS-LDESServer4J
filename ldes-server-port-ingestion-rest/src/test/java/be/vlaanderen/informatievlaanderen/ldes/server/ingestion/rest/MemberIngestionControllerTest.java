@@ -78,15 +78,16 @@ class MemberIngestionControllerTest {
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
 		String ldesMemberType = ldesConfig.getMemberType();
-		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,ldesMemberType.substring(0,ldesMemberType.length() - 1));
+		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
+				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 
 		Exception actualException = assertThrows(MalformedMemberIdException.class, () -> {
 			try {
 				mockMvc.perform(post("/mobility-hindrances")
-								.contentType("application/n-quads")
-								.content(ldesMemberStringWrongType));
+						.contentType("application/n-quads")
+						.content(ldesMemberStringWrongType));
 			} catch (Exception e) {
-				//throw nested exception
+				// throw nested exception
 				throw e.getCause();
 			}
 		});
