@@ -39,7 +39,7 @@ class SubstringRelationsAttributerTest {
 
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		SubstringConfig substringConfig = mock(SubstringConfig.class);
-		when(substringConfig.getFragmenterProperty()).thenReturn(FRAGMENTER_PROPERTY);
+		when(substringConfig.getFragmenterPropertyQuery()).thenReturn(FRAGMENTER_PROPERTY);
 		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository, substringConfig);
 	}
 
