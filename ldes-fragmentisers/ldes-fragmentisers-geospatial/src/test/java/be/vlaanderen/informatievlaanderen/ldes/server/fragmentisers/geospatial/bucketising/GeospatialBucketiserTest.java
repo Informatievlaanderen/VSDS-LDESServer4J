@@ -13,21 +13,18 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 class GeospatialBucketiserTest {
 
 	private GeospatialBucketiser bucketiser;
 
-	private final GeospatialConfig geospatialConfig = new GeospatialConfig(".*",
-			"http://www.opengis.net/ont/geosparql#asWKT",
+	private final GeospatialConfig geospatialConfig = new GeospatialConfig(
+			"PREFIX gs: <http://www.opengis.net/ont/geosparql#> SELECT ?x WHERE { ?s gs:asWKT ?x . }",
 			15);
 
 	@Test

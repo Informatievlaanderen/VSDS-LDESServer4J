@@ -4,7 +4,7 @@ views:
       - name: "geospatial"
         config:
           maxZoomLevel: 15
-          fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+          fragmenterPropertyQuery: "PREFIX gs: <http://www.opengis.net/ont/geosparql#> SELECT ?x WHERE { ?s gs:asWKT ?x . }"
       - name: "timebased"
         config:
           memberLimit: 5
