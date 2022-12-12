@@ -84,8 +84,7 @@ class MemberIngestionControllerTest {
 			try {
 				mockMvc.perform(post("/mobility-hindrances")
 								.contentType("application/n-quads")
-								.content(ldesMemberStringWrongType))
-						.andDo(print());
+								.content(ldesMemberStringWrongType));
 			} catch (Exception e) {
 				//throw nested exception
 				throw e.getCause();
