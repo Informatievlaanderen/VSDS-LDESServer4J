@@ -11,7 +11,8 @@ public class MalformedMemberIdException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "Member id could not be extracted. MemberType " + expectedMemberType + " could not be found in listStatements.";
+		return "Member id could not be extracted. MemberType " + expectedMemberType
+				+ " could not be found in listStatements.";
 	}
 
 }
