@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 public class FragmentInfo {
 
@@ -21,10 +21,7 @@ public class FragmentInfo {
 	private final int numberOfMembers;
 
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
-		this.viewName = viewName;
-		this.fragmentPairs = fragmentPairs;
-		this.immutable = false;
-		this.softDeleted = false;
+		this(viewName, fragmentPairs, false, null, false);
 		this.numberOfMembers = 0;
 	}
 
@@ -39,11 +36,8 @@ public class FragmentInfo {
 	}
 
 	public Optional<String> getValueOfKey(String key) {
-		return fragmentPairs
-				.stream()
-				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(key))
-				.map(FragmentPair::fragmentValue)
-				.findFirst();
+		return fragmentPairs.stream().filter(fragmentPair -> fragmentPair.fragmentKey().equals(key))
+				.map(FragmentPair::fragmentValue).findFirst();
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
@@ -105,14 +99,13 @@ public class FragmentInfo {
 
 	public String generateFragmentId() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder
-				.append("/").append(viewName);
+		stringBuilder.append("/").append(viewName);
 
 		if (!fragmentPairs.isEmpty()) {
 			stringBuilder.append("?");
-			stringBuilder
-					.append(fragmentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
-							"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
+			stringBuilder.append(fragmentPairs.stream()
+					.map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
+					.collect(Collectors.joining("&")));
 		}
 
 		return stringBuilder.toString();
