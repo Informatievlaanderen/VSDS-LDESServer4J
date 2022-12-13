@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,15 +82,12 @@ class MemberIngestionControllerTest {
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 
+		MockHttpServletRequestBuilder postRequest = post("/mobility-hindrances")
+				.contentType("application/n-quads")
+				.content(ldesMemberStringWrongType);
+		Exception outerException = assertThrows(Exception.class, () -> mockMvc.perform(postRequest));
 		Exception actualException = assertThrows(MalformedMemberIdException.class, () -> {
-			try {
-				mockMvc.perform(post("/mobility-hindrances")
-						.contentType("application/n-quads")
-						.content(ldesMemberStringWrongType));
-			} catch (Exception e) {
-				// throw nested exception
-				throw e.getCause();
-			}
+			throw outerException.getCause();
 		});
 		assertEquals(actualException.getMessage(), new MalformedMemberIdException(ldesMemberType).getMessage());
 	}
