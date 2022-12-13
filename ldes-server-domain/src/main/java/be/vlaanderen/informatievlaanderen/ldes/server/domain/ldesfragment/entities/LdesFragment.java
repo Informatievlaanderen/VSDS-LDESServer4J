@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entit
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LdesFragment {
 
@@ -9,9 +11,12 @@ public class LdesFragment {
 
 	private final FragmentInfo fragmentInfo;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(LdesFragment.class);
+
 	public LdesFragment(final FragmentInfo fragmentInfo) {
 		this.fragmentInfo = fragmentInfo;
 		this.fragmentId = fragmentInfo.generateFragmentId();
+		LOGGER.debug("Fragment with id " + fragmentId + " created");
 	}
 
 	public String getFragmentId() {
