@@ -32,8 +32,8 @@ public class MongoAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public LdesFragmentRepository ldesFragmentMongoRepository(
-			final LdesFragmentEntityRepository ldesFragmentEntityRepository) {
-		return new LdesFragmentMongoRepository(ldesFragmentEntityRepository);
+			final LdesFragmentEntityRepository ldesFragmentEntityRepository, final MongoTemplate mongoTemplate) {
+		return new LdesFragmentMongoRepository(ldesFragmentEntityRepository, mongoTemplate);
 	}
 
 	@Bean

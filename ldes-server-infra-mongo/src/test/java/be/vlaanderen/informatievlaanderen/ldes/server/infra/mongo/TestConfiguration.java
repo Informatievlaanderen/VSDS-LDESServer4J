@@ -34,7 +34,8 @@ public class TestConfiguration {
 	}
 
 	@Bean
-	public LdesFragmentMongoRepository ldesFragmentMongoRepository(final LdesFragmentEntityRepository repository) {
-		return new LdesFragmentMongoRepository(repository);
+	public LdesFragmentMongoRepository ldesFragmentMongoRepository(final LdesFragmentEntityRepository repository,
+			final MongoTemplate mongoTemplate) {
+		return new LdesFragmentMongoRepository(repository, mongoTemplate);
 	}
 }

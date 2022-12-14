@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,12 +19,11 @@ import java.util.stream.Stream;
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 
 	private final LdesFragmentEntityRepository repository;
+	private final MongoTemplate mongoTemplate;
 
-	@Autowired
-	MongoTemplate mongoTemplate;
-
-	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository) {
+	public LdesFragmentMongoRepository(LdesFragmentEntityRepository repository, MongoTemplate mongoTemplate) {
 		this.repository = repository;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	@Override
