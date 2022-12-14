@@ -2,17 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.ConfigurableEnvironment;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class EventStreamController {
@@ -23,13 +19,7 @@ public class EventStreamController {
 	private static final String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
 	private static final String INLINE = "inline";
 
-	@Value("${ldes.collectionname}")
-	private String collectionName;
-
 	private final EventStreamFetcher eventStreamFetcher;
-
-	@Autowired
-	private ConfigurableEnvironment myEnv;
 
 	public EventStreamController(EventStreamFetcher eventStreamFetcher) {
 		this.eventStreamFetcher = eventStreamFetcher;
