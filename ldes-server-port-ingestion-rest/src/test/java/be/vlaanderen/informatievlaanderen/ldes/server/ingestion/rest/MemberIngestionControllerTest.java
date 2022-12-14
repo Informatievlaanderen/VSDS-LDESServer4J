@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +30,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -71,6 +75,24 @@ class MemberIngestionControllerTest {
 				.contentType("application/n-quads")
 				.content(ldesMemberString))
 				.andDo(print()).andExpect(status().isNotFound());
+	}
+
+	@Test
+	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
+	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
+		String ldesMemberType = ldesConfig.getMemberType();
+		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
+				ldesMemberType.substring(0, ldesMemberType.length() - 1));
+
+		MockHttpServletRequestBuilder postRequest = post("/mobility-hindrances")
+				.contentType("application/n-quads")
+				.content(ldesMemberStringWrongType);
+		Exception outerException = assertThrows(Exception.class, () -> mockMvc.perform(postRequest));
+		Exception actualException = assertThrows(MalformedMemberIdException.class, () -> {
+			throw outerException.getCause();
+		});
+		assertEquals(actualException.getMessage(), new MalformedMemberIdException(ldesMemberType).getMessage());
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)
