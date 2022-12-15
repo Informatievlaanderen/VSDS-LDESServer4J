@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +23,11 @@ public class TreeNodeController {
 	private static final String INLINE = "inline";
 
 	private final TreeNodeFetcher treeNodeFetcher;
+	private final CachingStrategy cachingStrategy;
 
 	public TreeNodeController(TreeNodeFetcher treeNodeFetcher) {
 		this.treeNodeFetcher = treeNodeFetcher;
+		this.cachingStrategy = cachingStrategy;
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
@@ -46,6 +48,7 @@ public class TreeNodeController {
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, treeNode);
+		setEtagHeader(response, fragment);
 		return treeNode;
 
 	}
@@ -65,4 +68,7 @@ public class TreeNodeController {
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
 	}
 
+	private void setEtagHeader(HttpServletResponse response, LdesFragment ldesFragment) {
+		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(ldesFragment));
+	}
 }
