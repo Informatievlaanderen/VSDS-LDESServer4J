@@ -8,10 +8,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferenc
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -31,7 +31,7 @@ class FragmentationStrategyCreatorImplTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final MemberReferencesRepository memberReferencesRepository = mock(MemberReferencesRepository.class);
-	private final Tracer tracer = mock(Tracer.class);
+	private final ObservationRegistry tracer = mock(ObservationRegistry.class);
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach

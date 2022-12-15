@@ -6,22 +6,19 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.cloud.sleuth.Tracer;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class FragmentationStrategyImplTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final MemberReferencesRepository memberReferencesRepository = mock(MemberReferencesRepository.class);
-	private final Tracer tracer = mockTracer();
 
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			ldesFragmentRepository,
-			memberReferencesRepository, tracer);
+			memberReferencesRepository, null);
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {

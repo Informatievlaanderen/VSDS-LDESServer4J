@@ -6,25 +6,29 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
 public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
 	private final OpenFragmentProvider openFragmentProvider;
-	private final Tracer tracer;
+	private final ObservationRegistry observationRegistry;
 
 	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository, OpenFragmentProvider openFragmentProvider, Tracer tracer) {
+			LdesFragmentRepository ldesFragmentRepository, OpenFragmentProvider openFragmentProvider,
+			ObservationRegistry observationRegistry) {
 		super(fragmentationStrategy, ldesFragmentRepository);
 		this.openFragmentProvider = openFragmentProvider;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
-		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
+		Observation timebasedFragmentationSpan = Observation.createNotStarted("timebased fragmentation",
+						observationRegistry)
+				.parentObservation(parentObservation)
+				.start();
 		LdesFragment ldesFragment = openFragmentProvider
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		if (!ldesFragment.getMemberIds().contains(member.getLdesMemberId())) {
@@ -34,7 +38,7 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 			}
 			super.addMemberToFragment(ldesFragment, member, timebasedFragmentationSpan);
 		}
-		timebasedFragmentationSpan.end();
+		timebasedFragmentationSpan.stop();
 	}
 
 }

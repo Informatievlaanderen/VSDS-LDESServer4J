@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -19,23 +19,23 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final MemberReferencesRepository memberReferencesRepository;
 	private final RootFragmentCreator rootFragmentCreator;
-	private final Tracer tracer;
+	private final ObservationRegistry observationRegistry;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
 			LdesFragmentRepository ldesFragmentRepository,
 			MemberReferencesRepository memberReferencesRepository, RootFragmentCreator rootFragmentCreator,
-			Tracer tracer) {
+			ObservationRegistry observationRegistry) {
 		this.applicationContext = applicationContext;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberReferencesRepository = memberReferencesRepository;
 		this.rootFragmentCreator = rootFragmentCreator;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(ldesFragmentRepository,
-				memberReferencesRepository, tracer);
+				memberReferencesRepository, observationRegistry);
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);

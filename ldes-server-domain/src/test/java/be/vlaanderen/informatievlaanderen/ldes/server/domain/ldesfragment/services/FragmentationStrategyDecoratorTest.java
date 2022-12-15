@@ -6,10 +6,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.cloud.sleuth.Span;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ class FragmentationStrategyDecoratorTest {
 
 		assertEquals(1, parentFragment.getRelations().size());
 		assertEquals(new TreeRelation("", childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION),
+						GENERIC_TREE_RELATION),
 				parentFragment.getRelations().get(0));
 		Mockito.verify(fragmentRepository,
 				Mockito.times(1)).saveFragment(parentFragment);
@@ -61,7 +61,7 @@ class FragmentationStrategyDecoratorTest {
 
 		assertEquals(1, parentFragment.getRelations().size());
 		assertEquals(new TreeRelation("", childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION),
+						GENERIC_TREE_RELATION),
 				parentFragment.getRelations().get(0));
 		Mockito.verifyNoInteractions(fragmentRepository);
 	}
@@ -71,10 +71,10 @@ class FragmentationStrategyDecoratorTest {
 		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 		Member member = mock(Member.class);
-		Span span = mock(Span.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member, span);
+		Observation observation = mock(Observation.class);
+		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member, observation);
 		Mockito.verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
+				Mockito.times(1)).addMemberToFragment(parentFragment, member, observation);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends

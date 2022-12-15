@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -15,34 +15,32 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private final Map<String, FragmentationStrategy> fragmentationStrategyMap;
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final Tracer tracer;
+	private final ObservationRegistry observationRegistry;
 
 	public FragmentationExecutorImpl(Map<String, FragmentationStrategy> fragmentationStrategyMap,
-			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
+			LdesFragmentRepository ldesFragmentRepository, ObservationRegistry observationRegistry) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
 	public synchronized void executeFragmentation(Member member) {
-		Span parentSpan = tracer.nextSpan()
-				.name("execute fragmentation")
-				.tag("memberId", member.getLdesMemberId())
-				.start();
+		Observation observation = Observation.start("execute fragmentation", observationRegistry);
 		fragmentationStrategyMap.entrySet().parallelStream().forEach(entry -> {
-			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentSpan);
-			entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentSpan);
+			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), observation);
+			entry.getValue().addMemberToFragment(rootFragmentOfView, member, observation);
 		});
-		parentSpan.end();
+		observation.stop();
 	}
 
-	private LdesFragment retrieveRootFragmentOfView(String viewName, Span name) {
-		Span start = tracer.nextSpan(name).name("retrieve root of view " + viewName).start();
+	private LdesFragment retrieveRootFragmentOfView(String viewName, Observation parentObservation) {
+		Observation observation = Observation.createNotStarted("retrieve root of view " + viewName, observationRegistry)
+				.parentObservation(parentObservation).start();
 		LdesFragment ldesFragment = ldesFragmentRepository
 				.retrieveRootFragment(viewName)
 				.orElseThrow(() -> new MissingRootFragmentException(viewName));
-		start.end();
+		observation.stop();
 		return ldesFragment;
 	}
 }

@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedProperties.MEMBER_LIMIT;
@@ -17,12 +17,12 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
-		Tracer tracer = applicationContext.getBean(Tracer.class);
+		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
 				ldesFragmentRepository);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
-				ldesFragmentRepository, openFragmentProvider, tracer);
+				ldesFragmentRepository, openFragmentProvider, observationRegistry);
 
 	}
 

@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.TracerMockHelper.mockTracer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -30,7 +29,7 @@ class FragmentationExecutorImplTest {
 	@BeforeEach
 	void setUp() {
 		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationStrategy),
-				ldesFragmentRepository, mockTracer());
+				ldesFragmentRepository, null);
 	}
 
 	@Test

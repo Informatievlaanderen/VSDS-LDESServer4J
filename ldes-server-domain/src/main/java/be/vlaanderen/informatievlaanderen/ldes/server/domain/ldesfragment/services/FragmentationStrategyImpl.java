@@ -4,28 +4,28 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 
 public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final MemberReferencesRepository memberReferencesRepository;
-	private final Tracer tracer;
+	private final ObservationRegistry observationRegistry;
 
 	public FragmentationStrategyImpl(LdesFragmentRepository ldesFragmentRepository,
-			MemberReferencesRepository memberReferencesRepository, Tracer tracer) {
+			MemberReferencesRepository memberReferencesRepository, ObservationRegistry observationRegistry) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberReferencesRepository = memberReferencesRepository;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Span parentSpan) {
-		Span finalSpan = tracer.nextSpan(parentSpan).name("add member to fragment").start();
+	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Observation parentObservation) {
+		Observation finalSpan = Observation.start("add member to fragment", observationRegistry);
 		ldesFragment.addMember(member.getLdesMemberId());
 		ldesFragmentRepository.saveFragment(ldesFragment);
 		memberReferencesRepository.saveMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId());
-		finalSpan.end();
+		finalSpan.stop();
 	}
 
 }
