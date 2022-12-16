@@ -1,9 +1,33 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_PATH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
+import static org.apache.jena.rdf.model.ResourceFactory.createTypedLiteral;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
+import org.springframework.stereotype.Component;
+
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+<<<<<<< HEAD:ldes-server-domain/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/tree/node/services/TreeNodeConverterImpl.java
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.*;
@@ -14,6 +38,9 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
+=======
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+>>>>>>> 2d09afb (feat: VSDSPUB-110: Url strategy):ldes-server-domain/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/ldesfragment/services/LdesFragmentConverterImpl.java
 
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
@@ -30,12 +57,19 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	@Override
 	public Model toModel(final TreeNode treeNode) {
 		Model model = ModelFactory.createDefaultModel();
+<<<<<<< HEAD:ldes-server-domain/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/tree/node/services/TreeNodeConverterImpl.java
 		model.add(addTreeNodeStatements(treeNode));
 		if (!treeNode.getMembers().isEmpty()) {
 			model.add(addEventStreamStatements(treeNode));
 			treeNode.getMembers().stream()
 					.map(Member::getModel)
 					.forEach(model::add);
+=======
+		model.add(addTreeNodeStatements(ldesFragment));
+		if (!ldesFragment.getMemberIds().isEmpty()) {
+			model.add(addEventStreamStatements(ldesFragment));
+			memberRepository.getLdesMembersByIds(ldesFragment.getMemberIds()).map(Member::getModel).forEach(model::add);
+>>>>>>> 2d09afb (feat: VSDSPUB-110: Url strategy):ldes-server-domain/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/ldesfragment/services/LdesFragmentConverterImpl.java
 		}
 		return prefixAdder.addPrefixesToModel(model);
 	}
@@ -97,7 +131,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					TypeMapper.getInstance().getTypeByName(treeRelation.treeValueType()))));
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.treePath());
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
-				ldesConfig.getHostName() + treeRelation.treeNode());
+				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeRelation.treeNode());
 		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.relation());
 		return statements;
 	}
