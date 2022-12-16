@@ -1,8 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 
 @RestController
 public class EventStreamController {
@@ -55,5 +56,9 @@ public class EventStreamController {
 			response.setHeader(CONTENT_TYPE_HEADER, TEXT_TURTLE);
 		else
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
+	}
+
+	private void setEtagHeader(HttpServletResponse response, EventStream eventStream) {
+		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(eventStream));
 	}
 }
