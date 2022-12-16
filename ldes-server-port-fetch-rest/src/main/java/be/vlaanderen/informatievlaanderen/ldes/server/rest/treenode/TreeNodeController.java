@@ -1,24 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @RestController
 public class TreeNodeController {
@@ -60,8 +53,6 @@ public class TreeNodeController {
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, treeNode);
-		setEtagHeader(response, treeNode);
-
 		return treeNode;
 
 	}
@@ -81,7 +72,4 @@ public class TreeNodeController {
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
 	}
 
-	private void setEtagHeader(HttpServletResponse response, TreeNode treeNode) {
-		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(treeNode));
-	}
 }
