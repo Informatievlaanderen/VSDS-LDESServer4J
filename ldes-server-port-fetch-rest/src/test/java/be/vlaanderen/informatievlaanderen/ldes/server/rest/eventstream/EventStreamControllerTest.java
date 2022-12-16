@@ -140,4 +140,5 @@ class EventStreamControllerTest {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
+
 }
