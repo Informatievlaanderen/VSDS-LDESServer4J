@@ -8,18 +8,21 @@ import org.springframework.cloud.sleuth.Span;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private final Map<String, FragmentationStrategy> fragmentationStrategyMap;
+	private final Map<String, LdesFragment> rootFragmentMap;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final Tracer tracer;
 
 	public FragmentationExecutorImpl(Map<String, FragmentationStrategy> fragmentationStrategyMap,
 			LdesFragmentRepository ldesFragmentRepository, Tracer tracer) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
+		this.rootFragmentMap = new HashMap<>();
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.tracer = tracer;
 	}
@@ -39,9 +42,11 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private LdesFragment retrieveRootFragmentOfView(String viewName, Span name) {
 		Span start = tracer.nextSpan(name).name("retrieve root of view " + viewName).start();
-		LdesFragment ldesFragment = ldesFragmentRepository
+
+		LdesFragment ldesFragment = rootFragmentMap.computeIfAbsent(viewName, s -> ldesFragmentRepository
 				.retrieveRootFragment(viewName)
-				.orElseThrow(() -> new MissingRootFragmentException(viewName));
+				.orElseThrow(() -> new MissingRootFragmentException(viewName)));
+
 		start.end();
 		return ldesFragment;
 	}

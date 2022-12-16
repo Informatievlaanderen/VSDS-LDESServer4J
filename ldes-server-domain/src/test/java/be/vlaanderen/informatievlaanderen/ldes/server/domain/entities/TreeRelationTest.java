@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +40,7 @@ class TreeRelationTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null)), Arguments.of((Object) null),
+			return Stream.of(Arguments.of(new Member("some_id", null, List.of())), Arguments.of((Object) null),
 					Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType",
 							"relation")),
 					Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType",

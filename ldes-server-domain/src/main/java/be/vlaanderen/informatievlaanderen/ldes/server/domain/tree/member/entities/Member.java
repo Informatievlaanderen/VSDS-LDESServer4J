@@ -16,9 +16,12 @@ public class Member {
 	private final Model memberModel;
 	private final String memberId;
 
-	public Member(String memberId, final Model memberModel) {
+	private final List<String> treeNodeReferences;
+
+	public Member(String memberId, final Model memberModel, List<String> treeNodeReferences) {
 		this.memberId = memberId;
 		this.memberModel = memberModel;
+		this.treeNodeReferences = treeNodeReferences;
 	}
 
 	public Model getModel() {
@@ -60,6 +63,10 @@ public class Member {
 
 	private Optional<Statement> getCurrentTreeMemberStatement() {
 		return memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
+	}
+
+	public List<String> getTreeNodeReferences() {
+		return treeNodeReferences;
 	}
 
 	public void removeTreeMember() {

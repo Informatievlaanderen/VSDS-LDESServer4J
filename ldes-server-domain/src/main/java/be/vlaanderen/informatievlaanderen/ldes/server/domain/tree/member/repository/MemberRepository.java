@@ -4,15 +4,20 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface MemberRepository {
 
 	Member saveLdesMember(Member member);
 
-	Optional<Member> getLdesMemberById(String id);
+	boolean memberExists(String id);
 
-	Stream<Member> getLdesMembersByIds(List<String> ids);
+	Optional<Member> getMember(String id);
 
 	void deleteMember(String memberId);
+
+	void addMemberReference(String memberId, String fragmentId);
+
+	List<Member> getMembersByReference(String treeNodeId);
+
+	void removeMemberReference(String memberId, String fragmentId);
 }

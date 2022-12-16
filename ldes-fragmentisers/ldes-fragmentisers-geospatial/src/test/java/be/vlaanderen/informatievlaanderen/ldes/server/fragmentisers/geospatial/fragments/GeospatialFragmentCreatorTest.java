@@ -2,62 +2,114 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.TileFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class GeospatialFragmentCreatorTest {
 
 	private LdesFragmentRepository ldesFragmentRepository;
 	private GeospatialFragmentCreator geospatialFragmentCreator;
+	private NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository);
+		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = mock(TileFragmentRelationsAttributer.class);
+		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
+		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
+				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
 	}
 
 	@Test
-	void when_FragmentDoesNotExist_NewTileFragmentIsCreated() {
+	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
 		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesFragment.getFragmentInfo().getViewName(),
-				List.of(new FragmentPair("substring", "a"), new FragmentPair("tile", "15/101/202")));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
+		LdesFragment rootFragment = ldesFragment
+				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
+		String tileFragmentId = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"))
+				.getFragmentId();
 
-		TileFragment childFragment = geospatialFragmentCreator.getOrCreateGeospatialFragment(ldesFragment,
-				"15/101/202");
+		when(ldesFragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
 
-		assertEquals("/view?substring=a&tile=15/101/202", childFragment.ldesFragment().getFragmentId());
-		assertTrue(childFragment.created());
-		verify(ldesFragmentRepository, times(1)).retrieveFragment(ldesFragmentRequest);
-		verifyNoMoreInteractions(ldesFragmentRepository);
+		LdesFragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
+				"15/101/202", rootFragment);
+
+		assertEquals("/view?substring=a&tile=15/101/202",
+				childFragment.getFragmentId());
+		verify(ldesFragmentRepository,
+				times(1)).retrieveFragment(tileFragmentId);
+		verify(ldesFragmentRepository,
+				times(1)).saveFragment(childFragment);
+		verify(nonCriticalTasksExecutor, times(1)).submit(any());
 	}
 
 	@Test
-	void when_FragmentExists_RetrievedFragmentIsReturned() {
+	void when_TileFragmentDoesNotExist_RetrievedTileFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesFragment.getFragmentInfo().getViewName(),
-				List.of(new FragmentPair("substring", "a"), new FragmentPair("tile", "15/101/202")));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest))
-				.thenReturn(Optional.of(ldesFragment.createChild(new FragmentPair("tile", "15/101/202"))));
+		LdesFragment rootFragment = ldesFragment
+				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
+		LdesFragment tileFragment = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"));
 
-		TileFragment childFragment = geospatialFragmentCreator.getOrCreateGeospatialFragment(ldesFragment,
-				"15/101/202");
+		when(ldesFragmentRepository.retrieveFragment(tileFragment.getFragmentId()))
+				.thenReturn(Optional.of(tileFragment));
 
-		assertEquals("/view?substring=a&tile=15/101/202", childFragment.ldesFragment().getFragmentId());
-		assertFalse(childFragment.created());
-		verify(ldesFragmentRepository, times(1)).retrieveFragment(ldesFragmentRequest);
+		LdesFragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
+				"15/101/202", rootFragment);
+
+		assertEquals("/view?substring=a&tile=15/101/202",
+				childFragment.getFragmentId());
+		verify(ldesFragmentRepository,
+				times(1)).retrieveFragment(tileFragment.getFragmentId());
 		verifyNoMoreInteractions(ldesFragmentRepository);
+		verifyNoInteractions(nonCriticalTasksExecutor);
+	}
+
+	@Test
+	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
+		LdesFragment ldesFragment = new LdesFragment(
+				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
+		LdesFragment rootFragment = ldesFragment
+				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
+
+		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId())).thenReturn(Optional.empty());
+
+		LdesFragment returnedFragment = geospatialFragmentCreator.getOrCreateRootFragment(ldesFragment,
+				FRAGMENT_KEY_TILE_ROOT);
+
+		assertEquals("/view?substring=a&tile=0/0/0", returnedFragment.getFragmentId());
+		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
+		verify(ldesFragmentRepository, times(1)).saveFragment(returnedFragment);
+		verifyNoInteractions(nonCriticalTasksExecutor);
+	}
+
+	@Test
+	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
+		LdesFragment ldesFragment = new LdesFragment(
+				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
+		LdesFragment rootFragment = ldesFragment
+				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
+		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
+				.thenReturn(Optional.of(rootFragment));
+
+		LdesFragment returnedFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
+				FRAGMENT_KEY_TILE_ROOT, rootFragment);
+
+		assertEquals("/view?substring=a&tile=0/0/0", returnedFragment.getFragmentId());
+		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
+		verifyNoMoreInteractions(ldesFragmentRepository);
+		verifyNoInteractions(nonCriticalTasksExecutor);
 	}
 }

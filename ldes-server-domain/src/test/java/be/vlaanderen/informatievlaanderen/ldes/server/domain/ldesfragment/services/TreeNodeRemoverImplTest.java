@@ -5,8 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -20,13 +21,14 @@ import static org.mockito.Mockito.*;
 class TreeNodeRemoverImplTest {
 
 	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
+	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap = Map.of("view",
 			List.of(new TimeBasedRetentionPolicy("PT0S")));
-	private final MemberReferencesRepository referencesRepository = mock(MemberReferencesRepository.class);
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
 	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);
-	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, retentionPolicyMap,
-			referencesRepository, treeMemberRemover, parentUpdater);
+	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, memberRepository,
+			retentionPolicyMap,
+			treeMemberRemover, parentUpdater);
 
 	@Test
 	void when_NodeIsImmutableAndSatisfiesRetentionPoliciesOfView_NodeCanBeSoftDeleted() {
@@ -34,30 +36,30 @@ class TreeNodeRemoverImplTest {
 		LdesFragment readyToDeleteFragment = readyToDeleteFragment();
 		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("view"))
 				.thenReturn(Stream.of(notReadyToDeleteFragment, readyToDeleteFragment));
+		when(memberRepository.getMembersByReference("/view"))
+				.thenReturn(List.of(new Member("memberId", null, List.of())));
 
 		treeNodeRemover.removeTreeNodes();
 
-		verify(fragmentRepository, times(1)).retrieveNonDeletedImmutableFragmentsOfView("view");
+		verify(fragmentRepository,
+				times(1)).retrieveNonDeletedImmutableFragmentsOfView("view");
 		verify(fragmentRepository, times(1)).saveFragment(readyToDeleteFragment);
 		assertTrue(readyToDeleteFragment.getFragmentInfo().getSoftDeleted());
 		verifyNoMoreInteractions(fragmentRepository);
 		verify(parentUpdater, times(1)).updateParent(readyToDeleteFragment);
 		verifyNoMoreInteractions(parentUpdater);
-		verify(referencesRepository, times(1)).removeMemberReference("memberId", "/view");
-		verifyNoMoreInteractions(referencesRepository);
 		verify(treeMemberRemover, times(1)).tryRemovingMember("memberId");
 		verifyNoMoreInteractions(treeMemberRemover);
 	}
 
 	private LdesFragment notReadyToDeleteFragment() {
-		return new LdesFragment(new FragmentInfo("view", List.of(), true, LocalDateTime.now().plusDays(1), false));
+		return new LdesFragment(new FragmentInfo("view", List.of(), true,
+				LocalDateTime.now().plusDays(1), false, 0));
 	}
 
 	private LdesFragment readyToDeleteFragment() {
-		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo("view", List.of(), true, LocalDateTime.now(), false));
-		ldesFragment.addMember("memberId");
-		return ldesFragment;
+		return new LdesFragment(
+				new FragmentInfo("view", List.of(), true, LocalDateTime.now(), false, 0));
 	}
 
 }

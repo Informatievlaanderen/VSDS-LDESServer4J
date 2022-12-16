@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,15 +27,16 @@ class SubstringFragmentCreatorTest {
 	void when_FragmentDoesNotExist_NewSubstringFragmentIsCreated() {
 		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo("view", List.of(new FragmentPair("time", "b"))));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesFragment.getFragmentInfo().getViewName(),
-				List.of(new FragmentPair("time", "b"), new FragmentPair("substring", "a")));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest)).thenReturn(Optional.empty());
+		String exptectedFragmentId = ldesFragment.createChild(new FragmentPair("substring", "a")).getFragmentId();
+		when(ldesFragmentRepository.retrieveFragment(exptectedFragmentId)).thenReturn(Optional.empty());
 
 		LdesFragment childFragment = substringFragmentCreator.getOrCreateSubstringFragment(ldesFragment,
 				"a");
 
 		assertEquals("/view?time=b&substring=a", childFragment.getFragmentId());
-		verify(ldesFragmentRepository, times(1)).retrieveFragment(ldesFragmentRequest);
+		verify(ldesFragmentRepository,
+				times(1)).retrieveFragment(exptectedFragmentId);
+		verify(ldesFragmentRepository, times(1)).saveFragment(childFragment);
 		verifyNoMoreInteractions(ldesFragmentRepository);
 	}
 
@@ -44,16 +44,16 @@ class SubstringFragmentCreatorTest {
 	void when_FragmentExists_RetrievedFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
 				new FragmentInfo("view", List.of(new FragmentPair("time", "b"))));
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesFragment.getFragmentInfo().getViewName(),
-				List.of(new FragmentPair("time", "b"), new FragmentPair("substring", "a")));
-		when(ldesFragmentRepository.retrieveFragment(ldesFragmentRequest))
-				.thenReturn(Optional.of(ldesFragment.createChild(new FragmentPair("substring", "a"))));
+		LdesFragment substringFragment = ldesFragment.createChild(new FragmentPair("substring", "a"));
+
+		when(ldesFragmentRepository.retrieveFragment(substringFragment.getFragmentId()))
+				.thenReturn(Optional.of(substringFragment));
 
 		LdesFragment childFragment = substringFragmentCreator.getOrCreateSubstringFragment(ldesFragment,
 				"a");
 
 		assertEquals("/view?time=b&substring=a", childFragment.getFragmentId());
-		verify(ldesFragmentRepository, times(1)).retrieveFragment(ldesFragmentRequest);
+		verify(ldesFragmentRepository, times(1)).retrieveFragment(substringFragment.getFragmentId());
 		verifyNoMoreInteractions(ldesFragmentRepository);
 	}
 }
