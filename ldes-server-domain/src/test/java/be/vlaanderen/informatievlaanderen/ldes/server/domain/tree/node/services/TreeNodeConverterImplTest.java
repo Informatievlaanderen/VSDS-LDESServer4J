@@ -1,35 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
-
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -66,7 +41,7 @@ class TreeNodeConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		treeNodeConverter = new TreeNodeConverterImpl( prefixAdder, ldesConfig);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 	}
 
 	@Test
@@ -88,7 +63,8 @@ class TreeNodeConverterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel,
 				List.of());
-		TreeRelation treeRelation =new TreeRelation("path", "/node", "value", "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
+		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
+				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, List.of(treeRelation), List.of(member));
 
 		Model model = treeNodeConverter.toModel(treeNode);

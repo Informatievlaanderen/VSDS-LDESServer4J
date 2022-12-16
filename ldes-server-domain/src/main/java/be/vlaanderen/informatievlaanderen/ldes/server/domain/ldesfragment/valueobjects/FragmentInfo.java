@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 public class FragmentInfo {
 
@@ -21,8 +21,7 @@ public class FragmentInfo {
 	private final int numberOfMembers;
 
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
-		this(viewName, fragmentPairs, false, null, false);
-		this.numberOfMembers = 0;
+		this(viewName, fragmentPairs, false, null, false, 0);
 	}
 
 	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
