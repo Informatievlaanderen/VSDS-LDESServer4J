@@ -104,9 +104,12 @@ class TreeNodeConverterImplTest {
 
 	private void verifyRelationStatements(Model model, Resource relationObject) {
 		assertEquals(
-				String.format("[" + HOST_NAME + "/" + VIEW_NAME + ", https://w3id.org/tree#relation, %s]",
+				String.format(
+						"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
+								+ ", https://w3id.org/tree#relation, %s]",
 						relationObject),
-				model.listStatements(createResource(HOST_NAME + "/" + VIEW_NAME), TREE_RELATION, (Resource) null)
+				model.listStatements(createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME), TREE_RELATION,
+						(Resource) null)
 						.nextStatement().toString());
 		assertEquals(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject),
 				model.listStatements(relationObject, RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
@@ -136,7 +139,8 @@ class TreeNodeConverterImplTest {
 
 	private void verifyTreeNodeStatement(Model model) {
 		assertEquals(
-				"[http://localhost:8080/view, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
+				"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
+						+ ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
 				model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement()
 						.toString());
 	}

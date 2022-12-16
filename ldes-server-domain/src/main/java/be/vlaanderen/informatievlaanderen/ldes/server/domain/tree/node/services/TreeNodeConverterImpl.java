@@ -55,7 +55,8 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode) {
 		List<Statement> statements = new ArrayList<>();
-		Resource currentFragmentId = createResource(ldesConfig.getHostName() + treeNode.getFragmentId());
+		Resource currentFragmentId = createResource(
+				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNode.getFragmentId());
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(treeNode.getRelations(), currentFragmentId));
 		return statements;
