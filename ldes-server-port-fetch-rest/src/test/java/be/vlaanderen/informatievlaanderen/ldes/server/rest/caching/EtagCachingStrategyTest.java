@@ -23,7 +23,6 @@ class EtagCachingStrategyTest {
 				"ea25cd96ae19575f021e951a584466fb6b5ff76450f16a004b876bf4021b96ca");
 		etag = testGeneration("http://localhost:8080", "collection1", List.of("view1", "view2"),
 				"ea25cd96ae19575f021e951a584466fb6b5ff76450f16a004b876bf4021b96ca");
-
 	}
 
 	private String testGeneration(String hostname, String collection, List<String> views, String expectedEtag) {
