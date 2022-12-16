@@ -88,6 +88,7 @@
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-extension-annotations</artifactId>
         </dependency>
+        
         <!-- METRICS -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -97,5 +98,11 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+			
+		<!-- HASHING -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
     </dependencies>
 </project>
