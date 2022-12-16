@@ -16,19 +16,6 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
-import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,13 +44,16 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
 
 @WebMvcTest
 @ActiveProfiles("test")
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
 @ContextConfiguration(classes = { EventStreamController.class,
-		LdesConfig.class, EventStreamWebConfig.class })
+		LdesConfig.class, RestConfig.class, EventStreamWebConfig.class })
 class EventStreamControllerTest {
 
 	@Autowired
@@ -151,5 +141,4 @@ class EventStreamControllerTest {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
-
 }

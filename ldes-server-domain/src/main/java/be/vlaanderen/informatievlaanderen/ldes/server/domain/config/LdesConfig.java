@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
 public class LdesConfig {
+
 	private String hostName;
 	private String collectionName;
 	private String shape;
