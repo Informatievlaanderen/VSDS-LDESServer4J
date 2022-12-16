@@ -29,8 +29,7 @@ class ViewConfigTest {
 		assertEquals("firstView", firstViewSpecification.getName());
 		assertEquals(2, firstViewSpecification.getFragmentations().size());
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(0), "geospatial",
-				Map.of("maxZoomLevel", "15", "fragmenterPropertyQuery",
-						"PREFIX gs: <http://www.opengis.net/ont/geosparql#> SELECT ?x WHERE { ?s gs:asWKT ?x . }"));
+				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(1), "timebased",
 				Map.of("memberLimit", "5"));
 		assertEquals(1, firstViewSpecification.getRetentionConfigs().size());
