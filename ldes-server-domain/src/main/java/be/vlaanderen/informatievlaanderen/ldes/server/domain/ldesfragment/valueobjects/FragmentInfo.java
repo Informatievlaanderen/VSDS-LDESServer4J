@@ -21,15 +21,7 @@ public class FragmentInfo {
 	private final int numberOfMembers;
 
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
-<<<<<<< HEAD
-		this.viewName = viewName;
-		this.fragmentPairs = fragmentPairs;
-		this.immutable = false;
-		this.softDeleted = false;
-		this.numberOfMembers = 0;
-=======
-		this(viewName, fragmentPairs, false, null, false);
->>>>>>> 2d09afb (feat: VSDSPUB-110: Url strategy)
+		this(viewName, fragmentPairs, false, null, false, 0);
 	}
 
 	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,

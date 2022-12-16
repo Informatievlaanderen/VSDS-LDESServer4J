@@ -73,7 +73,7 @@ class EventStreamControllerTest {
 				new EventStream("collection", "timestampPath", "versionOf", "shape", List.of("viewOne", "viewTwo")));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
 				ldesConfig.getCollectionName())
-						.accept(mediaType))
+				.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
 

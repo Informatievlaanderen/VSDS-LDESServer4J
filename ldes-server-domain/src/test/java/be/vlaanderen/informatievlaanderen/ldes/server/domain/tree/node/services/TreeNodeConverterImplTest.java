@@ -9,19 +9,15 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
@@ -29,24 +25,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-<<<<<<< HEAD:ldes-server-domain/src/test/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/tree/node/services/TreeNodeConverterImplTest.java
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-=======
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
->>>>>>> 2d09afb (feat: VSDSPUB-110: Url strategy):ldes-server-domain/src/test/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/ldesfragment/services/LdesFragmentConverterImplTest.java
 
 class TreeNodeConverterImplTest {
 
@@ -69,7 +48,6 @@ class TreeNodeConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-<<<<<<< HEAD:ldes-server-domain/src/test/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/tree/node/services/TreeNodeConverterImplTest.java
 		treeNodeConverter = new TreeNodeConverterImpl(
 				prefixAdder, ldesConfig);
 	}
@@ -77,16 +55,6 @@ class TreeNodeConverterImplTest {
 	@Test
 	void when_TreeNodeHasNoMembers_ModelHasOneStatement() {
 		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, List.of(), List.of());
-=======
-		ldesFragmentConverter = new LdesFragmentConverterImpl(memberRepository, prefixAdder, ldesConfig);
-	}
-
-	@Test
-	@DisplayName("Verify correct conversion of an LdesFragment without Members ")
-	void when_LdesFragmentHasNoMembers_ModelHasOneStatement() {
-		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
->>>>>>> 2d09afb (feat: VSDSPUB-110: Url strategy):ldes-server-domain/src/test/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/ldesfragment/services/LdesFragmentConverterImplTest.java
-
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(1, getNumberOfStatements(model));
@@ -94,13 +62,11 @@ class TreeNodeConverterImplTest {
 	}
 
 	@Test
-<<<<<<< HEAD:ldes-server-domain/src/test/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/tree/node/services/TreeNodeConverterImplTest.java
 	void when_TreeNodeHasMembersAndARelations_ModelHasMultipleStatements() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(
-				"""
-						<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
-						<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
-						.""")
+		Model ldesMemberModel = RDFParserBuilder.create().fromString("""
+				<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
+				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
+				.""")
 				.lang(Lang.NQUADS).toModel();
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel,
@@ -108,20 +74,6 @@ class TreeNodeConverterImplTest {
 		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, List.of(treeRelation), List.of(member));
-=======
-	void when_LdesFragmentHasMembers_ModelHasTreeNodeStatementAndEventStreamStatementsAndMemberStatements() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString("""
-				<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
-				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
-				.""").lang(Lang.NQUADS).toModel();
-		Member member = new Member("some_id", ldesMemberModel);
-		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
-		ldesFragment.addMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165");
-		ldesFragment.addRelation(new TreeRelation("path", "/node", "value", DATE_TIME_TYPE, "relation"));
-		when(memberRepository.getLdesMembersByIds(
-				List.of("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165")))
-				.thenReturn(Stream.of(member));
->>>>>>> 2d09afb (feat: VSDSPUB-110: Url strategy):ldes-server-domain/src/test/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/ldesfragment/services/LdesFragmentConverterImplTest.java
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
