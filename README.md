@@ -144,7 +144,7 @@ An example of a view configuration with two view is shown below
         - name: "geospatial"
           config:
             maxZoomLevel: 15
-            fragmenterPropertyQuery: "PREFIX gs: <http://www.opengis.net/ont/geosparql#> SELECT ?x WHERE { ?s gs:asWKT ?x . }"
+            fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
         - name: "timebased"
           config:
             memberLimit: 5
@@ -153,19 +153,6 @@ An example of a view configuration with two view is shown below
         - name: "timebased"
           config:
             memberLimit: 3
-  ```
-###### Example Retention
-
-To reduce storage fill up, it is possible to set a retention policy per view.
-As of now, there is only a timebased retention possible which can be configured with a [ISO 8601 duration](https://tc39.es/proposal-temporal/docs/duration.html)
-
-  ```yaml
-  views:
-    - name: "firstView"
-      retentionPolicies:
-        - name: "timebased"
-          config:
-            duration: "PT5M"
   ```
 
 ##### Example Timebased Fragmentation
@@ -182,7 +169,7 @@ As of now, there is only a timebased retention possible which can be configured 
   name: "geospatial"
   config:
     maxZoomLevel: { Required zoom level }
-    fragmenterPropertyQuery: { SPARQL Query that defines which property will be used for bucketizing }
+    fragmenterProperty: { Defines which property will be used for bucketizing }
   ```
 
 ##### Example Substring Fragmentation
@@ -190,7 +177,7 @@ As of now, there is only a timebased retention possible which can be configured 
   ```yaml
   name: "substring"
   config:
-    fragmenterPropertyQuery: { SPARQL Query that defines which property will be used for bucketizing }
+    fragmenterProperty: { Defines which property will be used for bucketizing }
     memberLimit: { member limit > 0 }
   ```
 

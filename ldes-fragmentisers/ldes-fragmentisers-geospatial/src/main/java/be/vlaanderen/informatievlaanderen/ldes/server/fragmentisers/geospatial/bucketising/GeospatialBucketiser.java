@@ -24,7 +24,8 @@ public class GeospatialBucketiser {
 	public Set<String> bucketise(Member member) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
-		member.getFragmentationObjects(geospatialConfig.fragmenterPropertyQuery())
+		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
+				geospatialConfig.fragmenterProperty())
 				.stream()
 				.map(GeometryWrapper.class::cast)
 				.map(geometryWrapper -> {

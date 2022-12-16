@@ -25,7 +25,7 @@ class SubstringFragmentationStrategyWrapperTest {
 	@Test
 	void when_FragmentationStrategyIsUpdated_TimebasedFragmentationStrategyIsReturned() {
 		ConfigProperties properties = new ConfigProperties(
-				Map.of("memberLimit", "5", "fragmenterPropertyQuery", "http://purl.org/dc/terms/description"));
+				Map.of("memberLimit", "5", "fragmenterProperty", "http://purl.org/dc/terms/description"));
 		FragmentationStrategy decoratedFragmentationStrategy = substringFragmentationStrategyWrapper
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
 		assertTrue(decoratedFragmentationStrategy instanceof SubstringFragmentationStrategy);

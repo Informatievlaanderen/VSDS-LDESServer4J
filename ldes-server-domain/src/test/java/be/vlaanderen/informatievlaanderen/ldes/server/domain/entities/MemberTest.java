@@ -60,9 +60,10 @@ class MemberTest {
 				"http://localhost:8080/member/1",
 				createModel(ldesMemberString, Lang.NQUADS), List.of());
 
-		assertEquals(4, member.getFragmentationObjects(
-				"PREFIX core: <http://www.w3.org/2004/02/skos/core#> SELECT ?x WHERE { ?s core:prefLabel ?x . }")
-				.size());
+		assertEquals(4, member.getFragmentationObjects(".*",
+				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
+		assertEquals(1, member.getFragmentationObjects(".*/member/.*",
+				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
 	}
 
 	private Model createModel(final String ldesMember, final Lang lang) {
