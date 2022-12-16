@@ -41,8 +41,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
@@ -55,6 +53,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 
@@ -71,6 +71,8 @@ class TreeNodeControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+	@Autowired
+	private LdesConfig ldesConfig;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 
@@ -85,11 +87,12 @@ class TreeNodeControllerTest {
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
-		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
-				VIEW_NAME)
-				.param("generatedAtTime",
-						FRAGMENTATION_VALUE_1)
-				.accept(mediaType))
+		ResultActions resultActions = mockMvc
+				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+						VIEW_NAME)
+						.param("generatedAtTime",
+								FRAGMENTATION_VALUE_1)
+						.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
 
@@ -132,7 +135,7 @@ class TreeNodeControllerTest {
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
-		mockMvc.perform(get("/{viewName}",
+		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
 				.andExpect(status().isUnsupportedMediaType());
 	}
@@ -146,7 +149,10 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
 
-		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
+		ResultActions resultActions = mockMvc
+				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+						VIEW_NAME).accept("application/n-quads"))
+				.andDo(print())
 				.andExpect(status().isNotFound());
 		assertEquals("No fragment exists with fragment identifier: fragmentId",
 				resultActions.andReturn().getResponse().getContentAsString());
@@ -161,7 +167,10 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
 
-		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
+		ResultActions resultActions = mockMvc
+				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+						VIEW_NAME).accept("application/n-quads"))
+				.andDo(print())
 				.andExpect(status().isGone());
 		assertEquals("Fragment with following identifier has been deleted: fragmentId",
 				resultActions.andReturn().getResponse().getContentAsString());

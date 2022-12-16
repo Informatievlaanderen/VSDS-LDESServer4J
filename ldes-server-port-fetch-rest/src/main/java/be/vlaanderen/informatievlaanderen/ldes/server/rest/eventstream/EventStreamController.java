@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 
 @RestController
 public class EventStreamController {
@@ -56,9 +56,5 @@ public class EventStreamController {
 			response.setHeader(CONTENT_TYPE_HEADER, TEXT_TURTLE);
 		else
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
-	}
-
-	private void setEtagHeader(HttpServletResponse response, EventStream eventStream) {
-		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(eventStream));
 	}
 }

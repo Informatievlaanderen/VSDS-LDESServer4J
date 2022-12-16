@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 
 @RestController
 public class TreeNodeController {
@@ -30,7 +30,6 @@ public class TreeNodeController {
 	private static final String TEXT_TURTLE = "text/turtle";
 	private static final String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
 	private static final String INLINE = "inline";
-
 	private final TreeNodeFetcher treeNodeFetcher;
 	private final CachingStrategy cachingStrategy;
 
@@ -40,7 +39,7 @@ public class TreeNodeController {
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "/{view}")
+	@GetMapping(value = "${ldes.collectionname}/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {

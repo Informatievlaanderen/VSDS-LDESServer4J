@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.caching;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

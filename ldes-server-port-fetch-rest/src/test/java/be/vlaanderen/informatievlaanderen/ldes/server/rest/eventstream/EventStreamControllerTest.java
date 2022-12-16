@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
@@ -37,8 +38,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.github.jsonldjava.shaded.com.google.common.net.HttpHeaders;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
@@ -48,6 +47,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
 
 @WebMvcTest
@@ -79,8 +80,9 @@ class EventStreamControllerTest {
 
 		MvcResult result = resultActions.andReturn();
 
-		String etagHeaderValue = result.getResponse().getHeader(HttpHeaders.ETAG);
+		String etagHeaderValue = result.getResponse().getHeader(HttpHeaders.ETAG).replace("\"", "");
 		String expectedEtagHeaderValue = "0c9111a73bc6a46b00e47c029c2f0e2b340f744d87fce040591d2345dc1d0cb0";
+
 		assertNotNull(etagHeaderValue);
 		assertEquals(expectedEtagHeaderValue, etagHeaderValue);
 
@@ -130,6 +132,11 @@ class EventStreamControllerTest {
 		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
+		}
+
+		@Bean
+		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
+			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
 }

@@ -32,9 +32,6 @@ class TreeNodeConverterImplTest {
 	private static final String HOST_NAME = "http://localhost:8080";
 	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
-	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-	private static final String FRAGMENT_ID = HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME;
-	private static final String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
@@ -48,8 +45,7 @@ class TreeNodeConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		treeNodeConverter = new TreeNodeConverterImpl(
-				prefixAdder, ldesConfig);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 	}
 
 	@Test
@@ -66,8 +62,7 @@ class TreeNodeConverterImplTest {
 		Model ldesMemberModel = RDFParserBuilder.create().fromString("""
 				<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
-				.""")
-				.lang(Lang.NQUADS).toModel();
+				.""").lang(Lang.NQUADS).toModel();
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel,
 				List.of());
