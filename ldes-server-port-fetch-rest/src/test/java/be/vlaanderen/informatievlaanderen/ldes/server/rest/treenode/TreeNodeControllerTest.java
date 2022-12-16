@@ -91,9 +91,9 @@ class TreeNodeControllerTest {
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 						VIEW_NAME)
-								.param("generatedAtTime",
-										FRAGMENTATION_VALUE_1)
-								.accept(mediaType))
+						.param("generatedAtTime",
+								FRAGMENTATION_VALUE_1)
+						.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
 
