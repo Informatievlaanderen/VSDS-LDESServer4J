@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,6 +66,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeV
 		LdesConfig.class, RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
+
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
 
@@ -78,22 +80,20 @@ class TreeNodeControllerTest {
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
-			String expectedHeaderValue) throws
-
-	Exception {
+			String expectedHeaderValue) throws Exception {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		TreeNode ldesFragment = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, List.of(),
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, List.of(),
 				List.of());
 
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
+		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 						VIEW_NAME)
-						.param("generatedAtTime",
-								FRAGMENTATION_VALUE_1)
-						.accept(mediaType))
+								.param("generatedAtTime",
+										FRAGMENTATION_VALUE_1)
+								.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
 
@@ -102,6 +102,11 @@ class TreeNodeControllerTest {
 
 		headerValue = result.getResponse().getHeader("Cache-Control");
 		assertEquals(expectedHeaderValue, headerValue);
+
+		headerValue = result.getResponse().getHeader("Etag");
+		String expectedEtag = "\"a94b581e9537a12f07470c02a46a30060d6e997c723d1e6b17b0e1b0897f05f8\"";
+		assertNotNull(headerValue);
+		assertEquals(expectedEtag, headerValue);
 
 		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
 				.toModel();
@@ -127,9 +132,9 @@ class TreeNodeControllerTest {
 			throws Exception {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of());
-		TreeNode ldesFragment = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, List.of(),
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, List.of(),
 				List.of());
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
+		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
 		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
