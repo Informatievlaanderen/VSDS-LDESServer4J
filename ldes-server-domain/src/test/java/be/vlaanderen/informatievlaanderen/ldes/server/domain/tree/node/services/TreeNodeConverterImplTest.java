@@ -23,9 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class TreeNodeConverterImplTest {
 
 	private static final String HOST_NAME = "http://localhost:8080";
+	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
-	private static final String FRAGMENT_ID = HOST_NAME + "/" + VIEW_NAME;
+	private static final String FRAGMENT_ID = HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME;
 	private static final String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
 	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
@@ -34,14 +35,13 @@ class TreeNodeConverterImplTest {
 	@BeforeEach
 	void setUp() {
 		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setCollectionName("mobility-hindrances");
-		ldesConfig.setHostName("http://localhost:8080");
+		ldesConfig.setCollectionName(COLLECTION_NAME);
+		ldesConfig.setHostName(HOST_NAME);
 		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		treeNodeConverter = new TreeNodeConverterImpl(
-				prefixAdder, ldesConfig);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 	}
 
 	@Test
@@ -56,12 +56,10 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasMembersAndARelations_ModelHasMultipleStatements() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(
-				"""
-						<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
-						<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
-						.""")
-				.lang(Lang.NQUADS).toModel();
+		Model ldesMemberModel = RDFParserBuilder.create().fromString("""
+				<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
+				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
+				.""").lang(Lang.NQUADS).toModel();
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel,
 				List.of());
@@ -81,18 +79,21 @@ class TreeNodeConverterImplTest {
 	}
 
 	private void verifyRelationStatements(Model model, Resource relationObject) {
-		assertEquals(String.format(
-				"[http://localhost:8080/view, https://w3id.org/tree#relation, %s]",
-				relationObject),
-				model.listStatements(createResource(FRAGMENT_ID), TREE_RELATION, (Resource) null).nextStatement()
-						.toString());
+		assertEquals(
+				String.format(
+						"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
+								+ ", https://w3id.org/tree#relation, %s]",
+						relationObject),
+				model.listStatements(createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME), TREE_RELATION,
+						(Resource) null)
+						.nextStatement().toString());
 		assertEquals(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject),
 				model.listStatements(relationObject, RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
-		assertEquals(String.format("[%s, https://w3id.org/tree#path, path]",
-				relationObject),
+		assertEquals(String.format("[%s, https://w3id.org/tree#path, path]", relationObject),
 				model.listStatements(relationObject, TREE_PATH, (Resource) null).nextStatement().toString());
-		assertEquals(String.format("[%s, https://w3id.org/tree#node, http://localhost:8080/node]",
-				relationObject),
+		assertEquals(
+				String.format("[%s, https://w3id.org/tree#node, http://localhost:8080/mobility-hindrances/node]",
+						relationObject),
 				model.listStatements(relationObject, TREE_NODE, (Resource) null).nextStatement().toString());
 		assertEquals(
 				String.format("[%s, https://w3id.org/tree#value, \"value\"^^http://www.w3.org/2001/XMLSchema#dateTime]",
@@ -114,9 +115,9 @@ class TreeNodeConverterImplTest {
 
 	private void verifyTreeNodeStatement(Model model) {
 		assertEquals(
-				"[http://localhost:8080/view, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
-				model.listStatements(null, RDF_SYNTAX_TYPE,
-						createResource(TREE_NODE_RESOURCE)).nextStatement()
+				"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
+						+ ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
+				model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement()
 						.toString());
 	}
 
