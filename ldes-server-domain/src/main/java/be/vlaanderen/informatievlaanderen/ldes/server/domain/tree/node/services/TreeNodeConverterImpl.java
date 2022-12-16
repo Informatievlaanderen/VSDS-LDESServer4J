@@ -76,9 +76,16 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode) {
 		List<Statement> statements = new ArrayList<>();
+<<<<<<< HEAD:ldes-server-domain/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/tree/node/services/TreeNodeConverterImpl.java
 		Resource currentFragmentId = createResource(ldesConfig.getHostName() + treeNode.getFragmentId());
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(treeNode.getRelations(), currentFragmentId));
+=======
+		Resource currrentFragmentId = createResource(
+				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + ldesFragment.getFragmentId());
+		statements.add(createStatement(currrentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
+		statements.addAll(getRelationStatements(ldesFragment, currrentFragmentId));
+>>>>>>> bb7e189 (feat: VSDSPUB-110: url strategy: Added tests):ldes-server-domain/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/domain/ldesfragment/services/LdesFragmentConverterImpl.java
 		return statements;
 	}
 
