@@ -1,20 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 public class EventStreamController {
@@ -31,9 +29,6 @@ public class EventStreamController {
 	private final EventStreamFetcher eventStreamFetcher;
 	private final CachingStrategy cachingStrategy;
 
-	@Autowired
-	private ConfigurableEnvironment myEnv;
-
 	public EventStreamController(EventStreamFetcher eventStreamFetcher, CachingStrategy cachingStrategy) {
 		this.eventStreamFetcher = eventStreamFetcher;
 		this.cachingStrategy = cachingStrategy;
@@ -41,16 +36,18 @@ public class EventStreamController {
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "${ldes.collectionname}")
-	public EventStream retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
+	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response) {
 		EventStream eventStream = eventStreamFetcher.fetchEventStream();
 
 		response.setHeader(CACHE_CONTROL_HEADER, CACHE_CONTROL_IMMUTABLE);
 		response.setHeader(CONTENT_DISPOSITION_HEADER, INLINE);
 		setContentTypeHeader(language, response);
-		setEtagHeader(response, eventStream);
 
-		return eventStream;
+		return ResponseEntity
+				.ok()
+				.eTag(cachingStrategy.generateCacheIdentifier(eventStream))
+				.body(eventStream);
 	}
 
 	private void setContentTypeHeader(String language, HttpServletResponse response) {
@@ -58,9 +55,5 @@ public class EventStreamController {
 			response.setHeader(CONTENT_TYPE_HEADER, TEXT_TURTLE);
 		else
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
-	}
-
-	private void setEtagHeader(HttpServletResponse response, EventStream eventStream) {
-		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(eventStream));
 	}
 }
