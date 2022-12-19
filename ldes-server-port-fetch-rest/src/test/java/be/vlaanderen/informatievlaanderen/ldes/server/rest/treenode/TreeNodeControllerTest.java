@@ -14,8 +14,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
@@ -60,7 +63,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.Res
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 
 @WebMvcTest
-@ActiveProfiles("test")
+@ActiveProfiles({ "test", "rest" })
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
 		LdesConfig.class, RestConfig.class, TreeViewWebConfig.class,
@@ -69,11 +72,15 @@ class TreeNodeControllerTest {
 
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
+	private static final Integer CONFIGURED_MAX_AGE = 180;
+	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
 
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
 	private LdesConfig ldesConfig;
+	@Autowired
+	RestConfig restConfig;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 
@@ -108,6 +115,15 @@ class TreeNodeControllerTest {
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);
 
+		Integer maxAge = extractMaxAge(result);
+		assertNotNull(maxAge);
+
+		if (immutable) {
+			assertEquals(CONFIGURED_MAX_AGE_IMMUTABLE, maxAge);
+		} else {
+			assertEquals(CONFIGURED_MAX_AGE, maxAge);
+		}
+
 		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
 				.toModel();
 		assertEquals(TREE_NODE_RESOURCE, getObjectURI(resultModel,
@@ -124,6 +140,17 @@ class TreeNodeControllerTest {
 				.map(Resource::getURI)
 				.map(Objects::toString)
 				.orElse(null);
+	}
+
+	private Integer extractMaxAge(MvcResult result) {
+		String header = result.getResponse().getHeader(HttpHeaders.CACHE_CONTROL);
+		Matcher matcher = Pattern.compile("(.*,)?(max-age=([0-9]+))(,.*)?").matcher(header);
+
+		if (matcher.matches()) {
+			return Integer.valueOf(matcher.group(3));
+		}
+
+		return null;
 	}
 
 	@Test
@@ -193,10 +220,12 @@ class TreeNodeControllerTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of("application/n-quads", Lang.NQUADS, true, "public,max-age=604800,immutable"),
-					Arguments.of("application/ld+json", Lang.JSONLD11, true, "public,max-age=604800,immutable"),
-					Arguments.of("application/turtle", Lang.TURTLE, false, "public,max-age=60"),
-					Arguments.of("*/*", Lang.TURTLE, false, "public,max-age=60"));
+					Arguments.of("application/n-quads", Lang.NQUADS, true,
+							"public,max-age=" + CONFIGURED_MAX_AGE_IMMUTABLE + ",immutable"),
+					Arguments.of("application/ld+json", Lang.JSONLD11, true,
+							"public,max-age=" + CONFIGURED_MAX_AGE_IMMUTABLE + ",immutable"),
+					Arguments.of("application/turtle", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE),
+					Arguments.of("*/*", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE));
 		}
 	}
 

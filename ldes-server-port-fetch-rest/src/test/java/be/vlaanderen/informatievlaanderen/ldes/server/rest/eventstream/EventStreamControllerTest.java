@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.http.HttpHeaders;
@@ -53,20 +55,22 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
 
 @WebMvcTest
-@ActiveProfiles("test")
+@ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
 @ContextConfiguration(classes = { EventStreamController.class,
 		LdesConfig.class, RestConfig.class, EventStreamWebConfig.class })
 class EventStreamControllerTest {
 
+	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
+
 	@Autowired
 	private MockMvc mockMvc;
-
 	@MockBean
 	private EventStreamFetcher eventStreamFetcher;
-
 	@Autowired
 	LdesConfig ldesConfig;
+	@Autowired
+	RestConfig restConfig;
 
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
@@ -87,6 +91,10 @@ class EventStreamControllerTest {
 		assertNotNull(etagHeaderValue);
 		assertEquals(expectedEtagHeaderValue, etagHeaderValue);
 
+		Integer maxAge = extractMaxAge(result);
+		assertNotNull(maxAge);
+		assertEquals(CONFIGURED_MAX_AGE_IMMUTABLE, maxAge);
+
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(),
 				lang);
 		assertEquals(LDES_EVENT_STREAM_URI, getObjectURI(actualModel,
@@ -102,6 +110,17 @@ class EventStreamControllerTest {
 				.map(Resource::getURI)
 				.map(Objects::toString)
 				.orElse(null);
+	}
+
+	private Integer extractMaxAge(MvcResult result) {
+		String header = result.getResponse().getHeader(HttpHeaders.CACHE_CONTROL);
+		Matcher matcher = Pattern.compile("(.*,)?(max-age=([0-9]+))(,.*)?").matcher(header);
+
+		if (matcher.matches()) {
+			return Integer.valueOf(matcher.group(3));
+		}
+
+		return null;
 	}
 
 	@Test
@@ -140,5 +159,4 @@ class EventStreamControllerTest {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
-
 }

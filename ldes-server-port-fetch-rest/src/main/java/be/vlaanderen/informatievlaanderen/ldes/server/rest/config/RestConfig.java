@@ -24,8 +24,16 @@ public class RestConfig {
 		return maxAge;
 	}
 
+	public void setMaxAge(int maxAge) {
+		this.maxAge = maxAge;
+	}
+
 	public int getMaxAgeImmutable() {
 		return maxAgeImmutable;
+	}
+
+	public void setMaxAgeImmutable(int maxAgeImmutable) {
+		this.maxAgeImmutable = maxAgeImmutable;
 	}
 
 	public String generateMutableCacheControl() {
