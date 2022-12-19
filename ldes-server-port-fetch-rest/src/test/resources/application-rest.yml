@@ -1,0 +1,3 @@
+rest:
+  max-age: 180
+  max-age-immutable: 360

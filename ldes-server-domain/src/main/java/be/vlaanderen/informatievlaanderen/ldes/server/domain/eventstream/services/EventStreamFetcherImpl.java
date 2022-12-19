@@ -1,13 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
+import org.springframework.stereotype.Component;
+
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import org.springframework.stereotype.Component;
 
 @Component
 public class EventStreamFetcherImpl implements EventStreamFetcher {
+
 	private final LdesConfig ldesConfig;
 	private final ViewConfig viewConfig;
 
