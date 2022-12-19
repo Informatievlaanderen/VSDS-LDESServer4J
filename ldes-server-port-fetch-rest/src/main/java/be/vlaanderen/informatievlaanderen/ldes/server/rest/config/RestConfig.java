@@ -1,8 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.config;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,16 +17,8 @@ public class RestConfig {
 	private int maxAge = 60;
 	private int maxAgeImmutable = 604800;
 
-	public int getMaxAge() {
-		return maxAge;
-	}
-
 	public void setMaxAge(int maxAge) {
 		this.maxAge = maxAge;
-	}
-
-	public int getMaxAgeImmutable() {
-		return maxAgeImmutable;
 	}
 
 	public void setMaxAgeImmutable(int maxAgeImmutable) {
@@ -37,13 +26,11 @@ public class RestConfig {
 	}
 
 	public String generateMutableCacheControl() {
-		return List.of(CACHE_CONTROL_PUBLIC, CACHE_CONTROL_MAX_AGE + "=" + maxAge).stream()
-				.collect(Collectors.joining(","));
+		return String.join(",", CACHE_CONTROL_PUBLIC, CACHE_CONTROL_MAX_AGE + "=" + maxAge);
 	}
 
 	public String generateImmutableCacheControl() {
-		return List.of(CACHE_CONTROL_PUBLIC, CACHE_CONTROL_MAX_AGE + "=" + maxAgeImmutable, CACHE_CONTROL_IMMUTABLE)
-				.stream()
-				.collect(Collectors.joining(","));
+		return String.join(",", CACHE_CONTROL_PUBLIC, CACHE_CONTROL_MAX_AGE + "=" + maxAgeImmutable,
+				CACHE_CONTROL_IMMUTABLE);
 	}
 }
