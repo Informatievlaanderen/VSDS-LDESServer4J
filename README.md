@@ -21,6 +21,7 @@ open data.
                 * [Example HTTP Ingest-Fetch Configuration](#example-http-ingest-fetch-configuration)
                 * [Example Mongo Configuration](#example-mongo-configuration)
                 * [Example Views Configuration](#example-views-configuration)
+                * [Example Retention](#example-retention)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
@@ -153,6 +154,20 @@ An example of a view configuration with two view is shown below
         - name: "timebased"
           config:
             memberLimit: 3
+  ```
+
+##### Example Retention
+
+To reduce storage fill up, it is possible to set a retention policy per view.
+As of now, there is only a timebased retention possible which can be configured with a [ISO 8601 duration](https://tc39.es/proposal-temporal/docs/duration.html)
+
+  ```yaml
+  views:
+    - name: "firstView"
+      retentionPolicies:
+        - name: "timebased"
+          config:
+            duration: "PT5M"
   ```
 
 ##### Example Timebased Fragmentation
