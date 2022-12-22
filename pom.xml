@@ -35,8 +35,6 @@
 
         <!-- SPRING BOOT -->
         <spring-boot.version>3.0.0</spring-boot.version>
-        <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-otel-dependencies.version>1.1.0</spring-cloud-sleuth-otel-dependencies.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.6.1</apache-jena.version>
@@ -71,7 +69,7 @@
         <!-- CODE FORMATTER -->
         <formatter-maven-plugin.version>2.21.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
-        
+
         <!-- HASHING -->
         <commons-codec.version>1.15</commons-codec.version>
     </properties>
@@ -174,27 +172,13 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<version>${spring-cloud-sleuth-otel-dependencies.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
-			
-			<!-- HASHING -->
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>${commons-codec.version}</version>
-			</dependency>
+
+            <!-- HASHING -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

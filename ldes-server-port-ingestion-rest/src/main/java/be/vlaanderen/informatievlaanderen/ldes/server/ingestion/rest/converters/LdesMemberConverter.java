@@ -13,7 +13,6 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -72,12 +71,6 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		OutputStream body = outputMessage.getBody();
 		body.write(outputStream.toString().getBytes());
-	}
-
-	@PostConstruct
-	public void init() {
-		String example = "<init-server> <http://www.opengis.net/ont/geosparql#asWKT> \"<http://www.opengis.net/def/crs/EPSG/9.9.1/31370> POINT (0,0)\"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .";
-		fromString(example, Lang.NQUADS);
 	}
 
 }
