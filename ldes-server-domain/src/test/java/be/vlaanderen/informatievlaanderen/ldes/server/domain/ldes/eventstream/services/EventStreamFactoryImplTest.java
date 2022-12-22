@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,26 +9,26 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EventStreamFetcherImplTest {
-	EventStreamFetcher eventStreamFetcher;
+class EventStreamFactoryImplTest {
+	EventStreamFactory eventStreamFactory;
 
 	@BeforeEach
 	void setUp() {
 		LdesConfig ldesConfig = getLdesConfig();
 		ViewConfig viewConfig = getViewConfig();
-		eventStreamFetcher = new EventStreamFetcherImpl(ldesConfig, viewConfig);
+		eventStreamFactory = new EventStreamFactoryImpl(ldesConfig, viewConfig);
 	}
 
 	@Test
 	void test() {
-		EventStream eventStream = eventStreamFetcher.fetchEventStream();
+		EventStream eventStream = eventStreamFactory.getEventStream();
 		assertEquals("mobility-hindrances", eventStream.collection());
 		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				eventStream.shape());
 		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", eventStream.timestampPath());
-		assertEquals("http://purl.org/dc/terms/isVersionOf", eventStream.versionOf());
+		assertEquals("http://purl.org/dc/terms/isVersionOf", eventStream.versionOfPath());
 		assertEquals(List.of("firstView", "secondView"), eventStream.views());
 	}
 
