@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
-import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-
-import javax.servlet.http.HttpServletResponse;
-
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,10 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import static org.springframework.http.HttpHeaders.*;
 
 @RestController
 public class EventStreamController {
