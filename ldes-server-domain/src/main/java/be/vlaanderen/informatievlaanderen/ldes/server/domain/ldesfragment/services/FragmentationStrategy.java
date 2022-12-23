@@ -2,9 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import org.springframework.cloud.sleuth.Span;
+import io.micrometer.observation.Observation;
 
 public interface FragmentationStrategy {
 
-	void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan);
+	void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation);
 }

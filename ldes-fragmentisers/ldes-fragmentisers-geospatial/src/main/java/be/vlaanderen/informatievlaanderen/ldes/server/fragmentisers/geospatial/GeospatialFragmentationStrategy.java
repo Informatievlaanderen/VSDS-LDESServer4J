@@ -7,8 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 
 import java.util.Set;
 
@@ -18,22 +18,25 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 	private final GeospatialBucketiser geospatialBucketiser;
 	private final GeospatialFragmentCreator fragmentCreator;
-	private final Tracer tracer;
+	private final ObservationRegistry observationRegistry;
 
 	private LdesFragment rootTileFragment = null;
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
-			Tracer tracer, TreeRelationsRepository treeRelationsRepository) {
+			ObservationRegistry observationRegistry, TreeRelationsRepository treeRelationsRepository) {
 		super(fragmentationStrategy, treeRelationsRepository);
 		this.geospatialBucketiser = geospatialBucketiser;
 		this.fragmentCreator = fragmentCreator;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
-		Span geospatialFragmentationSpan = tracer.nextSpan(parentSpan).name("geospatial fragmentation").start();
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
+		Observation geospatialFragmentationObservation = Observation.createNotStarted("geospatial fragmentation",
+				observationRegistry)
+				.parentObservation(parentObservation)
+				.start();
 		getRootTileFragment(parentFragment);
 		Set<String> tiles = geospatialBucketiser.bucketise(member);
 		tiles
@@ -41,8 +44,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.parallel()
 				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment))
 				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
-						geospatialFragmentationSpan));
-		geospatialFragmentationSpan.end();
+						geospatialFragmentationObservation));
+		geospatialFragmentationObservation.stop();
 	}
 
 	private void getRootTileFragment(LdesFragment parentFragment) {
