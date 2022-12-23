@@ -31,6 +31,27 @@
             <artifactId>jena-geosparql</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.sis.core</groupId>
+            <artifactId>sis-referencing</artifactId>
+            <version>1.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.sis.non-free</groupId>
+            <artifactId>sis-epsg</artifactId>
+            <version>1.2</version>
+            <scope>compile</scope>
+        </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>10.14.2.0</version>
+                <scope>compile</scope>
+            </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
