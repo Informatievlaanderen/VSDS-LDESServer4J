@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.service
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFLanguages;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,7 +56,7 @@ class MemberIngestionControllerTest {
 	@Autowired
 	private LdesConfig ldesConfig;
 
-	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType	{0}")
+	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
@@ -99,7 +101,9 @@ class MemberIngestionControllerTest {
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+		// String content =
+		// Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+		String content = "<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .";
 		return RdfModelConverter.toString(RdfModelConverter.fromString(content,
 				Lang.NQUADS), rdfFormat);
 	}
@@ -108,9 +112,25 @@ class MemberIngestionControllerTest {
 			ArgumentsProvider {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS),
-					Arguments.of("application/n-triples", Lang.NTRIPLES));
+					Arguments.of("application/n-triples", Lang.NTRIPLES),
+					Arguments.of("application/ld+json", Lang.JSONLD),
+					Arguments.of("text/turtle", Lang.TURTLE),
+					Arguments.of("application/rdf+json", Lang.RDFJSON),
+					Arguments.of("application/trix+xml", Lang.TRIX),
+					Arguments.of("text/n3", Lang.N3),
+					Arguments.of("application/trig", Lang.TRIG),
+					Arguments.of("application/n3", Lang.N3),
+					Arguments.of("text/plain", Lang.NTRIPLES),
+					Arguments.of("application/rdf+xml", Lang.RDFXML),
+					Arguments.of("x/ld-json-11", Lang.JSONLD11),
+					Arguments.of("x/ld-json-10", Lang.JSONLD10),
+					Arguments.of("text/rdf+n3", Lang.N3),
+					Arguments.of("application/trix", Lang.TRIX),
+					Arguments.of("application/turtle", Lang.TURTLE),
+					Arguments.of("text/trig", Lang.TRIG));
 		}
 	}
 }

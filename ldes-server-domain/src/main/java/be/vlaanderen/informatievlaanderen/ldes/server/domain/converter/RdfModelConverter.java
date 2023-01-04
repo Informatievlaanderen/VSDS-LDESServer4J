@@ -8,9 +8,11 @@ import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.http.MediaType;
 
 import java.io.StringWriter;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.jena.riot.RDFLanguages.nameToLang;
+import org.apache.jena.riot.RDFLanguages;
 
 public class RdfModelConverter {
 	private RdfModelConverter() {
