@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -10,13 +9,13 @@ public class OpenFragmentProvider {
 
 	private final TimeBasedFragmentCreator fragmentCreator;
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final TimebasedFragmentationConfig timebasedFragmentationConfig;
+	private final Long memberLimit;
 
 	public OpenFragmentProvider(TimeBasedFragmentCreator fragmentCreator,
-			LdesFragmentRepository ldesFragmentRepository, TimebasedFragmentationConfig timebasedFragmentationConfig) {
+			LdesFragmentRepository ldesFragmentRepository, Long memberLimit) {
 		this.fragmentCreator = fragmentCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.timebasedFragmentationConfig = timebasedFragmentationConfig;
+		this.memberLimit = memberLimit;
 	}
 
 	public Pair<LdesFragment, Boolean> retrieveOpenFragmentOrCreateNewFragment(LdesFragment parentFragment) {
@@ -39,6 +38,6 @@ public class OpenFragmentProvider {
 	}
 
 	public boolean needsToCreateNewFragment(LdesFragment fragment) {
-		return fragment.getCurrentNumberOfMembers() >= timebasedFragmentationConfig.memberLimit();
+		return fragment.getCurrentNumberOfMembers() >= memberLimit;
 	}
 }
