@@ -14,6 +14,8 @@ import org.mockito.InOrder;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PROV_GENERATED_AT_TIME;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -32,7 +34,7 @@ class TimeBasedFragmentCreatorTest {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(
 				ldesFragmentRepository, treeRelationsRepository,
-				nonCriticalTasksExecutor);
+				nonCriticalTasksExecutor, createProperty(PROV_GENERATED_AT_TIME));
 	}
 
 	@Test

@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.se
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +18,6 @@ import static org.springframework.http.HttpHeaders.*;
 
 @RestController
 public class EventStreamController {
-
-	@Value("${ldes.collectionname}")
-	private String collectionName;
 
 	private final RestConfig restConfig;
 	private final EventStreamFactory eventStreamFactory;
