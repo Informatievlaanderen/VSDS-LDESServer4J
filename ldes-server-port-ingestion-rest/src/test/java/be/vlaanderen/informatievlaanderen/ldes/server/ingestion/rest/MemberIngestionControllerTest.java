@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.service
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFLanguages;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -27,7 +26,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,9 +99,7 @@ class MemberIngestionControllerTest {
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		// String content =
-		// Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-		String content = "<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .";
+		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
 		return RdfModelConverter.toString(RdfModelConverter.fromString(content,
 				Lang.NQUADS), rdfFormat);
 	}
