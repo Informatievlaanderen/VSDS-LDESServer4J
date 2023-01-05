@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
 		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
+				"view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 		String tileFragmentId = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"))
@@ -58,7 +57,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_TileFragmentDoesNotExist_RetrievedTileFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
+				"view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 		LdesFragment tileFragment = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"));
@@ -80,7 +79,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
 		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
+				"view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 
@@ -98,7 +97,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo("view", List.of(new FragmentPair("substring", "a"))));
+				"view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
