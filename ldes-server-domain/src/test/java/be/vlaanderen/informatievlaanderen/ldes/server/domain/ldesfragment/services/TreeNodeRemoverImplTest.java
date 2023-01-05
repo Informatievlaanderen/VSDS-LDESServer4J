@@ -44,7 +44,7 @@ class TreeNodeRemoverImplTest {
 		verify(fragmentRepository,
 				times(1)).retrieveNonDeletedImmutableFragmentsOfView("view");
 		verify(fragmentRepository, times(1)).saveFragment(readyToDeleteFragment);
-		assertTrue(readyToDeleteFragment.getFragmentInfo().getSoftDeleted());
+		assertTrue(readyToDeleteFragment.isSoftDeleted());
 		verifyNoMoreInteractions(fragmentRepository);
 		verify(parentUpdater, times(1)).updateParent(readyToDeleteFragment);
 		verifyNoMoreInteractions(parentUpdater);

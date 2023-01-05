@@ -83,8 +83,8 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 						viewName)
 				.stream()
 				.filter(ldesFragmentEntity -> Collections
-						.indexOfSubList(ldesFragmentEntity.getFragmentInfo().getFragmentPairs(), fragmentPairList) != -1
-						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentInfo().getFragmentPairs()))
+						.indexOfSubList(ldesFragmentEntity.getFragmentPairs(), fragmentPairList) != -1
+						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentPairs()))
 				.map(LdesFragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}

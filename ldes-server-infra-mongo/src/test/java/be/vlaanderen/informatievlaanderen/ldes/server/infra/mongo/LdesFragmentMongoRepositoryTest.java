@@ -46,7 +46,7 @@ class LdesFragmentMongoRepositoryTest {
 						VIEW_NAME))
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
-						.filter(ldesFragmentEntity -> ldesFragmentEntity.getFragmentInfo().getViewName()
+						.filter(ldesFragmentEntity -> ldesFragmentEntity.getViewName()
 								.equals(VIEW_NAME))
 						.collect(Collectors.toList()));
 

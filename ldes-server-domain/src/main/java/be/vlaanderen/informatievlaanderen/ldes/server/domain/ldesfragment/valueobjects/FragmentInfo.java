@@ -1,13 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 public class FragmentInfo {
 
@@ -32,11 +30,6 @@ public class FragmentInfo {
 		this.immutableTimestamp = immutableTimestamp;
 		this.softDeleted = softDeleted;
 		this.numberOfMembers = numberOfMembers;
-	}
-
-	public Optional<String> getValueOfKey(String key) {
-		return fragmentPairs.stream().filter(fragmentPair -> fragmentPair.fragmentKey().equals(key))
-				.map(FragmentPair::fragmentValue).findFirst();
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
@@ -96,38 +89,4 @@ public class FragmentInfo {
 		return Objects.hash(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted);
 	}
 
-	public String generateFragmentId() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("/").append(viewName);
-
-		if (!fragmentPairs.isEmpty()) {
-			stringBuilder.append("?");
-			stringBuilder.append(fragmentPairs.stream()
-					.map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
-					.collect(Collectors.joining("&")));
-		}
-
-		return stringBuilder.toString();
-	}
-
-	public String getParentId() {
-
-		if (!fragmentPairs.isEmpty()) {
-			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
-			parentPairs.remove(parentPairs.size() - 1);
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder
-					.append("/").append(viewName);
-			if (!parentPairs.isEmpty()) {
-
-				stringBuilder.append("?");
-				stringBuilder
-						.append(parentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
-								"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
-			}
-			return stringBuilder.toString();
-		}
-
-		return "root";
-	}
 }
