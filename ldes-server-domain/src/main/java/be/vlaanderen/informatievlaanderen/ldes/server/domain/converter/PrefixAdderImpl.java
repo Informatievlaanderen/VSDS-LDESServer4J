@@ -65,9 +65,9 @@ public class PrefixAdderImpl implements PrefixAdder {
 		nameSpaceMap.forEach((prefix, uri) -> {
 			try {
 				model.setNsPrefix(prefix, uri);
-			} catch (PrefixMapping.IllegalPrefixException ignored) {
+			} catch (PrefixMapping.IllegalPrefixException exception) {
 				// If namespace cannot be added as prefix, ignore.
-				LOGGER.error("IlligalPrefixException ignored: " + ignored.getMessage());
+				LOGGER.warn("IlligalPrefixException exception: {}", exception.getMessage());
 			}
 		});
 	}
