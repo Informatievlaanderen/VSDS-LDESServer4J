@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 import java.time.LocalDateTime;
@@ -11,17 +10,31 @@ import java.util.stream.Collectors;
 
 public class LdesFragment {
 
-	private final FragmentInfo fragmentInfo;
+	private final String viewName;
+	private final List<FragmentPair> fragmentPairs;
+	private Boolean immutable;
+	private LocalDateTime immutableTimestamp;
+	private Boolean softDeleted;
+	private final int numberOfMembers;
 
-	public LdesFragment(final FragmentInfo fragmentInfo) {
-		this.fragmentInfo = fragmentInfo;
+	public LdesFragment(final String viewName, final List<FragmentPair> fragmentPairs) {
+		this(viewName, fragmentPairs, false, null, false, 0);
+	}
+
+	public LdesFragment(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
+			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers) {
+		this.viewName = viewName;
+		this.fragmentPairs = fragmentPairs;
+		this.immutable = immutable;
+		this.immutableTimestamp = immutableTimestamp;
+		this.softDeleted = softDeleted;
+		this.numberOfMembers = numberOfMembers;
 	}
 
 	public String getFragmentId() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("/").append(getViewName());
+		stringBuilder.append("/").append(viewName);
 
-		List<FragmentPair> fragmentPairs = getFragmentPairs();
 		if (!fragmentPairs.isEmpty()) {
 			stringBuilder.append("?");
 			stringBuilder.append(fragmentPairs.stream()
@@ -33,59 +46,58 @@ public class LdesFragment {
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
-		return this.fragmentInfo.getFragmentPairs();
-	}
-
-	public FragmentInfo getFragmentInfo() {
-		return fragmentInfo;
+		return this.fragmentPairs;
 	}
 
 	public void makeImmutable() {
-		this.fragmentInfo.makeImmutable();
+		this.immutable = true;
+		this.immutableTimestamp = LocalDateTime.now();
 	}
 
 	public void setSoftDeleted(boolean softDeleted) {
-		this.fragmentInfo.setSoftDeleted(softDeleted);
+		this.softDeleted = softDeleted;
 	}
 
 	public boolean isImmutable() {
-		return this.fragmentInfo.getImmutable();
+		return this.immutable;
 	}
 
 	public LdesFragment createChild(FragmentPair fragmentPair) {
-		return new LdesFragment(fragmentInfo.createChild(fragmentPair));
+		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
+		childFragmentPairs.add(fragmentPair);
+		return new LdesFragment(getViewName(), childFragmentPairs);
 	}
 
 	public boolean isSoftDeleted() {
-		return this.fragmentInfo.getSoftDeleted();
+		return this.softDeleted;
 	}
 
 	public LocalDateTime getImmutableTimestamp() {
-		return this.fragmentInfo.getImmutableTimestamp();
+		return this.immutableTimestamp;
 	}
 
 	public Optional<String> getValueOfKey(String key) {
-		return this.fragmentInfo.getFragmentPairs().stream()
+		return this.fragmentPairs.stream()
 				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(key))
 				.map(FragmentPair::fragmentValue).findFirst();
 	}
 
 	public String getViewName() {
-		return this.fragmentInfo.getViewName();
+		return this.viewName;
 	}
 
 	public int getNumberOfMembers() {
-		return this.fragmentInfo.getNumberOfMembers();
+		return this.numberOfMembers;
 	}
 
 	public String getParentId() {
 
-		if (!this.getFragmentInfo().getFragmentPairs().isEmpty()) {
-			List<FragmentPair> parentPairs = new ArrayList<>(this.getFragmentInfo().getFragmentPairs());
+		if (!this.fragmentPairs.isEmpty()) {
+			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
 			parentPairs.remove(parentPairs.size() - 1);
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder
-					.append("/").append(getViewName());
+					.append("/").append(viewName);
 			if (!parentPairs.isEmpty()) {
 
 				stringBuilder.append("?");
