@@ -21,8 +21,8 @@
         <!-- MAVEN -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
@@ -39,7 +39,7 @@
         <spring-cloud-sleuth-otel-dependencies.version>1.1.0</spring-cloud-sleuth-otel-dependencies.version>
 
         <!-- JSON & RDF -->
-        <apache-jena.version>4.6.1</apache-jena.version>
+        <apache-jena.version>4.7.0</apache-jena.version>
         <json-simple.version>1.1.1</json-simple.version>
 
         <!-- TESTING -->
@@ -47,14 +47,14 @@
         <junit-platform-suite.version>1.9.1</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.9.1</jupiter.version>
-        <mockito.version>4.10.0</mockito.version>
-        <byte-buddy.version>1.12.20</byte-buddy.version>
-        <de.flapdoodle.embed.mongo.version>4.3.1</de.flapdoodle.embed.mongo.version>
+        <mockito.version>4.11.0</mockito.version>
+        <byte-buddy.version>1.12.21</byte-buddy.version>
+        <de.flapdoodle.embed.mongo.version>4.3.3</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>7.4.1</depencency-check-maven.version>
+        <depencency-check-maven.version>7.4.3</depencency-check-maven.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
