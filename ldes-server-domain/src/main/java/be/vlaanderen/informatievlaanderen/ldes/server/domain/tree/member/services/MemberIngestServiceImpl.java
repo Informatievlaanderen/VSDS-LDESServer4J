@@ -29,13 +29,14 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 	@Override
 	public void addMember(Member member) {
 		boolean memberExists = memberRepository.memberExists(member.getLdesMemberId());
+		String memberId = member.getLdesMemberId().replaceAll("[\n\r\t]", "_");
 		if (!memberExists) {
 			Metrics.counter("ldes_server_ingested_members_count").increment();
 			nonCriticalTasksExecutor.submit(() -> storeLdesMember(member));
 			fragmentationMediator.addMemberToFragment(member);
-			LOGGER.debug("Member with id {} ingested.", member.getLdesMemberId());
+			LOGGER.debug("Member with id {} ingested.", memberId);
 		} else {
-			LOGGER.warn("Duplicate member ingested. Member with id {} already exist", member.getLdesMemberId());
+			LOGGER.warn("Duplicate member ingested. Member with id {} already exist", memberId);
 		}
 	}
 
