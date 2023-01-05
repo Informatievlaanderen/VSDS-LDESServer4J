@@ -29,12 +29,9 @@ class SubstringFragmentationStrategyTest {
 	private SubstringFragmentFinder substringFragmentFinder;
 	private SubstringFragmentCreator substringFragmentCreator;
 	private SubstringFragmentationStrategy substringFragmentationStrategy;
-	private final FragmentationStrategy decoratedFragmentationStrategy =
-			mock(FragmentationStrategy.class);
-	private final LdesFragmentRepository ldesFragmentRepository =
-			mock(LdesFragmentRepository.class);
-	private final TreeRelationsRepository treeRelationsRepository =
-			mock(TreeRelationsRepository.class);
+	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
+	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 
 	@BeforeEach
 	void setUp() {
@@ -43,24 +40,20 @@ class SubstringFragmentationStrategyTest {
 		substringBucketiser = mock(SubstringBucketiser.class);
 		substringFragmentFinder = mock(SubstringFragmentFinder.class);
 		substringFragmentCreator = mock(SubstringFragmentCreator.class);
-		substringFragmentationStrategy = new
-				SubstringFragmentationStrategy(decoratedFragmentationStrategy,
+		substringFragmentationStrategy = new SubstringFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), substringBucketiser, substringFragmentFinder,
 				substringFragmentCreator, treeRelationsRepository);
 	}
 
 	@Test
-	void
-	when_SubstringFragmentationStrategyIsCalled_SubstringFragmentationIsAppliedAndDecoratedServiceIsCalled() {
+	void when_SubstringFragmentationStrategyIsCalled_SubstringFragmentationIsAppliedAndDecoratedServiceIsCalled() {
 		Member member = mock(Member.class);
 		when(substringBucketiser.bucketise(member)).thenReturn(List.of("a", "ab",
 				"abc"));
-		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new
-				FragmentPair(SUBSTRING, ""));
+		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"")).thenReturn(rootFragment);
-		LdesFragment childFragment = PARENT_FRAGMENT.createChild(new
-				FragmentPair(SUBSTRING, "ab"));
+		LdesFragment childFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentFinder.getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment,
 				List.of("a", "ab", "abc"))).thenReturn(childFragment);
@@ -76,10 +69,10 @@ class SubstringFragmentationStrategyTest {
 				times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "");
 		inOrder.verify(substringFragmentFinder,
 				times(1)).getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
-				rootFragment, List.of("a", "ab", "abc"));
+						rootFragment, List.of("a", "ab", "abc"));
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(childFragment), eq(member),
-				any(Observation.class));
+						any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

@@ -1,5 +1,4 @@
-package
-		be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
@@ -18,17 +17,14 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.mockito.Mockito.mock;
 
 class FragmentationStrategyDecoratorTest {
-	FragmentationStrategy fragmentationStrategy =
-			mock(FragmentationStrategy.class);
-	TreeRelationsRepository treeRelationsRepository =
-			mock(TreeRelationsRepository.class);
+	FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
+	TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
 	private static final String VIEW_NAME = "view";
 
 	@BeforeEach
 	void setUp() {
-		fragmentationStrategyDecorator = new
-				FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
+		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
 				treeRelationsRepository);
 	}
 
@@ -37,8 +33,7 @@ class FragmentationStrategyDecoratorTest {
 
 		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
-		LdesFragment childFragment = parentFragment.createChild(new
-				FragmentPair("key", "value"));
+		LdesFragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
 		TreeRelation expectedRelation = new TreeRelation("",
 				childFragment.getFragmentId(), "", "",
 				GENERIC_TREE_RELATION);
@@ -48,12 +43,11 @@ class FragmentationStrategyDecoratorTest {
 
 		Mockito.verify(treeRelationsRepository,
 				Mockito.times(1)).addTreeRelation(parentFragment.getFragmentId(),
-				expectedRelation);
+						expectedRelation);
 	}
 
 	@Test
-	void
-	when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
+	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
 		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
 		Member member = mock(Member.class);
@@ -66,8 +60,7 @@ class FragmentationStrategyDecoratorTest {
 
 	static class FragmentationStrategyDecoratorTestImpl extends
 			FragmentationStrategyDecorator {
-		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy
-				fragmentationStrategy,
+		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
 				TreeRelationsRepository treeRelationsRepository) {
 			super(fragmentationStrategy,
 					treeRelationsRepository);

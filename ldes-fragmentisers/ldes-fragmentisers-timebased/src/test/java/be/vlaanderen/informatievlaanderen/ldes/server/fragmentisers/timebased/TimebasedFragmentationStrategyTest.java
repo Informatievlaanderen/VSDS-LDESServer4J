@@ -21,24 +21,19 @@ import static org.mockito.Mockito.*;
 class TimebasedFragmentationStrategyTest {
 
 	private static final String VIEW_NAME = "view";
-	private final OpenFragmentProvider openFragmentProvider =
-			mock(OpenFragmentProvider.class);
-	private final FragmentationStrategy decoratedFragmentationStrategy =
-			mock(FragmentationStrategy.class);
+	private final OpenFragmentProvider openFragmentProvider = mock(OpenFragmentProvider.class);
+	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 
 	private FragmentationStrategy fragmentationStrategy;
 	private static LdesFragment PARENT_FRAGMENT;
 	private static LdesFragment OPEN_FRAGMENT;
-	private final TreeRelationsRepository treeRelationsRepository =
-			mock(TreeRelationsRepository.class);
+	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
-		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new
-				FragmentPair("generatedAtTime", "someTime"));
-		fragmentationStrategy = new
-				TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
+		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair("generatedAtTime", "someTime"));
+		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
 				openFragmentProvider, ObservationRegistry.create(),
 				treeRelationsRepository);
 	}
@@ -63,8 +58,7 @@ class TimebasedFragmentationStrategyTest {
 	}
 
 	@Test
-	void
-	when_MemberIsAddedToFirstFragment_TimebasedFragmentationIsAppliedAndRelationIsAdded() {
+	void when_MemberIsAddedToFirstFragment_TimebasedFragmentationIsAppliedAndRelationIsAdded() {
 		Member member = mock(Member.class);
 		when(member.getLdesMemberId()).thenReturn("memberId");
 		when(openFragmentProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
@@ -81,7 +75,7 @@ class TimebasedFragmentationStrategyTest {
 				times(1)).addTreeRelation(eq(PARENT_FRAGMENT.getFragmentId()), any());
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member),
-				any(Observation.class));
+						any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

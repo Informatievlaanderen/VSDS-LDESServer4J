@@ -1,5 +1,4 @@
-package
-		be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
@@ -24,10 +23,8 @@ import static org.mockito.Mockito.*;
 class FragmentationExecutorImplTest {
 
 	private static final String VIEW_NAME = "view";
-	private final FragmentationStrategy fragmentationStrategy =
-			mock(FragmentationStrategy.class);
-	private final LdesFragmentRepository ldesFragmentRepository =
-			mock(LdesFragmentRepository.class);
+	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
+	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private FragmentationExecutorImpl fragmentationExecutor;
 
 	@BeforeEach
@@ -38,8 +35,7 @@ class FragmentationExecutorImplTest {
 	}
 
 	@Test
-	void
-	when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
+	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME,
 				List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
@@ -62,9 +58,8 @@ class FragmentationExecutorImplTest {
 				.thenReturn(Optional.empty());
 		Member member = mock(Member.class);
 
-		MissingRootFragmentException missingRootFragmentException =
-				assertThrows(MissingRootFragmentException.class,
-						() -> fragmentationExecutor.executeFragmentation(member));
+		MissingRootFragmentException missingRootFragmentException = assertThrows(MissingRootFragmentException.class,
+				() -> fragmentationExecutor.executeFragmentation(member));
 
 		assertEquals("Could not retrieve root fragment for view view",
 				missingRootFragmentException.getMessage());
@@ -73,22 +68,20 @@ class FragmentationExecutorImplTest {
 	}
 
 	@Test
-	void
-	when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
+	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
 		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME,
 				List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 		IntStream.range(0, 100).parallel()
-				.forEach(i ->
-						fragmentationExecutor.executeFragmentation(mock(Member.class)));
+				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(Member.class)));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
 		inOrder.verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
 		inOrder.verify(fragmentationStrategy,
 				times(100)).addMemberToFragment(eq(ldesFragment),
-				any(), any());
+						any(), any());
 		inOrder.verifyNoMoreInteractions();
 
 	}
