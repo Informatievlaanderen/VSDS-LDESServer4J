@@ -33,9 +33,9 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 			Metrics.counter("ldes_server_ingested_members_count").increment();
 			nonCriticalTasksExecutor.submit(() -> storeLdesMember(member));
 			fragmentationMediator.addMemberToFragment(member);
-			LOGGER.debug("Member with id " + member.getLdesMemberId() + " ingested.");
+			LOGGER.debug("Member with id {} ingested.", member.getLdesMemberId());
 		} else {
-			LOGGER.warn("Duplicate member ingested. Member with id " + member.getLdesMemberId() + " already exist");
+			LOGGER.warn("Duplicate member ingested. Member with id {} already exist", member.getLdesMemberId());
 		}
 	}
 
