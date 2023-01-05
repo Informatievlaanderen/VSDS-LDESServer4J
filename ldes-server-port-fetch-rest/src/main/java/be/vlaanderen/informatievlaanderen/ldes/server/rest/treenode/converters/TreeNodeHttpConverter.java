@@ -39,7 +39,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.valueOf("*/*"));
+		return List.of(MediaType.ALL);
 	}
 
 	@Override
