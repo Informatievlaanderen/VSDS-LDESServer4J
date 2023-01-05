@@ -35,7 +35,8 @@ public class GeospatialBucketiser {
 					try {
 						return geometryWrapper.convertSRS(SRS_URI.WGS84_CRS);
 					} catch (FactoryException | TransformException e) {
-						LOGGER.error(e.getClass().getName() + " transformed into RdfGeometryException: " + e.getMessage());
+						LOGGER.error(
+								e.getClass().getName() + " transformed into RdfGeometryException: " + e.getMessage());
 						throw new RdfGeometryException(geometryWrapper, SRS_URI.WGS84_CRS);
 					}
 				})

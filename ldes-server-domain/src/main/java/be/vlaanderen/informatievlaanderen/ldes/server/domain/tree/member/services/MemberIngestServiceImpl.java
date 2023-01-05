@@ -34,8 +34,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 			nonCriticalTasksExecutor.submit(() -> storeLdesMember(member));
 			fragmentationMediator.addMemberToFragment(member);
 			LOGGER.debug("Member with id " + member.getLdesMemberId() + " ingested.");
-		}
-		else {
+		} else {
 			LOGGER.warn("Duplicate member ingested. Member with id " + member.getLdesMemberId() + " already exist");
 		}
 	}

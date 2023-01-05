@@ -9,16 +9,18 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+
 @Component
 public class ApplicationContextListener implements ApplicationListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextListener.class);
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ContextRefreshedEvent) {
-            final Environment env = ((ContextRefreshedEvent) event).getApplicationContext()
-                    .getEnvironment();
-            LOGGER.info("Active profiles: " + Arrays.toString(env.getActiveProfiles()));
-        }
-    }
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationContextListener.class);
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		if (event instanceof ContextRefreshedEvent) {
+			final Environment env = ((ContextRefreshedEvent) event).getApplicationContext()
+					.getEnvironment();
+			LOGGER.info("Active profiles: " + Arrays.toString(env.getActiveProfiles()));
+		}
+	}
 }
