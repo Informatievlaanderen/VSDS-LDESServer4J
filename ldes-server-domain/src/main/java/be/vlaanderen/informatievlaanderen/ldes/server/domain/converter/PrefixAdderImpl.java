@@ -67,7 +67,7 @@ public class PrefixAdderImpl implements PrefixAdder {
 				model.setNsPrefix(prefix, uri);
 			} catch (PrefixMapping.IllegalPrefixException exception) {
 				// If namespace cannot be added as prefix, ignore.
-				LOGGER.warn("IlligalPrefixException exception: {}", exception.getMessage());
+				LOGGER.warn("IllegalPrefixException: {}", exception.getMessage());
 			}
 		});
 	}

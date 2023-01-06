@@ -6,8 +6,8 @@ public class RdfGeometryException extends RuntimeException {
 	private final GeometryWrapper geometryWrapper;
 	private final String srsFormat;
 
-	public RdfGeometryException(GeometryWrapper geometryWrapper, String srsFormat) {
-		super();
+	public RdfGeometryException(GeometryWrapper geometryWrapper, String srsFormat, Exception e) {
+		super(e);
 		this.geometryWrapper = geometryWrapper;
 		this.srsFormat = srsFormat;
 	}
