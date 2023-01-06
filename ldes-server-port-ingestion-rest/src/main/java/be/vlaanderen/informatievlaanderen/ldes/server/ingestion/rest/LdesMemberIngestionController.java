@@ -18,7 +18,6 @@ public class LdesMemberIngestionController {
 
 	@PostMapping(value = "${ldes.collectionname}")
 	public void ingestLdesMember(@RequestBody Member member) {
-
 		memberIngestService.addMember(member);
 	}
 }
