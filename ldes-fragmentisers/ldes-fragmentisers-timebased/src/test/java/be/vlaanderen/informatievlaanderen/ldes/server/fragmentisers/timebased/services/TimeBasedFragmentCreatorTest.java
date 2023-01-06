@@ -74,7 +74,7 @@ class TimeBasedFragmentCreatorTest {
 	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
 		assertEquals("/view?generatedAtTime",
 				ldesFragment.getFragmentId().split("=")[0]);
-		assertEquals(VIEW, ldesFragment.getFragmentInfo().getViewName());
-		assertTrue(ldesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
+		assertEquals(VIEW, ldesFragment.getViewName());
+		assertTrue(ldesFragment.getValueOfKey(GENERATED_AT_TIME).isPresent());
 	}
 }
