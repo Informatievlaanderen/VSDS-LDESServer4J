@@ -9,8 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
+import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Property;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PROV_GENERATED_AT_TIME;
@@ -23,7 +23,7 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
-		Tracer tracer = applicationContext.getBean(Tracer.class);
+		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		TreeRelationsRepository treeRelationsRepository = applicationContext
 				.getBean(TreeRelationsRepository.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
@@ -31,7 +31,7 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
 				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
-				openFragmentProvider, tracer, treeRelationsRepository);
+				openFragmentProvider, observationRegistry, treeRelationsRepository);
 
 	}
 

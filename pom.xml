@@ -34,9 +34,7 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>2.7.5</spring-boot.version>
-        <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-otel-dependencies.version>1.1.0</spring-cloud-sleuth-otel-dependencies.version>
+        <spring-boot.version>3.0.1</spring-boot.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.7.0</apache-jena.version>
@@ -174,20 +172,6 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<version>${spring-cloud-sleuth-otel-dependencies.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
 			
 			<!-- HASHING -->
 			<dependency>
