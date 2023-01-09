@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import org.junit.jupiter.api.Test;
@@ -16,8 +15,8 @@ class GeospatialRelationsAttributerTest {
 	private final GeospatialRelationsAttributer geospatialRelationsAttributer = new GeospatialRelationsAttributer();
 	private static final String VIEW_NAME = "view";
 	private static final LdesFragment CHILD_FRAGMENT = new LdesFragment(
-			new FragmentInfo(VIEW_NAME, List.of(new FragmentPair(FRAGMENT_KEY_TILE,
-					"1/1/1"))));
+			VIEW_NAME, List.of(new FragmentPair(FRAGMENT_KEY_TILE,
+					"1/1/1")));
 
 	private static final TreeRelation EXPECTED_RELATION = new TreeRelation("http://www.opengis.net/ont/geosparql#asWKT",
 			"/view?tile=1/1/1",
