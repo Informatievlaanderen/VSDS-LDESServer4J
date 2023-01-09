@@ -119,8 +119,8 @@ The server allows configurable fragment refresh times with the max-age and max-a
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
   rest:
-    max-age: 60 { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
-    max-age-immutable: 604800 { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
+    max-age: { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
+    max-age-immutable: { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
   ```
 
 ##### Example Mongo Configuration
@@ -383,4 +383,15 @@ MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="health, info"
 MANAGEMENT_HEALTH_DEFAULTS_ENABLED=false
 MANAGEMENT_HEALTH_MONGO_ENABLED=true
 MANAGEMENT_ENDPOINT_HEALTH_SHOW-DETAILS="always"
+```
+
+### Logging
+
+The following config allows you to output logging to the console. Further customization of the logging settings can be done using the logback properties.
+```yaml
+logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+  level:
+    root: INFO
 ```
