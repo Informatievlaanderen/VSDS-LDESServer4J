@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,8 +39,8 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating First Time-Based Fragment")
 	void when_NoFragmentExists_thenNewFragmentIsCreated() {
-		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW,
-				List.of()));
+		LdesFragment parentFragment = new LdesFragment(VIEW,
+				List.of());
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
 
@@ -53,12 +52,12 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating New Time-Based Fragment")
 	void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
-		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW,
-				List.of()));
+		LdesFragment parentFragment = new LdesFragment(VIEW,
+				List.of());
 
 		LdesFragment existingLdesFragment = new LdesFragment(
-				new FragmentInfo(VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
-						"2020-12-28T09:36:37.127Z"))));
+				VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
+						"2020-12-28T09:36:37.127Z")));
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);
 

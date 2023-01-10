@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
@@ -25,7 +24,7 @@ class TileFragmentRelationsAttributerTest {
 	void setUp() {
 		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		PARENT_FRAGMENT = new LdesFragment(
-				new FragmentInfo(VIEW_NAME, List.of()));
+				VIEW_NAME, List.of());
 		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(treeRelationsRepository);
 	}
 

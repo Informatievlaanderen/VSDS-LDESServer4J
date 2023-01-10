@@ -21,6 +21,8 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStream> {
 
+	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
+
 	private final EventStreamConverter eventStreamConverter;
 
 	public EventStreamHttpConverter(EventStreamConverter eventStreamConverter) {
@@ -39,7 +41,7 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.ALL);
+		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
 	}
 
 	@Override
