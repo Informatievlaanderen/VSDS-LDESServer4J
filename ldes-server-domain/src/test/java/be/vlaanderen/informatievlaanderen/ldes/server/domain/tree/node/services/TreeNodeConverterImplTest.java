@@ -1,18 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -20,19 +13,18 @@ import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TreeNodeConverterImplTest {
 
 	private static final String HOST_NAME = "http://localhost:8080";
 	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
-	public static final String DATE_TIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
 
@@ -50,11 +42,12 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembers_ModelHasOneStatement() {
-		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, List.of(), List.of());
+		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, true, List.of(), List.of());
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(1, getNumberOfStatements(model));
+		assertEquals(2, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
+		verifyIsViewOfStatement(model);
 	}
 
 	@Test
@@ -68,12 +61,13 @@ class TreeNodeConverterImplTest {
 				List.of());
 		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, List.of(treeRelation), List.of(member));
+		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, false, List.of(treeRelation), List.of(member));
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(8, getNumberOfStatements(model));
+		assertEquals(9, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
+		verifyIsPartOfStatement(model);
 		Resource relationObject = model.listStatements(null, TREE_RELATION,
 				(Resource) null).nextStatement().getObject()
 				.asResource();
@@ -121,6 +115,22 @@ class TreeNodeConverterImplTest {
 				"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
 						+ ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
 				model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement()
+						.toString());
+	}
+
+	private void verifyIsViewOfStatement(Model model) {
+		assertEquals(
+				"[" + HOST_NAME + "/" + COLLECTION_NAME
+						+ ", https://w3id.org/tree#view, " + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME + "]",
+				model.listStatements(null, TREE_VIEW, (Resource) null).nextStatement()
+						.toString());
+	}
+
+	private void verifyIsPartOfStatement(Model model) {
+		assertEquals(
+				"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
+						+ ", http://purl.org/dc/terms/isPartOf, " + HOST_NAME + "/" + COLLECTION_NAME + "]",
+				model.listStatements(null, IS_PART_OF_PROPERTY, (Resource) null).nextStatement()
 						.toString());
 	}
 

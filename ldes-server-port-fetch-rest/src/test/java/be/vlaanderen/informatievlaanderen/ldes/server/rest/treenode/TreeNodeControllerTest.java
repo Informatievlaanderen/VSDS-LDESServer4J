@@ -81,7 +81,7 @@ class TreeNodeControllerTest {
 			String expectedHeaderValue) throws Exception {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, List.of(),
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
 				List.of());
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
@@ -150,7 +150,7 @@ class TreeNodeControllerTest {
 			throws Exception {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of());
-		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, List.of(),
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, false, List.of(),
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
