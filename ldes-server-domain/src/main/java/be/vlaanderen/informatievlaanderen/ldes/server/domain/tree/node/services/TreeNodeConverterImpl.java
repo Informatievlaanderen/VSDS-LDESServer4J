@@ -57,6 +57,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		Resource collection = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
 
 		if (isView) {
+			statements.add(createStatement(collection, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
 			addStatementIfMeaningful(statements, collection, TREE_SHAPE, ldesConfig.getShape());
 			addStatementIfMeaningful(statements, collection, LDES_VERSION_OF, ldesConfig.getVersionOfPath());
 			addStatementIfMeaningful(statements, collection, LDES_TIMESTAMP_PATH, ldesConfig.getTimestampPath());
