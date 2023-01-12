@@ -48,12 +48,12 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(treeNode.getRelations(), currentFragmentId));
-		addLdesStatements(statements, treeNode.isView(), currentFragmentId);
+		addLdesCollectionStatements(statements, treeNode.isView(), currentFragmentId);
 
 		return statements;
 	}
 
-	private void addLdesStatements(List<Statement> statements, boolean isView, Resource currentFragmentId) {
+	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, Resource currentFragmentId) {
 		Resource collection = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
 
 		if (isView) {
