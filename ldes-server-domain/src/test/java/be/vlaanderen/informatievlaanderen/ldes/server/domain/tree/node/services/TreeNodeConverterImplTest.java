@@ -45,7 +45,7 @@ class TreeNodeConverterImplTest {
 		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, true, List.of(), List.of());
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(5, getNumberOfStatements(model));
+		assertEquals(6, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -88,6 +88,8 @@ class TreeNodeConverterImplTest {
 	private void verifyLdesStatements(Model model) {
 		String id = HOST_NAME + "/" + COLLECTION_NAME;
 
+		assertEquals("[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
+				model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
 		assertEquals("[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
 				model.listStatements(createResource(id), LDES_TIMESTAMP_PATH, (Resource) null).nextStatement()
 						.toString());
