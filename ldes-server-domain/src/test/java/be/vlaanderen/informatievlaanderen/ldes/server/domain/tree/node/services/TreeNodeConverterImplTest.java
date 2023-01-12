@@ -94,7 +94,7 @@ class TreeNodeConverterImplTest {
 		assertEquals("[" + id + ", https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
 				model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement().toString());
 		assertEquals("[" + id
-						+ ", https://w3id.org/tree#shape, https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape]",
+				+ ", https://w3id.org/tree#shape, https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape]",
 				model.listStatements(createResource(id), TREE_SHAPE, (Resource) null).nextStatement().toString());
 
 		verifyIsViewOfStatement(model);
