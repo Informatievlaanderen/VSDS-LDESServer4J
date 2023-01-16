@@ -37,7 +37,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -45,7 +44,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -157,7 +155,8 @@ class EventStreamControllerTest {
 		@Bean
 		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new EventStreamConverterImpl(prefixAdder, ldesConfig, new RelationStatementConverterImpl(ldesConfig));
+			return new EventStreamConverterImpl(prefixAdder, ldesConfig,
+					new RelationStatementConverterImpl(ldesConfig));
 		}
 
 		@Bean

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface RelationStatementConverter {
 
-    List<Statement> getRelationStatements(List<TreeRelation> ldesFragment, Resource currentFragmentId);
+	List<Statement> getRelationStatements(List<TreeRelation> ldesFragment, Resource currentFragmentId);
 
 }

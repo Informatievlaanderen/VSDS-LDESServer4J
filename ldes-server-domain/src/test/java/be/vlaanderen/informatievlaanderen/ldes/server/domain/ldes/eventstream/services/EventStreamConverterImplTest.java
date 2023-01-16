@@ -11,7 +11,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -65,10 +64,14 @@ class EventStreamConverterImplTest {
 		assertEquals("[" + id + ", https://w3id.org/tree#view, " + id + "/view2]",
 				model.listStatements(createResource(id), TREE_VIEW, createResource(id + "/view2")).nextStatement()
 						.toString());
-		assertEquals("[" + id + "/view1" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
-				model.listStatements(createResource(id + "/view1"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
-		assertEquals("[" + id + "/view2" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
-				model.listStatements(createResource(id + "/view2"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
+		assertEquals(
+				"[" + id + "/view1" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
+				model.listStatements(createResource(id + "/view1"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
+						.toString());
+		assertEquals(
+				"[" + id + "/view2" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
+				model.listStatements(createResource(id + "/view2"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
+						.toString());
 	}
 
 	private int getNumberOfStatements(Model model) {

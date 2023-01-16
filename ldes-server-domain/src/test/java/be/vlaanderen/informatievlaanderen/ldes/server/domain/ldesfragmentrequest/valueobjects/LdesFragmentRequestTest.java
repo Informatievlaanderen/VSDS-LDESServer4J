@@ -46,15 +46,15 @@ class LdesFragmentRequestTest {
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
 	}
 
-    @Test
-    void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
+	@Test
+	void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
 		final String viewName = "view_name";
 		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(viewName);
 		assertEquals(viewName, request.viewName());
 		assertTrue(isEmpty(request.fragmentPairs()));
-    }
+	}
 
-    static class LdesFragmentRequestArgumentsProvider implements
+	static class LdesFragmentRequestArgumentsProvider implements
 			ArgumentsProvider {
 
 		@Override

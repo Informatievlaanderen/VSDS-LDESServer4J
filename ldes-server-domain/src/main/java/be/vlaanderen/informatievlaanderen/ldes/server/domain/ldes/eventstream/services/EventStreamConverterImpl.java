@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 @Component
 public class EventStreamConverterImpl implements EventStreamConverter {
@@ -23,7 +23,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 	private final RelationStatementConverter relationStatementConverter;
 
 	public EventStreamConverterImpl(PrefixAdder prefixAdder, LdesConfig ldesConfig,
-									RelationStatementConverter relationStatementConverter) {
+			RelationStatementConverter relationStatementConverter) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
 		this.relationStatementConverter = relationStatementConverter;
