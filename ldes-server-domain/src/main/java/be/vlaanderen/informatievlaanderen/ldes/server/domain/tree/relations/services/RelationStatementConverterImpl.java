@@ -14,7 +14,6 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
-// TODO: 16/01/2023 test this class 
 @Component
 public class RelationStatementConverterImpl implements RelationStatementConverter {
 
@@ -26,8 +25,7 @@ public class RelationStatementConverterImpl implements RelationStatementConverte
 
     public List<Statement> getRelationStatements(List<TreeRelation> ldesFragment, Resource currentFragmentId) {
         return ldesFragment.stream()
-                .flatMap(treeRelation -> getRelationStatementsOfRelation(currentFragmentId,
-                        treeRelation).stream())
+                .flatMap(treeRelation -> getRelationStatementsOfRelation(currentFragmentId, treeRelation).stream())
                 .toList();
     }
 
