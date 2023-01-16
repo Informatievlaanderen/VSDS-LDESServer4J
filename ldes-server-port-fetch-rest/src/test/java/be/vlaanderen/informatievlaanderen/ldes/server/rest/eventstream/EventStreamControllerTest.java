@@ -9,6 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.se
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -35,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -42,6 +45,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -71,7 +76,8 @@ class EventStreamControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
 		when(eventStreamFactory.getEventStream()).thenReturn(
-				new EventStream("collection", "timestampPath", "versionOf", "shape", List.of("viewOne", "viewTwo")));
+				new EventStream("collection", "timestampPath", "versionOf", "shape",
+						List.of(createView("viewOne"), createView("viewTwo"))));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
 				ldesConfig.getCollectionName())
 				.accept(mediaType))
@@ -90,15 +96,13 @@ class EventStreamControllerTest {
 		assertNotNull(maxAge);
 		assertEquals(CONFIGURED_MAX_AGE_IMMUTABLE, maxAge);
 
-		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(),
-				lang);
-		assertEquals(LDES_EVENT_STREAM_URI, getObjectURI(actualModel,
-				RdfConstants.RDF_SYNTAX_TYPE));
+		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), lang);
+		assertEquals(LDES_EVENT_STREAM_URI, getObjectURI(actualModel, RdfConstants.RDF_SYNTAX_TYPE));
 	}
 
 	private String getObjectURI(Model model, Property property) {
 		return model
-				.listStatements(null, property, (Resource) null)
+				.listStatements(createResource("http://localhost:8080/collection"), property, (Resource) null)
 				.nextOptional()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)
@@ -123,10 +127,15 @@ class EventStreamControllerTest {
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
 		when(eventStreamFactory.getEventStream()).thenReturn(
-				new EventStream("collection", "timestampPath", "versionOf", "shape", List.of("viewOne", "viewTwo")));
+				new EventStream("collection", "timestampPath", "versionOf", "shape",
+						List.of(createView("viewOne"), createView("viewTwo"))));
 
 		mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())
 				.andExpect(status().is4xxClientError());
+	}
+
+	private TreeNode createView(String viewName) {
+		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of());
 	}
 
 	static class MediaTypeRdfFormatsArgumentsProvider implements
@@ -148,7 +157,7 @@ class EventStreamControllerTest {
 		@Bean
 		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
+			return new EventStreamConverterImpl(prefixAdder, ldesConfig, new RelationStatementConverterImpl(ldesConfig));
 		}
 
 		@Bean

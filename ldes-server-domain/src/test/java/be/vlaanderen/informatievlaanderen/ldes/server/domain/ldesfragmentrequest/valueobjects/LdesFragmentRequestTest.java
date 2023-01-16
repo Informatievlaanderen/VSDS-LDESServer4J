@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LdesFragmentRequestTest {
 
@@ -46,7 +46,15 @@ class LdesFragmentRequestTest {
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
 	}
 
-	static class LdesFragmentRequestArgumentsProvider implements
+    @Test
+    void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
+		final String viewName = "view_name";
+		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(viewName);
+		assertEquals(viewName, request.viewName());
+		assertTrue(isEmpty(request.fragmentPairs()));
+    }
+
+    static class LdesFragmentRequestArgumentsProvider implements
 			ArgumentsProvider {
 
 		@Override
