@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -42,8 +41,7 @@ class EventStreamConverterImplTest {
 				.""").lang(Lang.NQUADS).toModel();
 		ldesConfig.setDcat(dcat);
 
-		RelationStatementConverterImpl relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
-		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig, relationStatementConverter);
+		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig);
 	}
 
 	@Test

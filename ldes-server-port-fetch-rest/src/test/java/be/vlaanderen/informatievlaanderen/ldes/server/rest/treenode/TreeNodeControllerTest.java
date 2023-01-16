@@ -11,8 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -230,8 +228,7 @@ class TreeNodeControllerTest {
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			RelationStatementConverter relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
-			return new TreeNodeConverterImpl(prefixAdder, ldesConfig, relationStatementConverter);
+			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 		}
 
 		@Bean

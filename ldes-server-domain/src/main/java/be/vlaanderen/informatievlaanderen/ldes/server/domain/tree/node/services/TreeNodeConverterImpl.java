@@ -3,9 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -25,13 +25,11 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final LdesConfig ldesConfig;
-	private final RelationStatementConverter relationStatementConverter;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			LdesConfig ldesConfig, RelationStatementConverter relationStatementConverter) {
+			LdesConfig ldesConfig) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
-		this.relationStatementConverter = relationStatementConverter;
 	}
 
 	@Override
@@ -53,8 +51,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		Resource currentFragmentId = createResource(treeNode.getFragmentId());
 
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
-		statements.addAll(relationStatementConverter.getRelationStatements(treeNode.getRelations(), currentFragmentId));
-
+		treeNode.getRelations().forEach(treeRelation -> {
+			TreeRelationResponse treeRelationResponse = new TreeRelationResponse(treeRelation.treePath(),
+					ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeRelation.treeNode(),
+					treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation());
+			statements.addAll(treeRelationResponse.convertToStatements(
+					treeNode.getFragmentId()));
+		});
 		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId());
 
 		return statements;
