@@ -65,7 +65,7 @@ class TreeNodeFactoryImplTest {
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID);
 
-		assertEquals(ldesFragment.getFragmentId(), treeNode.getFragmentId());
+		assertEquals(HOSTNAME + "/" + COLLECTION_NAME + ldesFragment.getFragmentId(), treeNode.getFragmentId());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isSoftDeleted());
 		assertEquals(members, treeNode.getMembers());

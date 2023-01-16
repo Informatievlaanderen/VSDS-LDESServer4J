@@ -29,13 +29,13 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	}
 
 	public TreeNode getTreeNode(String treeNodeId) {
+		String extendedTreeNodeId = ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNodeId;
 		LdesFragment ldesFragment = ldesFragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
-						() -> new MissingFragmentException(
-								ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNodeId));
+						() -> new MissingFragmentException(extendedTreeNodeId));
 		List<TreeRelation> relations = treeRelationsRepository.getRelations(treeNodeId);
 		List<Member> members = memberRepository.getMembersByReference(treeNodeId);
-		return new TreeNode(treeNodeId, ldesFragment.isImmutable(), ldesFragment.isSoftDeleted(),
+		return new TreeNode(extendedTreeNodeId, ldesFragment.isImmutable(), ldesFragment.isSoftDeleted(),
 				ldesFragment.getFragmentPairs().isEmpty(), relations,
 				members);
 	}
