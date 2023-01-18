@@ -20,14 +20,14 @@ public class SubstringFragmentFinder {
 
 	public LdesFragment getOpenLdesFragmentOrLastPossibleFragment(LdesFragment parentFragment,
 			LdesFragment rootFragment, List<String> buckets) {
-		if (rootFragment.getCurrentNumberOfMembers() < substringConfig.getMemberLimit())
+		if (rootFragment.getNumberOfMembers() < substringConfig.getMemberLimit())
 			return rootFragment;
 		LdesFragment currentParentFragment = rootFragment;
 		LdesFragment currentChildFragment = null;
 		for (String bucket : buckets) {
 			currentChildFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, bucket);
 			substringRelationsAttributer.addSubstringRelation(currentParentFragment, currentChildFragment);
-			if (currentChildFragment.getCurrentNumberOfMembers() < substringConfig.getMemberLimit()) {
+			if (currentChildFragment.getNumberOfMembers() < substringConfig.getMemberLimit()) {
 				break;
 			}
 			currentParentFragment = currentChildFragment;

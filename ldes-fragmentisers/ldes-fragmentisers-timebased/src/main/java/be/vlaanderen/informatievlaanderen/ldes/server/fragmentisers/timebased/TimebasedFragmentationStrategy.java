@@ -6,32 +6,36 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
 
 public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
 	private final OpenFragmentProvider openFragmentProvider;
-	private final Tracer tracer;
+
+	private final ObservationRegistry observationRegistry;
 
 	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			OpenFragmentProvider openFragmentProvider, Tracer tracer,
+			OpenFragmentProvider openFragmentProvider, ObservationRegistry observationRegistry,
 			TreeRelationsRepository treeRelationsRepository) {
 		super(fragmentationStrategy, treeRelationsRepository);
 		this.openFragmentProvider = openFragmentProvider;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
-		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
+		Observation timebasedFragmentationObservation = Observation.createNotStarted("timebased fragmentation",
+				observationRegistry)
+				.parentObservation(parentObservation)
+				.start();
 		Pair<LdesFragment, Boolean> ldesFragment = openFragmentProvider
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		if (Boolean.TRUE.equals(ldesFragment.getRight())) {
 			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());
 		}
-		super.addMemberToFragment(ldesFragment.getLeft(), member, timebasedFragmentationSpan);
-		timebasedFragmentationSpan.end();
+		super.addMemberToFragment(ldesFragment.getLeft(), member, timebasedFragmentationObservation);
+		timebasedFragmentationObservation.stop();
 	}
 
 }

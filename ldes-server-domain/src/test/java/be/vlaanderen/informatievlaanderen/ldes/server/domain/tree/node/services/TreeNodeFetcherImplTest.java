@@ -51,7 +51,8 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenFragmentIsDeleted_ThenDeletedFragmentExceptionIsThrown() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, true, List.of(), List.of());
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, true, false, List.of(),
+				List.of());
 		when(treeNodeFactory.getTreeNode(ldesFragmentRequest.generateFragmentId()))
 				.thenReturn(treeNode);
 
@@ -66,7 +67,8 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, false, List.of(), List.of());
+		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, false, false, List.of(),
+				List.of());
 		when(treeNodeFactory.getTreeNode(ldesFragmentRequest.generateFragmentId()))
 				.thenReturn(treeNode);
 

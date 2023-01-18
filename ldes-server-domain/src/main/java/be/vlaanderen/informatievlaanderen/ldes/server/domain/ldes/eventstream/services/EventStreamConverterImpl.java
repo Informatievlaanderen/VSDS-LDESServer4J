@@ -27,12 +27,12 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 	public Model toModel(final EventStream eventStream) {
 		Model model = ModelFactory.createDefaultModel();
 		List<Statement> statements = new ArrayList<>();
-		Resource collectionResource = createResource(ldesConfig.getHostName() + "/" + eventStream.collection());
-		statements.add(createStatement(collectionResource, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
-		addStatementIfMeaningful(statements, collectionResource, TREE_SHAPE, eventStream.shape());
-		addStatementIfMeaningful(statements, collectionResource, LDES_VERSION_OF, eventStream.versionOfPath());
-		addStatementIfMeaningful(statements, collectionResource, LDES_TIMESTAMP_PATH, eventStream.timestampPath());
-		eventStream.views().forEach(view -> addStatementIfMeaningful(statements, collectionResource, TREE_VIEW,
+		Resource collection = createResource(ldesConfig.getHostName() + "/" + eventStream.collection());
+		statements.add(createStatement(collection, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
+		addStatementIfMeaningful(statements, collection, TREE_SHAPE, eventStream.shape());
+		addStatementIfMeaningful(statements, collection, LDES_VERSION_OF, eventStream.versionOfPath());
+		addStatementIfMeaningful(statements, collection, LDES_TIMESTAMP_PATH, eventStream.timestampPath());
+		eventStream.views().forEach(view -> addStatementIfMeaningful(statements, collection, TREE_VIEW,
 				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + "/" + view));
 		model.add(statements);
 		return prefixAdder.addPrefixesToModel(model);

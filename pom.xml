@@ -25,8 +25,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
 
@@ -34,9 +34,7 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>2.7.5</spring-boot.version>
-        <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-otel-dependencies.version>1.1.0</spring-cloud-sleuth-otel-dependencies.version>
+        <spring-boot.version>3.0.1</spring-boot.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.7.0</apache-jena.version>
@@ -44,9 +42,9 @@
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.9.1</junit-platform-suite.version>
+        <junit-platform-suite.version>1.9.2</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.9.1</jupiter.version>
+        <jupiter.version>5.9.2</jupiter.version>
         <mockito.version>4.11.0</mockito.version>
         <byte-buddy.version>1.12.21</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.3.3</de.flapdoodle.embed.mongo.version>
@@ -54,7 +52,7 @@
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>7.4.3</depencency-check-maven.version>
+        <depencency-check-maven.version>7.4.4</depencency-check-maven.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
@@ -174,20 +172,6 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<version>${spring-cloud-sleuth-otel-dependencies.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
-			</dependency>
 			
 			<!-- HASHING -->
 			<dependency>

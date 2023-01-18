@@ -136,7 +136,9 @@ class EventStreamControllerTest {
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS),
 					Arguments.of("application/turtle", Lang.TURTLE),
-					Arguments.of("*/*", Lang.TURTLE));
+					Arguments.of("*/*", Lang.TURTLE),
+					Arguments.of("", Lang.TURTLE),
+					Arguments.of("text/html", Lang.TURTLE));
 		}
 	}
 

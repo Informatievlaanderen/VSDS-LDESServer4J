@@ -8,6 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.apache.jena.rdf.model.Property;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,6 +26,7 @@ public class TimeBasedFragmentCreator {
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	private final Property fragmentationProperty;
+	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentCreator.class);
 
 	public TimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
@@ -44,7 +47,7 @@ public class TimeBasedFragmentCreator {
 		String fragmentKey = fragmentationProperty.getLocalName();
 		String fragmentValue = LocalDateTime.now().format(formatter);
 		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(fragmentKey, fragmentValue));
-
+		LOGGER.debug("Time based fragment created with id: {}", newFragment.getFragmentId());
 		if (ldesFragment != null) {
 			makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment);
 		}
@@ -60,7 +63,7 @@ public class TimeBasedFragmentCreator {
 				.submit(() -> treeRelationsRepository.addTreeRelation(completeLdesFragment.getFragmentId(),
 						new TreeRelation(treePath,
 								newFragment.getFragmentId(),
-								newFragment.getFragmentInfo().getValueOfKey(fragmentKey).orElseThrow(
+								newFragment.getValueOfKey(fragmentKey).orElseThrow(
 										() -> new MissingFragmentValueException(newFragment.getFragmentId(),
 												fragmentKey)),
 								DATE_TIME_TYPE,
@@ -69,7 +72,7 @@ public class TimeBasedFragmentCreator {
 		nonCriticalTasksExecutor
 				.submit(() -> treeRelationsRepository.addTreeRelation(newFragment.getFragmentId(),
 						new TreeRelation(treePath, completeLdesFragment.getFragmentId(),
-								completeLdesFragment.getFragmentInfo().getValueOfKey(fragmentKey).orElseThrow(
+								completeLdesFragment.getValueOfKey(fragmentKey).orElseThrow(
 										() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
 												fragmentKey)),
 								DATE_TIME_TYPE,

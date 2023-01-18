@@ -119,8 +119,8 @@ The server allows configurable fragment refresh times with the max-age and max-a
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
   rest:
-    max-age: 60 { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
-    max-age-immutable: 604800 { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
+    max-age: { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
+    max-age-immutable: { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
   ```
 
 ##### Example Mongo Configuration
@@ -299,7 +299,7 @@ mvn clean verify -Dunittestskip=true
 ### Tracing and Metrics
 
 Additionally, it is possible to keep track of metrics and tracings of the LDES Server.
-This will be done through a Jaeger exporter for traces and a Prometheus endpoint for Metrics.
+This will be done through a Zipkin exporter for traces and a Prometheus endpoint for Metrics.
 
 The exposed metrics can be found at `/actuator/metrics`.
 
@@ -311,15 +311,13 @@ To achieve this, the following properties are expected
 #### Local Tracing and Metrics
 
 ```yaml
-spring:
-  sleuth:
-    otel:
-      config:
-        trace-id-ratio-based: 1.0
-      exporter:
-        jaeger:
-          endpoint: "endpoint of collector"
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: "zipkin endpoint of collector"
   endpoints:
     web:
       exposure:
@@ -330,8 +328,8 @@ management:
 The export of traces can be disabled with the following parameter:
 
 ```yaml
-spring:
-  sleuth:
+management:
+  tracing:
     enabled: false
   ```
 
@@ -340,11 +338,13 @@ spring:
 ```
 SPRING_SLEUTH_OTEL_EXPORTER_JAEGER_ENDPOINT="endpoint of collector"
 MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="prometheus"
+MANAGEMENT_TRACING_SAMPLING_PROBABILITY="1.0"
+MANAGEMENT_ZIPKIN_TRACING_ENDPOINT="zipkin endpoint of collector"
 ```
 The export of traces can be disabled with the following parameter:
 
 ```
-SPRING_SLEUTH_ENABLED=false
+MANAGEMENT_TRACING_ENABLED=false
 ```
 
 ### Health and Info
@@ -376,17 +376,6 @@ management:
       show-details: always
   ```
 
-Additionally, to provide a more clean health check report, the Spring Cloud discoveryComposite can be disabled by adding
-
-```yaml
-spring:
-  cloud:
-    discovery:
-      client:
-        composite-indicator:
-          enabled: false
-```
-
 #### Docker
 
 ```
@@ -396,8 +385,44 @@ MANAGEMENT_HEALTH_MONGO_ENABLED=true
 MANAGEMENT_ENDPOINT_HEALTH_SHOW-DETAILS="always"
 ```
 
-Additionally, to provide a more clean health check report, the Spring Cloud discoveryComposite can be disabled by adding
+### Logging
 
+
+The logging of this server is split over the different logging levels according to the following guidelines.
+
+- TRACE: NONE
+- DEBUG: Standard operations like: create fragment, ingest member, assign member to fragment
+- INFO: NONE
+- WARN: Potentially unintended operations like: Duplicate Member Ingest, ...
+- ERROR: All Exceptions
+
+#### Logging configuration
+
+The following config allows you to output logging to the console. Further customization of the logging settings can be done using the logback properties.
+```yaml
+logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+  level:
+    root: INFO
 ```
-SPRING_CLOUD_DISCOVERY_CLIENT_COMPOSITE-INDICATOR_ENABLED=false
+
+The following config enables and exposes the loggers endpoint.
+```yaml
+management:
+  endpoint:
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - loggers
+```
+
+To change the logging level of the application at runtime, you can send the following POST request to the loggers endpoint.
+Replace [LOGGING LEVEL] with the desired logging level from among: TRACE, DEBUG, INFO, WARN, ERROR.
+```
+curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "[LOGGING LEVEL]"}'
+  http://localhost:8080/actuator/loggers/ROOT
 ```

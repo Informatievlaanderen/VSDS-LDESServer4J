@@ -1,33 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
-import static org.apache.jena.rdf.model.ResourceFactory.createTypedLiteral;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.jena.datatypes.TypeMapper;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
-import org.springframework.stereotype.Component;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.rdf.model.*;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
@@ -62,8 +48,23 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(treeNode.getRelations(), currentFragmentId));
+		addLdesCollectionStatements(statements, treeNode.isView(), currentFragmentId);
 
 		return statements;
+	}
+
+	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, Resource currentFragmentId) {
+		Resource collection = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
+
+		if (isView) {
+			statements.add(createStatement(collection, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
+			addStatementIfMeaningful(statements, collection, TREE_SHAPE, ldesConfig.getShape());
+			addStatementIfMeaningful(statements, collection, LDES_VERSION_OF, ldesConfig.getVersionOfPath());
+			addStatementIfMeaningful(statements, collection, LDES_TIMESTAMP_PATH, ldesConfig.getTimestampPath());
+			statements.add(createStatement(collection, TREE_VIEW, currentFragmentId));
+		} else {
+			statements.add(createStatement(currentFragmentId, IS_PART_OF_PROPERTY, collection));
+		}
 	}
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode) {

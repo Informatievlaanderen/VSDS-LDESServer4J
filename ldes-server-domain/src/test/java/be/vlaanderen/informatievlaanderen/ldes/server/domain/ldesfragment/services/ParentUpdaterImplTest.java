@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
@@ -26,10 +25,10 @@ class ParentUpdaterImplTest {
 	private ParentUpdater parentUpdater;
 	private static final String VIEW = "view";
 	private static final LdesFragment DELETED_CHILD = new LdesFragment(
-			new FragmentInfo(VIEW, List.of(new FragmentPair("key", "value"))));
+			VIEW, List.of(new FragmentPair("key", "value")));
 	private static final LdesFragment NON_DELETED_CHILD = new LdesFragment(
-			new FragmentInfo(VIEW, List.of(new FragmentPair("key", "value2"))));
-	private static final LdesFragment PARENT = new LdesFragment(new FragmentInfo(VIEW, List.of()));
+			VIEW, List.of(new FragmentPair("key", "value2")));
+	private static final LdesFragment PARENT = new LdesFragment(VIEW, List.of());
 
 	@BeforeEach
 	void setUp() {
@@ -46,8 +45,8 @@ class ParentUpdaterImplTest {
 		TreeRelation newRelation = new TreeRelation("", NON_DELETED_CHILD.getFragmentId(),
 				"", "", GENERIC_TREE_RELATION);
 		when(treeRelationsRepository.getRelations(PARENT.getFragmentId())).thenReturn(List.of(oldRelation));
-		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getFragmentInfo().getViewName(),
-				PARENT.getFragmentInfo().getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
+		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName(),
+				PARENT.getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
 
 		parentUpdater.updateParent(DELETED_CHILD);
 

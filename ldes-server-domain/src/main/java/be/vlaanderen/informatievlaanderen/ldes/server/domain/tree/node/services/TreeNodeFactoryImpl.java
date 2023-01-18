@@ -1,9 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
@@ -13,6 +9,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class TreeNodeFactoryImpl implements TreeNodeFactory {
@@ -36,7 +35,9 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 								ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNodeId));
 		List<TreeRelation> relations = treeRelationsRepository.getRelations(treeNodeId);
 		List<Member> members = memberRepository.getMembersByReference(treeNodeId);
-		return new TreeNode(treeNodeId, ldesFragment.isImmutable(), ldesFragment.isSoftDeleted(), relations, members);
+		return new TreeNode(treeNodeId, ldesFragment.isImmutable(), ldesFragment.isSoftDeleted(),
+				ldesFragment.getFragmentPairs().isEmpty(), relations,
+				members);
 	}
 
 }

@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.b
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
-import org.springframework.cloud.sleuth.Tracer;
+import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
@@ -23,7 +23,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 		TreeRelationsRepository treeRelationsRepository = applicationContext
 				.getBean(TreeRelationsRepository.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
-		Tracer tracer = applicationContext.getBean(Tracer.class);
+		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
@@ -33,7 +33,7 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
-				geospatialBucketiser, geospatialFragmentCreator, tracer, treeRelationsRepository);
+				geospatialBucketiser, geospatialFragmentCreator, observationRegistry, treeRelationsRepository);
 	}
 
 	private GeospatialConfig createGeospatialConfig(ConfigProperties properties) {

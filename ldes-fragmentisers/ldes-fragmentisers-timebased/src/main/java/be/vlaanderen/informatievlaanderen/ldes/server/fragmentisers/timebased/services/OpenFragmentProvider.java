@@ -20,7 +20,7 @@ public class OpenFragmentProvider {
 
 	public Pair<LdesFragment, Boolean> retrieveOpenFragmentOrCreateNewFragment(LdesFragment parentFragment) {
 		return ldesFragmentRepository
-				.retrieveOpenChildFragment(parentFragment.getFragmentInfo().generateFragmentId())
+				.retrieveOpenChildFragment(parentFragment.getFragmentId())
 				.map(fragment -> {
 					if (needsToCreateNewFragment(fragment)) {
 						LdesFragment newFragment = fragmentCreator.createNewFragment(fragment, parentFragment);
@@ -38,6 +38,6 @@ public class OpenFragmentProvider {
 	}
 
 	public boolean needsToCreateNewFragment(LdesFragment fragment) {
-		return fragment.getCurrentNumberOfMembers() >= memberLimit;
+		return fragment.getNumberOfMembers() >= memberLimit;
 	}
 }
