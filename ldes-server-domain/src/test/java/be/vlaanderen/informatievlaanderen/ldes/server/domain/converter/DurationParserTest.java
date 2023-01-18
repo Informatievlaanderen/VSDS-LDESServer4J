@@ -9,7 +9,7 @@ import java.time.Period;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DurationParserTest {
+class DurationParserTest {
 
 	@Test
 	void when_StringIsDuration() {

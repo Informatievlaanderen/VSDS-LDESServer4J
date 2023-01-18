@@ -8,6 +8,9 @@ import java.time.format.DateTimeParseException;
 
 public class DurationParser {
 
+	public DurationParser() {
+	}
+
 	private static Duration periodToDuration(Period period) {
 		int days = period.getDays();
 		int months = period.getMonths();
