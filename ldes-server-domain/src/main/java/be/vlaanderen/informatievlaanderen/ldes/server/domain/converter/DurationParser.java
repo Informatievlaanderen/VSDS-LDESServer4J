@@ -9,9 +9,9 @@ import java.time.format.DateTimeParseException;
 public class DurationParser {
 
 	private static Duration periodToDuration(Period period) {
-		int years = period.getYears();
-		int months = period.getMonths();
 		int days = period.getDays();
+		int months = period.getMonths();
+		int years = period.getYears();
 		return Duration.ofDays(days + (months * 30L) + (years * 365L));
 	}
 
