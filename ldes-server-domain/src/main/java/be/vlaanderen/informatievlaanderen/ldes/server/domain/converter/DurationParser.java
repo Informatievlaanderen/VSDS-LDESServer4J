@@ -7,6 +7,7 @@ import java.time.Period;
 import java.time.format.DateTimeParseException;
 
 public class DurationParser {
+
 	private DurationParser() {
 	}
 
