@@ -12,9 +12,9 @@ public class DurationParser {
 	}
 
 	private static Duration periodToDuration(Period period) {
-		int days = period.getDays();
-		int months = period.getMonths();
 		int years = period.getYears();
+		int months = period.getMonths();
+		int days = period.getDays();
 		return Duration.ofDays(days + (months * 30L) + (years * 365L));
 	}
 
