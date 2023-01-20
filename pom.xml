@@ -298,13 +298,14 @@
                 <configuration>
                     <removeUnused>true</removeUnused>
                     <groups>*, java.,javax.,com.</groups>
+                    <staticGroups>*</staticGroups>
                     <staticAfter>true</staticAfter>
                 </configuration>
                 <executions>
                     <execution>
                         <id>sort-imports</id>
                         <goals>
-                            <goal>check</goal><!-- runs at process-sources phase by default -->
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
