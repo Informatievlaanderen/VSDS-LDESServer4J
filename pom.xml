@@ -23,6 +23,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
@@ -69,6 +70,7 @@
         <!-- CODE FORMATTER -->
         <formatter-maven-plugin.version>2.21.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
+        <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
         
         <!-- HASHING -->
         <commons-codec.version>1.15</commons-codec.version>
@@ -283,11 +285,30 @@
         </pluginManagement>
 
         <plugins>
-
             <!-- CODE FORMATTER -->
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
                 <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <version>${impsort-maven-plugin.version}</version>
+                <configuration>
+                    <removeUnused>true</removeUnused>
+                    <groups>*, java.,javax.,com.</groups>
+                    <staticGroups>*</staticGroups>
+                    <staticAfter>true</staticAfter>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sort-imports</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
