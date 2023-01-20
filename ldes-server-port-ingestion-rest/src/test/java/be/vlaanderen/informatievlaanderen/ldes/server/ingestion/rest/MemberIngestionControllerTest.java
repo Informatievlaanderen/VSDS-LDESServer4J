@@ -3,9 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -33,8 +35,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,8 +52,16 @@ class MemberIngestionControllerTest {
 	@MockBean
 	private MemberIngestService memberIngestService;
 
+	@MockBean
+	private LdesShaclValidator ldesShaclValidator;
+
 	@Autowired
 	private LdesConfig ldesConfig;
+
+	@BeforeEach
+	void setUp() {
+		when(ldesShaclValidator.validate(any())).thenReturn(true);
+	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 
