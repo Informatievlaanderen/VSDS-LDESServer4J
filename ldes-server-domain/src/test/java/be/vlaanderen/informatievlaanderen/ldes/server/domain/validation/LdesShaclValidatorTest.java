@@ -58,7 +58,8 @@ public class LdesShaclValidatorTest {
 
 	private String getAbsolutePathOfFile(String fileName)
 			throws URISyntaxException {
-		return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).toURI()).getAbsolutePath();
+		return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).toURI())
+				.getAbsolutePath();
 	}
 
 	private Model readLdesMemberFromFile(String fileName)
