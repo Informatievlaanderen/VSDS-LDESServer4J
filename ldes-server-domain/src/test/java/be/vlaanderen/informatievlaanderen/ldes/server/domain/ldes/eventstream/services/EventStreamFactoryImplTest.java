@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ValidationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -47,7 +48,9 @@ class EventStreamFactoryImplTest {
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ValidationConfig validationConfig = new ValidationConfig();
+		validationConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ldesConfig.setValidation(validationConfig);
 		return ldesConfig;
 	}
 }

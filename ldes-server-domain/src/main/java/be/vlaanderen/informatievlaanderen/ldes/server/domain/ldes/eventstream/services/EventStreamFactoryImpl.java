@@ -21,6 +21,6 @@ public class EventStreamFactoryImpl implements EventStreamFactory {
 	public EventStream getEventStream() {
 		return new EventStream(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath(),
 				ldesConfig.getVersionOfPath(),
-				ldesConfig.getShape(), viewConfig.getViews().stream().map(ViewSpecification::getName).toList());
+				ldesConfig.validation().getShape(), viewConfig.getViews().stream().map(ViewSpecification::getName).toList());
 	}
 }

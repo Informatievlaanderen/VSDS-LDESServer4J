@@ -115,9 +115,11 @@ The server allows configurable fragment refresh times with the max-age and max-a
     collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
     host-name: { hostname of LDES Server }
     member-type: { Defines which syntax type is used to define the member id e.g. "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder" }
-    shape: { URI to defined shape }
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
+    validation:
+      shape: { URI to defined shape }
+      enabled: { Enables/Disables shacl validation on ingested members }
   rest:
     max-age: { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
     max-age-immutable: { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }

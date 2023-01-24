@@ -14,8 +14,10 @@ public class LdesShaclValidatorImpl implements LdesShaclValidator {
 	private Shapes shapes;
 
 	public LdesShaclValidatorImpl(final LdesConfig ldesConfig) {
-		if (ldesConfig.getShape() != null) {
-			shapes = Shapes.parse(RDFDataMgr.loadGraph(ldesConfig.getShape()));
+		if (ldesConfig.validation() != null) {
+			if (ldesConfig.validation().isEnabled() && ldesConfig.validation().getShape() != null) {
+				shapes = Shapes.parse(RDFDataMgr.loadGraph(ldesConfig.validation().getShape()));
+			}
 		}
 	}
 
@@ -24,7 +26,9 @@ public class LdesShaclValidatorImpl implements LdesShaclValidator {
 		if (shapes != null) {
 			ValidationReport report = ShaclValidator.get().validate(shapes, dataGraph);
 
-			RDFDataMgr.write(System.out, report.getModel(), Lang.TTL);
+			if (!report.conforms()) {
+				RDFDataMgr.write(System.err, report.getModel(), Lang.TTL);
+			}
 
 			return report.conforms();
 		}

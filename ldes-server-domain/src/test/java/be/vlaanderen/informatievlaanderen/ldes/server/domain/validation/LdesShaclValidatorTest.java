@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ValidationConfig;
 import org.apache.jena.graph.Graph;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -24,10 +25,12 @@ public class LdesShaclValidatorTest {
 	private LdesShaclValidator ldesShaclValidator;
 
 	@BeforeEach
-	void setUp() throws URISyntaxException {
+	void setUp() {
 		LdesConfig ldesConfig = new LdesConfig();
-
-		ldesConfig.setShape(getAbsolutePathOfFile("validation/example-shape.ttl"));
+		ValidationConfig validationConfig = new ValidationConfig();
+		validationConfig.setShape("validation/example-shape.ttl");
+		validationConfig.setEnabled(true);
+		ldesConfig.setValidation(validationConfig);
 		ldesShaclValidator = new LdesShaclValidatorImpl(ldesConfig);
 	}
 
@@ -56,10 +59,20 @@ public class LdesShaclValidatorTest {
 		assertTrue(ldesShaclValidator.validate(invalidDataGraph));
 	}
 
-	private String getAbsolutePathOfFile(String fileName)
-			throws URISyntaxException {
-		return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).toURI())
-				.getAbsolutePath();
+	@Test
+	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
+		LdesConfig ldesConfig = new LdesConfig();
+		ValidationConfig validationConfig = new ValidationConfig();
+		validationConfig.setShape("validation/example-shape.ttl");
+		validationConfig.setEnabled(false);
+		ldesConfig.setValidation(validationConfig);
+		ldesShaclValidator = new LdesShaclValidatorImpl(ldesConfig);
+
+		Graph dataGraph = readLdesMemberFromFile("validation/example-data.ttl").getGraph();
+		Graph invalidDataGraph = readLdesMemberFromFile("validation/example-data-invalid.ttl").getGraph();
+
+		assertTrue(ldesShaclValidator.validate(dataGraph));
+		assertTrue(ldesShaclValidator.validate(invalidDataGraph));
 	}
 
 	private Model readLdesMemberFromFile(String fileName)

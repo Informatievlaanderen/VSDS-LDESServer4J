@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ValidationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
@@ -33,7 +34,9 @@ class TreeNodeConverterImplTest {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setCollectionName(COLLECTION_NAME);
 		ldesConfig.setHostName(HOST_NAME);
-		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ValidationConfig validationConfig = new ValidationConfig();
+		validationConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ldesConfig.setValidation(validationConfig);
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");

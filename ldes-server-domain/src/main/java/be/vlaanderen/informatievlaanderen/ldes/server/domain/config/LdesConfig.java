@@ -9,7 +9,7 @@ public class LdesConfig {
 
 	private String hostName;
 	private String collectionName;
-	private String shape;
+	private ValidationConfig validation;
 	private String memberType;
 	private String timestampPath;
 	private String versionOf;
@@ -28,14 +28,6 @@ public class LdesConfig {
 
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
-	}
-
-	public String getShape() {
-		return shape;
-	}
-
-	public void setShape(String shape) {
-		this.shape = shape;
 	}
 
 	public String getMemberType() {
@@ -60,5 +52,13 @@ public class LdesConfig {
 
 	public void setVersionOf(String versionOf) {
 		this.versionOf = versionOf;
+	}
+
+	public ValidationConfig validation() {
+		return validation;
+	}
+
+	public void setValidation(ValidationConfig validation) {
+		this.validation = validation;
 	}
 }
