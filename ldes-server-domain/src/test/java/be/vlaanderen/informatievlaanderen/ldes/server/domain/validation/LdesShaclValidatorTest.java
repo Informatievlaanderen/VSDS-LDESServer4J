@@ -1,24 +1,25 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ValidationConfig;
-import org.apache.jena.graph.Graph;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LdesShaclValidatorTest {
 
@@ -27,61 +28,63 @@ public class LdesShaclValidatorTest {
 	@BeforeEach
 	void setUp() {
 		LdesConfig ldesConfig = new LdesConfig();
-		ValidationConfig validationConfig = new ValidationConfig();
-		validationConfig.setShape("validation/example-shape.ttl");
-		validationConfig.setEnabled(true);
-		ldesConfig.setValidation(validationConfig);
-		ldesShaclValidator = new LdesShaclValidatorImpl(ldesConfig);
+		ldesConfig.validation().setShape("validation/example-shape.ttl");
+		ldesConfig.validation().setEnabled(true);
+		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 	}
 
 	@Test
 	void when_ValidateProvidedValidData_thenReturnValid() throws URISyntaxException, IOException {
-		Graph dataGraph = readLdesMemberFromFile("validation/example-data.ttl").getGraph();
+		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 
-		assertTrue(ldesShaclValidator.validate(dataGraph));
+		expectMemberToBeValid(validMember, true);
 	}
 
 	@Test
 	void when_ValidateProvidedInvalidData_thenReturnInvalid() throws URISyntaxException, IOException {
-		Graph invalidDataGraph = readLdesMemberFromFile("validation/example-data-invalid.ttl").getGraph();
+		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
 
-		assertFalse(ldesShaclValidator.validate(invalidDataGraph));
+		expectMemberToBeValid(invalidMember, false);
 	}
 
 	@Test
 	void when_ValidateWithNoProvidedShape_thenReturnValid() throws URISyntaxException, IOException {
-		ldesShaclValidator = new LdesShaclValidatorImpl(new LdesConfig());
+		ldesShaclValidator = new LdesShaclValidator(new LdesConfig());
 
-		Graph dataGraph = readLdesMemberFromFile("validation/example-data.ttl").getGraph();
-		Graph invalidDataGraph = readLdesMemberFromFile("validation/example-data-invalid.ttl").getGraph();
+		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
+		expectMemberToBeValid(validMember, true);
 
-		assertTrue(ldesShaclValidator.validate(dataGraph));
-		assertTrue(ldesShaclValidator.validate(invalidDataGraph));
+		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
+		expectMemberToBeValid(invalidMember, true);
 	}
 
 	@Test
 	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
 		LdesConfig ldesConfig = new LdesConfig();
-		ValidationConfig validationConfig = new ValidationConfig();
-		validationConfig.setShape("validation/example-shape.ttl");
-		validationConfig.setEnabled(false);
-		ldesConfig.setValidation(validationConfig);
-		ldesShaclValidator = new LdesShaclValidatorImpl(ldesConfig);
+		ldesConfig.validation().setEnabled(false);
+		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 
-		Graph dataGraph = readLdesMemberFromFile("validation/example-data.ttl").getGraph();
-		Graph invalidDataGraph = readLdesMemberFromFile("validation/example-data-invalid.ttl").getGraph();
+		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
+		expectMemberToBeValid(validMember, true);
 
-		assertTrue(ldesShaclValidator.validate(dataGraph));
-		assertTrue(ldesShaclValidator.validate(invalidDataGraph));
+		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
+		expectMemberToBeValid(invalidMember, true);
 	}
 
-	private Model readLdesMemberFromFile(String fileName)
+	private void expectMemberToBeValid(Member member, boolean expectValid) {
+		Errors errors = new BeanPropertyBindingResult(member, "");
+		ldesShaclValidator.validateShape(member, errors);
+		assertEquals(!expectValid, errors.hasErrors());
+	}
+
+	private Member readLdesMemberFromFile(String fileName)
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 
-		return RDFParserBuilder.create()
+		Model m = RDFParserBuilder.create()
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.TTL)
 				.toModel();
+		return new Member("", m, new ArrayList<>());
 	}
 }

@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShac
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -35,7 +34,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,11 +57,6 @@ class MemberIngestionControllerTest {
 
 	@Autowired
 	private LdesConfig ldesConfig;
-
-	@BeforeEach
-	void setUp() {
-		when(ldesShaclValidator.validate(any())).thenReturn(true);
-	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 

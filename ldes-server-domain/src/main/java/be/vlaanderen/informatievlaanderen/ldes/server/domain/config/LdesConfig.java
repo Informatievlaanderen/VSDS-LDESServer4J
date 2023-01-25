@@ -9,10 +9,10 @@ public class LdesConfig {
 
 	private String hostName;
 	private String collectionName;
-	private ValidationConfig validation;
 	private String memberType;
 	private String timestampPath;
 	private String versionOf;
+	private Validation validation = new Validation();
 
 	public String getHostName() {
 		return hostName;
@@ -54,11 +54,32 @@ public class LdesConfig {
 		this.versionOf = versionOf;
 	}
 
-	public ValidationConfig validation() {
+	public Validation validation() {
 		return validation;
 	}
 
-	public void setValidation(ValidationConfig validation) {
+	public void setValidation(Validation validation) {
 		this.validation = validation;
+	}
+
+	public static class Validation {
+		private String shape;
+		private boolean enabled = true;
+
+		public String getShape() {
+			return shape;
+		}
+
+		public void setShape(String shape) {
+			this.shape = shape;
+		}
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(Boolean enabled) {
+			this.enabled = enabled;
+		}
 	}
 }

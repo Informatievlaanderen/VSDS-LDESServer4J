@@ -1,7 +1,45 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
-import org.apache.jena.graph.Graph;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.shacl.ShaclValidator;
+import org.apache.jena.shacl.Shapes;
+import org.apache.jena.shacl.ValidationReport;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-public interface LdesShaclValidator {
-	boolean validate(Graph graph);
+@Component
+public class LdesShaclValidator implements Validator {
+	private Shapes shapes;
+
+	public LdesShaclValidator(final LdesConfig ldesConfig) {
+		if (ldesConfig.validation().isEnabled() && ldesConfig.validation().getShape() != null) {
+			shapes = Shapes.parse(RDFDataMgr.loadGraph(ldesConfig.validation().getShape()));
+		}
+	}
+
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return Member.class.equals(clazz);
+	}
+
+	@Override
+	public void validate(Object target, Errors errors) {
+		Member member = (Member) target;
+		validateShape(member, errors);
+	}
+
+	protected void validateShape(Member member, Errors errors) {
+		if (shapes != null) {
+			ValidationReport report = ShaclValidator.get().validate(shapes, member.getModel().getGraph());
+
+			if (!report.conforms()) {
+				errors.reject("shape.invalid");
+				RDFDataMgr.write(System.err, report.getModel(), Lang.TTL);
+			}
+		}
+	}
 }
