@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.ValidationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -26,10 +27,12 @@ class RelationStatementConverterImplTest {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setCollectionName(COLLECTION_NAME);
 		ldesConfig.setHostName(HOST_NAME);
-		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+		ValidationConfig validationConfig = new ValidationConfig();
+		validationConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ldesConfig.setValidation(validationConfig);
 		relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
 	}
 
