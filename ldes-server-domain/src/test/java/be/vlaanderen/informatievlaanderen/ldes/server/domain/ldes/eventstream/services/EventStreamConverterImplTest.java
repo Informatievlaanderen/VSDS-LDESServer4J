@@ -28,7 +28,8 @@ class EventStreamConverterImplTest {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("http://localhost:8080");
 		ldesConfig.setCollectionName("mobility-hindrances");
-		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ldesConfig.validation()
+				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");

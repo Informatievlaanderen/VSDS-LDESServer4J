@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
@@ -50,6 +51,9 @@ class MemberIngestionControllerTest {
 
 	@MockBean
 	private MemberIngestService memberIngestService;
+
+	@MockBean
+	private LdesShaclValidator ldesShaclValidator;
 
 	@Autowired
 	private LdesConfig ldesConfig;

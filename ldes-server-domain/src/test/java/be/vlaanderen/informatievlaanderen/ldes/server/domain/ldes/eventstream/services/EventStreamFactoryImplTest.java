@@ -62,7 +62,8 @@ class EventStreamFactoryImplTest {
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ldesConfig.validation()
+				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
 		return ldesConfig;
 	}
 

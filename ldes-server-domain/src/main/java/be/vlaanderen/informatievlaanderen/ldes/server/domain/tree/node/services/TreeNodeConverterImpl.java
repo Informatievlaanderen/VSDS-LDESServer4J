@@ -61,7 +61,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 		if (isView) {
 			statements.add(createStatement(collection, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
-			addStatementIfMeaningful(statements, collection, TREE_SHAPE, ldesConfig.getShape());
+			addStatementIfMeaningful(statements, collection, TREE_SHAPE, ldesConfig.validation().getShape());
 			addStatementIfMeaningful(statements, collection, LDES_VERSION_OF, ldesConfig.getVersionOfPath());
 			addStatementIfMeaningful(statements, collection, LDES_TIMESTAMP_PATH, ldesConfig.getTimestampPath());
 			statements.add(createStatement(collection, TREE_VIEW, currentFragmentId));

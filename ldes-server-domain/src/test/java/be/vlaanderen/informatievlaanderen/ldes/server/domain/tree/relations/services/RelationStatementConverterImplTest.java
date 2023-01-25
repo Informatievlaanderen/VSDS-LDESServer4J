@@ -26,10 +26,11 @@ class RelationStatementConverterImplTest {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setCollectionName(COLLECTION_NAME);
 		ldesConfig.setHostName(HOST_NAME);
-		ldesConfig.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+		ldesConfig.validation()
+				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
 		relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
 	}
 
