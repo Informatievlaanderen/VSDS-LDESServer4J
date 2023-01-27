@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class IngestionRestResponseEntityExceptionHandler
 		extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MalformedMemberIdException.class })
-	protected ResponseEntity<Object> handleMalformedMemberIdException(
+	@ExceptionHandler(value = { MalformedMemberIdException.class, LdesShaclValidationException.class })
+	protected ResponseEntity<Object> handleGeneralException(
 			RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
