@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LdesMemberIngestionController {
 
 	@Autowired
-	MemberIngestService memberIngestService;
+	private MemberIngestService memberIngestService;
 	@Autowired
 	private LdesShaclValidator validator;
 
