@@ -27,7 +27,7 @@
     dc:type <http://purl.org/adms/publishertype/LocalAuthority> ;
     a foaf:Agent ;
     foaf:name "Mijn Organisatie"@nl
-  ] ;
+  ] .
 
 #DataSet
 <https://mijnorganisatie/opendata/datasets/1>
@@ -46,7 +46,7 @@
   dc:modified "2019-02-27T15:15:08Z" ;
   owl:versionInfo "versie/1.0.1" ;
   dcat:keyword "bezoekers"^^rdfs:string, "statistiek"^^rdfs:string, "zwembad"^^rdfs:string ;
-  dcat:theme <https://www.eionet.europa.eu/gemet/en/theme/29>, <http://vocab.belgif.be/auth/datatheme/SOCI> .
+  dcat:theme <https://www.eionet.europa.eu/gemet/en/theme/29>, <http://vocab.belgif.be/auth/datatheme/SOCI> ;
   dc:issued "2016-12-10T12:54:04Z" ;
   dc:spatial <http://mir.geopunt.be/cl/Geopunt/VlaamseAdminRegios/Vlaanderen> ;
   dc:created "2016-12-10T12:54:04Z" ;
@@ -54,7 +54,7 @@
   dc:publisher [
     a foaf:Agent ;
     foaf:name "Mijn Organisatie"@nl
-  ] ;
+  ] .
 
 <http://mir.geopunt.be/cl/Geopunt/VlaamseAdminRegios/Vlaanderen>
   a dc:Location ;
@@ -73,7 +73,7 @@
 
 <https://mijnorganisatie/opendata/datasets/1/distributies/csv>
   a dcat:Distribution ;
-  dcat:accessURL <https://mijnorganisatie/opendata/datasets/1/distributies/csv> .
+  dcat:accessURL <https://mijnorganisatie/opendata/datasets/1/distributies/csv> ;
   dc:identifier "https://mijnorganisatie/opendata/datasets/1/distributies/csv" ;
   dc:title "Zwembadbezoekers in CSV"@nl ;
   dc:license <https://data.vlaanderen.be/id/licentie/modellicentie-gratis-hergebruik/v1.0> ;
