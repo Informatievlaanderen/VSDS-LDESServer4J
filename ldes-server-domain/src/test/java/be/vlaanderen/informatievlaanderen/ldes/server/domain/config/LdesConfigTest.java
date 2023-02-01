@@ -17,6 +17,7 @@ class LdesConfigTest {
 	@Autowired
 	private LdesConfig ldesConfig;
 
+	// TODO: 1/02/2023 add dcat
 	@Test
 	@DisplayName("Verify content of LdesConfig")
 	void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig() {
