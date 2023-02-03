@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
 
 class EventStreamConverterImplTest {
 
@@ -85,7 +84,8 @@ class EventStreamConverterImplTest {
 						.toString());
 		assertEquals(
 				"[http://localhost:8080/metadata/mobility-hindrances, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/ns/dcat#Catalog]",
-				model.listStatements(createResource("http://localhost:8080/metadata/mobility-hindrances"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
+				model.listStatements(createResource("http://localhost:8080/metadata/mobility-hindrances"),
+						RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
 						.toString());
 	}
 
