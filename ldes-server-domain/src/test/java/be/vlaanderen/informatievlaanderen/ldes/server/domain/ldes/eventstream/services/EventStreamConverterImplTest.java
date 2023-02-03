@@ -8,6 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,15 +19,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class EventStreamConverterImplTest {
 
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private EventStreamConverter eventStreamConverter;
+	private LdesConfig ldesConfig;
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("http://localhost:8080");
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.validation()
@@ -44,11 +48,17 @@ class EventStreamConverterImplTest {
 				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				List.of(createView("view1"), createView("view2")));
 
+		Model dcat = RDFParserBuilder.create().fromString("""
+				<http://localhost:8080/metadata/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+				<http://www.w3.org/ns/dcat#Catalog>
+				.""").lang(Lang.NQUADS).toModel();
+		ldesConfig.setDcat(dcat);
+
 		Model model = eventStreamConverter.toModel(eventStream);
 
 		String id = "http://localhost:8080/mobility-hindrances";
 
-		assertEquals(8, getNumberOfStatements(model));
+		assertEquals(9, getNumberOfStatements(model));
 		assertEquals("[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
 				model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
 		assertEquals("[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
@@ -72,6 +82,10 @@ class EventStreamConverterImplTest {
 		assertEquals(
 				"[" + id + "/view2" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
 				model.listStatements(createResource(id + "/view2"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
+						.toString());
+		assertEquals(
+				"[http://localhost:8080/metadata/mobility-hindrances, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/ns/dcat#Catalog]",
+				model.listStatements(createResource("http://localhost:8080/metadata/mobility-hindrances"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
 						.toString());
 	}
 

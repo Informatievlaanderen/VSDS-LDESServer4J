@@ -29,7 +29,6 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 		this.relationStatementConverter = relationStatementConverter;
 	}
 
-	// TODO: 1/02/2023 add testing for dcat
 	public Model toModel(final EventStream eventStream) {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(addCollectionStatements(eventStream));
