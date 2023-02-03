@@ -8,8 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { LdesConfig.class })
+@SpringBootTest(classes = { LdesConfig.class, PathToModelConverter.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class LdesConfigTest {
@@ -17,7 +19,6 @@ class LdesConfigTest {
 	@Autowired
 	private LdesConfig ldesConfig;
 
-	// TODO: 1/02/2023 add dcat
 	@Test
 	@DisplayName("Verify content of LdesConfig")
 	void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig() {
@@ -28,5 +29,6 @@ class LdesConfigTest {
 		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
 		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
 		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOfPath());
+		assertFalse(ldesConfig.getDcat().isEmpty());
 	}
 }
