@@ -11,6 +11,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix ns0: <http://www.w3.org/ns/adms#> .
 @prefix ns1: <http://data.vlaanderen.be/ns/metadata-dcat#> .
+@prefix dqv: <http://www.w3.org/ns/dqv#> .
 
 #Deze resource moet maar eenmalig voorkomen en beschrijft de organisatie
 <https://metadata.vlaanderen.be/srv/resources/catalogs/identifier_van_org>
@@ -56,6 +57,12 @@
 #Per LDES dataset is onderstaande metadata nodig
 <hier_komt_de_uri_van_de_ldes_dataset_metadata>
   a dcat:Dataset ;
+  #De rubriek waartoe de dataset behoort volgens de GEMET thesaurus.
+  ns1:GEMETconcept <https://www.eionet.europa.eu/gemet/en/concept/example> ;
+  #De rubriek waartoe de dataset behoort volgens de INSPIRE thema's.
+  ns1:INSPIREthema <https://inspire.ec.europa.eu/theme/example> ;
+  #De rubriek waartoe de dataset behoort volgens de afspraken in de ISO-standaard voor geografische metadata.
+  ns1:ISOcategorie <https://inspire.ec.europa.eu/metadata-codelist/TopicCategory/example> ;
   ns0:identifier [
     a ns0:Identifier ;
     skos:notation "Een alternatieve identificator (dan de unieke identificator) voor de dataset kan hier beschreven worden."@nl
@@ -72,6 +79,7 @@
   ] ;
   #Het tijdsmoment waarop de dataset ontstaan is.
   dc:created "2022-09-06" ;
+  dcat:distribution <beschikbare_distributie_url> ;
   dc:rightsHolder [
     a foaf:Agent ;
     foaf:name "De agent die de eigendomsrechten heeft."@nl
@@ -92,6 +100,15 @@
   dcat:landingPage <https://www.example.com/api> ;
   #Het tijdsmoment waarop de dataset werd gepubliceerd door de uitgever.
   dc:issued "2022-09-06" ;
+  #Het primaire ruimtelijke voorstellingstype waarin de data in de dataset wordt beheerd
+  ns0:representionTechnique <https://inspire.ec.europa.eu/metadata-codelist/SpatialRepresentationType> ;
+  dqv:hasQualityMeasurement [
+    a dqv:QualityMeasurement ;
+    dqv:measurementMethod "ex:method1" ;
+    dqv:hasValue "0.9"^^xsd:float
+  ] ;
+  #De progressie in het samenstellen van de dataset
+  ns1:status <https://standards.iso.org/iso/19139/resources/gmxCodelists.xml#MD_ProgressCode> ;
   ns1:statuut <https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden/VLOPENDATASERVICE> ;
   #De hoofdcategorie waartoe de dataset behoort.
   dcat:theme <http://vocab.belgif.be/auth/datatheme/GOVE> ;
@@ -140,6 +157,10 @@
   #Het tijdsmoment waarop de dataservice werd gepubliceerd door de uitgever.
   dc:issued "2022-09-06" ;
   dc:rights <http://publications.europa.eu/resource/authority/access-right/PUBLIC> ;
+  #De categorie waartoe de dataservice behoort
+  ns1:servicecategorie <https://inspire.ec.europa.eu/metadata-codelist/SpatialDataServiceCategory> ;
+  #Het type waartoe de dataservice behoort
+  ns1:servicetype <https://inspire.ec.europa.eu/metadata-codelist/SpatialDataServiceType> ;
   ns1:statuut <https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden/VLOPENDATASERVICE> ;
   #De hoofdcategorie waartoe de dataservice behoort.
   dcat:theme <http://vocab.belgif.be/auth/datatheme/GOVE> ;
@@ -149,4 +170,3 @@
   owl:versionInfo "Een unieke aanduiding van een variant van de dataservice door middel van een versienummer of -naam van de dataservice."@nl ;
   #Het tijdsmoment waarop de dataservice werd geactualiseerd
   dc:modified "2022-09-06" .
-

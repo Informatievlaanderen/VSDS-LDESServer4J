@@ -72,6 +72,7 @@
   ] ;
   #Het tijdsmoment waarop de dataset ontstaan is.
   dc:created "2022-09-06" ;
+  dcat:distribution <beschikbare_distributie_url> ;
   dc:rightsHolder [
     a foaf:Agent ;
     foaf:name "De agent die de eigendomsrechten heeft."@nl
