@@ -26,6 +26,7 @@ open data.
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
                 * [Example Serving Static Content](#example-serving-static-content)
+                * [Example Serving DCAT Metadata](#example-serving-dcat-metadata)
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
@@ -212,6 +213,15 @@ spring:
   web:
     resources:
       static-locations: { source folder of static content, e.g. file:/opt/files }
+  ```
+
+##### Example Serving DCAT Metadata
+
+Supported file formats: .ttl, .rdf, .nq and .jsonld
+
+  ```yaml
+ldes:
+  dcat: { path of file containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
   ```
 
 ### Docker Setup
