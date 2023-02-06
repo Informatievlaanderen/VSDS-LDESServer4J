@@ -12,8 +12,8 @@
 @prefix ns0: <http://www.w3.org/ns/adms#> .
 @prefix ns1: <http://data.vlaanderen.be/ns/metadata-dcat#> .
 
-#Deze resource moet maar eenmalig voorkomen en beschrijft de organisatie
-<https://metadata.vlaanderen.be/srv/resources/catalogs/identifier_van_org>
+#Deze resource moet maar eenmalig voorkomen en beschrijft de organisatie - gebruik hier een persistent uri
+<https://example.com/meta/catalog/identifier_van_org>
   a dcat:Catalog ;
   ns0:identifier [
     a ns0:Identifier ;
