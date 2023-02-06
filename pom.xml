@@ -70,7 +70,7 @@
         </sonar.projectKey>
 
         <!-- CODE FORMATTER -->
-        <formatter-maven-plugin.version>2.21.0</formatter-maven-plugin.version>
+        <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
         <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
         
