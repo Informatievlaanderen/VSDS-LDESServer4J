@@ -33,6 +33,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(addCollectionStatements(eventStream));
 		model.add(addViewStatements(eventStream.views()));
+		model.add(ldesConfig.getDcat());
 		return prefixAdder.addPrefixesToModel(model);
 	}
 

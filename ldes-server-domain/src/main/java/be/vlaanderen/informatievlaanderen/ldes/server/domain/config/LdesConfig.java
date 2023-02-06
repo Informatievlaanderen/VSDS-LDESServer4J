@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,6 +15,7 @@ public class LdesConfig {
 	private String timestampPath;
 	private String versionOf;
 	private Validation validation = new Validation();
+	private Model dcat = ModelFactory.createDefaultModel();
 
 	public String getHostName() {
 		return hostName;
@@ -82,4 +85,13 @@ public class LdesConfig {
 			this.enabled = enabled;
 		}
 	}
+
+	public void setDcat(Model dcat) {
+		this.dcat = dcat;
+	}
+
+	public Model getDcat() {
+		return dcat;
+	}
+
 }

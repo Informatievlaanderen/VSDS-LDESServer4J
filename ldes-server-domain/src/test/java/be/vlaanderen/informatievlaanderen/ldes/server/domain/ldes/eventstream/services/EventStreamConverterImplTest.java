@@ -8,6 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +35,13 @@ class EventStreamConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+
+		Model dcat = RDFParserBuilder.create().fromString("""
+				<http://localhost:8080/metadata/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+				<http://www.w3.org/ns/dcat#Catalog>
+				.""").lang(Lang.NQUADS).toModel();
+		ldesConfig.setDcat(dcat);
+
 		RelationStatementConverterImpl relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
 		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig, relationStatementConverter);
 	}
@@ -48,7 +57,7 @@ class EventStreamConverterImplTest {
 
 		String id = "http://localhost:8080/mobility-hindrances";
 
-		assertEquals(8, getNumberOfStatements(model));
+		assertEquals(9, getNumberOfStatements(model));
 		assertEquals("[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
 				model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
 		assertEquals("[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
@@ -72,6 +81,11 @@ class EventStreamConverterImplTest {
 		assertEquals(
 				"[" + id + "/view2" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
 				model.listStatements(createResource(id + "/view2"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
+						.toString());
+		assertEquals(
+				"[http://localhost:8080/metadata/mobility-hindrances, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, http://www.w3.org/ns/dcat#Catalog]",
+				model.listStatements(createResource("http://localhost:8080/metadata/mobility-hindrances"),
+						RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
 						.toString());
 	}
 

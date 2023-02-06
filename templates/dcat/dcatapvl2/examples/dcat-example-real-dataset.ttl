@@ -1,0 +1,188 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns0: <http://www.w3.org/ns/adms#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ns1: <http://data.vlaanderen.be/ns/metadata-dcat#> .
+
+<https://metadata.vlaanderen.be/srv/resources/catalogs/319403b7-0397-4b9d-884b-80693ebac521>
+  a dcat:Catalog ;
+  dc:title "Metadata Vlaanderen"@en ;
+  dc:description "Metadata Vlaanderen (agentschap Digitaal Vlaanderen)"@en ;
+  dc:identifier "319403b7-0397-4b9d-884b-80693ebac521" ;
+  dc:publisher <https://metadata.vlaanderen.be/srv/resources/organizations/agentschap%20Digitaal%20Vlaanderen> ;
+  foaf:homepage <https://metadata.vlaanderen.be> ;
+  dc:license <https://data.vlaanderen.be/id/licentie/creative-commons-zero-verklaring/v1.0> ;
+  dc:language <http://publications.europa.eu/resource/authority/language/ENG> ;
+  dcat:contactPoint [
+    a vcard:Organization ;
+    vcard:organization-name "agentschap Digitaal Vlaanderen" ;
+    vcard:hasEmail <mailto:digitaal.vlaanderen@vlaanderen.be> ;
+    vcard:hasURL <https://www.vlaanderen.be/digitaal-vlaanderen>
+  ] ;
+  dcat:record <https://metadata.vlaanderen.be/srv/api/records/a254c8ae-a887-4125-8d10-94b18424f8ad> ;
+  dcat:service <https://metadata.vlaanderen.be/srv/doc/service/ae6bd6c8-e6af-44e6-bc24-ff96437b6e75> .
+
+<https://metadata.vlaanderen.be/srv/resources/organizations/agentschap%20Digitaal%20Vlaanderen>
+  a foaf:Agent ;
+  foaf:name "agentschap Digitaal Vlaanderen"@en ;
+  dc:type <http://purl.org/adms/publishertype/LocalAuthority> .
+
+<http://purl.org/adms/publishertype/LocalAuthority>
+  a skos:Concept ;
+  skos:prefLabel "Lokaal bestuur"@nl, "Local Authority"@en, "Local Authority"@fr, "Local Authority"@de ;
+  skos:inScheme <http://purl.org/adms/publishertype/1.0> .
+
+<https://metadata.vlaanderen.be>
+  a foaf:Document ;
+  foaf:name "Metadata Vlaanderen"@en .
+
+<https://data.vlaanderen.be/id/licentie/creative-commons-zero-verklaring/v1.0>
+  a dc:LicenseDocument ;
+  dc:type <http://purl.org/adms/licencetype/PublicDomain> ;
+  dc:title "Creative Commons Zero verklaring"@nl ;
+  dc:description "De instantie doet afstand van haar intellectuele eigendomsrechten voor zover dit wettelijk mogelijk is. Hierdoor kan de gebruiker de data hergebruiken voor eender welk doel, zonder een verplichting op naamsvermelding. Deze is de welbekende CC0 licentie."@nl ;
+  dc:identifier "https://data.vlaanderen.be/id/licentie/creative-commons-zero-verklaring/v1.0" .
+
+<http://purl.org/adms/licencetype/PublicDomain>
+  a skos:Concept ;
+  skos:prefLabel "Werk in het publiek domein"@nl, "Public domain"@en, "Public domain"@fr, "Public domain"@de ;
+  skos:inScheme <http://purl.org/adms/licencetype/1.0> .
+
+<http://publications.europa.eu/resource/authority/language/ENG>
+  a skos:Concept, dc:LinguisticSystem ;
+  skos:prefLabel "Nederlands"@nl, "Dutch"@en, "néerlandais"@fr, "Niederländisch"@de ;
+  skos:inScheme <http://publications.europa.eu/resource/authority/language> .
+
+<https://metadata.vlaanderen.be/srv/api/records/a254c8ae-a887-4125-8d10-94b18424f8ad>
+  a dcat:CatalogRecord ;
+  ns0:identifier [
+    a ns0:Identifier ;
+    skos:notation "https://metadata.vlaanderen.be/srv/api/records/a254c8ae-a887-4125-8d10-94b18424f8ad"
+  ] ;
+  dc:identifier "a254c8ae-a887-4125-8d10-94b18424f8ad" ;
+  foaf:primaryTopic <https://metadata.vlaanderen.be/srv/doc/service/ae6bd6c8-e6af-44e6-bc24-ff96437b6e75> ;
+  dc:modified "2022-09-06" ;
+  dc:conformsTo <https://data.vlaanderen.be/doc/applicatieprofiel/DCAT-AP-VL/erkendestandaard/2019-10-03> .
+
+<https://data.vlaanderen.be/doc/applicatieprofiel/DCAT-AP-VL/erkendestandaard/2019-10-03>
+  a dc:Standard ;
+  dc:title "Dcat-ap-vl" ;
+  dc:description "Dit applicatieprofiel beschrijft Open Data Catalogi in Vlaanderen. DCAT-AP Vlaanderen (DCAT-AP VL) is een verdere specialisatie van DCAT-AP. De applicatie waarop dit profiel betrekking heeft is een Open Data Portaal in Vlaanderen. Open Data portalen zijn catalogussen van Open Data datasets. Ze hebben als belangrijkste doelstelling het vindbaar maken van data en hierdoor het hergebruik ervan te stimuleren. Open Data portalen vervullen een centrale rol in de overheidsopdracht om de toegankelijkheid tot overheidsinformatie te realiseren. Met dit applicatieprofiel bevorderen we de uniformiteit van de beschikbare informatie over datasets. Tevens vereenvoudigen we het aggregatie proces van meerdere Open Data Catalogi. Dit document bevat de verplichte elementen en bijkomende elementen waarover DCAT-AP Vlaanderen een uitspraak doet. Aanbevolen en optionele informatie waarvoor geen bijkomende afspraken in de context van DCAT-AP Vlaanderen zijn, zijn niet opgenomen in dit document. Hiervoor verwijzen we naar de DCAT-AP specificatie zelf."@nl ;
+  owl:versionInfo "2.0" .
+
+<https://metadata.vlaanderen.be/srv/doc/service/ae6bd6c8-e6af-44e6-bc24-ff96437b6e75>
+  a dcat:DataService ;
+  ns0:identifier [
+    a ns0:Identifier ;
+    skos:notation "https://metadata.vlaanderen.be/srv/doc/service/ae6bd6c8-e6af-44e6-bc24-ff96437b6e75"
+  ] ;
+  dc:identifier "ae6bd6c8-e6af-44e6-bc24-ff96437b6e75" ;
+  dc:title "GIPOD Geplande Mobiliteitshinder - Publieke Informatie - LDES"@nl ;
+  dc:description "GIPOD (Publieke Informatie) geeft een overzicht van alle concreet geplande en in uitvoering zijnde (grond)werken en evenementen op het openbaar domein met hun bijhorende omleidingen en verwachte mobiliteitshinder. Deze service bevat de geplande mobiliteitshinder en volgt de LDES specificatie."@nl ;
+  dc:publisher [
+    a foaf:Agent ;
+    foaf:name "agentschap Digitaal Vlaanderen"@nl ;
+    dc:type <http://purl.org/adms/publishertype/RegionalAuthority>
+  ] ;
+  dcat:endpointUrl <https://private-api.gipod.vlaanderen.be/api/v1/ldes/mobility-hindrances> ;
+  dcat:endpointDescription <https://private-api.gipod.vlaanderen.be/api-documentation.html#tag/Ldes> ;
+  dcat:servesDataset <https://metadata.vlaanderen.be/srv/dut/catalog.search#/metadata/d48f5a30-be85-4eb3-bcc5-e1266f348a1a> ;
+  dcat:landingPage <https://www.vlaanderen.be/digitaal-vlaanderen/onze-oplossingen/generiek-informatieplatform-openbaar-domein-gipod> ;
+  dcat:contactPoint [
+    a vcard:Organization ;
+    vcard:fn "Agentschap Digitaal Vlaanderen" ;
+    vcard:hasAddress [
+      a vcard:Address ;
+      vcard:street-address "Havenlaan 88" ;
+      vcard:locality "Brussel" ;
+      vcard:postal-code "1000" ;
+      vcard:country-name "België"
+    ] ;
+    vcard:hasEmail <mailto:digitaal.vlaanderen@vlaanderen.be> ;
+    vcard:hasTelephone "+32 9 276 15 00"
+  ] ;
+  dcat:keyword "LDES"@nl, "GIPOD"@nl, "Mobiliteitshinder"@nl, "Openbaar domein"@nl ;
+  dc:language <http://publications.europa.eu/resource/authority/language/NLD> ;
+  owl:versionInfo "v1" ;
+  ns1:levensfase <https://data.vlaanderen.be/id/concept/levensfase/live> ;
+  ns1:ontwikkelingstoestand <https://data.vlaanderen.be/id/concept/ontwikkelingstoestand/PROD> ;
+  dc:subject <https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden/VLOPENDATASERVICE>, <https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden/KOSTELOOS> ;
+  dcat:theme <http://vocab.belgif.be/auth/datatheme/TRAN>, <http://vocab.belgif.be/auth/datatheme/REGI>, <http://vocab.belgif.be/auth/datatheme/GOVE> ;
+  dc:accessRights <http://publications.europa.eu/resource/authority/access-right/PUBLIC> ;
+  dc:conformsTo <https://data.vlaanderen.be/id/concept/dataserviceprotocol/LDES>, <https://private-api.gipod.beta-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape> ;
+  dc:license <https://data.vlaanderen.be/doc/licentie/modellicentie-gratis-hergebruik/v1.0> .
+
+<http://purl.org/adms/publishertype/RegionalAuthority>
+  a skos:Concept ;
+  skos:prefLabel "Regionaal bestuur"@nl, "Regional authority"@en, "Regional authority"@fr, "Regional authority"@de ;
+  skos:inScheme <http://purl.org/adms/publishertype/1.0> .
+
+<http://publications.europa.eu/resource/authority/language/NLD>
+  a skos:Concept, dc:LinguisticSystem ;
+  skos:prefLabel "Nederlands"@nl, "Dutch"@en, "néerlandais"@fr, "Niederländisch"@de ;
+  skos:inScheme <http://publications.europa.eu/resource/authority/language> .
+
+<https://data.vlaanderen.be/id/concept/levensfase/live>
+  a skos:Concept ;
+  skos:prefLabel "live"@nl, "live"@en, "live"@fr, "live"@de ;
+  skos:inScheme <https://data.vlaanderen.be/id/conceptscheme/levensfase> .
+
+<https://data.vlaanderen.be/id/concept/ontwikkelingstoestand/PROD>
+  a skos:Concept ;
+  skos:prefLabel "productie"@nl, "production"@en, "production"@fr, "production"@de ;
+  skos:inScheme <https://data.vlaanderen.be/id/conceptscheme/ontwikkelingstoestand> .
+
+<https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden/VLOPENDATASERVICE>
+  a skos:Concept ;
+  skos:prefLabel "Vlaamse Open data Service"@nl, "Vlaamse Open data Service"@en, "Vlaamse Open data Service"@fr, "Vlaamse Open data Service"@de ;
+  skos:inScheme <https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden> .
+
+<https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden/KOSTELOOS>
+  a skos:Concept ;
+  skos:prefLabel "Kosteloos"@nl, "Kosteloos"@en, "Kosteloos"@fr, "Kosteloos"@de ;
+  skos:inScheme <https://metadata.vlaanderen.be/id/GDI-Vlaanderen-Trefwoorden> .
+
+<http://vocab.belgif.be/auth/datatheme/TRAN>
+  a skos:Concept ;
+  skos:prefLabel "Vervoer"@nl, "Transport"@en, "Transports"@fr, "Verkehr"@de ;
+  skos:inScheme <http://vocab.belgif.be/auth/datatheme> .
+
+<http://vocab.belgif.be/auth/datatheme/REGI>
+  a skos:Concept ;
+  skos:prefLabel "Regio's en steden"@nl, "Regions and cities"@en, "Régions et villes"@fr, "Regionen und Städte"@de ;
+  skos:inScheme <http://vocab.belgif.be/auth/datatheme> .
+
+<http://vocab.belgif.be/auth/datatheme/GOVE>
+  a skos:Concept ;
+  skos:prefLabel "Overheid en publieke sector"@nl, "Government and public sector"@en, "Gouvernement et secteur public"@fr, "Regierung und öffentlicher Sektor"@de ;
+  skos:inScheme <http://vocab.belgif.be/auth/datatheme> .
+
+<http://publications.europa.eu/resource/authority/access-right/PUBLIC>
+  a skos:Concept, dc:RightsStatement ;
+  skos:prefLabel "Toegang zonder voorwaarden"@nl, "without conditions"@en, "without conditions"@fr, "without conditions"@de ;
+  skos:inScheme <http://publications.europa.eu/resource/authority/access-right> .
+
+<https://data.vlaanderen.be/id/concept/dataserviceprotocol/LDES>
+  a dc:Standard ;
+  dc:title "LDES-specificatie"@nl ;
+  dc:description "De LDES-specificatie laat toe een collectie van onveranderlijke objecten te beschrijven .De beschrijving van de items in de event stream gebruikt de TREE specificatie."@nl .
+
+<https://private-api.gipod.beta-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape>
+  a dc:Standard ;
+  dc:title "Shape GIPOD Hindernissen - Publieke Informatie"@nl ;
+  dc:description "Een shape wordt opgelegd aan alle elementen van de LDES. Voorbeelden van zo'n shape zijn SHACL en ShEx. De shape moet cohorent zijn doorheen heel de Linked Data Event Stream."@nl .
+
+<https://data.vlaanderen.be/doc/licentie/modellicentie-gratis-hergebruik/v1.0>
+  a dc:LicenseDocument ;
+  dc:type <http://purl.org/adms/licencetype/Attribution> ;
+  dc:title "Licentie modellicentie-gratis-hergebruik/v1.0"@nl ;
+  dc:description "Hergebruik is geregeld d.m.v. de Modellicentie voor gratis hergebruik (cfr Titel II, hoofdstuk 4 van het Bestuursdecreet). Elk commercieel of niet-commercieel hergebruik voor onbepaalde duur is toegelaten, zonder dat daar kosten aan verbonden zijn. Als enige gebruiksvoorwaarde geldt een bronvermeldingsplicht."@nl ;
+  dc:identifier "https://data.vlaanderen.be/doc/licentie/modellicentie-gratis-hergebruik/v1.0" .
+
+<http://purl.org/adms/licencetype/Attribution>
+  a skos:Concept ;
+  skos:prefLabel "Verplichte bronvermelding"@nl, "Attribution"@en, "Attribution"@fr, "Attribution"@de ;
+  skos:inScheme <http://purl.org/adms/licencetype/1.0> .
