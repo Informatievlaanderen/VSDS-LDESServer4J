@@ -218,10 +218,11 @@ spring:
 ##### Example Serving DCAT Metadata
 
 Supported file formats: .ttl, .rdf, .nq and .jsonld
+Templates for configuring the DCAT metadata can be found [here](templates/dcat)
 
   ```yaml
 ldes:
-  dcat: { path of file containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
+  dcat: { path of file or url containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
   ```
 
 ### Docker Setup

@@ -24,11 +24,10 @@ class EventStreamConverterImplTest {
 
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private EventStreamConverter eventStreamConverter;
-	private LdesConfig ldesConfig;
 
 	@BeforeEach
 	void setUp() {
-		ldesConfig = new LdesConfig();
+		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("http://localhost:8080");
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.validation()
@@ -36,6 +35,13 @@ class EventStreamConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+
+		Model dcat = RDFParserBuilder.create().fromString("""
+				<http://localhost:8080/metadata/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
+				<http://www.w3.org/ns/dcat#Catalog>
+				.""").lang(Lang.NQUADS).toModel();
+		ldesConfig.setDcat(dcat);
+
 		RelationStatementConverterImpl relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
 		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig, relationStatementConverter);
 	}
@@ -46,12 +52,6 @@ class EventStreamConverterImplTest {
 				"http://purl.org/dc/terms/isVersionOf",
 				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				List.of(createView("view1"), createView("view2")));
-
-		Model dcat = RDFParserBuilder.create().fromString("""
-				<http://localhost:8080/metadata/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
-				<http://www.w3.org/ns/dcat#Catalog>
-				.""").lang(Lang.NQUADS).toModel();
-		ldesConfig.setDcat(dcat);
 
 		Model model = eventStreamConverter.toModel(eventStream);
 
