@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Optional.ofNullable;
+
 public class LdesFragment {
 
 	private final String viewName;
@@ -16,6 +18,26 @@ public class LdesFragment {
 	private LocalDateTime immutableTimestamp;
 	private Boolean softDeleted;
 	private final int numberOfMembers;
+
+	public Optional<LdesFragment> getPrev() {
+		return Optional.ofNullable(prev);
+	}
+
+	private void setPrev(LdesFragment prev) {
+		this.prev = prev;
+	}
+
+	public Optional<LdesFragment> getNext() {
+		return ofNullable(next);
+	}
+
+	private void setNext(LdesFragment next) {
+		this.next = next;
+	}
+
+	private LdesFragment prev;
+
+	private LdesFragment next;
 
 	public LdesFragment(final String viewName, final List<FragmentPair> fragmentPairs) {
 		this(viewName, fragmentPairs, false, null, false, 0);
@@ -29,6 +51,8 @@ public class LdesFragment {
 		this.immutableTimestamp = immutableTimestamp;
 		this.softDeleted = softDeleted;
 		this.numberOfMembers = numberOfMembers;
+		this.prev = null;
+		this.next = null;
 	}
 
 	public String getFragmentId() {
@@ -109,5 +133,10 @@ public class LdesFragment {
 		}
 
 		return "root";
+	}
+
+	public void linkPrevFragment(LdesFragment prevFragment) {
+		this.setPrev(prevFragment);
+		prevFragment.setNext(this);
 	}
 }

@@ -22,7 +22,6 @@ class TimebasedFragmentationStrategyTest {
 	private static final String VIEW_NAME = "view";
 	private final OpenFragmentProvider openFragmentProvider = mock(OpenFragmentProvider.class);
 	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
-
 	private FragmentationStrategy fragmentationStrategy;
 	private static LdesFragment PARENT_FRAGMENT;
 	private static LdesFragment OPEN_FRAGMENT;

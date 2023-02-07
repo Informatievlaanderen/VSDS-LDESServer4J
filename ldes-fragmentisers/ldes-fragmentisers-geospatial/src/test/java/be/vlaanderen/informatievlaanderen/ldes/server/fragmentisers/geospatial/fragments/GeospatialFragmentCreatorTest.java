@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.PaginationExecutorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,14 +22,16 @@ class GeospatialFragmentCreatorTest {
 	private LdesFragmentRepository ldesFragmentRepository;
 	private GeospatialFragmentCreator geospatialFragmentCreator;
 	private NonCriticalTasksExecutor nonCriticalTasksExecutor;
+	private PaginationExecutorImpl paginationExecutor;
 
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = mock(TileFragmentRelationsAttributer.class);
 		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
+		paginationExecutor = mock(PaginationExecutorImpl.class);
 		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
-				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
+				tileFragmentRelationsAttributer, nonCriticalTasksExecutor, paginationExecutor);
 	}
 
 	@Test
@@ -52,6 +55,7 @@ class GeospatialFragmentCreatorTest {
 		verify(ldesFragmentRepository,
 				times(1)).saveFragment(childFragment);
 		verify(nonCriticalTasksExecutor, times(1)).submit(any());
+		verify(paginationExecutor, times(1)).linkFragments(childFragment);
 	}
 
 	@Test
@@ -91,6 +95,7 @@ class GeospatialFragmentCreatorTest {
 		assertEquals("/view?substring=a&tile=0/0/0", returnedFragment.getFragmentId());
 		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
 		verify(ldesFragmentRepository, times(1)).saveFragment(returnedFragment);
+		verify(paginationExecutor, times(1)).linkFragments(returnedFragment);
 		verifyNoInteractions(nonCriticalTasksExecutor);
 	}
 
