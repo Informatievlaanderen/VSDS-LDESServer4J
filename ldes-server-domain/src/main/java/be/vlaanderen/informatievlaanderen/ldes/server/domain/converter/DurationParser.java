@@ -8,27 +8,27 @@ import java.time.format.DateTimeParseException;
 
 public class DurationParser {
 
-	private DurationParser() {
-	}
+	private static final long NUMBER_OF_DAYS_PER_MONTH = 30L;
+	private static final long NUMBER_OF_DAYS_PER_YEAR = 365L;
 
-	private static Duration periodToDuration(Period period) {
+	private Duration periodToDuration(Period period) {
 		int days = period.getDays();
 		int months = period.getMonths();
 		int years = period.getYears();
-		return Duration.ofDays(days + (months * 30L) + (years * 365L));
+		return Duration.ofDays(days + (months * NUMBER_OF_DAYS_PER_MONTH) + (years * NUMBER_OF_DAYS_PER_YEAR));
 	}
 
-	public static Duration parseText(String duration) {
+	public Duration parseText(String duration) {
 		try {
 			return Duration.parse(duration);
 		} catch (DateTimeParseException ignored) {
 			// if text cannot be parsed to duration, try parsing it to period
-		}
-		try {
-			Period period = Period.parse(duration);
-			return periodToDuration(period);
-		} catch (DateTimeParseException e) {
-			throw new DurationParserException(duration);
+			try {
+				Period period = Period.parse(duration);
+				return periodToDuration(period);
+			} catch (DateTimeParseException e) {
+				throw new DurationParserException(duration);
+			}
 		}
 	}
 

@@ -11,11 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class DurationParserTest {
 
+	private final DurationParser durationParser = new DurationParser();
+
 	@Test
 	void when_StringIsDuration() {
 		Duration duration = Duration.ofMinutes(4000);
 		String durationString = duration.toString();
-		Duration toTest = DurationParser.parseText(durationString);
+		Duration toTest = durationParser.parseText(durationString);
 		Assertions.assertEquals(duration, toTest);
 
 	}
@@ -25,13 +27,13 @@ class DurationParserTest {
 		Duration duration = Duration.ofDays(30);
 		Period period = Period.ofMonths(1);
 		String periodString = period.toString();
-		Duration toTest = DurationParser.parseText(periodString);
+		Duration toTest = durationParser.parseText(periodString);
 		Assertions.assertEquals(duration, toTest);
 	}
 
 	@Test()
 	void when_StringIsInvalid() {
 		String invalidString = "PT5F9";
-		assertThrows(DurationParserException.class, () -> DurationParser.parseText(invalidString));
+		assertThrows(DurationParserException.class, () -> durationParser.parseText(invalidString));
 	}
 }

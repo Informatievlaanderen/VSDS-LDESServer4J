@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 public class TimeBasedRetentionPolicy implements RetentionPolicy {
 	private final String duration;
+	private final DurationParser durationParser = new DurationParser();
 
 	public TimeBasedRetentionPolicy(String duration) {
 		this.duration = duration;
@@ -17,6 +18,6 @@ public class TimeBasedRetentionPolicy implements RetentionPolicy {
 	public boolean matchesPolicy(LdesFragment ldesFragment) {
 		LocalDateTime immutableTimestamp = ldesFragment.getImmutableTimestamp();
 		return immutableTimestamp != null
-				&& LocalDateTime.now().isAfter(immutableTimestamp.plus(DurationParser.parseText(duration)));
+				&& LocalDateTime.now().isAfter(immutableTimestamp.plus(durationParser.parseText(duration)));
 	}
 }
