@@ -5,11 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConsta
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -72,9 +73,16 @@ class EventStreamControllerTest {
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
-		when(eventStreamFactory.getEventStream()).thenReturn(
-				new EventStream("collection", "timestampPath", "versionOf", "shape",
-						List.of(createView("viewOne"), createView("viewTwo"))));
+		EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
+				"http://localhost:8080/collection", "http://www.w3.org/ns/prov#generatedAtTime",
+				"http://purl.org/dc/terms/isVersionOf",
+				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
+				List.of("http://localhost:8080/collection/viewOne",
+						"http://localhost:8080/collection/viewTwo"));
+		EventStreamResponse eventStreamResponse = new EventStreamResponse(eventStreamInfoResponse,
+				List.of(new TreeNodeInfoResponse("http://localhost:8080/collection/viewOne", List.of()),
+						new TreeNodeInfoResponse("http://localhost:8080/collection/viewTwo", List.of())));
+		when(eventStreamFactory.getEventStream()).thenReturn(eventStreamResponse);
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
 				ldesConfig.getCollectionName())
 				.accept(mediaType))
@@ -123,16 +131,20 @@ class EventStreamControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		when(eventStreamFactory.getEventStream()).thenReturn(
-				new EventStream("collection", "timestampPath", "versionOf", "shape",
-						List.of(createView("viewOne"), createView("viewTwo"))));
+		EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
+				"http://localhost:8080/mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime",
+				"http://purl.org/dc/terms/isVersionOf",
+				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
+				List.of("http://localhost:8080/mobility-hindrances/view1",
+						"http://localhost:8080/mobility-hindrances/view2"));
+		EventStreamResponse eventStreamResponse = new EventStreamResponse(eventStreamInfoResponse,
+				List.of(new TreeNodeInfoResponse("http://localhost:8080/mobility-hindrances/view1", List.of()),
+						new TreeNodeInfoResponse("http://localhost:8080/mobility-hindrances/view2", List.of())));
+
+		when(eventStreamFactory.getEventStream()).thenReturn(eventStreamResponse);
 
 		mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())
 				.andExpect(status().is4xxClientError());
-	}
-
-	private TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of());
 	}
 
 	static class MediaTypeRdfFormatsArgumentsProvider implements
@@ -158,8 +170,8 @@ class EventStreamControllerTest {
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
-			return new EtagCachingStrategy(ldesConfig);
+		public CachingStrategy cachingStrategy() {
+			return new EtagCachingStrategy();
 		}
 	}
 }

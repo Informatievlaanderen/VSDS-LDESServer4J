@@ -232,8 +232,8 @@ class TreeNodeControllerTest {
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
-			return new EtagCachingStrategy(ldesConfig);
+		public CachingStrategy cachingStrategy() {
+			return new EtagCachingStrategy();
 		}
 	}
 }

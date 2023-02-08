@@ -3,8 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -19,7 +20,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EventStreamConverterImplTest {
+class EventStreamResponseConverterImplTest {
 
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private EventStreamConverter eventStreamConverter;
@@ -46,12 +47,17 @@ class EventStreamConverterImplTest {
 
 	@Test
 	void when_LdesFragmentHasTwoViews_ModelHasEightStatement() {
-		EventStream eventStream = new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime",
+		EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
+				"http://localhost:8080/mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf",
 				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
-				List.of(createView("view1"), createView("view2")));
+				List.of("http://localhost:8080/mobility-hindrances/view1",
+						"http://localhost:8080/mobility-hindrances/view2"));
 
-		Model model = eventStreamConverter.toModel(eventStream);
+		EventStreamResponse eventStreamResponse = new EventStreamResponse(eventStreamInfoResponse,
+				List.of(new TreeNodeInfoResponse("http://localhost:8080/mobility-hindrances/view1", List.of()),
+						new TreeNodeInfoResponse("http://localhost:8080/mobility-hindrances/view2", List.of())));
+		Model model = eventStreamConverter.toModel(eventStreamResponse);
 
 		String id = "http://localhost:8080/mobility-hindrances";
 
@@ -93,7 +99,4 @@ class EventStreamConverterImplTest {
 		return statementCounter.get();
 	}
 
-	private TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of());
-	}
 }

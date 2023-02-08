@@ -6,13 +6,13 @@ import org.apache.jena.rdf.model.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
-public class EventStreamInfoResponse {
-
+public final class EventStreamInfoResponse {
 	private final String eventStreamId;
 	private final String timestampPath;
 	private final String versionOfPath;
@@ -49,4 +49,23 @@ public class EventStreamInfoResponse {
 		return objectContent != null && !objectContent.equals("");
 	}
 
+	public String getEventStreamId() {
+		return eventStreamId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof EventStreamInfoResponse that))
+			return false;
+		return Objects.equals(eventStreamId, that.eventStreamId) && Objects.equals(timestampPath, that.timestampPath)
+				&& Objects.equals(versionOfPath, that.versionOfPath) && Objects.equals(shape, that.shape)
+				&& Objects.equals(views, that.views);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(eventStreamId, timestampPath, versionOfPath, shape, views);
+	}
 }

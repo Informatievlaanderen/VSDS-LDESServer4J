@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -13,15 +12,9 @@ import java.util.stream.Collectors;
 @Component
 public class EtagCachingStrategy implements CachingStrategy {
 
-	private final LdesConfig ldesConfig;
-
-	public EtagCachingStrategy(final LdesConfig ldesConfig) {
-		this.ldesConfig = ldesConfig;
-	}
-
 	@Override
-	public String generateCacheIdentifier(EventStream eventStream) {
-		return DigestUtils.sha256Hex(ldesConfig.getHostName() + "/" + eventStream.collection());
+	public String generateCacheIdentifier(EventStreamResponse eventStreamResponse) {
+		return DigestUtils.sha256Hex(eventStreamResponse.getCacheIdentifier());
 	}
 
 	@Override

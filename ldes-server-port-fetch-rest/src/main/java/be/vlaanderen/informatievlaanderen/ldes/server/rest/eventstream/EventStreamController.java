@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,9 +31,9 @@ public class EventStreamController {
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "${ldes.collectionname}")
-	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
+	public ResponseEntity<EventStreamResponse> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response) {
-		EventStream eventStream = eventStreamFactory.getEventStream();
+		EventStreamResponse eventStreamResponse = eventStreamFactory.getEventStream();
 
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
@@ -41,8 +41,8 @@ public class EventStreamController {
 
 		return ResponseEntity
 				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(eventStream))
-				.body(eventStream);
+				.eTag(cachingStrategy.generateCacheIdentifier(eventStreamResponse))
+				.body(eventStreamResponse);
 	}
 
 	private void setContentTypeHeader(String language, HttpServletResponse response) {

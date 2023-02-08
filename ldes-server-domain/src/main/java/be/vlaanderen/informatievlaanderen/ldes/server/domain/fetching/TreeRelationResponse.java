@@ -7,11 +7,12 @@ import org.apache.jena.rdf.model.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
-public class TreeRelationResponse {
+public final class TreeRelationResponse {
 	private final String treePath;
 	private final String treeNode;
 	private final String treeValue;
@@ -51,4 +52,19 @@ public class TreeRelationResponse {
 		return objectContent != null && !objectContent.equals("");
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof TreeRelationResponse that))
+			return false;
+		return Objects.equals(treePath, that.treePath) && Objects.equals(treeNode, that.treeNode)
+				&& Objects.equals(treeValue, that.treeValue) && Objects.equals(treeValueType, that.treeValueType)
+				&& Objects.equals(relation, that.relation);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(treePath, treeNode, treeValue, treeValueType, relation);
+	}
 }
