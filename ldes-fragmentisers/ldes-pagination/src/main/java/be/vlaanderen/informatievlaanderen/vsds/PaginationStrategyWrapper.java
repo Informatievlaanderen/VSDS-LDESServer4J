@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
+package be.vlaanderen.informatievlaanderen.vsds;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
@@ -6,19 +6,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
+import be.vlaanderen.informatievlaanderen.vsds.config.PaginationConfig;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Property;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PROV_GENERATED_AT_TIME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedProperties.FRAGMENTATION_PROPERTY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedProperties.MEMBER_LIMIT;
+import static be.vlaanderen.informatievlaanderen.vsds.config.PaginationProperties.FRAGMENTATION_PROPERTY;
+import static be.vlaanderen.informatievlaanderen.vsds.config.PaginationProperties.MEMBER_LIMIT;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-public class TimebasedFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
+public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
@@ -28,34 +26,33 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 				.getBean(TreeRelationsRepository.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
-		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
+		OpenPageProvider openFragmentProvider = getOpenPageProvider(fragmentationProperties,
 				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
-		return new TimebasedFragmentationStrategy(fragmentationStrategy,
+		return new PaginationStrategy(fragmentationStrategy,
 				openFragmentProvider, observationRegistry, treeRelationsRepository);
 
 	}
 
-	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
+	private OpenPageProvider getOpenPageProvider(ConfigProperties properties,
 			LdesFragmentRepository ldesFragmentRepository, TreeRelationsRepository treeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
-		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(
+		PaginationConfig paginationConfig = createPaginationConfigConfig(properties);
+		PageCreator timeBasedFragmentCreator = getPageCreator(
 				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
-				timebasedFragmentationConfig.fragmentationProperty());
-		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository,
-				timebasedFragmentationConfig.memberLimit());
+				paginationConfig.fragmentationProperty());
+		return new OpenPageProvider(timeBasedFragmentCreator, ldesFragmentRepository,
+				paginationConfig.memberLimit());
 	}
 
-	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
+	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property timebasedFragmentationConfig) {
-		return new TimeBasedFragmentCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
-				timebasedFragmentationConfig);
+			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property paginationConfig) {
+		return new PageCreator(
+				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor, paginationConfig);
 	}
 
-	private TimebasedFragmentationConfig createTimebasedFragmentationConfig(ConfigProperties properties) {
-		return new TimebasedFragmentationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)),
+	private PaginationConfig createPaginationConfigConfig(ConfigProperties properties) {
+		return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)),
 				createProperty(properties.getOrDefault(FRAGMENTATION_PROPERTY, PROV_GENERATED_AT_TIME)));
 	}
 }

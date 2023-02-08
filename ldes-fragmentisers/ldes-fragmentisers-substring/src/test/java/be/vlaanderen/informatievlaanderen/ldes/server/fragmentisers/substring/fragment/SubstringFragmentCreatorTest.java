@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.f
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.PaginationExecutorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,13 +15,11 @@ import static org.mockito.Mockito.*;
 class SubstringFragmentCreatorTest {
 	private LdesFragmentRepository ldesFragmentRepository;
 	private SubstringFragmentCreator substringFragmentCreator;
-	private PaginationExecutorImpl paginationExecutor;
 
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		paginationExecutor = mock(PaginationExecutorImpl.class);
-		substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository, paginationExecutor);
+		substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 	}
 
 	@Test
@@ -38,7 +35,6 @@ class SubstringFragmentCreatorTest {
 		assertEquals("/view?time=b&substring=a", childFragment.getFragmentId());
 		verify(ldesFragmentRepository,
 				times(1)).retrieveFragment(exptectedFragmentId);
-		verify(paginationExecutor, times(1)).linkFragments(childFragment);
 		verify(ldesFragmentRepository, times(1)).saveFragment(childFragment);
 		verifyNoMoreInteractions(ldesFragmentRepository);
 	}
@@ -58,6 +54,5 @@ class SubstringFragmentCreatorTest {
 		assertEquals("/view?time=b&substring=a", childFragment.getFragmentId());
 		verify(ldesFragmentRepository, times(1)).retrieveFragment(substringFragment.getFragmentId());
 		verifyNoMoreInteractions(ldesFragmentRepository);
-		verifyNoInteractions(paginationExecutor);
 	}
 }

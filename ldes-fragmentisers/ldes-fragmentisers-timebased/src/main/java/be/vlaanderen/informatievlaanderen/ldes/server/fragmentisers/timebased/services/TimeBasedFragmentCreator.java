@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingF
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.PaginationExecutorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
@@ -25,20 +24,18 @@ public class TimeBasedFragmentCreator {
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private final TreeRelationsRepository treeRelationsRepository;
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
-	private final PaginationExecutorImpl paginationExecutor;
 
 	private final Property fragmentationProperty;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentCreator.class);
 
 	public TimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, PaginationExecutorImpl paginationExecutor,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor,
 			Property fragmentationProperty) {
 		this.treeRelationsRepository = treeRelationsRepository;
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
-		this.paginationExecutor = paginationExecutor;
 		this.fragmentationProperty = fragmentationProperty;
 	}
 
@@ -51,7 +48,6 @@ public class TimeBasedFragmentCreator {
 		String fragmentKey = fragmentationProperty.getLocalName();
 		String fragmentValue = LocalDateTime.now().format(formatter);
 		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(fragmentKey, fragmentValue));
-		paginationExecutor.linkFragments(newFragment);
 		LOGGER.debug("Time based fragment created with id: {}", newFragment.getFragmentId());
 		if (ldesFragment != null) {
 			makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment);

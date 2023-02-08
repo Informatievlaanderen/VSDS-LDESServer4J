@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.PaginationExecutorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
@@ -27,12 +26,10 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 				.getBean(TreeRelationsRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
-		PaginationExecutorImpl paginationExecutor = applicationContext.getBean(PaginationExecutorImpl.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
 		SubstringBucketiser substringBucketiser = new SubstringBucketiser(substringConfig);
-		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository,
-				paginationExecutor);
+		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 		SubstringRelationsAttributer substringRelationsAttributer = new SubstringRelationsAttributer(
 				treeRelationsRepository, nonCriticalTasksExecutor, substringConfig);
 		SubstringFragmentFinder substringFragmentFinder = new SubstringFragmentFinder(substringFragmentCreator,

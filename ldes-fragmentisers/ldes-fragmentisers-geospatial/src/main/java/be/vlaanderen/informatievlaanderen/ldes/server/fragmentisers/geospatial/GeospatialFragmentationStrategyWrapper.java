@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.PaginationExecutorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
@@ -25,14 +24,13 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 				.getBean(TreeRelationsRepository.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
-		PaginationExecutorImpl paginationExecutor = applicationContext.getBean(PaginationExecutorImpl.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
 				treeRelationsRepository);
 		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
-				tileFragmentRelationsAttributer, nonCriticalTasksExecutor, paginationExecutor);
+				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				geospatialBucketiser, geospatialFragmentCreator, observationRegistry, treeRelationsRepository);
