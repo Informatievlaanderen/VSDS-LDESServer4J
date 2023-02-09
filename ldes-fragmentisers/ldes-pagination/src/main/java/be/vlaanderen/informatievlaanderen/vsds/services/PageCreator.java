@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds;
+package be.vlaanderen.informatievlaanderen.vsds.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
-import org.apache.jena.rdf.model.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,32 +16,38 @@ public class PageCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final TreeRelationsRepository treeRelationsRepository;
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
-
-	private final Property fragmentationProperty;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
 
 	public PageCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor,
-			Property fragmentationProperty) {
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.treeRelationsRepository = treeRelationsRepository;
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
-		this.fragmentationProperty = fragmentationProperty;
 	}
 
-	public LdesFragment createNewFragment(LdesFragment previousFragment) {
-		String fragmentKey = fragmentationProperty.getLocalName();
-		String fragmentValue = incrementStringNumber(previousFragment.getFragmentPairs().get(0).fragmentValue());
-		LdesFragment newFragment = previousFragment.createChild(new FragmentPair(fragmentKey, fragmentValue));
-		LOGGER.debug("Pagination fragment created with id: {}", newFragment.getFragmentId());
+	public LdesFragment createFirstFragment(LdesFragment parentFragment) {
+		return createFragment(parentFragment, "1");
+	}
+
+	public LdesFragment createNewFragment(LdesFragment previousFragment, LdesFragment parentFragment) {
+		String nextPageNumber = getPageNumberAndGiveIncremented(previousFragment);
+		LdesFragment newFragment = createFragment(parentFragment, nextPageNumber);
 		makeFragmentImmutableAndUpdateRelations(previousFragment, newFragment);
 		return newFragment;
 	}
 
-	private String incrementStringNumber(String number) {
-		int incremented = Integer.parseInt(number) + 1;
+	private LdesFragment createFragment(LdesFragment parentFragment, String pageNumber) {
+		String fragmentKey = PAGE_NUMBER;
+		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(fragmentKey, pageNumber));
+		LOGGER.debug("Pagination fragment created with id: {}", newFragment.getFragmentId());
+		return newFragment;
+	}
+
+	private String getPageNumberAndGiveIncremented(LdesFragment previousFragment) {
+		String previousPageNumber = previousFragment.getValueOfKey(PAGE_NUMBER).orElseThrow();
+		int incremented = Integer.parseInt(previousPageNumber) + 1;
 		return String.valueOf(incremented);
 	}
 

@@ -7,14 +7,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.Tree
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.vsds.config.PaginationConfig;
+import be.vlaanderen.informatievlaanderen.vsds.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.vsds.services.PageCreator;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.jena.rdf.model.Property;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PROV_GENERATED_AT_TIME;
-import static be.vlaanderen.informatievlaanderen.vsds.config.PaginationProperties.FRAGMENTATION_PROPERTY;
 import static be.vlaanderen.informatievlaanderen.vsds.config.PaginationProperties.MEMBER_LIMIT;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -38,21 +36,19 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		PaginationConfig paginationConfig = createPaginationConfigConfig(properties);
 		PageCreator timeBasedFragmentCreator = getPageCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
-				paginationConfig.fragmentationProperty());
+				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 		return new OpenPageProvider(timeBasedFragmentCreator, ldesFragmentRepository,
 				paginationConfig.memberLimit());
 	}
 
 	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property paginationConfig) {
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		return new PageCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor, paginationConfig);
+				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 	}
 
 	private PaginationConfig createPaginationConfigConfig(ConfigProperties properties) {
-		return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)),
-				createProperty(properties.getOrDefault(FRAGMENTATION_PROPERTY, PROV_GENERATED_AT_TIME)));
+		return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)));
 	}
 }

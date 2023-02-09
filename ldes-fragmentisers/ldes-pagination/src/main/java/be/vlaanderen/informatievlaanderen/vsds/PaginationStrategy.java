@@ -5,8 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.vsds.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 public class PaginationStrategy extends FragmentationStrategyDecorator {
 	private final OpenPageProvider openPageProvider;
@@ -22,19 +24,17 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment lastFragment, Member member, Observation parentObservation) {
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
 		Observation paginationObservation = Observation.createNotStarted("pagination",
 				observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
-		LdesFragment currentFragment = openPageProvider
-				.retrieveOpenFragmentOrCreateNewFragment(lastFragment);
-		/*
-		 * if (Boolean.TRUE.equals(currentFragment.getRight())) {
-		 * super.addRelationFromParentToChild(lastFragment, currentFragment.getLeft());
-		 * }
-		 */
-		super.addMemberToFragment(currentFragment, member, paginationObservation);
+		ImmutablePair<LdesFragment, Boolean> ldesFragment = openPageProvider
+				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
+		if (Boolean.TRUE.equals(ldesFragment.getRight())) {
+			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());
+		}
+		super.addMemberToFragment(ldesFragment.getLeft(), member, paginationObservation);
 		paginationObservation.stop();
 	}
 
