@@ -73,8 +73,9 @@
         <!-- CODE FORMATTER -->
         <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
+        <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
         <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
-        
+
         <!-- HASHING -->
         <commons-codec.version>1.15</commons-codec.version>
     </properties>
@@ -286,7 +287,7 @@
                     <configuration>
                         <skip>${skipFormatCode}</skip>
                         <encoding>UTF-8</encoding>
-                        <configFile>${maven.multiModuleProjectDirectory}/settings.xml</configFile>
+                        <configFile>${relative-formatter-path}/settings.xml</configFile>
                     </configuration>
                 </plugin>
             </plugins>
