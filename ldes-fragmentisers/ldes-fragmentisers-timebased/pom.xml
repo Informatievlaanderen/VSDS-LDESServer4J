@@ -23,12 +23,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
-        <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-pagination</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
     <build>

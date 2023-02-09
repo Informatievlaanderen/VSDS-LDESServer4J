@@ -9,11 +9,9 @@ import be.vlaanderen.informatievlaanderen.vsds.services.PageCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PAGE_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,9 +29,7 @@ class PageCreatorTest {
 
 	@BeforeEach
 	void setUp() {
-		nonCriticalTasksExecutor = new NonCriticalTasksExecutor(
-				new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-						new LinkedBlockingQueue<Runnable>()));
+		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		pageCreator = new PageCreator(
@@ -67,8 +63,11 @@ class PageCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?pageNumber=2"));
-		verify(treeRelationsRepository, times(1)).addTreeRelation(eq(existingLdesFragment.getFragmentId()), any());
-		verify(treeRelationsRepository, times(1)).addTreeRelation(eq(newFragment.getFragmentId()), any());
+		InOrder inOrder = inOrder(ldesFragmentRepository, nonCriticalTasksExecutor);
+		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
+		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
+		inOrder.verifyNoMoreInteractions();
 		assertTrue(existingLdesFragment.isImmutable());
 	}
 
