@@ -13,6 +13,7 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.FIRST_PAGE_NUMBER;
 import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.PAGE_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,7 +47,7 @@ class PageCreatorTest {
 		LdesFragment newFragment = pageCreator.createFirstFragment(parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		assertTrue(newFragment.getFragmentId().contains("/view?pageNumber=1"));
+		assertTrue(newFragment.getFragmentId().contains("/view?pageNumber=" + FIRST_PAGE_NUMBER));
 		verifyNoInteractions(treeRelationsRepository);
 	}
 
