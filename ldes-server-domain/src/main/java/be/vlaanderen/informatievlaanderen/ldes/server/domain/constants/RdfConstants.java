@@ -32,7 +32,4 @@ public class RdfConstants {
 	public static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = TREE + "LessThanOrEqualToRelation";
 
 	public static final String GENERIC_TREE_RELATION = TREE + "Relation";
-	public static final String NEXT_PAGE_RELATION = TREE + "Next";
-	public static final String PREVIOUS_PAGE_RELATION = TREE + "Previous";
-	public static final String PAGE_NUMBER = "pageNumber";
 }

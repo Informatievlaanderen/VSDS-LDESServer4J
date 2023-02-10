@@ -14,7 +14,7 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.PAGE_NUMBER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;

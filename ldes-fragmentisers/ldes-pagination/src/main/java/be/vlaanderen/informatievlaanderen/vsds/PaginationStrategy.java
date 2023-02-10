@@ -10,6 +10,8 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import static java.lang.Boolean.TRUE;
+
 public class PaginationStrategy extends FragmentationStrategyDecorator {
 	private final OpenPageProvider openPageProvider;
 
@@ -31,7 +33,7 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 				.start();
 		ImmutablePair<LdesFragment, Boolean> ldesFragment = openPageProvider
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
-		if (Boolean.TRUE.equals(ldesFragment.getRight())) {
+		if (TRUE.equals(ldesFragment.getRight())) {
 			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());
 		}
 		super.addMemberToFragment(ldesFragment.getLeft(), member, paginationObservation);

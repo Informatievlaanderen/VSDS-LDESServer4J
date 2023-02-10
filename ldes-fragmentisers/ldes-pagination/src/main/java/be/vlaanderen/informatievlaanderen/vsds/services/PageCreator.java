@@ -9,8 +9,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.Tree
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PREVIOUS_PAGE_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
+import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.FIRST_PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.PAGE_NUMBER;
 
 public class PageCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
@@ -28,7 +29,7 @@ public class PageCreator {
 	}
 
 	public LdesFragment createFirstFragment(LdesFragment parentFragment) {
-		return createFragment(parentFragment, "1");
+		return createFragment(parentFragment, FIRST_PAGE_NUMBER);
 	}
 
 	public LdesFragment createNewFragment(LdesFragment previousFragment, LdesFragment parentFragment) {
@@ -39,8 +40,7 @@ public class PageCreator {
 	}
 
 	private LdesFragment createFragment(LdesFragment parentFragment, String pageNumber) {
-		String fragmentKey = PAGE_NUMBER;
-		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(fragmentKey, pageNumber));
+		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(PAGE_NUMBER, pageNumber));
 		LOGGER.debug("Pagination fragment created with id: {}", newFragment.getFragmentId());
 		return newFragment;
 	}
@@ -56,10 +56,10 @@ public class PageCreator {
 		completeLdesFragment.makeImmutable();
 		nonCriticalTasksExecutor
 				.submit(() -> treeRelationsRepository.addTreeRelation(newFragment.getFragmentId(),
-						new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", NEXT_PAGE_RELATION)));
+						new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION)));
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
 		nonCriticalTasksExecutor
 				.submit(() -> treeRelationsRepository.addTreeRelation(completeLdesFragment.getFragmentId(),
-						new TreeRelation("", newFragment.getFragmentId(), "", "", PREVIOUS_PAGE_RELATION)));
+						new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION)));
 	}
 }

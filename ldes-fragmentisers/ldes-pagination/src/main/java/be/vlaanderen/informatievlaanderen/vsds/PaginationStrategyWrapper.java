@@ -34,7 +34,7 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 	private OpenPageProvider getOpenPageProvider(ConfigProperties properties,
 			LdesFragmentRepository ldesFragmentRepository, TreeRelationsRepository treeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		PaginationConfig paginationConfig = createPaginationConfigConfig(properties);
+		PaginationConfig paginationConfig = createPaginationConfig(properties);
 		PageCreator timeBasedFragmentCreator = getPageCreator(
 				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 		return new OpenPageProvider(timeBasedFragmentCreator, ldesFragmentRepository,
@@ -48,7 +48,7 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 	}
 
-	private PaginationConfig createPaginationConfigConfig(ConfigProperties properties) {
+	private PaginationConfig createPaginationConfig(ConfigProperties properties) {
 		return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)));
 	}
 }
