@@ -63,7 +63,8 @@ class FragmentationStrategyCreatorImplTest {
 		FragmentationStrategy timebasedFragmentationStrategy = mock(FragmentationStrategy.class);
 		when(timebasedFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext),
 				any(),
-				eq(new ConfigProperties(TIMEBASED_PROPERTIES)))).thenReturn(timebasedFragmentationStrategy);
+				eq(new ConfigProperties(TIMEBASED_PROPERTIES))))
+				.thenReturn(timebasedFragmentationStrategy);
 
 		FragmentationStrategyWrapper geospatialFragmentationStrategyWrapper = mock(FragmentationStrategyWrapper.class);
 		when(applicationContext.getBean(GEOSPATIAL)).thenReturn(geospatialFragmentationStrategyWrapper);
