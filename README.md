@@ -25,6 +25,7 @@ open data.
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
+                * [Example Pagination](#example-pagination)
                 * [Example Serving Static Content](#example-serving-static-content)
                 * [Example Serving DCAT Metadata](#example-serving-dcat-metadata)
         + [Docker Setup](#docker-setup)
@@ -106,6 +107,7 @@ To enrich the server, certain Maven profiles can be activated:
 | **Geospatial Fragmentation**         | fragmentation-geospatial   | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
 | **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
 | **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **Pagination Fragmentation**         | fragmentation-pagination   | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
 | **Ldes-queues**                      | queue-none                 | Members are fragmented immediately.                             | N/A activating the profile is enough                                        |                                                                                                                                     |
 | **Ldes-queues**                      | queue-in-memory            | Members are queued in memory before fragmentation.              | N/A activating the profile is enough                                        |                                                                                                                                     |
 
@@ -215,6 +217,14 @@ As of now, there is only a timebased retention possible which can be configured 
   name: "substring"
   config:
     fragmenterProperty: { Defines which property will be used for bucketizing }
+    memberLimit: { member limit > 0 }
+  ```
+
+##### Example Pagination
+
+  ```yaml
+  name: "pagination"
+  config:
     memberLimit: { member limit > 0 }
   ```
 
