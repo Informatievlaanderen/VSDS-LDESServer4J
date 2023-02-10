@@ -1,10 +1,12 @@
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
+
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
-import be.vlaanderen.informatievlaanderen.vsds.PaginationStrategy;
-import be.vlaanderen.informatievlaanderen.vsds.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.PaginationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -14,11 +16,10 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 class PaginationStrategyTest {
 
@@ -76,7 +77,7 @@ class PaginationStrategyTest {
 				times(1)).addTreeRelation(eq(PARENT_FRAGMENT.getFragmentId()), any());
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member),
-						any(Observation.class));
+				any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

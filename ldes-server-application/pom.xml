@@ -105,7 +105,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-pagination</artifactId>
+                    <artifactId>ldes-fragmentisers-pagination</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

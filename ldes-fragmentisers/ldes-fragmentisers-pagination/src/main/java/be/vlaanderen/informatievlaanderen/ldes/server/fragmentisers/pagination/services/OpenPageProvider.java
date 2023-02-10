@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
