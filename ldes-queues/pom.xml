@@ -10,6 +10,10 @@
     <artifactId>ldes-queues</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <relative-formatter-path>..</relative-formatter-path>
+    </properties>
+
     <modules>
         <module>ldes-queue-none</module>
         <module>ldes-queue-in-memory</module>

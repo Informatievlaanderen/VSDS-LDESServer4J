@@ -11,6 +11,10 @@
     <artifactId>ldes-server-infra-mongo</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <relative-formatter-path>..</relative-formatter-path>
+    </properties>
+
 	<dependencies>
 		<!-- VSDS -->
 		<dependency>

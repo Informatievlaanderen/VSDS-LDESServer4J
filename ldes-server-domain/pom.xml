@@ -10,6 +10,10 @@
 
     <artifactId>ldes-server-domain</artifactId>
 
+    <properties>
+        <relative-formatter-path>..</relative-formatter-path>
+    </properties>
+
     <dependencies>
         <!-- SPRING -->
         <dependency>
