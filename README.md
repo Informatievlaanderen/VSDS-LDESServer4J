@@ -118,6 +118,8 @@ The main functionalities of the server are ingesting and fetching, these profile
 Below are properties that are needed when applying certain profiles.
 These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does not exist, create it)
 
+A minimal working example of the application.yml can be found [here](ldes-server-application/examples/minimal-config-application.yml). This works for both fetching and ingesting. 
+
 The server allows configurable fragment refresh times with the max-age and max-age-immutable options. These values will be sent with the Cache-Control header in HTTP responses.
 
 ##### Example HTTP Ingest-Fetch Configuration
