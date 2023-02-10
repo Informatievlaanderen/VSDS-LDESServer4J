@@ -97,7 +97,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>pagination</id>
+            <id>fragmentation-pagination</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
