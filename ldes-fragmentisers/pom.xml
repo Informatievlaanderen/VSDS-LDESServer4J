@@ -17,10 +17,6 @@
         <module>ldes-fragmentisers-substring</module>
     </modules>
 
-	<properties>
-		<relative-formatter-path>..</relative-formatter-path>
-	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
