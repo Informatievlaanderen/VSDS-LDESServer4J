@@ -78,6 +78,7 @@ class PaginationStrategyTest {
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member),
 				any(Observation.class));
+
 		inOrder.verifyNoMoreInteractions();
 	}
 }
