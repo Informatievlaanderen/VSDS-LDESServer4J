@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config;
 
 public class PaginationProperties {
 	private PaginationProperties() {

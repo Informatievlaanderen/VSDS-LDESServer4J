@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.FIRST_PAGE_NUMBER;
-import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.FIRST_PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
 
 public class PageCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
