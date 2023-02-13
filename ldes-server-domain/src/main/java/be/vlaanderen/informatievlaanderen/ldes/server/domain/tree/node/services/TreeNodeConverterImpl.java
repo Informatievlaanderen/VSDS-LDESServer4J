@@ -2,13 +2,18 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -45,28 +50,27 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode) {
 		List<Statement> statements = new ArrayList<>();
-		Resource currentFragmentId = createResource(
-				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNode.getFragmentId());
+		Resource currentFragmentId = createResource(treeNode.getFragmentId());
 
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(relationStatementConverter.getRelationStatements(treeNode.getRelations(), currentFragmentId));
 
-		addLdesCollectionStatements(statements, treeNode.isView(), currentFragmentId);
+		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId());
 
 		return statements;
 	}
 
-	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, Resource currentFragmentId) {
+	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId) {
 		Resource collection = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
+		String eventStreamId = ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName();
 
 		if (isView) {
-			statements.add(createStatement(collection, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
-			addStatementIfMeaningful(statements, collection, TREE_SHAPE, ldesConfig.validation().getShape());
-			addStatementIfMeaningful(statements, collection, LDES_VERSION_OF, ldesConfig.getVersionOfPath());
-			addStatementIfMeaningful(statements, collection, LDES_TIMESTAMP_PATH, ldesConfig.getTimestampPath());
-			statements.add(createStatement(collection, TREE_VIEW, currentFragmentId));
+			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(eventStreamId,
+					ldesConfig.getTimestampPath(), ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(),
+					Collections.singletonList(currentFragmentId));
+			statements.addAll(eventStreamInfoResponse.convertToStatements());
 		} else {
-			statements.add(createStatement(currentFragmentId, IS_PART_OF_PROPERTY, collection));
+			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
 	}
 
@@ -91,16 +95,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		List<Statement> statements = new ArrayList<>();
 		statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
 		return statements;
-	}
-
-	private void addStatementIfMeaningful(List<Statement> statements, Resource subject, Property predicate,
-			String objectContent) {
-		if (hasMeaningfulValue(objectContent))
-			statements.add(createStatement(subject, predicate, createResource(objectContent)));
-	}
-
-	private boolean hasMeaningfulValue(String objectContent) {
-		return objectContent != null && !objectContent.equals("");
 	}
 
 }
