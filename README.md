@@ -195,6 +195,8 @@ As of now, there is only a timebased retention possible which can be configured 
 
 ##### Example Timebased Fragmentation
 
+Full documentation for timebased fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD)
+
   ```yaml
   name: "timebased"
   config:
