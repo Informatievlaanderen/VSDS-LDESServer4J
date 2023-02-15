@@ -205,6 +205,8 @@ Full documentation for timebased fragmentation can be found [here](ldes-fragment
 
 ##### Example Geospatial Fragmentation
 
+Full documentation for geospatial fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-geospatial/README.MD)
+
   ```yaml
   name: "geospatial"
   config:
