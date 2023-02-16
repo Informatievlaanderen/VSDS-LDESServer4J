@@ -20,10 +20,12 @@ This allows you to fragment the data on geolocations.
    - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
    - We select all the object that pass the above filters.
 2. A bucket of tiles is created using the coordinates and provided zoomLevel. [This is done using the Slippy Map algorithm.](https://wiki.openstreetmap.org/wiki/Slippy_map)  
-3. The tiles are iterated. The member is added to every tile. Taking into account:
+3. The tiles are iterated. The member is added to every tile, or sub-fragmentations of these tiles<sup>1</sup>. Taking into account:
    - A new fragment is created if no fragment exists for the given tile.
    - There is no `memberLimit` or max size for a fragment. They do not become immutable.
    - The member is added to every related fragment
+
+<sup>1</sup> If the geospatial fragmentation is not the lowest fragmentation level, the member is not added to the tile but to a subfragment on this tile. This case is included in the [example below](#when-we-have-a-timebased-sub-fragmentation-below-geospatial-fragmentation).
 
 ![](content/geospatial_algorithm.drawio.png)
 
@@ -86,6 +88,16 @@ When we convert these [coordinates to tiles](https://wiki.openstreetmap.org/wiki
 - "15/16884/10974"
 - "15/16882/10975"
 
+### When geospatial fragmentation is the lowest level
+
 After ingestion the member will be part of the following two fragments
 - http://localhost:8080/addresses/by-zone?tile=15/16884/10974
 - http://localhost:8080/addresses/by-zone?tile=15/16882/10975
+
+### When we have a timebased sub-fragmentation below geospatial fragmentation
+
+After ingestion the member will be part of the following two fragments
+- http://localhost:8080/addresses/by-zone-and-time?tile=15/16884/10974&generatedAtTime=2023-02-15T10:14:28.262Z
+- http://localhost:8080/addresses/by-zone-and-time?tile=15/16882/10975&generatedAtTime=2023-02-15T10:14:28.262Z
+
+Note that the `generatedAtTime=2023-02-15T10:14:28.262Z` is an example, this can be any other fragmentation.

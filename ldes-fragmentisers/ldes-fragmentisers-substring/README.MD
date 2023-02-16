@@ -21,8 +21,8 @@ This allows you to efficiently implement autocompletion.
    - We select the object of the first statement that passes the above filters.
 2. A bucket of substrings is created
    - The literal value of the selected object is split into substrings. For example:
-     `example` is split into the following substrings: `e`, `ex`, `exa`, `exam`, `examp`, `exampl`, `example`
-3. The substrings in the bucket are iterated from small (e.g. `e` above) to large (e.g. `example`). The member is added to the first possible fragment. Taking into account:
+     `example` is split into the following substrings: ` `, `e`, `ex`, `exa`, `exam`, `examp`, `exampl`, `example`
+3. The substrings in the bucket are iterated from small (e.g. ` ` empty) to large (e.g. `example`). The member is added to the first possible fragment. Taking into account:
    - A new fragment is created if none exists.
    - When the fragment has reached the `memberLimit`, the member is not added but the next fragment is retrieved.
    - The member is only added to one fragment
