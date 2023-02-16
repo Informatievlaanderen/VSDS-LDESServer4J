@@ -31,9 +31,10 @@ public class TreeRelationResponse {
 		List<Statement> statements = new ArrayList<>();
 		Resource treeRelationNode = createResource();
 		statements.add(createStatement(createResource(treeNodeId), TREE_RELATION, treeRelationNode));
-		if (hasMeaningfulValue(treeValue))
+		if (hasMeaningfulValue(treeValue)) {
 			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeValue,
 					TypeMapper.getInstance().getTypeByName(treeValueType))));
+		}
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treePath);
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
 				treeNode);
@@ -43,8 +44,9 @@ public class TreeRelationResponse {
 
 	private void addStatementIfMeaningful(List<Statement> statements, Resource subject, Property predicate,
 			String objectContent) {
-		if (hasMeaningfulValue(objectContent))
+		if (hasMeaningfulValue(objectContent)) {
 			statements.add(createStatement(subject, predicate, createResource(objectContent)));
+		}
 	}
 
 	private boolean hasMeaningfulValue(String objectContent) {
