@@ -10,7 +10,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.se
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -133,7 +132,7 @@ class EventStreamControllerTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		return new TreeNode(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + "/" + viewName, false,
+		return new TreeNode(ldesConfig.getBaseUrl() + "/" + viewName, false,
 				false, true, List.of(), List.of());
 	}
 
@@ -156,8 +155,7 @@ class EventStreamControllerTest {
 		@Bean
 		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new EventStreamConverterImpl(prefixAdder, ldesConfig,
-					new RelationStatementConverterImpl(ldesConfig));
+			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
 		}
 
 		@Bean

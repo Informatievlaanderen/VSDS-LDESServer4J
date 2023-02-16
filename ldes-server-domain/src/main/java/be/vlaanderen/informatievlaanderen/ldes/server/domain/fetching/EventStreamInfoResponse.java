@@ -41,8 +41,9 @@ public class EventStreamInfoResponse {
 
 	private void addStatementIfMeaningful(List<Statement> statements, Resource subject, Property predicate,
 			String objectContent) {
-		if (hasMeaningfulValue(objectContent))
+		if (hasMeaningfulValue(objectContent)) {
 			statements.add(createStatement(subject, predicate, createResource(objectContent)));
+		}
 	}
 
 	private boolean hasMeaningfulValue(String objectContent) {
