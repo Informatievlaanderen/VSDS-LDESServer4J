@@ -29,7 +29,7 @@ public class PrefixAdderImpl implements PrefixAdder {
 	}
 
 	private void removePrefixesForWhichLocalNameIsNotCompliant(Map<String, String> nameSpaceMap,
-															   Map<String, String> localNamesMap) {
+			Map<String, String> localNamesMap) {
 		localNamesMap.forEach((localName, prefix) -> {
 			if (!localName.matches(VALID_LOCALNAME_REGEX)) {
 				nameSpaceMap.remove(prefix);
