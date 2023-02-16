@@ -27,6 +27,7 @@ class PrefixAdderImplTest {
 		Map<String, String> nsPrefixMap = updatedModel.getNsPrefixMap();
 		assertFalse(nsPrefixMap.containsKey("mobiliteit"));
 		assertTrue(nsPrefixMap.containsKey("statuses"));
+		assertTrue(nsPrefixMap.containsKey("rdf"));
 	}
 
 	private Model readLdesMemberFromFile(ClassLoader classLoader, String fileName)
