@@ -5,6 +5,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -36,7 +37,7 @@ public class EventStreamInfoResponse {
 		addStatementIfMeaningful(statements, collection, LDES_VERSION_OF, versionOfPath);
 		addStatementIfMeaningful(statements, collection, LDES_TIMESTAMP_PATH, timestampPath);
 		views.forEach(view -> addStatementIfMeaningful(statements, collection, TREE_VIEW, view));
-		return statements;
+		return Collections.unmodifiableList(statements);
 	}
 
 	private void addStatementIfMeaningful(List<Statement> statements, Resource subject, Property predicate,
