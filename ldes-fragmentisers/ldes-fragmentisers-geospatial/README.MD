@@ -16,10 +16,10 @@ This allows you to fragment the data on geolocations.
 ## Algorithm
 
 1. The fragmentationObjects of the member are determined
-   - We filter the statements where the predicate matches the `fragmenterProperty`
+   - We filter the RDF statements where the predicate matches the `fragmenterProperty`
    - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
    - We select all the object that pass the above filters.
-2. A bucket of tiles is created using the coordinates and provided zoomLevel. [This is a well known algorithm](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2)  
+2. A bucket of tiles is created using the coordinates and provided zoomLevel. [This is done using the Slippy Map algorithm.](https://wiki.openstreetmap.org/wiki/Slippy_map)  
 3. The tiles are iterated. The member is added to every tile. Taking into account:
    - A new fragment is created if no fragment exists for the given tile.
    - There is no `memberLimit` or max size for a fragment. They do not become immutable.

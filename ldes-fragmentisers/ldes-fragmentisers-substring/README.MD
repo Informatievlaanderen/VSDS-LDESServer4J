@@ -16,7 +16,7 @@ This allows you to efficiently implement autocompletion.
 ## Algorithm
 
 1. The fragmentationObject of the member is determined
-   - We filter the statements where the predicate matches the `fragmenterProperty`
+   - We filter the RDF statements where the predicate matches the `fragmenterProperty`
    - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
    - We select the object of the first statement that passes the above filters.
 2. A bucket of substrings is created
