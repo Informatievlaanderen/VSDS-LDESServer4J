@@ -132,7 +132,7 @@ class EventStreamControllerTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		return new TreeNode(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + "/" + viewName, false,
+		return new TreeNode(ldesConfig.getBaseUrl() + "/" + viewName, false,
 				false, true, List.of(), List.of());
 	}
 

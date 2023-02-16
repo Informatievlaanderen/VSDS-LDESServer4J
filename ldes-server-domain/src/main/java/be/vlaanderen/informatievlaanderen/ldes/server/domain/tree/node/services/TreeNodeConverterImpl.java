@@ -53,7 +53,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		treeNode.getRelations().forEach(treeRelation -> {
 			TreeRelationResponse treeRelationResponse = new TreeRelationResponse(treeRelation.treePath(),
-					ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeRelation.treeNode(),
+					ldesConfig.getBaseUrl() + treeRelation.treeNode(),
 					treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation());
 			statements.addAll(treeRelationResponse.convertToStatements(
 					treeNode.getFragmentId()));
@@ -64,11 +64,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId) {
-		Resource collection = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
-		String eventStreamId = ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName();
+		Resource collection = createResource(ldesConfig.getBaseUrl());
 
 		if (isView) {
-			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(eventStreamId,
+			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(ldesConfig.getBaseUrl(),
 					ldesConfig.getTimestampPath(), ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(),
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
@@ -79,7 +78,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode) {
 		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
+		Resource viewId = createResource(ldesConfig.getBaseUrl());
 		statements.addAll(getEventStreamStatements(viewId));
 		statements.addAll(getMemberStatements(treeNode, viewId));
 		return statements;
