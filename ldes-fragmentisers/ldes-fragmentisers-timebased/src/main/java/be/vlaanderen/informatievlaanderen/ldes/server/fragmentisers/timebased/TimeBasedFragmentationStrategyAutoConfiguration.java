@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,7 +16,14 @@ public class TimeBasedFragmentationStrategyAutoConfiguration {
 
 	@Bean("timebased")
 	public TimebasedFragmentationStrategyWrapper timebasedFragmentationStrategyWrapper() {
-		LOGGER.warn("You are still using timebased fragmentation. This is deprecated and no longer supported. ");
+		// @formatter:off
+        LOGGER.warn(
+          """
+              You are still using timebased fragmentation. This is deprecated and no longer supported.
+              For more information, refer to https://github.com/Informatievlaanderen/VSDS-LDESServer4J/blob/main/ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD
+          """
+        );
+        // @formatter:on
 		return new TimebasedFragmentationStrategyWrapper();
 	}
 }
