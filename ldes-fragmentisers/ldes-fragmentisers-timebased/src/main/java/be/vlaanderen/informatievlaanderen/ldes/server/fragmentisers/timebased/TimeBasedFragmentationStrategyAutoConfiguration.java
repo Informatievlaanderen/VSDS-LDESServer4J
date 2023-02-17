@@ -16,14 +16,8 @@ public class TimeBasedFragmentationStrategyAutoConfiguration {
 
 	@Bean("timebased")
 	public TimebasedFragmentationStrategyWrapper timebasedFragmentationStrategyWrapper() {
-		// @formatter:off
-        LOGGER.warn(
-          """
-              You are still using timebased fragmentation. This is deprecated and no longer supported.
-              For more information, refer to https://github.com/Informatievlaanderen/VSDS-LDESServer4J/blob/main/ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD
-          """
-        );
-        // @formatter:on
+		LOGGER.warn("Using deprecated timebased fragmentation. For more information, refer to " +
+				"https://github.com/Informatievlaanderen/VSDS-LDESServer4J/blob/main/ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD");
 		return new TimebasedFragmentationStrategyWrapper();
 	}
 }
