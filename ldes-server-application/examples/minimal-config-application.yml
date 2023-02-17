@@ -10,7 +10,7 @@ ldes:
 views:
   - name: "view-one"
     fragmentations:
-      - name: "timebased"
+      - name: "pagination"
         config:
           memberLimit: 5
 

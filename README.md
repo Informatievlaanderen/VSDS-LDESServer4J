@@ -91,24 +91,24 @@ mvn spring-boot:run -P{profiles (comma separated with no spaces) }
 
 for example:
 ```mvn
-mvn spring-boot:run -P{fragmentation-timebased,http-fetch,http-ingest,queue-none,storage-mongo}
+mvn spring-boot:run -P{fragmentation-pagination,http-fetch,http-ingest,queue-none,storage-mongo}
 ```
 
 To enrich the server, certain Maven profiles can be activated:
 
 #### Profiles
 
-| Profile Group                        | Profile Name               | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
-|--------------------------------------|----------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (Fetch/Ingestion)** | http-ingest                | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch                 | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
-| **Storage**                          | storage-mongo              | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
-| **Timebased Fragmentation**          | fragmentation-timebased    | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
-| **Geospatial Fragmentation**         | fragmentation-geospatial   | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
-| **Pagination Fragmentation**         | fragmentation-pagination   | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
-| **Ldes-queues**                      | queue-none                 | Members are fragmented immediately.                             | N/A activating the profile is enough                                        |                                                                                                                                     |
-| **Ldes-queues**                      | queue-in-memory            | Members are queued in memory before fragmentation.              | N/A activating the profile is enough                                        |                                                                                                                                     |
+| Profile Group                           | Profile Name               | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
+|-----------------------------------------|----------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest                | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)**    | http-fetch                 | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
+| **Storage**                             | storage-mongo              | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
+| **Timebased Fragmentation[DEPRECATED]** | fragmentation-timebased    | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
+| **Geospatial Fragmentation**            | fragmentation-geospatial   | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **Substring Fragmentation**             | fragmentation-substring    | Supports substring fragmentation.                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
+| **Pagination Fragmentation**            | fragmentation-pagination   | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
+| **Ldes-queues**                         | queue-none                 | Members are fragmented immediately.                             | N/A activating the profile is enough                                        |                                                                                                                                     |
+| **Ldes-queues**                         | queue-in-memory            | Members are queued in memory before fragmentation.              | N/A activating the profile is enough                                        |                                                                                                                                     |
 
 The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to function properly:
 - http-ingest: requires at least one queue, one fragmentation and one storage profile.
@@ -154,7 +154,7 @@ The server allows configurable fragment refresh times with the max-age and max-a
     views:
       - name: {name of the view}
         fragmentations:
-          - name: {type of fragmentation, currently "timebased" and "geospatial" supported}
+          - name: {type of fragmentation}
             config:
               {Map of fragmentation properties}
   ```
@@ -169,12 +169,12 @@ An example of a view configuration with two view is shown below
           config:
             maxZoomLevel: 15
             fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
-        - name: "timebased"
+        - name: "pagination"
           config:
             memberLimit: 5
     - name: "secondView"
       fragmentations:
-        - name: "timebased"
+        - name: "pagination"
           config:
             memberLimit: 3
   ```
@@ -195,7 +195,7 @@ As of now, there is only a timebased retention possible which can be configured 
 
 ##### Example Timebased Fragmentation
 
-Full documentation for timebased fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD)
+This fragmentation is DEPRECATED, more information can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD)
 
   ```yaml
   name: "timebased"
@@ -337,6 +337,8 @@ mvn clean verify -Dunittestskip=true
 - ldes-server-port-publication-rest
 - ldes-fragmentisers-timebased
 - ldes-fragmentisers-geospatial
+- ldes-fragmentisers-pagination
+- ldes-fragmentisers-substring
 
 ### Tracing and Metrics
 
