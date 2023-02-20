@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repos
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import io.micrometer.observation.ObservationRegistry;
+import io.mongock.runner.springboot.EnableMongock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
@@ -22,6 +23,7 @@ import org.springframework.data.mongodb.observability.MongoObservationCommandLis
 @ConditionalOnClass(MemberMongoRepository.class)
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
+@EnableMongock
 public class MongoAutoConfiguration {
 
 	@Bean

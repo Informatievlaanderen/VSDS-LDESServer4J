@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document("ldesfragment")
+@Document("ldestreenode")
 public class LdesFragmentEntity {
 	@Id
 	private final String id;
