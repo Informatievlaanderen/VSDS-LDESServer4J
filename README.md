@@ -222,6 +222,8 @@ As of now, there is only a timebased retention possible which can be configured 
 
 ##### Example Pagination
 
+Full documentation for pagination fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-pagination/README.MD)
+
   ```yaml
   name: "pagination"
   config:
