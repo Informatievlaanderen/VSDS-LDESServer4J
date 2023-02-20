@@ -1,24 +1,24 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model;
 
+import com.apicatalog.jsonld.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-import com.apicatalog.jsonld.StringUtils;
-
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.ROOT_SUBSTRING;
 
-public class SubstringToken {
+public class Token {
 
-	private final String token;
+	private final String part;
 
-	public SubstringToken(String token) {
-		this.token = token;
+	public Token(String part) {
+		this.part = part;
 	}
 
-	public List<String> getBucket() {
-		return bucketize(token);
+	public List<String> getBuckets() {
+		return bucketize(part);
 	}
 
 	private List<String> bucketize(String substringTarget) {
@@ -42,12 +42,12 @@ public class SubstringToken {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		SubstringToken that = (SubstringToken) o;
-		return token.equals(that.token);
+		Token that = (Token) o;
+		return part.equals(that.part);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(token);
+		return Objects.hash(part);
 	}
 }

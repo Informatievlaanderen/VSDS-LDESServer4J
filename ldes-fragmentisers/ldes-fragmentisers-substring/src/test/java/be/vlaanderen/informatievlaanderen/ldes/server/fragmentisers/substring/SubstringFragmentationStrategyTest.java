@@ -5,11 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMemberSupplier;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.SubstringToken;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,25 +15,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.util.List;
-import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.ROOT_SUBSTRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class SubstringFragmentationStrategyTest {
 
 	private static final String VIEW_NAME = "view";
 	private static LdesFragment PARENT_FRAGMENT;
-	private LocalMemberSupplier localMemberSupplier;
 	private SubstringFragmentFinder substringFragmentFinder;
 	private SubstringFragmentCreator substringFragmentCreator;
 	private SubstringFragmentationStrategy substringFragmentationStrategy;
+	private SubstringConfig substringConfig;
 	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 
@@ -43,20 +35,18 @@ class SubstringFragmentationStrategyTest {
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(
 				VIEW_NAME, List.of());
-		localMemberSupplier = mock(LocalMemberSupplier.class);
 		substringFragmentFinder = mock(SubstringFragmentFinder.class);
 		substringFragmentCreator = mock(SubstringFragmentCreator.class);
+		substringConfig = new SubstringConfig();
 		substringFragmentationStrategy = new SubstringFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), substringFragmentFinder,
-				substringFragmentCreator, ldesFragmentRepository, localMemberSupplier);
+				substringFragmentCreator, ldesFragmentRepository, substringConfig);
 	}
 
 	@Test
 	void when_SubstringFragmentationStrategyIsCalled_SubstringFragmentationIsAppliedAndDecoratedServiceIsCalled() {
 		Member member = mock(Member.class);
-		LocalMember localMember = mock(LocalMember.class);
-		when(localMemberSupplier.toLocalMember(member)).thenReturn(localMember);
-		when(localMember.getTokens()).thenReturn(Set.of(new SubstringToken("abc")));
+		when(member.getFragmentationObject(any(), any())).thenReturn("abc");
 		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"")).thenReturn(rootFragment);
@@ -77,7 +67,7 @@ class SubstringFragmentationStrategyTest {
 				times(1)).getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 						rootFragment, List.of(ROOT_SUBSTRING, "a", "ab", "abc"));
 		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToFragment(eq(childFragment), eq(localMember),
+				times(1)).addMemberToFragment(eq(childFragment), eq(member),
 						any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}

@@ -21,7 +21,6 @@ This allows you to efficiently implement autocompletion.
    - We select the object of the first statement that passes the above filters.
 2. Tokens are created
    - The literal value of the selected object is normalized and split into substrings based on a space char " "
-   - The normalized value of the non split string is also included as a token
 3. The tokens are iterated, with every token the following happens:
    - A bucket of substrings is created
       - The literal value of the selected object is split into substrings. For example:
