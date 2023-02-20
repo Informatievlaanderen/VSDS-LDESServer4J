@@ -18,7 +18,7 @@ public class SubstringFragmentFinder {
 		this.substringRelationsAttributer = substringRelationsAttributer;
 	}
 
-	public LdesFragment getOpenLdesFragmentOrLastPossibleFragment(LdesFragment parentFragment,
+	public LdesFragment getOpenOrLastPossibleFragment(LdesFragment parentFragment,
 			LdesFragment rootFragment, List<String> buckets) {
 		if (rootFragment.getNumberOfMembers() < substringConfig.getMemberLimit())
 			return rootFragment;
