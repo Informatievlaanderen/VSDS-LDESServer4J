@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.re
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.ROOT_SUBSTRING;
+
 public class SubstringFragmentFinder {
 	private final SubstringFragmentCreator substringFragmentCreator;
 	private final SubstringConfig substringConfig;
@@ -18,13 +20,17 @@ public class SubstringFragmentFinder {
 		this.substringRelationsAttributer = substringRelationsAttributer;
 	}
 
+	// TODO: 20/02/2023 test root substring
 	public LdesFragment getOpenOrLastPossibleFragment(LdesFragment parentFragment,
 			LdesFragment rootFragment, List<String> buckets) {
-		if (rootFragment.getNumberOfMembers() < substringConfig.getMemberLimit())
-			return rootFragment;
+
 		LdesFragment currentParentFragment = rootFragment;
 		LdesFragment currentChildFragment = null;
 		for (String bucket : buckets) {
+			if (canBeAddedToRoot(rootFragment, bucket)) {
+				return rootFragment;
+			}
+
 			currentChildFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, bucket);
 			substringRelationsAttributer.addSubstringRelation(currentParentFragment, currentChildFragment);
 			if (currentChildFragment.getNumberOfMembers() < substringConfig.getMemberLimit()) {
@@ -33,6 +39,11 @@ public class SubstringFragmentFinder {
 			currentParentFragment = currentChildFragment;
 		}
 		return currentChildFragment;
+	}
+
+	private boolean canBeAddedToRoot(LdesFragment rootFragment, String bucket) {
+		return ROOT_SUBSTRING.equals(bucket)
+				&& rootFragment.getNumberOfMembers() < substringConfig.getMemberLimit();
 	}
 
 }

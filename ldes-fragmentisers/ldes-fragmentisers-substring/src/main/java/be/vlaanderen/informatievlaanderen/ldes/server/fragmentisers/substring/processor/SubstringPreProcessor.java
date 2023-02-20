@@ -11,6 +11,8 @@ import java.util.stream.IntStream;
 
 import com.apicatalog.jsonld.StringUtils;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.ROOT_SUBSTRING;
+
 public class SubstringPreProcessor {
 
 	private final SubstringConfig substringConfig;
@@ -24,15 +26,20 @@ public class SubstringPreProcessor {
 				substringConfig.getFragmenterProperty());
 	}
 
+    // TODO: 20/02/2023 fix testing
 	public List<String> bucketize(String substringTarget) {
+		final List<String> bucket = new ArrayList<>(List.of(ROOT_SUBSTRING));
 		if (StringUtils.isBlank(substringTarget)) {
-			return List.of();
+			return bucket;
 		}
 
-		return IntStream
-				.rangeClosed(1, substringTarget.length())
-				.mapToObj(index -> substringTarget.substring(0, index))
-				.toList();
+		bucket.addAll(
+				IntStream
+						.rangeClosed(1, substringTarget.length())
+						.mapToObj(index -> substringTarget.substring(0, index))
+						.toList());
+
+		return bucket;
 	}
 
 	public List<String> tokenize(String input) {
@@ -45,7 +52,7 @@ public class SubstringPreProcessor {
 		if (tokens.size() > 1) {
 			// we only add the input if it was actually split, else we end up with a list
 			// with duplicate values
-			tokens.add(input);
+			tokens.add(normalizedInput);
 		}
 		return tokens;
 	}

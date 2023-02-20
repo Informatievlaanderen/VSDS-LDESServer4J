@@ -5,13 +5,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.processor.SubstringPreProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.processor.SubstringPreProcessor;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.ROOT_SUBSTRING;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
 
 public class SubstringFragmentationStrategy extends FragmentationStrategyDecorator {
 
@@ -36,23 +41,35 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
 		final Observation substringFragmentationObservation = startFragmentationObservation(parentObservation);
-		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, "");
+		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment,
+				ROOT_SUBSTRING);
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 		addMemberToFragments(parentFragment, member, substringFragmentationObservation, rootFragment);
 		substringFragmentationObservation.stop();
 	}
 
+	// TODO: 20/02/2023 test and refactor
 	private void addMemberToFragments(LdesFragment parentFragment,
 			Member member,
 			Observation substringFragmentationObservation,
 			LdesFragment rootFragment) {
 		final String substringTarget = substringPreProcessor.getSubstringTarget(member);
 		final List<String> tokens = substringPreProcessor.tokenize(substringTarget);
+		final Set<String> addedTo = new HashSet<>();
 		tokens.forEach(token -> {
 			final List<String> buckets = substringPreProcessor.bucketize(token);
-			final LdesFragment substringFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(parentFragment,
-					rootFragment, buckets);
-			super.addMemberToFragment(substringFragment, member, substringFragmentationObservation);
+			if (buckets.stream().noneMatch(addedTo::contains)) {
+				final LdesFragment substringFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(
+						parentFragment,
+						rootFragment, buckets);
+				String[] split = substringFragment.getFragmentId().split(SUBSTRING + "=");
+				if (split.length > 1) {
+					addedTo.add(split[1]);
+				} else {
+					addedTo.add(ROOT_SUBSTRING);
+				}
+				super.addMemberToFragment(substringFragment, member, substringFragmentationObservation);
+			}
 		});
 	}
 
