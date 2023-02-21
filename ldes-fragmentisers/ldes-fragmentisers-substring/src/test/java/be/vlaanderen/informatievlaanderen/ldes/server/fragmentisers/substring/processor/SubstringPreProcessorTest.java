@@ -42,7 +42,7 @@ class SubstringPreProcessorTest {
 
 			String substringTarget = substringPreProcessor.getSubstringTarget(member);
 
-			assertEquals(substringTarget, "omschríjvińĝ");
+			assertEquals("omschríjvińĝ", substringTarget);
 		}
 
 		@Test
