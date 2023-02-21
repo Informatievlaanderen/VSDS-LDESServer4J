@@ -55,17 +55,17 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	}
 
 	private void addMemberToFragments(LdesFragment parentFragment,
-									  Member member,
-									  Observation substringFragmentationObservation,
-									  LdesFragment rootFragment) {
+			Member member,
+			Observation substringFragmentationObservation,
+			LdesFragment rootFragment) {
 		final String substringTarget = substringPreProcessor.getSubstringTarget(member);
 		final List<String> tokens = substringPreProcessor.tokenize(substringTarget);
 		final Set<String> substringsThatContainMember = new HashSet<>();
 		tokens.forEach(token -> {
 			final List<String> buckets = substringPreProcessor.bucketize(token);
 			if (buckets.stream().noneMatch(substringsThatContainMember::contains)) {
-				final LdesFragment substringFragment =
-						substringFragmentFinder.getOpenOrLastPossibleFragment(parentFragment, rootFragment, buckets);
+				final LdesFragment substringFragment = substringFragmentFinder
+						.getOpenOrLastPossibleFragment(parentFragment, rootFragment, buckets);
 				substringsThatContainMember.add(extractSubstringFromFragmentId(substringFragment.getFragmentId()));
 				super.addMemberToFragment(substringFragment, member, substringFragmentationObservation);
 			}
