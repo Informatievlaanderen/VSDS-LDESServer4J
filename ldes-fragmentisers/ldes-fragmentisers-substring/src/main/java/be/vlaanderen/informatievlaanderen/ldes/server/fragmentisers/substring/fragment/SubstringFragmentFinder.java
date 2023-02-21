@@ -20,7 +20,6 @@ public class SubstringFragmentFinder {
 		this.substringRelationsAttributer = substringRelationsAttributer;
 	}
 
-	// TODO: 20/02/2023 test root substring
 	public LdesFragment getOpenOrLastPossibleFragment(LdesFragment parentFragment,
 			LdesFragment rootFragment, List<String> buckets) {
 
