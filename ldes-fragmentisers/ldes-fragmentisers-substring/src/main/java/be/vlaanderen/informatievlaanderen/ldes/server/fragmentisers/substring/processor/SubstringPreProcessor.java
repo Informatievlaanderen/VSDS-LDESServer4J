@@ -26,7 +26,6 @@ public class SubstringPreProcessor {
 				substringConfig.getFragmenterProperty());
 	}
 
-    // TODO: 20/02/2023 fix testing
 	public List<String> bucketize(String substringTarget) {
 		final List<String> bucket = new ArrayList<>(List.of(ROOT_SUBSTRING));
 		if (StringUtils.isBlank(substringTarget)) {

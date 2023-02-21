@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.ROOT_SUBSTRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -70,14 +71,14 @@ class SubstringPreProcessorTest {
 		void shouldReturnStringInBuckets_whenStringNotNull() {
 			List<String> buckets = substringPreProcessor.bucketize("omschrijving");
 
-			assertEquals(List.of("o", "om", "oms", "omsc", "omsch", "omschr", "omschri",
+			assertEquals(List.of("", "o", "om", "oms", "omsc", "omsch", "omschr", "omschri",
 					"omschrij", "omschrijv", "omschrijvi", "omschrijvin", "omschrijving"),
 					buckets);
 		}
 
 		@Test
-		void shouldReturnEmpty_whenStringNull() {
-			assertEquals(0, substringPreProcessor.bucketize(null).size());
+		void shouldReturnSingletonListWithRoot_whenStringNull() {
+			assertEquals(List.of(ROOT_SUBSTRING), substringPreProcessor.bucketize(null));
 		}
 
 	}
