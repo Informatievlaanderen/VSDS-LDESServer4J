@@ -41,36 +41,40 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
 		final Observation substringFragmentationObservation = startFragmentationObservation(parentObservation);
-		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment,
-				ROOT_SUBSTRING);
-		super.addRelationFromParentToChild(parentFragment, rootFragment);
+
+		final LdesFragment rootFragment = prepareRootFragment(parentFragment);
 		addMemberToFragments(parentFragment, member, substringFragmentationObservation, rootFragment);
 		substringFragmentationObservation.stop();
 	}
 
-	// TODO: 20/02/2023 test and refactor
+	private LdesFragment prepareRootFragment(LdesFragment parentFragment) {
+		final LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment,
+				ROOT_SUBSTRING);
+		super.addRelationFromParentToChild(parentFragment, rootFragment);
+		return rootFragment;
+	}
+
 	private void addMemberToFragments(LdesFragment parentFragment,
-			Member member,
-			Observation substringFragmentationObservation,
-			LdesFragment rootFragment) {
+									  Member member,
+									  Observation substringFragmentationObservation,
+									  LdesFragment rootFragment) {
 		final String substringTarget = substringPreProcessor.getSubstringTarget(member);
 		final List<String> tokens = substringPreProcessor.tokenize(substringTarget);
-		final Set<String> addedTo = new HashSet<>();
+		final Set<String> substringsThatContainMember = new HashSet<>();
 		tokens.forEach(token -> {
 			final List<String> buckets = substringPreProcessor.bucketize(token);
-			if (buckets.stream().noneMatch(addedTo::contains)) {
-				final LdesFragment substringFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(
-						parentFragment,
-						rootFragment, buckets);
-				String[] split = substringFragment.getFragmentId().split(SUBSTRING + "=");
-				if (split.length > 1) {
-					addedTo.add(split[1]);
-				} else {
-					addedTo.add(ROOT_SUBSTRING);
-				}
+			if (buckets.stream().noneMatch(substringsThatContainMember::contains)) {
+				final LdesFragment substringFragment =
+						substringFragmentFinder.getOpenOrLastPossibleFragment(parentFragment, rootFragment, buckets);
+				substringsThatContainMember.add(extractSubstringFromFragmentId(substringFragment.getFragmentId()));
 				super.addMemberToFragment(substringFragment, member, substringFragmentationObservation);
 			}
 		});
+	}
+
+	private String extractSubstringFromFragmentId(String fragmentId) {
+		String[] splitFragmentId = fragmentId.split(SUBSTRING + "=");
+		return splitFragmentId.length > 1 ? splitFragmentId[1] : ROOT_SUBSTRING;
 	}
 
 	private Observation startFragmentationObservation(Observation parentObservation) {
