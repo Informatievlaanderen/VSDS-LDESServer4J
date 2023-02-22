@@ -77,8 +77,8 @@ class LdesFragmentTest {
 		assertNotNull(ldesFragment.getImmutableTimestamp());
 	}
 
-    @Test
-    void testEquals() {
+	@Test
+	void testEquals() {
 		LdesFragment a = new LdesFragment("a", List.of());
 		LdesFragment a2 = new LdesFragment("a", List.of());
 		LdesFragment c = new LdesFragment("c", List.of());
@@ -88,8 +88,8 @@ class LdesFragmentTest {
 		assertNotEquals(a, c);
 	}
 
-    @Test
-    void testHashCode() {
+	@Test
+	void testHashCode() {
 		LdesFragment a = new LdesFragment("a", List.of());
 		LdesFragment a2 = new LdesFragment("a", List.of());
 		LdesFragment c = new LdesFragment("c", List.of());
@@ -97,6 +97,6 @@ class LdesFragmentTest {
 		assertEquals(a.hashCode(), a2.hashCode());
 		assertEquals(a2.hashCode(), a.hashCode());
 		assertNotEquals(a.hashCode(), c.hashCode());
-    }
+	}
 
 }

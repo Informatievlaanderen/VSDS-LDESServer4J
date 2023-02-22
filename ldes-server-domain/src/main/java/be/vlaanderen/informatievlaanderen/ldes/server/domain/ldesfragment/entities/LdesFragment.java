@@ -114,8 +114,10 @@ public class LdesFragment {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		LdesFragment that = (LdesFragment) o;
 		return Objects.equals(getFragmentId(), that.getFragmentId());
 	}
