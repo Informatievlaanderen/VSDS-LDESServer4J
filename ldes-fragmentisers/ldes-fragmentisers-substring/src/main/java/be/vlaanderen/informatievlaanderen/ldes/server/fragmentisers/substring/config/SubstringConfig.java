@@ -4,7 +4,7 @@ public class SubstringConfig {
 
 	public static final String DEFAULT_FRAGMENTER_SUBJECT_FILTER = ".*";
 
-	private String fragmenterSubjectFilter = ".*";
+	private String fragmenterSubjectFilter = DEFAULT_FRAGMENTER_SUBJECT_FILTER;
 	private String fragmenterProperty;
 	private Integer memberLimit;
 
