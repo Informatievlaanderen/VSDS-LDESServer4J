@@ -35,11 +35,11 @@ class SubstringFragmentFinderTest {
 	}
 
 	@Test
-	void when_RootFragmentHasNotReachedLimit_RootFragmentIsReturned() {
+	void when_RootFragmentHasNotReachedLimitAndIsInBucket_RootFragmentIsReturned() {
 		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
 
-		LdesFragment actualFragment = substringFragmentFinder.getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
-				rootFragment, List.of("a", "ab"));
+		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
+				rootFragment, List.of("", "a", "ab"));
 
 		assertEquals(rootFragment, actualFragment);
 		InOrder inOrder = inOrder(substringFragmentCreator,
@@ -59,7 +59,7 @@ class SubstringFragmentFinderTest {
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"ab")).thenReturn(abFragment);
 
-		LdesFragment actualFragment = substringFragmentFinder.getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
+		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab"));
 
 		assertEquals(abFragment, actualFragment);

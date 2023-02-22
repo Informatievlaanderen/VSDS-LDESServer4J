@@ -1,7 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config;
 
 public class SubstringConfig {
-	private String fragmenterSubjectFilter = ".*";
+
+	public static final String DEFAULT_FRAGMENTER_SUBJECT_FILTER = ".*";
+
+	private String fragmenterSubjectFilter = DEFAULT_FRAGMENTER_SUBJECT_FILTER;
 	private String fragmenterProperty;
 	private Integer memberLimit;
 
