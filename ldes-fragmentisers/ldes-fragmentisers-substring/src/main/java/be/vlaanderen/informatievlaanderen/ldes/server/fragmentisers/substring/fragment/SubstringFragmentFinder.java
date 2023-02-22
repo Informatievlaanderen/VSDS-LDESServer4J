@@ -30,6 +30,10 @@ public class SubstringFragmentFinder {
 				return rootFragment;
 			}
 
+			if (ROOT_SUBSTRING.equals(bucket)) {
+				continue;
+			}
+
 			currentChildFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, bucket);
 			substringRelationsAttributer.addSubstringRelation(currentParentFragment, currentChildFragment);
 			if (currentChildFragment.getNumberOfMembers() < substringConfig.getMemberLimit()) {
