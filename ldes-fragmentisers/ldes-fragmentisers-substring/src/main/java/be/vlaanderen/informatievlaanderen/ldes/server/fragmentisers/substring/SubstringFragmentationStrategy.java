@@ -12,10 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.mo
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
+import java.util.stream.Collectors;
 
 public class SubstringFragmentationStrategy extends FragmentationStrategyDecorator {
 
@@ -60,15 +57,10 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 			LocalMember member,
 			Observation substringFragmentationObservation,
 			LdesFragment rootFragment) {
-		final Set<String> substringsThatContainMember = new HashSet<>();
 		member.getTokens().stream()
-				.filter(token -> token.hasNotBeenAdded(substringsThatContainMember))
-				.map(token -> {
-					final LdesFragment substringFragment = substringFragmentFinder
-							.getOpenOrLastPossibleFragment(parentFragment, rootFragment, token.getBucket());
-					substringsThatContainMember.add(substringFragment.getValueOfKey(SUBSTRING).orElse(ROOT_SUBSTRING));
-					return substringFragment;
-				}).toList()
+				.map(token -> substringFragmentFinder
+						.getOpenOrLastPossibleFragment(parentFragment, rootFragment, token.getBucket()))
+				.collect(Collectors.toSet())
 				.parallelStream()
 				.forEach(substringFragment -> super.addMemberToFragment(substringFragment, member,
 						substringFragmentationObservation));

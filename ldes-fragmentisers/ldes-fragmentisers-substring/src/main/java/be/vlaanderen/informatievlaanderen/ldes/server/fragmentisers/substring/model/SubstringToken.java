@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.m
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import com.apicatalog.jsonld.StringUtils;
@@ -16,10 +15,6 @@ public class SubstringToken {
 
 	public SubstringToken(String token) {
 		this.token = token;
-	}
-
-	public boolean hasNotBeenAdded(Set<String> substringsThatContainMember) {
-		return getBucket().stream().noneMatch(substringsThatContainMember::contains);
 	}
 
 	public List<String> getBucket() {

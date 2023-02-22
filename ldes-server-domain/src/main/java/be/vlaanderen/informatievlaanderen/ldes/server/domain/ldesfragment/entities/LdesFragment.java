@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -110,4 +111,18 @@ public class LdesFragment {
 
 		return "root";
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		LdesFragment that = (LdesFragment) o;
+		return Objects.equals(getFragmentId(), that.getFragmentId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getFragmentId());
+	}
+
 }

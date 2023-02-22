@@ -5,35 +5,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.ROOT_SUBSTRING;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SubstringTokenTest {
-
-	@Nested
-	class HasBeenAdded {
-
-		@Test
-		void shouldReturnTrue_whenTheInputHasNoMatchWithTheBucket() {
-			SubstringToken token = new SubstringToken("ab");
-
-			assertTrue(token.hasNotBeenAdded(Set.of()));
-			assertTrue(token.hasNotBeenAdded(Set.of("c", "d")));
-		}
-
-		@Test
-		void shouldReturnFalse_whenTheInputHasAMatchWithTheBucket() {
-			SubstringToken token = new SubstringToken("ab");
-
-			assertFalse(token.hasNotBeenAdded(Set.of("a")));
-			assertFalse(token.hasNotBeenAdded(Set.of("ab")));
-			assertFalse(token.hasNotBeenAdded(Set.of("c", "a")));
-		}
-
-	}
 
 	@Nested
 	class GetBuckets {
