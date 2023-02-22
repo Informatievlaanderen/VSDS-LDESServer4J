@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.re
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.ROOT_SUBSTRING;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.ROOT_SUBSTRING;
 
 public class SubstringFragmentFinder {
 	private final SubstringFragmentCreator substringFragmentCreator;

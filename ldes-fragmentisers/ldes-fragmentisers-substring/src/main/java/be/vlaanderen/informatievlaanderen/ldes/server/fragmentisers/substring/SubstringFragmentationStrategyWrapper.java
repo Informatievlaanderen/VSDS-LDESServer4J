@@ -9,8 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.processor.SubstringPreProcessor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMemberSupplier;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
@@ -28,7 +28,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
-		SubstringPreProcessor substringPreProcessor = new SubstringPreProcessor(substringConfig);
+		LocalMemberSupplier localMemberSupplier = new LocalMemberSupplier(substringConfig);
 		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 		SubstringRelationsAttributer substringRelationsAttributer = new SubstringRelationsAttributer(
 				treeRelationsRepository, nonCriticalTasksExecutor, substringConfig);
@@ -36,7 +36,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,
 				observationRegistry, substringFragmentFinder, substringFragmentCreator,
-				treeRelationsRepository, substringPreProcessor);
+				treeRelationsRepository, localMemberSupplier);
 	}
 
 	private SubstringConfig createSubstringConfig(ConfigProperties properties) {
