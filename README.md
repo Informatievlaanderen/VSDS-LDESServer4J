@@ -227,6 +227,8 @@ Full documentation for substring fragmentation can be found [here](ldes-fragment
 
 ##### Example Pagination
 
+Full documentation for pagination fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-pagination/README.MD)
+
   ```yaml
   name: "pagination"
   config:
