@@ -67,6 +67,17 @@ class MemberIngestionControllerTest {
 	}
 
 	@Test
+	// TODO Jonas Bulcke
+	void relevant_name() throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-id.nq", Lang.NQUADS);
+
+		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
+				.andDo(print()).andExpect(status().isOk());
+		verify(memberIngestService, times(1)).addMember(any());
+		// catch Exception en verifieer dat message correct is.
+	}
+
+	@Test
 	@DisplayName("Requesting using another collection name returns 404")
 	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404()
 			throws Exception {
