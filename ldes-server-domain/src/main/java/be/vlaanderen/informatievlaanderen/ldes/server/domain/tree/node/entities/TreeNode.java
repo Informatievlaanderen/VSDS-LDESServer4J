@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 
 import java.util.List;
+import java.util.Objects;
 
 public class TreeNode {
 	private final String fragmentId;
@@ -47,4 +48,15 @@ public class TreeNode {
 	public boolean isView() {
 		return isView;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		TreeNode that = (TreeNode) o;
+		return Objects.equals(fragmentId, that.fragmentId);
+	}
+
 }
