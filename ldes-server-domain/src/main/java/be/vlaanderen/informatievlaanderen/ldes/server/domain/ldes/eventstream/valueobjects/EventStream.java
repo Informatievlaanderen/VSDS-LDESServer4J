@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @param timestampPath The ldes:EventStream instance MAY have a property ldes:timestampPath
@@ -26,13 +25,4 @@ public record EventStream(String collection, String timestampPath, String versio
                 Objects.equals(this.views, that.views);
     }
 
-    @Override
-    public String toString() {
-        return "EventStream[" +
-                "collection=" + collection + ", " +
-                "timestampPath=" + timestampPath + ", " +
-                "versionOf=" + versionOfPath + ", " +
-                "shape=" + shape + ", " +
-                "views=" + views.stream().map(TreeNode::getFragmentId).collect(Collectors.joining(",")) + ']';
-    }
 }
