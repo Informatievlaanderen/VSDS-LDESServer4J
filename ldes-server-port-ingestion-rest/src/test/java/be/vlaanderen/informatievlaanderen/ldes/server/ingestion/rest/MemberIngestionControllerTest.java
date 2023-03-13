@@ -31,11 +31,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -67,14 +65,17 @@ class MemberIngestionControllerTest {
 	}
 
 	@Test
-	// TODO Jonas Bulcke
-	void relevant_name() throws Exception {
+	void when_POSTRequestIsPerformedWithoutMemberId_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-id.nq", Lang.NQUADS);
 
-		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
-		verify(memberIngestService, times(1)).addMember(any());
-		// catch Exception en verifieer dat message correct is.
+		var postRequest = post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString);
+
+		Exception outerException = assertThrows(Exception.class, () -> mockMvc.perform(postRequest));
+		Exception malFormedException = assertThrows(MalformedMemberIdException.class, () -> {
+			throw outerException.getCause();
+		});
+
+		assertEquals(malFormedException.getMessage(), new MalformedMemberIdException(ldesConfig.getMemberType()).getMessage());
 	}
 
 	@Test
