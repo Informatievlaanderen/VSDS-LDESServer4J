@@ -59,4 +59,8 @@ public class TreeNode {
 		return Objects.equals(fragmentId, that.fragmentId);
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(fragmentId);
+	}
 }
