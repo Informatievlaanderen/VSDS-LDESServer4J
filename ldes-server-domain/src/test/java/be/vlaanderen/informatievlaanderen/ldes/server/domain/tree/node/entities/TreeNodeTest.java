@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,6 +40,7 @@ class TreeNodeTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
 					Arguments.of((Object) null),
+					Arguments.of(new EventStream("collection", "timestamp", "path", "shape", List.of())),
 					Arguments.of(new TreeNode("Other id", true, true, false, List.of(), null)),
 					Arguments.of(new TreeNode("Another id", false, false, false, null, List.of())));
 		}
