@@ -75,7 +75,8 @@ class MemberIngestionControllerTest {
 			throw outerException.getCause();
 		});
 
-		assertEquals(malFormedException.getMessage(), new MalformedMemberIdException(ldesConfig.getMemberType()).getMessage());
+		assertEquals(malFormedException.getMessage(),
+				new MalformedMemberIdException(ldesConfig.getMemberType()).getMessage());
 	}
 
 	@Test
