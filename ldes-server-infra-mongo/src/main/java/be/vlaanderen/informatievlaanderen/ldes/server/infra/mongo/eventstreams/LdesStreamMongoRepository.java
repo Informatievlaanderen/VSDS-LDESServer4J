@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesStreamEntity;
@@ -31,13 +32,13 @@ public class LdesStreamMongoRepository {
                 .map(LdesStreamEntity::toEventStream);
     }
 
-    public Optional<String> retrieveShape(String collection) {
+    public String retrieveShape(String collection) {
         return repository
                 .findAllByCollection(collection)
                 .stream()
                 .map(LdesStreamEntity::toEventStream)
-                .map(EventStream::shape)
-                .findAny();
+                .findAny()
+                .orElseThrow(() -> new MissingEventStreamException(collection)).shape();
     }
 
     public List<TreeNode> retrieveViews(String collection) {
@@ -46,7 +47,26 @@ public class LdesStreamMongoRepository {
                 .stream()
                 .map(LdesStreamEntity::toEventStream)
                 .findAny()
-                .get().views();
+                .orElseThrow(() -> new MissingEventStreamException(collection)).views();
+    }
+
+    public String updateShape(String collection, String shape) {
+        LdesStreamEntity ldesStreamEntity = getLdesStreamEntity(collection);
+        ldesStreamEntity.setShape(shape);
+        repository.save(ldesStreamEntity);
+
+        return ldesStreamEntity.getShape();
+    }
+
+    public String addView(String collection, String viewName) {
+       LdesStreamEntity ldesStreamEntity = getLdesStreamEntity(collection);
+       ldesStreamEntity.getViewNames().add(viewName);
+       repository.save(ldesStreamEntity);
+       return viewName;
+    }
+
+    private LdesStreamEntity getLdesStreamEntity(String collection) {
+        return repository.findAllByCollection(collection).orElseThrow(() -> new MissingEventStreamException(collection));
     }
 
     public EventStream saveEventStream(EventStream eventStream) {

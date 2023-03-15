@@ -16,7 +16,7 @@ public class LdesStreamEntity {
     private final String collection;
     private final String timestampPath;
     private final String versionOfPath;
-    private final String shape;
+    private String shape;
     private final List<String> viewNames;
 
     public LdesStreamEntity(String collection, String timestampPath, String versionOfPath, String shape, List<String> viewNames) {
@@ -39,5 +39,17 @@ public class LdesStreamEntity {
                 eventStream.shape(),
                 eventStream.views()
         );
+    }
+
+    public String getShape() {
+        return shape;
+    }
+
+    public void setShape(String shape) {
+        this.shape = shape;
+    }
+
+    public List<String> getViewNames() {
+        return viewNames;
     }
 }
