@@ -25,12 +25,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
-        <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-infra-mongo</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 </project>
