@@ -2,6 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.s
 
 public interface LdesStreamModelService {
 	String retrieveShape(String collectionName);
-	String updateShape(String collectionName);
+	String updateShape(String collectionName, String shape);
 
 }
