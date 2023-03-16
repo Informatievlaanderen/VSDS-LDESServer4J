@@ -11,5 +11,13 @@ public interface LdesStreamRepository {
 
 	Optional<LdesStreamModel> retrieveLdesStream(String collection);
 
+	String retrieveShape(String collection);
+
+	List<TreeNode> retrieveViews(String collection);
+
+	String updateShape(String collection, String shape);
+
+	String addView(String collection, String viewName);
+
 	LdesStreamModel saveLdesStream(LdesStreamModel ldesStreamModel);
 }

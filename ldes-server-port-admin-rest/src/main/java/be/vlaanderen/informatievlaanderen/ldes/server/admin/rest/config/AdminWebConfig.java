@@ -12,16 +12,10 @@ public class AdminWebConfig {
 		return new LdesStreamModelConverter();
 	}
 
-	@Bean("streamShaclValidator")
+	@Bean
 	public LdesStreamShaclValidator ldesStreamShaclValidator() {
 		// shape needs to be retrieved from the config, needs to be the shacl shape of
 		// the stream
-		final String SHAPE = "";
-		return new LdesStreamShaclValidator(SHAPE);
-	}
-
-	@Bean(name = "viewShaclValidator")
-	public LdesStreamShaclValidator ldesViewShaclValidator() {
 		final String SHAPE = "";
 		return new LdesStreamShaclValidator(SHAPE);
 	}

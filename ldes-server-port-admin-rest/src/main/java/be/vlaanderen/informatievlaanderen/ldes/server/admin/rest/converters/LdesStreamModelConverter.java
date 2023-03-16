@@ -20,52 +20,43 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.EVENT_STREAM_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.VIEW_NAME;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesStreamModelConverter extends AbstractHttpMessageConverter<LdesStreamModel> {
 
-    @Override
-    protected boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(LdesStreamModel.class);
-    }
+	@Override
+	protected boolean supports(Class<?> clazz) {
+		return clazz.isAssignableFrom(LdesStreamModel.class);
+	}
 
-    @Override
-    protected LdesStreamModel readInternal(Class<? extends LdesStreamModel> clazz, HttpInputMessage inputMessage)
-            throws IOException, HttpMessageNotReadableException {
-        Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
-        Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
-        String memberId = extractStreamId(memberModel);
-        return new LdesStreamModel(memberId, memberModel);
-    }
+	@Override
+	protected LdesStreamModel readInternal(Class<? extends LdesStreamModel> clazz, HttpInputMessage inputMessage)
+			throws IOException, HttpMessageNotReadableException {
+		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
+		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
+		String memberId = extractStreamId(memberModel);
+		return new LdesStreamModel(memberId, memberModel);
+	}
 
-    private String extractStreamId(Model model) {
+	private String extractStreamId(Model model) {
+		final String COLLECTION_NAME = "collectionName";
+		return model
+				.listStatements(null, RDF_SYNTAX_TYPE, createResource(COLLECTION_NAME))
+				.nextOptional()
+				.map(statement -> statement.getSubject().toString()).get();
+	}
 
-        var optional = model
-                .listStatements(null, RDF_SYNTAX_TYPE, createResource(EVENT_STREAM_TYPE))
-                .nextOptional();
+	@Override
+	protected void writeInternal(LdesStreamModel ldesStreamModel, HttpOutputMessage outputMessage)
+			throws IOException, HttpMessageNotWritableException {
+		Model fragmentModel = ldesStreamModel.getModel();
 
-        if (optional.isPresent()) {
-            return optional.map(statement -> statement.getSubject().toString()).get();
-        } else {
-            return model.listStatements(null, RDF_SYNTAX_TYPE, createResource(VIEW_NAME))
-                    .nextOptional()
-                    .map(statement -> statement.getSubject().toString()).get();
-        }
-    }
+		StringWriter outputStream = new StringWriter();
 
-    @Override
-    protected void writeInternal(LdesStreamModel ldesStreamModel, HttpOutputMessage outputMessage)
-            throws IOException, HttpMessageNotWritableException {
-        Model fragmentModel = ldesStreamModel.getModel();
+		RDFDataMgr.write(outputStream, fragmentModel, NQUADS);
 
-        StringWriter outputStream = new StringWriter();
-
-        RDFDataMgr.write(outputStream, fragmentModel, NQUADS);
-
-        OutputStream body = outputMessage.getBody();
-        body.write(outputStream.toString().getBytes());
-    }
+		OutputStream body = outputMessage.getBody();
+		body.write(outputStream.toString().getBytes());
+	}
 }
