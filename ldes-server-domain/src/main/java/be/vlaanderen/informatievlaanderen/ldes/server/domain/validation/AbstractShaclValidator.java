@@ -7,18 +7,11 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.shacl.ShaclValidator;
 import org.apache.jena.shacl.Shapes;
 import org.apache.jena.shacl.ValidationReport;
-import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 public abstract class AbstractShaclValidator implements Validator {
 	private boolean initialized;
 	protected Shapes shapes;
-
-	@Override
-	public abstract boolean supports(Class<?> clazz);
-
-	@Override
-	public abstract void validate(Object target, Errors errors);
 
 	protected abstract void initializeShapes();
 

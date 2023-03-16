@@ -44,8 +44,10 @@ class LdesShaclValidatorTest {
 	void when_ValidateProvidedInvalidData_thenReturnInvalid() throws URISyntaxException, IOException {
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
 
+		Model model = invalidMember.getModel();
+
 		assertThrows(LdesShaclValidationException.class,
-				() -> ldesShaclValidator.validateShape(invalidMember.getModel()));
+				() -> ldesShaclValidator.validateShape(model));
 	}
 
 	@Test
