@@ -1,77 +1,68 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.repository.LdesStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesStreamModelEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.repository.LdesStreamEntityRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
 import java.util.Optional;
 
-public class LdesStreamMongoRepository {
-    private final LdesStreamEntityRepository repository;
-    private final MongoTemplate mongoTemplate;
+public class LdesStreamMongoRepository implements LdesStreamRepository {
+	private final LdesStreamEntityRepository repository;
+	private final MongoTemplate mongoTemplate;
 
-    public LdesStreamMongoRepository(LdesStreamEntityRepository repository, MongoTemplate mongoTemplate) {
-        this.repository = repository;
-        this.mongoTemplate = mongoTemplate;
-    }
+	public LdesStreamMongoRepository(LdesStreamEntityRepository repository, MongoTemplate mongoTemplate) {
+		this.repository = repository;
+		this.mongoTemplate = mongoTemplate;
+	}
 
-    public List<EventStream> retrieveAllEventStreams() {
-        return repository
-                .findAll()
-                .stream().map(LdesStreamEntity::toEventStream)
-                .toList();
-    }
+	@Override
+	public List<LdesStreamModel> retrieveAllLdesStreams() {
+		return repository
+				.findAll()
+				.stream().map(LdesStreamModelEntity::toLdesStreamModel)
+				.toList();
+	}
 
-    public Optional<EventStream> retrieveEventStream(String collection) {
-        return repository
-                .findAllByCollection(collection)
-                .map(LdesStreamEntity::toEventStream);
-    }
+	@Override
+	public Optional<LdesStreamModel> retrieveLdesStream(String collection) {
+		return repository
+				.findAllByCollection(collection)
+				.map(LdesStreamModelEntity::toLdesStreamModel);
+	}
 
+	@Override
     public String retrieveShape(String collection) {
-        return repository
-                .findAllByCollection(collection)
-                .stream()
-                .map(LdesStreamEntity::toEventStream)
-                .findAny()
-                .orElseThrow(() -> new MissingEventStreamException(collection)).shape();
+        return repository.findAllByCollection(collection).
     }
 
-    public List<TreeNode> retrieveViews(String collection) {
-        return repository
-                .findAllByCollection(collection)
-                .stream()
-                .map(LdesStreamEntity::toEventStream)
-                .findAny()
-                .orElseThrow(() -> new MissingEventStreamException(collection)).views();
-    }
+	@Override
+	public List<TreeNode> retrieveViews(String collection) {
 
-    public String updateShape(String collection, String shape) {
-        LdesStreamEntity ldesStreamEntity = getLdesStreamEntity(collection);
-        ldesStreamEntity.setShape(shape);
-        repository.save(ldesStreamEntity);
+	}
 
-        return ldesStreamEntity.getShape();
-    }
+	@Override
+	public String updateShape(String collection, String shape) {
 
-    public String addView(String collection, String viewName) {
-       LdesStreamEntity ldesStreamEntity = getLdesStreamEntity(collection);
-       ldesStreamEntity.getViewNames().add(viewName);
-       repository.save(ldesStreamEntity);
-       return viewName;
-    }
+	}
 
-    private LdesStreamEntity getLdesStreamEntity(String collection) {
-        return repository.findAllByCollection(collection).orElseThrow(() -> new MissingEventStreamException(collection));
-    }
+	@Override
+	public String addView(String collection, String viewName) {
 
-    public EventStream saveEventStream(EventStream eventStream) {
-        repository.save(LdesStreamEntity.fromEventStream(eventStream));
-        return eventStream;
-    }
+	}
+
+	private LdesStreamModelEntity getLdesStreamEntity(String collection) {
+		return repository.findAllByCollection(collection).orElseThrow(() -> new MissingLdesStreamException(collection));
+	}
+
+	@Override
+	public LdesStreamModel saveLdesStream(LdesStreamModel ldesStreamModel) {
+		repository.save(LdesStreamModelEntity.fromLdesStreamModel(ldesStreamModel));
+		return ldesStreamModel;
+	}
 
 }
