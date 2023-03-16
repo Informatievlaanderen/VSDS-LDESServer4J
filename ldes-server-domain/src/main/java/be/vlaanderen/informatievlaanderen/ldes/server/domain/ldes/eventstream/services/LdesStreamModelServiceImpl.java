@@ -7,44 +7,40 @@ import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
 public class LdesStreamModelServiceImpl implements LdesStreamModelService {
 
-	private final LdesStreamRepository repository;
+    private final LdesStreamRepository repository;
 
-	@Autowired
-	public LdesStreamModelServiceImpl(LdesStreamRepository repository) {
-		this.repository = repository;
-	}
+    @Autowired
+    public LdesStreamModelServiceImpl(LdesStreamRepository repository) {
+        this.repository = repository;
+    }
 
-	@Override
-	public String retrieveShape(String collectionName) {
-		final String SHAPE = "shape";
-		LdesStreamModel ldesStreamModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesStreamException(collectionName));
+    @Override
+    public String retrieveShape(String collectionName) {
+        final String SHAPE = "shape";
+        LdesStreamModel ldesStreamModel = repository.retrieveLdesStream(collectionName)
+                .orElseThrow(() -> new MissingLdesStreamException(collectionName));
 
-		return ldesStreamModel.getModel().listStatements(null,
-				ResourceFactory.createProperty(SHAPE), (Resource) null).toList().stream().findFirst().get()
-				.getObject().asLiteral().getString();
+        return ldesStreamModel.getModel().listStatements(null,
+                        createProperty(SHAPE), (Resource) null).toList().stream().findFirst().get()
+                .getObject().asLiteral().getString();
 
-	}
+    }
 
-	@Override
-	public String updateShape(String collectionName) {
-		final String SHAPE = "shape";
-		LdesStreamModel ldesStreamModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesStreamException(collectionName));
+    @Override
+    public String updateShape(String collectionName, String shape) {
+        final String SHAPE = "shape";
+        LdesStreamModel ldesStreamModel = repository.retrieveLdesStream(collectionName)
+                .orElseThrow(() -> new MissingLdesStreamException(collectionName));
 
-		StmtIterator iterator = ldesStreamModel.getModel().listStatements(null, ResourceFactory.createProperty(SHAPE), (Resource) null);
+        ldesStreamModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null).remove();
+        ldesStreamModel.getModel().createStatement(createResource(collectionName), createProperty(SHAPE), shape);
+        repository.saveLdesStream(ldesStreamModel);
 
-		if(iterator.hasNext()) {
-			Statement statement = iterator.nextStatement();
-			ldesStreamModel.getModel().remove(statement);
-		}
-
-		// TODO: return updated collection name
-		return null;
-	}
+        return shape;
+    }
 }
