@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesStreamModelEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface LdesStreamEntityRepository extends MongoRepository<LdesStreamEntity, String> {
+public interface LdesStreamEntityRepository extends MongoRepository<LdesStreamModelEntity, String> {
 
-    Optional<LdesStreamEntity> findAllByCollection(String collection);
+	Optional<LdesStreamModelEntity> findAllByCollection(String collection);
 }
