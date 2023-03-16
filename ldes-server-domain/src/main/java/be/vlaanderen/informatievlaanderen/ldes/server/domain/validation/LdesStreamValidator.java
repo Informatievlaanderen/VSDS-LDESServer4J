@@ -8,23 +8,23 @@ import org.springframework.validation.Validator;
 
 @Component
 public class LdesStreamValidator implements Validator {
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return EventStream.class.equals(clazz);
-    }
+	@Override
+	public boolean supports(Class<?> clazz) {
+		return EventStream.class.equals(clazz);
+	}
 
-    @Override
-    public void validate(Object target, Errors errors) {
-        EventStream eventStream = (EventStream) target;
+	@Override
+	public void validate(Object target, Errors errors) {
+		EventStream eventStream = (EventStream) target;
 
-    }
+	}
 
-    protected void validateEventStream(EventStream eventStream) {
-        if(eventStream.collection() == null) {
-            throw new LdesStreamValidationException("null");
-        }
-        if(eventStream.shape() == null) {
-            throw new LdesStreamValidationException(eventStream.collection());
-        }
-    }
+	protected void validateEventStream(EventStream eventStream) {
+		if (eventStream.collection() == null) {
+			throw new LdesStreamValidationException("null");
+		}
+		if (eventStream.shape() == null) {
+			throw new LdesStreamValidationException(eventStream.collection());
+		}
+	}
 }
