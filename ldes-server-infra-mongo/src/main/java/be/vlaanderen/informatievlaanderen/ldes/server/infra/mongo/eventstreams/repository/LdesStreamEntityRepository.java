@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface LdesStreamEntityRepository extends MongoRepository<LdesStreamModelEntity, String> {
 
-	Optional<LdesStreamModelEntity> findAllByCollection(String collection);
+	Optional<LdesStreamModelEntity> findAllById(String collectionName);
 }
