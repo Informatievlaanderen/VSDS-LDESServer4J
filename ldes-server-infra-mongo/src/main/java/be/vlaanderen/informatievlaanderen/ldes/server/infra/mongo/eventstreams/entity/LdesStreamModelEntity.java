@@ -26,7 +26,7 @@ public class LdesStreamModelEntity {
 
 	public static LdesStreamModelEntity fromLdesStreamModel(LdesStreamModel ldesStreamModel) {
 		StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, ldesStreamModel.getModel(), Lang.NQUADS);
+		RDFDataMgr.write(outputStream, ldesStreamModel.getModel(), Lang.TURTLE);
 		String ldesMemberString = outputStream.toString();
 		return new LdesStreamModelEntity(
 				ldesStreamModel.getId(),
@@ -34,7 +34,7 @@ public class LdesStreamModelEntity {
 	}
 
 	public LdesStreamModel toLdesStreamModel() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.NQUADS).toModel();
+		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.TURTLE).toModel();
 		return new LdesStreamModel(this.id, ldesMemberModel);
 	}
 
