@@ -2,12 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesStreamModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesStreamModelServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesStreamShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.LdesStreamMongoRepository;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -26,6 +27,7 @@ public class AdminRestController {
 	private final LdesStreamModelService service;
 
 	@Autowired
+	@Qualifier("streamShaclValidator")
 	private LdesStreamShaclValidator ldesStreamShaclValidator;
 
 	@Autowired
@@ -75,19 +77,25 @@ public class AdminRestController {
 
 	@PutMapping("/eventstreams/{collectionName}/shape")
 	public ResponseEntity<String> putShape(@PathVariable String collectionName, @RequestBody String shape) {
-		String updatedShape = repository.updateShape(collectionName, shape);
-
+		String updatedShape = service.updateShape(collectionName, shape);
 		return ResponseEntity.ok(updatedShape);
 	}
 
+
 	@GetMapping("/eventstreams/{collectionName}/views")
-	public ResponseEntity<List<TreeNode>> getViews(@PathVariable String collectionName) {
-		return ResponseEntity.ok(repository.retrieveViews(collectionName));
+	public ResponseEntity<List<Model>> getViews(@PathVariable String collectionName) {
+		return ResponseEntity.ok(service.retrieveViews(collectionName));
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/views")
-    public ResponseEntity<TreeNode> putViews(@PathVariable String collectionName, @RequestBody TreeNode view) {
-        String viewName = repository.addView(collectionName, view.)
-    }
+	public ResponseEntity<LdesStreamModel> putViews(@PathVariable String collectionName, @RequestBody LdesStreamModel view) {
+		return ResponseEntity.ok(service.addView(collectionName, view));
+	}
+
+	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
+	public ResponseEntity<Model> getView(@PathVariable String collectionName, @PathVariable String viewName) {
+		return ResponseEntity.ok(service.retrieveView(collectionName, viewName));
+	}
+
 
 }

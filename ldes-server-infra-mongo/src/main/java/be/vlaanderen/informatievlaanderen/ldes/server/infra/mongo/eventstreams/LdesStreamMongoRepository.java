@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.repository.LdesStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesStreamModelEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.repository.LdesStreamEntityRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -31,32 +30,12 @@ public class LdesStreamMongoRepository implements LdesStreamRepository {
 	@Override
 	public Optional<LdesStreamModel> retrieveLdesStream(String collection) {
 		return repository
-				.findAllByCollection(collection)
+				.findAllById(collection)
 				.map(LdesStreamModelEntity::toLdesStreamModel);
 	}
 
-	@Override
-    public String retrieveShape(String collection) {
-        return repository.findAllByCollection(collection).
-    }
-
-	@Override
-	public List<TreeNode> retrieveViews(String collection) {
-
-	}
-
-	@Override
-	public String updateShape(String collection, String shape) {
-
-	}
-
-	@Override
-	public String addView(String collection, String viewName) {
-
-	}
-
 	private LdesStreamModelEntity getLdesStreamEntity(String collection) {
-		return repository.findAllByCollection(collection).orElseThrow(() -> new MissingLdesStreamException(collection));
+		return repository.findAllById(collection).orElseThrow(() -> new MissingLdesStreamException(collection));
 	}
 
 	@Override

@@ -11,11 +11,11 @@ import org.apache.jena.shacl.ValidationReport;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-public class LdesStreamShaclValidator implements Validator {
-	private final Shapes shapes;
+public class LdesStreamShaclValidator extends AbstractShaclValidator {
+	private final String shape;
 
 	public LdesStreamShaclValidator(String shape) {
-		shapes = Shapes.parse(RDFDataMgr.loadGraph(shape));
+		this.shape = shape;
 	}
 
 	@Override
@@ -35,5 +35,10 @@ public class LdesStreamShaclValidator implements Validator {
 		if (!report.conforms()) {
 			throw new LdesStreamShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE));
 		}
+	}
+
+	@Override
+	protected void initializeShapes() {
+		shapes = Shapes.parse(RDFDataMgr.loadGraph(shape));
 	}
 }
