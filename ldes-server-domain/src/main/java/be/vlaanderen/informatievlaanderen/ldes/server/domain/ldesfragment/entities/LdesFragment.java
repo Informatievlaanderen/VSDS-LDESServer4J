@@ -138,4 +138,8 @@ public class LdesFragment {
 	public boolean containsRelation(TreeRelation parentChildRelation) {
 		return relations.contains(parentChildRelation);
 	}
+
+	public List<TreeRelation> getRelations() {
+		return relations;
+	}
 }

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -28,9 +29,12 @@ public class LdesFragmentEntity {
 	private final LocalDateTime immutableTimestamp;
 	private final int numberOfMembers;
 
+	private final List<TreeRelation> relations;
+
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable,
-			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, int numberOfMembers) {
+			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, int numberOfMembers,
+			List<TreeRelation> relations) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -40,6 +44,7 @@ public class LdesFragmentEntity {
 		this.parentId = parentId;
 		this.immutableTimestamp = immutableTimestamp;
 		this.numberOfMembers = numberOfMembers;
+		this.relations = relations;
 	}
 
 	public String getId() {
@@ -51,7 +56,8 @@ public class LdesFragmentEntity {
 	}
 
 	public LdesFragment toLdesFragment() {
-		return new LdesFragment(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted, numberOfMembers);
+		return new LdesFragment(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted, numberOfMembers,
+				relations);
 	}
 
 	public String getViewName() {
@@ -68,6 +74,6 @@ public class LdesFragmentEntity {
 				ldesFragment.getViewName(),
 				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
 				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
-				ldesFragment.getNumberOfMembers());
+				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations());
 	}
 }

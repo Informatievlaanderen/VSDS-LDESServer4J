@@ -93,7 +93,7 @@ class LdesFragmentMongoRepositoryTest {
 				String viewName,
 				String value) {
 			LdesFragment ldesFragment = new LdesFragment(viewName, List.of(new FragmentPair("generatedAtTime", value)),
-					immutable, LocalDateTime.now(), false, 0);
+					immutable, LocalDateTime.now(), false, 0, List.of());
 			return LdesFragmentEntity.fromLdesFragment(ldesFragment);
 		}
 
