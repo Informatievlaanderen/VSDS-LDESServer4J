@@ -2,8 +2,6 @@
 @prefix ldes: <http://ldes.be/> .
 @prefix example: <http://example.org/> .
 
-ldes:collectionName tree:view ldes:view1 .
-
 ldes:view1 tree:viewDescription [
     example:fragmentationStrategy [
         a example:Fragmentation ;

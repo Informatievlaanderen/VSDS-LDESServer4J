@@ -1,6 +1,21 @@
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 
-ldes:collectionName3 a ldes:EventStream ;
+ldes:collectionName2 a ldes:EventStream ;
    ldes:versionOfPath "1.1" ;
-   ldes:shape [] .
+   ldes:shape [] ;
+   ldes:view [
+       tree:viewDescription [
+           ldes:retentionPolicy "none"
+       ]
+   ] ;
+   ldes:view [
+       tree:viewDescription [
+           ldes:retentionPolicy "none"
+       ]
+   ] ;
+   ldes:view [
+       tree:viewDescription [
+           ldes:retentionPolicy "none"
+       ]
+   ] .
