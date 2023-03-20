@@ -33,8 +33,7 @@ class PageCreatorTest {
 		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		pageCreator = new PageCreator(
-				ldesFragmentRepository, treeRelationsRepository,
-				nonCriticalTasksExecutor);
+				ldesFragmentRepository);
 	}
 
 	@Test

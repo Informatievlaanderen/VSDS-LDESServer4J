@@ -22,30 +22,26 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		TreeRelationsRepository treeRelationsRepository = applicationContext
 				.getBean(TreeRelationsRepository.class);
-		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		OpenPageProvider openFragmentProvider = getOpenPageProvider(fragmentationProperties,
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
+				ldesFragmentRepository);
 		return new PaginationStrategy(fragmentationStrategy,
 				openFragmentProvider, observationRegistry, treeRelationsRepository);
 
 	}
 
 	private OpenPageProvider getOpenPageProvider(ConfigProperties properties,
-			LdesFragmentRepository ldesFragmentRepository, TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			LdesFragmentRepository ldesFragmentRepository) {
 		PaginationConfig paginationConfig = createPaginationConfig(properties);
 		PageCreator timeBasedFragmentCreator = getPageCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
+				ldesFragmentRepository);
 		return new OpenPageProvider(timeBasedFragmentCreator, ldesFragmentRepository,
 				paginationConfig.memberLimit());
 	}
 
-	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository,
-			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository) {
 		return new PageCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
+				ldesFragmentRepository);
 	}
 
 	private PaginationConfig createPaginationConfig(ConfigProperties properties) {
