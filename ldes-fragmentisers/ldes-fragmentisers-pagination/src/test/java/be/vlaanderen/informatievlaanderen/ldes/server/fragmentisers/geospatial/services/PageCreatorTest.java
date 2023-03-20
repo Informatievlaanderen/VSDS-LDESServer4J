@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.PageCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,11 +21,9 @@ class PageCreatorTest {
 	private static final String VIEW = "view";
 	private PageCreator pageCreator;
 	private LdesFragmentRepository ldesFragmentRepository;
-	private TreeRelationsRepository treeRelationsRepository;
 
 	@BeforeEach
 	void setUp() {
-		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		pageCreator = new PageCreator(
 				ldesFragmentRepository);
@@ -42,7 +39,6 @@ class PageCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?pageNumber=" + FIRST_PAGE_NUMBER));
-		verifyNoInteractions(treeRelationsRepository);
 	}
 
 	@Test
