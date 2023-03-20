@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
@@ -20,17 +18,14 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
-		TreeRelationsRepository treeRelationsRepository = applicationContext
-				.getBean(TreeRelationsRepository.class);
-		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
-				treeRelationsRepository);
+				ldesFragmentRepository);
 		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
-				tileFragmentRelationsAttributer, nonCriticalTasksExecutor);
+				tileFragmentRelationsAttributer);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
 				geospatialBucketiser, geospatialFragmentCreator, observationRegistry, ldesFragmentRepository);

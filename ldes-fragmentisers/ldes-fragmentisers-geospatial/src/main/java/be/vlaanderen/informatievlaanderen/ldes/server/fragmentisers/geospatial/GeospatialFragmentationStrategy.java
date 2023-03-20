@@ -41,8 +41,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 		Set<String> tiles = geospatialBucketiser.bucketise(member);
 		tiles
 				.stream()
-				.parallel()
 				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment))
+				.parallel()
 				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
 						geospatialFragmentationObservation));
 		geospatialFragmentationObservation.stop();
