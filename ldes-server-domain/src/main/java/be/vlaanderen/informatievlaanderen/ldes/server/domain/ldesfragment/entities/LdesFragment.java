@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
 import java.time.LocalDateTime;
@@ -18,18 +19,21 @@ public class LdesFragment {
 	private Boolean softDeleted;
 	private final int numberOfMembers;
 
+	private final List<TreeRelation> relations;
+
 	public LdesFragment(final String viewName, final List<FragmentPair> fragmentPairs) {
-		this(viewName, fragmentPairs, false, null, false, 0);
+		this(viewName, fragmentPairs, false, null, false, 0, new ArrayList<>());
 	}
 
 	public LdesFragment(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
-			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers) {
+			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers, List<TreeRelation> relations) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.immutableTimestamp = immutableTimestamp;
 		this.softDeleted = softDeleted;
 		this.numberOfMembers = numberOfMembers;
+		this.relations = relations;
 	}
 
 	public String getFragmentId() {
@@ -127,4 +131,11 @@ public class LdesFragment {
 		return Objects.hash(getFragmentId());
 	}
 
+	public void addRelation(TreeRelation relation) {
+		relations.add(relation);
+	}
+
+	public boolean containsRelation(TreeRelation parentChildRelation) {
+		return relations.contains(parentChildRelation);
+	}
 }
