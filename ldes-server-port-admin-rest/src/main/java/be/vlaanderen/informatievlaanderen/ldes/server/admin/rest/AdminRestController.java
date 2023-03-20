@@ -31,6 +31,10 @@ public class AdminRestController {
 	private LdesStreamShaclValidator ldesStreamShaclValidator;
 
 	@Autowired
+	@Qualifier("viewShaclValidator")
+	private LdesStreamShaclValidator ldesViewShaclValidator;
+
+	@Autowired
 	public AdminRestController(LdesStreamMongoRepository repository, EventStreamFactory factory,
 			LdesStreamModelService service) {
 		this.repository = repository;
@@ -38,9 +42,14 @@ public class AdminRestController {
 		this.service = service;
 	}
 
-	@InitBinder
-	private void initBinder(WebDataBinder binder) {
+	@InitBinder("stream")
+	private void initStreamBinder(WebDataBinder binder) {
 		binder.setValidator(ldesStreamShaclValidator);
+	}
+
+	@InitBinder("view")
+	private void initViewBinder(WebDataBinder binder) {
+		binder.setValidator(ldesViewShaclValidator);
 	}
 
 	@PostMapping(value = "${ldes.collectionname}")
