@@ -9,7 +9,6 @@ import org.apache.jena.shacl.ShaclValidator;
 import org.apache.jena.shacl.Shapes;
 import org.apache.jena.shacl.ValidationReport;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 public class LdesStreamShaclValidator implements Validator {
 	private final Shapes shapes;

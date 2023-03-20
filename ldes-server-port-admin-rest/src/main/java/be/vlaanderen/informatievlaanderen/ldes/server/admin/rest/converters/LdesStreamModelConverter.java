@@ -1,7 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
@@ -14,16 +18,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesStreamModelConverter extends AbstractHttpMessageConverter<LdesStreamModel> {
+
+	private static List<Resource> resources = List.of(createResource(EVENT_STREAM_TYPE),
+			createResource(VIEW), createResource(SHAPE));
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
@@ -40,11 +50,15 @@ public class LdesStreamModelConverter extends AbstractHttpMessageConverter<LdesS
 	}
 
 	private String extractStreamId(Model model) {
-		final String COLLECTION_NAME = "collectionName";
-		return model
-				.listStatements(null, RDF_SYNTAX_TYPE, createResource(COLLECTION_NAME))
-				.nextOptional()
-				.map(statement -> statement.getSubject().toString()).get();
+		for (Resource resource : resources) {
+			Optional<Statement> statementOptional = model.listStatements(null, RDF_SYNTAX_TYPE, resource)
+					.nextOptional();
+			if (statementOptional.isPresent()) {
+				Statement statement = statementOptional.get();
+				return statement.getSubject().toString();
+			}
+		}
+		throw new InvalidModelException(RdfModelConverter.toString(model, Lang.TURTLE));
 	}
 
 	@Override
