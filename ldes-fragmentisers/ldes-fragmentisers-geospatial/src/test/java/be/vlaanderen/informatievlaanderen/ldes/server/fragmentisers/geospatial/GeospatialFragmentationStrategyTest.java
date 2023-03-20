@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
@@ -28,7 +28,7 @@ class GeospatialFragmentationStrategyTest {
 
 	private GeospatialBucketiser geospatialBucketiser;
 	private GeospatialFragmentCreator fragmentCreator;
-	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
+	private final LdesFragmentRepository treeRelationsRepository = mock(LdesFragmentRepository.class);
 	private FragmentationStrategy decoratedFragmentationStrategy;
 	private GeospatialFragmentationStrategy geospatialFragmentationStrategy;
 

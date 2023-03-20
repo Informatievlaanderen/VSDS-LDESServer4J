@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationConfig;
@@ -20,13 +18,11 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
-		TreeRelationsRepository treeRelationsRepository = applicationContext
-				.getBean(TreeRelationsRepository.class);
 
 		OpenPageProvider openFragmentProvider = getOpenPageProvider(fragmentationProperties,
 				ldesFragmentRepository);
 		return new PaginationStrategy(fragmentationStrategy,
-				openFragmentProvider, observationRegistry, treeRelationsRepository);
+				openFragmentProvider, observationRegistry, ldesFragmentRepository);
 
 	}
 

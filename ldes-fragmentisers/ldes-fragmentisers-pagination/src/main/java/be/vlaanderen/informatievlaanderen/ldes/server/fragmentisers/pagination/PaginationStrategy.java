@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -19,8 +19,8 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 
 	public PaginationStrategy(FragmentationStrategy fragmentationStrategy,
 			OpenPageProvider openPageProvider, ObservationRegistry observationRegistry,
-			TreeRelationsRepository treeRelationsRepository) {
-		super(fragmentationStrategy, treeRelationsRepository);
+			LdesFragmentRepository ldesFragmentRepository) {
+		super(fragmentationStrategy, ldesFragmentRepository);
 		this.openPageProvider = openPageProvider;
 		this.observationRegistry = observationRegistry;
 	}

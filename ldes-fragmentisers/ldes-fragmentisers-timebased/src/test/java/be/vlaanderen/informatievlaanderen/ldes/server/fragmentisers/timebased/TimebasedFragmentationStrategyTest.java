@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -25,7 +25,7 @@ class TimebasedFragmentationStrategyTest {
 	private FragmentationStrategy fragmentationStrategy;
 	private static LdesFragment PARENT_FRAGMENT;
 	private static LdesFragment OPEN_FRAGMENT;
-	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
+	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 
 	@BeforeEach
 	void setUp() {
@@ -33,7 +33,7 @@ class TimebasedFragmentationStrategyTest {
 		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair("generatedAtTime", "someTime"));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
 				openFragmentProvider, ObservationRegistry.create(),
-				treeRelationsRepository);
+				ldesFragmentRepository);
 	}
 
 	@Test
@@ -46,7 +46,7 @@ class TimebasedFragmentationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				member, any(Observation.class));
 
-		InOrder inOrder = inOrder(openFragmentProvider, treeRelationsRepository,
+		InOrder inOrder = inOrder(openFragmentProvider, ldesFragmentRepository,
 				decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
@@ -65,12 +65,12 @@ class TimebasedFragmentationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				member, any(Observation.class));
 
-		InOrder inOrder = inOrder(openFragmentProvider, treeRelationsRepository,
+		InOrder inOrder = inOrder(openFragmentProvider, ldesFragmentRepository,
 				decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
-		inOrder.verify(treeRelationsRepository,
-				times(1)).addTreeRelation(eq(PARENT_FRAGMENT.getFragmentId()), any());
+		inOrder.verify(ldesFragmentRepository,
+				times(1)).saveFragment(PARENT_FRAGMENT);
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member),
 						any(Observation.class));
