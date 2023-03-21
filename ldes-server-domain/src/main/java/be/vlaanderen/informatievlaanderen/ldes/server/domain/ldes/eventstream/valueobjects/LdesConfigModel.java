@@ -2,11 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.v
 
 import org.apache.jena.rdf.model.Model;
 
-public class LdesStreamModel {
+public class LdesConfigModel {
 	private final String id;
 	private final Model model;
 
-	public LdesStreamModel(String id, Model model) {
+	public LdesConfigModel(String id, Model model) {
 		this.id = id;
 		this.model = model;
 	}
