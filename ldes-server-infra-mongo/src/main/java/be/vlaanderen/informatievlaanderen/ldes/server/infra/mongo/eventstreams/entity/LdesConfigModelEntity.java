@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -11,29 +11,29 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.io.StringWriter;
 
 @Document("ldesstreammodel")
-public class LdesStreamModelEntity {
+public class LdesConfigModelEntity {
 	@Id
 	private final String id;
 
 	private final String model;
 
-	public LdesStreamModelEntity(String id, String model) {
+	public LdesConfigModelEntity(String id, String model) {
 		this.id = id;
 		this.model = model;
 	}
 
-	public static LdesStreamModelEntity fromLdesStreamModel(LdesStreamModel ldesStreamModel) {
+	public static LdesConfigModelEntity fromLdesStreamModel(LdesConfigModel ldesConfigModel) {
 		StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, ldesStreamModel.getModel(), Lang.TURTLE);
+		RDFDataMgr.write(outputStream, ldesConfigModel.getModel(), Lang.TURTLE);
 		String ldesMemberString = outputStream.toString();
-		return new LdesStreamModelEntity(
-				ldesStreamModel.getId(),
+		return new LdesConfigModelEntity(
+				ldesConfigModel.getId(),
 				ldesMemberString);
 	}
 
-	public LdesStreamModel toLdesStreamModel() {
+	public LdesConfigModel toLdesStreamModel() {
 		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.TURTLE).toModel();
-		return new LdesStreamModel(this.id, ldesMemberModel);
+		return new LdesConfigModel(this.id, ldesMemberModel);
 	}
 
 }

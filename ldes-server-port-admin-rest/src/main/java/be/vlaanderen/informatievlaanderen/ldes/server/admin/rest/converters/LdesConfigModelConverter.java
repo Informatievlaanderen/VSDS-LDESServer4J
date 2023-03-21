@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -30,23 +30,23 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventst
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
-public class LdesStreamModelConverter extends AbstractHttpMessageConverter<LdesStreamModel> {
+public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesConfigModel> {
 
 	private static List<Resource> resources = List.of(createResource(EVENT_STREAM_TYPE),
 			createResource(VIEW), createResource(SHAPE));
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(LdesStreamModel.class);
+		return clazz.isAssignableFrom(LdesConfigModel.class);
 	}
 
 	@Override
-	protected LdesStreamModel readInternal(Class<? extends LdesStreamModel> clazz, HttpInputMessage inputMessage)
+	protected LdesConfigModel readInternal(Class<? extends LdesConfigModel> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 		String memberId = extractStreamId(memberModel);
-		return new LdesStreamModel(memberId, memberModel);
+		return new LdesConfigModel(memberId, memberModel);
 	}
 
 	private String extractStreamId(Model model) {
@@ -62,9 +62,9 @@ public class LdesStreamModelConverter extends AbstractHttpMessageConverter<LdesS
 	}
 
 	@Override
-	protected void writeInternal(LdesStreamModel ldesStreamModel, HttpOutputMessage outputMessage)
+	protected void writeInternal(LdesConfigModel ldesConfigModel, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Model fragmentModel = ldesStreamModel.getModel();
+		Model fragmentModel = ldesConfigModel.getModel();
 
 		StringWriter outputStream = new StringWriter();
 
