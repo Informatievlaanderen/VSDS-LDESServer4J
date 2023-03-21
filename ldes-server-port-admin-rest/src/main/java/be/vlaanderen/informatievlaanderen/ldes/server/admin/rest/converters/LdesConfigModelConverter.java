@@ -10,6 +10,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -28,7 +29,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.riot.RDFFormat.NQUADS;
+import static org.apache.jena.riot.RDFFormat.TURTLE;
 
 public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesConfigModel> {
 
@@ -41,10 +42,16 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 	}
 
 	@Override
+	public List<MediaType> getSupportedMediaTypes() {
+		return List.of(MediaType.ALL);
+	}
+
+	@Override
 	protected LdesConfigModel readInternal(Class<? extends LdesConfigModel> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
-		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
+		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
+				Lang.TURTLE);
 		String memberId = extractStreamId(memberModel);
 		return new LdesConfigModel(memberId, memberModel);
 	}
@@ -68,7 +75,7 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 
 		StringWriter outputStream = new StringWriter();
 
-		RDFDataMgr.write(outputStream, fragmentModel, NQUADS);
+		RDFDataMgr.write(outputStream, fragmentModel, TURTLE);
 
 		OutputStream body = outputMessage.getBody();
 		body.write(outputStream.toString().getBytes());
