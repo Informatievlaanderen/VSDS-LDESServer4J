@@ -82,6 +82,12 @@ public class AdminRestController {
 		return ResponseEntity.ok(service.addView(collectionName, view));
 	}
 
+	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
+	public ResponseEntity<Object> deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
+		service.deleteView(collectionName, viewName);
+		return ResponseEntity.ok().build();
+	}
+
 	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
 	public ResponseEntity<Model> getView(@PathVariable String collectionName, @PathVariable String viewName) {
 		return ResponseEntity.ok(service.retrieveView(collectionName, viewName));
