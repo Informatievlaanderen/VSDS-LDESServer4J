@@ -31,6 +31,11 @@ public class LdesConfigMongoRepository implements LdesConfigRepository {
 	}
 
 	@Override
+	public void deleteLdesStream(String collectionName) {
+		repository.deleteById(collectionName);
+	}
+
+	@Override
 	public LdesConfigModel saveLdesStream(LdesConfigModel ldesConfigModel) {
 		repository.save(LdesConfigModelEntity.fromLdesStreamModel(ldesConfigModel));
 		return ldesConfigModel;

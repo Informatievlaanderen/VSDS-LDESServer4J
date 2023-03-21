@@ -58,6 +58,12 @@ public class AdminRestController {
 		return ResponseEntity.ok(service.retrieveEventStream(collectionName));
 	}
 
+	@DeleteMapping("/eventstreams/{collectionName}")
+	public ResponseEntity<Object> deleteLdesStream(@PathVariable String collectionName) {
+		service.deleteEventStream(collectionName);
+		return ResponseEntity.ok().build();
+	}
+
 	@GetMapping("/eventstreams/{collectionName}/shape")
 	public ResponseEntity<Model> getShape(@PathVariable String collectionName) {
 		Model shape = service.retrieveShape(collectionName);

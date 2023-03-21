@@ -34,6 +34,15 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
     }
 
     @Override
+    public void deleteEventStream(String collectionName) {
+        if(repository.retrieveLdesStream(collectionName).isEmpty()) {
+            throw new MissingLdesConfigException(collectionName);
+        }
+
+        repository.deleteLdesStream(collectionName);
+    }
+
+    @Override
     public LdesConfigModel updateEventStream(LdesConfigModel ldesConfigModel) {
         return repository.saveLdesStream(ldesConfigModel);
     }
@@ -113,8 +122,6 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
         LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
                 .orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
-        List<Statement> notDeletedStatements = ldesConfigModel.getModel().listStatements().toList();
-
         StmtIterator iterator = ldesConfigModel.getModel().listStatements(stringToResource(collectionName), createProperty(VIEW), stringToResource(viewName));
 
         if (!iterator.hasNext()) {
@@ -124,8 +131,6 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
         Statement statement = iterator.nextStatement();
         List<Statement> statements = retrieveAllStatements(statement, ldesConfigModel.getModel());
         ldesConfigModel.getModel().remove(statements);
-
-        var deletedStatements = ldesConfigModel.getModel().listStatements().toList();
 
         repository.saveLdesStream(ldesConfigModel);
     }
