@@ -101,6 +101,16 @@ class AdminRestControllerTest {
 				.andExpect(status().isBadRequest());
 	}
 
+	@Test
+	void when_ModelDoesNotConformToShaclShape_Then_ReturnedBadRequest() throws Exception {
+		var request = put("/admin/api/v1/eventstreams")
+				.content(readDataFromFile("malformed-ldes.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN);
+		mockMvc.perform(request).andDo(print());
+		mockMvc.perform(request)
+				.andExpect(status().isBadRequest());
+	}
+
 	/*
 	 * @Test
 	 * void retrieveAllLdesStreams() {

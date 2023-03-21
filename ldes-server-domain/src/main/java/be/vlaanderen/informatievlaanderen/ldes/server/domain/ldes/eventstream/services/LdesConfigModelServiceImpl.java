@@ -97,14 +97,17 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, ResourceFactory.createProperty(VIEW),
 				stringToResource(view.getId()));
 		if (iterator.hasNext()) {
-			// TODO: view may have to be updated
-		} else {
-			ldesConfigModel.getModel().add(view.getModel());
-			Statement statement = ldesConfigModel.getModel().createStatement(stringToResource(collectionName),
-					createProperty(VIEW), stringToResource(ldesConfigModel.getId()));
-			ldesConfigModel.getModel().add(statement);
-			repository.saveLdesStream(ldesConfigModel);
+			Statement statement = iterator.nextStatement();
+			List<Statement> statements = retrieveAllStatements(statement.getResource(), ldesConfigModel.getModel());
+			statements.add(statement);
+			ldesConfigModel.getModel().remove(statements);
 		}
+
+		ldesConfigModel.getModel().add(view.getModel());
+		Statement statement = ldesConfigModel.getModel().createStatement(stringToResource(collectionName),
+				createProperty(VIEW), stringToResource(ldesConfigModel.getId()));
+		ldesConfigModel.getModel().add(statement);
+		repository.saveLdesStream(ldesConfigModel);
 
 		return view;
 	}
