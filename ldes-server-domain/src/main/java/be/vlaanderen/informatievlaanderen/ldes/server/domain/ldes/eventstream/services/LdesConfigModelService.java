@@ -21,5 +21,7 @@ public interface LdesConfigModelService {
 
 	LdesConfigModel addView(String collectionName, LdesConfigModel view);
 
+	void deleteView(String collectionName, String viewName);
+
 	Model retrieveView(String collectionName, String viewName);
 }
