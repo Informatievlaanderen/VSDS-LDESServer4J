@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesStreamShaclValidator;
@@ -18,8 +17,6 @@ import java.util.List;
 @RequestMapping("/admin/api/v1")
 public class AdminRestController {
 
-	private final EventStreamFactory factory;
-
 	private final LdesConfigModelService service;
 
 	@Autowired
@@ -31,8 +28,7 @@ public class AdminRestController {
 	private LdesStreamShaclValidator ldesViewShaclValidator;
 
 	@Autowired
-	public AdminRestController(EventStreamFactory factory, LdesConfigModelService service) {
-		this.factory = factory;
+	public AdminRestController(LdesConfigModelService service) {
 		this.service = service;
 	}
 
