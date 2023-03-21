@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandl
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesStreamShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesStreamException;
+import org.apache.jena.riot.RiotException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,12 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	@ExceptionHandler(value = { InvalidModelException.class })
 	protected ResponseEntity<Object> handleInvalidModelException(
+			RuntimeException ex, WebRequest request) {
+		return handleException(ex, HttpStatus.BAD_REQUEST, request);
+	}
+
+	@ExceptionHandler(value = { RiotException.class })
+	protected ResponseEntity<Object> handleRiotException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
