@@ -11,4 +11,6 @@ public interface LdesConfigRepository {
 	Optional<LdesConfigModel> retrieveLdesStream(String collection);
 
 	LdesConfigModel saveLdesStream(LdesConfigModel ldesConfigModel);
+
+	void deleteLdesStream(String collectionName);
 }
