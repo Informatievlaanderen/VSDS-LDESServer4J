@@ -50,7 +50,7 @@ public class AdminRestController {
 
 	@PutMapping("/eventstreams")
 	public ResponseEntity<LdesConfigModel> putLdesStream(@RequestBody @Validated LdesConfigModel ldesConfigModel) {
-		return ResponseEntity.ok(ldesConfigModel);
+		return ResponseEntity.ok(service.updateEventStream(ldesConfigModel));
 	}
 
 	@GetMapping("/eventstreams/{collectionName}")
