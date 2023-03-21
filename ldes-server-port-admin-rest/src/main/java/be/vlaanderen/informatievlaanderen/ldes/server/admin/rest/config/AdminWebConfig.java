@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.LdesStreamModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.LdesConfigModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesStreamShaclValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AdminWebConfig {
 	@Bean
-	public LdesStreamModelConverter ldesStreamModelConverter() {
-		return new LdesStreamModelConverter();
+	public LdesConfigModelConverter ldesStreamModelConverter() {
+		return new LdesConfigModelConverter();
 	}
 
 	@Bean

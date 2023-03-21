@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesStreamModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesStreamModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesStreamShaclValidator;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class AdminRestController {
 
 	private final EventStreamFactory factory;
 
-	private final LdesStreamModelService service;
+	private final LdesConfigModelService service;
 
 	@Autowired
 	@Qualifier("streamShaclValidator")
@@ -31,7 +31,7 @@ public class AdminRestController {
 	private LdesStreamShaclValidator ldesViewShaclValidator;
 
 	@Autowired
-	public AdminRestController(EventStreamFactory factory, LdesStreamModelService service) {
+	public AdminRestController(EventStreamFactory factory, LdesConfigModelService service) {
 		this.factory = factory;
 		this.service = service;
 	}
@@ -47,18 +47,18 @@ public class AdminRestController {
 	}
 
 	@GetMapping("/eventstreams")
-	public ResponseEntity<List<LdesStreamModel>> retrieveAllLdesStreams() {
+	public ResponseEntity<List<LdesConfigModel>> retrieveAllLdesStreams() {
 		return ResponseEntity
 				.ok(service.retrieveAllEventStreams());
 	}
 
 	@PutMapping("/eventstreams")
-	public ResponseEntity<LdesStreamModel> putLdesStream(@RequestBody @Validated LdesStreamModel ldesStreamModel) {
-		return ResponseEntity.ok(ldesStreamModel);
+	public ResponseEntity<LdesConfigModel> putLdesStream(@RequestBody @Validated LdesConfigModel ldesConfigModel) {
+		return ResponseEntity.ok(ldesConfigModel);
 	}
 
 	@GetMapping("/eventstreams/{collectionName}")
-	public ResponseEntity<LdesStreamModel> getLdesStream(@PathVariable String collectionName) {
+	public ResponseEntity<LdesConfigModel> getLdesStream(@PathVariable String collectionName) {
 		return ResponseEntity.ok(service.retrieveEventStream(collectionName));
 	}
 
@@ -69,9 +69,9 @@ public class AdminRestController {
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<LdesStreamModel> putShape(@PathVariable String collectionName,
-			@RequestBody LdesStreamModel shape) {
-		LdesStreamModel updatedShape = service.updateShape(collectionName, shape);
+	public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
+			@RequestBody LdesConfigModel shape) {
+		LdesConfigModel updatedShape = service.updateShape(collectionName, shape);
 		return ResponseEntity.ok(updatedShape);
 	}
 
@@ -81,8 +81,8 @@ public class AdminRestController {
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/views")
-	public ResponseEntity<LdesStreamModel> putViews(@PathVariable String collectionName,
-			@RequestBody LdesStreamModel view) {
+	public ResponseEntity<LdesConfigModel> putViews(@PathVariable String collectionName,
+			@RequestBody LdesConfigModel view) {
 		return ResponseEntity.ok(service.addView(collectionName, view));
 	}
 
