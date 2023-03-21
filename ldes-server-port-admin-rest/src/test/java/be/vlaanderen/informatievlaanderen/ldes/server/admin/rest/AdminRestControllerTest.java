@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
@@ -66,7 +66,7 @@ class AdminRestControllerTest {
 	void when_StreamNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
 		when(ldesConfigModelService.retrieveEventStream(collectionName))
-				.thenThrow(new MissingLdesStreamException(collectionName));
+				.thenThrow(new MissingLdesConfigException(collectionName));
 		ResultActions resultActions = mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isNotFound());
