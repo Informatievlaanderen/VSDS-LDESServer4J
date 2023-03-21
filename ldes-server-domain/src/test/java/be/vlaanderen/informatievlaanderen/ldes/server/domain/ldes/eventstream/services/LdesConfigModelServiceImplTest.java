@@ -30,7 +30,23 @@ class LdesConfigModelServiceImplTest {
     }
 
     @Test
-    void whenCollectionHasViews() throws URISyntaxException {
+    void whenCollectionExists_thenDelete() throws URISyntaxException {
+        final String collectionName = "collectionName1";
+        final Model model = readModelFromFile("ldes-1.ttl");
+        final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+
+        when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel)).thenReturn(Optional.empty());
+
+        service.deleteEventStream(collectionName);
+
+        verify(repository, times(1)).retrieveLdesStream(collectionName);
+        verify(repository, times(1)).deleteLdesStream(collectionName);
+        verify(repository, times(1)).retrieveLdesStream(collectionName);
+        assertThrows(MissingLdesConfigException.class, () -> service.retrieveEventStream(collectionName));
+    }
+
+    @Test
+    void whenStreamsRetrieved_thenReturnAll() throws URISyntaxException {
         final List<LdesConfigModel> models = new ArrayList<>();
 
         for (int i = 1; i < 4; i++) {
@@ -185,7 +201,6 @@ class LdesConfigModelServiceImplTest {
 
     @Test
     void whenCollectionHasNonExistingViewAndTriesToDelete_thenThrowException() throws URISyntaxException {
-        //TODO
         final String collectionName = "collectionName1";
         final Model model = readModelFromFile("ldes-named-view.ttl");
         final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
@@ -196,7 +211,7 @@ class LdesConfigModelServiceImplTest {
 
         when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
 
-        assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(collectionName, viewName), expectedMessage);
+        assertThrows(MissingLdesConfigException.class, () -> service.deleteView(collectionName, viewName), expectedMessage);
     }
 
     @Test

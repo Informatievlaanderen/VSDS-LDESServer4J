@@ -11,6 +11,8 @@ public interface LdesConfigModelService {
 
 	LdesConfigModel retrieveEventStream(String collectionName);
 
+	void deleteEventStream(String collectionName);
+
 	LdesConfigModel updateEventStream(LdesConfigModel ldesConfigModel);
 
 	Model retrieveShape(String collectionName);
