@@ -1,5 +1,5 @@
 @prefix tree: <http://www.w3.org/1999/02/22-rdf-syntax-tree#> .
-@prefix ldes: <http://ldes.be/> .
+@prefix ldes: <https://w3id.org/ldes#> .
 @prefix example: <http://example.org/> .
 
 ldes:view1 tree:viewDescription [
