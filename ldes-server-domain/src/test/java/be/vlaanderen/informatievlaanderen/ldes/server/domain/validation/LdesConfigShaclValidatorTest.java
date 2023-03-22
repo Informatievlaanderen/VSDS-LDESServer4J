@@ -5,9 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,57 +24,89 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LdesConfigShaclValidatorTest {
-    private LdesConfigShaclValidator validator;
+	private LdesConfigShaclValidator validator;
 
-    @BeforeEach
-    void setUp() throws URISyntaxException, IOException {
-//        validator = new LdesConfigShaclValidator(readShaclShape("streamShaclShape.ttl"));
-        validator = new LdesConfigShaclValidator("streamShaclShape.ttl");
-    }
+	private String readShaclShape(String fileName) throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URI uri = null;
+		uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI();
 
-    private String readShaclShape(String fileName) throws URISyntaxException, IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        URI uri = null;
-        uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI();
+		Stream<String> shape = Files.lines(Paths.get(uri));
+		return shape.collect(Collectors.joining("\n"));
+	}
 
-        Stream<String> shape = Files.lines(Paths.get(uri));
-        return shape.collect(Collectors.joining("\n"));
-    }
+	private void initializeStreamValidator() {
+		validator = new LdesConfigShaclValidator("eventstream/streams/streamShaclShape.ttl");
+	}
 
-    @Test
-    void when_SupportedClassProvided_thenReturnTrue() {
-        assertTrue(validator.supports(LdesConfigModel.class));
-    }
+	@Test
+	void when_SupportedClassProvided_thenReturnTrue() {
+		initializeStreamValidator();
+		assertTrue(validator.supports(LdesConfigModel.class));
+	}
 
-    @Test
-    void when_UnsupportedClassProvided_thenReturnFalse() {
-        assertFalse(validator.supports(EventStream.class));
-        assertFalse(validator.supports(Object.class));
-    }
+	@Test
+	void when_UnsupportedClassProvided_thenReturnFalse() {
+		initializeStreamValidator();
 
-    @Test
-    void when_ValidateProvidedValidData_thenReturnValid() throws URISyntaxException {
-        final Model modelWithShape = readModelFromFile("ldes-with-shape.ttl");
-        final LdesConfigModel ldesConfigModelWithShape = new LdesConfigModel("collectionName", modelWithShape);
+		assertFalse(validator.supports(EventStream.class));
+		assertFalse(validator.supports(Object.class));
+	}
 
-        final Model modelWithoutShape = readModelFromFile("ldes-2.ttl");
-        final LdesConfigModel ldesConfigModelWithoutShape = new LdesConfigModel("collectionName", modelWithoutShape);
+	@ParameterizedTest
+	@ArgumentsSource(LdesConfigShaclValidatorFileNameProvider.class)
+	void when_ValidateProvidedValidEventStream_thenReturnValid(String fileName) throws URISyntaxException {
+		initializeStreamValidator();
+		final Model validEventStream = readModelFromFile(fileName);
 
-        assertDoesNotThrow(() -> validator.validateShape(ldesConfigModelWithShape.getModel()));
-        assertDoesNotThrow(() -> validator.validateShape(ldesConfigModelWithoutShape.getModel()));
-    }
+		assertDoesNotThrow(() -> validator.validateShape(validEventStream));
+	}
 
-    @Test
-    @Disabled("Disabled until the right shacl shapes are provided")
-    void when_ValidateProvidedInvalidData_thenReturnInvalid() throws URISyntaxException {
-        final Model model = readModelFromFile("ldes-without-version-of-path.ttl");
-        assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
-    }
+	@Test
+	void when_ValidateValidShaclShape_thenReturnValid() throws URISyntaxException {
+		validator = new LdesConfigShaclValidator("eventstream/streams/shapeShaclShape.ttl");
 
-    private Model readModelFromFile(String fileName) throws URISyntaxException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String uri = Objects.requireNonNull(classLoader.getResource("eventstream/streams/" + fileName)).toURI()
-                .toString();
-        return RDFDataMgr.loadModel(uri);
-    }
+		final Model validShaclShape = readModelFromFile("valid-shacl-shape.ttl");
+
+		assertDoesNotThrow(() -> validator.validateShape(validShaclShape));
+	}
+
+	@Test
+	void when_validateInvalidShaclShape_thenReturnInvalid() throws URISyntaxException {
+		validator = new LdesConfigShaclValidator("eventstream/streams/shapeShaclShape.ttl");
+
+		final Model model = readModelFromFile("example-shape.ttl");
+		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
+	}
+
+	@Test
+	void when_ValidateProvidedInvalidEventStream_thenReturnInvalid() throws URISyntaxException {
+		initializeStreamValidator();
+
+		final Model model = readModelFromFile("ldes-1.ttl");
+		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
+	}
+
+	private Model readModelFromFile(String fileName) throws URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		String uri = Objects.requireNonNull(classLoader.getResource("eventstream/streams/" + fileName)).toURI()
+				.toString();
+		return RDFDataMgr.loadModel(uri);
+	}
+
+	static class LdesConfigShaclValidatorFileNameProvider implements ArgumentsProvider {
+
+		@Override
+		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+			return Stream.of(Arguments.of("valid-ldes.ttl")
+			//// Below is commented, because eventstreams without shape are not valid yet,
+			//// but are supposed to in the future
+			// ,Arguments.of("valid-ldes-without-shape.ttl")
+
+			//// Below is commented, because eventsteams with a view are not valid yet,
+			//// buy are supposed to in the future
+			// ,Arguments.of("valid-ldes-with-view.ttl")
+			);
+		}
+	}
 }

@@ -2,8 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
 import org.apache.jena.shacl.Shapes;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+@Component
 public class LdesConfigShaclValidator extends AbstractShaclValidator {
 	private final String fileName;
 
