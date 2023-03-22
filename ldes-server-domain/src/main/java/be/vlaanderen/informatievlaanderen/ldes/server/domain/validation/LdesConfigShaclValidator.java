@@ -1,15 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
-import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
-public class LdesStreamShaclValidator extends AbstractShaclValidator {
-	private final String shape;
+public class LdesConfigShaclValidator extends AbstractShaclValidator {
+	private final String fileName;
 
-	public LdesStreamShaclValidator(String shape) {
-		this.shape = shape;
+	public LdesConfigShaclValidator(String fileName) {
+		this.fileName = fileName;
 	}
 
 	@Override
@@ -25,6 +24,6 @@ public class LdesStreamShaclValidator extends AbstractShaclValidator {
 
 	@Override
 	protected void initializeShapes() {
-		shapes = Shapes.parse(RDFDataMgr.loadGraph(shape));
+		shapes = Shapes.parse(fileName);
 	}
 }

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesStreamShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import org.apache.jena.riot.RiotException;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +21,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
-	@ExceptionHandler(value = { LdesStreamShaclValidationException.class })
+	@ExceptionHandler(value = { LdesShaclValidationException.class })
 	protected ResponseEntity<Object> handleLdesStreamShacleValidationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
