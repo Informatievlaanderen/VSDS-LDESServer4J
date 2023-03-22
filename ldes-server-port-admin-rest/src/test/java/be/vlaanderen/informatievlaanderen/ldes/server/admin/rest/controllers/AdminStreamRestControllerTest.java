@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
@@ -6,12 +6,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -29,7 +31,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,12 +40,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminRestController.class,
+@ContextConfiguration(classes = { AdminStreamRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
-class AdminRestControllerTest {
-
+class AdminStreamRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
+	@Autowired
+	@Qualifier("streamShaclValidator")
+	private LdesConfigShaclValidator ldesConfigShaclValidator;
+
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -75,8 +79,8 @@ class AdminRestControllerTest {
 	@Test
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateEventStream(any());
@@ -85,8 +89,8 @@ class AdminRestControllerTest {
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+						.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -109,6 +113,28 @@ class AdminRestControllerTest {
 		mockMvc.perform(request).andDo(print());
 		mockMvc.perform(request)
 				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
+		final Model model = readModelFromFile("ldes-1.ttl");
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel("collectionName1", model);
+		when(ldesConfigModelService.updateEventStream(ldesConfigModel)).thenReturn(ldesConfigModel);
+		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
+						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+	}
+
+	@Test
+	void when_ShapeEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
+		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstream1/shape")
+						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
+				.andDo(print())
+				.andExpect(status().isOk());
+		//verify(ldesStreamShaclValidator, times(1)).validate(any(), any());
 	}
 
 	/*
