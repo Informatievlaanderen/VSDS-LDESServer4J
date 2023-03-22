@@ -79,8 +79,8 @@ class AdminStreamRestControllerTest {
 	@Test
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateEventStream(any());
@@ -89,8 +89,8 @@ class AdminStreamRestControllerTest {
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -121,8 +121,8 @@ class AdminStreamRestControllerTest {
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel("collectionName1", model);
 		when(ldesConfigModelService.updateEventStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -130,11 +130,11 @@ class AdminStreamRestControllerTest {
 	@Test
 	void when_ShapeEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstream1/shape")
-						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
-		//verify(ldesStreamShaclValidator, times(1)).validate(any(), any());
+		// verify(ldesStreamShaclValidator, times(1)).validate(any(), any());
 	}
 
 	/*

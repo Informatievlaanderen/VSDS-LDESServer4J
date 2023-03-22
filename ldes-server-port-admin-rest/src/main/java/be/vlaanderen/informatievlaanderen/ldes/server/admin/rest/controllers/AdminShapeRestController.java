@@ -13,33 +13,33 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminShapeRestController {
-    private final LdesConfigModelService service;
+	private final LdesConfigModelService service;
 
-    @Autowired
-    @Qualifier("shapeShaclValidator")
-    private LdesConfigShaclValidator shapeValidator;
+	@Autowired
+	@Qualifier("shapeShaclValidator")
+	private LdesConfigShaclValidator shapeValidator;
 
-    @Autowired
-    public AdminShapeRestController(LdesConfigModelService service) {
-        this.service = service;
-    }
+	@Autowired
+	public AdminShapeRestController(LdesConfigModelService service) {
+		this.service = service;
+	}
 
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        binder.setValidator(shapeValidator);
-    }
+	@InitBinder
+	private void initBinder(WebDataBinder binder) {
+		binder.setValidator(shapeValidator);
+	}
 
-    @GetMapping("/eventstreams/{collectionName}/shape")
-    public ResponseEntity<Model> getShape(@PathVariable String collectionName) {
-        Model shape = service.retrieveShape(collectionName);
-        return ResponseEntity.ok(shape);
-    }
+	@GetMapping("/eventstreams/{collectionName}/shape")
+	public ResponseEntity<Model> getShape(@PathVariable String collectionName) {
+		Model shape = service.retrieveShape(collectionName);
+		return ResponseEntity.ok(shape);
+	}
 
-    @PutMapping("/eventstreams/{collectionName}/shape")
-    public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
-                                                    @RequestBody LdesConfigModel shape) {
-        LdesConfigModel updatedShape = service.updateShape(collectionName, shape);
-        return ResponseEntity.ok(updatedShape);
-    }
+	@PutMapping("/eventstreams/{collectionName}/shape")
+	public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
+			@RequestBody LdesConfigModel shape) {
+		LdesConfigModel updatedShape = service.updateShape(collectionName, shape);
+		return ResponseEntity.ok(updatedShape);
+	}
 
 }

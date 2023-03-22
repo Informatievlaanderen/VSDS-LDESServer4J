@@ -16,41 +16,41 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminViewsRestController {
-    private final LdesConfigModelService service;
+	private final LdesConfigModelService service;
 
-    @Autowired
-    @Qualifier("viewShaclValidator")
-    private LdesConfigShaclValidator viewValidator;
+	@Autowired
+	@Qualifier("viewShaclValidator")
+	private LdesConfigShaclValidator viewValidator;
 
-    @Autowired
-    public AdminViewsRestController(LdesConfigModelService service) {
-        this.service = service;
-    }
+	@Autowired
+	public AdminViewsRestController(LdesConfigModelService service) {
+		this.service = service;
+	}
 
-    @InitBinder
-    private void initBinder(WebDataBinder binder) {
-        binder.setValidator(viewValidator);
-    }
+	@InitBinder
+	private void initBinder(WebDataBinder binder) {
+		binder.setValidator(viewValidator);
+	}
 
-    @GetMapping("/eventstreams/{collectionName}/views")
-    public ResponseEntity<List<Model>> getViews(@PathVariable String collectionName) {
-        return ResponseEntity.ok(service.retrieveViews(collectionName));
-    }
+	@GetMapping("/eventstreams/{collectionName}/views")
+	public ResponseEntity<List<Model>> getViews(@PathVariable String collectionName) {
+		return ResponseEntity.ok(service.retrieveViews(collectionName));
+	}
 
-    @PutMapping("/eventstreams/{collectionName}/views")
-    public ResponseEntity<LdesConfigModel> putViews(@PathVariable String collectionName,
-                                                    @RequestBody @Validated LdesConfigModel view) {
-        return ResponseEntity.ok(service.addView(collectionName, view));
-    }
+	@PutMapping("/eventstreams/{collectionName}/views")
+	public ResponseEntity<LdesConfigModel> putViews(@PathVariable String collectionName,
+			@RequestBody @Validated LdesConfigModel view) {
+		return ResponseEntity.ok(service.addView(collectionName, view));
+	}
 
-    @DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
-    public ResponseEntity<Object> deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
-        service.deleteView(collectionName, viewName);
-        return ResponseEntity.ok().build();
-    }
+	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
+	public ResponseEntity<Object> deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
+		service.deleteView(collectionName, viewName);
+		return ResponseEntity.ok().build();
+	}
 
-    @GetMapping("/eventstreams/{collectionName}/views/{viewName}")
-    public ResponseEntity<Model> getView(@PathVariable String collectionName, @PathVariable String viewName) {
-        return ResponseEntity.ok(service.retrieveView(collectionName, viewName));
-    }
+	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
+	public ResponseEntity<Model> getView(@PathVariable String collectionName, @PathVariable String viewName) {
+		return ResponseEntity.ok(service.retrieveView(collectionName, viewName));
+	}
 }

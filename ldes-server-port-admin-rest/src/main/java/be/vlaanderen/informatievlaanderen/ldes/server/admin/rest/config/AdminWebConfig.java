@@ -7,24 +7,24 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AdminWebConfig {
-    @Bean
-    public LdesConfigModelConverter ldesStreamModelConverter() {
-        return new LdesConfigModelConverter();
-    }
+	@Bean
+	public LdesConfigModelConverter ldesStreamModelConverter() {
+		return new LdesConfigModelConverter();
+	}
 
-    @Bean("streamShaclValidator")
-    public LdesConfigShaclValidator ldesStreamShaclValidator() {
-        return new LdesConfigShaclValidator("streamShaclShape.ttl");
-    }
+	@Bean("streamShaclValidator")
+	public LdesConfigShaclValidator ldesStreamShaclValidator() {
+		return new LdesConfigShaclValidator("streamShaclShape.ttl");
+	}
 
-    @Bean(name = "viewShaclValidator")
-    public LdesConfigShaclValidator ldesViewShaclValidator() {
-        //shaclShape for view still needs to be added
-        return new LdesConfigShaclValidator("viewShaclShape.ttl");
-    }
+	@Bean(name = "viewShaclValidator")
+	public LdesConfigShaclValidator ldesViewShaclValidator() {
+		// shaclShape for view still needs to be added
+		return new LdesConfigShaclValidator("viewShaclShape.ttl");
+	}
 
-    @Bean(name = "shapeShaclValidator")
-    public LdesConfigShaclValidator ldesShapeShaclValidator() {
-        return new LdesConfigShaclValidator("shapeShaclShape.ttl");
-    }
+	@Bean(name = "shapeShaclValidator")
+	public LdesConfigShaclValidator ldesShapeShaclValidator() {
+		return new LdesConfigShaclValidator("shapeShaclShape.ttl");
+	}
 }
