@@ -1,8 +1,10 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.repository.LdesConfigRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelServiceImpl;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.SHAPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.config.LdesAdminConstants.SHAPE;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -108,8 +110,8 @@ class LdesConfigModelServiceImplTest {
 	@Test
 	void whenCollectionExists_RetrieveShape() throws URISyntaxException {
 		final String collectionName = "collectionName2";
-		final Model view = readModelFromFile("ldes-2.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, view);
+		final Model streamModel = readModelFromFile("ldes-with-shape.ttl");
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, streamModel);
 		final Model shape = ldesConfigModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null)
 				.toList().stream()
 				.findFirst().get().getModel();
