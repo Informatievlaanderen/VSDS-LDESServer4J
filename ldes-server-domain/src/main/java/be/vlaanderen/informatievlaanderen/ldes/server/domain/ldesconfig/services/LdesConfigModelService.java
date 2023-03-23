@@ -1,7 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
-import org.apache.jena.rdf.model.Model;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 
 import java.util.List;
 

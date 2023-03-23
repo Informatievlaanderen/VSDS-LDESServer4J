@@ -1,6 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;

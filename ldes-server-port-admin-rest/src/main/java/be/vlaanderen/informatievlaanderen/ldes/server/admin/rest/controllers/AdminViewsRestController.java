@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
-import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -32,10 +31,10 @@ public class AdminViewsRestController {
 		binder.setValidator(viewValidator);
 	}
 
-    @GetMapping("/eventstreams/{collectionName}/views")
-    public ResponseEntity<List<LdesConfigModel>> getViews(@PathVariable String collectionName) {
-        return ResponseEntity.ok(service.retrieveViews(collectionName));
-    }
+	@GetMapping("/eventstreams/{collectionName}/views")
+	public ResponseEntity<List<LdesConfigModel>> getViews(@PathVariable String collectionName) {
+		return ResponseEntity.ok(service.retrieveViews(collectionName));
+	}
 
 	@PutMapping("/eventstreams/{collectionName}/views")
 	public ResponseEntity<LdesConfigModel> putViews(@PathVariable String collectionName,
@@ -49,8 +48,8 @@ public class AdminViewsRestController {
 		return ResponseEntity.ok().build();
 	}
 
-    @GetMapping("/eventstreams/{collectionName}/views/{viewName}")
-    public ResponseEntity<LdesConfigModel> getView(@PathVariable String collectionName, @PathVariable String viewName) {
-        return ResponseEntity.ok(service.retrieveView(collectionName, viewName));
-    }
+	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
+	public ResponseEntity<LdesConfigModel> getView(@PathVariable String collectionName, @PathVariable String viewName) {
+		return ResponseEntity.ok(service.retrieveView(collectionName, viewName));
+	}
 }

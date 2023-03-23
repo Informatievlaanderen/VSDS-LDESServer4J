@@ -1,8 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.repository.LdesConfigRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.config.LdesAdminConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
@@ -91,11 +91,10 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 				.map(Statement::getResource)
 				.map(resource -> {
 					List<Statement> statements = retrieveAllStatements(resource, ldesConfigModel.getModel());
-							Model viewModel = ModelFactory.createDefaultModel().add(statements);
-							String name = resource.toString();
-							return new LdesConfigModel(resource.getLocalName(), viewModel);
-						}
-						)
+					Model viewModel = ModelFactory.createDefaultModel().add(statements);
+					String name = resource.toString();
+					return new LdesConfigModel(resource.getLocalName(), viewModel);
+				})
 				.toList();
 	}
 
