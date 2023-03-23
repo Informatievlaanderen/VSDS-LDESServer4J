@@ -49,11 +49,10 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 	@Override
 	protected LdesConfigModel readInternal(Class<? extends LdesConfigModel> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
-		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
+		Model model = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
 				Lang.TURTLE);
-		String memberId = extractStreamId(memberModel);
-		return new LdesConfigModel(memberId, memberModel);
+		String memberId = extractStreamId(model);
+		return new LdesConfigModel(memberId, model);
 	}
 
 	private String extractStreamId(Model model) {
@@ -71,11 +70,11 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 	@Override
 	protected void writeInternal(LdesConfigModel ldesConfigModel, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Model fragmentModel = ldesConfigModel.getModel();
+		Model model = ldesConfigModel.getModel();
 
 		StringWriter outputStream = new StringWriter();
 
-		RDFDataMgr.write(outputStream, fragmentModel, TURTLE);
+		RDFDataMgr.write(outputStream, model, TURTLE);
 
 		OutputStream body = outputMessage.getBody();
 		body.write(outputStream.toString().getBytes());

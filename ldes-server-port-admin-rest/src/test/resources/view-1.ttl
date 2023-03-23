@@ -1,0 +1,9 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+
+ldes:view1 a ldes:View ;
+    tree:viewDescription [
+        ldes:retentionPolicy "none"
+    ] .

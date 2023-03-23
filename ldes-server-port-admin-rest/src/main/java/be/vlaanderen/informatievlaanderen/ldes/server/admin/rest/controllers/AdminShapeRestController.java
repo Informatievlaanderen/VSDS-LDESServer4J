@@ -7,13 +7,14 @@ import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminShapeRestController {
-	private final LdesConfigModelService service;
+    private final LdesConfigModelService service;
 
 	@Autowired
 	@Qualifier("shapeShaclValidator")
@@ -29,17 +30,17 @@ public class AdminShapeRestController {
 		binder.setValidator(shapeValidator);
 	}
 
-	@GetMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<Model> getShape(@PathVariable String collectionName) {
-		Model shape = service.retrieveShape(collectionName);
-		return ResponseEntity.ok(shape);
-	}
+    @GetMapping("/eventstreams/{collectionName}/shape")
+    public ResponseEntity<LdesConfigModel> getShape(@PathVariable String collectionName) {
+        LdesConfigModel shape = service.retrieveShape(collectionName);
+        return ResponseEntity.ok(shape);
+    }
 
-	@PutMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
-			@RequestBody LdesConfigModel shape) {
-		LdesConfigModel updatedShape = service.updateShape(collectionName, shape);
-		return ResponseEntity.ok(updatedShape);
-	}
+    @PutMapping("/eventstreams/{collectionName}/shape")
+    public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
+                                                    @RequestBody @Validated LdesConfigModel shape) {
+        LdesConfigModel updatedShape = service.updateShape(collectionName, shape);
+        return ResponseEntity.ok(updatedShape);
+    }
 
 }

@@ -115,7 +115,7 @@ class LdesConfigModelServiceImplTest {
 				.findFirst().get().getModel();
 
 		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
-		assertTrue(service.retrieveShape(collectionName).isIsomorphicWith(shape));
+		assertTrue(service.retrieveShape(collectionName).getModel().isIsomorphicWith(shape));
 	}
 
 	@Test
@@ -159,7 +159,7 @@ class LdesConfigModelServiceImplTest {
 
 		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
 
-		Model actualView = service.retrieveView(collectionName, viewName);
+		Model actualView = service.retrieveView(collectionName, viewName).getModel();
 		Model expectedView = readModelFromFile("view.ttl");
 
 		assertTrue(actualView.isIsomorphicWith(expectedView));
@@ -257,7 +257,7 @@ class LdesConfigModelServiceImplTest {
 		var updatedStatements = model.listStatements().toList();
 
 		assertEquals(4, service.retrieveViews(collectionName).size());
-		Model retrievedView = service.retrieveView(collectionName, viewName);
+		Model retrievedView = service.retrieveView(collectionName, viewName).getModel();
 		assertTrue(retrievedView.isIsomorphicWith(view));
 	}
 
@@ -275,7 +275,7 @@ class LdesConfigModelServiceImplTest {
 		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveLdesStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 
-		final Model oldView = service.retrieveView(collectionName, viewName);
+		final Model oldView = service.retrieveView(collectionName, viewName).getModel();
 		assertFalse(oldView.isIsomorphicWith(newView), "make sure the views are not equal/isomorphic");
 		assertEquals(1, service.retrieveViews(collectionName).size(),
 				"Make sure there is only one view in the collection");
@@ -286,7 +286,7 @@ class LdesConfigModelServiceImplTest {
 		assertEquals(1, service.retrieveViews(collectionName).size(),
 				"make sure the view is updated and not added as second element");
 
-		final Model updatedView = service.retrieveView(collectionName, viewName);
+		final Model updatedView = service.retrieveView(collectionName, viewName).getModel();
 		assertTrue(updatedView.isIsomorphicWith(newView));
 		assertFalse(updatedView.isIsomorphicWith(oldView));
 	}
