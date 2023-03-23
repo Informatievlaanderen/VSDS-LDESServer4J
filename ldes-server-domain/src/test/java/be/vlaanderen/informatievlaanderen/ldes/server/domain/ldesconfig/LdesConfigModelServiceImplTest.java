@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.net.URISyntaxException;
 import java.util.*;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.config.LdesAdminConstants.SHAPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHAPE;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

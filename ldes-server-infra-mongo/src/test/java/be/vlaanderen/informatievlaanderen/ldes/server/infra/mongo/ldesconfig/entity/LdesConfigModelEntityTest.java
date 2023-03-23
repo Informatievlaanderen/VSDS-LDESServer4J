@@ -17,28 +17,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LdesConfigModelEntityTest {
 
-    @Test
-    void fromLdesStreamModel() {
+	@Test
+	void fromLdesStreamModel() {
 
-    }
+	}
 
-    @Test
-    void toLdesStreamModel() {
+	@Test
+	void toLdesStreamModel() {
 
-    }
+	}
 
-    private String readDataFromFile(String fileName, Lang rdfFormat)
-            throws URISyntaxException, IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-        String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-        return content;
-    }
+	private String readDataFromFile(String fileName, Lang rdfFormat)
+			throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+		return content;
+	}
 
-    private Model readModelFromFile(String fileName) throws URISyntaxException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-                .toString();
-        return RDFDataMgr.loadModel(uri);
-    }
+	private Model readModelFromFile(String fileName) throws URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
+				.toString();
+		return RDFDataMgr.loadModel(uri);
+	}
 }
