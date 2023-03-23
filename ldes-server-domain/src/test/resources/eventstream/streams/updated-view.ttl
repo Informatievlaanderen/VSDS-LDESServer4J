@@ -1,4 +1,4 @@
-@prefix tree: <http://www.w3.org/1999/02/22-rdf-syntax-tree#> .
+@prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix example: <http://example.org/> .
 
@@ -6,6 +6,5 @@ ldes:view1 a ldes:View ;
    tree:viewDescription [
       example:fragmentationStrategy [
         a example:Fragmentation ;
-        example:property ldes:propertyPath
     ]
 ] .

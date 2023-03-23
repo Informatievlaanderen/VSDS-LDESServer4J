@@ -36,7 +36,7 @@ class LdesConfigShaclValidatorTest {
 	}
 
 	private void initializeStreamValidator() {
-		validator = new LdesConfigShaclValidator("eventstream/streams/streamShaclShape.ttl");
+		validator = new LdesConfigShaclValidator("eventstream/streams/shaclShapes/streamShaclShape.ttl");
 	}
 
 	@Test
@@ -64,16 +64,16 @@ class LdesConfigShaclValidatorTest {
 
 	@Test
 	void when_ValidateValidShaclShape_thenReturnValid() throws URISyntaxException {
-		validator = new LdesConfigShaclValidator("eventstream/streams/shapeShaclShape.ttl");
+		validator = new LdesConfigShaclValidator("eventstream/streams/shaclShapes/shapeShaclShape.ttl");
 
-		final Model validShaclShape = readModelFromFile("valid-shacl-shape.ttl");
+		final Model validShaclShape = readModelFromFile("valid-shape.ttl");
 
 		assertDoesNotThrow(() -> validator.validateShape(validShaclShape));
 	}
 
 	@Test
 	void when_validateInvalidShaclShape_thenReturnInvalid() throws URISyntaxException {
-		validator = new LdesConfigShaclValidator("eventstream/streams/shapeShaclShape.ttl");
+		validator = new LdesConfigShaclValidator("eventstream/streams/shaclShapes/shapeShaclShape.ttl");
 
 		final Model model = readModelFromFile("example-shape.ttl");
 		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
@@ -83,7 +83,7 @@ class LdesConfigShaclValidatorTest {
 	void when_ValidateProvidedInvalidEventStream_thenReturnInvalid() throws URISyntaxException {
 		initializeStreamValidator();
 
-		final Model model = readModelFromFile("ldes-1.ttl");
+		final Model model = readModelFromFile("ldes-empty.ttl");
 		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
 	}
 
