@@ -7,15 +7,14 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AdminWebConfig {
-	@Bean
-	public LdesConfigModelConverter ldesStreamModelConverter() {
-		return new LdesConfigModelConverter();
-	}
-
-	@Bean("streamShaclValidator")
-	public LdesConfigShaclValidator ldesStreamShaclValidator() {
-		return new LdesConfigShaclValidator("streamShaclShape.ttl");
-	}
+    @Bean
+    public LdesConfigModelConverter ldesStreamModelConverter() {
+        return new LdesConfigModelConverter();
+    }
+    @Bean("streamShaclValidator")
+    public LdesConfigShaclValidator ldesStreamShaclValidator() {
+        return new LdesConfigShaclValidator("streamShaclShape.ttl");
+    }
 
 	@Bean(name = "viewShaclValidator")
 	public LdesConfigShaclValidator ldesViewShaclValidator() {

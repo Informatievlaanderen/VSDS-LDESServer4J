@@ -15,15 +15,15 @@ public interface LdesConfigModelService {
 
 	LdesConfigModel updateEventStream(LdesConfigModel ldesConfigModel);
 
-	Model retrieveShape(String collectionName);
+	LdesConfigModel retrieveShape(String collectionName);
 
 	LdesConfigModel updateShape(String collectionName, LdesConfigModel shape);
 
-	List<Model> retrieveViews(String collectionName);
+	List<LdesConfigModel> retrieveViews(String collectionName);
 
 	LdesConfigModel addView(String collectionName, LdesConfigModel view);
 
 	void deleteView(String collectionName, String viewName);
 
-	Model retrieveView(String collectionName, String viewName);
+	LdesConfigModel retrieveView(String collectionName, String viewName);
 }

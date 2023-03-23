@@ -2,8 +2,9 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix example: <http://example.org/> .
 
-ldes:view1 tree:viewDescription [
-    example:fragmentationStrategy [
+ldes:view1 a ldes:View ;
+   tree:viewDescription [
+      example:fragmentationStrategy [
         a example:Fragmentation ;
         example:property ldes:propertyPath
     ]

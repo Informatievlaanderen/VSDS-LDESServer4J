@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,12 +46,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AdminStreamRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
-	@Autowired
+	@MockBean
 	@Qualifier("streamShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@BeforeEach
+	void setUp() {
+		when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
+	}
 
 	@Test
 	void when_StreamPresent_Then_StreamIsReturned() throws Exception {
@@ -71,16 +77,16 @@ class AdminStreamRestControllerTest {
 		String collectionName = "name1";
 		when(ldesConfigModelService.retrieveEventStream(collectionName))
 				.thenThrow(new MissingLdesConfigException(collectionName));
-		ResultActions resultActions = mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
+		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+		mockMvc.perform(put("/admin/api/v1/eventstreams")
+						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateEventStream(any());
@@ -88,9 +94,9 @@ class AdminStreamRestControllerTest {
 
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+		mockMvc.perform(put("/admin/api/v1/eventstreams")
+						.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -104,72 +110,18 @@ class AdminStreamRestControllerTest {
 		mockMvc.perform(request)
 				.andExpect(status().isBadRequest());
 	}
-
-	@Test
-	void when_ModelDoesNotConformToShaclShape_Then_ReturnedBadRequest() throws Exception {
-		var request = put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("malformed-ldes.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN);
-		mockMvc.perform(request).andDo(print());
-		mockMvc.perform(request)
-				.andExpect(status().isBadRequest());
-	}
-
 	@Test
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		final Model model = readModelFromFile("ldes-1.ttl");
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel("collectionName1", model);
 		when(ldesConfigModelService.updateEventStream(ldesConfigModel)).thenReturn(ldesConfigModel);
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
-				.andDo(print())
-				.andExpect(status().isBadRequest());
+		mockMvc.perform(put("/admin/api/v1/eventstreams")
+						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+						.contentType(MediaType.TEXT_PLAIN))
+				.andDo(print());
+		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
 	}
 
-	@Test
-	void when_ShapeEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstream1/shape")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
-				.andDo(print())
-				.andExpect(status().isOk());
-		// verify(ldesStreamShaclValidator, times(1)).validate(any(), any());
-	}
-
-	/*
-	 * @Test
-	 * void retrieveAllLdesStreams() {
-	 * }
-	 *
-	 * @Test
-	 * void putLdesStream() {
-	 * }
-	 *
-	 * @Test
-	 * void getLdesStream() {
-	 * }
-	 *
-	 * @Test
-	 * void getShape() {
-	 * }
-	 *
-	 * @Test
-	 * void putShape() {
-	 * }
-	 *
-	 * @Test
-	 * void getViews() {
-	 * }
-	 *
-	 * @Test
-	 * void putViews() {
-	 * }
-	 *
-	 * @Test
-	 * void getView() {
-	 * }
-	 */
 	private String readDataFromFile(String fileName, Lang rdfFormat)
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();

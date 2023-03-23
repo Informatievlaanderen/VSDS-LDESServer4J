@@ -48,14 +48,15 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	}
 
 	@Override
-	public Model retrieveShape(String collectionName) {
+	public LdesConfigModel retrieveShape(String collectionName) {
 		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
-		return ldesConfigModel.getModel().listStatements(null,
+		Model shapeModel = ldesConfigModel.getModel().listStatements(null,
 				createProperty(SHAPE), (Resource) null).toList().stream().findFirst()
 				.map(Statement::getModel)
 				.orElse(ModelFactory.createDefaultModel());
+		return new LdesConfigModel(collectionName + "Shape", shapeModel);
 	}
 
 	@Override
@@ -81,15 +82,20 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	}
 
 	@Override
-	public List<Model> retrieveViews(String collectionName) {
+	public List<LdesConfigModel> retrieveViews(String collectionName) {
 		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
 		return ldesConfigModel.getModel().listStatements(null, createProperty(VIEW), (Resource) null)
 				.toList().stream()
 				.map(Statement::getResource)
-				.map(resource -> ldesConfigModel.getModel().listStatements(resource, null, (Resource) null))
-				.map(stmtIterator -> ModelFactory.createDefaultModel().add(stmtIterator))
+				.map(resource -> {
+					List<Statement> statements = retrieveAllStatements(resource, ldesConfigModel.getModel());
+							Model viewModel = ModelFactory.createDefaultModel().add(statements);
+							String name = resource.toString();
+							return new LdesConfigModel(resource.getLocalName(), viewModel);
+						}
+						)
 				.toList();
 	}
 
@@ -135,7 +141,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	}
 
 	@Override
-	public Model retrieveView(String collectionName, String viewName) {
+	public LdesConfigModel retrieveView(String collectionName, String viewName) {
 		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
@@ -152,7 +158,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(viewStatements);
 
-		return model;
+		return new LdesConfigModel(viewName, model);
 	}
 
 	/**
