@@ -1,6 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.repository;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesConfigModelEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.entity.LdesConfigModelEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

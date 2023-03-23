@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects;
 
 import org.apache.jena.rdf.model.Model;
 

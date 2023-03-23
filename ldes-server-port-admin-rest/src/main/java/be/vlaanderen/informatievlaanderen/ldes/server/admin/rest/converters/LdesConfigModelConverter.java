@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelIdException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -20,21 +20,18 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.config.LdesAdminConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.config.LdesAdminConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
 
 public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesConfigModel> {
 
 	private static List<Resource> resources = List.of(createResource(EVENT_STREAM_TYPE),
-			createResource(VIEW), createResource(SHAPE));
+			createResource(VIEW_TYPE), createResource(NODE_SHAPE_TYPE));
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
@@ -64,7 +61,7 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 				return statement.getSubject().toString();
 			}
 		}
-		throw new InvalidModelException(RdfModelConverter.toString(model, Lang.TURTLE));
+		throw new InvalidModelIdException(RdfModelConverter.toString(model, Lang.TURTLE));
 	}
 
 	@Override

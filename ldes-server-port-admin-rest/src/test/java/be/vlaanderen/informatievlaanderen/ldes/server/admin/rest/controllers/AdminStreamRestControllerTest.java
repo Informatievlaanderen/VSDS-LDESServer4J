@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWeb
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -85,8 +85,8 @@ class AdminStreamRestControllerTest {
 	@Test
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateEventStream(any());
@@ -95,8 +95,8 @@ class AdminStreamRestControllerTest {
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -110,14 +110,15 @@ class AdminStreamRestControllerTest {
 		mockMvc.perform(request)
 				.andExpect(status().isBadRequest());
 	}
+
 	@Test
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		final Model model = readModelFromFile("ldes-1.ttl");
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel("collectionName1", model);
 		when(ldesConfigModelService.updateEventStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-						.contentType(MediaType.TEXT_PLAIN))
+				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print());
 		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
 	}

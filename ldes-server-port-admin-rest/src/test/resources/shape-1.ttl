@@ -4,7 +4,7 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 
 
-[] a tree:Shape ;
+[] a tree:NodeShape ;
     ldes:example dcterms:example ;
     ldes:versionOfPath dcterms:example ;
     tree:shape [

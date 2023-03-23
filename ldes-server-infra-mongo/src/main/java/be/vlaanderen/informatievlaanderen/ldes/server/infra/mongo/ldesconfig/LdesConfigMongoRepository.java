@@ -1,9 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.repository.LdesConfigRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.entity.LdesConfigModelEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstreams.repository.LdesConfigEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.entity.LdesConfigModelEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.repository.LdesConfigEntityRepository;
 
 import java.util.List;
 import java.util.Optional;
