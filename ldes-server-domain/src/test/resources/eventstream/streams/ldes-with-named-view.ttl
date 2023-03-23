@@ -8,14 +8,15 @@ ldes:collectionName1 a ldes:EventStream ;
    tree:shape tree:shape ;
    ldes:view ldes:view1 .
 
-tree:shapeNew a sh:NodeShape ;
+tree:shape a sh:NodeShape ;
    sh:nodeShape [
      sh:closed true ;
      sh:propertyShape []
      ] ;
    sh:deactivated true .
 
-ldes:view1 tree:viewDescription [
+ldes:view1 a ldes:View ;
+ tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
        example:property ldes:propertyPath

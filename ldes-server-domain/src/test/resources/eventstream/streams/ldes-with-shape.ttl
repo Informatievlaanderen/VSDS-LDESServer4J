@@ -15,9 +15,10 @@ ldes:collectionName1 a ldes:EventStream ;
          ] ;
       sh:deactivated "false" ;
    ] ;
-   ldes:View ldes:view1 .
+   ldes:view ldes:view1 .
 
-ldes:view1 tree:viewDescription [
+ldes:view1 a ldes:View ;
+ tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
        example:property ldes:propertyPath
