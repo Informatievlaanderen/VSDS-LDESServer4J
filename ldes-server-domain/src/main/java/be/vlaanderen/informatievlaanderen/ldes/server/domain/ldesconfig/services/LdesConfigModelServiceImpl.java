@@ -74,7 +74,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 		ldesConfigModel.getModel().add(shape.getModel());
 		Statement statement = ldesConfigModel.getModel().createStatement(stringToResource(collectionName),
-				createProperty(SHAPE), stringToResource(shape.getId()));
+				createProperty(SHAPE), stringToResource(TREE, shape.getId()));
 		ldesConfigModel.getModel().add(statement);
 		repository.saveLdesStream(ldesConfigModel);
 
@@ -199,6 +199,10 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	}
 
 	protected Resource stringToResource(String name) {
-		return ResourceFactory.createResource(LDES + name);
+		return stringToResource(LDES, name);
+	}
+
+	protected Resource stringToResource(String prefix, String name) {
+		return ResourceFactory.createResource(prefix + name);
 	}
 }
