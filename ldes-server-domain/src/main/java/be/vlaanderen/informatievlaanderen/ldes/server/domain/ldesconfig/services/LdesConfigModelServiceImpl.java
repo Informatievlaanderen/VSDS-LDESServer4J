@@ -93,7 +93,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 					List<Statement> statements = retrieveAllStatements(resource, ldesConfigModel.getModel());
 					Model viewModel = ModelFactory.createDefaultModel().add(statements);
 					String name = resource.toString();
-					return new LdesConfigModel(resource.getLocalName(), viewModel);
+					return new LdesConfigModel(name, viewModel);
 				})
 				.toList();
 	}
