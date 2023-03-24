@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.migrationpackage1;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

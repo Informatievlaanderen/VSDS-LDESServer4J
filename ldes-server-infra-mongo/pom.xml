@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    
+
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server</artifactId>
         <version>0.0.4-SNAPSHOT</version>
     </parent>
-    
+
     <artifactId>ldes-server-infra-mongo</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-       <module>mongo-repository</module>
+        <module>mongo-repository</module>
+        <module>mongock-changeset-1</module>
     </modules>
+
+    <properties>
+        <mongock-bom.version>5.2.2</mongock-bom.version>
+    </properties>
+
 </project>
