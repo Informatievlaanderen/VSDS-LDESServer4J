@@ -15,6 +15,11 @@
         <relative-formatter-path>..</relative-formatter-path>
     </properties>
     <dependencies>
+        <!-- VSDS -->
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-server-domain</artifactId>
+        </dependency>
 
         <!-- SPRING BOOT -->
         <dependency>
@@ -24,12 +29,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-infra-mongo</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 
