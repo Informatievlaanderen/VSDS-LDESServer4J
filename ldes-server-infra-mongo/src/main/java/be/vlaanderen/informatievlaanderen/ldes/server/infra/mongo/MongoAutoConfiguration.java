@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.LdesConfigMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.repository.LdesConfigEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.relations.TreeRelationsMongoRepository;
@@ -44,6 +47,13 @@ public class MongoAutoConfiguration {
 	@ConditionalOnMissingBean
 	public TreeRelationsRepository treeRelationsRepository(final MongoTemplate mongoTemplate) {
 		return new TreeRelationsMongoRepository(mongoTemplate);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public LdesConfigRepository ldesConfigRepository(
+			final LdesConfigEntityRepository ldesConfigEntityRepository) {
+		return new LdesConfigMongoRepository(ldesConfigEntityRepository);
 	}
 
 	@Bean
