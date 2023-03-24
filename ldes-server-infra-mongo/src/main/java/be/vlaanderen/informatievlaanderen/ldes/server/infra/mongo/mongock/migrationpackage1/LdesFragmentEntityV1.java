@@ -55,4 +55,16 @@ public class LdesFragmentEntityV1 {
 		return relations;
 	}
 
+	public Boolean getRoot() {
+		return root;
+	}
+
+	public String getViewName() {
+		return viewName;
+	}
+
+	public List<FragmentPair> getFragmentPairs() {
+		return fragmentPairs;
+	}
+
 }

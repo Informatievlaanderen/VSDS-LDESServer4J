@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document("ldestreenode")
+@Document("ldesfragment")
 public class LdesFragmentEntity {
 	@Id
 	private final String id;
@@ -27,13 +27,14 @@ public class LdesFragmentEntity {
 	@Indexed
 	private final String parentId;
 	private final LocalDateTime immutableTimestamp;
-	private final int numberOfMembers;
+
+	private final Integer numberOfMembers;
 
 	private final List<TreeRelation> relations;
 
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable,
-			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, int numberOfMembers,
+			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, Integer numberOfMembers,
 			List<TreeRelation> relations) {
 		this.id = id;
 		this.root = root;
@@ -56,7 +57,9 @@ public class LdesFragmentEntity {
 	}
 
 	public LdesFragment toLdesFragment() {
-		return new LdesFragment(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted, numberOfMembers,
+		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
+		return new LdesFragment(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted,
+				effectiveNumberOfMembers,
 				relations);
 	}
 
