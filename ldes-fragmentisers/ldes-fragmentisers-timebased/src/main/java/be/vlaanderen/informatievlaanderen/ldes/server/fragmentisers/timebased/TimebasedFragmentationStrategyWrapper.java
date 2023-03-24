@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
@@ -24,33 +22,28 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
-		TreeRelationsRepository treeRelationsRepository = applicationContext
-				.getBean(TreeRelationsRepository.class);
-		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
+				ldesFragmentRepository);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
 				openFragmentProvider, observationRegistry, ldesFragmentRepository);
 
 	}
 
 	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
-			LdesFragmentRepository ldesFragmentRepository, TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			LdesFragmentRepository ldesFragmentRepository) {
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
+				ldesFragmentRepository,
 				timebasedFragmentationConfig.fragmentationProperty());
 		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository,
 				timebasedFragmentationConfig.memberLimit());
 	}
 
 	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
-			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property timebasedFragmentationConfig) {
+			Property timebasedFragmentationConfig) {
 		return new TimeBasedFragmentCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
+				ldesFragmentRepository,
 				timebasedFragmentationConfig);
 	}
 

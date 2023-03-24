@@ -24,16 +24,13 @@ class TimeBasedFragmentCreatorTest {
 	private static final String VIEW = "view";
 	private TimeBasedFragmentCreator fragmentCreator;
 	private LdesFragmentRepository ldesFragmentRepository;
-	private NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	@BeforeEach
 	void setUp() {
-		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
-		TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(
-				ldesFragmentRepository, treeRelationsRepository,
-				nonCriticalTasksExecutor, createProperty(PROV_GENERATED_AT_TIME));
+				ldesFragmentRepository,
+				createProperty(PROV_GENERATED_AT_TIME));
 	}
 
 	@Test
@@ -63,10 +60,9 @@ class TimeBasedFragmentCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
-		InOrder inOrder = inOrder(ldesFragmentRepository, nonCriticalTasksExecutor);
-		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
+		InOrder inOrder = inOrder(ldesFragmentRepository);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
-		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
 	}
 
