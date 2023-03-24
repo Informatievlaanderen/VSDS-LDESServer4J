@@ -142,4 +142,8 @@ public class LdesFragment {
 	public List<TreeRelation> getRelations() {
 		return relations;
 	}
+
+	public void deleteRelation(TreeRelation oldTreeRelation) {
+		relations.remove(oldTreeRelation);
+	}
 }
