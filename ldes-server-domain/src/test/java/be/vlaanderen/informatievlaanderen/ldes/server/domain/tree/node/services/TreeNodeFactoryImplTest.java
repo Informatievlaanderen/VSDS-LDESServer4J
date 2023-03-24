@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,18 +29,16 @@ class TreeNodeFactoryImplTest {
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
 	private MemberRepository memberRepository;
-	private TreeRelationsRepository treeRelationsRepository;
 
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		memberRepository = mock(MemberRepository.class);
-		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setHostName(HOSTNAME);
 		ldesConfig.setCollectionName(COLLECTION_NAME);
 		treeNodeFactory = new TreeNodeFactoryImpl(ldesConfig,
-				ldesFragmentRepository, memberRepository, treeRelationsRepository);
+				ldesFragmentRepository, memberRepository);
 	}
 
 	@Test
@@ -57,11 +54,10 @@ class TreeNodeFactoryImplTest {
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME, List.of());
+		ldesFragment.addRelation(new TreeRelation("path", "node", "value", "valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
 		List<Member> members = List.of(new Member("member", null, List.of()));
 		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members);
-		List<TreeRelation> treeRelations = List.of(new TreeRelation("path", "node", "value", "valueType", "relation"));
-		when(treeRelationsRepository.getRelations(TREE_NODE_ID)).thenReturn(treeRelations);
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID);
 
@@ -69,7 +65,8 @@ class TreeNodeFactoryImplTest {
 		assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isSoftDeleted());
 		assertEquals(members, treeNode.getMembers());
-		assertEquals(treeRelations, treeNode.getRelations());
+		assertEquals(List.of(new TreeRelation("path", "node", "value", "valueType", "relation")),
+				treeNode.getRelations());
 	}
 
 }
