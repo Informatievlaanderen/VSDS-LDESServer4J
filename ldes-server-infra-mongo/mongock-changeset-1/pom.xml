@@ -18,6 +18,17 @@
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>mongo-repository</artifactId>
             <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- MONGOCK -->
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongock-springboot-v3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.mongock</groupId>
+            <artifactId>mongodb-springdata-v4-driver</artifactId>
         </dependency>
     </dependencies>
 
@@ -30,5 +41,7 @@
             </plugin>
         </plugins>
     </build>
+
+
 
 </project>
