@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 
-@ChangeUnit(id = "member-updater", order = "1", author = "VSDS")
+@ChangeUnit(id = "member-updater-changeset-1", order = "1", author = "VSDS")
 public class MemberUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 

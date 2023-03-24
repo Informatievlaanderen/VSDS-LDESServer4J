@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ChangeUnit(id = "fragment-updater", order = "2", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-1", order = "2", author = "VSDS")
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 
