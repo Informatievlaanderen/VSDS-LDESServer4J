@@ -43,4 +43,7 @@ public class LdesMemberEntity {
 		return new Member(this.id, ldesMemberModel, this.treeNodeReferences);
 	}
 
+	public String getId() {
+		return id;
+	}
 }

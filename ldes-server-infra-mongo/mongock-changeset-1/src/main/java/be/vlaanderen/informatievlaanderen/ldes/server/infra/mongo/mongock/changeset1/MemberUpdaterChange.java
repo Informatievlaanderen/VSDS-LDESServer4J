@@ -12,6 +12,7 @@ import java.util.List;
 
 @ChangeUnit(id = "member-updater-changeset-1", order = "1", author = "VSDS")
 public class MemberUpdaterChange {
+	private static final String MEMBERS = "members";
 	private final MongoTemplate mongoTemplate;
 
 	public MemberUpdaterChange(MongoTemplate mongoTemplate) {
@@ -26,7 +27,7 @@ public class MemberUpdaterChange {
 		List<LdesMemberEntityV1> ldesMemberEntityV1s = mongoTemplate.find(new Query(), LdesMemberEntityV1.class);
 		ldesMemberEntityV1s.forEach(ldesMember -> {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("members").is(ldesMember.getId()));
+			query.addCriteria(Criteria.where(MEMBERS).is(ldesMember.getId()));
 			List<String> treeNodeReferences = mongoTemplate.find(query, LdesFragmentEntityV1.class).stream()
 					.map(LdesFragmentEntityV1::getId).toList();
 			mongoTemplate
@@ -36,5 +37,8 @@ public class MemberUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
+		List<LdesMemberEntity> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntity.class);
+		ldesMemberEntities.forEach(ldesMember -> mongoTemplate
+				.save(new LdesMemberEntityV1(ldesMember.getId(), ldesMember.getModel())));
 	}
 }

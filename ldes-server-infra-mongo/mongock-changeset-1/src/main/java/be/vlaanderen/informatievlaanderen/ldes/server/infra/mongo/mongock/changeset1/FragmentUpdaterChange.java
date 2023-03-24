@@ -2,16 +2,20 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.chang
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository.TREE_NODE_REFERENCES;
 
 @ChangeUnit(id = "fragment-updater-changeset-1", order = "2", author = "VSDS")
 public class FragmentUpdaterChange {
@@ -44,6 +48,19 @@ public class FragmentUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
+		List<LdesFragmentEntity> ldesFragmentEntities = mongoTemplate.find(new Query(), LdesFragmentEntity.class);
+		ldesFragmentEntities.forEach(fragmentEntity -> {
+			Query query = new Query();
+			query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(fragmentEntity.getId()));
+			List<String> members = mongoTemplate.find(query, LdesMemberEntity.class).stream()
+					.map(LdesMemberEntity::getId).toList();
+			LdesFragmentEntityV1 ldesFragmentEntityV1 = new LdesFragmentEntityV1(fragmentEntity.getId(),
+					fragmentEntity.getRoot(), fragmentEntity.getViewName(),
+					fragmentEntity.getFragmentPairs(),
+					fragmentEntity.isImmutable(), fragmentEntity.getRelations(), members);
+			mongoTemplate
+					.save(ldesFragmentEntityV1);
+		});
 	}
 
 	private String getParentId(List<FragmentPair> fragmentPairs, String viewName) {

@@ -79,4 +79,12 @@ public class LdesFragmentEntity {
 				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
 				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations());
 	}
+
+	public Boolean getRoot() {
+		return root;
+	}
+
+	public List<TreeRelation> getRelations() {
+		return relations;
+	}
 }
