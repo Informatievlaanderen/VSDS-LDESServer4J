@@ -19,7 +19,7 @@ public class LdesConfigMongoRepository implements LdesConfigRepository {
 	public List<LdesConfigModel> retrieveAllLdesStreams() {
 		return repository
 				.findAll()
-				.stream().map(LdesConfigModelEntity::toLdesStreamModel)
+				.stream().map(LdesConfigModelEntity::toLdesConfigModel)
 				.toList();
 	}
 
@@ -27,7 +27,7 @@ public class LdesConfigMongoRepository implements LdesConfigRepository {
 	public Optional<LdesConfigModel> retrieveLdesStream(String collection) {
 		return repository
 				.findAllById(collection)
-				.map(LdesConfigModelEntity::toLdesStreamModel);
+				.map(LdesConfigModelEntity::toLdesConfigModel);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class LdesConfigMongoRepository implements LdesConfigRepository {
 
 	@Override
 	public LdesConfigModel saveLdesStream(LdesConfigModel ldesConfigModel) {
-		repository.save(LdesConfigModelEntity.fromLdesStreamModel(ldesConfigModel));
+		repository.save(LdesConfigModelEntity.fromLdesConfigtModel(ldesConfigModel));
 		return ldesConfigModel;
 	}
 
