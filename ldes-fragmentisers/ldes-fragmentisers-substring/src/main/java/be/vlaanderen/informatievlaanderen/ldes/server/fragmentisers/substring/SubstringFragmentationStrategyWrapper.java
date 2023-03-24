@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
@@ -22,21 +20,18 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
-		TreeRelationsRepository treeRelationsRepository = applicationContext
-				.getBean(TreeRelationsRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
-		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
 		LocalMemberSupplier localMemberSupplier = new LocalMemberSupplier(substringConfig);
 		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 		SubstringRelationsAttributer substringRelationsAttributer = new SubstringRelationsAttributer(
-				treeRelationsRepository, nonCriticalTasksExecutor, substringConfig);
+				ldesFragmentRepository, substringConfig);
 		SubstringFragmentFinder substringFragmentFinder = new SubstringFragmentFinder(substringFragmentCreator,
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,
 				observationRegistry, substringFragmentFinder, substringFragmentCreator,
-				treeRelationsRepository, localMemberSupplier);
+				ldesFragmentRepository, localMemberSupplier);
 	}
 
 	private SubstringConfig createSubstringConfig(ConfigProperties properties) {

@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
@@ -24,8 +24,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
-			ObservationRegistry observationRegistry, TreeRelationsRepository treeRelationsRepository) {
-		super(fragmentationStrategy, treeRelationsRepository);
+			ObservationRegistry observationRegistry, LdesFragmentRepository ldesFragmentRepository) {
+		super(fragmentationStrategy, ldesFragmentRepository);
 		this.geospatialBucketiser = geospatialBucketiser;
 		this.fragmentCreator = fragmentCreator;
 		this.observationRegistry = observationRegistry;
@@ -41,8 +41,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 		Set<String> tiles = geospatialBucketiser.bucketise(member);
 		tiles
 				.stream()
-				.parallel()
 				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment))
+				.parallel()
 				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
 						geospatialFragmentationObservation));
 		geospatialFragmentationObservation.stop();
