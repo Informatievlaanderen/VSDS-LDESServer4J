@@ -45,7 +45,7 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-infra-mongo</artifactId>
+                    <artifactId>mongo-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

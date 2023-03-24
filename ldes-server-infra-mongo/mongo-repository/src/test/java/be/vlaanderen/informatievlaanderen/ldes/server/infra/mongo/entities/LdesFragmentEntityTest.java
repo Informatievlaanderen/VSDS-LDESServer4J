@@ -1,4 +1,6 @@
-// package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;// package
+																			// be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities;
+
 //
 // import
 // be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
