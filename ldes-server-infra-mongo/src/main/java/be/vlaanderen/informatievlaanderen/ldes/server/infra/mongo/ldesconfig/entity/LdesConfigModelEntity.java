@@ -20,7 +20,7 @@ public class LdesConfigModelEntity {
 		this.model = model;
 	}
 
-	public static LdesConfigModelEntity fromLdesStreamModel(LdesConfigModel ldesConfigModel) {
+	public static LdesConfigModelEntity fromLdesConfigtModel(LdesConfigModel ldesConfigModel) {
 		String ldesMemberString = RDFWriter.source(ldesConfigModel.getModel())
 				.lang(Lang.TURTLE)
 				.asString();
@@ -29,7 +29,7 @@ public class LdesConfigModelEntity {
 				ldesMemberString);
 	}
 
-	public LdesConfigModel toLdesStreamModel() {
+	public LdesConfigModel toLdesConfigModel() {
 		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.TURTLE).toModel();
 		return new LdesConfigModel(this.id, ldesMemberModel);
 	}
