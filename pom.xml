@@ -52,7 +52,7 @@
         <jupiter.version>5.9.2</jupiter.version>
         <mockito.version>5.2.0</mockito.version>
         <byte-buddy.version>1.14.2</byte-buddy.version>
-        <de.flapdoodle.embed.mongo.version>4.6.1</de.flapdoodle.embed.mongo.version>
+        <de.flapdoodle.embed.mongo.version>4.6.2</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
 
