@@ -29,17 +29,17 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel retrieveEventStream(String collectionName) {
-		return repository.retrieveLdesStream(collectionName)
+		return repository.retrieveLdesStream(LDES + collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 	}
 
 	@Override
 	public void deleteEventStream(String collectionName) {
-		if (repository.retrieveLdesStream(collectionName).isEmpty()) {
+		if (repository.retrieveLdesStream(LDES + collectionName).isEmpty()) {
 			throw new MissingLdesConfigException(collectionName);
 		}
 
-		repository.deleteLdesStream(collectionName);
+		repository.deleteLdesStream(LDES + collectionName);
 	}
 
 	@Override
@@ -49,20 +49,23 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel retrieveShape(String collectionName) {
-		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
+		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
 
 		Model shapeModel = ldesConfigModel.getModel().listStatements(null,
 				createProperty(SHAPE), (Resource) null).toList().stream().findFirst()
-				.map(Statement::getModel)
+				.map(statement -> retrieveAllStatements(statement.getResource(), ldesConfigModel.getModel()))
+				.map(statements -> {
+					Model model = ModelFactory.createDefaultModel();
+					model.add(statements);
+					return model;
+				})
 				.orElse(ModelFactory.createDefaultModel());
 		return new LdesConfigModel(collectionName + "Shape", shapeModel);
 	}
 
 	@Override
 	public LdesConfigModel updateShape(String collectionName, LdesConfigModel shape) {
-		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
+		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null);
 
@@ -83,8 +86,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public List<LdesConfigModel> retrieveViews(String collectionName) {
-		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
+		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
 
 		return ldesConfigModel.getModel().listStatements(null, createProperty(VIEW), (Resource) null)
 				.toList().stream()
@@ -100,8 +102,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel addView(String collectionName, LdesConfigModel view) {
-		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
+		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, ResourceFactory.createProperty(VIEW),
 				idStringToResource(view.getId()));
@@ -122,8 +123,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public void deleteView(String collectionName, String viewName) {
-		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
+		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(idStringToResource(collectionName),
 				createProperty(VIEW), idStringToResource(viewName));
@@ -141,8 +141,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel retrieveView(String collectionName, String viewName) {
-		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
-				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
+		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(idStringToResource(collectionName),
 				createProperty(VIEW), idStringToResource(viewName));

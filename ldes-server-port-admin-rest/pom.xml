@@ -27,9 +27,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-server-infra-mongo</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
-            <scope>compile</scope>
+            <artifactId>ldes-server-domain</artifactId>
         </dependency>
     </dependencies>
 

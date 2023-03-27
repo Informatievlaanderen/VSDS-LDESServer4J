@@ -13,8 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.net.URISyntaxException;
 import java.util.*;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHAPE;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -34,14 +33,14 @@ class LdesConfigModelServiceImplTest {
 		final Model model = readModelFromFile("ldes-empty.ttl");
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel))
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel))
 				.thenReturn(Optional.empty());
 
 		service.deleteEventStream(collectionName);
 
-		verify(repository, times(1)).retrieveLdesStream(collectionName);
-		verify(repository, times(1)).deleteLdesStream(collectionName);
-		verify(repository, times(1)).retrieveLdesStream(collectionName);
+		verify(repository, times(1)).retrieveLdesStream(LDES + collectionName);
+		verify(repository, times(1)).deleteLdesStream(LDES + collectionName);
+		verify(repository, times(1)).retrieveLdesStream(LDES + collectionName);
 		assertThrows(MissingLdesConfigException.class, () -> service.retrieveEventStream(collectionName));
 	}
 
@@ -49,13 +48,13 @@ class LdesConfigModelServiceImplTest {
 	void whenNonExistingCollectionDeleted_thenThrowError() throws URISyntaxException {
 		final String collectionName = "non-existing";
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.empty());
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.empty());
 
 		final String expectedMessage = "No ldes event stream exists with identifier: " + collectionName;
 		assertThrows(MissingLdesConfigException.class, () -> service.deleteEventStream(collectionName),
 				expectedMessage);
-		verify(repository, times(1)).retrieveLdesStream(collectionName);
-		verify(repository, times(0)).deleteLdesStream(collectionName);
+		verify(repository, times(1)).retrieveLdesStream(LDES + collectionName);
+		verify(repository, times(0)).deleteLdesStream(LDES + collectionName);
 	}
 
 	@Test
@@ -81,7 +80,7 @@ class LdesConfigModelServiceImplTest {
 		final Model view = readModelFromFile("ldes-with-named-view.ttl");
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, view);
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		assertEquals(ldesConfigModel, service.retrieveEventStream(collectionName));
 	}
 
@@ -91,7 +90,7 @@ class LdesConfigModelServiceImplTest {
 
 		String expectedMessage = "No ldes event stream exists with identifier: " + collectionName;
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.empty());
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.empty());
 		assertThrows(MissingLdesConfigException.class, () -> service.retrieveEventStream(collectionName),
 				expectedMessage);
 	}
@@ -111,13 +110,11 @@ class LdesConfigModelServiceImplTest {
 	@Test
 	void whenCollectionExists_RetrieveShape() throws URISyntaxException {
 		final String collectionName = "collectionName1";
-		final Model view = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, view);
-		final Model shape = ldesConfigModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null)
-				.toList().stream()
-				.findFirst().get().getModel();
+		final Model model = readModelFromFile("ldes-with-named-view.ttl");
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final Model shape = readModelFromFile("example-shape.ttl");
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		assertTrue(service.retrieveShape(collectionName).getModel().isIsomorphicWith(shape));
 	}
 
@@ -133,7 +130,7 @@ class LdesConfigModelServiceImplTest {
 
 		final Model modelWitNewShape = readModelFromFile("ldes-with-named-view.ttl");
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveLdesStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 
 		LdesConfigModel updatedLdesStreamShape = service.updateShape(collectionName, ldesStreamShape);
@@ -148,7 +145,7 @@ class LdesConfigModelServiceImplTest {
 		final Model view = readModelFromFile("ldes-multiple-views.ttl");
 		LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, view);
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		assertEquals(3, service.retrieveViews(collectionName).size());
 	}
 
@@ -160,7 +157,7 @@ class LdesConfigModelServiceImplTest {
 
 		final String viewName = "view1";
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 
 		Model actualView = service.retrieveView(collectionName, viewName).getModel();
 		Model expectedView = readModelFromFile("view.ttl");
@@ -178,7 +175,7 @@ class LdesConfigModelServiceImplTest {
 
 		final String expectedMessage = "No view exists with identifier: " + collectionName + "/" + viewName;
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 
 		assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(collectionName, viewName),
 				expectedMessage);
@@ -194,7 +191,7 @@ class LdesConfigModelServiceImplTest {
 
 		final String expectedMessage = "No view exists with identifier: " + collectionName + "/" + viewName;
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 
 		assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(collectionName, viewName),
 				expectedMessage);
@@ -210,7 +207,7 @@ class LdesConfigModelServiceImplTest {
 
 		final Model modelWithoutView = readModelFromFile("ldes-empty.ttl");
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveLdesStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 
 		service.deleteView(collectionName, viewName);
@@ -228,7 +225,7 @@ class LdesConfigModelServiceImplTest {
 
 		final String expectedMessage = "No view exists with identifier: " + collectionName + "/" + viewName;
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 
 		assertThrows(MissingLdesConfigException.class, () -> service.deleteView(collectionName, viewName),
 				expectedMessage);
@@ -243,17 +240,15 @@ class LdesConfigModelServiceImplTest {
 
 		final Model view = readModelFromFile("view.ttl");
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveLdesStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 
 		assertEquals(3, service.retrieveViews(collectionName).size());
 
-		LdesConfigModel ldesStreamView = new LdesConfigModel(viewName, view);
+		LdesConfigModel ldesStreamView = new LdesConfigModel(LDES + viewName, view);
 		Model addedView = service.addView(collectionName, ldesStreamView).getModel();
 
 		assertTrue(addedView.isIsomorphicWith(view));
-
-		var updatedStatements = model.listStatements().toList();
 
 		assertEquals(4, service.retrieveViews(collectionName).size());
 		Model retrievedView = service.retrieveView(collectionName, viewName).getModel();
@@ -269,9 +264,9 @@ class LdesConfigModelServiceImplTest {
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
 
 		final Model newView = readModelFromFile("updated-view.ttl");
-		final LdesConfigModel newLdesConfigView = new LdesConfigModel("view1", newView);
+		final LdesConfigModel newLdesConfigView = new LdesConfigModel(LDES + "view1", newView);
 
-		when(repository.retrieveLdesStream(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveLdesStream(LDES + collectionName)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveLdesStream(ldesConfigModel)).thenReturn(ldesConfigModel);
 
 		assertEquals(1, service.retrieveViews(collectionName).size());

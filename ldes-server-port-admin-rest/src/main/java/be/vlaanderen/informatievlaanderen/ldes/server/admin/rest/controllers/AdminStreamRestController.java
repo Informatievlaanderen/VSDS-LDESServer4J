@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.dtos.LdesConfigModelListDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
@@ -9,8 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin/api/v1")
@@ -32,9 +31,9 @@ public class AdminStreamRestController {
 	}
 
 	@GetMapping("/eventstreams")
-	public ResponseEntity<List<LdesConfigModel>> retrieveAllLdesStreams() {
+	public ResponseEntity<LdesConfigModelListDto> retrieveAllLdesStreams() {
 		return ResponseEntity
-				.ok(service.retrieveAllEventStreams());
+				.ok(new LdesConfigModelListDto(service.retrieveAllEventStreams()));
 	}
 
 	@PutMapping("/eventstreams")
