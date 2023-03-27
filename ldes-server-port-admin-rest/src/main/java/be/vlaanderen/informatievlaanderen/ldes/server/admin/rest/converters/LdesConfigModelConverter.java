@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelServiceImpl.extractIdFromResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
 
@@ -57,7 +58,7 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 					.nextOptional();
 			if (statementOptional.isPresent()) {
 				Statement statement = statementOptional.get();
-				return statement.getSubject().toString();
+				return extractIdFromResource(statement.getSubject());
 			}
 		}
 		throw new InvalidModelIdException(RdfModelConverter.toString(model, Lang.TURTLE));

@@ -4,9 +4,9 @@
 
 ldes:collectionName1 a ldes:EventStream ;
    ldes:versionOfPath "1.1" ;
-   tree:shape tree:shape .
+   tree:shape ldes:shape .
 
-tree:shape a sh:NodeShape ;
+ldes:shape a sh:NodeShape ;
    sh:nodeShape [
      sh:closed true ;
      sh:propertyShape []

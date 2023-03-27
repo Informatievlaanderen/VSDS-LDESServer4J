@@ -2,7 +2,7 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
-tree:shape a sh:NodeShape ;
+ldes:shape a sh:NodeShape ;
    sh:nodeShape [
      sh:closed true ;
      sh:propertyShape []
