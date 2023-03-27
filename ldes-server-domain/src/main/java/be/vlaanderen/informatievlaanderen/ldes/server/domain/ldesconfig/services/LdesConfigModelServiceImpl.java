@@ -29,17 +29,17 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel retrieveEventStream(String collectionName) {
-		return repository.retrieveLdesStream(LDES + collectionName)
+		return repository.retrieveLdesStream(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 	}
 
 	@Override
 	public void deleteEventStream(String collectionName) {
-		if (repository.retrieveLdesStream(LDES + collectionName).isEmpty()) {
+		if (repository.retrieveLdesStream(collectionName).isEmpty()) {
 			throw new MissingLdesConfigException(collectionName);
 		}
 
-		repository.deleteLdesStream(LDES + collectionName);
+		repository.deleteLdesStream(collectionName);
 	}
 
 	@Override
