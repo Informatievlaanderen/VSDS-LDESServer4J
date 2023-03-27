@@ -16,13 +16,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = { MissingLdesConfigException.class })
-	protected ResponseEntity<Object> handleMissingLdesStreamException(
+	protected ResponseEntity<Object> hanldeMissingLdesConfigException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
 	@ExceptionHandler(value = { LdesShaclValidationException.class })
-	protected ResponseEntity<Object> handleLdesStreamShacleValidationException(
+	protected ResponseEntity<Object> handleLdesShacleValidationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}

@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LdesConfigRepository {
-	List<LdesConfigModel> retrieveAllLdesStreams();
+	List<LdesConfigModel> retrieveAllConfigModels();
 
-	Optional<LdesConfigModel> retrieveLdesStream(String collection);
+	Optional<LdesConfigModel> retrieveConfigModel(String collection);
 
-	LdesConfigModel saveLdesStream(LdesConfigModel ldesConfigModel);
+	LdesConfigModel saveConfigModel(LdesConfigModel ldesConfigModel);
 
-	void deleteLdesStream(String collectionName);
+	void deleteConfigModel(String collectionName);
 }

@@ -23,33 +23,33 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	}
 
 	@Override
-	public List<LdesConfigModel> retrieveAllEventStreams() {
-		return repository.retrieveAllLdesStreams();
+	public List<LdesConfigModel> retrieveAllConfigModels() {
+		return repository.retrieveAllConfigModels();
 	}
 
 	@Override
-	public LdesConfigModel retrieveEventStream(String collectionName) {
-		return repository.retrieveLdesStream(collectionName)
+	public LdesConfigModel retrieveConfigModel(String collectionName) {
+		return repository.retrieveConfigModel(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 	}
 
 	@Override
-	public void deleteEventStream(String collectionName) {
-		if (repository.retrieveLdesStream(collectionName).isEmpty()) {
+	public void deleteConfigModel(String collectionName) {
+		if (repository.retrieveConfigModel(collectionName).isEmpty()) {
 			throw new MissingLdesConfigException(collectionName);
 		}
 
-		repository.deleteLdesStream(collectionName);
+		repository.deleteConfigModel(collectionName);
 	}
 
 	@Override
-	public LdesConfigModel updateEventStream(LdesConfigModel ldesConfigModel) {
-		return repository.saveLdesStream(ldesConfigModel);
+	public LdesConfigModel updateConfigModel(LdesConfigModel ldesConfigModel) {
+		return repository.saveConfigModel(ldesConfigModel);
 	}
 
 	@Override
 	public LdesConfigModel retrieveShape(String collectionName) {
-		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
+		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 
 		Model shapeModel = ldesConfigModel.getModel().listStatements(null,
 				createProperty(SHAPE), (Resource) null).toList().stream().findFirst()
@@ -60,12 +60,12 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 					return model;
 				})
 				.orElse(ModelFactory.createDefaultModel());
-		return new LdesConfigModel(collectionName + "Shape", shapeModel);
+		return LdesConfigModel.createLdesConfigShape(collectionName, shapeModel);
 	}
 
 	@Override
 	public LdesConfigModel updateShape(String collectionName, LdesConfigModel shape) {
-		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
+		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null);
 
@@ -79,14 +79,14 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		Statement statement = ldesConfigModel.getModel().createStatement(idStringToResource(collectionName),
 				createProperty(SHAPE), idStringToResource(shape.getId()));
 		ldesConfigModel.getModel().add(statement);
-		repository.saveLdesStream(ldesConfigModel);
+		repository.saveConfigModel(ldesConfigModel);
 
 		return shape;
 	}
 
 	@Override
 	public List<LdesConfigModel> retrieveViews(String collectionName) {
-		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
+		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 
 		return ldesConfigModel.getModel().listStatements(null, createProperty(VIEW), (Resource) null)
 				.toList().stream()
@@ -102,7 +102,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel addView(String collectionName, LdesConfigModel view) {
-		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
+		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, ResourceFactory.createProperty(VIEW),
 				idStringToResource(view.getId()));
@@ -116,14 +116,14 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 				createProperty(VIEW), idStringToResource(view.getId()));
 		ldesConfigModel.getModel().add(viewStatement);
 		ldesConfigModel.getModel().add(view.getModel());
-		repository.saveLdesStream(ldesConfigModel);
+		repository.saveConfigModel(ldesConfigModel);
 
 		return view;
 	}
 
 	@Override
 	public void deleteView(String collectionName, String viewName) {
-		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
+		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(idStringToResource(collectionName),
 				createProperty(VIEW), idStringToResource(viewName));
@@ -136,12 +136,12 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		List<Statement> statements = retrieveAllStatements(statement, ldesConfigModel.getModel());
 		ldesConfigModel.getModel().remove(statements);
 
-		repository.saveLdesStream(ldesConfigModel);
+		repository.saveConfigModel(ldesConfigModel);
 	}
 
 	@Override
 	public LdesConfigModel retrieveView(String collectionName, String viewName) {
-		LdesConfigModel ldesConfigModel = retrieveEventStream(collectionName);
+		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(idStringToResource(collectionName),
 				createProperty(VIEW), idStringToResource(viewName));

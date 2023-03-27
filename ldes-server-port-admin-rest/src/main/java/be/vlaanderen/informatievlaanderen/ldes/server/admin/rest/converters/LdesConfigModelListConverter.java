@@ -13,7 +13,6 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import java.util.Collections;
 import java.util.List;
 
 import static org.apache.jena.riot.RDFFormat.TURTLE;
@@ -32,8 +31,8 @@ public class LdesConfigModelListConverter extends AbstractHttpMessageConverter<L
 
 	@Override
 	protected LdesConfigModelListDto readInternal(Class<? extends LdesConfigModelListDto> clazz,
-			HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
-		return new LdesConfigModelListDto(Collections.emptyList());
+			HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

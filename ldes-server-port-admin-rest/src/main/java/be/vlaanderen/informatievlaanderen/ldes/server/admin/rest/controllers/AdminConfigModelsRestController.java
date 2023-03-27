@@ -13,15 +13,15 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin/api/v1")
-public class AdminStreamRestController {
+public class AdminConfigModelsRestController {
 	private final LdesConfigModelService service;
 
 	@Autowired
-	@Qualifier("streamShaclValidator")
+	@Qualifier("configShaclValidator")
 	private LdesConfigShaclValidator streamValidator;
 
 	@Autowired
-	public AdminStreamRestController(LdesConfigModelService service) {
+	public AdminConfigModelsRestController(LdesConfigModelService service) {
 		this.service = service;
 	}
 
@@ -31,24 +31,24 @@ public class AdminStreamRestController {
 	}
 
 	@GetMapping("/eventstreams")
-	public ResponseEntity<LdesConfigModelListDto> retrieveAllLdesStreams() {
+	public ResponseEntity<LdesConfigModelListDto> retrieveAllConfigModels() {
 		return ResponseEntity
-				.ok(new LdesConfigModelListDto(service.retrieveAllEventStreams()));
+				.ok(new LdesConfigModelListDto(service.retrieveAllConfigModels()));
 	}
 
 	@PutMapping("/eventstreams")
-	public ResponseEntity<LdesConfigModel> putLdesStream(@RequestBody @Validated LdesConfigModel ldesConfigModel) {
-		return ResponseEntity.ok(service.updateEventStream(ldesConfigModel));
+	public ResponseEntity<LdesConfigModel> putConfigModel(@RequestBody @Validated LdesConfigModel ldesConfigModel) {
+		return ResponseEntity.ok(service.updateConfigModel(ldesConfigModel));
 	}
 
 	@GetMapping("/eventstreams/{collectionName}")
-	public ResponseEntity<LdesConfigModel> getLdesStream(@PathVariable String collectionName) {
-		return ResponseEntity.ok(service.retrieveEventStream(collectionName));
+	public ResponseEntity<LdesConfigModel> getConfigModel(@PathVariable String collectionName) {
+		return ResponseEntity.ok(service.retrieveConfigModel(collectionName));
 	}
 
 	@DeleteMapping("/eventstreams/{collectionName}")
-	public ResponseEntity<Object> deleteLdesStream(@PathVariable String collectionName) {
-		service.deleteEventStream(collectionName);
+	public ResponseEntity<Object> deleteConfigModel(@PathVariable String collectionName) {
+		service.deleteConfigModel(collectionName);
 		return ResponseEntity.ok().build();
 	}
 

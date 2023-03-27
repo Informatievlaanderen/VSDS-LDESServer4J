@@ -8,7 +8,7 @@ import org.apache.jena.riot.RDFWriter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("ldesstreammodel")
+@Document("ldesconfigmodel")
 public class LdesConfigModelEntity {
 	@Id
 	private final String id;
@@ -20,7 +20,7 @@ public class LdesConfigModelEntity {
 		this.model = model;
 	}
 
-	public static LdesConfigModelEntity fromLdesConfigtModel(LdesConfigModel ldesConfigModel) {
+	public static LdesConfigModelEntity fromLdesConfigModel(LdesConfigModel ldesConfigModel) {
 		String ldesMemberString = RDFWriter.source(ldesConfigModel.getModel())
 				.lang(Lang.TURTLE)
 				.asString();

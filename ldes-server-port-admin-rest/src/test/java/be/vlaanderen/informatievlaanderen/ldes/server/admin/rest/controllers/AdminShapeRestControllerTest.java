@@ -63,7 +63,7 @@ class AdminShapeRestControllerTest {
 	void when_StreamAndShapeArePresent_Then_ShapeIsReturned() throws Exception {
 		String collectionName = "name1";
 		Model expectedShapeModel = readModelFromFile("shape-1.ttl");
-		LdesConfigModel shapeConfigModel = new LdesConfigModel(collectionName + "Shape", expectedShapeModel);
+		LdesConfigModel shapeConfigModel = LdesConfigModel.createLdesConfigShape(collectionName, expectedShapeModel);
 		when(ldesConfigModelService.retrieveShape(collectionName)).thenReturn(shapeConfigModel);
 		ResultActions resultActions = mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
 				.andDo(print())

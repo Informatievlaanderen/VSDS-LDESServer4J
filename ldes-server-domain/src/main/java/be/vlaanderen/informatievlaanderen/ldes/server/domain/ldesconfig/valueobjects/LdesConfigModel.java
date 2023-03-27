@@ -11,6 +11,10 @@ public class LdesConfigModel {
 		this.model = model;
 	}
 
+	public static LdesConfigModel createLdesConfigShape(String id, Model model) {
+		return new LdesConfigModel(id + "Shape", model);
+	}
+
 	public String getId() {
 		return id;
 	}

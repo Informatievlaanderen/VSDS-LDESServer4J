@@ -41,9 +41,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminStreamRestController.class,
+@ContextConfiguration(classes = { AdminConfigModelsRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
-class AdminStreamRestControllerTest {
+class AdminConfigModelsRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
 	@MockBean
@@ -63,7 +63,7 @@ class AdminStreamRestControllerTest {
 		String collectionName = "name1";
 		Model model = readModelFromFile("ldes-1.ttl");
 		LdesConfigModel configModel = new LdesConfigModel(collectionName, model);
-		when(ldesConfigModelService.retrieveEventStream(collectionName)).thenReturn(configModel);
+		when(ldesConfigModelService.retrieveConfigModel(collectionName)).thenReturn(configModel);
 		ResultActions resultActions = mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isOk());
@@ -75,7 +75,7 @@ class AdminStreamRestControllerTest {
 	@Test
 	void when_StreamNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
-		when(ldesConfigModelService.retrieveEventStream(collectionName))
+		when(ldesConfigModelService.retrieveConfigModel(collectionName))
 				.thenThrow(new MissingLdesConfigException(collectionName));
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
@@ -89,7 +89,7 @@ class AdminStreamRestControllerTest {
 				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
-		verify(ldesConfigModelService, times(1)).updateEventStream(any());
+		verify(ldesConfigModelService, times(1)).updateConfigModel(any());
 	}
 
 	@Test
@@ -115,7 +115,7 @@ class AdminStreamRestControllerTest {
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		final Model model = readModelFromFile("ldes-1.ttl");
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel("collectionName1", model);
-		when(ldesConfigModelService.updateEventStream(ldesConfigModel)).thenReturn(ldesConfigModel);
+		when(ldesConfigModelService.updateConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
 				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
 				.contentType(MediaType.TEXT_PLAIN))

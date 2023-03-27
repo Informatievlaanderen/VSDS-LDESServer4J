@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface LdesConfigModelService {
 
-	List<LdesConfigModel> retrieveAllEventStreams();
+	List<LdesConfigModel> retrieveAllConfigModels();
 
-	LdesConfigModel retrieveEventStream(String collectionName);
+	LdesConfigModel retrieveConfigModel(String collectionName);
 
-	void deleteEventStream(String collectionName);
+	void deleteConfigModel(String collectionName);
 
-	LdesConfigModel updateEventStream(LdesConfigModel ldesConfigModel);
+	LdesConfigModel updateConfigModel(LdesConfigModel ldesConfigModel);
 
 	LdesConfigModel retrieveShape(String collectionName);
 

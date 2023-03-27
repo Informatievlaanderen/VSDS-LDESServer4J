@@ -11,15 +11,15 @@ public class MissingLdesConfigException extends RuntimeException {
 	}
 
 	/**
-	 * Constructs a new MissingLdesConfigException with default object type <i>ldes
-	 * event stream</i>
+	 * Constructs a new MissingLdesConfigException with default object type <i>event
+	 * stream</i>
 	 *
 	 * @param identifier
 	 *            identifier of the missing ldes config object
 	 */
 	public MissingLdesConfigException(String identifier) {
 		super();
-		this.objectType = "ldes event stream";
+		this.objectType = "event stream";
 		this.identifier = identifier;
 	}
 
