@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobj
 import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
-
 public class LdesConfigShaclValidator extends AbstractShaclValidator {
 	private final String fileName;
 

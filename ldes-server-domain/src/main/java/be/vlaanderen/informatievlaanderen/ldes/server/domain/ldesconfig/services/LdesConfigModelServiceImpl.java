@@ -73,8 +73,8 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		}
 
 		ldesConfigModel.getModel().add(shape.getModel());
-		Statement statement = ldesConfigModel.getModel().createStatement(stringToResource(collectionName),
-				createProperty(SHAPE), stringToResource(TREE, shape.getId()));
+		Statement statement = ldesConfigModel.getModel().createStatement(idStringToResource(collectionName),
+				createProperty(SHAPE), idStringToResource(shape.getId()));
 		ldesConfigModel.getModel().add(statement);
 		repository.saveLdesStream(ldesConfigModel);
 
@@ -104,15 +104,15 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, ResourceFactory.createProperty(VIEW),
-				stringToResource(view.getId()));
+				idStringToResource(view.getId()));
 		if (iterator.hasNext()) {
 			Statement statement = iterator.nextStatement();
 			List<Statement> statements = retrieveAllStatements(statement, ldesConfigModel.getModel());
 			ldesConfigModel.getModel().remove(statements);
 		}
 
-		Statement viewStatement = ldesConfigModel.getModel().createStatement(stringToResource(collectionName),
-				createProperty(VIEW), stringToResource(view.getId()));
+		Statement viewStatement = ldesConfigModel.getModel().createStatement(idStringToResource(collectionName),
+				createProperty(VIEW), idStringToResource(view.getId()));
 		ldesConfigModel.getModel().add(viewStatement);
 		ldesConfigModel.getModel().add(view.getModel());
 		repository.saveLdesStream(ldesConfigModel);
@@ -125,8 +125,8 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
-		StmtIterator iterator = ldesConfigModel.getModel().listStatements(stringToResource(collectionName),
-				createProperty(VIEW), stringToResource(viewName));
+		StmtIterator iterator = ldesConfigModel.getModel().listStatements(idStringToResource(collectionName),
+				createProperty(VIEW), idStringToResource(viewName));
 
 		if (!iterator.hasNext()) {
 			throw new MissingLdesConfigException("view", collectionName + "/" + viewName);
@@ -144,15 +144,16 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		LdesConfigModel ldesConfigModel = repository.retrieveLdesStream(collectionName)
 				.orElseThrow(() -> new MissingLdesConfigException(collectionName));
 
-		StmtIterator iterator = ldesConfigModel.getModel().listStatements(stringToResource(collectionName),
-				createProperty(VIEW), stringToResource(viewName));
+		StmtIterator iterator = ldesConfigModel.getModel().listStatements(idStringToResource(collectionName),
+				createProperty(VIEW), idStringToResource(viewName));
 
 		if (!iterator.hasNext()) {
 			throw new MissingLdesConfigException("view", collectionName + "/" + viewName);
 		}
 
 		// list of all the statements in the view
-		List<Statement> viewStatements = retrieveAllStatements(stringToResource(viewName), ldesConfigModel.getModel());
+		List<Statement> viewStatements = retrieveAllStatements(idStringToResource(viewName),
+				ldesConfigModel.getModel());
 
 		Model model = ModelFactory.createDefaultModel();
 		model.add(viewStatements);
@@ -198,11 +199,13 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		return statements;
 	}
 
-	protected Resource stringToResource(String name) {
-		return stringToResource(LDES, name);
+	protected Resource idStringToResource(String name) {
+		// the LDES constant is meant to be the local prefix
+		return ResourceFactory.createResource(LDES + name);
 	}
 
-	protected Resource stringToResource(String prefix, String name) {
-		return ResourceFactory.createResource(prefix + name);
+	public static String extractIdFromResource(Resource resource) {
+		// the LDES constant is meant to be the local prefix
+		return resource.toString().replace(LDES, "");
 	}
 }
