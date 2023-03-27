@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.migrationpackage1;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock;
 
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.runner.springboot.MongockSpringboot;
