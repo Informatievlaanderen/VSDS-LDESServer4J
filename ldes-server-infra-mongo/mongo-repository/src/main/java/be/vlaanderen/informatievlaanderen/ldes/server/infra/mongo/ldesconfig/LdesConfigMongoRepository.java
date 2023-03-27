@@ -4,10 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.entity.LdesConfigModelEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.repository.LdesConfigEntityRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class LdesConfigMongoRepository implements LdesConfigRepository {
 	private final LdesConfigEntityRepository repository;
 

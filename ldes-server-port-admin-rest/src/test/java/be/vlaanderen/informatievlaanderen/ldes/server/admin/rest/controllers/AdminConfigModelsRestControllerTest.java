@@ -47,7 +47,7 @@ class AdminConfigModelsRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
 	@MockBean
-	@Qualifier("streamShaclValidator")
+	@Qualifier("configShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
 	@Autowired

@@ -129,7 +129,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 				createProperty(VIEW), idStringToResource(viewName));
 
 		if (!iterator.hasNext()) {
-			throw new MissingLdesConfigException("view", collectionName + "/" + viewName);
+			throw new MissingLdesConfigException(collectionName, viewName);
 		}
 
 		Statement statement = iterator.nextStatement();
@@ -147,7 +147,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 				createProperty(VIEW), idStringToResource(viewName));
 
 		if (!iterator.hasNext()) {
-			throw new MissingLdesConfigException("view", collectionName + "/" + viewName);
+			throw new MissingLdesConfigException(collectionName, viewName);
 		}
 
 		// list of all the statements in the view
