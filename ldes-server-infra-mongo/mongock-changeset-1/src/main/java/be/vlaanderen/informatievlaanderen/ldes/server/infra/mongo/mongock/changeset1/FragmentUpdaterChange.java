@@ -40,7 +40,8 @@ public class FragmentUpdaterChange {
 					ldesFragmentEntityV1.getRoot(), ldesFragmentEntityV1.getViewName(),
 					ldesFragmentEntityV1.getFragmentPairs(),
 					ldesFragmentEntityV1.isImmutable(), false, parentId, immutableTimestamp,
-					ldesFragmentEntityV1.getMembers().size(), ldesFragmentEntityV1.getRelations());
+					ldesFragmentEntityV1.getMembers() == null ? 0 : ldesFragmentEntityV1.getMembers().size(),
+					ldesFragmentEntityV1.getRelations());
 			mongoTemplate
 					.save(ldesFragmentEntity);
 		});
