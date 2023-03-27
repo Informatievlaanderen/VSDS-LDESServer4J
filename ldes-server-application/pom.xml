@@ -45,7 +45,17 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-infra-mongo</artifactId>
+                    <artifactId>mongo-repository</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>changeset-mongo</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongock-changeset-1</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
