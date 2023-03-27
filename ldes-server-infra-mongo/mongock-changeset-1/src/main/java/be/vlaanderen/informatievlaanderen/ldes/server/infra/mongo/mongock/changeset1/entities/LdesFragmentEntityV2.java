@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@SuppressWarnings({"java:S1068","java:S107"})
+@SuppressWarnings({ "java:S1068", "java:S107" })
 @Document("ldesfragment")
 public class LdesFragmentEntityV2 {
 	@Id
