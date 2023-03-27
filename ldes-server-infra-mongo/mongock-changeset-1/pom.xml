@@ -12,13 +12,15 @@
     <artifactId>mongock-changeset-1</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <relative-formatter-path>../..</relative-formatter-path>
+    </properties>
+
     <dependencies>
-        <!-- VSDS -->
+
         <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>mongo-repository</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
         <!-- MONGOCK -->

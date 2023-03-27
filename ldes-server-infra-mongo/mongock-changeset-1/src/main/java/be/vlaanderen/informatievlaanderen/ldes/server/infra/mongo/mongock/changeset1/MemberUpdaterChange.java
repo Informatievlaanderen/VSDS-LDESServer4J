@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesFragmentEntityV1;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesMemberEntityV1;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesMemberEntityV2;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
@@ -31,13 +33,13 @@ public class MemberUpdaterChange {
 			List<String> treeNodeReferences = mongoTemplate.find(query, LdesFragmentEntityV1.class).stream()
 					.map(LdesFragmentEntityV1::getId).toList();
 			mongoTemplate
-					.save(new LdesMemberEntity(ldesMember.getId(), ldesMember.getLdesMember(), treeNodeReferences));
+					.save(new LdesMemberEntityV2(ldesMember.getId(), ldesMember.getLdesMember(), treeNodeReferences));
 		});
 	}
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesMemberEntity> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntity.class);
+		List<LdesMemberEntityV2> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV2.class);
 		ldesMemberEntities.forEach(ldesMember -> mongoTemplate
 				.save(new LdesMemberEntityV1(ldesMember.getId(), ldesMember.getModel())));
 	}

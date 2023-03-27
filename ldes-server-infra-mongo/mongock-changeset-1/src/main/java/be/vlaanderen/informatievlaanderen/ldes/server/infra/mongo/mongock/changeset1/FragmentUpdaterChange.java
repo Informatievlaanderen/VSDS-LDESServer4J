@@ -1,8 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesFragmentEntityV1;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesFragmentEntityV2;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesMemberEntityV2;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.valueobjects.FragmentPair;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
@@ -15,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository.TREE_NODE_REFERENCES;
-
 @ChangeUnit(id = "fragment-updater-changeset-1", order = "2", author = "VSDS")
 public class FragmentUpdaterChange {
+	private static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	private final MongoTemplate mongoTemplate;
 
 	public FragmentUpdaterChange(MongoTemplate mongoTemplate) {
@@ -36,7 +36,7 @@ public class FragmentUpdaterChange {
 			LocalDateTime immutableTimestamp = Boolean.TRUE.equals(ldesFragmentEntityV1.isImmutable())
 					? LocalDateTime.now()
 					: null;
-			LdesFragmentEntity ldesFragmentEntity = new LdesFragmentEntity(ldesFragmentEntityV1.getId(),
+			LdesFragmentEntityV2 ldesFragmentEntity = new LdesFragmentEntityV2(ldesFragmentEntityV1.getId(),
 					ldesFragmentEntityV1.getRoot(), ldesFragmentEntityV1.getViewName(),
 					ldesFragmentEntityV1.getFragmentPairs(),
 					ldesFragmentEntityV1.isImmutable(), false, parentId, immutableTimestamp,
@@ -48,12 +48,12 @@ public class FragmentUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesFragmentEntity> ldesFragmentEntities = mongoTemplate.find(new Query(), LdesFragmentEntity.class);
+		List<LdesFragmentEntityV2> ldesFragmentEntities = mongoTemplate.find(new Query(), LdesFragmentEntityV2.class);
 		ldesFragmentEntities.forEach(fragmentEntity -> {
 			Query query = new Query();
 			query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(fragmentEntity.getId()));
-			List<String> members = mongoTemplate.find(query, LdesMemberEntity.class).stream()
-					.map(LdesMemberEntity::getId).toList();
+			List<String> members = mongoTemplate.find(query, LdesMemberEntityV2.class).stream()
+					.map(LdesMemberEntityV2::getId).toList();
 			LdesFragmentEntityV1 ldesFragmentEntityV1 = new LdesFragmentEntityV1(fragmentEntity.getId(),
 					fragmentEntity.getRoot(), fragmentEntity.getViewName(),
 					fragmentEntity.getFragmentPairs(),
