@@ -69,7 +69,7 @@
         <sonar.organization>informatievlaanderen</sonar.organization>
         <sonar.projectKey>Informatievlaanderen_VSDS-LDESServer4J-${project.groupId}:${project.artifactId}
         </sonar.projectKey>
-        <sonar.exclusions>${project.basedir}/ldes-server-infra-mongo/mongock-changeset-1/**/*</sonar.exclusions>
+        <sonar.exclusions>${project.basedir}/ldes-server-infra-mongo/mongock-changeset-1/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/infra/mongo/mongock/changeset1/*</sonar.exclusions>
 
         <!-- CODE FORMATTER -->
         <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
