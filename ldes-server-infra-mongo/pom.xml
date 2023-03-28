@@ -18,7 +18,7 @@
     </modules>
 
     <properties>
-        <mongock-bom.version>5.2.2</mongock-bom.version>
+        <mongock-bom.version>5.2.4</mongock-bom.version>
     </properties>
 
     <dependencyManagement>
