@@ -17,7 +17,7 @@ ldes:collectionName1 a ldes:EventStream ;
    ] ;
    ldes:view ldes:view1 .
 
-ldes:view1 a ldes:View ;
+ldes:view1 a tree:Node ;
  tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;

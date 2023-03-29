@@ -3,7 +3,7 @@
 @prefix tree: <https://w3id.org/tree#>.
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 
-ldes:view1 a ldes:View ;
+ldes:view1 a tree:Node ;
     tree:viewDescription [
         ldes:retentionPolicy "none"
     ] .
