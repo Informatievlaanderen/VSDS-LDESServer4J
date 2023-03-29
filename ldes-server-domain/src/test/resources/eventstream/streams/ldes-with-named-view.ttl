@@ -15,7 +15,7 @@ ldes:shape a sh:NodeShape ;
      ] ;
    sh:deactivated true .
 
-ldes:view1 a ldes:View ;
+ldes:view1 a tree:Node ;
  tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
