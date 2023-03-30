@@ -15,11 +15,11 @@ public class ViewConfig {
 	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100");
 	private List<ViewSpecification> views = new ArrayList<>();
-	private Boolean defaultView;
+	private boolean defaultView;
 
 	public List<ViewSpecification> getViews() {
 		ArrayList<ViewSpecification> viewSpecifications = new ArrayList<>(views);
-		if (Boolean.TRUE.equals(defaultView)) {
+		if (defaultView) {
 			viewSpecifications.add(getDefaultPaginationView());
 		}
 		return viewSpecifications;
@@ -40,7 +40,7 @@ public class ViewConfig {
 		this.views = views;
 	}
 
-	public void setDefaultView(Boolean defaultView) {
+	public void setDefaultView(boolean defaultView) {
 		this.defaultView = defaultView;
 	}
 }
