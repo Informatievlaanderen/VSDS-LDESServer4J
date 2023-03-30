@@ -43,13 +43,14 @@ class MemberTest {
 	void test_getters() {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464", LocalDateTime.of(1,1,1,1,1,1), ModelFactory.createDefaultModel(), List.of());
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
+				LocalDateTime.of(1, 1, 1, 1, 1, 1), ModelFactory.createDefaultModel(), List.of());
 
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				member.getLdesMemberId());
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
 				member.getVersionOf());
-		assertEquals(LocalDateTime.of(1,1,1,1,1,1),
+		assertEquals(LocalDateTime.of(1, 1, 1, 1, 1, 1),
 				member.getTimestamp());
 	}
 
