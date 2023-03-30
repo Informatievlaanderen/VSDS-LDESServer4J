@@ -51,10 +51,8 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 						ldesFragment.setSoftDeleted(true);
 						ldesFragmentRepository.saveFragment(ldesFragment);
 						parentUpdater.updateParent(ldesFragment);
-						List<Member> membersByReference = memberRepository
-								.getMembersByReference(ldesFragment.getFragmentId());
-						membersByReference
-								.stream()
+						memberRepository
+								.getMembersByReference(ldesFragment.getFragmentId())
 								.map(Member::getLdesMemberId)
 								.forEach(memberId -> {
 									memberRepository.removeMemberReference(memberId,
