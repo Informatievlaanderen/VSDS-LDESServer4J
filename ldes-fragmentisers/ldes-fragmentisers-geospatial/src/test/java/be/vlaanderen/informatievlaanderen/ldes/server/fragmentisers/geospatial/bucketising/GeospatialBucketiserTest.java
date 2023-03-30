@@ -69,7 +69,7 @@ class GeospatialBucketiserTest {
 				.toModel();
 
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				outputModel, List.of());
+				null, null, outputModel, List.of());
 	}
 
 }

@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model;
 
-import com.apicatalog.jsonld.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
+
+import com.apicatalog.jsonld.StringUtils;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.ROOT_SUBSTRING;
 

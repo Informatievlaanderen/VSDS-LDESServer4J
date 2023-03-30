@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
@@ -15,15 +14,13 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 	private final MemberRepository memberRepository;
 
 	private final FragmentationMediator fragmentationMediator;
-	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MemberIngestServiceImpl.class);
 
 	public MemberIngestServiceImpl(MemberRepository memberRepository,
-			FragmentationMediator fragmentationMediator, NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+			FragmentationMediator fragmentationMediator) {
 		this.memberRepository = memberRepository;
 		this.fragmentationMediator = fragmentationMediator;
-		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 	}
 
 	@Override
@@ -32,7 +29,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 		String memberId = member.getLdesMemberId().replaceAll("[\n\r\t]", "_");
 		if (!memberExists) {
 			Metrics.counter("ldes_server_ingested_members_count").increment();
-			nonCriticalTasksExecutor.submit(() -> storeLdesMember(member));
+			storeLdesMember(member);
 			fragmentationMediator.addMemberToFragment(member);
 			LOGGER.debug("Member with id {} ingested.", memberId);
 		} else {

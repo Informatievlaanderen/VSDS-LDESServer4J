@@ -4,15 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,14 +27,7 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	public Member saveLdesMember(Member member) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(member.getLdesMemberId()));
-		Update update = new Update();
-		StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
-		String ldesMemberString = outputStream.toString();
-		update.set("model", ldesMemberString);
-		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
+		repository.save(LdesMemberEntity.fromLdesMember(member));
 		return member;
 	}
 

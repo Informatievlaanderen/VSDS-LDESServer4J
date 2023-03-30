@@ -2,11 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFFormat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -61,7 +63,7 @@ class MemberIngestionControllerTest {
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
-		verify(memberIngestService, times(1)).addMember(any());
+		verify(memberIngestService, times(1)).addMember(any(Member.class));
 	}
 
 	@Test
@@ -77,6 +79,16 @@ class MemberIngestionControllerTest {
 
 		assertEquals(malFormedException.getMessage(),
 				new MalformedMemberIdException(ldesConfig.getMemberType()).getMessage());
+	}
+
+	@Test
+	void when_POSTRequestIsPerformed_LDesMemberIsSavedWithoutVersionOfAndTimestamp() throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-version-of-timestamp.nq",
+				Lang.NQUADS);
+
+		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
+				.andDo(print()).andExpect(status().isOk());
+		verify(memberIngestService, times(1)).addMember(any(Member.class));
 	}
 
 	@Test
