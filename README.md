@@ -155,7 +155,10 @@ Note that the database schema may evolve between releases. To update the schema 
 
 ##### Example Views Configuration
 
+By using the property `defaultView`, one can enable or disable a default paginated (100 members per page) view on the collection. By defining the `views` property, more custom views can be configured.
+
   ```yaml
+    defaultView: {"true" or "false"}
     views:
       - name: {name of the view}
         fragmentations:
@@ -167,6 +170,7 @@ Note that the database schema may evolve between releases. To update the schema 
 An example of a view configuration with two view is shown below
 
   ```yaml
+  defaultView: "true"
   views:
     - name: "firstView"
       fragmentations:
