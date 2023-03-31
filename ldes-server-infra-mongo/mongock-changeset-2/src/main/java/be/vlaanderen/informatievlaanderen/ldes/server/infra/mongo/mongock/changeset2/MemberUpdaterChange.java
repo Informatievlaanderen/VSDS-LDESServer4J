@@ -1,25 +1,35 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset1.entities.LdesMemberEntityV2;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV3;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LocalDateTimeConverter;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.impl.LiteralImpl;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+
 @ChangeUnit(id = "member-updater-changeset-2", order = "2", author = "VSDS")
 public class MemberUpdaterChange {
 
-	private static final String MEMBERS = "members";
 	private final MongoTemplate mongoTemplate;
+	private final LdesConfig ldesConfig;
+	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public MemberUpdaterChange(MongoTemplate mongoTemplate) {
+	public MemberUpdaterChange(MongoTemplate mongoTemplate, LdesConfig ldesConfig) {
 		this.mongoTemplate = mongoTemplate;
+		this.ldesConfig = ldesConfig;
 	}
 
 	/**
@@ -29,14 +39,14 @@ public class MemberUpdaterChange {
 	public void changeSet() {
 		List<LdesMemberEntityV2> ldesMemberEntityV2s = mongoTemplate.find(new Query(), LdesMemberEntityV2.class);
 		ldesMemberEntityV2s.forEach(ldesMember -> {
-			List<String> treeNodeReferences = getTreeNodeReferences(ldesMember);
-
-			String versionOf = "";
-			LocalDateTime timestamp = LocalDateTime.now();
+			Model ldesMemberModel = RDFParserBuilder.create().fromString(ldesMember.getModel()).lang(Lang.NQUADS)
+					.toModel();
+			String versionOf = extractVersionOf(ldesMemberModel);
+			LocalDateTime timestamp = extractTimestamp(ldesMemberModel);
 
 			mongoTemplate
-					.save(new LdesMemberEntityV3(ldesMember.getId(), ldesMember.getModel(), versionOf, timestamp,
-							treeNodeReferences));
+					.save(new LdesMemberEntityV3(ldesMember.getId(), versionOf, timestamp, ldesMember.getModel(),
+							ldesMember.getTreeNodeReferences()));
 		});
 	}
 
@@ -44,19 +54,29 @@ public class MemberUpdaterChange {
 	public void rollback() {
 		List<LdesMemberEntityV3> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV3.class);
 
-		ldesMemberEntities.forEach(ldesMember -> {
-			List<String> treeNodeReferences = getTreeNodeReferences(ldesMember);
-
-			mongoTemplate
-					.save(new LdesMemberEntityV2(ldesMember.getId(), ldesMember.getModel(), treeNodeReferences));
-		});
+		ldesMemberEntities.forEach(ldesMember -> mongoTemplate
+				.save(new LdesMemberEntityV2(ldesMember.getId(), ldesMember.getModel(),
+						ldesMember.getTreeNodeReferences())));
 	}
 
-	private List<String> getTreeNodeReferences(LdesMemberEntityV2 ldesMember) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where(MEMBERS).is(ldesMember.getId()));
+	private LocalDateTime extractTimestamp(Model memberModel) {
+		LiteralImpl literalImpl = memberModel
+				.listStatements(null, createProperty(ldesConfig.getTimestampPath()), (RDFNode) null)
+				.nextOptional()
+				.map(statement -> (LiteralImpl) statement.getObject())
+				.orElse(null);
+		if (literalImpl == null) {
+			return null;
+		}
+		return localDateTimeConverter.getLocalDateTime(literalImpl);
 
-		return mongoTemplate.find(query, LdesMemberEntityV2.class).stream()
-				.map(LdesMemberEntityV2::getId).toList();
+	}
+
+	private String extractVersionOf(Model memberModel) {
+		return memberModel
+				.listStatements(null, createProperty(ldesConfig.getVersionOfPath()), (RDFNode) null)
+				.nextOptional()
+				.map(statement -> statement.getObject().toString())
+				.orElse(null);
 	}
 }

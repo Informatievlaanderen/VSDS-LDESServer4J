@@ -1,6 +1,6 @@
-# Mongock Changeset 1
+# Mongock Changeset 2
 
-Following configuration is needed to apply this changeset.
+The following configuration is needed to apply this changeset.
 
 ```
 mongock:
