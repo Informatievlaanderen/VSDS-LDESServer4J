@@ -23,7 +23,7 @@ class ViewConfigTest {
 	@Test
 	@DisplayName("Verify content of ViewConfig")
 	void when_ViewConfigIsInjected_ViewSpecificationsCanBeConsulted() {
-		assertEquals(2, viewConfig.getViews().size());
+		assertEquals(3, viewConfig.getViews().size());
 
 		ViewSpecification firstViewSpecification = viewConfig.getViews().get(0);
 		assertEquals("firstView", firstViewSpecification.getName());
@@ -42,6 +42,13 @@ class ViewConfigTest {
 		assertEquals(List.of(), secondViewSpecification.getRetentionConfigs());
 		verifyViewSpecification(secondViewSpecification.getFragmentations().get(0), "timebased",
 				Map.of("memberLimit", "3"));
+
+		ViewSpecification defaultViewSpecification = viewConfig.getViews().get(2);
+		assertEquals("by-page", defaultViewSpecification.getName());
+		assertEquals(1, defaultViewSpecification.getFragmentations().size());
+		assertEquals(List.of(), defaultViewSpecification.getRetentionConfigs());
+		verifyViewSpecification(defaultViewSpecification.getFragmentations().get(0), "pagination",
+				Map.of("memberLimit", "100"));
 	}
 
 	private void verifyRetentionPolicy(RetentionConfig retentionConfig) {
@@ -49,9 +56,9 @@ class ViewConfigTest {
 		assertEquals(new ConfigProperties(Map.of("duration", "PT1M")), retentionConfig.getProperties());
 	}
 
-	private void verifyViewSpecification(FragmentationConfig fragmentationConfig, String geospatial,
+	private void verifyViewSpecification(FragmentationConfig fragmentationConfig, String fragmentationName,
 			Map<String, String> maxZoomLevel) {
-		assertEquals(geospatial, fragmentationConfig.getName());
+		assertEquals(fragmentationName, fragmentationConfig.getName());
 		assertEquals(new ConfigProperties(maxZoomLevel), fragmentationConfig.getProperties());
 	}
 }

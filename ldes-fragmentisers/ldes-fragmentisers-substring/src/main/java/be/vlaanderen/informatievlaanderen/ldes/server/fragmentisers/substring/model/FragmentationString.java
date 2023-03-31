@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model;
 
-import com.apicatalog.jsonld.StringUtils;
-
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.apicatalog.jsonld.StringUtils;
 
 public class FragmentationString {
 	private final String string;

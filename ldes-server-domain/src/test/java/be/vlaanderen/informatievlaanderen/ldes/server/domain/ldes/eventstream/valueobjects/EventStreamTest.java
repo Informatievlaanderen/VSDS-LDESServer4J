@@ -51,7 +51,7 @@ class EventStreamTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
 			return Stream.of(
 					Arguments.of((Object) null),
-					Arguments.of(new Member("id", null, List.of())),
+					Arguments.of(new Member("id", null, null, null, List.of())),
 					Arguments.of(new EventStream(COLLECTION,
 							"other timestamp path", "other version", SHAPE, List.of())),
 					Arguments.of(new EventStream("Other collection", TIMESTAMP_PATH, VERSION_OF_PATH, SHAPE,

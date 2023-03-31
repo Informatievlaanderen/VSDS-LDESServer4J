@@ -1,3 +1,4 @@
+defaultView: "true"
 views:
   - name: "firstView"
     fragmentations:
