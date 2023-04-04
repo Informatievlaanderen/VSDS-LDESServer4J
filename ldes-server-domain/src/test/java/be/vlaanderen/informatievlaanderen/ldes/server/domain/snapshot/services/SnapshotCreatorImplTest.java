@@ -43,18 +43,18 @@ class SnapshotCreatorImplTest {
 		List<LdesFragment> ldesFragmentsForSnapshot = getLdesFragmentsForSnapshot();
 		Map<String, List<Member>> membersOfSnapshot = getMembers();
 		when(memberCollector.getMembersGroupedByVersionOf(ldesFragmentsForSnapshot)).thenReturn(membersOfSnapshot);
-		LdesFragment rootFragmentOfSnapshot = new LdesFragment("snapshot/", List.of());
-		when(rootFragmentCreator.createRootFragmentForView(startsWith("snapshot/"))).thenReturn(rootFragmentOfSnapshot);
+		LdesFragment rootFragmentOfSnapshot = new LdesFragment("snapshot-", List.of());
+		when(rootFragmentCreator.createRootFragmentForView(startsWith("snapshot-"))).thenReturn(rootFragmentOfSnapshot);
 
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot);
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);
 		inOrder.verify(memberCollector, times(1)).getMembersGroupedByVersionOf(ldesFragmentsForSnapshot);
-		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(startsWith("snapshot/"));
+		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(startsWith("snapshot-"));
 		inOrder.verify(snapshotFragmenter, times(1))
 				.fragmentSnapshotMembers(getMemberLastVersionsOfSnapshot(membersOfSnapshot), rootFragmentOfSnapshot);
 		inOrder.verifyNoMoreInteractions();
-		assertTrue(snapshot.getSnapshotId().startsWith("snapshot/"));
+		assertTrue(snapshot.getSnapshotId().startsWith("snapshot-"));
 		assertEquals("localhost:8080/collection", snapshot.getSnapshotOf());
 		assertTrue(snapshot.getSnapshotUntil().isBefore(LocalDateTime.now()));
 		assertEquals("shape", snapshot.getShape());

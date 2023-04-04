@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,7 +46,8 @@ public class SnapshotRelationLinkerImpl implements SnapshotRelationLinker {
 		return ldesFragmentRepository.retrieveFragmentsOfView(snapshot.getSnapshotId())
 				.stream()
 				.filter(ldesFragment -> !ldesFragment.isImmutable())
-				.filter(ldesFragment -> !ldesFragment.isRoot()).findFirst().orElseThrow(() -> new IllegalStateException(
+				.filter(ldesFragment -> !ldesFragment.isRoot()).findFirst()
+				.orElseThrow(() -> new SnapshotCreationException(
 						"Could not find an mutable, non-root treenode of view " + snapshot.getSnapshotId()));
 	}
 }

@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +51,7 @@ class MemberCollectorImplTest {
 	}
 
 	private Member getMember(String versionOf) {
-		return new Member("", versionOf, null, null, List.of());
+		return new Member("", versionOf, LocalDateTime.now(), null, List.of());
 	}
 
 }

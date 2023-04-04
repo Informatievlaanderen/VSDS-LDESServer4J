@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -43,11 +44,12 @@ class SnapshotRelationLinkerImplTest {
 		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(List.of());
 		List<LdesFragment> treeNodes = List.of();
 
-		IllegalStateException illegalStateException = assertThrows(IllegalStateException.class,
+		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,
 				() -> snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 						treeNodes));
 
-		assertEquals("Could not find an mutable, non-root treenode of view id", illegalStateException.getMessage());
+		assertEquals("Unable to create snapshot.\nCause: Could not find an mutable, non-root treenode of view id",
+				snapshotCreationException.getMessage());
 	}
 
 	private List<LdesFragment> getTreeNodes() {
