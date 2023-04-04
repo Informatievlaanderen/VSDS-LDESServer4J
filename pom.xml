@@ -4,7 +4,7 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -15,19 +15,23 @@
         <module>ldes-server-port-ingestion-rest</module>
         <module>ldes-fragmentisers</module>
         <module>ldes-queues</module>
+        <module>ldes-server-port-admin-rest</module>
     </modules>
 
     <properties>
         <!-- MAVEN -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
-        <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
+        <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
+        <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
 
@@ -35,31 +39,28 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>2.7.5</spring-boot.version>
-        <spring-cloud-dependencies.version>2021.0.5</spring-cloud-dependencies.version>
-        <spring-cloud-sleuth-otel-dependencies.version>1.1.0</spring-cloud-sleuth-otel-dependencies.version>
+        <spring-boot.version>3.0.5</spring-boot.version>
 
         <!-- JSON & RDF -->
-        <apache-jena.version>4.6.1</apache-jena.version>
+        <apache-jena.version>4.7.0</apache-jena.version>
         <json-simple.version>1.1.1</json-simple.version>
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.9.1</junit-platform-suite.version>
+        <junit-platform-suite.version>1.9.2</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.9.1</jupiter.version>
-        <mockito.version>4.8.1</mockito.version>
-        <byte-buddy.version>1.12.18</byte-buddy.version>
-        <cucumber.version>7.9.0</cucumber.version>
+        <jupiter.version>5.9.2</jupiter.version>
+        <mockito.version>5.2.0</mockito.version>
+        <byte-buddy.version>1.14.3</byte-buddy.version>
+        <de.flapdoodle.embed.mongo.version>4.6.2</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
-        <de.flapdoodle.embed.mongo.version>3.5.2</de.flapdoodle.embed.mongo.version>
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>7.3.0</depencency-check-maven.version>
+        <depencency-check-maven.version>8.2.1</depencency-check-maven.version>
 
         <!-- JACOCO -->
-        <jacoco.version>0.8.8</jacoco.version>
+        <jacoco.version>0.8.9</jacoco.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.language>java</sonar.language>
@@ -71,8 +72,13 @@
         </sonar.projectKey>
 
         <!-- CODE FORMATTER -->
-        <formatter-maven-plugin.version>2.21.0</formatter-maven-plugin.version>
+        <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
+        <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
+        <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
+
+        <!-- HASHING -->
+        <commons-codec.version>1.15</commons-codec.version>
     </properties>
 
     <dependencyManagement>
@@ -112,6 +118,11 @@
             <dependency>
                 <groupId>org.apache.jena</groupId>
                 <artifactId>jena-arq</artifactId>
+                <version>${apache-jena.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.jena</groupId>
+                <artifactId>jena-shacl</artifactId>
                 <version>${apache-jena.version}</version>
             </dependency>
             <dependency>
@@ -168,36 +179,17 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-java</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-junit-platform-engine</artifactId>
-                <version>${cucumber.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-suite</artifactId>
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
+			
+			<!-- HASHING -->
 			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-dependencies.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-sleuth-otel-dependencies</artifactId>
-				<version>${spring-cloud-sleuth-otel-dependencies.version}</version>
-				<scope>import</scope>
-				<type>pom</type>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.version}</version>
 			</dependency>
         </dependencies>
     </dependencyManagement>
@@ -296,14 +288,13 @@
                     <configuration>
                         <skip>${skipFormatCode}</skip>
                         <encoding>UTF-8</encoding>
-                        <configFile>${maven.multiModuleProjectDirectory}/settings.xml</configFile>
+                        <configFile>${relative-formatter-path}/settings.xml</configFile>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
-
             <!-- CODE FORMATTER -->
             <plugin>
                 <groupId>net.revelc.code.formatter</groupId>
@@ -311,15 +302,33 @@
             </plugin>
 
             <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <version>${impsort-maven-plugin.version}</version>
+                <configuration>
+                    <removeUnused>true</removeUnused>
+                    <groups>*, java.,javax.,com.</groups>
+                    <staticGroups>*</staticGroups>
+                    <staticAfter>true</staticAfter>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sort-imports</id>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>${unittestskip}</skip>
-                    <properties>
-                        <configurationParameters>
-                            cucumber.junit-platform.naming-strategy=long
-                        </configurationParameters>
-                    </properties>
+                    <environmentVariables>
+                        <SIS_DATA>./</SIS_DATA>
+                    </environmentVariables>
                 </configuration>
             </plugin>
             <plugin>
@@ -337,10 +346,50 @@
                 </executions>
             </plugin>
 
+            <!-- RELEASE PREP -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadoc</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-source</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- RELEASE -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -407,10 +456,13 @@
     </profiles>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>github</id>
-            <name>GitHub OWNER Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/Informatievlaanderen/VSDS-LDESServer4J</url>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
 

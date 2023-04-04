@@ -7,9 +7,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@SpringBootTest(classes = { LdesConfig.class })
+@SpringBootTest(classes = { LdesConfig.class, PathToModelConverter.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class LdesConfigTest {
@@ -23,9 +24,10 @@ class LdesConfigTest {
 		assertEquals("exampleData", ldesConfig.getCollectionName());
 		assertEquals("http://localhost:8089", ldesConfig.getHostName());
 		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
-				ldesConfig.getShape());
+				ldesConfig.validation().getShape());
 		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
 		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
 		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOfPath());
+		assertFalse(ldesConfig.getDcat().isEmpty());
 	}
 }

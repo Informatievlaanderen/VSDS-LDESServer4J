@@ -1,12 +1,10 @@
-name: 1.b Build Docker image (Ruben)
+name: 2. Build & Deploy Project
+
 on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened]
   workflow_dispatch:
-
 
 env:
   REGISTRY: ghcr.io

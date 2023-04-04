@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
+import static org.junit.jupiter.api.Assertions.*;
 
 class LdesFragmentRequestTest {
 
@@ -46,12 +46,20 @@ class LdesFragmentRequestTest {
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
 	}
 
+	@Test
+	void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
+		final String viewName = "view_name";
+		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(viewName);
+		assertEquals(viewName, request.viewName());
+		assertTrue(isEmpty(request.fragmentPairs()));
+	}
+
 	static class LdesFragmentRequestArgumentsProvider implements
 			ArgumentsProvider {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new LdesMember("some_id", null)),
+			return Stream.of(Arguments.of(new Member("some_id", null, null, null, List.of())),
 					Arguments.of((Object) null),
 					Arguments.of(new LdesFragmentRequest("otherViewName",
 							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,

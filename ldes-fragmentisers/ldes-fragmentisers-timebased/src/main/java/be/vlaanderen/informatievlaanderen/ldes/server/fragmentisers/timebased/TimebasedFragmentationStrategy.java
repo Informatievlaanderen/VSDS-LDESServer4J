@@ -4,37 +4,38 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.Tracer;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
 	private final OpenFragmentProvider openFragmentProvider;
-	private final Tracer tracer;
+
+	private final ObservationRegistry observationRegistry;
 
 	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository ldesFragmentRepository, OpenFragmentProvider openFragmentProvider, Tracer tracer) {
+			OpenFragmentProvider openFragmentProvider, ObservationRegistry observationRegistry,
+			LdesFragmentRepository ldesFragmentRepository) {
 		super(fragmentationStrategy, ldesFragmentRepository);
 		this.openFragmentProvider = openFragmentProvider;
-		this.tracer = tracer;
+		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
-		Span timebasedFragmentationSpan = tracer.nextSpan(parentSpan).name("timebased fragmentation").start();
-		LdesFragment ldesFragment = openFragmentProvider
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
+		Observation timebasedFragmentationObservation = Observation.createNotStarted("timebased fragmentation",
+				observationRegistry)
+				.parentObservation(parentObservation)
+				.start();
+		Pair<LdesFragment, Boolean> ldesFragment = openFragmentProvider
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
-		if (!ldesFragment.getMemberIds().contains(ldesMember.getLdesMemberId())) {
-			if (parentFragment.getRelations().stream()
-					.noneMatch(relation -> relation.relation().equals(GENERIC_TREE_RELATION))) {
-				super.addRelationFromParentToChild(parentFragment, ldesFragment);
-			}
-			super.addMemberToFragment(ldesFragment, ldesMember, timebasedFragmentationSpan);
+		if (Boolean.TRUE.equals(ldesFragment.getRight())) {
+			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());
 		}
-		timebasedFragmentationSpan.end();
+		super.addMemberToFragment(ldesFragment.getLeft(), member, timebasedFragmentationObservation);
+		timebasedFragmentationObservation.stop();
 	}
 
 }

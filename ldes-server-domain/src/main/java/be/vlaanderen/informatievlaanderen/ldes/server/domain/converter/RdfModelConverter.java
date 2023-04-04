@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import java.io.StringWriter;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.jena.riot.RDFLanguages.TURTLE;
 import static org.apache.jena.riot.RDFLanguages.nameToLang;
 
 public class RdfModelConverter {
@@ -17,7 +18,9 @@ public class RdfModelConverter {
 	}
 
 	public static Lang getLang(MediaType contentType, RdfFormatException.LdesProcessDirection ldesProcessDirection) {
-		return ofNullable(nameToLang(contentType.toString()))
+		if (contentType.equals(MediaType.TEXT_HTML))
+			return TURTLE;
+		return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
 				.orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
 						.orElseThrow(() -> new RdfFormatException(contentType.toString(), ldesProcessDirection)));
 	}

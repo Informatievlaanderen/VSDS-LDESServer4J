@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,20 +17,17 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 	}
 
 	@Override
-	public void createRootFragmentForView(String viewName) {
+	public LdesFragment createRootFragmentForView(String viewName) {
 		Optional<LdesFragment> optionalRoot = ldesFragmentRepository
 				.retrieveRootFragment(viewName);
 		if (optionalRoot.isEmpty()) {
-			createRoot(viewName);
+			return createRoot(viewName);
 		}
+		return optionalRoot.get();
 	}
 
-	private void createRoot(String viewName) {
-		FragmentInfo fragmentInfo = new FragmentInfo(
-				viewName, List.of());
-		LdesFragment ldesFragment = new LdesFragment(
-
-				fragmentInfo);
-		ldesFragmentRepository.saveFragment(ldesFragment);
+	private LdesFragment createRoot(String viewName) {
+		LdesFragment ldesFragment = new LdesFragment(viewName, List.of());
+		return ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 }

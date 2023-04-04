@@ -3,13 +3,16 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.f
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SubstringFragmentCreator {
 
 	public static final String SUBSTRING = "substring";
 
 	private final LdesFragmentRepository ldesFragmentRepository;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SubstringFragmentCreator.class);
 
 	public SubstringFragmentCreator(LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -18,9 +21,11 @@ public class SubstringFragmentCreator {
 	public LdesFragment getOrCreateSubstringFragment(LdesFragment parentFragment, String substring) {
 		LdesFragment child = parentFragment.createChild(new FragmentPair(SUBSTRING, substring));
 		return ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(
-						child.getFragmentInfo().getViewName(),
-						child.getFragmentInfo().getFragmentPairs()))
-				.orElse(child);
+				.retrieveFragment(child.getFragmentId())
+				.orElseGet(() -> {
+					ldesFragmentRepository.saveFragment(child);
+					LOGGER.debug("Substring fragment created with id: {}", child.getFragmentId());
+					return child;
+				});
 	}
 }

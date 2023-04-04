@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import org.springframework.http.HttpHeaders;
@@ -17,16 +18,26 @@ public class RestResponseEntityExceptionHandler
 	@ExceptionHandler(value = { MissingFragmentException.class })
 	protected ResponseEntity<Object> handleMissingFragmentException(
 			RuntimeException ex, WebRequest request) {
-		String bodyOfResponse = ex.getMessage();
-		return handleExceptionInternal(ex, bodyOfResponse,
-				new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+		return handleException(ex, HttpStatus.NOT_FOUND, request);
+	}
+
+	@ExceptionHandler(value = { DeletedFragmentException.class })
+	protected ResponseEntity<Object> handleDeletedFragmentException(
+			RuntimeException ex, WebRequest request) {
+		return handleException(ex, HttpStatus.GONE, request);
 	}
 
 	@ExceptionHandler(value = { RdfFormatException.class })
 	protected ResponseEntity<Object> handleRdfFormatException(
 			RuntimeException ex, WebRequest request) {
+		return handleException(ex, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
+	}
+
+	private ResponseEntity<Object> handleException(
+			RuntimeException ex, HttpStatus status, WebRequest request) {
+		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
-				new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
+				new HttpHeaders(), status, request);
 	}
 }

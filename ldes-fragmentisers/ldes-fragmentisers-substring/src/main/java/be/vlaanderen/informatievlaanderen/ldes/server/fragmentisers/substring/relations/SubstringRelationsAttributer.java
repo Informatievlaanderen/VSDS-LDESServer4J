@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingF
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.STRING_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.TREE_SUBSTRING_RELATION;
@@ -13,24 +14,28 @@ public class SubstringRelationsAttributer {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
 
-	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository) {
+	private final SubstringConfig substringConfig;
+
+	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
+			SubstringConfig substringConfig) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.substringConfig = substringConfig;
 	}
 
 	public void addSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
-
 		String substringValue = getSubstringValue(childFragment);
-		TreeRelation parentChildRelation = new TreeRelation(null, childFragment.getFragmentId(),
+		TreeRelation parentChildRelation = new TreeRelation(substringConfig.getFragmenterProperty(),
+				childFragment.getFragmentId(),
 				substringValue, STRING_TYPE,
 				TREE_SUBSTRING_RELATION);
-		if (!parentFragment.getRelations().contains(parentChildRelation)) {
+		if (!parentFragment.containsRelation(parentChildRelation)) {
 			parentFragment.addRelation(parentChildRelation);
 			ldesFragmentRepository.saveFragment(parentFragment);
 		}
 	}
 
 	private String getSubstringValue(LdesFragment childFragment) {
-		return childFragment.getFragmentInfo().getValueOfKey(SUBSTRING).map(substring -> substring.replace("\"", ""))
+		return childFragment.getValueOfKey(SUBSTRING).map(substring -> substring.replace("\"", ""))
 				.orElseThrow(
 						() -> new MissingFragmentValueException(childFragment.getFragmentId(), SUBSTRING));
 

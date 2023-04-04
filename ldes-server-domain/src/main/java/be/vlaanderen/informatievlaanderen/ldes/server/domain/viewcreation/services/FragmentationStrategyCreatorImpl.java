@@ -3,10 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +18,23 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	private final ApplicationContext applicationContext;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final RootFragmentCreator rootFragmentCreator;
-	private final Tracer tracer;
+	private final MemberRepository memberRepository;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-			LdesFragmentRepository ldesFragmentRepository, RootFragmentCreator rootFragmentCreator, Tracer tracer) {
+			LdesFragmentRepository ldesFragmentRepository,
+			RootFragmentCreator rootFragmentCreator,
+			MemberRepository memberRepository) {
 		this.applicationContext = applicationContext;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.rootFragmentCreator = rootFragmentCreator;
-		this.tracer = tracer;
+		this.memberRepository = memberRepository;
 	}
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
-		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(ldesFragmentRepository, tracer);
+		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
+		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(ldesFragmentRepository,
+				memberRepository, nonCriticalTasksExecutor);
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);

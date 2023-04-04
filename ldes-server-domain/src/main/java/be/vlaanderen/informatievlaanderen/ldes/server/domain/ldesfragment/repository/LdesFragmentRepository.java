@@ -2,22 +2,29 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repos
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface LdesFragmentRepository {
 	LdesFragment saveFragment(LdesFragment ldesFragment);
 
-	Optional<LdesFragment> retrieveFragment(LdesFragmentRequest ldesFragmentRequest);
+	Optional<LdesFragment> retrieveFragment(String fragmentId);
 
-	Optional<LdesFragment> retrieveOpenChildFragment(String viewName,
-			List<FragmentPair> fragmentPairList);
+	Optional<LdesFragment> retrieveOpenChildFragment(String parentId);
 
-	Optional<LdesFragment> retrieveOpenFragment(String viewName,
+	Optional<LdesFragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList);
 
 	Optional<LdesFragment> retrieveRootFragment(String viewName);
 
+	Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName);
+
+	Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
+			List<FragmentPair> fragmentPairList);
+
+	void incrementNumberOfMembers(String fragmentId);
+
+	List<LdesFragment> retrieveFragmentsOfView(String defaultViewName);
 }

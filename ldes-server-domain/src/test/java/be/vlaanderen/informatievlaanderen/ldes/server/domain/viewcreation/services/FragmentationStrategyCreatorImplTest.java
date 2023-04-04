@@ -3,14 +3,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
@@ -29,13 +30,14 @@ class FragmentationStrategyCreatorImplTest {
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
-	private final Tracer tracer = mock(Tracer.class);
+	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach
 	void setUp() {
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, ldesFragmentRepository, rootFragmentCreator, tracer);
+				applicationContext, ldesFragmentRepository, rootFragmentCreator,
+				memberRepository);
 	}
 
 	@Test
@@ -48,7 +50,9 @@ class FragmentationStrategyCreatorImplTest {
 
 		assertTrue(fragmentationStrategy instanceof FragmentationStrategyImpl);
 		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
-		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(viewSpecification.getName());
+		inOrder.verify(rootFragmentCreator,
+				times(1)).createRootFragmentForView(viewSpecification.getName());
+		inOrder.verify(applicationContext, times(1)).getBean(NonCriticalTasksExecutor.class);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -57,14 +61,16 @@ class FragmentationStrategyCreatorImplTest {
 		FragmentationStrategyWrapper timebasedFragmentationStrategyWrapper = mock(FragmentationStrategyWrapper.class);
 		when(applicationContext.getBean(TIMEBASED)).thenReturn(timebasedFragmentationStrategyWrapper);
 		FragmentationStrategy timebasedFragmentationStrategy = mock(FragmentationStrategy.class);
-		when(timebasedFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext), any(),
-				eq(new FragmentationProperties(TIMEBASED_PROPERTIES)))).thenReturn(timebasedFragmentationStrategy);
+		when(timebasedFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext),
+				any(),
+				eq(new ConfigProperties(TIMEBASED_PROPERTIES))))
+				.thenReturn(timebasedFragmentationStrategy);
 
 		FragmentationStrategyWrapper geospatialFragmentationStrategyWrapper = mock(FragmentationStrategyWrapper.class);
 		when(applicationContext.getBean(GEOSPATIAL)).thenReturn(geospatialFragmentationStrategyWrapper);
 		FragmentationStrategy geospatialFragmentationStrategy = mock(FragmentationStrategy.class);
 		when(geospatialFragmentationStrategyWrapper.wrapFragmentationStrategy(applicationContext,
-				timebasedFragmentationStrategy, new FragmentationProperties(GEOSPATIAL_PROPERTIES)))
+				timebasedFragmentationStrategy, new ConfigProperties(GEOSPATIAL_PROPERTIES)))
 				.thenReturn(geospatialFragmentationStrategy);
 
 		ViewSpecification viewSpecification = getViewSpecification();
@@ -73,7 +79,8 @@ class FragmentationStrategyCreatorImplTest {
 
 		assertEquals(geospatialFragmentationStrategy, fragmentationStrategy);
 		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
-		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(viewSpecification.getName());
+		inOrder.verify(rootFragmentCreator,
+				times(1)).createRootFragmentForView(viewSpecification.getName());
 		inOrder.verify(applicationContext, times(1)).getBean(TIMEBASED);
 		inOrder.verify(applicationContext, times(1)).getBean(GEOSPATIAL);
 		inOrder.verifyNoMoreInteractions();
@@ -83,9 +90,12 @@ class FragmentationStrategyCreatorImplTest {
 	private ViewSpecification getViewSpecification() {
 		ViewSpecification viewSpecification = new ViewSpecification();
 		viewSpecification.setName("firstView");
-		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL, GEOSPATIAL_PROPERTIES);
-		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED, TIMEBASED_PROPERTIES);
-		viewSpecification.setFragmentations(List.of(geospatialConfig, timebasedConfig));
+		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL,
+				GEOSPATIAL_PROPERTIES);
+		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED,
+				TIMEBASED_PROPERTIES);
+		viewSpecification.setFragmentations(List.of(geospatialConfig,
+				timebasedConfig));
 		return viewSpecification;
 	}
 

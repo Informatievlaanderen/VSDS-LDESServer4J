@@ -2,10 +2,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentreques
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
-public record LdesFragmentRequest(String viewName,List<FragmentPair>fragmentPairs){
+public record LdesFragmentRequest(String viewName, List<FragmentPair> fragmentPairs) {
 
-// @formatter:off
+    public static LdesFragmentRequest createViewRequest(String viewName) {
+        return new LdesFragmentRequest(viewName, List.of());
+    }
+
+    // @formatter:off
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -20,5 +25,22 @@ public record LdesFragmentRequest(String viewName,List<FragmentPair>fragmentPair
         }
     }
     // @formatter:on
+
+    public String generateFragmentId() {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("/").append(viewName);
+
+        if (!fragmentPairs.isEmpty()) {
+            stringBuilder.append("?");
+            stringBuilder.append(
+                    fragmentPairs
+                            .stream()
+                            .map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
+                            .collect(Collectors.joining("&"))
+            );
+        }
+
+        return stringBuilder.toString();
+    }
 
 }

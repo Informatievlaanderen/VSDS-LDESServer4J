@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,45 +12,91 @@ class LdesFragmentTest {
 	private static final String VIEW_NAME = "mobility-hindrances";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String GENERATED_AT_TIME = "generatedAtTime";
+	private static final String FRAGMENTATION_VALUE_2 = "0/0/0";
+	private static final String TILE = "tile";
+	public static final FragmentPair PARENT_FRAGMENT_PAIR = new FragmentPair("a", "b");
+	public static final FragmentPair CHILD_FRAGMENT_PAIR = new FragmentPair("c", "d");
 
 	@Test
-	@DisplayName("Test if fragment is immutable or not")
 	void when_LdesFragmentIsImmutable_IsImmutableReturnsTrue() {
 		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo(VIEW_NAME,
-						List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
+				VIEW_NAME,
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		assertFalse(ldesFragment.isImmutable());
-		ldesFragment.setImmutable(true);
+		ldesFragment.makeImmutable();
 		assertTrue(ldesFragment.isImmutable());
 	}
 
 	@Test
-	@DisplayName("Test current number of members")
-	void when_CurrentNumberOfMembersIsRequested_LdesFragmentsReturnsNumberOfMembers() {
+	void get_FragmentId() {
 		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo(VIEW_NAME,
-						List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
+				VIEW_NAME,
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1),
+						new FragmentPair(TILE, FRAGMENTATION_VALUE_2)));
 
-		assertEquals(0, ldesFragment.getCurrentNumberOfMembers());
-		ldesFragment.addMember("some_id");
-		assertEquals(1, ldesFragment.getCurrentNumberOfMembers());
-		ldesFragment.addMember("some_id_2");
-		ldesFragment.addMember("some_id_3");
-		assertEquals(3, ldesFragment.getCurrentNumberOfMembers());
+		assertEquals("/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&tile=0/0/0",
+				ldesFragment.getFragmentId());
+		assertEquals("/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z", ldesFragment.getParentId());
+
+		ldesFragment = new LdesFragment(
+				VIEW_NAME, List.of());
+		assertEquals("/mobility-hindrances",
+				ldesFragment.getFragmentId());
+		assertEquals("root", ldesFragment.getParentId());
+
 	}
 
 	@Test
-	void when_ChildIsCreated_ChildHasExtendedFragmentPairs() {
-		LdesFragment ldesFragment = new LdesFragment(
-				new FragmentInfo(VIEW_NAME,
-						List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
-
-		LdesFragment child = ldesFragment.createChild(new FragmentPair("a", "b"));
-		assertEquals("/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&a=b", child.getFragmentId());
-		assertFalse(child.isImmutable());
-		assertEquals(0, child.getMemberIds().size());
-		assertEquals(0, child.getRelations().size());
-		assertEquals(List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1), new FragmentPair("a", "b")),
-				child.getFragmentInfo().getFragmentPairs());
+	void when_ValueIsAbsent_GetValueOfKeyReturnsOptionalEmpty() {
+		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1),
+						new FragmentPair(TILE, FRAGMENTATION_VALUE_2)));
+		assertTrue(ldesFragment.getValueOfKey("unexistingKey").isEmpty());
+		assertEquals(Optional.of(FRAGMENTATION_VALUE_1), ldesFragment.getValueOfKey(GENERATED_AT_TIME));
+		assertEquals(Optional.of(FRAGMENTATION_VALUE_2), ldesFragment.getValueOfKey(TILE));
 	}
+
+	@Test
+	void when_childIsCreated_ViewIsSameAndFragmentPairsAreExtended() {
+		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
+				List.of(PARENT_FRAGMENT_PAIR));
+		LdesFragment child = ldesFragment.createChild(CHILD_FRAGMENT_PAIR);
+		assertEquals(List.of(PARENT_FRAGMENT_PAIR, CHILD_FRAGMENT_PAIR), child.getFragmentPairs());
+		assertFalse(child.isImmutable());
+		assertEquals(VIEW_NAME, child.getViewName());
+	}
+
+	@Test
+	void when_LdesFragmentIsMadeImmutable_ImmutableTimeStampIsSet() {
+		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
+				List.of(PARENT_FRAGMENT_PAIR));
+		assertFalse(ldesFragment.isImmutable());
+		assertNull(ldesFragment.getImmutableTimestamp());
+		ldesFragment.makeImmutable();
+		assertTrue(ldesFragment.isImmutable());
+		assertNotNull(ldesFragment.getImmutableTimestamp());
+	}
+
+	@Test
+	void testEquals() {
+		LdesFragment a = new LdesFragment("a", List.of());
+		LdesFragment a2 = new LdesFragment("a", List.of());
+		LdesFragment c = new LdesFragment("c", List.of());
+
+		assertEquals(a, a2);
+		assertEquals(a2, a);
+		assertNotEquals(a, c);
+	}
+
+	@Test
+	void testHashCode() {
+		LdesFragment a = new LdesFragment("a", List.of());
+		LdesFragment a2 = new LdesFragment("a", List.of());
+		LdesFragment c = new LdesFragment("c", List.of());
+
+		assertEquals(a.hashCode(), a2.hashCode());
+		assertEquals(a2.hashCode(), a.hashCode());
+		assertNotEquals(a.hashCode(), c.hashCode());
+	}
+
 }

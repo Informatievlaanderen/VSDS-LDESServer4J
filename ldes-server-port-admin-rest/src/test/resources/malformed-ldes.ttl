@@ -1,0 +1,6 @@
+@prefix tree: <https://w3id.org/tree#> .
+@preix ldes: <https://w3id.org/ldes#> .
+
+ldes:collectionName1 a ldes:EventStream ;
+   ldes:versionOfPath "1.1" ;
+   ldes:shape [] .

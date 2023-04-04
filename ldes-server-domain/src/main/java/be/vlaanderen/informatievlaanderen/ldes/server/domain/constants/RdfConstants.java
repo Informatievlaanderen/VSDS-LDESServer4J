@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
 
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
-
 import org.apache.jena.rdf.model.Property;
+
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class RdfConstants {
 	private RdfConstants() {
@@ -24,7 +24,7 @@ public class RdfConstants {
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
 	public static final String GENERATED_AT_TIME = "generatedAtTime";
-
+	public static final Property IS_PART_OF_PROPERTY = createProperty("http://purl.org/dc/terms/isPartOf");
 	public static final String PROV = "http://www.w3.org/ns/prov#";
 	public static final String PROV_GENERATED_AT_TIME = PROV + GENERATED_AT_TIME;
 
@@ -32,4 +32,10 @@ public class RdfConstants {
 	public static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = TREE + "LessThanOrEqualToRelation";
 
 	public static final String GENERIC_TREE_RELATION = TREE + "Relation";
+
+	public static final String VIEW = LDES + "view";
+	public static final String VIEW_TYPE = LDES + "View";
+	public static final String SHAPE = TREE + "shape";
+	public static final String NODE_SHAPE_TYPE = TREE + "NodeShape";
+	public static final String EVENT_STREAM_TYPE = LDES + "EventStream";
 }

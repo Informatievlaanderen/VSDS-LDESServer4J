@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,14 +26,14 @@ class InMemoryFragmentationMediatorTest {
 	@DisplayName("Adding a member to the queue")
 	void when_MemberIsAddedForFragmentation_AThreadIsStartedWhichCallsTheFragmentationExecutor() {
 		Awaitility.reset();
-		LdesMember ldesMember = mock(LdesMember.class);
-		fragmentationMediator.addMemberToFragment(ldesMember);
+		Member member = mock(Member.class);
+		fragmentationMediator.addMemberToFragment(member);
 
 		await().pollDelay(Durations.ONE_MILLISECOND)
 				.atMost(Durations.TEN_SECONDS)
 				.until(() -> fragmentationMediator.ldesMembersToFragmentTracker.get() == 0);
 
-		verify(fragmentationExecutor, times(1)).executeFragmentation(ldesMember);
+		verify(fragmentationExecutor, times(1)).executeFragmentation(member);
 	}
 
 }

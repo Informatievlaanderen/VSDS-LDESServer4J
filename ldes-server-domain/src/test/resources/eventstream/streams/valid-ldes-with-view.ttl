@@ -1,0 +1,18 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+
+
+[] a ldes:EventStream ;
+    ldes:timestampPath dcterms:created ;
+    ldes:versionOfPath dcterms:isVersionOf ;
+    ldes:View [
+           tree:viewDescription [
+               ldes:retentionPolicy "none"
+           ]
+       ] ;
+    tree:shape [
+        sh:closed true;
+        a sh:NodeShape ;
+    ] .

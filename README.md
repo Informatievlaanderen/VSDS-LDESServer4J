@@ -21,9 +21,13 @@ open data.
                 * [Example HTTP Ingest-Fetch Configuration](#example-http-ingest-fetch-configuration)
                 * [Example Mongo Configuration](#example-mongo-configuration)
                 * [Example Views Configuration](#example-views-configuration)
+                * [Example Retention](#example-retention)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
+                * [Example Pagination](#example-pagination)
+                * [Example Serving Static Content](#example-serving-static-content)
+                * [Example Serving DCAT Metadata](#example-serving-dcat-metadata)
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
@@ -82,27 +86,44 @@ cd ldes-server-application
 ```
 
 ```mvn
-mvn spring-boot:run -P {profiles (comma separated with no spaces) }
+mvn spring-boot:run -P{profiles (comma separated with no spaces) }
 ```
 
-This will start an empty LDES server. To enrich this server, certain Maven profiles can be activated:
+for example:
+```mvn
+mvn spring-boot:run -P{fragmentation-pagination,http-fetch,http-ingest,queue-none,storage-mongo}
+```
+
+To enrich the server, certain Maven profiles can be activated:
 
 #### Profiles
 
-| Profile Group                        | Profile Name             | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
-|--------------------------------------|--------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (Fetch/Ingestion)** | http-ingest              | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"   |
-| **Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
-| **Timebased Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
-| **Geospatial Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**          | fragmentation-substring  | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| Profile Group                           | Profile Name             | Description                                                                     | Parameters                                                                  | Further Info                                                                                                                        |
+|-----------------------------------------|--------------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest              | Enables a HTTP endpoint for to insert LDES members.                             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)**    | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments                              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
+| **Storage**                             | storage-mongo            | Allows the LDES server to read and write from a mongo database.                 | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
+| **Timebased Fragmentation[DEPRECATED]** | fragmentation-timebased  | Supports timebased fragmentation.                                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
+| **Geospatial Fragmentation**            | fragmentation-geospatial | Supports geospatial fragmentation.                                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **Substring Fragmentation**             | fragmentation-substring  | Supports substring fragmentation.                                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
+| **Pagination Fragmentation**            | fragmentation-pagination | Supports pagination.                                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
+| **Ldes-queues**                         | queue-none               | Members are fragmented immediately.                                             | N/A activating the profile is enough                                        |                                                                                                                                     |
+| **Ldes-queues**                         | queue-in-memory          | Members are queued in memory before fragmentation.                              | N/A activating the profile is enough                                        |                                                                                                                                     |
+| **HTTP Endpoints (Admin)**              | http-admin               | Enables HTTP endpoints. These will be used later to configure different streams |                                                                             |                                                                                                                                     |
+
+
+The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to function properly:
+- http-ingest: requires at least one queue, one fragmentation and one storage profile.
+- http-fetch: requires at least one storage profile
 
 #### Application Configuration
 
 Below are properties that are needed when applying certain profiles.
-These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does
-not exist, create it)
+These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does not exist, create it)
+
+A minimal working example of the application.yml can be found [here](ldes-server-application/examples/minimal-config-application.yml). This works for both fetching and ingesting. 
+
+The server allows configurable fragment refresh times with the max-age and max-age-immutable options. These values will be sent with the Cache-Control header in HTTP responses.
 
 ##### Example HTTP Ingest-Fetch Configuration
 
@@ -112,9 +133,14 @@ not exist, create it)
     collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
     host-name: { hostname of LDES Server }
     member-type: { Defines which syntax type is used to define the member id e.g. "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder" }
-    shape: { URI to defined shape }
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
+    validation:
+      shape: { URI to defined shape }
+      enabled: { Enables/Disables shacl validation on ingested members }
+  rest:
+    max-age: { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
+    max-age-immutable: { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
   ```
 
 ##### Example Mongo Configuration
@@ -124,13 +150,19 @@ not exist, create it)
     uri: mongodb://{docker-hostname}:{port}
     database: { database name }
   ```
+
+Note that the database schema may evolve between releases. To update the schema Mongock changesets have been created and can be applied. For more info: [mongock-changeset-1](ldes-server-infra-mongo/mongock-changeset-1/README.md)
+
 ##### Example Views Configuration
 
+By using the property `defaultView`, one can enable or disable a default paginated (100 members per page) view on the collection. By defining the `views` property, more custom views can be configured.
+
   ```yaml
+    defaultView: {"true" or "false"}
     views:
       - name: {name of the view}
         fragmentations:
-          - name: {type of fragmentation, currently "timebased" and "geospatial" supported}
+          - name: {type of fragmentation}
             config:
               {Map of fragmentation properties}
   ```
@@ -138,6 +170,7 @@ not exist, create it)
 An example of a view configuration with two view is shown below
 
   ```yaml
+  defaultView: "true"
   views:
     - name: "firstView"
       fragmentations:
@@ -145,18 +178,33 @@ An example of a view configuration with two view is shown below
           config:
             maxZoomLevel: 15
             fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
-            projection: "lambert72"
-        - name: "timebased"
+        - name: "pagination"
           config:
             memberLimit: 5
     - name: "secondView"
       fragmentations:
-        - name: "timebased"
+        - name: "pagination"
           config:
             memberLimit: 3
   ```
 
+##### Example Retention
+
+To reduce storage fill up, it is possible to set a retention policy per view.
+As of now, there is only a timebased retention possible which can be configured with a [ISO 8601 duration](https://tc39.es/proposal-temporal/docs/duration.html)
+
+  ```yaml
+  views:
+    - name: "firstView"
+      retentionPolicies:
+        - name: "timebased"
+          config:
+            duration: "PT5M"
+  ```
+
 ##### Example Timebased Fragmentation
+
+This fragmentation is DEPRECATED, more information can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD)
 
   ```yaml
   name: "timebased"
@@ -166,21 +214,55 @@ An example of a view configuration with two view is shown below
 
 ##### Example Geospatial Fragmentation
 
+Full documentation for geospatial fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-geospatial/README.MD)
+
   ```yaml
   name: "geospatial"
   config:
     maxZoomLevel: { Required zoom level }
     fragmenterProperty: { Defines which property will be used for bucketizing }
-    projection: { "lambert72" (current only this projection is supported) }
   ```
 
 ##### Example Substring Fragmentation
+
+Full documentation for substring fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-substring/README.MD)
 
   ```yaml
   name: "substring"
   config:
     fragmenterProperty: { Defines which property will be used for bucketizing }
     memberLimit: { member limit > 0 }
+  ```
+
+##### Example Pagination
+
+Full documentation for pagination fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-pagination/README.MD)
+
+  ```yaml
+  name: "pagination"
+  config:
+    memberLimit: { member limit > 0 }
+  ```
+
+##### Example Serving Static Content
+
+  ```yaml
+spring:
+  mvc:
+    static-path-pattern: { pattern used in url for static content, e.g. /content/** for serving on http://localhost:8080/content/ }
+  web:
+    resources:
+      static-locations: { source folder of static content, e.g. file:/opt/files }
+  ```
+
+##### Example Serving DCAT Metadata
+
+Supported file formats: .ttl, .rdf, .nq and .jsonld
+Templates for configuring the DCAT metadata can be found [here](templates/dcat)
+
+  ```yaml
+ldes:
+   dcat: { path of file or url containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
   ```
 
 ### Docker Setup
@@ -266,11 +348,13 @@ mvn clean verify -Dunittestskip=true
 - ldes-server-port-publication-rest
 - ldes-fragmentisers-timebased
 - ldes-fragmentisers-geospatial
+- ldes-fragmentisers-pagination
+- ldes-fragmentisers-substring
 
 ### Tracing and Metrics
 
 Additionally, it is possible to keep track of metrics and tracings of the LDES Server.
-This will be done through a Jaeger exporter for traces and a Prometheus endpoint for Metrics.
+This will be done through a Zipkin exporter for traces and a Prometheus endpoint for Metrics.
 
 The exposed metrics can be found at `/actuator/metrics`.
 
@@ -282,15 +366,13 @@ To achieve this, the following properties are expected
 #### Local Tracing and Metrics
 
 ```yaml
-spring:
-  sleuth:
-    otel:
-      config:
-        trace-id-ratio-based: 1.0
-      exporter:
-        jaeger:
-          endpoint: "endpoint of collector"
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: "zipkin endpoint of collector"
   endpoints:
     web:
       exposure:
@@ -301,8 +383,8 @@ management:
 The export of traces can be disabled with the following parameter:
 
 ```yaml
-spring:
-  sleuth:
+management:
+  tracing:
     enabled: false
   ```
 
@@ -311,11 +393,13 @@ spring:
 ```
 SPRING_SLEUTH_OTEL_EXPORTER_JAEGER_ENDPOINT="endpoint of collector"
 MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="prometheus"
+MANAGEMENT_TRACING_SAMPLING_PROBABILITY="1.0"
+MANAGEMENT_ZIPKIN_TRACING_ENDPOINT="zipkin endpoint of collector"
 ```
 The export of traces can be disabled with the following parameter:
 
 ```
-SPRING_SLEUTH_ENABLED=false
+MANAGEMENT_TRACING_ENABLED=false
 ```
 
 ### Health and Info
@@ -347,17 +431,6 @@ management:
       show-details: always
   ```
 
-Additionally, to provide a more clean health check report, the Spring Cloud discoveryComposite can be disabled by adding
-
-```yaml
-spring:
-  cloud:
-    discovery:
-      client:
-        composite-indicator:
-          enabled: false
-```
-
 #### Docker
 
 ```
@@ -367,8 +440,44 @@ MANAGEMENT_HEALTH_MONGO_ENABLED=true
 MANAGEMENT_ENDPOINT_HEALTH_SHOW-DETAILS="always"
 ```
 
-Additionally, to provide a more clean health check report, the Spring Cloud discoveryComposite can be disabled by adding
+### Logging
 
+
+The logging of this server is split over the different logging levels according to the following guidelines.
+
+- TRACE: NONE
+- DEBUG: Standard operations like: create fragment, ingest member, assign member to fragment
+- INFO: NONE
+- WARN: Potentially unintended operations like: Duplicate Member Ingest, ...
+- ERROR: All Exceptions
+
+#### Logging configuration
+
+The following config allows you to output logging to the console. Further customization of the logging settings can be done using the logback properties.
+```yaml
+logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+  level:
+    root: INFO
 ```
-SPRING_CLOUD_DISCOVERY_CLIENT_COMPOSITE-INDICATOR_ENABLED=false
+
+The following config enables and exposes the loggers endpoint.
+```yaml
+management:
+  endpoint:
+    loggers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - loggers
+```
+
+To change the logging level of the application at runtime, you can send the following POST request to the loggers endpoint.
+Replace [LOGGING LEVEL] with the desired logging level from among: TRACE, DEBUG, INFO, WARN, ERROR.
+```
+curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "[LOGGING LEVEL]"}'
+  http://localhost:8080/actuator/loggers/ROOT
 ```

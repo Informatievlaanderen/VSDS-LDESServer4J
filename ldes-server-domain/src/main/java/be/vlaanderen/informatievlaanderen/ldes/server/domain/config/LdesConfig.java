@@ -1,17 +1,21 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
 public class LdesConfig {
+
 	private String hostName;
 	private String collectionName;
-	private String shape;
 	private String memberType;
 	private String timestampPath;
 	private String versionOf;
+	private Validation validation = new Validation();
+	private Model dcat = ModelFactory.createDefaultModel();
 
 	public String getHostName() {
 		return hostName;
@@ -27,14 +31,6 @@ public class LdesConfig {
 
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
-	}
-
-	public String getShape() {
-		return shape;
-	}
-
-	public void setShape(String shape) {
-		this.shape = shape;
 	}
 
 	public String getMemberType() {
@@ -60,4 +56,46 @@ public class LdesConfig {
 	public void setVersionOf(String versionOf) {
 		this.versionOf = versionOf;
 	}
+
+	public Validation validation() {
+		return validation;
+	}
+
+	public void setValidation(Validation validation) {
+		this.validation = validation;
+	}
+
+	public String getBaseUrl() {
+		return hostName + "/" + collectionName;
+	}
+
+	public static class Validation {
+		private String shape;
+		private boolean enabled = true;
+
+		public String getShape() {
+			return shape;
+		}
+
+		public void setShape(String shape) {
+			this.shape = shape;
+		}
+
+		public boolean isEnabled() {
+			return enabled;
+		}
+
+		public void setEnabled(boolean enabled) {
+			this.enabled = enabled;
+		}
+	}
+
+	public void setDcat(Model dcat) {
+		this.dcat = dcat;
+	}
+
+	public Model getDcat() {
+		return dcat;
+	}
+
 }

@@ -1,3 +1,4 @@
+defaultView: "true"
 views:
   - name: "firstView"
     fragmentations:
@@ -5,10 +6,13 @@ views:
         config:
           maxZoomLevel: 15
           fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
-          projection: "lambert72"
       - name: "timebased"
         config:
           memberLimit: 5
+    retention-policies:
+      - name: "timebased"
+        config:
+          duration: PT1M
   - name: "secondView"
     fragmentations:
       - name: "timebased"

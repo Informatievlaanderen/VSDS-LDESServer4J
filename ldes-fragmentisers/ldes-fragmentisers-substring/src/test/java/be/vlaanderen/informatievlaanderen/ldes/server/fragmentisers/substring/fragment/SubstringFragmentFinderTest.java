@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
@@ -26,7 +25,7 @@ class SubstringFragmentFinderTest {
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(
-				new FragmentInfo(VIEW_NAME, List.of()));
+				VIEW_NAME, List.of());
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setMemberLimit(1);
 		substringRelationsAttributer = mock(SubstringRelationsAttributer.class);
@@ -36,36 +35,45 @@ class SubstringFragmentFinderTest {
 	}
 
 	@Test
-	void when_RootFragmentHasNotReachedLimit_RootFragmentIsReturned() {
+	void when_RootFragmentHasNotReachedLimitAndIsInBucket_RootFragmentIsReturned() {
 		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
 
-		LdesFragment actualFragment = substringFragmentFinder.getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
-				rootFragment, List.of("a", "ab"));
+		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
+				rootFragment, List.of("", "a", "ab"));
 
 		assertEquals(rootFragment, actualFragment);
-		InOrder inOrder = inOrder(substringFragmentCreator, substringRelationsAttributer);
+		InOrder inOrder = inOrder(substringFragmentCreator,
+				substringRelationsAttributer);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_RootFragmentHasReachedItsLimit_FirstOpenFragmentIsReturned() {
-		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
-		rootFragment.addMember("someMember");
-		LdesFragment aFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "a"));
-		aFragment.addMember("anotherMember");
+		LdesFragment rootFragment = new LdesFragment(
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, null, false, 1, List.of());
+		LdesFragment aFragment = new LdesFragment(
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, null, false, 1, List.of());
 		LdesFragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
-		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT, "a")).thenReturn(aFragment);
-		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT, "ab")).thenReturn(abFragment);
-		LdesFragment actualFragment = substringFragmentFinder.getOpenLdesFragmentOrLastPossibleFragment(PARENT_FRAGMENT,
+		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
+				"a")).thenReturn(aFragment);
+		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
+				"ab")).thenReturn(abFragment);
+
+		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab"));
 
 		assertEquals(abFragment, actualFragment);
 
-		InOrder inOrder = inOrder(substringFragmentCreator, substringRelationsAttributer);
-		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "a");
-		inOrder.verify(substringRelationsAttributer, times(1)).addSubstringRelation(rootFragment, aFragment);
-		inOrder.verify(substringFragmentCreator, times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "ab");
-		inOrder.verify(substringRelationsAttributer, times(1)).addSubstringRelation(aFragment, abFragment);
+		InOrder inOrder = inOrder(substringFragmentCreator,
+				substringRelationsAttributer);
+		inOrder.verify(substringFragmentCreator,
+				times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "a");
+		inOrder.verify(substringRelationsAttributer,
+				times(1)).addSubstringRelation(rootFragment, aFragment);
+		inOrder.verify(substringFragmentCreator,
+				times(1)).getOrCreateSubstringFragment(PARENT_FRAGMENT, "ab");
+		inOrder.verify(substringRelationsAttributer,
+				times(1)).addSubstringRelation(aFragment, abFragment);
 		inOrder.verifyNoMoreInteractions();
 
 	}

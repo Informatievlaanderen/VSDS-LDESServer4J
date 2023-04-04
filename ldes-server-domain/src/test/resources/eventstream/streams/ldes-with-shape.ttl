@@ -1,0 +1,26 @@
+@prefix tree: <https://w3id.org/tree#> .
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix example: <http://example.org/> .
+
+
+ldes:collectionName1 a ldes:EventStream ;
+   ldes:versionOfPath "1.1" ;
+   tree:shape [ a sh:nodeShape ;
+      sh:nodeShape [
+         sh:closed "true" ;
+         ] ;
+      sh:propertyShape [
+         sh:defaultValue "0" ;
+         ] ;
+      sh:deactivated "false" ;
+   ] ;
+   ldes:view ldes:view1 .
+
+ldes:view1 a tree:Node ;
+ tree:viewDescription [
+   example:fragmentationStrategy [
+       a example:Fragmentation ;
+       example:property ldes:propertyPath
+   ]
+] .

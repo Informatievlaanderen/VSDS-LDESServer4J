@@ -2,39 +2,24 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.TileFragment;
-
-import java.util.List;
-import java.util.stream.Stream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 
 public class TileFragmentRelationsAttributer {
 
-	private final LdesFragmentRepository ldesFragmentRepository;
 	private final GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
+	private final LdesFragmentRepository ldesFragmentRepository;
 
 	public TileFragmentRelationsAttributer(LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 	}
 
-	public Stream<LdesFragment> addRelationsFromRootToBottom(LdesFragment rootFragment,
-			List<TileFragment> tileFragments) {
-		addRelationsFromRootToCreatedTiles(rootFragment, getCreatedTiles(tileFragments));
-		return tileFragments
-				.stream()
-				.map(TileFragment::ldesFragment);
-	}
-
-	private List<LdesFragment> getCreatedTiles(List<TileFragment> tileFragments) {
-		return tileFragments
-				.stream()
-				.filter(TileFragment::created)
-				.map(TileFragment::ldesFragment)
-				.toList();
-	}
-
-	private void addRelationsFromRootToCreatedTiles(LdesFragment tileRootFragment, List<LdesFragment> tileFragments) {
-		tileFragments.forEach(
-				ldesFragment -> relationsAttributer.addRelationToParentFragment(tileRootFragment, ldesFragment));
-		ldesFragmentRepository.saveFragment(tileRootFragment);
+	public void addRelationsFromRootToBottom(LdesFragment rootFragment,
+			LdesFragment tileFragments) {
+		TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
+				tileFragments);
+		if (!rootFragment.containsRelation(relationToParentFragment)) {
+			rootFragment.addRelation(relationToParentFragment);
+			ldesFragmentRepository.saveFragment(rootFragment);
+		}
 	}
 }

@@ -1,8 +1,9 @@
 ldes:
   collection-name: "exampleData"
   host-name: "http://localhost:8089"
-  shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
+  validation:
+    shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
   member-type: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
   timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
   version-of: "http://purl.org/dc/terms/isVersionOf"
-
+  dcat: "dcat-test.ttl"
