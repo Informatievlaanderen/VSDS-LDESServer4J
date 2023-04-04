@@ -98,4 +98,13 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		mongoTemplate.updateFirst(query, update, LdesFragmentEntity.class);
 	}
 
+	@Override
+	public List<LdesFragment> retrieveFragmentsOfView(String viewName) {
+		return repository
+				.findAllByViewName(viewName)
+				.stream()
+				.map(LdesFragmentEntity::toLdesFragment)
+				.toList();
+	}
+
 }

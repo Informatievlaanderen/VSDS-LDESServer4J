@@ -21,4 +21,6 @@ public interface LdesFragmentEntityRepository extends MongoRepository<LdesFragme
 	List<LdesFragmentEntity> findAllBySoftDeletedAndViewName(Boolean softDeleted, String viewName);
 
 	Optional<LdesFragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
+
+	List<LdesFragmentEntity> findAllByViewName(String viewName);
 }
