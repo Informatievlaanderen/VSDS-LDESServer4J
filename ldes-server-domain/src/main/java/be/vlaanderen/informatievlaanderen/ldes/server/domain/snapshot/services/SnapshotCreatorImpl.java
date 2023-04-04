@@ -30,7 +30,7 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	@Override
 	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		Snapshot snapshot = new Snapshot("snapshot/" + snapshotTime,
+		Snapshot snapshot = new Snapshot("snapshot-" + snapshotTime,
 				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator.createRootFragmentForView(snapshot.getSnapshotId());
