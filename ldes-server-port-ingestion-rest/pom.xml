@@ -10,10 +10,6 @@
 
     <artifactId>ldes-server-port-ingestion-rest</artifactId>
 
-    <properties>
-        <relative-formatter-path>..</relative-formatter-path>
-    </properties>
-
     <dependencies>
         <!-- VSDS -->
         <dependency>

@@ -9,10 +9,6 @@
 
     <artifactId>ldes-queue-none</artifactId>
 
-    <properties>
-        <relative-formatter-path>../..</relative-formatter-path>
-    </properties>
-
     <dependencies>
         <!-- Spring Boot -->
         <dependency>

@@ -86,41 +86,28 @@ cd ldes-server-application
 ```
 
 ```mvn
-mvn spring-boot:run -P{profiles (comma separated with no spaces) }
+mvn spring-boot:run -P {profiles (comma separated with no spaces) }
 ```
 
-for example:
-```mvn
-mvn spring-boot:run -P{fragmentation-timebased,http-fetch,http-ingest,queue-none,storage-mongo}
-```
-
-To enrich the server, certain Maven profiles can be activated:
+This will start an empty LDES server. To enrich this server, certain Maven profiles can be activated:
 
 #### Profiles
 
-| Profile Group                        | Profile Name               | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
-|--------------------------------------|----------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (Fetch/Ingestion)** | http-ingest                | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch                 | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
-| **Storage**                          | storage-mongo              | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
-| **Timebased Fragmentation**          | fragmentation-timebased    | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
-| **Geospatial Fragmentation**         | fragmentation-geospatial   | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Pagination Fragmentation**         | fragmentation-pagination   | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
-| **Ldes-queues**                      | queue-none                 | Members are fragmented immediately.                             | N/A activating the profile is enough                                        |                                                                                                                                     |
-| **Ldes-queues**                      | queue-in-memory            | Members are queued in memory before fragmentation.              | N/A activating the profile is enough                                        |                                                                                                                                     |
+| Profile Group                        | Profile Name             | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
+|--------------------------------------|--------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| **HTTP Endpoints (Fetch/Ingestion)** | http-ingest              | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
+| **Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
+| **Timebased Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
+| **Geospatial Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **Substring Fragmentation**          | fragmentation-substring  | Supports substring fragmentation.                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
+| **Pagination Fragmentation**         | fragmentation-pagination | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
 
-The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to function properly:
-- http-ingest: requires at least one queue, one fragmentation and one storage profile.
-- http-fetch: requires at least one storage profile
 
 #### Application Configuration
 
 Below are properties that are needed when applying certain profiles.
 These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does not exist, create it)
-
-A minimal working example of the application.yml can be found [here](ldes-server-application/examples/minimal-config-application.yml). This works for both fetching and ingesting. 
 
 The server allows configurable fragment refresh times with the max-age and max-age-immutable options. These values will be sent with the Cache-Control header in HTTP responses.
 
