@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.config;
 
 public class TimebasedRetentionProperties {
 	private TimebasedRetentionProperties() {
