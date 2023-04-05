@@ -25,7 +25,6 @@ class TreeNodeConverterImplTest {
 
 	private static final String HOST_NAME = "http://localhost:8080";
 	private static final String COLLECTION_NAME = "mobility-hindrances";
-	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
@@ -46,7 +45,7 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of());
+		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, true, List.of(), List.of());
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(6, getNumberOfStatements(model));
@@ -56,7 +55,7 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of());
+		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, false, List.of(), List.of());
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(2, getNumberOfStatements(model));
@@ -75,8 +74,7 @@ class TreeNodeConverterImplTest {
 				List.of());
 		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
-				List.of(member));
+		TreeNode treeNode = new TreeNode("/" + VIEW_NAME, false, false, false, List.of(treeRelation), List.of(member));
 
 		Model model = treeNodeConverter.toModel(treeNode);
 

@@ -215,7 +215,7 @@ class TreeNodeControllerTest {
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS, true,
 							"public,max-age=" + CONFIGURED_MAX_AGE_IMMUTABLE + ",immutable"),
-					Arguments.of("application/ld+json", Lang.JSONLD10, true,
+					Arguments.of("application/ld+json", Lang.JSONLD11, true,
 							"public,max-age=" + CONFIGURED_MAX_AGE_IMMUTABLE + ",immutable"),
 					Arguments.of("application/turtle", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE),
 					Arguments.of("*/*", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE),

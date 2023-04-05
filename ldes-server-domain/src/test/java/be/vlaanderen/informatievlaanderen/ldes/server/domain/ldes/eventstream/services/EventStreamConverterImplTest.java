@@ -96,7 +96,6 @@ class EventStreamConverterImplTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		return new TreeNode("http://localhost:8080/mobility-hindrances/" + viewName, false, false, true, List.of(),
-				List.of());
+		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of());
 	}
 }
