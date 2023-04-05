@@ -25,7 +25,6 @@ open data.
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
-                * [Example Serving Static Content](#example-serving-static-content)
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
@@ -199,17 +198,6 @@ As of now, there is only a timebased retention possible which can be configured 
   config:
     fragmenterProperty: { Defines which property will be used for bucketizing }
     memberLimit: { member limit > 0 }
-  ```
-
-##### Example Serving Static Content
-
-  ```yaml
-spring:
-  mvc:
-    static-path-pattern: { pattern used in url for static content, e.g. /content/** for serving on http://localhost:8080/content/ }
-  web:
-    resources:
-      static-locations: { source folder of static content, e.g. file:/opt/files }
   ```
 
 ### Docker Setup
