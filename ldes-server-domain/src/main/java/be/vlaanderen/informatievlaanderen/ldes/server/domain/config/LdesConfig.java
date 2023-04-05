@@ -65,10 +65,6 @@ public class LdesConfig {
 		this.validation = validation;
 	}
 
-	public String getBaseUrl() {
-		return hostName + "/" + collectionName;
-	}
-
 	public static class Validation {
 		private String shape;
 		private boolean enabled = true;

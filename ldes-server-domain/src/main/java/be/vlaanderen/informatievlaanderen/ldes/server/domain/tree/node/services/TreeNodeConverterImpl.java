@@ -3,9 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -25,11 +25,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final LdesConfig ldesConfig;
+	private final RelationStatementConverter relationStatementConverter;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			LdesConfig ldesConfig) {
+			LdesConfig ldesConfig, RelationStatementConverter relationStatementConverter) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
+		this.relationStatementConverter = relationStatementConverter;
 	}
 
 	@Override
@@ -51,23 +53,19 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		Resource currentFragmentId = createResource(treeNode.getFragmentId());
 
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
-		treeNode.getRelations().forEach(treeRelation -> {
-			TreeRelationResponse treeRelationResponse = new TreeRelationResponse(treeRelation.treePath(),
-					ldesConfig.getBaseUrl() + treeRelation.treeNode(),
-					treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation());
-			statements.addAll(treeRelationResponse.convertToStatements(
-					treeNode.getFragmentId()));
-		});
+		statements.addAll(relationStatementConverter.getRelationStatements(treeNode.getRelations(), currentFragmentId));
+
 		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId());
 
 		return statements;
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId) {
-		Resource collection = createResource(ldesConfig.getBaseUrl());
+		Resource collection = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
+		String eventStreamId = ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName();
 
 		if (isView) {
-			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(ldesConfig.getBaseUrl(),
+			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(eventStreamId,
 					ldesConfig.getTimestampPath(), ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(),
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
@@ -78,7 +76,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode) {
 		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(ldesConfig.getBaseUrl());
+		Resource viewId = createResource(ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName());
 		statements.addAll(getEventStreamStatements(viewId));
 		statements.addAll(getMemberStatements(treeNode, viewId));
 		return statements;

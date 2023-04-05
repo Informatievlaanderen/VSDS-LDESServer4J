@@ -3,9 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -25,10 +25,13 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final LdesConfig ldesConfig;
+	private final RelationStatementConverter relationStatementConverter;
 
-	public EventStreamConverterImpl(PrefixAdder prefixAdder, LdesConfig ldesConfig) {
+	public EventStreamConverterImpl(PrefixAdder prefixAdder, LdesConfig ldesConfig,
+			RelationStatementConverter relationStatementConverter) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
+		this.relationStatementConverter = relationStatementConverter;
 	}
 
 	public Model toModel(final EventStream eventStream) {
@@ -52,17 +55,9 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 
 		views.forEach(view -> {
 			Resource viewResource = createResource(view.getFragmentId());
-			statements.add(createStatement(viewResource, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
-			view.getRelations()
-					.forEach(treeRelation -> {
-						TreeRelationResponse treeRelationResponse = new TreeRelationResponse(treeRelation.treePath(),
-								ldesConfig.getBaseUrl()
-										+ treeRelation.treeNode(),
-								treeRelation.treeValue(),
-								treeRelation.treeValueType(), treeRelation.relation());
-						statements.addAll(treeRelationResponse.convertToStatements(view.getFragmentId()));
-					});
 
+			statements.add(createStatement(viewResource, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
+			statements.addAll(relationStatementConverter.getRelationStatements(view.getRelations(), viewResource));
 		});
 
 		return statements;
