@@ -32,7 +32,7 @@ public class GeospatialBucketiser {
 					try {
 						return geometryWrapper.convertSRS(SRS_URI.WGS84_CRS);
 					} catch (FactoryException | TransformException e) {
-						throw new RdfGeometryException(geometryWrapper, SRS_URI.WGS84_CRS, e);
+						throw new RdfGeometryException(geometryWrapper, SRS_URI.WGS84_CRS);
 					}
 				})
 				.forEach(geometryWrapper -> coordinates.addAll(

@@ -3,8 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.shared.PrefixMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -14,7 +12,6 @@ import java.util.Map;
 public class PrefixAdderImpl implements PrefixAdder {
 
 	private static final String VALID_LOCALNAME_REGEX = "([a-zA-Z][\\-_a-zA-Z0-9]*)$";
-	private static final Logger LOGGER = LoggerFactory.getLogger(PrefixAdderImpl.class);
 
 	@Override
 	public Model addPrefixesToModel(Model model) {
@@ -65,9 +62,8 @@ public class PrefixAdderImpl implements PrefixAdder {
 		nameSpaceMap.forEach((prefix, uri) -> {
 			try {
 				model.setNsPrefix(prefix, uri);
-			} catch (PrefixMapping.IllegalPrefixException exception) {
+			} catch (PrefixMapping.IllegalPrefixException ignored) {
 				// If namespace cannot be added as prefix, ignore.
-				LOGGER.warn("IllegalPrefixException: {}", exception.getMessage());
 			}
 		});
 	}
