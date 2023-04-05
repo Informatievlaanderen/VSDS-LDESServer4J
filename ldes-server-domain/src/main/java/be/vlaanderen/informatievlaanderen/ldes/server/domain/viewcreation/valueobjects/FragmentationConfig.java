@@ -19,8 +19,8 @@ public class FragmentationConfig {
 		this.config = config;
 	}
 
-	public ConfigProperties getProperties() {
-		return new ConfigProperties(config);
+	public FragmentationProperties getProperties() {
+		return new FragmentationProperties(config);
 	}
 
 }

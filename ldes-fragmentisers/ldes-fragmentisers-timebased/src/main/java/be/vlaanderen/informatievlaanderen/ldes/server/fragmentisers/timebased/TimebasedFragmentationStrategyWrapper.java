@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
@@ -15,25 +15,25 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timeb
 public class TimebasedFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
-			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
+			FragmentationStrategy fragmentationStrategy, FragmentationProperties properties) {
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		Tracer tracer = applicationContext.getBean(Tracer.class);
 
-		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
+		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(properties,
 				ldesFragmentRepository);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
 				ldesFragmentRepository, openFragmentProvider, tracer);
 
 	}
 
-	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
+	private OpenFragmentProvider getOpenFragmentProvider(FragmentationProperties properties,
 			LdesFragmentRepository ldesFragmentRepository) {
 		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(properties,
 				ldesFragmentRepository);
 		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository);
 	}
 
-	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(ConfigProperties properties,
+	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(FragmentationProperties properties,
 			LdesFragmentRepository ldesFragmentRepository) {
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		return new TimeBasedFragmentCreator(
@@ -41,7 +41,7 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 				ldesFragmentRepository);
 	}
 
-	private TimebasedFragmentationConfig createTimebasedFragmentationConfig(ConfigProperties properties) {
+	private TimebasedFragmentationConfig createTimebasedFragmentationConfig(FragmentationProperties properties) {
 		return new TimebasedFragmentationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)));
 	}
 }

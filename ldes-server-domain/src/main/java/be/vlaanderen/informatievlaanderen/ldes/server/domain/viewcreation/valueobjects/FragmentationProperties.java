@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class ConfigProperties {
+public class FragmentationProperties {
 	private final Map<String, String> caseInsensitiveProperties;
 
-	public ConfigProperties(Map<String, String> properties) {
+	public FragmentationProperties(Map<String, String> properties) {
 		this.caseInsensitiveProperties = new HashMap<>();
 		properties.forEach((key, value) -> caseInsensitiveProperties.put(removeCasing(key), value));
 	}
@@ -33,7 +33,7 @@ public class ConfigProperties {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		ConfigProperties that = (ConfigProperties) o;
+		FragmentationProperties that = (FragmentationProperties) o;
 		return caseInsensitiveProperties.equals(that.caseInsensitiveProperties);
 	}
 
