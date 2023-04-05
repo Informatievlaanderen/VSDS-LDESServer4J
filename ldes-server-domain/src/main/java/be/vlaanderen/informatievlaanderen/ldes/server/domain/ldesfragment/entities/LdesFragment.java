@@ -68,7 +68,4 @@ public class LdesFragment {
 		return new LdesFragment(fragmentInfo.createChild(fragmentPair));
 	}
 
-	public void removeRelation(TreeRelation treeRelation) {
-		relations.remove(treeRelation);
-	}
 }

@@ -18,17 +18,14 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
 	private final MemberReferencesRepository memberReferencesRepository;
 	private final TreeMemberRemover treeMemberRemover;
-	private final ParentUpdater parentUpdater;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			Map<String, List<RetentionPolicy>> retentionPolicyMap,
-			MemberReferencesRepository memberReferencesRepository, TreeMemberRemover treeMemberRemover,
-			ParentUpdater parentUpdater) {
+			MemberReferencesRepository memberReferencesRepository, TreeMemberRemover treeMemberRemover) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
 		this.memberReferencesRepository = memberReferencesRepository;
 		this.treeMemberRemover = treeMemberRemover;
-		this.parentUpdater = parentUpdater;
 	}
 
 	@Scheduled(fixedDelay = 10000)
@@ -43,7 +40,6 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 			ldesFragments.forEach(ldesFragment -> {
 				ldesFragment.setSoftDeleted(true);
 				ldesFragmentRepository.saveFragment(ldesFragment);
-				parentUpdater.updateParent(ldesFragment);
 				ldesFragment
 						.getMemberIds()
 						.forEach(memberId -> {
