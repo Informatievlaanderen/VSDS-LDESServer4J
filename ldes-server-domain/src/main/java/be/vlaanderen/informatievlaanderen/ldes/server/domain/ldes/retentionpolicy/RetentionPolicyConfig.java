@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimebasedRetentionProperties.DURATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimebasedRetentionProperties.DURATION_IN_SECONDS;
 
 @Configuration
 @EnableConfigurationProperties()
@@ -37,7 +37,7 @@ public class RetentionPolicyConfig {
 	private RetentionPolicy getRetentionPolicy(RetentionConfig retentionConfig) {
 		if ("timebased".equals(retentionConfig.getName())) {
 			return new TimeBasedRetentionPolicy(
-					retentionConfig.getProperties().get(DURATION));
+					Long.parseLong(retentionConfig.getProperties().get(DURATION_IN_SECONDS)));
 		}
 		throw new IllegalArgumentException("Invalid retention Policy: " + retentionConfig.getName());
 	}

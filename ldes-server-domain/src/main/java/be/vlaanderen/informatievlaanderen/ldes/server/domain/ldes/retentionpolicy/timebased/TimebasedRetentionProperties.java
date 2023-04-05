@@ -4,6 +4,6 @@ public class TimebasedRetentionProperties {
 	private TimebasedRetentionProperties() {
 	}
 
-	public static final String DURATION = "duration";
+	public static final String DURATION_IN_SECONDS = "durationInSeconds";
 
 }

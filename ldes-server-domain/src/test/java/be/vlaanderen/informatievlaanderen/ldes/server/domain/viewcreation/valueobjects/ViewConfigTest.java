@@ -46,7 +46,7 @@ class ViewConfigTest {
 
 	private void verifyRetentionPolicy(RetentionConfig retentionConfig) {
 		assertEquals("timebased", retentionConfig.getName());
-		assertEquals(new ConfigProperties(Map.of("duration", "PT1M")), retentionConfig.getProperties());
+		assertEquals(new ConfigProperties(Map.of("durationInSeconds", "100")), retentionConfig.getProperties());
 	}
 
 	private void verifyViewSpecification(FragmentationConfig fragmentationConfig, String geospatial,
