@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 
 public interface FragmentationExecutor {
 
-	void executeFragmentation(Member memberId);
+	void executeFragmentation(LdesMember memberId);
 }

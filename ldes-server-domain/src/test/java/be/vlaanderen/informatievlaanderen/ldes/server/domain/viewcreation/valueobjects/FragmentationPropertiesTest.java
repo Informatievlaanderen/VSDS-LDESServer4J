@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingConfigurationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -63,7 +63,7 @@ class FragmentationPropertiesTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null)),
+			return Stream.of(Arguments.of(new LdesMember("some_id", null)),
 					Arguments.of((Object) null));
 		}
 	}

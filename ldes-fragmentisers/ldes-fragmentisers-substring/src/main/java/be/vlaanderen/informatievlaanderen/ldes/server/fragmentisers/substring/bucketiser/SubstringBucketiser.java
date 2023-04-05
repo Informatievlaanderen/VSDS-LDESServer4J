@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.bucketiser;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 
 import java.text.Normalizer;
@@ -14,7 +14,7 @@ public class SubstringBucketiser {
 		this.substringConfig = substringConfig;
 	}
 
-	public List<String> bucketise(Member member) {
+	public List<String> bucketise(LdesMember member) {
 		String substringTarget = (String) member.getFragmentationObject(substringConfig.getFragmenterSubjectFilter(),
 				substringConfig.getFragmenterProperty());
 		String normalizedSubstringTarget = normalize(substringTarget);

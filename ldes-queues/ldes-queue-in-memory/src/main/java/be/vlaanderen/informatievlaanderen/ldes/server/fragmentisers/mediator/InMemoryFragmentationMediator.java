@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.mediator;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +25,10 @@ public class InMemoryFragmentationMediator implements FragmentationMediator {
 	}
 
 	@Override
-	public void addMemberToFragment(Member member) {
+	public void addMemberToFragment(LdesMember ldesMember) {
 		executorService.execute(() -> {
 			ldesMembersToFragmentTracker.incrementAndGet();
-			fragmentationExecutor.executeFragmentation(member);
+			fragmentationExecutor.executeFragmentation(ldesMember);
 			ldesMembersToFragmentTracker.decrementAndGet();
 		});
 	}

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.bucketiser;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -31,20 +31,20 @@ class SubstringBucketiserTest {
 
 	@Test
 	void when_propertyIsSet_SubstringBucketisingIsPossible() throws URISyntaxException, IOException {
-		Member member = readLdesMemberFromFile();
+		LdesMember ldesMember = readLdesMemberFromFile();
 
-		List<String> buckets = substringBucketiser.bucketise(member);
+		List<String> buckets = substringBucketiser.bucketise(ldesMember);
 
 		assertEquals(List.of("o", "om", "oms", "omsc", "omsch", "omschr", "omschri",
 				"omschrij", "omschrijv", "omschrijvi", "omschrijvin", "omschrijving"), buckets);
 	}
 
-	private Member readLdesMemberFromFile()
+	private LdesMember readLdesMemberFromFile()
 			throws URISyntaxException, IOException {
 		File file = new File(
 				Objects.requireNonNull(getClass().getClassLoader().getResource("example-ldes-member.nq")).toURI());
 
-		return new Member("a", RDFParserBuilder.create()
+		return new LdesMember("a", RDFParserBuilder.create()
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
 				.toModel());
 	}

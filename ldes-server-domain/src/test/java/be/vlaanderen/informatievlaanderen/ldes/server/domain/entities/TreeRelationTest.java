@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -39,7 +39,7 @@ class TreeRelationTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null)), Arguments.of((Object) null),
+			return Stream.of(Arguments.of(new LdesMember("some_id", null)), Arguments.of((Object) null),
 					Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType",
 							"relation")),
 					Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType",

@@ -12,9 +12,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -164,9 +164,9 @@ class TreeNodeControllerTest {
 
 		@Bean
 		public LdesFragmentConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
-			MemberRepository memberRepository = mock(MemberRepository.class);
+			LdesMemberRepository ldesMemberRepository = mock(LdesMemberRepository.class);
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new LdesFragmentConverterImpl(memberRepository, prefixAdder, ldesConfig);
+			return new LdesFragmentConverterImpl(ldesMemberRepository, prefixAdder, ldesConfig);
 		}
 	}
 }

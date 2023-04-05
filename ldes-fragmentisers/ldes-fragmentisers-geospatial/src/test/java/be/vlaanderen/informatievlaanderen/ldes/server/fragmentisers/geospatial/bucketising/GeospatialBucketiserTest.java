@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;// package
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -34,10 +34,10 @@ class GeospatialBucketiserTest {
 
 		Set<String> expectedBuckets = Set.of("15/16743/11009", "15/16744/11009",
 				"15/16743/11010", "15/16742/11010");
-		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
+		LdesMember ldesMember = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member);
+		Set<String> actualBuckets = bucketiser.bucketise(ldesMember);
 
 		assertEquals(4, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -49,16 +49,16 @@ class GeospatialBucketiserTest {
 		bucketiser = new GeospatialBucketiser(geospatialConfig, new NoopCoordinateConverter());
 
 		Set<String> expectedBuckets = Set.of("15/16884/10974", "15/16882/10975");
-		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
+		LdesMember ldesMember = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member);
+		Set<String> actualBuckets = bucketiser.bucketise(ldesMember);
 
 		assertEquals(2, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
 	}
 
-	private Member readLdesMemberFromFile(ClassLoader classLoader, String fileName)
+	private LdesMember readLdesMemberFromFile(ClassLoader classLoader, String fileName)
 			throws URISyntaxException, IOException {
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 
@@ -66,7 +66,7 @@ class GeospatialBucketiserTest {
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
 				.toModel();
 
-		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+		return new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				outputModel);
 	}
 

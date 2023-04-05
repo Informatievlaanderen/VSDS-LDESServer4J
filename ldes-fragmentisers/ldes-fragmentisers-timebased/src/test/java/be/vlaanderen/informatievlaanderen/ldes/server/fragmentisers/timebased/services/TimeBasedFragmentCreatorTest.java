@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.repository.LdesMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -27,14 +27,14 @@ class TimeBasedFragmentCreatorTest {
 
 	private static final String VIEW = "view";
 	private TimeBasedFragmentCreator fragmentCreator;
-	private MemberRepository memberRepository;
+	private LdesMemberRepository ldesMemberRepository;
 	private LdesFragmentRepository ldesFragmentRepository;
 
 	@BeforeEach
 	void setUp() {
 		TimebasedFragmentationConfig timeBasedConfig = createSequentialFragmentationConfig();
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
-		memberRepository = mock(MemberRepository.class);
+		ldesMemberRepository = mock(LdesMemberRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(timeBasedConfig,
 				ldesFragmentRepository);
 	}
@@ -57,13 +57,13 @@ class TimeBasedFragmentCreatorTest {
 	void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
 		LdesFragment parentFragment = new LdesFragment(new FragmentInfo(VIEW, List.of()));
 
-		Member memberOfFragment = createLdesMember();
+		LdesMember ldesMemberOfFragment = createLdesMember();
 		LdesFragment existingLdesFragment = new LdesFragment(
 				new FragmentInfo(VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
 						"2020-12-28T09:36:37.127Z"))));
-		existingLdesFragment.addMember(memberOfFragment.getLdesMemberId());
-		when(memberRepository.getLdesMemberById(memberOfFragment.getLdesMemberId()))
-				.thenReturn(Optional.of(memberOfFragment));
+		existingLdesFragment.addMember(ldesMemberOfFragment.getLdesMemberId());
+		when(ldesMemberRepository.getLdesMemberById(ldesMemberOfFragment.getLdesMemberId()))
+				.thenReturn(Optional.of(ldesMemberOfFragment));
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);
 
@@ -99,7 +99,7 @@ class TimeBasedFragmentCreatorTest {
 		assertTrue(ldesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).isPresent());
 	}
 
-	private Member createLdesMember() {
+	private LdesMember createLdesMember() {
 		Model ldesMemberModel = ModelFactory.createDefaultModel();
 		ldesMemberModel.add(createStatement(
 				createResource("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483"),
@@ -113,7 +113,7 @@ class TimeBasedFragmentCreatorTest {
 				TREE_MEMBER,
 				createResource(
 						"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483")));
-		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",
+		return new LdesMember("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483",
 				ldesMemberModel);
 	}
 

@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.bucketiser.SubstringBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
@@ -33,14 +33,14 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
+	public void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan) {
 		Span substringFragmentationSpan = tracer.nextSpan(parentSpan).name("substring fragmentation").start();
-		List<String> buckets = substringBucketiser.bucketise(member);
+		List<String> buckets = substringBucketiser.bucketise(ldesMember);
 		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, "");
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 		LdesFragment substringFragment = substringFragmentFinder
 				.getOpenLdesFragmentOrLastPossibleFragment(parentFragment, rootFragment, buckets);
-		super.addMemberToFragment(substringFragment, member, substringFragmentationSpan);
+		super.addMemberToFragment(substringFragment, ldesMember, substringFragmentationSpan);
 		substringFragmentationSpan.end();
 	}
 

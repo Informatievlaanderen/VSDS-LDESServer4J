@@ -25,9 +25,9 @@ public class TestConfiguration {
 	}
 
 	@Bean
-	public MemberMongoRepository ldesMemberMongoRepository(
+	public LdesMemberMongoRepository ldesMemberMongoRepository(
 			final LdesMemberEntityRepository ldesMemberEntityRepository) {
-		return new MemberMongoRepository(ldesMemberEntityRepository);
+		return new LdesMemberMongoRepository(ldesMemberEntityRepository);
 	}
 
 	@Bean

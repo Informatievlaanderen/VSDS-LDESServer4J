@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +14,7 @@ import org.springframework.cloud.sleuth.Span;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 class FragmentationStrategyDecoratorTest {
@@ -70,11 +70,11 @@ class FragmentationStrategyDecoratorTest {
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
 		LdesFragment parentFragment = new LdesFragment(
 				new FragmentInfo(VIEW_NAME, List.of()));
-		Member member = mock(Member.class);
+		LdesMember ldesMember = mock(LdesMember.class);
 		Span span = mock(Span.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member, span);
+		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, ldesMember, span);
 		Mockito.verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
+				Mockito.times(1)).addMemberToFragment(parentFragment, ldesMember, span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends

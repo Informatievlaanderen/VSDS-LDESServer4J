@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -18,7 +18,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-class MemberTest {
+class LdesMemberTest {
 	private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 
 	@Test
@@ -26,12 +26,12 @@ class MemberTest {
 	void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
-		Member member = new Member(
+		LdesMember ldesMember = new LdesMember(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				createModel(ldesMemberString, Lang.NQUADS));
 
-		member.removeTreeMember();
-		Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
+		ldesMember.removeTreeMember();
+		Statement statement = ldesMember.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
 				.orElse(null);
 
 		assertNull(statement);
@@ -42,11 +42,11 @@ class MemberTest {
 	void when_TreeMemberStatementIsAvailableInModel_LdesMemberId() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
-		Member member = new Member(
+		LdesMember ldesMember = new LdesMember(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				createModel(ldesMemberString, Lang.NQUADS));
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				member.getLdesMemberId());
+				ldesMember.getLdesMemberId());
 	}
 
 	@Test
@@ -55,13 +55,13 @@ class MemberTest {
 				ResourceUtils.getFile("classpath:example-ldes-member-multiple-properties-same-predicate.nq"),
 				StandardCharsets.UTF_8);
 
-		Member member = new Member(
+		LdesMember ldesMember = new LdesMember(
 				"http://localhost:8080/member/1",
 				createModel(ldesMemberString, Lang.NQUADS));
 
-		assertEquals(4, member.getFragmentationObjects(".*",
+		assertEquals(4, ldesMember.getFragmentationObjects(".*",
 				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
-		assertEquals(1, member.getFragmentationObjects(".*/member/.*",
+		assertEquals(1, ldesMember.getFragmentationObjects(".*/member/.*",
 				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
 	}
 

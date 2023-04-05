@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.entities.LdesMember;
 import org.springframework.cloud.sleuth.Span;
 
 public interface FragmentationStrategy {
 
-	void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan);
+	void addMemberToFragment(LdesFragment parentFragment, LdesMember ldesMember, Span parentSpan);
 }

@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesmember.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class })
-class MemberIngestionControllerTest {
+class LdesMemberIngestionControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
