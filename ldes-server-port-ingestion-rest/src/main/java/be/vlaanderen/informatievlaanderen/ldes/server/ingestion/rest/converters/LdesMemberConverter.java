@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import jakarta.annotation.PostConstruct;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
@@ -20,7 +18,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,14 +25,12 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 	private final LdesConfig ldesConfig;
-	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
 	public LdesMemberConverter(LdesConfig ldesConfig) {
 		super(MediaType.ALL);
@@ -53,30 +48,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 		String memberId = extractMemberId(memberModel);
-		String versionOf = extractVersionOf(memberModel);
-		LocalDateTime timestamp = extractTimestamp(memberModel);
-		return new Member(memberId, versionOf, timestamp, memberModel, List.of());
-	}
-
-	private LocalDateTime extractTimestamp(Model memberModel) {
-		LiteralImpl literalImpl = memberModel
-				.listStatements(null, createProperty(ldesConfig.getTimestampPath()), (RDFNode) null)
-				.nextOptional()
-				.map(statement -> (LiteralImpl) statement.getObject())
-				.orElse(null);
-		if (literalImpl == null) {
-			return null;
-		}
-		return localDateTimeConverter.getLocalDateTime(literalImpl);
-
-	}
-
-	private String extractVersionOf(Model memberModel) {
-		return memberModel
-				.listStatements(null, createProperty(ldesConfig.getVersionOfPath()), (RDFNode) null)
-				.nextOptional()
-				.map(statement -> statement.getObject().toString())
-				.orElse(null);
+		return new Member(memberId, memberModel, List.of());
 	}
 
 	private String extractMemberId(Model model) {

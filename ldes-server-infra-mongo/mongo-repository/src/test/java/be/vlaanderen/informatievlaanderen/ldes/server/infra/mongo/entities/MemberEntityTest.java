@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -13,46 +14,69 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MemberEntityTest {
 
 	private Member member;
+	private LdesMemberEntity ldesMemberEntity;
 
 	@BeforeEach
 	public void init() throws IOException, URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
-		member = readLdesMemberFromFile(classLoader);
+		member = readLdesMemberFromFile(classLoader, "example-ldes-member.nq");
+		ldesMemberEntity = readLdesMemberEntityFromFile(classLoader,
+				"example-ldes-member-entity.json");
 	}
 
 	@Test
-	void testReconstructionOfLdesMember() {
+	@DisplayName("Convert LdesMember to LdesMemberEntity")
+	void toEntity() {
 		LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(member);
-		Member reconstructedMember = actualLdesMemberEntity.toLdesMember();
 
-		assertTrue(member.getModel().isIsomorphicWith(reconstructedMember.getModel()));
-		assertEquals(member.getLdesMemberId(), reconstructedMember.getLdesMemberId());
-		assertEquals(member.getVersionOf(), reconstructedMember.getVersionOf());
-		assertEquals(member.getTimestamp(), reconstructedMember.getTimestamp());
-		assertEquals(member.getTreeNodeReferences(), reconstructedMember.getTreeNodeReferences());
+		Model actualLdesMemberEntityModel = RDFParserBuilder.create().fromString(actualLdesMemberEntity.getModel())
+				.lang(Lang.NQUADS).toModel();
+
+		Model ldesMemberEntityModel = RDFParserBuilder.create().fromString(ldesMemberEntity.getModel())
+				.lang(Lang.NQUADS).toModel();
+
+		assertTrue(ldesMemberEntityModel.isIsomorphicWith(actualLdesMemberEntityModel));
 	}
 
-	private Member readLdesMemberFromFile(ClassLoader classLoader)
+	@Test
+	@DisplayName("Convert LdesMemberEntity to LdesMember")
+	void fromEntity() {
+		Member actualMember = ldesMemberEntity.toLdesMember();
+		assertTrue(member.getModel().isIsomorphicWith(actualMember.getModel()));
+	}
+
+	private LdesMemberEntity readLdesMemberEntityFromFile(ClassLoader classLoader, String fileName)
+			throws IOException, URISyntaxException {
+		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+
+		Model outputModel = RDFParserBuilder.create()
+				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.JSONLD11)
+				.toModel();
+
+		return LdesMemberEntity.fromLdesMember(new Member(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				outputModel,
+				List.of()));
+	}
+
+	private Member readLdesMemberFromFile(ClassLoader classLoader, String fileName)
 			throws URISyntaxException, IOException {
-		File file = new File(Objects.requireNonNull(classLoader.getResource("example-ldes-member.nq")).toURI());
+		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 
 		Model outputModel = RDFParserBuilder.create()
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
 				.toModel();
 
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
-				LocalDateTime.of(1, 1, 1, 1, 1), outputModel, List.of());
+				outputModel, List.of());
 	}
 }

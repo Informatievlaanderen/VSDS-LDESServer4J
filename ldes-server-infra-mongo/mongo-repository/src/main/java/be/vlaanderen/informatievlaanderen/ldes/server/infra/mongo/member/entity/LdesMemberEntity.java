@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.StringWriter;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("ldesmember")
@@ -18,19 +17,12 @@ public class LdesMemberEntity {
 
 	@Id
 	private final String id;
-	@Indexed
-	private final String versionOf;
-	@Indexed
-	private final LocalDateTime timestamp;
 	private final String model;
 	@Indexed
 	private final List<String> treeNodeReferences;
 
-	public LdesMemberEntity(String id, String versionOf, LocalDateTime timestamp, final String model,
-			List<String> treeNodeReferences) {
+	public LdesMemberEntity(String id, final String model, List<String> treeNodeReferences) {
 		this.id = id;
-		this.versionOf = versionOf;
-		this.timestamp = timestamp;
 		this.model = model;
 		this.treeNodeReferences = treeNodeReferences;
 	}
@@ -43,13 +35,12 @@ public class LdesMemberEntity {
 		StringWriter outputStream = new StringWriter();
 		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
 		String ldesMemberString = outputStream.toString();
-		return new LdesMemberEntity(member.getLdesMemberId(), member.getVersionOf(), member.getTimestamp(),
-				ldesMemberString, member.getTreeNodeReferences());
+		return new LdesMemberEntity(member.getLdesMemberId(), ldesMemberString, member.getTreeNodeReferences());
 	}
 
 	public Member toLdesMember() {
 		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.NQUADS).toModel();
-		return new Member(this.id, this.versionOf, this.timestamp, ldesMemberModel, this.treeNodeReferences);
+		return new Member(this.id, ldesMemberModel, this.treeNodeReferences);
 	}
 
 	public String getId() {

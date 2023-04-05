@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,7 +15,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.time.LocalDateTime;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,12 +36,19 @@ class MemberMongoRepositoryTest {
 		Model model = getModel();
 
 		Member treeMember = new Member("some_id",
-				"some_id", LocalDateTime.now(), model,
+				model,
 				List.of());
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(treeMember.getLdesMemberId()));
+		Update update = new Update();
+		StringWriter outputStream = new StringWriter();
+		RDFDataMgr.write(outputStream, treeMember.getModel(), Lang.NQUADS);
+		String ldesMemberString = outputStream.toString();
+		update.set("model", ldesMemberString);
 
 		ldesMemberMongoRepository.saveLdesMember(treeMember);
 
-		verify(ldesMemberEntityRepository, times(1)).save(any(LdesMemberEntity.class));
+		verify(mongoTemplate, times(1)).upsert(query, update, LdesMemberEntity.class);
 	}
 
 	@Test
@@ -54,8 +62,7 @@ class MemberMongoRepositoryTest {
 
 	@Test
 	void when_getMember_MemberIsReturned() {
-		LdesMemberEntity ldesMemberEntity = new LdesMemberEntity("memberId", "memberId", LocalDateTime.now(),
-				getModelString(), List.of());
+		LdesMemberEntity ldesMemberEntity = new LdesMemberEntity("memberId", getModelString(), List.of());
 		when(ldesMemberEntityRepository.findById("memberId")).thenReturn(Optional.of(ldesMemberEntity));
 
 		Optional<Member> member = ldesMemberMongoRepository.getMember("memberId");

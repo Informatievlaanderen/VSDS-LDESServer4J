@@ -39,8 +39,7 @@ class TreeRelationTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null, null, null, List.of())),
-					Arguments.of((Object) null),
+			return Stream.of(Arguments.of(new Member("some_id", null, List.of())), Arguments.of((Object) null),
 					Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType",
 							"relation")),
 					Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType",

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.apache.commons.io.FileUtils;
@@ -23,12 +24,14 @@ class MemberIngestServiceImplTest {
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 
 	private final FragmentationMediator fragmentationMediator = mock(FragmentationMediator.class);
+	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 	private MemberIngestService memberIngestService;
 
 	@BeforeEach
 	void setUp() {
 		memberIngestService = new MemberIngestServiceImpl(memberRepository,
-				fragmentationMediator);
+				fragmentationMediator,
+				nonCriticalTasksExecutor);
 	}
 
 	@Test
@@ -38,18 +41,18 @@ class MemberIngestServiceImplTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(true);
 
 		memberIngestService.addMember(member);
 
-		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
+		InOrder inOrder = inOrder(memberRepository, fragmentationMediator, nonCriticalTasksExecutor);
 		inOrder.verify(memberRepository,
 				times(1)).memberExists(member.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 		verifyNoInteractions(fragmentationMediator);
-		verifyNoMoreInteractions(memberRepository);
+		verifyNoInteractions(nonCriticalTasksExecutor);
 	}
 
 	@Test
@@ -59,15 +62,15 @@ class MemberIngestServiceImplTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
+				RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(false);
 
 		memberIngestService.addMember(member);
 
-		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
+		InOrder inOrder = inOrder(memberRepository, fragmentationMediator, nonCriticalTasksExecutor);
 		inOrder.verify(memberRepository, times(1)).memberExists(member.getLdesMemberId());
-		inOrder.verify(memberRepository, times(1)).saveLdesMember(member);
+		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
 		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(member);
 		inOrder.verifyNoMoreInteractions();
 	}

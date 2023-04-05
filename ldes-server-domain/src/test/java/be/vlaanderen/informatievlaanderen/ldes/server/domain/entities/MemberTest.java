@@ -1,5 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class MemberTest {
+	private final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 
 	@Test
 	@DisplayName("Test correct replacing of TreeMember statement")
