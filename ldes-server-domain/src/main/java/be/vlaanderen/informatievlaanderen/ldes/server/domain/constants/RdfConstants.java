@@ -32,10 +32,4 @@ public class RdfConstants {
 	public static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = TREE + "LessThanOrEqualToRelation";
 
 	public static final String GENERIC_TREE_RELATION = TREE + "Relation";
-
-	public static final String VIEW = LDES + "view";
-	public static final String VIEW_TYPE = LDES + "View";
-	public static final String SHAPE = TREE + "shape";
-	public static final String NODE_SHAPE_TYPE = TREE + "NodeShape";
-	public static final String EVENT_STREAM_TYPE = LDES + "EventStream";
 }

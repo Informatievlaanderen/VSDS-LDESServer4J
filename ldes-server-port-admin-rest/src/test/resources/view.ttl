@@ -1,6 +1,0 @@
-@prefix tree: <https://w3id.org/tree#> .
-@prefix ldes: <https://w3id.org/ldes#> .
-
-ldes:view1 tree:viewDescription [
-           ldes:retentionPolicy "none"
-       ] .
