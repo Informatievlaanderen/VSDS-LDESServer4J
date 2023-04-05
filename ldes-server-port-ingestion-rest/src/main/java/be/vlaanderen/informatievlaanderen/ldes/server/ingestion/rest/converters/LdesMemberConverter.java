@@ -62,7 +62,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 				.listStatements(null, RDF_SYNTAX_TYPE, createResource(ldesConfig.getMemberType()))
 				.nextOptional()
 				.map(statement -> statement.getSubject().toString())
-				.orElseThrow(() -> new MalformedMemberIdException(ldesConfig.getMemberType()));
+				.orElseThrow(MalformedMemberIdException::new);
 	}
 
 	@Override
