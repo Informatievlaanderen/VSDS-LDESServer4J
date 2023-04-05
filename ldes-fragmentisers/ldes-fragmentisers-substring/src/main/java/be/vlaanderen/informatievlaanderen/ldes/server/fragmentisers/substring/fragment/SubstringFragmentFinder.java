@@ -29,6 +29,7 @@ public class SubstringFragmentFinder {
 			if (canBeAddedToRoot(rootFragment, bucket)) {
 				return rootFragment;
 			}
+
 			if (ROOT_SUBSTRING.equals(bucket)) {
 				continue;
 			}

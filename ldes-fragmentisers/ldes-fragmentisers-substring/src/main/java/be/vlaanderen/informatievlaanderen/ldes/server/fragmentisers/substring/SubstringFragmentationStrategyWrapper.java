@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMemberSupplier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +23,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
+		LocalMemberSupplier localMemberSupplier = new LocalMemberSupplier(substringConfig);
 		SubstringFragmentCreator substringFragmentCreator = new SubstringFragmentCreator(ldesFragmentRepository);
 		SubstringRelationsAttributer substringRelationsAttributer = new SubstringRelationsAttributer(
 				ldesFragmentRepository, substringConfig);
@@ -29,7 +31,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,
 				observationRegistry, substringFragmentFinder, substringFragmentCreator,
-				ldesFragmentRepository, substringConfig);
+				ldesFragmentRepository, localMemberSupplier);
 	}
 
 	private SubstringConfig createSubstringConfig(ConfigProperties properties) {
