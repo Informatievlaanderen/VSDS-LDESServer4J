@@ -21,8 +21,9 @@
         <!-- MAVEN -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
+
         <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
@@ -55,7 +56,7 @@
         <awaitility.version>4.2.0</awaitility.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>7.4.1</depencency-check-maven.version>
+        <depencency-check-maven.version>7.4.0</depencency-check-maven.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.8</jacoco.version>
