@@ -1,11 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.FragmentationPropertyException;
-import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,33 +21,27 @@ public class Member {
 		return memberModel;
 	}
 
-	public Object getFragmentationObject(String fragmentationPredicateQuery) {
+	public Object getFragmentationObject(String subjectFilter, String fragmentationPredicate) {
 		// @formatter:off
-        return getFragmentationObjects( fragmentationPredicateQuery)
+        return getFragmentationObjects(subjectFilter, fragmentationPredicate)
 				.stream()
 				.findFirst()
-				.orElseThrow(() -> new FragmentationPropertyException(memberId, fragmentationPredicateQuery));
+				.orElse(null);
         // @formatter:on
 	}
 
-	public List<Object> getFragmentationObjects(String fragmentationPropertyQuery) {
-		Query query = QueryFactory.create(fragmentationPropertyQuery);
-
-		try (QueryExecution qe = QueryExecution.create(query, memberModel)) {
-			ResultSet rs = qe.execSelect();
-
-			return ResultSetFormatter.toList(rs)
-					.stream()
-					.map(querySolution -> {
-						List<RDFNode> rdfNodes = new ArrayList<>();
-						query.getResultVars().forEach(resultVar -> rdfNodes.add(querySolution.get(resultVar)));
-						return rdfNodes;
-					})
-					.flatMap(Collection::stream)
-					.map(RDFNode::asLiteral)
-					.map(Literal::getValue)
-					.toList();
-		}
+	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationProperty) {
+		// @formatter:off
+		return memberModel
+				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+				.toList()
+				.stream()
+				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
+				.map(Statement::getObject)
+				.map(RDFNode::asLiteral)
+				.map(Literal::getValue)
+				.toList();
+		// @formatter:on
 	}
 
 	public String getLdesMemberId() {

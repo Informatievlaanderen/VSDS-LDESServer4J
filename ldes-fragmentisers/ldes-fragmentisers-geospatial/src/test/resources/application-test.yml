@@ -1,4 +1,4 @@
 geospatial:
   maxZoomLevel: 15
-  fragmenterPropertyQuery: "PREFIX gs: <http://www.opengis.net/ont/geosparql#> SELECT ?x WHERE { ?s gs:asWKT ?x . }"
+  fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
   projection: "lambert72"

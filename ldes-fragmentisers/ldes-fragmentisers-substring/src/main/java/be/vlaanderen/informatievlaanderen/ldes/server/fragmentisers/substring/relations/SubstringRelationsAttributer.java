@@ -24,7 +24,7 @@ public class SubstringRelationsAttributer {
 	public void addSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
 
 		String substringValue = getSubstringValue(childFragment);
-		TreeRelation parentChildRelation = new TreeRelation(substringConfig.getFragmenterPropertyQuery(),
+		TreeRelation parentChildRelation = new TreeRelation(substringConfig.getFragmenterProperty(),
 				childFragment.getFragmentId(),
 				substringValue, STRING_TYPE,
 				TREE_SUBSTRING_RELATION);

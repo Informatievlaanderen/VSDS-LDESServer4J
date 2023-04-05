@@ -25,8 +25,7 @@ class SubstringBucketiserTest {
 	@BeforeEach
 	void setUp() {
 		SubstringConfig substringConfig = new SubstringConfig();
-		substringConfig.setFragmenterPropertyQuery(
-				"PREFIX terms: <http://purl.org/dc/terms/> SELECT ?x WHERE { ?s terms:description ?x . }");
+		substringConfig.setFragmenterProperty("http://purl.org/dc/terms/description");
 		substringBucketiser = new SubstringBucketiser(substringConfig);
 	}
 

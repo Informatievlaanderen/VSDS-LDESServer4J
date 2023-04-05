@@ -5,6 +5,6 @@ public class SubstringProperties {
 	private SubstringProperties() {
 	}
 
-	public static final String FRAGMENTER_PROPERTY = "fragmenterPropertyQuery";
+	public static final String FRAGMENTER_PROPERTY = "fragmenterProperty";
 	public static final String MEMBER_LIMIT = "memberLimit";
 }
