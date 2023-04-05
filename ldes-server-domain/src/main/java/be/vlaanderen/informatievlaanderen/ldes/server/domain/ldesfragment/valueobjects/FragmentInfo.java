@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,7 +13,6 @@ public class FragmentInfo {
 	private final String viewName;
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
-	private LocalDateTime immutableTimestamp;
 
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
@@ -22,12 +20,10 @@ public class FragmentInfo {
 		this.immutable = false;
 	}
 
-	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
-			LocalDateTime immutableTimestamp) {
+	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
-		this.immutableTimestamp = immutableTimestamp;
 	}
 
 	public Optional<String> getValueOfKey(String key) {
@@ -50,13 +46,8 @@ public class FragmentInfo {
 		return immutable;
 	}
 
-	public LocalDateTime getImmutableTimestamp() {
-		return immutableTimestamp;
-	}
-
-	public void makeImmutable() {
-		this.immutable = true;
-		this.immutableTimestamp = LocalDateTime.now();
+	public void setImmutable(Boolean immutable) {
+		this.immutable = immutable;
 	}
 
 	public FragmentInfo createChild(FragmentPair fragmentPair) {
@@ -73,13 +64,12 @@ public class FragmentInfo {
 			return false;
 		FragmentInfo that = (FragmentInfo) o;
 		return Objects.equals(viewName, that.viewName) && Objects.equals(fragmentPairs, that.fragmentPairs)
-				&& Objects.equals(immutable, that.immutable)
-				&& Objects.equals(immutableTimestamp, that.immutableTimestamp);
+				&& Objects.equals(immutable, that.immutable);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(viewName, fragmentPairs, immutable, immutableTimestamp);
+		return Objects.hash(viewName, fragmentPairs, immutable);
 	}
 
 	public String generateFragmentId() {

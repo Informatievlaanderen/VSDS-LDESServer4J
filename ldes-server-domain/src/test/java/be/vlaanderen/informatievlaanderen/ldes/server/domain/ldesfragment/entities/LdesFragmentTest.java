@@ -21,7 +21,7 @@ class LdesFragmentTest {
 				new FragmentInfo(VIEW_NAME,
 						List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
 		assertFalse(ldesFragment.isImmutable());
-		ldesFragment.makeImmutable();
+		ldesFragment.setImmutable(true);
 		assertTrue(ldesFragment.isImmutable());
 	}
 

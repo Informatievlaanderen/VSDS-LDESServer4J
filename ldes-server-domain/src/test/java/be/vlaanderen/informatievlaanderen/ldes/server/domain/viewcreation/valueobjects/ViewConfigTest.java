@@ -45,7 +45,7 @@ class ViewConfigTest {
 	}
 
 	private void verifyRetentionPolicy(RetentionConfig retentionConfig) {
-		assertEquals("timebased", retentionConfig.getName());
+		assertEquals("timebased", retentionConfig.getRetentionPolicyName());
 		assertEquals(new ConfigProperties(Map.of("durationInSeconds", "100")), retentionConfig.getProperties());
 	}
 

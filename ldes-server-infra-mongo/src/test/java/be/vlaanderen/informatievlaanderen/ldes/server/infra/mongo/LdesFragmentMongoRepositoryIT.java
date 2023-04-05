@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,16 +39,13 @@ class LdesFragmentMongoRepositoryIT {
 	@Test
 	void when_retrieveFragmentIsCalled_ReturnsCorrectFragment() {
 		LdesFragmentEntity ldesFragmentEntity_1 = new LdesFragmentEntity("http://server:8080/exampleData?key=1",
-				false, VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_1)), false,
-				LocalDateTime.now(), List.of(),
+				false, VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_1)), false, List.of(),
 				List.of());
 		LdesFragmentEntity ldesFragmentEntity_2 = new LdesFragmentEntity("http://server:8080/exampleData?key=2",
-				false, VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_2)), false,
-				LocalDateTime.now(), List.of(),
+				false, VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_2)), false, List.of(),
 				List.of());
 		LdesFragmentEntity ldesFragmentEntity_3 = new LdesFragmentEntity("http://server:8080/exampleData?key=3",
-				false, VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_3)), false,
-				LocalDateTime.now(), List.of(),
+				false, VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENT_VALUE_3)), false, List.of(),
 				List.of());
 
 		ldesFragmentEntityRepository.saveAll(List.of(ldesFragmentEntity_1,

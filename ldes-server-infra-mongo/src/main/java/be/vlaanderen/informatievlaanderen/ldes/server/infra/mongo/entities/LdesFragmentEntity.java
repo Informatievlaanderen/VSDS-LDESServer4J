@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("ldesfragment")
@@ -25,20 +24,18 @@ public class LdesFragmentEntity {
 	private final List<FragmentPair> fragmentPairs;
 	@Indexed
 	private final Boolean immutable;
-	private final LocalDateTime immutableTimestamp;
 	private final List<TreeRelation> relations;
 
 	private final List<String> members;
 
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable,
-			LocalDateTime immutableTimestamp, List<TreeRelation> relations, List<String> members) {
+			List<TreeRelation> relations, List<String> members) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
-		this.immutableTimestamp = immutableTimestamp;
 		this.relations = relations;
 		this.members = members;
 	}
@@ -48,7 +45,7 @@ public class LdesFragmentEntity {
 	}
 
 	public FragmentInfo getFragmentInfo() {
-		return new FragmentInfo(viewName, fragmentPairs, immutable, immutableTimestamp);
+		return new FragmentInfo(viewName, fragmentPairs, immutable);
 	}
 
 	public Boolean isImmutable() {
@@ -75,7 +72,7 @@ public class LdesFragmentEntity {
 				ldesFragment.getFragmentInfo().getFragmentPairs().isEmpty(),
 				ldesFragment.getFragmentInfo().getViewName(),
 				ldesFragment.getFragmentInfo().getFragmentPairs(), ldesFragment.getFragmentInfo().getImmutable(),
-				ldesFragment.getFragmentInfo().getImmutableTimestamp(), ldesFragment.getRelations(),
+				ldesFragment.getRelations(),
 				ldesFragment.getMemberIds());
 	}
 }

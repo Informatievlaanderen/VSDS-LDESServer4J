@@ -46,7 +46,7 @@ public class TimeBasedFragmentCreator {
 
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
-		completeLdesFragment.makeImmutable();
+		completeLdesFragment.setImmutable(true);
 		completeLdesFragment.addRelation(new TreeRelation(PROV_GENERATED_AT_TIME,
 				newFragment.getFragmentId(),
 				newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
