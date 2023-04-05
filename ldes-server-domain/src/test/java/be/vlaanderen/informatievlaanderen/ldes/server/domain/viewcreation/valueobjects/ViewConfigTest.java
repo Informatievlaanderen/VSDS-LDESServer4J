@@ -7,10 +7,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @SpringBootTest(classes = { ViewConfig.class })
 @EnableConfigurationProperties
@@ -39,7 +39,7 @@ class ViewConfigTest {
 		ViewSpecification secondViewSpecification = viewConfig.getViews().get(1);
 		assertEquals("secondView", secondViewSpecification.getName());
 		assertEquals(1, secondViewSpecification.getFragmentations().size());
-		assertEquals(List.of(), secondViewSpecification.getRetentionConfigs());
+		assertNull(secondViewSpecification.getRetentionConfigs());
 		verifyViewSpecification(secondViewSpecification.getFragmentations().get(0), "timebased",
 				Map.of("memberLimit", "3"));
 	}
