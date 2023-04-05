@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;

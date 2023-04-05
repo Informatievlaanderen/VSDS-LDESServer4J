@@ -1,13 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ActiveProfiles;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 
 @ActiveProfiles("test")
 class EtagCachingStrategyTest {

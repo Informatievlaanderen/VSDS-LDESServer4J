@@ -1,20 +1,25 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
 import org.apache.http.HttpHeaders;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,19 +40,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
@@ -61,7 +66,7 @@ class EventStreamControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
-	private EventStreamFactory eventStreamFactory;
+	private EventStreamFetcher eventStreamFetcher;
 	@Autowired
 	LdesConfig ldesConfig;
 	@Autowired
@@ -70,7 +75,7 @@ class EventStreamControllerTest {
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
-		when(eventStreamFactory.getEventStream()).thenReturn(
+		when(eventStreamFetcher.fetchEventStream()).thenReturn(
 				new EventStream("collection", "timestampPath", "versionOf", "shape", List.of("viewOne", "viewTwo")));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
 				ldesConfig.getCollectionName())
@@ -122,7 +127,7 @@ class EventStreamControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		when(eventStreamFactory.getEventStream()).thenReturn(
+		when(eventStreamFetcher.fetchEventStream()).thenReturn(
 				new EventStream("collection", "timestampPath", "versionOf", "shape", List.of("viewOne", "viewTwo")));
 
 		mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())

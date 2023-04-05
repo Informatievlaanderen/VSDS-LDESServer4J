@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,9 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-
-import static org.springframework.http.HttpHeaders.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 
 @RestController
 public class EventStreamController {
@@ -24,13 +27,13 @@ public class EventStreamController {
 	private String collectionName;
 
 	private final RestConfig restConfig;
-	private final EventStreamFactory eventStreamFactory;
+	private final EventStreamFetcher eventStreamFetcher;
 	private final CachingStrategy cachingStrategy;
 
-	public EventStreamController(RestConfig restConfig, EventStreamFactory eventStreamFactory,
+	public EventStreamController(RestConfig restConfig, EventStreamFetcher eventStreamFetcher,
 			CachingStrategy cachingStrategy) {
 		this.restConfig = restConfig;
-		this.eventStreamFactory = eventStreamFactory;
+		this.eventStreamFetcher = eventStreamFetcher;
 		this.cachingStrategy = cachingStrategy;
 	}
 
@@ -38,7 +41,7 @@ public class EventStreamController {
 	@GetMapping(value = "${ldes.collectionname}")
 	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response) {
-		EventStream eventStream = eventStreamFactory.getEventStream();
+		EventStream eventStream = eventStreamFetcher.fetchEventStream();
 
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
