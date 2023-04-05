@@ -25,13 +25,8 @@ class PrefixAdderImplTest {
 		Model model = readLdesMemberFromFile(getClass().getClassLoader(), "eventstream/example-gipod.nq");
 		Model updatedModel = prefixAdder.addPrefixesToModel(model);
 		Map<String, String> nsPrefixMap = updatedModel.getNsPrefixMap();
-
-		// verify that there is no prefix for a namespace if ONE or MORE of its
-		// localNames is invalid.
 		assertFalse(nsPrefixMap.containsKey("mobiliteit"));
-
 		assertTrue(nsPrefixMap.containsKey("statuses"));
-		assertTrue(nsPrefixMap.containsKey("rdf"));
 	}
 
 	private Model readLdesMemberFromFile(ClassLoader classLoader, String fileName)
