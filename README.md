@@ -148,9 +148,6 @@ The server allows configurable fragment refresh times with the max-age and max-a
     uri: mongodb://{docker-hostname}:{port}
     database: { database name }
   ```
-
-Note that the database schema may evolve between releases. To update the schema Mongock changesets have been created and can be applied. For more info: [mongock-changeset-1](ldes-server-infra-mongo/mongock-changeset-1/README.md)
-
 ##### Example Views Configuration
 
   ```yaml
