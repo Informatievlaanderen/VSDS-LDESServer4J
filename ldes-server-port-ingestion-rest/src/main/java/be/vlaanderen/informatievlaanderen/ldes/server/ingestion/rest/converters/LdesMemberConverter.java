@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -14,7 +12,6 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
@@ -24,21 +21,16 @@ import java.util.Objects;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
-	private static final String APPLICATION = "application";
-
-	@Autowired
-	Environment environment;
 
 	private final LdesConfig ldesConfig;
 
 	public LdesMemberConverter(LdesConfig ldesConfig) {
-		super(new MediaType(APPLICATION, "n-quads"), new MediaType(APPLICATION, "n-triples"),
-				new MediaType(APPLICATION, "ld+json"));
+		super(new MediaType("application", "n-quads"), new MediaType("application", "n-triples"));
 		this.ldesConfig = ldesConfig;
 	}
 
@@ -50,7 +42,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 	@Override
 	protected Member readInternal(Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
+		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), FETCH);
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 		String memberId = extractMemberId(memberModel);
 		return new Member(memberId, memberModel);
@@ -75,12 +67,6 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		OutputStream body = outputMessage.getBody();
 		body.write(outputStream.toString().getBytes());
-	}
-
-	@PostConstruct
-	public void init() {
-		String example = "<init-server> <http://www.opengis.net/ont/geosparql#asWKT> \"<http://www.opengis.net/def/crs/EPSG/9.9.1/31370> POINT (0,0)\"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .";
-		fromString(example, Lang.NQUADS);
 	}
 
 }

@@ -145,6 +145,7 @@ An example of a view configuration with two view is shown below
           config:
             maxZoomLevel: 15
             fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+            projection: "lambert72"
         - name: "timebased"
           config:
             memberLimit: 5
@@ -170,6 +171,7 @@ An example of a view configuration with two view is shown below
   config:
     maxZoomLevel: { Required zoom level }
     fragmenterProperty: { Defines which property will be used for bucketizing }
+    projection: { "lambert72" (current only this projection is supported) }
   ```
 
 ##### Example Substring Fragmentation

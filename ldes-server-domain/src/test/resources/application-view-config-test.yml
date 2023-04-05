@@ -5,6 +5,7 @@ views:
         config:
           maxZoomLevel: 15
           fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+          projection: "lambert72"
       - name: "timebased"
         config:
           memberLimit: 5
