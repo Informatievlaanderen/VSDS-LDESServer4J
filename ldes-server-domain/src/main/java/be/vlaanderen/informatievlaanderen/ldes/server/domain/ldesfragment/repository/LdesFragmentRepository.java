@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface LdesFragmentRepository {
 	LdesFragment saveFragment(LdesFragment ldesFragment);
@@ -20,7 +19,5 @@ public interface LdesFragmentRepository {
 			List<FragmentPair> fragmentPairList);
 
 	Optional<LdesFragment> retrieveRootFragment(String viewName);
-
-	Stream<LdesFragment> retrieveImmutableFragmentsOfView(String viewName);
 
 }

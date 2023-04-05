@@ -32,14 +32,14 @@ class ViewConfigTest {
 				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(1), "timebased",
 				Map.of("memberLimit", "5"));
-		assertEquals(1, firstViewSpecification.getRetentionConfigs().size());
-		RetentionConfig retentionConfig = firstViewSpecification.getRetentionConfigs().get(0);
+		assertEquals(1, firstViewSpecification.getRetentionPolicies().size());
+		RetentionConfig retentionConfig = firstViewSpecification.getRetentionPolicies().get(0);
 		verifyRetentionPolicy(retentionConfig);
 
 		ViewSpecification secondViewSpecification = viewConfig.getViews().get(1);
 		assertEquals("secondView", secondViewSpecification.getName());
 		assertEquals(1, secondViewSpecification.getFragmentations().size());
-		assertNull(secondViewSpecification.getRetentionConfigs());
+		assertNull(secondViewSpecification.getRetentionPolicies());
 		verifyViewSpecification(secondViewSpecification.getFragmentations().get(0), "timebased",
 				Map.of("memberLimit", "3"));
 	}
