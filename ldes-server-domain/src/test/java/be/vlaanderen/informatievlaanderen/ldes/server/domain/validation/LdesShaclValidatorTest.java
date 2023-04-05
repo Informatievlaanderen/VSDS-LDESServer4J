@@ -1,13 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Errors;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +19,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LdesShaclValidatorTest {
 
@@ -37,14 +37,14 @@ class LdesShaclValidatorTest {
 	void when_ValidateProvidedValidData_thenReturnValid() throws URISyntaxException, IOException {
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember));
+		expectMemberToBeValid(validMember, true);
 	}
 
 	@Test
 	void when_ValidateProvidedInvalidData_thenReturnInvalid() throws URISyntaxException, IOException {
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
 
-		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidMember));
+		expectMemberToBeValid(invalidMember, false);
 	}
 
 	@Test
@@ -52,10 +52,10 @@ class LdesShaclValidatorTest {
 		ldesShaclValidator = new LdesShaclValidator(new LdesConfig());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember));
+		expectMemberToBeValid(validMember, true);
 
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember));
+		expectMemberToBeValid(invalidMember, true);
 	}
 
 	@Test
@@ -65,10 +65,16 @@ class LdesShaclValidatorTest {
 		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember));
+		expectMemberToBeValid(validMember, true);
 
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember));
+		expectMemberToBeValid(invalidMember, true);
+	}
+
+	private void expectMemberToBeValid(Member member, boolean expectValid) {
+		Errors errors = new BeanPropertyBindingResult(member, "");
+		ldesShaclValidator.validateShape(member, errors);
+		assertEquals(!expectValid, errors.hasErrors());
 	}
 
 	private Member readLdesMemberFromFile(String fileName)

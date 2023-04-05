@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, LdesConfig.class, LdesShaclValidator.class })
+		IngestionWebConfig.class, LdesConfig.class })
 class MemberIngestionControllerTest {
 
 	@Autowired
@@ -51,6 +51,9 @@ class MemberIngestionControllerTest {
 
 	@MockBean
 	private MemberIngestService memberIngestService;
+
+	@MockBean
+	private LdesShaclValidator ldesShaclValidator;
 
 	@Autowired
 	private LdesConfig ldesConfig;
