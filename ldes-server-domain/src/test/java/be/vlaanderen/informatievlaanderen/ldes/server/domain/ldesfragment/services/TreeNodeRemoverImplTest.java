@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
@@ -52,13 +53,13 @@ class TreeNodeRemoverImplTest {
 	}
 
 	private LdesFragment notReadyToDeleteFragment() {
-		return new LdesFragment("view", List.of(), true,
-				LocalDateTime.now().plusDays(1), false, 0);
+		return new LdesFragment(new FragmentInfo("view", List.of(), true,
+				LocalDateTime.now().plusDays(1), false, 0));
 	}
 
 	private LdesFragment readyToDeleteFragment() {
 		return new LdesFragment(
-				"view", List.of(), true, LocalDateTime.now(), false, 0);
+				new FragmentInfo("view", List.of(), true, LocalDateTime.now(), false, 0));
 	}
 
 }

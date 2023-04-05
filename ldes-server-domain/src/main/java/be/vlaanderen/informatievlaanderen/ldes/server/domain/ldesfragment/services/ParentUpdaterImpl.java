@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
@@ -34,7 +35,7 @@ public class ParentUpdaterImpl implements ParentUpdater {
 		LdesFragment parent = ldesFragmentRepository
 				.retrieveMutableFragment(currentChild.getViewName(), parentPairs)
 				.orElseThrow(() -> new MissingFragmentException(
-						new LdesFragment(currentChild.getViewName(), parentPairs).getFragmentId()));
+						new LdesFragment(new FragmentInfo(currentChild.getViewName(), parentPairs)).getFragmentId()));
 
 		List<TreeRelation> relations = treeRelationsRepository.getRelations(parentId);
 		Optional<TreeRelation> optionalOldTreeRelation = relations.stream()

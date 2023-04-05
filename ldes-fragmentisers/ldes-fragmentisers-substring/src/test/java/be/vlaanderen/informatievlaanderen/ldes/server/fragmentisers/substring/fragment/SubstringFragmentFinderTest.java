@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
@@ -25,7 +26,7 @@ class SubstringFragmentFinderTest {
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(
-				VIEW_NAME, List.of());
+				new FragmentInfo(VIEW_NAME, List.of()));
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setMemberLimit(1);
 		substringRelationsAttributer = mock(SubstringRelationsAttributer.class);
@@ -50,9 +51,9 @@ class SubstringFragmentFinderTest {
 	@Test
 	void when_RootFragmentHasReachedItsLimit_FirstOpenFragmentIsReturned() {
 		LdesFragment rootFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, null, false, 1);
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, null, false, 1));
 		LdesFragment aFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, null, false, 1);
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, null, false, 1));
 		LdesFragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"a")).thenReturn(aFragment);

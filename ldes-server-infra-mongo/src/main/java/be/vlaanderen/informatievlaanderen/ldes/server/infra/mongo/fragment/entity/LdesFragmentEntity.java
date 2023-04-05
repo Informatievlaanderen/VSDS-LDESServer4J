@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -46,12 +47,16 @@ public class LdesFragmentEntity {
 		return id;
 	}
 
+	public FragmentInfo getFragmentInfo() {
+		return new FragmentInfo(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted, numberOfMembers);
+	}
+
 	public Boolean isImmutable() {
 		return immutable;
 	}
 
 	public LdesFragment toLdesFragment() {
-		return new LdesFragment(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted, numberOfMembers);
+		return new LdesFragment(getFragmentInfo());
 	}
 
 	public String getViewName() {

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -30,7 +31,8 @@ class FragmentationStrategyDecoratorTest {
 	@Test
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
-		LdesFragment parentFragment = new LdesFragment(VIEW_NAME, List.of());
+		LdesFragment parentFragment = new LdesFragment(
+				new FragmentInfo(VIEW_NAME, List.of()));
 		LdesFragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
 		TreeRelation expectedRelation = new TreeRelation("",
 				childFragment.getFragmentId(), "", "",
@@ -46,7 +48,8 @@ class FragmentationStrategyDecoratorTest {
 
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
-		LdesFragment parentFragment = new LdesFragment(VIEW_NAME, List.of());
+		LdesFragment parentFragment = new LdesFragment(
+				new FragmentInfo(VIEW_NAME, List.of()));
 		Member member = mock(Member.class);
 		Observation span = mock(Observation.class);
 		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,

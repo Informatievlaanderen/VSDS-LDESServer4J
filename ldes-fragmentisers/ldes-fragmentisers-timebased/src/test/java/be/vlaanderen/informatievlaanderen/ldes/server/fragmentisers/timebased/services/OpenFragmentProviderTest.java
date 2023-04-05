@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,7 @@ class OpenFragmentProviderTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
 		openFragmentProvider = new OpenFragmentProvider(fragmentCreator,
 				ldesFragmentRepository, 3L);
 	}
@@ -76,9 +77,8 @@ class OpenFragmentProviderTest {
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
 		LdesFragment completeFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair("OldPath",
-						"OldValue")),
-				false, null, false, 3);
+				new FragmentInfo(VIEW_NAME, List.of(new FragmentPair("OldPath",
+						"OldValue")), false, null, false, 3));
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair("Path",
 				"Value"));
 		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
