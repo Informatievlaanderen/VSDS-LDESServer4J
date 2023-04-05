@@ -12,8 +12,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 import org.apache.jena.rdf.model.*;
@@ -62,8 +60,6 @@ class TreeNodeControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-	@Autowired
-	private LdesConfig ldesConfig;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 
@@ -84,16 +80,12 @@ class TreeNodeControllerTest {
 				VIEW_NAME)
 				.param("generatedAtTime",
 						FRAGMENTATION_VALUE_1)
-				.accept(mediaType))
-				.andDo(print())
+				.accept(mediaType)).andDo(print())
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
-		String headerValue;
-
-		headerValue = result.getResponse().getHeader("Cache-Control");
+		String headerValue = result.getResponse().getHeader("Cache-Control");
 		assertEquals(expectedHeaderValue, headerValue);
-
 		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
 				.toModel();
 		assertEquals(TREE_NODE_RESOURCE, getObjectURI(resultModel,
@@ -187,11 +179,6 @@ class TreeNodeControllerTest {
 		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
-		}
-
-		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
-			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
 }

@@ -4,10 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,25 +23,19 @@ public class TreeNodeController {
 	private static final String INLINE = "inline";
 
 	private final TreeNodeFetcher treeNodeFetcher;
-	private final CachingStrategy cachingStrategy;
 
-	public TreeNodeController(TreeNodeFetcher treeNodeFetcher, CachingStrategy cachingStrategy) {
+	public TreeNodeController(TreeNodeFetcher treeNodeFetcher) {
 		this.treeNodeFetcher = treeNodeFetcher;
-		this.cachingStrategy = cachingStrategy;
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "/{view}")
-	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
+	public TreeNode retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {
-		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(CONTENT_DISPOSITION_HEADER, INLINE);
-		return ResponseEntity
-				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(treeNode))
-				.body(treeNode);
+		return returnRequestedTreeNode(response, viewName, requestParameters);
 	}
 
 	private TreeNode returnRequestedTreeNode(HttpServletResponse response, String viewName,
@@ -54,7 +46,6 @@ public class TreeNodeController {
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, treeNode);
-		setEtagHeader(response, treeNode);
 		return treeNode;
 
 	}
@@ -74,7 +65,4 @@ public class TreeNodeController {
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
 	}
 
-	private void setEtagHeader(HttpServletResponse response, TreeNode treeNode) {
-		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(treeNode));
-	}
 }

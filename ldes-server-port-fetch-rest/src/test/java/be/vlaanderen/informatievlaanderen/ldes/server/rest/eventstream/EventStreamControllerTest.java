@@ -9,8 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
@@ -127,11 +125,6 @@ class EventStreamControllerTest {
 		public EventStreamConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
-		}
-
-		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
-			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
 
