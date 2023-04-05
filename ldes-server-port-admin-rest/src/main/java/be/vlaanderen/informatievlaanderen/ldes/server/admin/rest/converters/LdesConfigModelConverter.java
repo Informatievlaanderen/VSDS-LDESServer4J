@@ -31,7 +31,7 @@ import static org.apache.jena.riot.RDFFormat.TURTLE;
 public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesConfigModel> {
 
 	private static List<Resource> resources = List.of(createResource(EVENT_STREAM_TYPE),
-			createResource(TREE_NODE_RESOURCE), createResource(NODE_SHAPE_TYPE));
+			createResource(VIEW_TYPE), createResource(NODE_SHAPE_TYPE));
 
 	@Override
 	protected boolean supports(Class<?> clazz) {

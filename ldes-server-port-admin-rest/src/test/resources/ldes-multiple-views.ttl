@@ -15,7 +15,7 @@
         a sh:NodeShape ;
     ] .
 
-ldes:view1 a tree:Node ;
+ldes:view1 a ldes:View ;
     tree:viewDescription [
         ldes:retentionPolicy "none"
     ] .
