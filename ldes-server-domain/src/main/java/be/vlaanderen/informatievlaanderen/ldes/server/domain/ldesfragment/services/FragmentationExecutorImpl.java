@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,8 +20,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	private final ObservationRegistry observationRegistry;
 
-	public FragmentationExecutorImpl(
-			@Qualifier("configured-fragmentation") Map<String, FragmentationStrategy> fragmentationStrategyMap,
+	public FragmentationExecutorImpl(Map<String, FragmentationStrategy> fragmentationStrategyMap,
 			LdesFragmentRepository ldesFragmentRepository, ObservationRegistry observationRegistry) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
 		this.rootFragmentMap = new ConcurrentHashMap<>();

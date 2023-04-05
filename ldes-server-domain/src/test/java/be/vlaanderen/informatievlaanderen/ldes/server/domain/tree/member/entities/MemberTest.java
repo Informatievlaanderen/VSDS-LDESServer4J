@@ -44,6 +44,7 @@ class MemberTest {
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
 				LocalDateTime.of(1, 1, 1, 1, 1, 1), ModelFactory.createDefaultModel(), List.of());
+
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				member.getLdesMemberId());
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",

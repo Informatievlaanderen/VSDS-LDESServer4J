@@ -29,7 +29,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		LdesFragment ldesFragment = ldesFragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));
-		List<Member> members = memberRepository.getMembersByReference(treeNodeId).toList();
+		List<Member> members = memberRepository.getMembersByReference(treeNodeId);
 		return new TreeNode(extendedTreeNodeId, ldesFragment.isImmutable(), ldesFragment.isSoftDeleted(),
 				ldesFragment.getFragmentPairs().isEmpty(), ldesFragment.getRelations(),
 				members);

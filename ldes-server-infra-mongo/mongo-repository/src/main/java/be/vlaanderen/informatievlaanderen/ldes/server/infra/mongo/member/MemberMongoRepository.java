@@ -10,8 +10,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Component
 public class MemberMongoRepository implements MemberRepository {
@@ -67,9 +67,9 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public Stream<Member> getMembersByReference(String treeNodeId) {
+	public List<Member> getMembersByReference(String treeNodeId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId));
-		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(LdesMemberEntity::toLdesMember);
+		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(LdesMemberEntity::toLdesMember).toList();
 	}
 }

@@ -17,17 +17,16 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 	}
 
 	@Override
-	public LdesFragment createRootFragmentForView(String viewName) {
+	public void createRootFragmentForView(String viewName) {
 		Optional<LdesFragment> optionalRoot = ldesFragmentRepository
 				.retrieveRootFragment(viewName);
 		if (optionalRoot.isEmpty()) {
-			return createRoot(viewName);
+			createRoot(viewName);
 		}
-		return optionalRoot.get();
 	}
 
-	private LdesFragment createRoot(String viewName) {
+	private void createRoot(String viewName) {
 		LdesFragment ldesFragment = new LdesFragment(viewName, List.of());
-		return ldesFragmentRepository.saveFragment(ldesFragment);
+		ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 }

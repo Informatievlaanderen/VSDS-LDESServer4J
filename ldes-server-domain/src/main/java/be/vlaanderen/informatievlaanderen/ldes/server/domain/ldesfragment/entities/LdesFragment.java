@@ -146,8 +146,4 @@ public class LdesFragment {
 	public void deleteRelation(TreeRelation oldTreeRelation) {
 		relations.remove(oldTreeRelation);
 	}
-
-	public boolean isRoot() {
-		return this.fragmentPairs.isEmpty();
-	}
 }

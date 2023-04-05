@@ -98,7 +98,7 @@ class MemberMongoRepositoryTest {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is("treeNodeId"));
 
-		List<Member> members = ldesMemberMongoRepository.getMembersByReference("treeNodeId").toList();
+		ldesMemberMongoRepository.getMembersByReference("treeNodeId");
 
 		verify(mongoTemplate, times(1)).find(query, LdesMemberEntity.class);
 

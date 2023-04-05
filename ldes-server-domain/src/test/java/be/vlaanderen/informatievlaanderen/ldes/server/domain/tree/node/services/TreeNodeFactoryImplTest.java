@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -58,7 +57,7 @@ class TreeNodeFactoryImplTest {
 		ldesFragment.addRelation(new TreeRelation("path", "node", "value", "valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
 		List<Member> members = List.of(new Member("member", null, null, null, List.of()));
-		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
+		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members);
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID);
 
