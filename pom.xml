@@ -25,8 +25,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven-assembly-plugin.version>3.4.2</maven-assembly-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
-        <maven-surefire-plugin.version>3.0.0-M8</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
 
