@@ -19,18 +19,14 @@ This allows you to efficiently implement autocompletion.
    - We filter the RDF statements where the predicate matches the `fragmenterProperty`
    - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
    - We select the object of the first statement that passes the above filters.
-2. Tokens are created
-   - The literal value of the selected object is normalized and split into substrings based on a space char " "
-   - The normalized value of the non split string is also included as a token
-3. The tokens are iterated, with every token the following happens:
-   - A bucket of substrings is created
-      - The literal value of the selected object is split into substrings. For example:
-        `example` is split into the following substrings: ` `, `e`, `ex`, `exa`, `exam`, `examp`, `exampl`, `example`
-   - The substrings in the bucket are iterated from small (e.g. ` ` empty) to large (e.g. `example`). The member is added to the first possible fragment. Taking into account:
-     - A new fragment is created if none exists.
-     - When the fragment has reached the `memberLimit`, the member is not added but the next fragment is retrieved.
-     - The member is only added to the fragment when it was not previously added by another token.
-     - If all fragments are full, the member is always added to the last one (e.g. `example`) above. Ignoring the `memberLimit`.
+2. A bucket of substrings is created
+   - The literal value of the selected object is split into substrings. For example:
+     `example` is split into the following substrings: ` `, `e`, `ex`, `exa`, `exam`, `examp`, `exampl`, `example`
+3. The substrings in the bucket are iterated from small (e.g. ` ` empty) to large (e.g. `example`). The member is added to the first possible fragment. Taking into account:
+   - A new fragment is created if none exists.
+   - When the fragment has reached the `memberLimit`, the member is not added but the next fragment is retrieved.
+   - The member is only added to one fragment
+   - If all fragments are full, the member is always added to the last one (e.g. `example`) above. Ignoring the `memberLimit`.
 
 ![](content/algorithm.png)
 

@@ -5,71 +5,46 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.bucketiser.SubstringBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMemberSupplier;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
-import java.util.stream.Collectors;
+import java.util.List;
 
 public class SubstringFragmentationStrategy extends FragmentationStrategyDecorator {
 
-	public static final String ROOT_SUBSTRING = "";
-
 	private final ObservationRegistry observationRegistry;
+	private final SubstringBucketiser substringBucketiser;
 	private final SubstringFragmentFinder substringFragmentFinder;
 	private final SubstringFragmentCreator substringFragmentCreator;
-	private final LocalMemberSupplier localMemberSupplier;
 
 	public SubstringFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			ObservationRegistry observationRegistry,
-			SubstringFragmentFinder substringFragmentFinder,
-			SubstringFragmentCreator substringFragmentCreator,
-			TreeRelationsRepository treeRelationsRepository,
-			LocalMemberSupplier localMemberSupplier) {
+			SubstringBucketiser substringBucketiser,
+			SubstringFragmentFinder substringFragmentFinder, SubstringFragmentCreator substringFragmentCreator,
+			TreeRelationsRepository treeRelationsRepository) {
 		super(fragmentationStrategy, treeRelationsRepository);
 		this.observationRegistry = observationRegistry;
+		this.substringBucketiser = substringBucketiser;
 		this.substringFragmentFinder = substringFragmentFinder;
 		this.substringFragmentCreator = substringFragmentCreator;
-		this.localMemberSupplier = localMemberSupplier;
 	}
 
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
-		final Observation substringFragmentationObservation = startFragmentationObservation(parentObservation);
-
-		final LocalMember localMember = localMemberSupplier.toLocalMember(member);
-		final LdesFragment rootFragment = prepareRootFragment(parentFragment);
-		addMemberToFragments(parentFragment, localMember, substringFragmentationObservation, rootFragment);
-		substringFragmentationObservation.stop();
-	}
-
-	private LdesFragment prepareRootFragment(LdesFragment parentFragment) {
-		final LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment,
-				ROOT_SUBSTRING);
-		super.addRelationFromParentToChild(parentFragment, rootFragment);
-		return rootFragment;
-	}
-
-	private void addMemberToFragments(LdesFragment parentFragment,
-			LocalMember member,
-			Observation substringFragmentationObservation,
-			LdesFragment rootFragment) {
-		member.getTokens().stream()
-				.map(token -> substringFragmentFinder
-						.getOpenOrLastPossibleFragment(parentFragment, rootFragment, token.getBucket()))
-				.collect(Collectors.toSet())
-				.parallelStream()
-				.forEach(substringFragment -> super.addMemberToFragment(substringFragment, member,
-						substringFragmentationObservation));
-	}
-
-	private Observation startFragmentationObservation(Observation parentObservation) {
-		return Observation.createNotStarted("substring fragmentation", observationRegistry)
+		Observation substringFragmentationObservation = Observation.createNotStarted("substring fragmentation",
+				observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
+		List<String> buckets = substringBucketiser.bucketise(member);
+		LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, "");
+		super.addRelationFromParentToChild(parentFragment, rootFragment);
+		LdesFragment substringFragment = substringFragmentFinder
+				.getOpenLdesFragmentOrLastPossibleFragment(parentFragment, rootFragment, buckets);
+		super.addMemberToFragment(substringFragment, member, substringFragmentationObservation);
+		substringFragmentationObservation.stop();
 	}
 
 }
