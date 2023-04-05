@@ -27,7 +27,7 @@ public class GeospatialBucketiser {
 		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
 				geospatialConfig.fragmenterProperty())
 				.stream()
-				.map(GeometryWrapper.class::cast)
+				.map(o -> (GeometryWrapper) o)
 				.map(geometryWrapper -> {
 					try {
 						return geometryWrapper.convertSRS(SRS_URI.WGS84_CRS);
