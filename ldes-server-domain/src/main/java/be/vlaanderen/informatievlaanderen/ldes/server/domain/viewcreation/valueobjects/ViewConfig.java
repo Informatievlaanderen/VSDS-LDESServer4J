@@ -3,14 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.value
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @ConfigurationProperties
 public class ViewConfig {
-
-	private List<ViewSpecification> views = new ArrayList<>();
+	private List<ViewSpecification> views;
 
 	public List<ViewSpecification> getViews() {
 		return views;

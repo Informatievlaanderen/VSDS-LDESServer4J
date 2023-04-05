@@ -2,9 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverter;
+import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
 
@@ -12,21 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final LdesConfig ldesConfig;
-	private final RelationStatementConverter relationStatementConverter;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			LdesConfig ldesConfig, RelationStatementConverter relationStatementConverter) {
+			LdesConfig ldesConfig) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
-		this.relationStatementConverter = relationStatementConverter;
 	}
 
 	@Override
@@ -49,8 +47,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNode.getFragmentId());
 
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
-		statements.addAll(relationStatementConverter.getRelationStatements(treeNode.getRelations(), currentFragmentId));
-
+		statements.addAll(getRelationStatements(treeNode.getRelations(), currentFragmentId));
 		addLdesCollectionStatements(statements, treeNode.isView(), currentFragmentId);
 
 		return statements;
@@ -103,4 +100,24 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return objectContent != null && !objectContent.equals("");
 	}
 
+	private List<Statement> getRelationStatements(List<TreeRelation> ldesFragment, Resource currentFragmentId) {
+		return ldesFragment.stream()
+				.flatMap(treeRelation -> getRelationStatementsOfRelation(currentFragmentId,
+						treeRelation).stream())
+				.toList();
+	}
+
+	private List<Statement> getRelationStatementsOfRelation(Resource currentFragmentId, TreeRelation treeRelation) {
+		List<Statement> statements = new ArrayList<>();
+		Resource treeRelationNode = createResource();
+		statements.add(createStatement(currentFragmentId, TREE_RELATION, treeRelationNode));
+		if (hasMeaningfulValue(treeRelation.treeValue()))
+			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeRelation.treeValue(),
+					TypeMapper.getInstance().getTypeByName(treeRelation.treeValueType()))));
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treeRelation.treePath());
+		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
+				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeRelation.treeNode());
+		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, treeRelation.relation());
+		return statements;
+	}
 }

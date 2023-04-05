@@ -1,10 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @param timestampPath The ldes:EventStream instance MAY have a property ldes:timestampPath
@@ -12,7 +9,7 @@ import java.util.stream.Collectors;
  * @param shape         The ldes:EventStream instance SHOULD have a property tree:shape
  */
 public record EventStream(String collection, String timestampPath, String versionOfPath, String shape,
-                          List<TreeNode> views) {
+                          List<String> views) {
 
     @Override
     public boolean equals(Object obj) {
@@ -33,6 +30,6 @@ public record EventStream(String collection, String timestampPath, String versio
                 "timestampPath=" + timestampPath + ", " +
                 "versionOf=" + versionOfPath + ", " +
                 "shape=" + shape + ", " +
-                "views=" + views.stream().map(TreeNode::getFragmentId).collect(Collectors.joining(",")) + ']';
+                "views=" + views + ']';
     }
 }

@@ -4,8 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.services.RelationStatementConverterImpl;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,22 +30,21 @@ class EventStreamConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		RelationStatementConverterImpl relationStatementConverter = new RelationStatementConverterImpl(ldesConfig);
-		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig, relationStatementConverter);
+		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig);
 	}
 
 	@Test
-	void when_LdesFragmentHasTwoViews_ModelHasEightStatement() {
+	void when_LdesFragmentHasTwoViews_ModelHasSixStatement() {
 		EventStream eventStream = new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf",
 				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
-				List.of(createView("view1"), createView("view2")));
+				List.of("view1", "view2"));
 
 		Model model = eventStreamConverter.toModel(eventStream);
 
 		String id = "http://localhost:8080/mobility-hindrances";
 
-		assertEquals(8, getNumberOfStatements(model));
+		assertEquals(6, getNumberOfStatements(model));
 		assertEquals("[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
 				model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
 		assertEquals("[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
@@ -64,23 +61,11 @@ class EventStreamConverterImplTest {
 		assertEquals("[" + id + ", https://w3id.org/tree#view, " + id + "/view2]",
 				model.listStatements(createResource(id), TREE_VIEW, createResource(id + "/view2")).nextStatement()
 						.toString());
-		assertEquals(
-				"[" + id + "/view1" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
-				model.listStatements(createResource(id + "/view1"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
-						.toString());
-		assertEquals(
-				"[" + id + "/view2" + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
-				model.listStatements(createResource(id + "/view2"), RDF_SYNTAX_TYPE, (Resource) null).nextStatement()
-						.toString());
 	}
 
 	private int getNumberOfStatements(Model model) {
 		AtomicInteger statementCounter = new AtomicInteger();
 		model.listStatements().forEach((statement) -> statementCounter.getAndIncrement());
 		return statementCounter.get();
-	}
-
-	private TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of());
 	}
 }
