@@ -101,9 +101,8 @@ This will start an empty LDES server. To enrich this server, certain Maven profi
 #### Application Configuration
 
 Below are properties that are needed when applying certain profiles.
-These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does not exist, create it)
-
-The server allows configurable fragment refresh times with the max-age and max-age-immutable options. These values will be sent with the Cache-Control header in HTTP responses.
+These need to be added in the `application.yml` file in `ldes-server-application/src/main/resources`. (If the file does
+not exist, create it)
 
 ##### Example HTTP Ingest-Fetch Configuration
 
@@ -116,9 +115,6 @@ The server allows configurable fragment refresh times with the max-age and max-a
     shape: { URI to defined shape }
     timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
     version-of: { SHACL property path to the non-versioned identifier of the entity. }
-  rest:
-    max-age: 60 { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
-    max-age-immutable: 604800 { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
   ```
 
 ##### Example Mongo Configuration
