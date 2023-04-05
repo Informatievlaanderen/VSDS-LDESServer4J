@@ -8,8 +8,8 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class FragmentationExecutorImpl implements FragmentationExecutor {
@@ -23,7 +23,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 	public FragmentationExecutorImpl(Map<String, FragmentationStrategy> fragmentationStrategyMap,
 			LdesFragmentRepository ldesFragmentRepository, ObservationRegistry observationRegistry) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
-		this.rootFragmentMap = new ConcurrentHashMap<>();
+		this.rootFragmentMap = new HashMap<>();
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.observationRegistry = observationRegistry;
 	}
