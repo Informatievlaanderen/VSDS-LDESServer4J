@@ -41,7 +41,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 
 	private SubstringConfig createSubstringConfig(ConfigProperties properties) {
 		SubstringConfig substringConfig = new SubstringConfig();
-		substringConfig.setFragmenterProperty(properties.get(FRAGMENTER_PROPERTY));
+		substringConfig.setFragmenterPropertyQuery(properties.get(FRAGMENTER_PROPERTY));
 		substringConfig.setMemberLimit(Integer.valueOf(properties.get(MEMBER_LIMIT)));
 		return substringConfig;
 	}

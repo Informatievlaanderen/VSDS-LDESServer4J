@@ -13,7 +13,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.f
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.FRAGMENTER_PROPERTY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialProperties.MAX_ZOOM_LEVEL;
 
 public class GeospatialFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -38,7 +39,6 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 
 	private GeospatialConfig createGeospatialConfig(ConfigProperties properties) {
 		return new GeospatialConfig(
-				properties.getOrDefault(FRAGMENTER_SUBJECT_FILTER, ".*"),
 				properties.get(FRAGMENTER_PROPERTY),
 				Integer.parseInt(properties.get(MAX_ZOOM_LEVEL)));
 	}

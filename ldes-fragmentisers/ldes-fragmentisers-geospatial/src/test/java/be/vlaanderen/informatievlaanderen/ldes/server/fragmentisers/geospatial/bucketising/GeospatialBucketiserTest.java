@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;//
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
@@ -24,8 +24,8 @@ class GeospatialBucketiserTest {
 
 	private GeospatialBucketiser bucketiser;
 
-	private final GeospatialConfig geospatialConfig = new GeospatialConfig(".*",
-			"http://www.opengis.net/ont/geosparql#asWKT",
+	private final GeospatialConfig geospatialConfig = new GeospatialConfig(
+			"PREFIX gs: <http://www.opengis.net/ont/geosparql#> SELECT ?x WHERE { ?s gs:asWKT ?x . }",
 			15);
 
 	@Test

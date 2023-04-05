@@ -30,7 +30,7 @@ class SubstringRelationsAttributerTest {
 		TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 		SubstringConfig substringConfig = new SubstringConfig();
-		substringConfig.setFragmenterProperty("somefilter");
+		substringConfig.setFragmenterPropertyQuery("somefilter");
 		substringRelationsAttributer = new SubstringRelationsAttributer(treeRelationsRepository,
 				nonCriticalTasksExecutor, substringConfig);
 	}
