@@ -30,8 +30,7 @@ public class TimeBasedFragmentCreator {
 
 	public TimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor,
-			Property fragmentationProperty) {
+			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property fragmentationProperty) {
 		this.treeRelationsRepository = treeRelationsRepository;
 
 		this.ldesFragmentRepository = ldesFragmentRepository;

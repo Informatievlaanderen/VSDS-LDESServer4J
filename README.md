@@ -25,7 +25,6 @@ open data.
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
-                * [Example Pagination](#example-pagination)
                 * [Example Serving Static Content](#example-serving-static-content)
                 * [Example Serving DCAT Metadata](#example-serving-dcat-metadata)
         + [Docker Setup](#docker-setup)
@@ -96,13 +95,11 @@ This will start an empty LDES server. To enrich this server, certain Maven profi
 | Profile Group                        | Profile Name             | Description                                                     | Parameters                                                                  | Further Info                                                                                                                        |
 |--------------------------------------|--------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
 | **HTTP Endpoints (Fetch/Ingestion)** | http-ingest              | Enables a HTTP endpoint for to insert LDES members.             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
+| **HTTP Endpoints (Fetch/Ingestion)** | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"   |
 | **Storage**                          | storage-mongo            | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
 | **Timebased Fragmentation**          | fragmentation-timebased  | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
 | **Geospatial Fragmentation**         | fragmentation-geospatial | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**          | fragmentation-substring  | Supports substring fragmentation.                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
-| **Pagination Fragmentation**         | fragmentation-pagination | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
-
+| **Substring Fragmentation**          | fragmentation-substring  | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
 
 #### Application Configuration
 
@@ -204,14 +201,6 @@ As of now, there is only a timebased retention possible which can be configured 
   name: "substring"
   config:
     fragmenterProperty: { Defines which property will be used for bucketizing }
-    memberLimit: { member limit > 0 }
-  ```
-
-##### Example Pagination
-
-  ```yaml
-  name: "pagination"
-  config:
     memberLimit: { member limit > 0 }
   ```
 
