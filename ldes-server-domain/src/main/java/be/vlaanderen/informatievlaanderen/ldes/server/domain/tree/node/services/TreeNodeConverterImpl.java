@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -48,14 +47,17 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode) {
-		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
-				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						ldesConfig.getBaseUrl() + treeRelation.treeNode(),
-						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
-				.toList();
-		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
-				treeRelationResponses);
-		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
+		List<Statement> statements = new ArrayList<>();
+		Resource currentFragmentId = createResource(treeNode.getFragmentId());
+
+		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
+		treeNode.getRelations().forEach(treeRelation -> {
+			TreeRelationResponse treeRelationResponse = new TreeRelationResponse(treeRelation.treePath(),
+					ldesConfig.getBaseUrl() + treeRelation.treeNode(),
+					treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation());
+			statements.addAll(treeRelationResponse.convertToStatements(
+					treeNode.getFragmentId()));
+		});
 		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId());
 
 		return statements;

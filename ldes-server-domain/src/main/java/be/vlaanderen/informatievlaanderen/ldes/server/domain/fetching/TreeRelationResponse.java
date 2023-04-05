@@ -6,7 +6,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -40,7 +39,7 @@ public class TreeRelationResponse {
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
 				treeNode);
 		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, relation);
-		return Collections.unmodifiableList(statements);
+		return statements;
 	}
 
 	private void addStatementIfMeaningful(List<Statement> statements, Resource subject, Property predicate,
