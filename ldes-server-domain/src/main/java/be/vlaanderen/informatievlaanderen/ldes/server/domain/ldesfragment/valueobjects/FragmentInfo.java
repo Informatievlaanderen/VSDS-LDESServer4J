@@ -16,22 +16,18 @@ public class FragmentInfo {
 	private Boolean immutable;
 	private LocalDateTime immutableTimestamp;
 
-	private Boolean softDeleted;
-
 	public FragmentInfo(final String viewName, final List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = false;
-		this.softDeleted = false;
 	}
 
 	public FragmentInfo(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
-			LocalDateTime immutableTimestamp, Boolean softDeleted) {
+			LocalDateTime immutableTimestamp) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.immutableTimestamp = immutableTimestamp;
-		this.softDeleted = softDeleted;
 	}
 
 	public Optional<String> getValueOfKey(String key) {
@@ -63,14 +59,6 @@ public class FragmentInfo {
 		this.immutableTimestamp = LocalDateTime.now();
 	}
 
-	public Boolean getSoftDeleted() {
-		return softDeleted;
-	}
-
-	public void setSoftDeleted(Boolean softDeleted) {
-		this.softDeleted = softDeleted;
-	}
-
 	public FragmentInfo createChild(FragmentPair fragmentPair) {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
 		childFragmentPairs.add(fragmentPair);
@@ -86,13 +74,12 @@ public class FragmentInfo {
 		FragmentInfo that = (FragmentInfo) o;
 		return Objects.equals(viewName, that.viewName) && Objects.equals(fragmentPairs, that.fragmentPairs)
 				&& Objects.equals(immutable, that.immutable)
-				&& Objects.equals(immutableTimestamp, that.immutableTimestamp)
-				&& Objects.equals(softDeleted, that.softDeleted);
+				&& Objects.equals(immutableTimestamp, that.immutableTimestamp);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted);
+		return Objects.hash(viewName, fragmentPairs, immutable, immutableTimestamp);
 	}
 
 	public String generateFragmentId() {

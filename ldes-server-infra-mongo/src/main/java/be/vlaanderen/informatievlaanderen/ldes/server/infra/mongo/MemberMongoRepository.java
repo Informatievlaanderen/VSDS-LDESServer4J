@@ -38,9 +38,4 @@ public class MemberMongoRepository implements MemberRepository {
 		return StreamSupport.stream(repository.findAllById(ids).spliterator(), false)
 				.map(LdesMemberEntity::toLdesMember);
 	}
-
-	@Override
-	public void deleteMember(String memberId) {
-		repository.deleteById(memberId);
-	}
 }

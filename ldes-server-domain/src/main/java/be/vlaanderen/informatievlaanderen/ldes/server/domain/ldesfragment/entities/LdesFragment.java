@@ -56,10 +56,6 @@ public class LdesFragment {
 		this.fragmentInfo.makeImmutable();
 	}
 
-	public void setSoftDeleted(boolean softDeleted) {
-		this.fragmentInfo.setSoftDeleted(softDeleted);
-	}
-
 	public boolean isImmutable() {
 		return this.fragmentInfo.getImmutable();
 	}
