@@ -21,8 +21,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 
 public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
-	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-
 	private final TreeNodeConverter treeNodeConverter;
 
 	public TreeNodeHttpConverter(TreeNodeConverter treeNodeConverter) {
@@ -41,7 +39,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
+		return List.of(MediaType.ALL);
 	}
 
 	@Override
