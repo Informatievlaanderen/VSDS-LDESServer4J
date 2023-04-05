@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -62,7 +61,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 				.listStatements(null, RDF_SYNTAX_TYPE, createResource(ldesConfig.getMemberType()))
 				.nextOptional()
 				.map(statement -> statement.getSubject().toString())
-				.orElseThrow(MalformedMemberIdException::new);
+				.orElse(null);
 	}
 
 	@Override
