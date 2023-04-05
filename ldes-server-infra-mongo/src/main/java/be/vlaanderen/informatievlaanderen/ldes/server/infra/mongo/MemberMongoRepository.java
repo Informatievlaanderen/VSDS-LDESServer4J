@@ -38,4 +38,5 @@ public class MemberMongoRepository implements MemberRepository {
 		return StreamSupport.stream(repository.findAllById(ids).spliterator(), false)
 				.map(LdesMemberEntity::toLdesMember);
 	}
+
 }

@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -30,14 +29,13 @@ class FragmentationStrategyCreatorImplTest {
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
-	private final MemberReferencesRepository memberReferencesRepository = mock(MemberReferencesRepository.class);
 	private final Tracer tracer = mock(Tracer.class);
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach
 	void setUp() {
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, ldesFragmentRepository, memberReferencesRepository, rootFragmentCreator, tracer);
+				applicationContext, ldesFragmentRepository, rootFragmentCreator, tracer);
 	}
 
 	@Test

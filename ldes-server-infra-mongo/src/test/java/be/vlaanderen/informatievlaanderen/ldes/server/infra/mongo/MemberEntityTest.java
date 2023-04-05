@@ -36,10 +36,10 @@ class MemberEntityTest {
 	void toEntity() {
 		LdesMemberEntity actualLdesMemberEntity = LdesMemberEntity.fromLdesMember(member);
 
-		Model actualLdesMemberEntityModel = RDFParserBuilder.create().fromString(actualLdesMemberEntity.getModel())
+		Model actualLdesMemberEntityModel = RDFParserBuilder.create().fromString(actualLdesMemberEntity.getLdesMember())
 				.lang(Lang.NQUADS).toModel();
 
-		Model ldesMemberEntityModel = RDFParserBuilder.create().fromString(ldesMemberEntity.getModel())
+		Model ldesMemberEntityModel = RDFParserBuilder.create().fromString(ldesMemberEntity.getLdesMember())
 				.lang(Lang.NQUADS).toModel();
 
 		assertTrue(ldesMemberEntityModel.isIsomorphicWith(actualLdesMemberEntityModel));
