@@ -1,13 +1,13 @@
-name: Add forks and dependabot PRs to project
+name: Add needs-review and size/XL pull requests to projects
 
 on:
-  pull_request_target:
+  pull_request:
     types:
       - opened
-      - reopened
 
 jobs:
   add-to-project:
+    name: Add fork to project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/add-to-project@v0.4.0
