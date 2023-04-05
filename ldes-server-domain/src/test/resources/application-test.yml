@@ -6,4 +6,4 @@ ldes:
   member-type: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
   timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
   version-of: "http://purl.org/dc/terms/isVersionOf"
-  dcat: "dcat-test.ttl"
+
