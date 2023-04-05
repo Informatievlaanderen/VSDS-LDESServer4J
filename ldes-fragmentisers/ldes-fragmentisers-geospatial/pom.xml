@@ -3,7 +3,7 @@
     <parent>
         <artifactId>ldes-fragmentisers</artifactId>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-        <version>0.0.3</version>
+        <version>0.0.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
