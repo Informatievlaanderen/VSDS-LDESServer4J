@@ -1,16 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class TileFragmentRelationsAttributerTest {
@@ -19,14 +18,14 @@ class TileFragmentRelationsAttributerTest {
 	private static final String VIEW_NAME = "view";
 	private TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 
-	private LdesFragmentRepository ldesFragmentRepository;
+	private TreeRelationsRepository treeRelationsRepository;
 
 	@BeforeEach
 	void setUp() {
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		treeRelationsRepository = mock(TreeRelationsRepository.class);
 		PARENT_FRAGMENT = new LdesFragment(
 				VIEW_NAME, List.of());
-		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(ldesFragmentRepository);
+		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(treeRelationsRepository);
 	}
 
 	@Test
@@ -42,9 +41,8 @@ class TileFragmentRelationsAttributerTest {
 		tileFragmentRelationsAttributer.addRelationsFromRootToBottom(
 				rootFragment, tileFragment);
 
-		assertTrue(rootFragment.containsRelation(expectedRelation));
-		verify(ldesFragmentRepository,
-				times(1)).saveFragment(rootFragment);
+		verify(treeRelationsRepository,
+				times(1)).addTreeRelation(rootFragment.getFragmentId(), expectedRelation);
 	}
 
 	private LdesFragment createTileFragment(String tile) {

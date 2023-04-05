@@ -2,7 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,13 +24,16 @@ class TimeBasedFragmentCreatorTest {
 	private static final String VIEW = "view";
 	private TimeBasedFragmentCreator fragmentCreator;
 	private LdesFragmentRepository ldesFragmentRepository;
+	private NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
 	@BeforeEach
 	void setUp() {
+		nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
+		TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(
-				ldesFragmentRepository,
-				createProperty(PROV_GENERATED_AT_TIME));
+				ldesFragmentRepository, treeRelationsRepository,
+				nonCriticalTasksExecutor, createProperty(PROV_GENERATED_AT_TIME));
 	}
 
 	@Test
@@ -58,9 +63,10 @@ class TimeBasedFragmentCreatorTest {
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
 		assertTrue(newFragment.getFragmentId().contains("/view?generatedAtTime="));
-		InOrder inOrder = inOrder(ldesFragmentRepository);
+		InOrder inOrder = inOrder(ldesFragmentRepository, nonCriticalTasksExecutor);
+		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
+		inOrder.verify(nonCriticalTasksExecutor, times(1)).submit(any());
 		inOrder.verifyNoMoreInteractions();
 	}
 

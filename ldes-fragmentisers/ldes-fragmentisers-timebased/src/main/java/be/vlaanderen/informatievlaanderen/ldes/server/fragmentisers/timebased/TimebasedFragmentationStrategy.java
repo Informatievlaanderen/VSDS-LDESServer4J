@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -17,8 +17,8 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 
 	public TimebasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			OpenFragmentProvider openFragmentProvider, ObservationRegistry observationRegistry,
-			LdesFragmentRepository ldesFragmentRepository) {
-		super(fragmentationStrategy, ldesFragmentRepository);
+			TreeRelationsRepository treeRelationsRepository) {
+		super(fragmentationStrategy, treeRelationsRepository);
 		this.openFragmentProvider = openFragmentProvider;
 		this.observationRegistry = observationRegistry;
 	}

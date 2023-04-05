@@ -1,25 +1,23 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 
 public class TileFragmentRelationsAttributer {
 
 	private final GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
-	private final LdesFragmentRepository ldesFragmentRepository;
 
-	public TileFragmentRelationsAttributer(LdesFragmentRepository ldesFragmentRepository) {
-		this.ldesFragmentRepository = ldesFragmentRepository;
+	private final TreeRelationsRepository treeRelationsRepository;
+
+	public TileFragmentRelationsAttributer(TreeRelationsRepository treeRelationsRepository) {
+		this.treeRelationsRepository = treeRelationsRepository;
 	}
 
 	public void addRelationsFromRootToBottom(LdesFragment rootFragment,
 			LdesFragment tileFragments) {
 		TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
 				tileFragments);
-		if (!rootFragment.containsRelation(relationToParentFragment)) {
-			rootFragment.addRelation(relationToParentFragment);
-			ldesFragmentRepository.saveFragment(rootFragment);
-		}
+		treeRelationsRepository.addTreeRelation(rootFragment.getFragmentId(), relationToParentFragment);
 	}
 }

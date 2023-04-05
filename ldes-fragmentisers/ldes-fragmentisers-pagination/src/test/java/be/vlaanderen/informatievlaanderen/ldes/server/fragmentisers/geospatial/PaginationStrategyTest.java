@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.PaginationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
@@ -29,7 +29,7 @@ class PaginationStrategyTest {
 	private FragmentationStrategy fragmentationStrategy;
 	private static LdesFragment PARENT_FRAGMENT;
 	private static LdesFragment OPEN_FRAGMENT;
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 
 	@BeforeEach
 	void setUp() {
@@ -37,7 +37,7 @@ class PaginationStrategyTest {
 		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER, "1"));
 		fragmentationStrategy = new PaginationStrategy(decoratedFragmentationStrategy,
 				openPageProvider, ObservationRegistry.create(),
-				ldesFragmentRepository);
+				treeRelationsRepository);
 	}
 
 	@Test
@@ -50,7 +50,7 @@ class PaginationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				member, any(Observation.class));
 
-		InOrder inOrder = inOrder(openPageProvider, ldesFragmentRepository,
+		InOrder inOrder = inOrder(openPageProvider, treeRelationsRepository,
 				decoratedFragmentationStrategy);
 		inOrder.verify(openPageProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
@@ -69,12 +69,12 @@ class PaginationStrategyTest {
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
 				member, any(Observation.class));
 
-		InOrder inOrder = inOrder(openPageProvider, ldesFragmentRepository,
+		InOrder inOrder = inOrder(openPageProvider, treeRelationsRepository,
 				decoratedFragmentationStrategy);
 		inOrder.verify(openPageProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
-		inOrder.verify(ldesFragmentRepository,
-				times(1)).saveFragment(PARENT_FRAGMENT);
+		inOrder.verify(treeRelationsRepository,
+				times(1)).addTreeRelation(eq(PARENT_FRAGMENT.getFragmentId()), any());
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member), any(Observation.class));
 

@@ -53,12 +53,12 @@ class TreeNodeRemoverImplTest {
 
 	private LdesFragment notReadyToDeleteFragment() {
 		return new LdesFragment("view", List.of(), true,
-				LocalDateTime.now().plusDays(1), false, 0, List.of());
+				LocalDateTime.now().plusDays(1), false, 0);
 	}
 
 	private LdesFragment readyToDeleteFragment() {
 		return new LdesFragment(
-				"view", List.of(), true, LocalDateTime.now(), false, 0, List.of());
+				"view", List.of(), true, LocalDateTime.now(), false, 0);
 	}
 
 }

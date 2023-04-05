@@ -2,8 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +15,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagin
 
 public class PageCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
+	private final TreeRelationsRepository treeRelationsRepository;
+	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
 
-	public PageCreator(LdesFragmentRepository ldesFragmentRepository) {
+	public PageCreator(LdesFragmentRepository ldesFragmentRepository,
+			TreeRelationsRepository treeRelationsRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+		this.treeRelationsRepository = treeRelationsRepository;
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 	}
 
 	public LdesFragment createFirstFragment(LdesFragment parentFragment) {
@@ -46,11 +54,12 @@ public class PageCreator {
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.makeImmutable();
-		completeLdesFragment
-				.addRelation(new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
-		newFragment
-				.addRelation(new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
+		nonCriticalTasksExecutor
+				.submit(() -> treeRelationsRepository.addTreeRelation(newFragment.getFragmentId(),
+						new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION)));
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
-		ldesFragmentRepository.saveFragment(newFragment);
+		nonCriticalTasksExecutor
+				.submit(() -> treeRelationsRepository.addTreeRelation(completeLdesFragment.getFragmentId(),
+						new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION)));
 	}
 }

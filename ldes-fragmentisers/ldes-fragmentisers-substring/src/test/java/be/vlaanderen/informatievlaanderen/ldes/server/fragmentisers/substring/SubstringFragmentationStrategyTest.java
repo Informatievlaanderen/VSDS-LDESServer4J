@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.model.LocalMember;
@@ -38,6 +39,7 @@ class SubstringFragmentationStrategyTest {
 	private SubstringFragmentationStrategy substringFragmentationStrategy;
 	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final TreeRelationsRepository treeRelationsRepository = mock(TreeRelationsRepository.class);
 
 	@BeforeEach
 	void setUp() {
@@ -48,7 +50,7 @@ class SubstringFragmentationStrategyTest {
 		substringFragmentCreator = mock(SubstringFragmentCreator.class);
 		substringFragmentationStrategy = new SubstringFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), substringFragmentFinder,
-				substringFragmentCreator, ldesFragmentRepository, localMemberSupplier);
+				substringFragmentCreator, treeRelationsRepository, localMemberSupplier);
 	}
 
 	@Test
