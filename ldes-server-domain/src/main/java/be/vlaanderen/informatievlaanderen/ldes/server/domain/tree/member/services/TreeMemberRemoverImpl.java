@@ -19,7 +19,6 @@ public class TreeMemberRemoverImpl implements TreeMemberRemover {
 	public void tryRemovingMember(String memberId) {
 		if (!memberReferencesRepository.hasMemberReferences(memberId)) {
 			memberRepository.deleteMember(memberId);
-			memberReferencesRepository.deleteMemberReference(memberId);
 		}
 	}
 }

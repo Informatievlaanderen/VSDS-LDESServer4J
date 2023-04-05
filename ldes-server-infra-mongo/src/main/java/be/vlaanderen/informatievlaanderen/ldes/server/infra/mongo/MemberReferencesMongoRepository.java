@@ -39,9 +39,4 @@ public class MemberReferencesMongoRepository implements MemberReferencesReposito
 				.map(MemberReferencesEntity::hasMemberReferences)
 				.orElseThrow(() -> new MemberNotFoundException(memberId));
 	}
-
-	@Override
-	public synchronized void deleteMemberReference(String memberId) {
-		repository.deleteById(memberId);
-	}
 }

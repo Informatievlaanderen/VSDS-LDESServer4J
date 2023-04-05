@@ -69,9 +69,9 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName) {
+	public Stream<LdesFragment> retrieveImmutableFragmentsOfView(String viewName) {
 		return repository
-				.findAllByImmutableAndSoftDeletedAndViewName(true, false, viewName)
+				.findAllByImmutableAndViewName(true, viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment);
 	}

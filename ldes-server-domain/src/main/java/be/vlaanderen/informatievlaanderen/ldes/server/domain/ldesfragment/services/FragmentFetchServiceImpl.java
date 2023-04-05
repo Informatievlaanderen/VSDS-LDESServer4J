@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -23,16 +22,12 @@ public class FragmentFetchServiceImpl implements FragmentFetchService {
 
 	@Override
 	public LdesFragment getFragment(LdesFragmentRequest ldesFragmentRequest) {
-		LdesFragment ldesFragment = ldesFragmentRepository
+		return ldesFragmentRepository
 				.retrieveFragment(ldesFragmentRequest)
 				.orElseThrow(
 						() -> new MissingFragmentException(
+
 								ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
 										ldesFragmentRequest.fragmentPairs()).generateFragmentId()));
-		if (ldesFragment.isSoftDeleted())
-			throw new DeletedFragmentException(
-					ldesConfig.getHostName() + new FragmentInfo(ldesFragmentRequest.viewName(),
-							ldesFragmentRequest.fragmentPairs()).generateFragmentId());
-		return ldesFragment;
 	}
 }
