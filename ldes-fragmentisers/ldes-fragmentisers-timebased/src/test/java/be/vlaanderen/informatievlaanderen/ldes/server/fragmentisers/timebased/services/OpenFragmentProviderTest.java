@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,8 +28,9 @@ class OpenFragmentProviderTest {
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
+		TimebasedFragmentationConfig timebasedFragmentationConfig = createSequentialFragmentationConfig();
 		openFragmentProvider = new OpenFragmentProvider(fragmentCreator,
-				ldesFragmentRepository, 3L);
+				ldesFragmentRepository, timebasedFragmentationConfig);
 	}
 
 	@Test
@@ -96,6 +98,10 @@ class OpenFragmentProviderTest {
 		inOrder.verify(fragmentCreator, times(1)).createNewFragment(completeFragment, PARENT_FRAGMENT);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
+	}
+
+	private TimebasedFragmentationConfig createSequentialFragmentationConfig() {
+		return new TimebasedFragmentationConfig(3L);
 	}
 
 }

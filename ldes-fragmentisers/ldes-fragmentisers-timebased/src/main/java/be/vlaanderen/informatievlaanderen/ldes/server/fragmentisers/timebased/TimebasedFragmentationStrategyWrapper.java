@@ -9,14 +9,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
-import org.apache.jena.rdf.model.Property;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.PROV_GENERATED_AT_TIME;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedProperties.FRAGMENTATION_PROPERTY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedProperties.MEMBER_LIMIT;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class TimebasedFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -38,24 +34,20 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
 			LdesFragmentRepository ldesFragmentRepository, TreeRelationsRepository treeRelationsRepository,
 			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
-		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
-				timebasedFragmentationConfig.fragmentationProperty());
-		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository,
-				timebasedFragmentationConfig.memberLimit());
+				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
+		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
+		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository, timebasedFragmentationConfig);
 	}
 
 	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property timebasedFragmentationConfig) {
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		return new TimeBasedFragmentCreator(
-				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor,
-				timebasedFragmentationConfig);
+				ldesFragmentRepository, treeRelationsRepository, nonCriticalTasksExecutor);
 	}
 
 	private TimebasedFragmentationConfig createTimebasedFragmentationConfig(ConfigProperties properties) {
-		return new TimebasedFragmentationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)),
-				createProperty(properties.getOrDefault(FRAGMENTATION_PROPERTY, PROV_GENERATED_AT_TIME)));
+		return new TimebasedFragmentationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)));
 	}
 }

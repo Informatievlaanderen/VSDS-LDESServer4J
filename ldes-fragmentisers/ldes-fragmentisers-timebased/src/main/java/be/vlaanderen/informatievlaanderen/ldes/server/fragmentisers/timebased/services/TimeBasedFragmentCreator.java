@@ -7,13 +7,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
-import org.apache.jena.rdf.model.Property;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_GREATER_THAN_OR_EQUAL_TO_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_LESSER_THAN_OR_EQUAL_TO_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 
 public class TimeBasedFragmentCreator {
 
@@ -23,16 +21,13 @@ public class TimeBasedFragmentCreator {
 	private final TreeRelationsRepository treeRelationsRepository;
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 
-	private final Property fragmentationProperty;
-
 	public TimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
 			TreeRelationsRepository treeRelationsRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, Property fragmentationProperty) {
+			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
 		this.treeRelationsRepository = treeRelationsRepository;
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
-		this.fragmentationProperty = fragmentationProperty;
 	}
 
 	public LdesFragment createNewFragment(LdesFragment parentFragment) {
@@ -41,9 +36,8 @@ public class TimeBasedFragmentCreator {
 
 	public LdesFragment createNewFragment(LdesFragment ldesFragment,
 			LdesFragment parentFragment) {
-		String fragmentKey = fragmentationProperty.getLocalName();
-		String fragmentValue = LocalDateTime.now().format(formatter);
-		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(fragmentKey, fragmentValue));
+		String fragmentationValue = LocalDateTime.now().format(formatter);
+		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(GENERATED_AT_TIME, fragmentationValue));
 
 		if (ldesFragment != null) {
 			makeFragmentImmutableAndUpdateRelations(ldesFragment, newFragment);
@@ -54,24 +48,22 @@ public class TimeBasedFragmentCreator {
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.makeImmutable();
-		String treePath = fragmentationProperty.toString();
-		String fragmentKey = fragmentationProperty.getLocalName();
 		nonCriticalTasksExecutor
 				.submit(() -> treeRelationsRepository.addTreeRelation(completeLdesFragment.getFragmentId(),
-						new TreeRelation(treePath,
+						new TreeRelation(PROV_GENERATED_AT_TIME,
 								newFragment.getFragmentId(),
-								newFragment.getFragmentInfo().getValueOfKey(fragmentKey).orElseThrow(
+								newFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
 										() -> new MissingFragmentValueException(newFragment.getFragmentId(),
-												fragmentKey)),
+												GENERATED_AT_TIME)),
 								DATE_TIME_TYPE,
 								TREE_GREATER_THAN_OR_EQUAL_TO_RELATION)));
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
 		nonCriticalTasksExecutor
 				.submit(() -> treeRelationsRepository.addTreeRelation(newFragment.getFragmentId(),
-						new TreeRelation(treePath, completeLdesFragment.getFragmentId(),
-								completeLdesFragment.getFragmentInfo().getValueOfKey(fragmentKey).orElseThrow(
+						new TreeRelation(PROV_GENERATED_AT_TIME, completeLdesFragment.getFragmentId(),
+								completeLdesFragment.getFragmentInfo().getValueOfKey(GENERATED_AT_TIME).orElseThrow(
 										() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
-												fragmentKey)),
+												GENERATED_AT_TIME)),
 								DATE_TIME_TYPE,
 								TREE_LESSER_THAN_OR_EQUAL_TO_RELATION)));
 	}
