@@ -48,7 +48,7 @@
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.9.1</jupiter.version>
         <mockito.version>4.9.0</mockito.version>
-        <byte-buddy.version>1.12.20</byte-buddy.version>
+        <byte-buddy.version>1.12.18</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.3.1</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
