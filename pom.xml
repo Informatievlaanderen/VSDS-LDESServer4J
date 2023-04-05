@@ -117,11 +117,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>
-                <artifactId>jena-shacl</artifactId>
-                <version>${apache-jena.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.jena</groupId>
                 <artifactId>jena-geosparql</artifactId>
                 <version>${apache-jena.version}</version>
             </dependency>
@@ -310,7 +305,7 @@
                     <execution>
                         <id>sort-imports</id>
                         <goals>
-                            <goal>sort</goal>
+                            <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>

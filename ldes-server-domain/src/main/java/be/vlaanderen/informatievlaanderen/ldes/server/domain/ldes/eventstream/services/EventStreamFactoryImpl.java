@@ -27,7 +27,7 @@ public class EventStreamFactoryImpl implements EventStreamFactory {
 	@Override
 	public EventStream getEventStream() {
 		return new EventStream(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath(),
-				ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(), getViews());
+				ldesConfig.getVersionOfPath(), ldesConfig.getShape(), getViews());
 	}
 
 	private List<TreeNode> getViews() {
