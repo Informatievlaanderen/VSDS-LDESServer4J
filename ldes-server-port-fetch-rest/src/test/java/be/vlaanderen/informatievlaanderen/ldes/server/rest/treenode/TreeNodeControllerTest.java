@@ -80,12 +80,11 @@ class TreeNodeControllerTest {
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
-		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
-						VIEW_NAME)
-						.param("generatedAtTime",
-								FRAGMENTATION_VALUE_1)
-						.accept(mediaType))
+		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
+				VIEW_NAME)
+				.param("generatedAtTime",
+						FRAGMENTATION_VALUE_1)
+				.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
 
@@ -123,7 +122,7 @@ class TreeNodeControllerTest {
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
-		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+		mockMvc.perform(get("/{viewName}",
 				VIEW_NAME).accept("application/json")).andDo(print())
 				.andExpect(status().isUnsupportedMediaType());
 	}
@@ -137,10 +136,7 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
 
-		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
-						VIEW_NAME).accept("application/n-quads"))
-				.andDo(print())
+		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
 				.andExpect(status().isNotFound());
 		assertEquals("No fragment exists with fragment identifier: fragmentId",
 				resultActions.andReturn().getResponse().getContentAsString());
@@ -155,10 +151,7 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
 
-		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
-						VIEW_NAME).accept("application/n-quads"))
-				.andDo(print())
+		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
 				.andExpect(status().isGone());
 		assertEquals("Fragment with following identifier has been deleted: fragmentId",
 				resultActions.andReturn().getResponse().getContentAsString());

@@ -23,6 +23,7 @@ public class TreeNodeController {
 	private static final String TEXT_TURTLE = "text/turtle";
 	private static final String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
 	private static final String INLINE = "inline";
+
 	private final TreeNodeFetcher treeNodeFetcher;
 	private final CachingStrategy cachingStrategy;
 
@@ -32,7 +33,7 @@ public class TreeNodeController {
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "${ldes.collectionname}/{view}")
+	@GetMapping(value = "/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {
