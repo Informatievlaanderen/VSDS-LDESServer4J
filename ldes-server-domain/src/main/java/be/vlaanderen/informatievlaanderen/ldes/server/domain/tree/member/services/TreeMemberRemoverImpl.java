@@ -1,25 +1,26 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class TreeMemberRemoverImpl implements TreeMemberRemover {
 
+	private final MemberReferencesRepository memberReferencesRepository;
 	private final MemberRepository memberRepository;
 
-	public TreeMemberRemoverImpl(MemberRepository memberRepository) {
+	public TreeMemberRemoverImpl(MemberReferencesRepository memberReferencesRepository,
+			MemberRepository memberRepository) {
+		this.memberReferencesRepository = memberReferencesRepository;
 		this.memberRepository = memberRepository;
 	}
 
 	public void tryRemovingMember(String memberId) {
-		Optional<Member> member = memberRepository.getMember(memberId);
-		if (member.isPresent() && member.get().getTreeNodeReferences().isEmpty()) {
+		if (!memberReferencesRepository.hasMemberReferences(memberId)) {
 			memberRepository.deleteMember(memberId);
+			memberReferencesRepository.deleteMemberReference(memberId);
 			Metrics.counter("ldes_server_deleted_members_count").increment();
 		}
 	}

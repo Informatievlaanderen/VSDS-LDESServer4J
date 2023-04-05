@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;//
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;// package
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,8 +45,7 @@ class GeospatialBucketiserTest {
 
 	@Test
 	@DisplayName("Bucketising of LdesMember with 2 geo properties")
-	void when_MemberWith2GeoPropertiesIsBucketized_CorrectBucketsAreReturned()
-			throws URISyntaxException, IOException {
+	void when_MemberWith2GeoPropertiesIsBucketized_CorrectBucketsAreReturned() throws URISyntaxException, IOException {
 		bucketiser = new GeospatialBucketiser(geospatialConfig);
 
 		Set<String> expectedBuckets = Set.of("15/16884/10974", "15/16882/10975");
@@ -69,7 +67,7 @@ class GeospatialBucketiserTest {
 				.toModel();
 
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				outputModel, List.of());
+				outputModel);
 	}
 
 }

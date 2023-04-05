@@ -13,7 +13,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +28,7 @@ class MemberTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				createModel(ldesMemberString, Lang.NQUADS), List.of());
+				createModel(ldesMemberString, Lang.NQUADS));
 
 		member.removeTreeMember();
 		Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
@@ -45,7 +44,7 @@ class MemberTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				createModel(ldesMemberString, Lang.NQUADS), List.of());
+				createModel(ldesMemberString, Lang.NQUADS));
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				member.getLdesMemberId());
 	}
@@ -58,7 +57,7 @@ class MemberTest {
 
 		Member member = new Member(
 				"http://localhost:8080/member/1",
-				createModel(ldesMemberString, Lang.NQUADS), List.of());
+				createModel(ldesMemberString, Lang.NQUADS));
 
 		assertEquals(4, member.getFragmentationObjects(
 				"PREFIX core: <http://www.w3.org/2004/02/skos/core#> SELECT ?x WHERE { ?s core:prefLabel ?x . }")

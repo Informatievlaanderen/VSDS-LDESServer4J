@@ -29,15 +29,13 @@ class FragmentationExecutorImplTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME,
-				fragmentationStrategy),
+		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME, fragmentationStrategy),
 				ldesFragmentRepository, mockTracer());
 	}
 
 	@Test
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
-		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME,
-				List.of()));
+		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 		Member member = mock(Member.class);
@@ -52,9 +50,7 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
-		when(ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(VIEW_NAME,
-						List.of()).generateFragmentId()))
+		when(ldesFragmentRepository.retrieveFragment(new LdesFragmentRequest(VIEW_NAME, List.of())))
 				.thenReturn(Optional.empty());
 		Member member = mock(Member.class);
 
@@ -69,19 +65,19 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
-		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME,
-				List.of()));
+		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(VIEW_NAME, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 		IntStream.range(0, 100).parallel()
 				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(Member.class)));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
-		inOrder.verify(ldesFragmentRepository, times(1))
-				.retrieveRootFragment(VIEW_NAME);
-		inOrder.verify(fragmentationStrategy,
-				times(100)).addMemberToFragment(eq(ldesFragment),
-						any(), any());
+		IntStream.range(0, 100).forEach(i -> {
+			inOrder.verify(ldesFragmentRepository, times(1))
+					.retrieveRootFragment(VIEW_NAME);
+			inOrder.verify(fragmentationStrategy, times(1)).addMemberToFragment(eq(ldesFragment),
+					any(), any());
+		});
 		inOrder.verifyNoMoreInteractions();
 
 	}

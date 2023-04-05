@@ -41,8 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, LdesConfig.class })
+@ContextConfiguration(classes = { LdesMemberIngestionController.class, IngestionWebConfig.class, LdesConfig.class })
 class MemberIngestionControllerTest {
 
 	@Autowired
@@ -54,8 +53,7 @@ class MemberIngestionControllerTest {
 	@Autowired
 	private LdesConfig ldesConfig;
 
-	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType	{0}")
-
+	@ParameterizedTest(name = "Ingest an LDES member in the REST service using ContentType {0}")
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
@@ -67,8 +65,7 @@ class MemberIngestionControllerTest {
 
 	@Test
 	@DisplayName("Requesting using another collection name returns 404")
-	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404()
-			throws Exception {
+	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
 
 		mockMvc.perform(post("/another-collection-name")
@@ -95,17 +92,14 @@ class MemberIngestionControllerTest {
 		assertEquals(actualException.getMessage(), new MalformedMemberIdException(ldesMemberType).getMessage());
 	}
 
-	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)
-			throws URISyntaxException, IOException {
+	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat) throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-		return RdfModelConverter.toString(RdfModelConverter.fromString(content,
-				Lang.NQUADS), rdfFormat);
+		return RdfModelConverter.toString(RdfModelConverter.fromString(content, Lang.NQUADS), rdfFormat);
 	}
 
-	static class ContentTypeRdfFormatLangArgumentsProvider implements
-			ArgumentsProvider {
+	static class ContentTypeRdfFormatLangArgumentsProvider implements ArgumentsProvider {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(

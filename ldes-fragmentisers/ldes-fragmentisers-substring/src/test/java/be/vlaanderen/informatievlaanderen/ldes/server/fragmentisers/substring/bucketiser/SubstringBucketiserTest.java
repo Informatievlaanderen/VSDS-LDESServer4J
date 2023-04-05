@@ -37,8 +37,7 @@ class SubstringBucketiserTest {
 		List<String> buckets = substringBucketiser.bucketise(member);
 
 		assertEquals(List.of("o", "om", "oms", "omsc", "omsch", "omschr", "omschri",
-				"omschrij", "omschrijv", "omschrijvi", "omschrijvin", "omschrijving"),
-				buckets);
+				"omschrij", "omschrijv", "omschrijvi", "omschrijvin", "omschrijving"), buckets);
 	}
 
 	private Member readLdesMemberFromFile()
@@ -48,7 +47,7 @@ class SubstringBucketiserTest {
 
 		return new Member("a", RDFParserBuilder.create()
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
-				.toModel(), List.of());
+				.toModel());
 	}
 
 }

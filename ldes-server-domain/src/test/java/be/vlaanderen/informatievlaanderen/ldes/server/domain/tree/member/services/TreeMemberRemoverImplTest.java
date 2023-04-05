@@ -1,52 +1,40 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
 class TreeMemberRemoverImplTest {
 
+	private final MemberReferencesRepository memberReferencesRepository = mock(MemberReferencesRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private TreeMemberRemover treeMemberRemover;
 
 	@BeforeEach
 	void setUp() {
-		treeMemberRemover = new TreeMemberRemoverImpl(memberRepository);
+		treeMemberRemover = new TreeMemberRemoverImpl(memberReferencesRepository, memberRepository);
 	}
 
 	@Test
 	void when_memberHasNoReferences_ItCanBeDeleted() {
-		when(memberRepository.getMember("memberId")).thenReturn(Optional.of(new Member("memberId", null, List.of())));
+		when(memberReferencesRepository.hasMemberReferences("memberId")).thenReturn(false);
 		treeMemberRemover.tryRemovingMember("memberId");
 
-		verify(memberRepository, times(1)).getMember("memberId");
 		verify(memberRepository, times(1)).deleteMember("memberId");
-		verifyNoMoreInteractions(memberRepository);
+		verify(memberReferencesRepository, times(1)).deleteMemberReference("memberId");
 	}
 
 	@Test
-	void when_memberHasReferences_ItCannotBeDeleted() {
-		when(memberRepository.getMember("memberId"))
-				.thenReturn(Optional.of(new Member("memberId", null, List.of("reference"))));
+	void when_memberHasReferences_ItCanNotBeDeleted() {
+		when(memberReferencesRepository.hasMemberReferences("memberId")).thenReturn(true);
 		treeMemberRemover.tryRemovingMember("memberId");
 
-		verify(memberRepository, times(1)).getMember("memberId");
-		verifyNoMoreInteractions(memberRepository);
-	}
-
-	@Test
-	void when_memberDoesNotExistAnymore_ItCannotBeDeleted() {
-		when(memberRepository.getMember("memberId")).thenReturn(Optional.empty());
-		treeMemberRemover.tryRemovingMember("memberId");
-
-		verify(memberRepository, times(1)).getMember("memberId");
-		verifyNoMoreInteractions(memberRepository);
+		verifyNoInteractions(memberRepository);
+		verify(memberReferencesRepository, times(1)).hasMemberReferences("memberId");
+		verifyNoMoreInteractions(memberReferencesRepository);
 	}
 
 }

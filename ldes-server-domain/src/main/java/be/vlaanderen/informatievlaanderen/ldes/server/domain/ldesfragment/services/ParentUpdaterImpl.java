@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,17 +18,11 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 public class ParentUpdaterImpl implements ParentUpdater {
 	private final LdesFragmentRepository ldesFragmentRepository;
 
-	private final TreeRelationsRepository treeRelationsRepository;
-
-	public ParentUpdaterImpl(LdesFragmentRepository ldesFragmentRepository,
-			TreeRelationsRepository treeRelationsRepository) {
+	public ParentUpdaterImpl(LdesFragmentRepository ldesFragmentRepository) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.treeRelationsRepository = treeRelationsRepository;
 	}
 
 	public void updateParent(LdesFragment currentChild) {
-		String childId = currentChild.getFragmentId();
-		String parentId = currentChild.getFragmentInfo().getParentId();
 		List<FragmentPair> parentPairs = new ArrayList<>(currentChild.getFragmentInfo().getFragmentPairs());
 		parentPairs.remove(parentPairs.size() - 1);
 		LdesFragment parent = ldesFragmentRepository
@@ -37,19 +30,16 @@ public class ParentUpdaterImpl implements ParentUpdater {
 				.orElseThrow(() -> new MissingFragmentException(
 						new FragmentInfo(currentChild.getFragmentInfo().getViewName(), parentPairs)
 								.generateFragmentId()));
-
-		List<TreeRelation> relations = treeRelationsRepository.getRelations(parentId);
-		Optional<TreeRelation> optionalOldTreeRelation = relations.stream()
-				.filter(treeRelation -> treeRelation.treeNode().equals(childId)).findFirst();
+		Optional<TreeRelation> optionalOldTreeRelation = parent.getRelations().stream()
+				.filter(treeRelation -> treeRelation.treeNode().equals(currentChild.getFragmentId())).findFirst();
 		if (optionalOldTreeRelation.isPresent()) {
 			TreeRelation oldTreeRelation = optionalOldTreeRelation.get();
 			LdesFragment newChild = ldesFragmentRepository
-					.retrieveNonDeletedChildFragment(parent.getFragmentInfo().getViewName(),
-							parentPairs)
+					.retrieveNonDeletedChildFragment(parent.getFragmentInfo().getViewName(), parentPairs)
 					.orElseThrow(() -> new RuntimeException("No non-deleted child"));
-			treeRelationsRepository.deleteTreeRelation(parentId, oldTreeRelation);
-			treeRelationsRepository.addTreeRelation(parentId, new TreeRelation("", newChild.getFragmentId(), "", "",
-					GENERIC_TREE_RELATION));
+			parent.removeRelation(oldTreeRelation);
+			parent.addRelation(new TreeRelation("", newChild.getFragmentId(), "", "", GENERIC_TREE_RELATION));
+			ldesFragmentRepository.saveFragment(parent);
 		}
 	}
 }

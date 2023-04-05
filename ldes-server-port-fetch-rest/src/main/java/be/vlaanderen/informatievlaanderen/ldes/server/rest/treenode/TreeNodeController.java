@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,36 +22,36 @@ public class TreeNodeController {
 	private static final String CONTENT_DISPOSITION_HEADER = "Content-Disposition";
 	private static final String INLINE = "inline";
 
-	private final TreeNodeFetcher treeNodeFetcher;
+	private final FragmentFetchService fragmentFetchService;
 
-	public TreeNodeController(TreeNodeFetcher treeNodeFetcher) {
-		this.treeNodeFetcher = treeNodeFetcher;
+	public TreeNodeController(FragmentFetchService fragmentFetchService) {
+		this.fragmentFetchService = fragmentFetchService;
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "/{view}")
-	public TreeNode retrieveLdesFragment(HttpServletResponse response,
+	public LdesFragment retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {
 		setContentTypeHeader(language, response);
 		response.setHeader(CONTENT_DISPOSITION_HEADER, INLINE);
-		return returnRequestedTreeNode(response, viewName, requestParameters);
+		return returnRequestedFragment(response, viewName, requestParameters);
 	}
 
-	private TreeNode returnRequestedTreeNode(HttpServletResponse response, String viewName,
+	private LdesFragment returnRequestedFragment(HttpServletResponse response, String viewName,
 			Map<String, String> fragmentationMap) {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
 
-		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
-		setCacheControlHeader(response, treeNode);
-		return treeNode;
+		LdesFragment fragment = fragmentFetchService.getFragment(ldesFragmentRequest);
+		setCacheControlHeader(response, fragment);
+		return fragment;
 
 	}
 
-	private void setCacheControlHeader(HttpServletResponse response, TreeNode treeNode) {
-		if (treeNode.isImmutable()) {
+	private void setCacheControlHeader(HttpServletResponse response, LdesFragment fragment) {
+		if (fragment.isImmutable()) {
 			response.setHeader(CACHE_CONTROL_HEADER, CACHE_CONTROL_IMMUTABLE);
 		} else {
 			response.setHeader(CACHE_CONTROL_HEADER, CACHE_CONTROL_MUTABLE);

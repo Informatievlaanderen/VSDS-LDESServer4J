@@ -3,9 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.memberreferences.entities.MemberReferencesRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -16,18 +15,18 @@ import java.util.Map;
 public class TreeNodeRemoverImpl implements TreeNodeRemover {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
-	private final MemberRepository memberRepository;
 	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
+	private final MemberReferencesRepository memberReferencesRepository;
 	private final TreeMemberRemover treeMemberRemover;
 	private final ParentUpdater parentUpdater;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
-			MemberRepository memberRepository, Map<String, List<RetentionPolicy>> retentionPolicyMap,
-			TreeMemberRemover treeMemberRemover,
+			Map<String, List<RetentionPolicy>> retentionPolicyMap,
+			MemberReferencesRepository memberReferencesRepository, TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.memberRepository = memberRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
+		this.memberReferencesRepository = memberReferencesRepository;
 		this.treeMemberRemover = treeMemberRemover;
 		this.parentUpdater = parentUpdater;
 	}
@@ -51,13 +50,10 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 						ldesFragment.setSoftDeleted(true);
 						ldesFragmentRepository.saveFragment(ldesFragment);
 						parentUpdater.updateParent(ldesFragment);
-						List<Member> membersByReference = memberRepository
-								.getMembersByReference(ldesFragment.getFragmentId());
-						membersByReference
-								.stream()
-								.map(Member::getLdesMemberId)
+						ldesFragment
+								.getMemberIds()
 								.forEach(memberId -> {
-									memberRepository.removeMemberReference(memberId,
+									memberReferencesRepository.removeMemberReference(memberId,
 											ldesFragment.getFragmentId());
 									treeMemberRemover.tryRemovingMember(memberId);
 								});

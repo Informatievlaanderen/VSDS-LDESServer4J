@@ -3,15 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.entities.LdesFragmentEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.repositories.LdesFragmentEntityRepository;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,10 +30,9 @@ class LdesFragmentMongoRepositoryTest {
 	private static final String THIRD_VALUE = "2020-12-30T09:36:37.127Z";
 
 	private final LdesFragmentEntityRepository ldesFragmentEntityRepository = mock(LdesFragmentEntityRepository.class);
-	private final MongoTemplate mongoTemplate = mock(MongoTemplate.class);
 
 	private final LdesFragmentMongoRepository ldesFragmentMongoRepository = new LdesFragmentMongoRepository(
-			ldesFragmentEntityRepository, mongoTemplate);
+			ldesFragmentEntityRepository);
 
 	@ParameterizedTest
 	@ArgumentsSource(LdesFragmentEntityListProvider.class)
@@ -94,7 +91,7 @@ class LdesFragmentMongoRepositoryTest {
 				String viewName,
 				String value) {
 			FragmentInfo fragmentInfo = new FragmentInfo(viewName, List.of(new FragmentPair("generatedAtTime", value)),
-					immutable, LocalDateTime.now(), false, 0);
+					immutable, LocalDateTime.now(), false);
 			LdesFragment ldesFragment = new LdesFragment(fragmentInfo);
 			return LdesFragmentEntity.fromLdesFragment(ldesFragment);
 		}

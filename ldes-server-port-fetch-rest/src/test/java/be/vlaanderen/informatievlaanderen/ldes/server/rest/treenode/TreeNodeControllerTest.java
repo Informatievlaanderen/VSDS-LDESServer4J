@@ -6,12 +6,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentFetchService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.LdesFragmentConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.FragmentInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 import org.apache.jena.rdf.model.*;
@@ -52,8 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
-		LdesConfig.class, TreeViewWebConfig.class,
-		RestResponseEntityExceptionHandler.class })
+		LdesConfig.class, TreeViewWebConfig.class, RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
@@ -61,20 +62,23 @@ class TreeNodeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
-	private TreeNodeFetcher treeNodeFetcher;
+	private FragmentFetchService fragmentFetchService;
 
-	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
+	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws
 
 	Exception {
+		LdesFragment ldesFragment = new LdesFragment(new FragmentInfo(
+				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
+						FRAGMENTATION_VALUE_1))));
+		if (immutable) {
+			ldesFragment.makeImmutable();
+		}
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		TreeNode ldesFragment = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, List.of(),
-				List.of());
-
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
+		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
 				VIEW_NAME)
@@ -90,7 +94,7 @@ class TreeNodeControllerTest {
 				.toModel();
 		assertEquals(TREE_NODE_RESOURCE, getObjectURI(resultModel,
 				RdfConstants.RDF_SYNTAX_TYPE));
-		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
+		verify(fragmentFetchService, times(1)).getFragment(ldesFragmentRequest);
 	}
 
 	private String getObjectURI(Model model, Property property) {
@@ -108,11 +112,12 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
+		LdesFragment ldesFragment = new LdesFragment(
+				new FragmentInfo(VIEW_NAME, List.of()));
+
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of());
-		TreeNode ldesFragment = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, List.of(),
-				List.of());
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
+		when(fragmentFetchService.getFragment(ldesFragmentRequest)).thenReturn(ldesFragment);
 
 		mockMvc.perform(get("/{viewName}",
 				VIEW_NAME).accept("application/json")).andDo(print())
@@ -125,7 +130,7 @@ class TreeNodeControllerTest {
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of());
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
+		when(fragmentFetchService.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
 
 		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
@@ -140,7 +145,7 @@ class TreeNodeControllerTest {
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of());
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
+		when(fragmentFetchService.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
 
 		ResultActions resultActions = mockMvc.perform(get("/view").accept("application/n-quads")).andDo(print())
@@ -176,9 +181,10 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
+		public LdesFragmentConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
+			MemberRepository memberRepository = mock(MemberRepository.class);
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
+			return new LdesFragmentConverterImpl(memberRepository, prefixAdder, ldesConfig);
 		}
 	}
 }
