@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandl
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelIdException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import org.apache.jena.riot.RiotException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,12 +37,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	protected ResponseEntity<Object> handleRiotException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
-	}
-
-	@ExceptionHandler(value = { SnapshotCreationException.class })
-	protected ResponseEntity<Object> handleSnapshotCreationException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 
 	private ResponseEntity<Object> handleException(

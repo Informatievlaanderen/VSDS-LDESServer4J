@@ -21,9 +21,7 @@ public class MemberCollectorImpl implements MemberCollector {
 	@Override
 	public Map<String, List<Member>> getMembersGroupedByVersionOf(List<LdesFragment> ldesFragments) {
 		return ldesFragments.stream()
-				.map(LdesFragment::getFragmentId)
-				.flatMap(memberRepository::getMembersByReference)
-				.filter(new SnapshotValidPredicate())
+				.map(LdesFragment::getFragmentId).flatMap(memberRepository::getMembersByReference)
 				.collect(Collectors.groupingBy(Member::getVersionOf));
 	}
 }

@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import org.springframework.stereotype.Component;
 
@@ -31,14 +30,6 @@ public class SnapshotServiceImpl implements SnapshotService {
 	@Override
 	public void createSnapshot() {
 		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME);
-		if (treeNodesForSnapshot.isEmpty()) {
-			throw new SnapshotCreationException(
-					"No TreeNodes available in view " + DEFAULT_VIEW_NAME + " which is used for snapshotting");
-		}
-		createSnapshotForTreeNodes(treeNodesForSnapshot);
-	}
-
-	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot) {
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot);
 		LdesFragment lastTreeNodeOfSnapshot = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
