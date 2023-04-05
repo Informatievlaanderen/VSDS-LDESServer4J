@@ -25,6 +25,7 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
+
         <!-- Jena -->
         <dependency>
             <groupId>org.apache.jena</groupId>
@@ -35,6 +36,16 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit-platform-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

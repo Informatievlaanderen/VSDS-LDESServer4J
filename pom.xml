@@ -49,6 +49,7 @@
         <jupiter.version>5.9.1</jupiter.version>
         <mockito.version>4.9.0</mockito.version>
         <byte-buddy.version>1.12.18</byte-buddy.version>
+        <cucumber.version>7.9.0</cucumber.version>
         <de.flapdoodle.embed.mongo.version>4.2.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
@@ -163,6 +164,18 @@
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
                 <version>${awaitility.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit-platform-engine</artifactId>
+                <version>${cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -301,6 +314,11 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skip>${unittestskip}</skip>
+                    <properties>
+                        <configurationParameters>
+                            cucumber.junit-platform.naming-strategy=long
+                        </configurationParameters>
+                    </properties>
                     <environmentVariables>
                         <SIS_DATA>./</SIS_DATA>
                     </environmentVariables>
