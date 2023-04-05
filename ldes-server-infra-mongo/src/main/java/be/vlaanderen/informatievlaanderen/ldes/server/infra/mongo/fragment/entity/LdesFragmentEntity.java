@@ -59,20 +59,13 @@ public class LdesFragmentEntity {
 		return new LdesFragment(getFragmentInfo());
 	}
 
-	public String getViewName() {
-		return viewName;
-	}
-
-	public List<FragmentPair> getFragmentPairs() {
-		return fragmentPairs;
-	}
-
 	public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
+		FragmentInfo fragmentInfo = ldesFragment.getFragmentInfo();
 		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
-				ldesFragment.getFragmentPairs().isEmpty(),
-				ldesFragment.getViewName(),
-				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
-				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
-				ldesFragment.getNumberOfMembers());
+				fragmentInfo.getFragmentPairs().isEmpty(),
+				fragmentInfo.getViewName(),
+				fragmentInfo.getFragmentPairs(), fragmentInfo.getImmutable(),
+				fragmentInfo.getSoftDeleted(), fragmentInfo.getParentId(), fragmentInfo.getImmutableTimestamp(),
+				fragmentInfo.getNumberOfMembers());
 	}
 }

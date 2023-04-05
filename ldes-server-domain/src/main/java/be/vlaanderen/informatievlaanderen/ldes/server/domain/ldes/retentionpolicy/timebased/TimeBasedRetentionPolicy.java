@@ -15,7 +15,7 @@ public class TimeBasedRetentionPolicy implements RetentionPolicy {
 
 	@Override
 	public boolean matchesPolicy(LdesFragment ldesFragment) {
-		LocalDateTime immutableTimestamp = ldesFragment.getImmutableTimestamp();
+		LocalDateTime immutableTimestamp = ldesFragment.getFragmentInfo().getImmutableTimestamp();
 		return immutableTimestamp != null
 				&& LocalDateTime.now().isAfter(immutableTimestamp.plus(Duration.parse(duration)));
 	}

@@ -46,8 +46,8 @@ class ParentUpdaterImplTest {
 		TreeRelation newRelation = new TreeRelation("", NON_DELETED_CHILD.getFragmentId(),
 				"", "", GENERIC_TREE_RELATION);
 		when(treeRelationsRepository.getRelations(PARENT.getFragmentId())).thenReturn(List.of(oldRelation));
-		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName(),
-				PARENT.getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
+		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getFragmentInfo().getViewName(),
+				PARENT.getFragmentInfo().getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
 
 		parentUpdater.updateParent(DELETED_CHILD);
 

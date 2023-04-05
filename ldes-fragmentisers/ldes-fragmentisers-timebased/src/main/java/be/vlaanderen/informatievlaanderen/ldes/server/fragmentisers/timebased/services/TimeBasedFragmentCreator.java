@@ -63,7 +63,7 @@ public class TimeBasedFragmentCreator {
 				.submit(() -> treeRelationsRepository.addTreeRelation(completeLdesFragment.getFragmentId(),
 						new TreeRelation(treePath,
 								newFragment.getFragmentId(),
-								newFragment.getValueOfKey(fragmentKey).orElseThrow(
+								newFragment.getFragmentInfo().getValueOfKey(fragmentKey).orElseThrow(
 										() -> new MissingFragmentValueException(newFragment.getFragmentId(),
 												fragmentKey)),
 								DATE_TIME_TYPE,
@@ -72,7 +72,7 @@ public class TimeBasedFragmentCreator {
 		nonCriticalTasksExecutor
 				.submit(() -> treeRelationsRepository.addTreeRelation(newFragment.getFragmentId(),
 						new TreeRelation(treePath, completeLdesFragment.getFragmentId(),
-								completeLdesFragment.getValueOfKey(fragmentKey).orElseThrow(
+								completeLdesFragment.getFragmentInfo().getValueOfKey(fragmentKey).orElseThrow(
 										() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
 												fragmentKey)),
 								DATE_TIME_TYPE,
