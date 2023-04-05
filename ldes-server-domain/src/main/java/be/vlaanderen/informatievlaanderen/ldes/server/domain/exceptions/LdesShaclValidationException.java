@@ -11,6 +11,6 @@ public class LdesShaclValidationException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "Shacl validation failed: \n\n" + validationReport;
+		return "Shacl validation for member failed: \n\n" + validationReport;
 	}
 }

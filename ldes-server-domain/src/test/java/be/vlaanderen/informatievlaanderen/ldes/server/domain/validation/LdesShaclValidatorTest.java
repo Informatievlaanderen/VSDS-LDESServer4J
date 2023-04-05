@@ -37,17 +37,14 @@ class LdesShaclValidatorTest {
 	void when_ValidateProvidedValidData_thenReturnValid() throws URISyntaxException, IOException {
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
+		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember));
 	}
 
 	@Test
 	void when_ValidateProvidedInvalidData_thenReturnInvalid() throws URISyntaxException, IOException {
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
 
-		Model model = invalidMember.getModel();
-
-		assertThrows(LdesShaclValidationException.class,
-				() -> ldesShaclValidator.validateShape(model));
+		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidMember));
 	}
 
 	@Test
@@ -55,10 +52,10 @@ class LdesShaclValidatorTest {
 		ldesShaclValidator = new LdesShaclValidator(new LdesConfig());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
+		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember));
 
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember.getModel()));
+		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember));
 	}
 
 	@Test
@@ -68,10 +65,10 @@ class LdesShaclValidatorTest {
 		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
+		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember));
 
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember.getModel()));
+		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember));
 	}
 
 	private Member readLdesMemberFromFile(String fileName)
