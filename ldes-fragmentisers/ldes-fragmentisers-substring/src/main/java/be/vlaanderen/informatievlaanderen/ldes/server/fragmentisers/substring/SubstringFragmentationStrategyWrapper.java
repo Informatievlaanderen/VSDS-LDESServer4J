@@ -11,7 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.co
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
-import io.micrometer.observation.ObservationRegistry;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.FRAGMENTER_PROPERTY;
@@ -24,7 +24,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		TreeRelationsRepository treeRelationsRepository = applicationContext
 				.getBean(TreeRelationsRepository.class);
-		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
+		Tracer tracer = applicationContext.getBean(Tracer.class);
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 
 		SubstringConfig substringConfig = createSubstringConfig(fragmentationProperties);
@@ -35,7 +35,7 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		SubstringFragmentFinder substringFragmentFinder = new SubstringFragmentFinder(substringFragmentCreator,
 				substringConfig, substringRelationsAttributer);
 		return new SubstringFragmentationStrategy(fragmentationStrategy,
-				observationRegistry, substringBucketiser, substringFragmentFinder, substringFragmentCreator,
+				tracer, substringBucketiser, substringFragmentFinder, substringFragmentCreator,
 				treeRelationsRepository);
 	}
 

@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.relations.TreeRelationsRepository;
-import io.micrometer.observation.Observation;
+import org.springframework.cloud.sleuth.Span;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
@@ -20,8 +20,8 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
-		fragmentationStrategy.addMemberToFragment(parentFragment, member, parentObservation);
+	public void addMemberToFragment(LdesFragment parentFragment, Member member, Span parentSpan) {
+		fragmentationStrategy.addMemberToFragment(parentFragment, member, parentSpan);
 	}
 
 	protected void addRelationFromParentToChild(LdesFragment parentFragment, LdesFragment childFragment) {
