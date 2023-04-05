@@ -53,6 +53,7 @@ public class TreeNodeController {
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, treeNode);
+		setEtagHeader(response, treeNode);
 		return treeNode;
 
 	}
@@ -72,4 +73,7 @@ public class TreeNodeController {
 			response.setHeader(CONTENT_TYPE_HEADER, language.split(",")[0]);
 	}
 
+	private void setEtagHeader(HttpServletResponse response, TreeNode treeNode) {
+		response.setHeader(HttpHeaders.ETAG, cachingStrategy.generateCacheIdentifier(treeNode));
+	}
 }

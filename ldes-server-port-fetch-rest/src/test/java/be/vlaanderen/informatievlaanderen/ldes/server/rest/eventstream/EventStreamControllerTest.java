@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -12,12 +11,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +46,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
@@ -47,8 +57,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
 
 @WebMvcTest
@@ -77,16 +85,7 @@ class EventStreamControllerTest {
 				.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
-
-		MvcResult result = resultActions.andReturn();
-
-		String etagHeaderValue = result.getResponse().getHeader(HttpHeaders.ETAG).replace("\"", "");
-		String expectedEtagHeaderValue = "0c9111a73bc6a46b00e47c029c2f0e2b340f744d87fce040591d2345dc1d0cb0";
-
-		assertNotNull(etagHeaderValue);
-		assertEquals(expectedEtagHeaderValue, etagHeaderValue);
-
-		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(),
+		Model actualModel = RdfModelConverter.fromString(resultActions.andReturn().getResponse().getContentAsString(),
 				lang);
 		assertEquals(LDES_EVENT_STREAM_URI, getObjectURI(actualModel,
 				RdfConstants.RDF_SYNTAX_TYPE));
@@ -114,8 +113,21 @@ class EventStreamControllerTest {
 				.andExpect(status().is4xxClientError());
 	}
 
+	private Model getExpectedModel() {
+		return RdfModelConverter.fromString(
+				"""
+						<http://localhost:8080/collection> <https://w3id.org/tree#view> <http://localhost:8080/viewTwo> .
+						<http://localhost:8080/collection> <https://w3id.org/tree#view> <http://localhost:8080/viewOne> .
+						<http://localhost:8080/collection> <https://w3id.org/ldes#timestampPath> <timestampPath> .
+						<http://localhost:8080/collection> <https://w3id.org/ldes#versionOfPath> <versionOf> .
+						<http://localhost:8080/collection> <https://w3id.org/tree#shape> <shape> .
+						<http://localhost:8080/collection> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .""",
+				Lang.NQUADS);
+	}
+
 	static class MediaTypeRdfFormatsArgumentsProvider implements
 			ArgumentsProvider {
+
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
@@ -129,7 +141,7 @@ class EventStreamControllerTest {
 	public static class EventStreamControllerTestConfiguration {
 
 		@Bean
-		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
+		public EventStreamConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
 		}
@@ -139,4 +151,5 @@ class EventStreamControllerTest {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
+
 }

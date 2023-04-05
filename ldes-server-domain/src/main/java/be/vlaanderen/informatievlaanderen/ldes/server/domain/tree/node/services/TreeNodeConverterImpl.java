@@ -45,13 +45,11 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	public Model toModel(final TreeNode treeNode) {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(addTreeNodeStatements(treeNode));
-
 		if (!treeNode.getMembers().isEmpty()) {
 			model.add(addEventStreamStatements(treeNode));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
 		}
-
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
@@ -59,10 +57,8 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		List<Statement> statements = new ArrayList<>();
 		Resource currentFragmentId = createResource(
 				ldesConfig.getHostName() + "/" + ldesConfig.getCollectionName() + treeNode.getFragmentId());
-
 		statements.add(createStatement(currentFragmentId, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
 		statements.addAll(getRelationStatements(treeNode.getRelations(), currentFragmentId));
-
 		return statements;
 	}
 
