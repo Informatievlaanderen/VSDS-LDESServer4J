@@ -9,11 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>ldes-fragmentisers-pagination</artifactId>
-
-    <properties>
-        <relative-formatter-path>../..</relative-formatter-path>
-    </properties>
+    <artifactId>ldes-pagination</artifactId>
 
     <dependencies>
         <!-- Spring Boot -->

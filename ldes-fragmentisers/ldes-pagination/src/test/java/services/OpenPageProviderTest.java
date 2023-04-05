@@ -1,10 +1,10 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.services;
+package services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.PageCreator;
+import be.vlaanderen.informatievlaanderen.vsds.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.vsds.services.PageCreator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,9 +14,11 @@ import org.mockito.InOrder;
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.vsds.constants.PaginationConstants.PAGE_NUMBER;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 class OpenPageProviderTest {
 

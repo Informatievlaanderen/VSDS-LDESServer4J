@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
+package be.vlaanderen.informatievlaanderen.vsds;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
