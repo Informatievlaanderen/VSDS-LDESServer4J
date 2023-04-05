@@ -54,7 +54,7 @@ class MemberIngestionControllerTest {
 	@Autowired
 	private LdesConfig ldesConfig;
 
-	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
+	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType	{0}")
 
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
@@ -108,25 +108,9 @@ class MemberIngestionControllerTest {
 			ArgumentsProvider {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS),
-					Arguments.of("application/n-triples", Lang.NTRIPLES),
-					Arguments.of("application/ld+json", Lang.JSONLD),
-					Arguments.of("text/turtle", Lang.TURTLE),
-					Arguments.of("application/rdf+json", Lang.RDFJSON),
-					Arguments.of("application/trix+xml", Lang.TRIX),
-					Arguments.of("text/n3", Lang.N3),
-					Arguments.of("application/trig", Lang.TRIG),
-					Arguments.of("application/n3", Lang.N3),
-					Arguments.of("text/plain", Lang.NTRIPLES),
-					Arguments.of("application/rdf+xml", Lang.RDFXML),
-					Arguments.of("x/ld-json-11", Lang.JSONLD11),
-					Arguments.of("x/ld-json-10", Lang.JSONLD10),
-					Arguments.of("text/rdf+n3", Lang.N3),
-					Arguments.of("application/trix", Lang.TRIX),
-					Arguments.of("application/turtle", Lang.TURTLE),
-					Arguments.of("text/trig", Lang.TRIG));
+					Arguments.of("application/n-triples", Lang.NTRIPLES));
 		}
 	}
 }

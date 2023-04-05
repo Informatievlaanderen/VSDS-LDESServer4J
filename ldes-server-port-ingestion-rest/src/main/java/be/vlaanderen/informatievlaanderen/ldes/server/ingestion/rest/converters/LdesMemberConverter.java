@@ -29,11 +29,13 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
+	private static final String APPLICATION = "application";
 
 	private final LdesConfig ldesConfig;
 
 	public LdesMemberConverter(LdesConfig ldesConfig) {
-		super(MediaType.ALL);
+		super(new MediaType(APPLICATION, "n-quads"), new MediaType(APPLICATION, "n-triples"),
+				new MediaType(APPLICATION, "ld+json"));
 		this.ldesConfig = ldesConfig;
 	}
 
