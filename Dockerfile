@@ -13,8 +13,8 @@ RUN mvn net.revelc.code.formatter:formatter-maven-plugin:format install -DskipTe
 #
 # RUN THE APPLICATION
 #
-FROM openjdk:18-ea-bullseye
-RUN apt-get update & apt-get upgrade
+FROM openjdk:18-ea-alpine
+RUN apk upgrade
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
 COPY --from=app-stage ldes-server-infra-mongo/target/ldes-server-infra-mongo-jar-with-dependencies.jar ./lib/
@@ -25,7 +25,7 @@ COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-timebased/target/lde
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-substring/target/ldes-fragmentisers-substring-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-queues/ldes-queue-none/target/ldes-queue-none-jar-with-dependencies.jar ./lib/
 
-RUN useradd -u 2000 ldes
+RUN adduser -D -u 2000 ldes
 USER ldes
 
 CMD ["java", "-cp", "ldes-server-application.jar", "-Dloader.path=lib/", "org.springframework.boot.loader.PropertiesLauncher"]
