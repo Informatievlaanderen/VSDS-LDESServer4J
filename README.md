@@ -105,7 +105,8 @@ To enrich the server, certain Maven profiles can be activated:
 | **Storage**                          | storage-mongo              | Allows the LDES server to read and write from a mongo database. | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
 | **Timebased Fragmentation**          | fragmentation-timebased    | Supports timebased fragmentation.                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
 | **Geospatial Fragmentation**         | fragmentation-geospatial   | Supports geospatial fragmentation.                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
+| **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
+| **Substring Fragmentation**          | fragmentation-substring    | Supports substring fragmentation.                               | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
 | **Pagination Fragmentation**         | fragmentation-pagination   | Supports pagination.                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
 | **Ldes-queues**                      | queue-none                 | Members are fragmented immediately.                             | N/A activating the profile is enough                                        |                                                                                                                                     |
 | **Ldes-queues**                      | queue-in-memory            | Members are queued in memory before fragmentation.              | N/A activating the profile is enough                                        |                                                                                                                                     |
@@ -195,8 +196,6 @@ As of now, there is only a timebased retention possible which can be configured 
 
 ##### Example Timebased Fragmentation
 
-Full documentation for timebased fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD)
-
   ```yaml
   name: "timebased"
   config:
@@ -204,8 +203,6 @@ Full documentation for timebased fragmentation can be found [here](ldes-fragment
   ```
 
 ##### Example Geospatial Fragmentation
-
-Full documentation for geospatial fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-geospatial/README.MD)
 
   ```yaml
   name: "geospatial"
@@ -215,8 +212,6 @@ Full documentation for geospatial fragmentation can be found [here](ldes-fragmen
   ```
 
 ##### Example Substring Fragmentation
-
-Full documentation for substring fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-substring/README.MD)
 
   ```yaml
   name: "substring"
