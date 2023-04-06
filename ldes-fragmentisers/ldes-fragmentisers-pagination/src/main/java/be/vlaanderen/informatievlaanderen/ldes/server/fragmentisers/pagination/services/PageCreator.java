@@ -13,11 +13,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagin
 
 public class PageCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
+	private final boolean bidirectionalRelations;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
 
-	public PageCreator(LdesFragmentRepository ldesFragmentRepository) {
+	public PageCreator(LdesFragmentRepository ldesFragmentRepository, boolean bidirectionalRelations) {
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.bidirectionalRelations = bidirectionalRelations;
 	}
 
 	public LdesFragment createFirstFragment(LdesFragment parentFragment) {
@@ -28,6 +30,7 @@ public class PageCreator {
 		String nextPageNumber = getPageNumberAndGiveIncremented(previousFragment);
 		LdesFragment newFragment = createFragment(parentFragment, nextPageNumber);
 		makeFragmentImmutableAndUpdateRelations(previousFragment, newFragment);
+		ldesFragmentRepository.saveFragment(newFragment);
 		return newFragment;
 	}
 
@@ -48,9 +51,11 @@ public class PageCreator {
 		completeLdesFragment.makeImmutable();
 		completeLdesFragment
 				.addRelation(new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
-		newFragment
-				.addRelation(new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
+		if (bidirectionalRelations) {
+			newFragment
+					.addRelation(
+							new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
+		}
 		ldesFragmentRepository.saveFragment(completeLdesFragment);
-		ldesFragmentRepository.saveFragment(newFragment);
 	}
 }

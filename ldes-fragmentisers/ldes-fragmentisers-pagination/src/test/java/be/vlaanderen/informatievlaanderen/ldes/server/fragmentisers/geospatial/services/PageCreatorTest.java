@@ -26,7 +26,7 @@ class PageCreatorTest {
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		pageCreator = new PageCreator(
-				ldesFragmentRepository);
+				ldesFragmentRepository, true);
 	}
 
 	@Test

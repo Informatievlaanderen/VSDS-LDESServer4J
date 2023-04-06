@@ -5,5 +5,6 @@ public class PaginationProperties {
 	}
 
 	public static final String MEMBER_LIMIT = "memberLimit";
+	public static final String BIDIRECTIONAL_RELATIONS = "bidirectionalRelations";
 
 }

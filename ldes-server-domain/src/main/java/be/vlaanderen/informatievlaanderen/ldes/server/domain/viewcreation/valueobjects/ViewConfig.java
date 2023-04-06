@@ -13,7 +13,8 @@ public class ViewConfig {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
 	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
-	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100");
+	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
+			"bidirectionalRelations", "false");
 	private List<ViewSpecification> views = new ArrayList<>();
 	private boolean defaultView;
 

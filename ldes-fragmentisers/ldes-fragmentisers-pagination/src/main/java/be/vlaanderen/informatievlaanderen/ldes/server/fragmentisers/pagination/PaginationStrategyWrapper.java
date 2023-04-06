@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.s
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationProperties.MEMBER_LIMIT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationProperties.*;
 
 public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -30,17 +30,18 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 			LdesFragmentRepository ldesFragmentRepository) {
 		PaginationConfig paginationConfig = createPaginationConfig(properties);
 		PageCreator timeBasedFragmentCreator = getPageCreator(
-				ldesFragmentRepository);
+				ldesFragmentRepository, paginationConfig.bidirectionalRelations());
 		return new OpenPageProvider(timeBasedFragmentCreator, ldesFragmentRepository,
 				paginationConfig.memberLimit());
 	}
 
-	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository) {
+	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository, boolean bidirectionalRelations) {
 		return new PageCreator(
-				ldesFragmentRepository);
+				ldesFragmentRepository, bidirectionalRelations);
 	}
 
 	private PaginationConfig createPaginationConfig(ConfigProperties properties) {
-		return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)));
+		return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)),
+				Boolean.parseBoolean(properties.getOrDefault(BIDIRECTIONAL_RELATIONS, "true")));
 	}
 }
