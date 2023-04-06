@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.f
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
+import java.util.List;
 import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
@@ -39,10 +40,11 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 				.start();
 		getRootTileFragment(parentFragment);
 		Set<String> tiles = geospatialBucketiser.bucketise(member);
-		tiles
+		List<LdesFragment> ldesFragments = tiles
 				.stream()
-				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment))
-				.parallel()
+				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment)).toList();
+		ldesFragments
+				.parallelStream()
 				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
 						geospatialFragmentationObservation));
 		geospatialFragmentationObservation.stop();
