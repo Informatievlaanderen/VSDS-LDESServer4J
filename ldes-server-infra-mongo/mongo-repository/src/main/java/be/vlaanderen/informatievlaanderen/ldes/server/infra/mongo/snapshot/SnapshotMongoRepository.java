@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.entity.SnapshotEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.repository.SnapshotEntityRepository;
 
-import java.util.List;
-
 public class SnapshotMongoRepository implements SnapshotRepository {
 	private final SnapshotEntityRepository snapshotEntityRepository;
 
