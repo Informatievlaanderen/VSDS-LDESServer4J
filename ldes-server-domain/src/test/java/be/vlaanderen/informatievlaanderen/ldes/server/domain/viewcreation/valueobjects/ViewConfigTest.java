@@ -48,7 +48,7 @@ class ViewConfigTest {
 		assertEquals(1, defaultViewSpecification.getFragmentations().size());
 		assertEquals(List.of(), defaultViewSpecification.getRetentionConfigs());
 		verifyViewSpecification(defaultViewSpecification.getFragmentations().get(0), "pagination",
-				Map.of("memberLimit", "100"));
+				Map.of("memberLimit", "100", "bidirectionalRelations", "false"));
 	}
 
 	private void verifyRetentionPolicy(RetentionConfig retentionConfig) {

@@ -241,7 +241,8 @@ Full documentation for pagination fragmentation can be found [here](ldes-fragmen
   ```yaml
   name: "pagination"
   config:
-    memberLimit: { member limit > 0 }
+    memberLimit: { Mandatory: member limit > 0 }
+    bidirectionalRelations: { Optional: true or false (true is default) }
   ```
 
 ##### Example Serving Static Content
