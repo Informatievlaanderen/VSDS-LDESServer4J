@@ -16,6 +16,12 @@ jobs:
       - name: Release
         uses: qcastel/github-actions-maven-release@master
         with:
+          servers: |
+            [{
+                "id": "ossrh",
+                "username": "${{ secrets.OSSRH_USERNAME }}",
+                "password": "${{ secrets.OSSRH_TOKEN }}"
+            }]
           git-release-bot-name: "Maven Release"
           git-release-bot-email: "maven@release.io"
 
