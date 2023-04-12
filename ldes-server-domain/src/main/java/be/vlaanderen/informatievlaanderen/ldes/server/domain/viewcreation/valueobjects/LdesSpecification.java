@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
@@ -16,7 +15,7 @@ public class LdesSpecification {
 	private String versionOf;
 	private Validation validation = new Validation();
 	private Model dcat = ModelFactory.createDefaultModel();
-	private boolean defaultView;
+	private Boolean defaultView;
 	private ViewConfig viewConfig = new ViewConfig(new ArrayList<>(), false);
 
 	public String getHostName() {
@@ -68,6 +67,7 @@ public class LdesSpecification {
 	}
 
 	public static class Validation {
+
 		private String shape;
 		private boolean enabled = true;
 
@@ -86,15 +86,16 @@ public class LdesSpecification {
 		public void setEnabled(boolean enabled) {
 			this.enabled = enabled;
 		}
+
 	}
 
 	public List<ViewSpecification> getViews() {
-		return viewConfig.getViews();
+		return viewConfig.getViews(collectionName);
 	}
 
 	public void setViews(List<ViewSpecification> views) {
 		views.forEach(viewSpec -> viewSpec.setLdesCollectionName(collectionName));
-		this.viewConfig = new ViewConfig(views, defaultView);
+		this.viewConfig = new ViewConfig(views, false);
 	}
 
 	public void setDcat(Model dcat) {
@@ -107,6 +108,7 @@ public class LdesSpecification {
 
 	public void setDefaultView(boolean defaultView) {
 		this.defaultView = defaultView;
+		this.viewConfig.setDefaultView(defaultView);
 	}
 
 }
