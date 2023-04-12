@@ -49,8 +49,10 @@ class LdesFragmentRequestTest {
 	@Test
 	void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
 		final String viewName = "view_name";
-		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest("collectionName", viewName);
+		final String collectionName = "collection_name";
+		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(collectionName, viewName);
 		assertEquals(viewName, request.viewName());
+		assertEquals(collectionName, request.collectionName());
 		assertTrue(isEmpty(request.fragmentPairs()));
 	}
 

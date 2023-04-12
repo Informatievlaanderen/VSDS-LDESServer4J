@@ -1,8 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -27,10 +28,10 @@ class LdesShaclValidatorTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
-		ldesConfig.validation().setShape("validation/example-shape.ttl");
-		ldesConfig.validation().setEnabled(true);
-		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
+		LdesSpecification specification = new LdesSpecification();
+		specification.validation().setShape("validation/example-shape.ttl");
+		specification.validation().setEnabled(true);
+		ldesShaclValidator = new LdesShaclValidator(specification);
 	}
 
 	@Test
@@ -52,7 +53,7 @@ class LdesShaclValidatorTest {
 
 	@Test
 	void when_ValidateWithNoProvidedShape_thenReturnValid() throws URISyntaxException, IOException {
-		ldesShaclValidator = new LdesShaclValidator(new LdesConfigDeprecated());
+		ldesShaclValidator = new LdesShaclValidator(new LdesSpecification());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
@@ -63,9 +64,9 @@ class LdesShaclValidatorTest {
 
 	@Test
 	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
-		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
-		ldesConfig.validation().setEnabled(false);
-		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
+		LdesSpecification ldesSpecification = new LdesSpecification();
+		ldesSpecification.validation().setEnabled(false);
+		ldesShaclValidator = new LdesShaclValidator(ldesSpecification);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));

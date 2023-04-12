@@ -36,7 +36,7 @@ public class TreeNodeController {
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language,
 			@PathVariable("collectionname") String collectionName) {
-		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
+		TreeNode treeNode = returnRequestedTreeNode(collectionName, response, viewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
 		return ResponseEntity
@@ -45,9 +45,9 @@ public class TreeNodeController {
 				.body(treeNode);
 	}
 
-	private TreeNode returnRequestedTreeNode(HttpServletResponse response, String viewName,
+	private TreeNode returnRequestedTreeNode(String collectionName, HttpServletResponse response, String viewName,
 			Map<String, String> fragmentationMap) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", viewName,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
 

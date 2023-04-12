@@ -79,7 +79,7 @@ class OpenPageProviderTest {
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
 		LdesFragment completeFragment = new LdesFragment(
-				"collectionName", VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
+				collectionName, VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
 						"2")),
 				false, null, false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,

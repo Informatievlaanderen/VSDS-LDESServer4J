@@ -94,7 +94,7 @@ public class LdesSpecification {
 	}
 
 	public void setViews(List<ViewSpecification> views) {
-		views.forEach(viewSpec -> viewSpec.setLdesCollectionName(collectionName));
+		views.forEach(viewSpec -> viewSpec.setCollectionName(collectionName));
 		this.viewConfig = new ViewConfig(views, false);
 	}
 
