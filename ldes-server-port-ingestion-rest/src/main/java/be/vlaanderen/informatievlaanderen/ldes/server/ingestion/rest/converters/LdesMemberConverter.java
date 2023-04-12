@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import jakarta.annotation.PostConstruct;
@@ -34,10 +34,10 @@ import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public LdesMemberConverter(LdesConfig ldesConfig) {
+	public LdesMemberConverter(LdesConfigDeprecated ldesConfig) {
 		super(MediaType.ALL);
 		this.ldesConfig = ldesConfig;
 	}

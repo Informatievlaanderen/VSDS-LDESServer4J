@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
@@ -19,9 +19,9 @@ import java.util.List;
 public class EventStreamConverterImpl implements EventStreamConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 
-	public EventStreamConverterImpl(PrefixAdder prefixAdder, LdesConfig ldesConfig) {
+	public EventStreamConverterImpl(PrefixAdder prefixAdder, LdesConfigDeprecated ldesConfig) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
 	}

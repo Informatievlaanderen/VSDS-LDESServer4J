@@ -31,10 +31,11 @@ public class TreeNodeController {
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "${ldes.collectionname}/{view}")
+	@GetMapping(value = "{collectionname}/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
-			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {
+			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language,
+														 @PathVariable("collectionname") String collectionName) {
 		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);

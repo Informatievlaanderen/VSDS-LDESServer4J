@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 @Component
 public class EtagCachingStrategy implements CachingStrategy {
 
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 
-	public EtagCachingStrategy(final LdesConfig ldesConfig) {
+	public EtagCachingStrategy(final LdesConfigDeprecated ldesConfig) {
 		this.ldesConfig = ldesConfig;
 	}
 

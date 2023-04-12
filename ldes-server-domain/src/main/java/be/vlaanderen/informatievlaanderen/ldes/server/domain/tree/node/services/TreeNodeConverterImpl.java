@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
@@ -25,10 +25,10 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			LdesConfig ldesConfig) {
+			LdesConfigDeprecated ldesConfig) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
 	}

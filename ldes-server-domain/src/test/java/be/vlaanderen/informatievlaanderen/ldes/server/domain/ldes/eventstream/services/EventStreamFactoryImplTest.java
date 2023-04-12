@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
@@ -24,7 +24,7 @@ class EventStreamFactoryImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = getLdesConfig();
+		LdesConfigDeprecated ldesConfig = getLdesConfig();
 		ViewConfig viewConfig = getViewConfig();
 		treeNodeFetcher = mock(TreeNodeFetcher.class);
 		eventStreamFactory = new EventStreamFactoryImpl(ldesConfig, viewConfig, treeNodeFetcher);
@@ -48,17 +48,15 @@ class EventStreamFactoryImplTest {
 	}
 
 	private ViewConfig getViewConfig() {
-		ViewConfig viewConfig = new ViewConfig();
 		ViewSpecification firstViewSpecification = new ViewSpecification();
 		firstViewSpecification.setName("firstView");
 		ViewSpecification secondViewSpecification = new ViewSpecification();
 		secondViewSpecification.setName("secondView");
-		viewConfig.setViews(List.of(firstViewSpecification, secondViewSpecification));
-		return viewConfig;
+		return new ViewConfig(List.of(firstViewSpecification, secondViewSpecification), false);
 	}
 
-	private LdesConfig getLdesConfig() {
-		LdesConfig ldesConfig = new LdesConfig();
+	private LdesConfigDeprecated getLdesConfig() {
+		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");

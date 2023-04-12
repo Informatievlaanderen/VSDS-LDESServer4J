@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -29,10 +29,10 @@ class SnapshotCreatorImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = new LdesConfig();
+		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
 		ldesConfig.setHostName("localhost:8080");
 		ldesConfig.setCollectionName("collection");
-		LdesConfig.Validation validation = new LdesConfig.Validation();
+		LdesConfigDeprecated.Validation validation = new LdesConfigDeprecated.Validation();
 		validation.setShape("shape");
 		ldesConfig.setValidation(validation);
 		snapShotCreator = new SnapshotCreatorImpl(ldesConfig, memberCollector, rootFragmentCreator, snapshotFragmenter);

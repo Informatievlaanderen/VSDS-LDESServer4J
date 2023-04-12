@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private void setupCachingStrategy(String hostname, String collection) {
-		LdesConfig ldesConfig = new LdesConfig();
+		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
 		ldesConfig.setHostName(hostname);
 		ldesConfig.setCollectionName(collection);
 

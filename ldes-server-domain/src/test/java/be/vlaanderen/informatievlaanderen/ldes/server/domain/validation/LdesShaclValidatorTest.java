@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -27,7 +27,7 @@ class LdesShaclValidatorTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = new LdesConfig();
+		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
 		ldesConfig.validation().setShape("validation/example-shape.ttl");
 		ldesConfig.validation().setEnabled(true);
 		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
@@ -52,7 +52,7 @@ class LdesShaclValidatorTest {
 
 	@Test
 	void when_ValidateWithNoProvidedShape_thenReturnValid() throws URISyntaxException, IOException {
-		ldesShaclValidator = new LdesShaclValidator(new LdesConfig());
+		ldesShaclValidator = new LdesShaclValidator(new LdesConfigDeprecated());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
@@ -63,7 +63,7 @@ class LdesShaclValidatorTest {
 
 	@Test
 	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
-		LdesConfig ldesConfig = new LdesConfig();
+		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
 		ldesConfig.validation().setEnabled(false);
 		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -14,11 +14,11 @@ import java.util.List;
 @Component
 public class EventStreamFactoryImpl implements EventStreamFactory {
 
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 	private final ViewConfig viewConfig;
 	private final TreeNodeFetcher treeNodeFetcher;
 
-	public EventStreamFactoryImpl(LdesConfig ldesConfig, ViewConfig viewConfig, TreeNodeFetcher treeNodeFetcher) {
+	public EventStreamFactoryImpl(LdesConfigDeprecated ldesConfig, ViewConfig viewConfig, TreeNodeFetcher treeNodeFetcher) {
 		this.ldesConfig = ldesConfig;
 		this.viewConfig = viewConfig;
 		this.treeNodeFetcher = treeNodeFetcher;
