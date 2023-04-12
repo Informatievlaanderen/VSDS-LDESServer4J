@@ -18,7 +18,8 @@ public class EventStreamFactoryImpl implements EventStreamFactory {
 	private final ViewConfig viewConfig;
 	private final TreeNodeFetcher treeNodeFetcher;
 
-	public EventStreamFactoryImpl(LdesConfigDeprecated ldesConfig, ViewConfig viewConfig, TreeNodeFetcher treeNodeFetcher) {
+	public EventStreamFactoryImpl(LdesConfigDeprecated ldesConfig, ViewConfig viewConfig,
+			TreeNodeFetcher treeNodeFetcher) {
 		this.ldesConfig = ldesConfig;
 		this.viewConfig = viewConfig;
 		this.treeNodeFetcher = treeNodeFetcher;

@@ -11,22 +11,21 @@ import java.util.Optional;
 @Configuration
 public class LdesConfig {
 
-    private List<LdesSpecification> ldesStreams = new ArrayList<>();
+	private List<LdesSpecification> ldesStreams = new ArrayList<>();
 
-    public List<LdesSpecification> getLdesStreams() {
-        return ldesStreams;
-    }
+	public List<LdesSpecification> getLdesStreams() {
+		return ldesStreams;
+	}
 
-    public void setLdesStreams(List<LdesSpecification> ldesStreams) {
-        this.ldesStreams = ldesStreams;
-    }
+	public void setLdesStreams(List<LdesSpecification> ldesStreams) {
+		this.ldesStreams = ldesStreams;
+	}
 
-    public Optional<LdesSpecification> getLdesSpecification(String collectionName) {
-        return getLdesStreams()
-                .stream()
-                .filter(ldes -> ldes.getCollectionName().equals(collectionName))
-                .findFirst();
-    }
+	public Optional<LdesSpecification> getLdesSpecification(String collectionName) {
+		return getLdesStreams()
+				.stream()
+				.filter(ldes -> ldes.getCollectionName().equals(collectionName))
+				.findFirst();
+	}
 
 }
-

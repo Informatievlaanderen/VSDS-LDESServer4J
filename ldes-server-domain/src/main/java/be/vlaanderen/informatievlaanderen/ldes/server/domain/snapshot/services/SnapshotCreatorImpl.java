@@ -20,7 +20,7 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	private final SnapshotFragmenter snapshotFragmenter;
 
 	public SnapshotCreatorImpl(LdesConfigDeprecated ldesConfig, MemberCollector memberCollector,
-                               RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
+			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
 		this.ldesConfig = ldesConfig;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;

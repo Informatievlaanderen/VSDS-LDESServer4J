@@ -65,7 +65,7 @@ class EventStreamControllerTest {
 	@MockBean
 	private EventStreamFactory eventStreamFactory;
 	@Autowired
-    LdesConfigDeprecated ldesConfig;
+	LdesConfigDeprecated ldesConfig;
 	@Autowired
 	RestConfig restConfig;
 

@@ -35,7 +35,7 @@ public class TreeNodeController {
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language,
-														 @PathVariable("collectionname") String collectionName) {
+			@PathVariable("collectionname") String collectionName) {
 		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
