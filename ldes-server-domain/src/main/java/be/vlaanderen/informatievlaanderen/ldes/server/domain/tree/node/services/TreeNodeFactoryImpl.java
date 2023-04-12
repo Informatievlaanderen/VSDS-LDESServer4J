@@ -18,7 +18,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final MemberRepository memberRepository;
 
 	public TreeNodeFactoryImpl(LdesConfigDeprecated ldesConfig, LdesFragmentRepository ldesFragmentRepository,
-                               MemberRepository memberRepository) {
+			MemberRepository memberRepository) {
 		this.ldesConfig = ldesConfig;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberRepository = memberRepository;
