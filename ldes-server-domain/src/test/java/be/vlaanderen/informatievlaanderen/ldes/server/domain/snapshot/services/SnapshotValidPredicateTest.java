@@ -25,7 +25,7 @@ class SnapshotValidPredicateTest {
 
 		@Test
 		void test_validMember() {
-			Member member = new Member("id", "versionOf", LocalDateTime.now(), null, List.of());
+			Member member = new Member("id", "collection", 0L, "versionOf", LocalDateTime.now(), null, List.of());
 
 			assertTrue(snapshotValidPredicate.test(member));
 		}
@@ -49,8 +49,8 @@ class SnapshotValidPredicateTest {
 			@Override
 			public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 				return Stream.of(
-						Arguments.of(new Member("id", null, LocalDateTime.now(), null, List.of())),
-						Arguments.of(new Member("id", "versionOf", null, null, List.of())));
+						Arguments.of(new Member("id", "collection", 0L, null, LocalDateTime.now(), null, List.of())),
+						Arguments.of(new Member("id", "collection", 0L, "versionOf", null, null, List.of())));
 			}
 		}
 	}

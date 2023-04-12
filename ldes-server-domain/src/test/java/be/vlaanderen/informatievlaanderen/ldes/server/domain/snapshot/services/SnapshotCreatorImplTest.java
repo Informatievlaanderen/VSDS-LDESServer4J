@@ -72,7 +72,8 @@ class SnapshotCreatorImplTest {
 	}
 
 	private Member createMember(String memberId, String versionOf, int minute) {
-		return new Member(memberId, versionOf, LocalDateTime.of(1, 1, 1, 1, minute), null, List.of());
+		return new Member(memberId, "collection", 0L, versionOf, LocalDateTime.of(1, 1, 1, 1, minute), null,
+				List.of());
 	}
 
 	private List<LdesFragment> getLdesFragmentsForSnapshot() {

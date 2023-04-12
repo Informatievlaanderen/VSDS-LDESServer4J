@@ -39,6 +39,6 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
 	private Member storeLdesMember(Member member) {
 		member.removeTreeMember();
-		return memberRepository.saveLdesMember(member);
+		return memberRepository.saveMemberOfCollection(member);
 	}
 }

@@ -12,13 +12,18 @@ public class Member {
 
 	private final Model memberModel;
 	private final String memberId;
+	private final String collection;
+	private final Long index;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 	private final List<String> treeNodeReferences;
 
-	public Member(String memberId, String versionOf, LocalDateTime timestamp, final Model memberModel,
+	public Member(String memberId, String collection, Long index, String versionOf, LocalDateTime timestamp,
+			final Model memberModel,
 			List<String> treeNodeReferences) {
 		this.memberId = memberId;
+		this.collection = collection;
+		this.index = index;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 		this.memberModel = memberModel;
@@ -74,5 +79,13 @@ public class Member {
 
 	public LocalDateTime getTimestamp() {
 		return timestamp;
+	}
+
+	public String getCollection() {
+		return collection;
+	}
+
+	public Long getIndex() {
+		return index;
 	}
 }

@@ -34,7 +34,7 @@ class MemberReduceOperatorTest {
 		}
 
 		private Member getMember(String id, int minute) {
-			return new Member(id, null, LocalDateTime.of(1, 1, 1, 1, minute), null, List.of());
+			return new Member(id, "collection", 0L, null, LocalDateTime.of(1, 1, 1, 1, minute), null, List.of());
 		}
 	}
 }

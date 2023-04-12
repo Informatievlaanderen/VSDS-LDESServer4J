@@ -1,15 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +13,10 @@ public class LdesMemberEntity {
 	@Id
 	private final String id;
 	@Indexed
+	private final String collection;
+	@Indexed
+	private Long index;
+	@Indexed
 	private final String versionOf;
 	@Indexed
 	private final LocalDateTime timestamp;
@@ -26,9 +24,12 @@ public class LdesMemberEntity {
 	@Indexed
 	private final List<String> treeNodeReferences;
 
-	public LdesMemberEntity(String id, String versionOf, LocalDateTime timestamp, final String model,
+	public LdesMemberEntity(String id, String collection, Long index, String versionOf, LocalDateTime timestamp,
+			final String model,
 			List<String> treeNodeReferences) {
 		this.id = id;
+		this.collection = collection;
+		this.index = index;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 		this.model = model;
@@ -39,20 +40,31 @@ public class LdesMemberEntity {
 		return this.model;
 	}
 
-	public static LdesMemberEntity fromLdesMember(Member member) {
-		StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
-		String ldesMemberString = outputStream.toString();
-		return new LdesMemberEntity(member.getLdesMemberId(), member.getVersionOf(), member.getTimestamp(),
-				ldesMemberString, member.getTreeNodeReferences());
-	}
-
-	public Member toLdesMember() {
-		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.NQUADS).toModel();
-		return new Member(this.id, this.versionOf, this.timestamp, ldesMemberModel, this.treeNodeReferences);
-	}
-
 	public String getId() {
 		return id;
+	}
+
+	public String getCollection() {
+		return collection;
+	}
+
+	public Long getIndex() {
+		return index;
+	}
+
+	public String getVersionOf() {
+		return versionOf;
+	}
+
+	public LocalDateTime getTimestamp() {
+		return timestamp;
+	}
+
+	public List<String> getTreeNodeReferences() {
+		return treeNodeReferences;
+	}
+
+	public void setIndex(long index) {
+		this.index = index;
 	}
 }

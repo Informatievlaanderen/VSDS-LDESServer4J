@@ -38,7 +38,7 @@ class MemberIngestServiceImplTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
+				"collection", 0L, null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(true);
 
@@ -59,7 +59,7 @@ class MemberIngestServiceImplTest {
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
+				"collection", 0L, null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(false);
 
@@ -67,7 +67,7 @@ class MemberIngestServiceImplTest {
 
 		InOrder inOrder = inOrder(memberRepository, fragmentationMediator);
 		inOrder.verify(memberRepository, times(1)).memberExists(member.getLdesMemberId());
-		inOrder.verify(memberRepository, times(1)).saveLdesMember(member);
+		inOrder.verify(memberRepository, times(1)).saveMemberOfCollection(member);
 		inOrder.verify(fragmentationMediator, times(1)).addMemberToFragment(member);
 		inOrder.verifyNoMoreInteractions();
 	}

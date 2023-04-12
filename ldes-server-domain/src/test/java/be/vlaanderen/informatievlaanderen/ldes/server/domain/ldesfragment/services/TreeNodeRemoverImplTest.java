@@ -36,7 +36,7 @@ class TreeNodeRemoverImplTest {
 		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("view"))
 				.thenReturn(Stream.of(notReadyToDeleteFragment, readyToDeleteFragment));
 		when(memberRepository.getMembersByReference("/view"))
-				.thenReturn(Stream.of(new Member("memberId", null, null, null, List.of())));
+				.thenReturn(Stream.of(new Member("memberId", "collection", 0L, null, null, null, List.of())));
 
 		treeNodeRemover.removeTreeNodes();
 

@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 
 public interface MemberRepository {
 
-	Member saveLdesMember(Member member);
+	Member saveMemberOfCollection(Member member);
 
 	boolean memberExists(String id);
 
