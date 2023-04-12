@@ -72,7 +72,8 @@ class MemberIngestionControllerTest {
 				.contentType("application/n-quads")
 				.content(ldesMemberString))
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string("Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
+				.andExpect(content().string(
+						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
 	}
 
 	@Test
@@ -106,10 +107,11 @@ class MemberIngestionControllerTest {
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 
 		mockMvc.perform(post("/mobility-hindrances")
-						.contentType("application/n-quads")
-						.content(ldesMemberStringWrongType))
+				.contentType("application/n-quads")
+				.content(ldesMemberStringWrongType))
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string("Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
+				.andExpect(content().string(
+						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)

@@ -20,7 +20,7 @@ public class LdesMemberIngestionController {
 
 	@PostMapping(value = "{collectionname}")
 	public void ingestLdesMember(@RequestBody Member member,
-								 @PathVariable("collectionname") String collectionName) {
+			@PathVariable("collectionname") String collectionName) {
 		validateMember(member, collectionName);
 		memberIngestService.addMember(member);
 	}
