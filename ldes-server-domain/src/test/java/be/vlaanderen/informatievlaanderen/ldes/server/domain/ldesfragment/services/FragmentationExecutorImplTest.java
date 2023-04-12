@@ -35,7 +35,7 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
+		LdesFragment ldesFragment = new LdesFragment("collectionName", VIEW_NAME,
 				List.of());
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
@@ -52,7 +52,7 @@ class FragmentationExecutorImplTest {
 	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
 		when(ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(VIEW_NAME,
+				.retrieveFragment(new LdesFragmentRequest("collectionName", VIEW_NAME,
 						List.of()).generateFragmentId()))
 				.thenReturn(Optional.empty());
 		Member member = mock(Member.class);
@@ -68,7 +68,7 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
+		LdesFragment ldesFragment = new LdesFragment("collectionName", VIEW_NAME,
 				List.of());
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));

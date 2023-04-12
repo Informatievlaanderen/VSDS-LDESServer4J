@@ -15,7 +15,7 @@ class GeospatialRelationsAttributerTest {
 	private final GeospatialRelationsAttributer geospatialRelationsAttributer = new GeospatialRelationsAttributer();
 	private static final String VIEW_NAME = "view";
 	private static final LdesFragment CHILD_FRAGMENT = new LdesFragment(
-			VIEW_NAME, List.of(new FragmentPair(FRAGMENT_KEY_TILE,
+			"collectionName", VIEW_NAME, List.of(new FragmentPair(FRAGMENT_KEY_TILE,
 					"1/1/1")));
 
 	private static final TreeRelation EXPECTED_RELATION = new TreeRelation("http://www.opengis.net/ont/geosparql#asWKT",

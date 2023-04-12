@@ -34,7 +34,7 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating First Time-Based Fragment")
 	void when_NoFragmentExists_thenNewFragmentIsCreated() {
-		LdesFragment parentFragment = new LdesFragment(VIEW,
+		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW,
 				List.of());
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
@@ -47,11 +47,11 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	@DisplayName("Creating New Time-Based Fragment")
 	void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
-		LdesFragment parentFragment = new LdesFragment(VIEW,
+		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW,
 				List.of());
 
 		LdesFragment existingLdesFragment = new LdesFragment(
-				VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
+				"collectionName", VIEW, List.of(new FragmentPair(GENERATED_AT_TIME,
 						"2020-12-28T09:36:37.127Z")));
 
 		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);

@@ -37,7 +37,7 @@ class MemberIngestServiceImplTest {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				"collectionName", "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(true);
@@ -58,7 +58,7 @@ class MemberIngestServiceImplTest {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				"collectionName", "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.memberExists(member.getLdesMemberId())).thenReturn(false);

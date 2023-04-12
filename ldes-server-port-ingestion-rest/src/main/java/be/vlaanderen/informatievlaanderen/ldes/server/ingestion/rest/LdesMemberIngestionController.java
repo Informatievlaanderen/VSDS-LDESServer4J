@@ -3,27 +3,32 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.CollectionNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class LdesMemberIngestionController {
 
-	@Autowired
-	private MemberIngestService memberIngestService;
-	@Autowired
-	private LdesShaclValidator validator;
+	private final MemberIngestService memberIngestService;
+	private final LdesConfig ldesConfig;
 
-	@InitBinder
-	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(validator);
+	public LdesMemberIngestionController(MemberIngestService memberIngestService, LdesConfig ldesConfig) {
+		this.memberIngestService = memberIngestService;
+		this.ldesConfig = ldesConfig;
 	}
 
 	@PostMapping(value = "{collectionname}")
-	public void ingestLdesMember(@RequestBody @Validated Member member,
-			@PathVariable("collectionname") String collectionName) {
+	public void ingestLdesMember(@RequestBody Member member,
+								 @PathVariable("collectionname") String collectionName) {
+		validateMember(member, collectionName);
 		memberIngestService.addMember(member);
+	}
+
+	private void validateMember(Member member, String collectionName) {
+		new LdesShaclValidator(
+				ldesConfig.getLdesSpecification(collectionName)
+						.orElseThrow(() -> new CollectionNotFoundException(collectionName)))
+				.validate(member);
 	}
 }

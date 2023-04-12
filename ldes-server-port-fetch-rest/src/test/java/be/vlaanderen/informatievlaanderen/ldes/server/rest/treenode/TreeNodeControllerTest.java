@@ -79,7 +79,7 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
 				List.of());
@@ -148,7 +148,7 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of());
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, false, List.of(),
 				List.of());
@@ -163,7 +163,7 @@ class TreeNodeControllerTest {
 	void when_GETRequestButMissingFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
@@ -181,7 +181,7 @@ class TreeNodeControllerTest {
 	void when_GETRequestButDeletedFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));

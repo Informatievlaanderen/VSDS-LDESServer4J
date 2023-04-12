@@ -34,7 +34,7 @@ class SubstringFragmentationStrategyTest {
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(
-				VIEW_NAME, List.of());
+				"collectionName", VIEW_NAME, List.of());
 		substringFragmentFinder = mock(SubstringFragmentFinder.class);
 		substringFragmentCreator = mock(SubstringFragmentCreator.class);
 		substringConfig = new SubstringConfig();

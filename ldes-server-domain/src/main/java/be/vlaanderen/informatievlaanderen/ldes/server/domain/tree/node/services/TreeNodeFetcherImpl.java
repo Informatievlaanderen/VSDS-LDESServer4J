@@ -21,12 +21,14 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 	public TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest) {
 		TreeNode treeNode = treeNodeFactory
 				.getTreeNode(new LdesFragment(
-						ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
+						ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
+						ldesFragmentRequest.fragmentPairs())
 						.getFragmentId());
 		if (treeNode.isSoftDeleted())
 			throw new DeletedFragmentException(
-					ldesConfig.getHostName() + new LdesFragment(ldesFragmentRequest.viewName(),
-							ldesFragmentRequest.fragmentPairs()).getFragmentId());
+					ldesConfig.getHostName()
+							+ new LdesFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
+									ldesFragmentRequest.fragmentPairs()).getFragmentId());
 		return treeNode;
 	}
 }

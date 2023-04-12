@@ -22,4 +22,12 @@ public class IngestionRestResponseEntityExceptionHandler
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
+
+	@ExceptionHandler(value = { CollectionNotFoundException.class })
+	protected ResponseEntity<Object> handleNotFoundException(RuntimeException ex, WebRequest request) {
+		logger.error(ex.getMessage());
+		String bodyOfResponse = ex.getMessage();
+		return handleExceptionInternal(ex, bodyOfResponse,
+				new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+	}
 }

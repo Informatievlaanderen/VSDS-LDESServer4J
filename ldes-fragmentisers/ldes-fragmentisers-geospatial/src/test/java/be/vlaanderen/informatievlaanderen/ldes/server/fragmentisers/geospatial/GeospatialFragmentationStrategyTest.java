@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class GeospatialFragmentationStrategyTest {
 
 	private static final String VIEW_NAME = "view";
-	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
+	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
 	private static final LdesFragment ROOT_TILE_FRAGMENT = PARENT_FRAGMENT
 			.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 

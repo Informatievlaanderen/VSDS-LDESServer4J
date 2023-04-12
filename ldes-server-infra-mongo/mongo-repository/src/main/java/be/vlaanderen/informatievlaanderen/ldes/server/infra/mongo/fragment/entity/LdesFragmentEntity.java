@@ -32,10 +32,13 @@ public class LdesFragmentEntity {
 
 	private final List<TreeRelation> relations;
 
+	@Indexed
+	private final String collectionName;
+
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable,
 			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, Integer numberOfMembers,
-			List<TreeRelation> relations) {
+			List<TreeRelation> relations, String collectionName) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -46,6 +49,7 @@ public class LdesFragmentEntity {
 		this.immutableTimestamp = immutableTimestamp;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
+		this.collectionName = collectionName;
 	}
 
 	public String getId() {
@@ -58,7 +62,7 @@ public class LdesFragmentEntity {
 
 	public LdesFragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted,
+		return new LdesFragment(collectionName, viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted,
 				effectiveNumberOfMembers,
 				relations);
 	}
@@ -77,7 +81,7 @@ public class LdesFragmentEntity {
 				ldesFragment.getViewName(),
 				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
 				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
-				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations());
+				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations(), ldesFragment.getCollectionName());
 	}
 
 	public Boolean getRoot() {

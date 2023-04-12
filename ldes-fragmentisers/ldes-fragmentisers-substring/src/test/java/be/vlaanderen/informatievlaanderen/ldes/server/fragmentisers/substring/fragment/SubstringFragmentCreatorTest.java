@@ -25,7 +25,7 @@ class SubstringFragmentCreatorTest {
 	@Test
 	void when_FragmentDoesNotExist_NewSubstringFragmentIsCreated() {
 		LdesFragment ldesFragment = new LdesFragment(
-				"view", List.of(new FragmentPair("time", "b")));
+				"collectionName", "view", List.of(new FragmentPair("time", "b")));
 		String exptectedFragmentId = ldesFragment.createChild(new FragmentPair("substring", "a")).getFragmentId();
 		when(ldesFragmentRepository.retrieveFragment(exptectedFragmentId)).thenReturn(Optional.empty());
 
@@ -42,7 +42,7 @@ class SubstringFragmentCreatorTest {
 	@Test
 	void when_FragmentExists_RetrievedFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
-				"view", List.of(new FragmentPair("time", "b")));
+				"collectionName", "view", List.of(new FragmentPair("time", "b")));
 		LdesFragment substringFragment = ldesFragment.createChild(new FragmentPair("substring", "a"));
 
 		when(ldesFragmentRepository.retrieveFragment(substringFragment.getFragmentId()))

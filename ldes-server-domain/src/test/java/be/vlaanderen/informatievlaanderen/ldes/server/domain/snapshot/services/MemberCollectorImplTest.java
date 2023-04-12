@@ -42,7 +42,7 @@ class MemberCollectorImplTest {
 	}
 
 	private LdesFragment getLdesFragment(String pageNumber) {
-		return new LdesFragment("mobility-hindrances", List.of(new FragmentPair("page", pageNumber)));
+		return new LdesFragment("collectionName", "mobility-hindrances", List.of(new FragmentPair("page", pageNumber)));
 	}
 
 	private Stream<Member> getMemberStream() {
@@ -51,7 +51,7 @@ class MemberCollectorImplTest {
 	}
 
 	private Member getMember(String versionOf) {
-		return new Member("", versionOf, LocalDateTime.now(), null, List.of());
+		return new Member("collectionName", "", versionOf, LocalDateTime.now(), null, List.of());
 	}
 
 }

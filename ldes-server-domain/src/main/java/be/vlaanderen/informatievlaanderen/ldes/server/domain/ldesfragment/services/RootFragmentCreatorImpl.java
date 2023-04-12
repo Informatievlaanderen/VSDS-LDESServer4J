@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class RootFragmentCreatorImpl implements RootFragmentCreator {
@@ -18,16 +17,13 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 
 	@Override
 	public LdesFragment createRootFragmentForView(String viewName) {
-		Optional<LdesFragment> optionalRoot = ldesFragmentRepository
-				.retrieveRootFragment(viewName);
-		if (optionalRoot.isEmpty()) {
-			return createRoot(viewName);
-		}
-		return optionalRoot.get();
+		return ldesFragmentRepository
+				.retrieveRootFragment(viewName)
+				.orElseGet(() -> createRoot(viewName));
 	}
 
 	private LdesFragment createRoot(String viewName) {
-		LdesFragment ldesFragment = new LdesFragment(viewName, List.of());
+		LdesFragment ldesFragment = new LdesFragment(viewName.split("/")[0], viewName, List.of());
 		return ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 }

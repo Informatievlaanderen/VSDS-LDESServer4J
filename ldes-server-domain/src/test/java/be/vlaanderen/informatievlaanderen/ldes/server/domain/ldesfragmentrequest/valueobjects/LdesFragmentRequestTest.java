@@ -26,10 +26,10 @@ class LdesFragmentRequestTest {
 	@Test
 	@DisplayName("Test Equality of LdesFragmentRequest")
 	void test_EqualityOfLdesFragmentRequests() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
-		LdesFragmentRequest otherLdesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest otherLdesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
 		assertEquals(ldesFragmentRequest, otherLdesFragmentRequest);
@@ -40,7 +40,7 @@ class LdesFragmentRequestTest {
 	@ParameterizedTest
 	@ArgumentsSource(LdesFragmentRequestArgumentsProvider.class)
 	void test_InequalityOfLdesFragmentRequests(Object otherLdesFragmentRequest) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 						VALUE_2)));
 		assertNotEquals(ldesFragmentRequest, otherLdesFragmentRequest);
@@ -49,8 +49,10 @@ class LdesFragmentRequestTest {
 	@Test
 	void when_ViewRequestIsCreated_RequestHasViewNameAndEmptyList() {
 		final String viewName = "view_name";
-		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(viewName);
+		final String collectionName = "collection_name";
+		LdesFragmentRequest request = LdesFragmentRequest.createViewRequest(collectionName, viewName);
 		assertEquals(viewName, request.viewName());
+		assertEquals(collectionName, request.collectionName());
 		assertTrue(isEmpty(request.fragmentPairs()));
 	}
 
@@ -59,12 +61,12 @@ class LdesFragmentRequestTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", null, null, null, List.of())),
+			return Stream.of(Arguments.of(new Member("collectionName", "some_id", null, null, null, List.of())),
 					Arguments.of((Object) null),
-					Arguments.of(new LdesFragmentRequest("otherViewName",
+					Arguments.of(new LdesFragmentRequest("collectionName", "otherViewName",
 							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
 									VALUE_2)))),
-					Arguments.of(new LdesFragmentRequest(VIEW_NAME,
+					Arguments.of(new LdesFragmentRequest("collectionName", VIEW_NAME,
 							List.of(new FragmentPair(KEY_2, VALUE_2), new FragmentPair(KEY,
 									VALUE)))));
 		}

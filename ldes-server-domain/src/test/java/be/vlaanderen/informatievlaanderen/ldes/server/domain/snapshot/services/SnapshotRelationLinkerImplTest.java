@@ -53,20 +53,23 @@ class SnapshotRelationLinkerImplTest {
 	}
 
 	private List<LdesFragment> getTreeNodes() {
-		LdesFragment rootTreeNode = new LdesFragment("root", List.of());
-		LdesFragment coveredTreeNode = new LdesFragment("covered", List.of(new FragmentPair("fragment", "0")));
+		LdesFragment rootTreeNode = new LdesFragment("collectionName", "root", List.of());
+		LdesFragment coveredTreeNode = new LdesFragment("collectionName", "covered",
+				List.of(new FragmentPair("fragment", "0")));
 		coveredTreeNode.makeImmutable();
 		return List.of(
 				rootTreeNode,
 				coveredTreeNode,
-				new LdesFragment("uncovered", List.of(new FragmentPair("fragment", "1"))),
-				new LdesFragment("uncovered", List.of(new FragmentPair("fragment", "2"))));
+				new LdesFragment("collectionName", "uncovered", List.of(new FragmentPair("fragment", "1"))),
+				new LdesFragment("collectionName", "uncovered", List.of(new FragmentPair("fragment", "2"))));
 	}
 
 	private List<LdesFragment> getTreeNodesOfSnapshot() {
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("id", List.of(new FragmentPair("page", "2")));
-		LdesFragment rootTreeNodeOfSnapshot = new LdesFragment("id", List.of());
-		LdesFragment immutableTreeNodeOfSnapshot = new LdesFragment("id", List.of(new FragmentPair("page", "1")));
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("collectionName", "id",
+				List.of(new FragmentPair("page", "2")));
+		LdesFragment rootTreeNodeOfSnapshot = new LdesFragment("collectionName", "id", List.of());
+		LdesFragment immutableTreeNodeOfSnapshot = new LdesFragment("collectionName", "id",
+				List.of(new FragmentPair("page", "1")));
 		immutableTreeNodeOfSnapshot.makeImmutable();
 		return List.of(rootTreeNodeOfSnapshot, immutableTreeNodeOfSnapshot, lastTreeNodeOfSnapshot);
 	}
