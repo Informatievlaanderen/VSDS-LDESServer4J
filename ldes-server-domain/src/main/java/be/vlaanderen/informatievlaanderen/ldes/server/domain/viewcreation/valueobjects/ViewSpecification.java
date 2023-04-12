@@ -5,15 +5,20 @@ import java.util.List;
 public class ViewSpecification {
 
 	private String name;
+	private String ldesCollectionName;
 	private List<RetentionConfig> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
 	public String getName() {
-		return name;
+		return ldesCollectionName + "/" + name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setLdesCollectionName(String ldesCollectionName) {
+		this.ldesCollectionName = ldesCollectionName;
 	}
 
 	public List<FragmentationConfig> getFragmentations() {
@@ -31,4 +36,5 @@ public class ViewSpecification {
 	public void setRetentionPolicies(List<RetentionConfig> retentionPolicies) {
 		this.retentionPolicies = retentionPolicies;
 	}
+
 }

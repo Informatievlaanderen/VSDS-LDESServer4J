@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
 
-	public SnapshotCreatorImpl(LdesConfig ldesConfig, MemberCollector memberCollector,
-			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
+	public SnapshotCreatorImpl(LdesConfigDeprecated ldesConfig, MemberCollector memberCollector,
+                               RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
 		this.ldesConfig = ldesConfig;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;

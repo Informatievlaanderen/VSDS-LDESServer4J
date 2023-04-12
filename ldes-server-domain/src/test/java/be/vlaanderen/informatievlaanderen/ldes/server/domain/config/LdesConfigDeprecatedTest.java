@@ -10,13 +10,13 @@ import org.springframework.test.context.ActiveProfiles;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@SpringBootTest(classes = { LdesConfig.class, PathToModelConverter.class })
+@SpringBootTest(classes = { LdesConfigDeprecated.class, PathToModelConverter.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
-class LdesConfigTest {
+class LdesConfigDeprecatedTest {
 
 	@Autowired
-	private LdesConfig ldesConfig;
+	private LdesConfigDeprecated ldesConfig;
 
 	@Test
 	@DisplayName("Verify content of LdesConfig")

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
@@ -57,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
-		LdesConfig.class, RestConfig.class, TreeViewWebConfig.class,
+		LdesConfigDeprecated.class, RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
 
@@ -69,7 +69,7 @@ class TreeNodeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
-	private LdesConfig ldesConfig;
+	private LdesConfigDeprecated ldesConfig;
 	@Autowired
 	RestConfig restConfig;
 	@MockBean
@@ -226,13 +226,13 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
+		public TreeNodeConverter ldesFragmentConverter(final LdesConfigDeprecated ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
+		public CachingStrategy cachingStrategy(final LdesConfigDeprecated ldesConfig) {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}

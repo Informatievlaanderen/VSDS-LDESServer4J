@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
-public class LdesConfig {
+public class LdesConfigDeprecated {
 
 	private String hostName;
 	private String collectionName;

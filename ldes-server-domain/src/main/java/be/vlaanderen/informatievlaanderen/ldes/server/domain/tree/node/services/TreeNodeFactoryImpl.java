@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -13,12 +13,12 @@ import java.util.List;
 
 @Component
 public class TreeNodeFactoryImpl implements TreeNodeFactory {
-	private final LdesConfig ldesConfig;
+	private final LdesConfigDeprecated ldesConfig;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final MemberRepository memberRepository;
 
-	public TreeNodeFactoryImpl(LdesConfig ldesConfig, LdesFragmentRepository ldesFragmentRepository,
-			MemberRepository memberRepository) {
+	public TreeNodeFactoryImpl(LdesConfigDeprecated ldesConfig, LdesFragmentRepository ldesFragmentRepository,
+                               MemberRepository memberRepository) {
 		this.ldesConfig = ldesConfig;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberRepository = memberRepository;

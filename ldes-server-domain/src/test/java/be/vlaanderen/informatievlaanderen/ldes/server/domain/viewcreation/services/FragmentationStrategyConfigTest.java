@@ -1,9 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.context.ApplicationContext;
@@ -26,35 +24,45 @@ class FragmentationStrategyConfigTest {
 	@Test
 	void when_FragmentationStrategyConfigIsCorrectlyConfigured_MapOfFragmentationStrategiesIsReturned() {
 		FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
-		ViewConfig viewConfig = getViewConfig();
+		LdesConfig ldesConfig = getLdesConfig();
+		List<ViewSpecification> views = ldesConfig.getLdesStreams().get(0).getViews();
 		FragmentationStrategy firstCreatedFragmentationStrategy = mock(FragmentationStrategy.class);
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewConfig.getViews().get(0)))
+		when(fragmentationStrategyCreator.createFragmentationStrategyForView(views.get(0)))
 				.thenReturn(firstCreatedFragmentationStrategy);
 		FragmentationStrategy secondCreatedFragmentationStrategy = mock(FragmentationStrategy.class);
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewConfig.getViews().get(1)))
+		when(fragmentationStrategyCreator.createFragmentationStrategyForView(views.get(1)))
 				.thenReturn(secondCreatedFragmentationStrategy);
 
 		FragmentationStrategyConfig fragmentationStrategyConfig = new FragmentationStrategyConfig();
 		Map<String, FragmentationStrategy> actualFragmentationStrategyMap = fragmentationStrategyConfig
-				.fragmentationStrategyMap(fragmentationStrategyCreator, viewConfig);
+				.fragmentationStrategyMap(fragmentationStrategyCreator, ldesConfig);
 
-		Map<String, FragmentationStrategy> expectedFragmentationStrategyMap = Map.of("firstView",
-				firstCreatedFragmentationStrategy, "secondView", secondCreatedFragmentationStrategy);
+		Map<String, FragmentationStrategy> expectedFragmentationStrategyMap = Map.of("parcels/firstView",
+				firstCreatedFragmentationStrategy, "parcels/secondView", secondCreatedFragmentationStrategy);
 		assertEquals(expectedFragmentationStrategyMap, actualFragmentationStrategyMap);
 		InOrder inOrder = inOrder(fragmentationStrategyCreator);
 		inOrder.verify(fragmentationStrategyCreator, times(1))
-				.createFragmentationStrategyForView(viewConfig.getViews().get(0));
+				.createFragmentationStrategyForView(views.get(0));
 		inOrder.verify(fragmentationStrategyCreator, times(1))
-				.createFragmentationStrategyForView(viewConfig.getViews().get(1));
+				.createFragmentationStrategyForView(views.get(1));
 		inOrder.verifyNoMoreInteractions();
 	}
 
-	private ViewConfig getViewConfig() {
-		ViewConfig viewConfig = new ViewConfig();
-		ViewSpecification viewSpecification = getFirstViewSpecification();
-		ViewSpecification secondViewSpecification = getSecondViewSpecification();
-		viewConfig.setViews(List.of(viewSpecification, secondViewSpecification));
-		return viewConfig;
+	private LdesConfig getLdesConfig() {
+		LdesConfig ldesConfig = new LdesConfig();
+		LdesSpecification ldesSpecification = getFirstLdesSpecification();
+		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		return ldesConfig;
+	}
+
+	private LdesSpecification getFirstLdesSpecification() {
+		LdesSpecification ldesSpecification = new LdesSpecification();
+		ldesSpecification.setHostName("http://localhost:8080");
+		ldesSpecification.setCollectionName("parcels");
+		ldesSpecification.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
+		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesSpecification.setViews(List.of(getFirstViewSpecification(), getSecondViewSpecification()));
+		return ldesSpecification;
 	}
 
 	private ViewSpecification getFirstViewSpecification() {
@@ -79,13 +87,6 @@ class FragmentationStrategyConfigTest {
 		FragmentationConfig secondTimebasedConfig = getFragmentationConfig(TIMEBASED, SECOND_TIMEBASED_PROPERTIES);
 		secondViewSpecification.setFragmentations(List.of(secondTimebasedConfig));
 		return secondViewSpecification;
-	}
-
-	private FragmentationStrategyWrapper getFragmentationUpdater(ApplicationContext applicationContext,
-			String timebased) {
-		FragmentationStrategyWrapper timebasedFragmentationStrategyWrapper = mock(FragmentationStrategyWrapper.class);
-		when(applicationContext.getBean(timebased)).thenReturn(timebasedFragmentationStrategyWrapper);
-		return timebasedFragmentationStrategyWrapper;
 	}
 
 }

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -26,7 +26,7 @@ class TreeNodeFetcherImplTest {
 	@BeforeEach
 	void setUp() {
 		treeNodeFactory = mock(TreeNodeFactory.class);
-		LdesConfig ldesConfig = new LdesConfig();
+		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
 		ldesConfig.setHostName("http://localhost:8089");
 		treeNodeFetcher = new TreeNodeFetcherImpl(ldesConfig,
 				treeNodeFactory);

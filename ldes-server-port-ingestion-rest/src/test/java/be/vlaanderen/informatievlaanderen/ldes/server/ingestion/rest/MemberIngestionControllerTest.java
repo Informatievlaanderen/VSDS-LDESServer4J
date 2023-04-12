@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, LdesConfig.class, LdesShaclValidator.class })
+		IngestionWebConfig.class, LdesConfigDeprecated.class, LdesShaclValidator.class })
 class MemberIngestionControllerTest {
 
 	@Autowired
@@ -52,7 +52,7 @@ class MemberIngestionControllerTest {
 	private MemberIngestService memberIngestService;
 
 	@Autowired
-	private LdesConfig ldesConfig;
+	private LdesConfigDeprecated ldesConfig;
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 

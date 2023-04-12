@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
@@ -55,7 +55,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
 @ContextConfiguration(classes = { EventStreamController.class,
-		LdesConfig.class, RestConfig.class, EventStreamWebConfig.class })
+		LdesConfigDeprecated.class, RestConfig.class, EventStreamWebConfig.class })
 class EventStreamControllerTest {
 
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
@@ -65,7 +65,7 @@ class EventStreamControllerTest {
 	@MockBean
 	private EventStreamFactory eventStreamFactory;
 	@Autowired
-	LdesConfig ldesConfig;
+    LdesConfigDeprecated ldesConfig;
 	@Autowired
 	RestConfig restConfig;
 
@@ -153,13 +153,13 @@ class EventStreamControllerTest {
 	public static class EventStreamControllerTestConfiguration {
 
 		@Bean
-		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
+		public EventStreamConverter eventStreamConverter(final LdesConfigDeprecated ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
+		public CachingStrategy cachingStrategy(final LdesConfigDeprecated ldesConfig) {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}
