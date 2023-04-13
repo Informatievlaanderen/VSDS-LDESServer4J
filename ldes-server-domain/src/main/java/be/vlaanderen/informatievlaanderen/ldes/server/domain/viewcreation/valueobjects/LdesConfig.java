@@ -15,8 +15,7 @@ public class LdesConfig {
 	private String versionOf;
 	private Validation validation = new Validation();
 	private Model dcat = ModelFactory.createDefaultModel();
-	private boolean defaultView;
-	private ViewConfig viewConfig = new ViewConfig(new ArrayList<>(), false);
+	private ViewConfig viewConfig = ViewConfig.empty();
 
 	public String getHostName() {
 		return hostName;
@@ -95,7 +94,7 @@ public class LdesConfig {
 
 	public void setViews(List<ViewSpecification> views) {
 		views.forEach(viewSpec -> viewSpec.setCollectionName(collectionName));
-		this.viewConfig = new ViewConfig(views, defaultView);
+		viewConfig = viewConfig.withViews(views);
 	}
 
 	public void setDcat(Model dcat) {
@@ -107,8 +106,7 @@ public class LdesConfig {
 	}
 
 	public void setDefaultView(boolean defaultView) {
-		this.defaultView = defaultView;
-		this.viewConfig.setDefaultView(defaultView);
+		viewConfig = viewConfig.withDefaultView(defaultView);
 	}
 
 	public String getBaseUrl() {
