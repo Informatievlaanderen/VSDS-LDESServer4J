@@ -10,17 +10,19 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 
 public class Member {
 
-	private final String collectionName;
 	private final Model memberModel;
+	private final String collectionName;
+	private final Long sequenceNr;
 	private final String memberId;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 	private final List<String> treeNodeReferences;
 
-	public Member(String collectionName, String memberId, String versionOf, LocalDateTime timestamp,
+	public Member(String memberId, String collectionName, Long sequenceNr, String versionOf, LocalDateTime timestamp,
 			final Model memberModel, List<String> treeNodeReferences) {
 		this.collectionName = collectionName;
 		this.memberId = memberId;
+		this.sequenceNr = sequenceNr;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 		this.memberModel = memberModel;
@@ -82,4 +84,7 @@ public class Member {
 		return collectionName;
 	}
 
+	public Long getSequenceNr() {
+		return sequenceNr;
+	}
 }

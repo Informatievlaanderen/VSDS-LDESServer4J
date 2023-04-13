@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service.LdesMemberEntityConverter;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,6 +20,7 @@ public class MemberMongoRepository implements MemberRepository {
 	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	private final LdesMemberEntityRepository repository;
 	private final MongoTemplate mongoTemplate;
+	private final LdesMemberEntityConverter converter = new LdesMemberEntityConverter();
 
 	public MemberMongoRepository(final LdesMemberEntityRepository repository, MongoTemplate mongoTemplate) {
 		this.repository = repository;
@@ -27,7 +29,7 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	public Member saveLdesMember(Member member) {
-		repository.save(LdesMemberEntity.fromLdesMember(member));
+		repository.save(converter.fromLdesMember(member));
 		return member;
 	}
 
@@ -40,7 +42,7 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	public Optional<Member> getMember(String id) {
-		return repository.findById(id).map(LdesMemberEntity::toLdesMember);
+		return repository.findById(id).map(converter::toLdesMember);
 	}
 
 	@Override
@@ -70,6 +72,6 @@ public class MemberMongoRepository implements MemberRepository {
 	public Stream<Member> getMembersByReference(String treeNodeId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId));
-		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(LdesMemberEntity::toLdesMember);
+		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(converter::toLdesMember);
 	}
 }

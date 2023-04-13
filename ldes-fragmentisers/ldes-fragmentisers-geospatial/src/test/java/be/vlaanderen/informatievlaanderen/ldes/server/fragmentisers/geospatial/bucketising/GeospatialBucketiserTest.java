@@ -68,9 +68,9 @@ class GeospatialBucketiserTest {
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
 				.toModel();
 
-		return new Member("collectionName",
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				null, null, outputModel, List.of());
+		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				"collectionName",
+				0L, null, null, outputModel, List.of());
 	}
 
 }

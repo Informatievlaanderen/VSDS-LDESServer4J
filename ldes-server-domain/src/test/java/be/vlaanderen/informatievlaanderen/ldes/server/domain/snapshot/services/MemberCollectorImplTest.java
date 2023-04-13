@@ -51,7 +51,7 @@ class MemberCollectorImplTest {
 	}
 
 	private Member getMember(String versionOf) {
-		return new Member("collectionName", "", versionOf, LocalDateTime.now(), null, List.of());
+		return new Member("", "collectionName", 0L, versionOf, LocalDateTime.now(), null, List.of());
 	}
 
 }
