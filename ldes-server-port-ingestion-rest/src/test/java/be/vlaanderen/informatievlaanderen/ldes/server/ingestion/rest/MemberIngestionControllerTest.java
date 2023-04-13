@@ -1,12 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.IngestionRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -20,9 +28,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,12 +40,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -43,6 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
 		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
 class MemberIngestionControllerTest {
+	private final static String COLLECTION_NAME = "mobility-hindrances";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -50,11 +60,21 @@ class MemberIngestionControllerTest {
 	@MockBean
 	private MemberIngestService memberIngestService;
 
+	@MockBean
+	private LdesConfigModelService ldesConfigModelService;
+
 	@Autowired
 	private AppConfig appConfig;
 
-	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
+	@BeforeEach
+	void setUp() throws IOException, URISyntaxException {
+		Model shapeConfigModel = readModelFromFile("shape.jsonld", Lang.JSONLD);
 
+		when(ldesConfigModelService.retrieveShape(COLLECTION_NAME))
+				.thenReturn(new LdesConfigModel(COLLECTION_NAME, shapeConfigModel));
+	}
+
+	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
@@ -62,6 +82,7 @@ class MemberIngestionControllerTest {
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
 		verify(memberIngestService, times(1)).addMember(any(Member.class));
+		verify(ldesConfigModelService, times(1)).retrieveShape(COLLECTION_NAME);
 	}
 
 	@Test
@@ -114,6 +135,44 @@ class MemberIngestionControllerTest {
 						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
 	}
 
+	@Test
+	@Disabled("other config required")
+	void when_shapeUpdated_then_useNewShapeToValidate() throws Exception {
+		final String COLLECTION_NAME_2 = "restaurant";
+
+		Model oldShape = readModelFromFile("alternatives/example-shape-old.ttl", Lang.TURTLE);
+		LdesConfigModel oldLdesConfigShape = new LdesConfigModel(COLLECTION_NAME_2, oldShape);
+
+		Model newShape = readModelFromFile("alternatives/example-shape-new.ttl", Lang.TURTLE);
+		LdesConfigModel newLdesConfigShape = new LdesConfigModel(COLLECTION_NAME_2, newShape);
+
+		Model ldesMemberWithOldShape = readModelFromFile("alternatives/example-data-old.ttl", Lang.TURTLE);
+		String ldesMemberWithOldShapeString = RdfModelConverter.toString(ldesMemberWithOldShape, Lang.NQUADS);
+
+		Model ldesMemberWithNewShape = readModelFromFile("alternatives/example-data-new.ttl", Lang.TURTLE);
+		String ldesMemberWithNewShapeString = RdfModelConverter.toString(ldesMemberWithNewShape, Lang.NQUADS);
+
+		when(ldesConfigModelService.retrieveShape(COLLECTION_NAME_2)).thenReturn(oldLdesConfigShape, oldLdesConfigShape,
+				newLdesConfigShape);
+
+		mockMvc.perform(post("/restaurant")
+				.contentType("application/n-quads")
+				.content(ldesMemberWithOldShapeString))
+				.andDo(print())
+				.andExpect(status().isOk());
+
+		mockMvc.perform(post("/restaurant").contentType("application/n-quads").content(ldesMemberWithNewShapeString))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+
+		mockMvc.perform(post("/restaurant").contentType("application/n-quads").content(ldesMemberWithNewShapeString))
+				.andDo(print())
+				.andExpect(status().isOk());
+
+		verify(memberIngestService, times(2)).addMember(any(Member.class));
+		verify(ldesConfigModelService, times(3)).retrieveShape(COLLECTION_NAME_2);
+	}
+
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -121,6 +180,15 @@ class MemberIngestionControllerTest {
 		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
 		return RdfModelConverter.toString(RdfModelConverter.fromString(content,
 				Lang.NQUADS), rdfFormat);
+	}
+
+	private Model readModelFromFile(String fileName, Lang lang) throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URI uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI();
+
+		return RDFParserBuilder.create()
+				.fromString(Files.lines(Paths.get(uri)).collect(Collectors.joining())).lang(lang)
+				.toModel();
 	}
 
 	static class ContentTypeRdfFormatLangArgumentsProvider implements

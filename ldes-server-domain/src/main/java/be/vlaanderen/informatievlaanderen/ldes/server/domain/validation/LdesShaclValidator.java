@@ -1,15 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
 public class LdesShaclValidator extends AbstractShaclValidator {
 	private final LdesConfig.Validation validationConfig;
+	private final Model shaclShape;
 
-	public LdesShaclValidator(final LdesConfig ldesConfig) {
+	public LdesShaclValidator(Model shaclShape, final LdesConfig ldesConfig) {
+		this.shaclShape = shaclShape;
 		validationConfig = ldesConfig.validation();
 	}
 
@@ -30,8 +33,13 @@ public class LdesShaclValidator extends AbstractShaclValidator {
 
 	@Override
 	protected void initializeShapes() {
-		if (validationConfig.isEnabled() && validationConfig.getShape() != null) {
-			shapes = Shapes.parse(RDFDataMgr.loadGraph(validationConfig.getShape()));
+		if (validationConfig.isEnabled() && (shaclShape != null || validationConfig.getShape() != null)) {
+			if (shaclShape != null) {
+				shapes = Shapes.parse(shaclShape);
+			} else if (validationConfig.getShape() != null) {
+				shapes = Shapes.parse(RDFDataMgr.loadGraph(validationConfig.getShape()));
+
+			}
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -26,11 +28,11 @@ class LdesShaclValidatorTest {
 	private LdesShaclValidator ldesShaclValidator;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws URISyntaxException, IOException {
 		LdesConfig specification = new LdesConfig();
-		specification.validation().setShape("validation/example-shape.ttl");
+		Model model = readLdesMemberFromFile("validation/example-shape.ttl").getModel();
 		specification.validation().setEnabled(true);
-		ldesShaclValidator = new LdesShaclValidator(specification);
+		ldesShaclValidator = new LdesShaclValidator(model, specification);
 	}
 
 	@Test
@@ -48,11 +50,19 @@ class LdesShaclValidatorTest {
 
 		assertThrows(LdesShaclValidationException.class,
 				() -> ldesShaclValidator.validateShape(model));
+
+		Model mobilityModel = readModelFromFile("validation/mobility-hindrance/example-ldes-member.nq", Lang.NQUADS);
+		Model mobilityShape = readModelFromFile("validation/mobility-hindrance/shape.jsonld", Lang.JSONLD);
+
+		LdesShaclValidator mobilityValidator = new LdesShaclValidator(mobilityShape, new LdesConfig());
+
+		assertThrows(LdesShaclValidationException.class,
+				() -> mobilityValidator.validateShape(mobilityModel));
 	}
 
 	@Test
 	void when_ValidateWithNoProvidedShape_thenReturnValid() throws URISyntaxException, IOException {
-		ldesShaclValidator = new LdesShaclValidator(new LdesConfig());
+		ldesShaclValidator = new LdesShaclValidator(null, new LdesConfig());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
@@ -65,7 +75,7 @@ class LdesShaclValidatorTest {
 	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.validation().setEnabled(false);
-		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
+		ldesShaclValidator = new LdesShaclValidator(null, ldesConfig);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
@@ -83,5 +93,14 @@ class LdesShaclValidatorTest {
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.TTL)
 				.toModel();
 		return new Member("", "collectionName", 0L, null, null, m, new ArrayList<>());
+	}
+
+	private Model readModelFromFile(String fileName, Lang lang) throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URI uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI();
+
+		return RDFParserBuilder.create()
+				.fromString(Files.lines(Paths.get(uri)).collect(Collectors.joining())).lang(lang)
+				.toModel();
 	}
 }
