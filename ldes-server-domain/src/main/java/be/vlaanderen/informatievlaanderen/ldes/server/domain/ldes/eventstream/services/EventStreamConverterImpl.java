@@ -51,7 +51,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 		views.forEach(view -> {
 			List<TreeRelationResponse> treeRelationResponses = view.getRelations().stream()
 					.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-							ldesConfig.getBaseUrl()
+							ldesConfig.getHostName()
 									+ treeRelation.treeNode(),
 							treeRelation.treeValue(),
 							treeRelation.treeValueType(), treeRelation.relation()))

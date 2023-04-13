@@ -36,7 +36,8 @@ public class TreeNodeController {
 			@PathVariable("view") String viewName,
 			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language,
 			@PathVariable("collectionname") String collectionName) {
-		TreeNode treeNode = returnRequestedTreeNode(collectionName, response, viewName, requestParameters);
+		String fullViewName = "%s/%s".formatted(collectionName, viewName);
+		TreeNode treeNode = returnRequestedTreeNode(collectionName, response, fullViewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
 		return ResponseEntity

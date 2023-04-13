@@ -23,7 +23,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	}
 
 	public TreeNode getTreeNode(String treeNodeId, LdesConfig ldesConfig) {
-		String extendedTreeNodeId = ldesConfig.getBaseUrl() + treeNodeId;
+		String extendedTreeNodeId = ldesConfig.getHostName() + treeNodeId;
 		LdesFragment ldesFragment = ldesFragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));
