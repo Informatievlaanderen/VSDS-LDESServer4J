@@ -28,9 +28,6 @@ public class LdesMemberEntity {
 	@Indexed
 	private final String collectionName;
 
-	@Indexed
-	private final String collectionName;
-
 	public LdesMemberEntity(String id, String versionOf, LocalDateTime timestamp, final String model,
 			List<String> treeNodeReferences, String collectionName) {
 		this.id = id;
