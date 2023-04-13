@@ -30,7 +30,7 @@ public class MemberUpdaterChange {
 
 	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfig appConfig) {
 		this.mongoTemplate = mongoTemplate;
-		// TODO: 13/04/2023 solve as part of VSDSPUB-618 
+		// TODO: 13/04/2023 solve as part of VSDSPUB-618
 		this.ldesConfig = appConfig.getCollections().get(0);
 	}
 
