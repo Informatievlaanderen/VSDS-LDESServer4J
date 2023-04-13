@@ -36,7 +36,7 @@ class TreeNodeRemoverImplTest {
 		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("view"))
 				.thenReturn(Stream.of(notReadyToDeleteFragment, readyToDeleteFragment));
 		when(memberRepository.getMembersByReference("/view"))
-				.thenReturn(Stream.of(new Member("memberId", null, null, null, List.of())));
+				.thenReturn(Stream.of(new Member("collectionName", "memberId", null, null, null, List.of())));
 
 		treeNodeRemover.removeTreeNodes();
 
@@ -52,13 +52,13 @@ class TreeNodeRemoverImplTest {
 	}
 
 	private LdesFragment notReadyToDeleteFragment() {
-		return new LdesFragment("view", List.of(), true,
+		return new LdesFragment("collectionName", "view", List.of(), true,
 				LocalDateTime.now().plusDays(1), false, 0, List.of());
 	}
 
 	private LdesFragment readyToDeleteFragment() {
 		return new LdesFragment(
-				"view", List.of(), true, LocalDateTime.now(), false, 0, List.of());
+				"collectionName", "view", List.of(), true, LocalDateTime.now(), false, 0, List.of());
 	}
 
 }

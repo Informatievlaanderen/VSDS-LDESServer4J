@@ -26,7 +26,7 @@ class SubstringRelationsAttributerTest {
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(
-				VIEW_NAME, List.of());
+				"collectionName", VIEW_NAME, List.of());
 		CHILD_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);

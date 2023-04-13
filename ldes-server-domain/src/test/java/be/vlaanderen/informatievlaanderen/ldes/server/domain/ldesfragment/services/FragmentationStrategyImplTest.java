@@ -21,7 +21,7 @@ class FragmentationStrategyImplTest {
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
-		LdesFragment ldesFragment = new LdesFragment("view",
+		LdesFragment ldesFragment = new LdesFragment("collectionName", "view",
 				List.of());
 		Member member = mock(Member.class);
 		when(member.getLdesMemberId()).thenReturn("memberId");

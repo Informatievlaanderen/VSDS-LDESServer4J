@@ -22,14 +22,14 @@ class ParentUpdaterImplTest {
 	private ParentUpdater parentUpdater;
 	private static final String VIEW = "view";
 	private static final LdesFragment DELETED_CHILD = new LdesFragment(
-			VIEW, List.of(new FragmentPair("key", "value")));
+			"collectionName", VIEW, List.of(new FragmentPair("key", "value")));
 	private static final LdesFragment NON_DELETED_CHILD = new LdesFragment(
-			VIEW, List.of(new FragmentPair("key", "value2")));
+			"collectionName", VIEW, List.of(new FragmentPair("key", "value2")));
 	private static LdesFragment PARENT;
 
 	@BeforeEach
 	void setUp() {
-		PARENT = new LdesFragment(VIEW, List.of());
+		PARENT = new LdesFragment("collectionName", VIEW, List.of());
 		parentUpdater = new ParentUpdaterImpl(ldesFragmentRepository);
 
 	}

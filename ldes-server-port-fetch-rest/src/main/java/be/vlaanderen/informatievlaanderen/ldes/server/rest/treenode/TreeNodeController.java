@@ -46,7 +46,7 @@ public class TreeNodeController {
 
 	private TreeNode returnRequestedTreeNode(HttpServletResponse response, String viewName,
 			Map<String, String> fragmentationMap) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
 

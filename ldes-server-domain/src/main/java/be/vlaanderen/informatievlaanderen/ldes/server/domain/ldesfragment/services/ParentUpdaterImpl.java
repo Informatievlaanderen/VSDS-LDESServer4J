@@ -28,7 +28,7 @@ public class ParentUpdaterImpl implements ParentUpdater {
 		LdesFragment parent = ldesFragmentRepository
 				.retrieveMutableFragment(currentChild.getViewName(), parentPairs)
 				.orElseThrow(() -> new MissingFragmentException(
-						new LdesFragment(currentChild.getViewName(), parentPairs).getFragmentId()));
+						new LdesFragment("collectionName", currentChild.getViewName(), parentPairs).getFragmentId()));
 
 		Optional<TreeRelation> optionalOldTreeRelation = parent.getRelations().stream()
 				.filter(treeRelation -> treeRelation.treeNode().equals(childId)).findFirst();

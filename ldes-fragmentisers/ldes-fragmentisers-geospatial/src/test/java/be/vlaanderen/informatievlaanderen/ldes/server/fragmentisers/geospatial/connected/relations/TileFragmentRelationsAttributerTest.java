@@ -25,7 +25,7 @@ class TileFragmentRelationsAttributerTest {
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		PARENT_FRAGMENT = new LdesFragment(
-				VIEW_NAME, List.of());
+				"collectionName", VIEW_NAME, List.of());
 		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(ldesFragmentRepository);
 	}
 

@@ -22,8 +22,8 @@ class SnapshotFragmenterImplTest {
 
 	@Test
 	void when_MembersAreSentForFragmentation_TheyAreFragmentedOneByOne() {
-		Set<Member> members = Set.of(new Member("id", null, null, null, List.of()));
-		LdesFragment rootTreeNode = new LdesFragment("view", List.of());
+		Set<Member> members = Set.of(new Member("collectionName", "id", null, null, null, List.of()));
+		LdesFragment rootTreeNode = new LdesFragment("collectionName", "view", List.of());
 
 		snapshotFragmenter.fragmentSnapshotMembers(members, rootTreeNode);
 

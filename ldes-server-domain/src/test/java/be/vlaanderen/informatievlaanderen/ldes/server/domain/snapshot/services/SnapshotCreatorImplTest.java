@@ -43,7 +43,7 @@ class SnapshotCreatorImplTest {
 		List<LdesFragment> ldesFragmentsForSnapshot = getLdesFragmentsForSnapshot();
 		Map<String, List<Member>> membersOfSnapshot = getMembers();
 		when(memberCollector.getMembersGroupedByVersionOf(ldesFragmentsForSnapshot)).thenReturn(membersOfSnapshot);
-		LdesFragment rootFragmentOfSnapshot = new LdesFragment("snapshot-", List.of());
+		LdesFragment rootFragmentOfSnapshot = new LdesFragment("collectionName", "snapshot-", List.of());
 		when(rootFragmentCreator.createRootFragmentForView(startsWith("snapshot-"))).thenReturn(rootFragmentOfSnapshot);
 
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot);
@@ -72,13 +72,13 @@ class SnapshotCreatorImplTest {
 	}
 
 	private Member createMember(String memberId, String versionOf, int minute) {
-		return new Member(memberId, versionOf, LocalDateTime.of(1, 1, 1, 1, minute), null, List.of());
+		return new Member("collectionName", memberId, versionOf, LocalDateTime.of(1, 1, 1, 1, minute), null, List.of());
 	}
 
 	private List<LdesFragment> getLdesFragmentsForSnapshot() {
-		LdesFragment ldesFragment = new LdesFragment("view", List.of());
-		LdesFragment ldesFragment1 = new LdesFragment("view", List.of(new FragmentPair("page", "1")));
-		LdesFragment ldesFragment2 = new LdesFragment("view", List.of(new FragmentPair("page", "2")));
+		LdesFragment ldesFragment = new LdesFragment("collectionName", "view", List.of());
+		LdesFragment ldesFragment1 = new LdesFragment("collectionName", "view", List.of(new FragmentPair("page", "1")));
+		LdesFragment ldesFragment2 = new LdesFragment("collectionName", "view", List.of(new FragmentPair("page", "2")));
 		return List.of(ldesFragment, ldesFragment1, ldesFragment2);
 	}
 }

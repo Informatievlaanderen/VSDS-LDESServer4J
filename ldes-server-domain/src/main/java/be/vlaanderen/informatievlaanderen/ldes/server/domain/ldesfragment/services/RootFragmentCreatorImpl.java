@@ -27,7 +27,7 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 	}
 
 	private LdesFragment createRoot(String viewName) {
-		LdesFragment ldesFragment = new LdesFragment(viewName, List.of());
+		LdesFragment ldesFragment = new LdesFragment("collectionName", viewName, List.of());
 		return ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 }
