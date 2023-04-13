@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
@@ -42,7 +43,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		Model model = ModelFactory.createDefaultModel();
 
 		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(treeNode.getCollectionName())
-				.orElseThrow();
+				.orElseThrow(() -> new CollectionNotFoundException(treeNode.getCollectionName()));
 
 		model.add(addTreeNodeStatements(treeNode, ldesSpecification));
 

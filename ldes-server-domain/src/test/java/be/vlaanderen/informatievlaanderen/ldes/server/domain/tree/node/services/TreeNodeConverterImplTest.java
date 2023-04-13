@@ -48,7 +48,7 @@ class TreeNodeConverterImplTest {
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of(),
-				"collectionName");
+				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(6, getNumberOfStatements(model));
@@ -59,7 +59,7 @@ class TreeNodeConverterImplTest {
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of(),
-				"collectionName");
+				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(2, getNumberOfStatements(model));
@@ -74,14 +74,14 @@ class TreeNodeConverterImplTest {
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
 		Member member = new Member(
-				"collectionName",
+				COLLECTION_NAME,
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", null, null,
 				ldesMemberModel,
 				List.of());
 		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
-				List.of(member), "collectionName");
+				List.of(member), COLLECTION_NAME);
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
