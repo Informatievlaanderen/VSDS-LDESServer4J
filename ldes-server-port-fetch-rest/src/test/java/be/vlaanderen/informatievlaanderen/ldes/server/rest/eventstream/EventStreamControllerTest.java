@@ -128,7 +128,7 @@ class EventStreamControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-				LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 		when(eventStreamFactory.getEventStream(ldesConfig)).thenReturn(
 				new EventStream("mobility-hindrances", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
@@ -138,7 +138,7 @@ class EventStreamControllerTest {
 	}
 
 	private TreeNode createView(String viewName) {
-				LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 
 		return new TreeNode(ldesConfig.getBaseUrl() + "/" + viewName, false,
 				false, true, List.of(), List.of(), ldesConfig.getCollectionName());
