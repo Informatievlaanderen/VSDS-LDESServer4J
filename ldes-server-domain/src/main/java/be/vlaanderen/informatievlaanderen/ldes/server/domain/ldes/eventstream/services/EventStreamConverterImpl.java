@@ -31,28 +31,28 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection());
 
 		Model model = ModelFactory.createDefaultModel();
-		model.add(addCollectionStatements(eventStream, ldesConfig));
-		model.add(addViewStatements(eventStream.views(), ldesConfig));
+		String hostName = ldesConfig.getHostName();
+		model.add(addCollectionStatements(eventStream, hostName));
+		model.add(addViewStatements(eventStream.views(), hostName));
 		model.add(ldesConfig.getDcat());
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addCollectionStatements(EventStream eventStream, LdesConfig ldesConfig) {
-		String eventStreamId = ldesConfig.getHostName() + "/" + eventStream.collection();
+	private List<Statement> addCollectionStatements(EventStream eventStream, String hostName) {
+		String eventStreamId = hostName + "/" + eventStream.collection();
 		List<String> views = eventStream.views().stream().map(TreeNode::getFragmentId).toList();
 		EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(eventStreamId,
 				eventStream.timestampPath(), eventStream.versionOfPath(), eventStream.shape(), views);
 		return eventStreamInfoResponse.convertToStatements();
 	}
 
-	private List<Statement> addViewStatements(List<TreeNode> views, LdesConfig ldesConfig) {
+	private List<Statement> addViewStatements(List<TreeNode> views, String hostName) {
 		final List<Statement> statements = new ArrayList<>();
 
 		views.forEach(view -> {
 			List<TreeRelationResponse> treeRelationResponses = view.getRelations().stream()
 					.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-							ldesConfig.getHostName()
-									+ treeRelation.treeNode(),
+							hostName + treeRelation.treeNode(),
 							treeRelation.treeValue(),
 							treeRelation.treeValueType(), treeRelation.relation()))
 					.toList();
