@@ -11,7 +11,7 @@ class SnapshotEntityTest {
 
 	@Test
 	void test_ConversionFromAndToDomain() {
-		Snapshot snapshot = new Snapshot("collectionName", "id", "shape", LocalDateTime.now(), "snapshotOf");
+		Snapshot snapshot = new Snapshot("id", "collectionName", "shape", LocalDateTime.now(), "snapshotOf");
 
 		Snapshot convertedSnapshot = SnapshotEntity.fromSnapshot(snapshot).toSnapshot();
 

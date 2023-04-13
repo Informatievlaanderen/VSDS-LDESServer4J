@@ -23,7 +23,7 @@ class SnapshotRelationLinkerImplTest {
 
 	@Test
 	void test_ConnectLastFragmentOfSnapshotToUncoveredFragments() {
-		Snapshot snapshot = new Snapshot("collectionName", "id", null, null, null);
+		Snapshot snapshot = new Snapshot("id", "collectionName", null, null, null);
 		List<LdesFragment> treeNodesOfSnapshot = getTreeNodesOfSnapshot();
 		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(treeNodesOfSnapshot);
 		List<LdesFragment> treeNodes = getTreeNodes();
@@ -40,7 +40,7 @@ class SnapshotRelationLinkerImplTest {
 
 	@Test
 	void when_NoMutableNonRootTreeNodeOfSnapshotIsAvailable_IllegalStateExceptionIsThrown() {
-		Snapshot snapshot = new Snapshot("collectionName", "id", null, null, null);
+		Snapshot snapshot = new Snapshot("id", "collectionName", null, null, null);
 		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(List.of());
 		List<LdesFragment> treeNodes = List.of();
 

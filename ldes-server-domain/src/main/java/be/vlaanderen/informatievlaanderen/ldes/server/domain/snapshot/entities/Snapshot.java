@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 public class Snapshot {
 
 	private final String snapshotId;
+	private final String collectionName;
 	private final String shape;
 	private final LocalDateTime snapshotUntil;
 	private final String snapshotOf;
-	private final String collectionName;
 
-	public Snapshot(String collectionName, String snapshotId, String shape, LocalDateTime snapshotUntil,
+	public Snapshot(String snapshotId, String collectionName, String shape, LocalDateTime snapshotUntil,
 			String snapshotOf) {
 		this.collectionName = collectionName;
 		this.snapshotId = snapshotId;

@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 public class SnapshotEntity {
 	@Id
 	private String snapshotId;
+	private String collectionName;
 	private String shape;
 	private LocalDateTime snapshotUntil;
 	private String snapshotOf;
-	private String collectionName;
 
-	public SnapshotEntity(String collectionName, String snapshotId, String shape, LocalDateTime snapshotUntil,
+	public SnapshotEntity(String snapshotId, String collectionName, String shape, LocalDateTime snapshotUntil,
 			String snapshotOf) {
 		this.collectionName = collectionName;
 		this.snapshotId = snapshotId;
@@ -25,11 +25,11 @@ public class SnapshotEntity {
 	}
 
 	public Snapshot toSnapshot() {
-		return new Snapshot(this.collectionName, this.snapshotId, this.shape, this.snapshotUntil, this.snapshotOf);
+		return new Snapshot(this.snapshotId, this.collectionName, this.shape, this.snapshotUntil, this.snapshotOf);
 	}
 
 	public static SnapshotEntity fromSnapshot(Snapshot snapshot) {
-		return new SnapshotEntity(snapshot.getCollectionName(), snapshot.getSnapshotId(), snapshot.getShape(),
+		return new SnapshotEntity(snapshot.getSnapshotId(), snapshot.getCollectionName(), snapshot.getShape(),
 				snapshot.getSnapshotUntil(),
 				snapshot.getSnapshotOf());
 	}
