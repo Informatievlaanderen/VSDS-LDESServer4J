@@ -27,8 +27,8 @@ class LdesConfigTest {
 	@Test
 	@DisplayName("Verify content of LdesConfig")
 	void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig() {
-		verifyFirstLdes(ldesConfig.getLdesStreams().get(0));
-		verifySecondLdes(ldesConfig.getLdesStreams().get(1));
+		verifyFirstLdes(ldesConfig.getCollections().get(0));
+		verifySecondLdes(ldesConfig.getCollections().get(1));
 
 	}
 

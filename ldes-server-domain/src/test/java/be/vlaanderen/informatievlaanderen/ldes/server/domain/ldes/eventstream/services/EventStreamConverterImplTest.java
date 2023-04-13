@@ -47,7 +47,7 @@ class EventStreamConverterImplTest {
 		ldesSpecification.setDcat(dcat);
 		ldesSpecification.setDefaultView(true);
 
-		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesConfig.setCollections(List.of(ldesSpecification));
 		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig);
 	}
 

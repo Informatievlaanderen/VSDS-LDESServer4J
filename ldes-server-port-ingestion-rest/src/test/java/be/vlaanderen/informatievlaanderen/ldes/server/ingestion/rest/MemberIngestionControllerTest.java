@@ -102,7 +102,7 @@ class MemberIngestionControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = ldesConfig.getLdesStreams().get(0).getMemberType();
+		String ldesMemberType = ldesConfig.getCollections().get(0).getMemberType();
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 

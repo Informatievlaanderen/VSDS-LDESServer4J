@@ -23,7 +23,7 @@ public class RetentionPolicyConfig {
 	@Bean
 	public Map<String, List<RetentionPolicy>> retentionPolicyMap(LdesConfig ldesConfig) {
 		return ldesConfig
-				.getLdesStreams()
+				.getCollections()
 				.stream()
 				.flatMap(ldesSpec -> ldesSpec.getViews().stream())
 				.collect(Collectors.toMap(ViewSpecification::getName,

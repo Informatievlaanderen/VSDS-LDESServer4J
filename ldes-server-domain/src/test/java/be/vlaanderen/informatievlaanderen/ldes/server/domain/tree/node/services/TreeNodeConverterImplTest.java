@@ -34,7 +34,7 @@ class TreeNodeConverterImplTest {
 	void setUp() {
 		LdesConfig ldesConfig = new LdesConfig();
 		LdesSpecification ldesSpecification = new LdesSpecification();
-		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesConfig.setCollections(List.of(ldesSpecification));
 		ldesSpecification.setCollectionName(COLLECTION_NAME);
 		ldesSpecification.setHostName(HOST_NAME);
 		ldesSpecification.validation()

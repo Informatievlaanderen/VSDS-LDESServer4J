@@ -40,7 +40,7 @@ class RetentionPolicyConfigTest {
 	private LdesConfig getLdesConfig(String policyName) {
 		LdesConfig ldesConfig = new LdesConfig();
 		LdesSpecification ldesSpecification = getFirstLdesSpecification(policyName);
-		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesConfig.setCollections(List.of(ldesSpecification));
 		return ldesConfig;
 	}
 

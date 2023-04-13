@@ -1,4 +1,4 @@
-ldes-streams:
+collections:
   - hostname: "http://localhost:8080"
     collectionname: "mobility-hindrances"
     shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"

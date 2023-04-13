@@ -44,7 +44,7 @@ class EtagCachingStrategyTest {
 	private void setupCachingStrategy(String hostname, String collection) {
 		LdesConfig ldesConfig = new LdesConfig();
 		LdesSpecification ldesSpecification = new LdesSpecification();
-		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesConfig.setCollections(List.of(ldesSpecification));
 		ldesSpecification.setHostName(hostname);
 		ldesSpecification.setCollectionName(collection);
 

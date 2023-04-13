@@ -85,7 +85,7 @@ class TreeNodeControllerTest {
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
 
-		final LdesSpecification ldesSpecification = ldesConfig.getLdesStreams().get(0);
+		final LdesSpecification ldesSpecification = ldesConfig.getCollections().get(0);
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesSpecification.getCollectionName(),
 				VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));

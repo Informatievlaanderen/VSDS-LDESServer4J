@@ -1,4 +1,4 @@
-ldes-streams:
+collections:
   - collection-name: "ldes-1"
     host-name: "http://localhost:8089"
     validation:

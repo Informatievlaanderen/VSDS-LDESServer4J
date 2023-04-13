@@ -31,7 +31,7 @@ class TreeNodeFetcherImplTest {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesSpecification = new LdesSpecification();
 		ldesSpecification.setCollectionName("collectionName");
-		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesConfig.setCollections(List.of(ldesSpecification));
 		ldesSpecification.setHostName("http://localhost:8089");
 		treeNodeFetcher = new TreeNodeFetcherImpl(ldesConfig, treeNodeFactory);
 	}

@@ -24,7 +24,7 @@ public class FragmentationStrategyConfig {
 			LdesConfig ldesConfig) {
 
 		return ldesConfig
-				.getLdesStreams()
+				.getCollections()
 				.stream()
 				.flatMap(ldesSpec -> ldesSpec.getViews().stream())
 				.collect(Collectors.toMap(ViewSpecification::getName,

@@ -24,7 +24,7 @@ class FragmentationStrategyConfigTest {
 	void when_FragmentationStrategyConfigIsCorrectlyConfigured_MapOfFragmentationStrategiesIsReturned() {
 		FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
 		LdesConfig ldesConfig = getLdesConfig();
-		List<ViewSpecification> views = ldesConfig.getLdesStreams().get(0).getViews();
+		List<ViewSpecification> views = ldesConfig.getCollections().get(0).getViews();
 		FragmentationStrategy firstCreatedFragmentationStrategy = mock(FragmentationStrategy.class);
 		when(fragmentationStrategyCreator.createFragmentationStrategyForView(views.get(0)))
 				.thenReturn(firstCreatedFragmentationStrategy);
@@ -50,7 +50,7 @@ class FragmentationStrategyConfigTest {
 	private LdesConfig getLdesConfig() {
 		LdesConfig ldesConfig = new LdesConfig();
 		LdesSpecification ldesSpecification = getFirstLdesSpecification();
-		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesConfig.setCollections(List.of(ldesSpecification));
 		return ldesConfig;
 	}
 
