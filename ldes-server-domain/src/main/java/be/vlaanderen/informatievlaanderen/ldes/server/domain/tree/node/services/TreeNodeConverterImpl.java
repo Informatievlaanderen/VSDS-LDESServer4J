@@ -41,12 +41,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	public Model toModel(final TreeNode treeNode) {
 		Model model = ModelFactory.createDefaultModel();
 
-		LdesSpecification ldesSpec = ldesConfig.getLdesSpecification(treeNode.getCollectionName()).orElseThrow();
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(treeNode.getCollectionName())
+				.orElseThrow();
 
-		model.add(addTreeNodeStatements(treeNode));
+		model.add(addTreeNodeStatements(treeNode, ldesSpecification));
 
 		if (!treeNode.getMembers().isEmpty()) {
-			model.add(addEventStreamStatements(treeNode));
+			model.add(addEventStreamStatements(treeNode, ldesSpecification));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
 		}
@@ -54,26 +55,29 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addTreeNodeStatements(TreeNode treeNode) {
+	private List<Statement> addTreeNodeStatements(TreeNode treeNode, LdesSpecification ldesSpecification) {
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						ldesConfig.getBaseUrl() + treeRelation.treeNode(),
+						ldesSpecification.getBaseUrl() + treeRelation.treeNode(),
 						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
 				.toList();
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
 				treeRelationResponses);
 		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId());
+		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), ldesSpecification);
 
 		return statements;
 	}
 
-	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId) {
-		Resource collection = createResource(ldesConfig.getBaseUrl());
+	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
+			LdesSpecification ldesSpecification) {
+		Resource collection = createResource(ldesSpecification.getBaseUrl());
 
 		if (isView) {
-			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(ldesConfig.getBaseUrl(),
-					ldesConfig.getTimestampPath(), ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(),
+			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
+					ldesSpecification.getBaseUrl(),
+					ldesSpecification.getTimestampPath(), ldesSpecification.getVersionOfPath(),
+					ldesSpecification.validation().getShape(),
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 		} else {
@@ -81,9 +85,9 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		}
 	}
 
-	private List<Statement> addEventStreamStatements(TreeNode treeNode) {
+	private List<Statement> addEventStreamStatements(TreeNode treeNode, LdesSpecification ldesSpecification) {
 		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(ldesConfig.getBaseUrl());
+		Resource viewId = createResource(ldesSpecification.getBaseUrl());
 		statements.addAll(getEventStreamStatements(viewId));
 		statements.addAll(getMemberStatements(treeNode, viewId));
 		return statements;

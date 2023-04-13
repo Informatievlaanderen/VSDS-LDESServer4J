@@ -23,7 +23,7 @@ public class EventStreamController {
 	private final LdesConfig ldesConfig;
 
 	public EventStreamController(RestConfig restConfig, EventStreamFactory eventStreamFactory,
-								 CachingStrategy cachingStrategy, LdesConfig ldesConfig) {
+			CachingStrategy cachingStrategy, LdesConfig ldesConfig) {
 		this.restConfig = restConfig;
 		this.eventStreamFactory = eventStreamFactory;
 		this.cachingStrategy = cachingStrategy;

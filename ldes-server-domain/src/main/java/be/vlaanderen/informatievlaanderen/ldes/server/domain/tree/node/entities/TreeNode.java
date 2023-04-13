@@ -13,16 +13,18 @@ public class TreeNode {
 	private final boolean isView;
 	private final List<TreeRelation> relations;
 	private final List<Member> members;
+	private final String collectionName;
 
 	public TreeNode(String fragmentId, boolean immutable, boolean softDeleted, boolean isView,
 			List<TreeRelation> relations,
-			List<Member> members) {
+			List<Member> members, String collectionName) {
 		this.fragmentId = fragmentId;
 		this.immutable = immutable;
 		this.softDeleted = softDeleted;
 		this.isView = isView;
 		this.relations = relations;
 		this.members = members;
+		this.collectionName = collectionName;
 	}
 
 	public String getFragmentId() {
@@ -63,4 +65,9 @@ public class TreeNode {
 	public int hashCode() {
 		return Objects.hash(fragmentId);
 	}
+
+	public String getCollectionName() {
+		return collectionName;
+	}
+
 }

@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
@@ -84,7 +83,7 @@ class TreeNodeControllerTest {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
-				List.of());
+				List.of(), "collectionName");
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
@@ -155,7 +154,7 @@ class TreeNodeControllerTest {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
 				List.of());
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, false, List.of(),
-				List.of());
+				List.of(), "collectionName");
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
 		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();

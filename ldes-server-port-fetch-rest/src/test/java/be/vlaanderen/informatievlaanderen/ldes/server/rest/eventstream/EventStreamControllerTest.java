@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
@@ -11,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.se
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -18,7 +18,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.Ev
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -74,11 +73,12 @@ class EventStreamControllerTest {
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 		when(eventStreamFactory.getEventStream(ldesSpecification)).thenReturn(
 				new EventStream("collection", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
-				ldesConfig.getCollectionName())
+				ldesSpecification.getCollectionName())
 				.accept(mediaType))
 				.andDo(print())
 				.andExpect(status().isOk());
@@ -121,12 +121,11 @@ class EventStreamControllerTest {
 		return null;
 	}
 
-	// TODO: 12/04/2023 fix as part of VSDSPUB-607
-	@Disabled
 	@Test
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 		when(eventStreamFactory.getEventStream(ldesSpecification)).thenReturn(
 				new EventStream("collection", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
@@ -136,8 +135,10 @@ class EventStreamControllerTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		return new TreeNode(ldesConfig.getBaseUrl() + "/" + viewName, false,
-				false, true, List.of(), List.of());
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+
+		return new TreeNode(ldesSpecification.getBaseUrl() + "/" + viewName, false,
+				false, true, List.of(), List.of(), "collectionName");
 	}
 
 	static class MediaTypeRdfFormatsArgumentsProvider implements

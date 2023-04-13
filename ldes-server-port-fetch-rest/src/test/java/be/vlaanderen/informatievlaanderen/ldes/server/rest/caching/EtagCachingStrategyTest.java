@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
@@ -29,7 +28,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of());
+		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of(), "collectionName");
 	}
 
 	private String testGeneration(String hostname, String collection, List<TreeNode> views, String expectedEtag) {

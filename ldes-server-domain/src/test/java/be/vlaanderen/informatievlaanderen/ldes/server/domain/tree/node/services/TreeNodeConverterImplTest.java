@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
@@ -48,7 +47,8 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of());
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of(),
+				"collectionName");
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(6, getNumberOfStatements(model));
@@ -58,7 +58,8 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of());
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of(),
+				"collectionName");
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(2, getNumberOfStatements(model));
@@ -80,7 +81,7 @@ class TreeNodeConverterImplTest {
 		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
-				List.of(member));
+				List.of(member), "collectionName");
 
 		Model model = treeNodeConverter.toModel(treeNode);
 

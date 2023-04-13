@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
@@ -139,6 +138,6 @@ class EventStreamConverterImplTest {
 
 	private TreeNode createView(String viewName, List<TreeRelation> relations) {
 		return new TreeNode("http://localhost:8080/mobility-hindrances/" + viewName, false, false, true, relations,
-				List.of());
+				List.of(), "collectionName");
 	}
 }
