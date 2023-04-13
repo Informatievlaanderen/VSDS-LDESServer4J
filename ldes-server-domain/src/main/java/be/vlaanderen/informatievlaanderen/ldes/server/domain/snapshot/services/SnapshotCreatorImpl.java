@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.springframework.stereotype.Component;
 
@@ -30,12 +29,17 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	@Override
 	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot, LdesConfig ldesConfig) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		Snapshot snapshot = new Snapshot("snapshot-" + snapshotTime,
+		String collectionName = ldesConfig.getCollectionName();
+		Snapshot snapshot = new Snapshot(collectionName, getSnapshotId(collectionName, snapshotTime),
 				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator.createRootFragmentForView(snapshot.getSnapshotId());
 		snapshotFragmenter.fragmentSnapshotMembers(membersOfSnapshot, rootTreeNodeOfSnapshot);
 		return snapshot;
+	}
+
+	private String getSnapshotId(String collectionName, LocalDateTime snapshotTime) {
+		return "%s/snapshot-%s".formatted(collectionName, snapshotTime);
 	}
 
 	private Set<Member> getMembersOfSnapshot(List<LdesFragment> ldesFragments) {

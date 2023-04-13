@@ -44,7 +44,7 @@ class SnapshotServiceImplTest {
 	void when_TreeNodesAreAvailable_TheyCanBeUsedToCreateSnapshot() {
 		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment("collectionName", "by-page", List.of()));
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
-		Snapshot snapshot = new Snapshot("id", "shape", LocalDateTime.now(), "of");
+		Snapshot snapshot = new Snapshot("collectionName", "id", "shape", LocalDateTime.now(), "of");
 		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig)).thenReturn(snapshot);
 		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("collectionName", "lastTreeNodeOfSnapshot", List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot, treeNodesForSnapshot))
