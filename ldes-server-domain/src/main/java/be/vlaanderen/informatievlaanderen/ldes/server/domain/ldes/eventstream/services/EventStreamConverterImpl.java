@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
@@ -19,37 +20,39 @@ import java.util.List;
 public class EventStreamConverterImpl implements EventStreamConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final LdesConfig ldesConfig;
+	private final AppConfig appConfig;
 
-	public EventStreamConverterImpl(PrefixAdder prefixAdder, LdesConfig ldesConfig) {
+	public EventStreamConverterImpl(PrefixAdder prefixAdder, AppConfig appConfig) {
 		this.prefixAdder = prefixAdder;
-		this.ldesConfig = ldesConfig;
+		this.appConfig = appConfig;
 	}
 
 	public Model toModel(final EventStream eventStream) {
+		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection());
+
 		Model model = ModelFactory.createDefaultModel();
-		model.add(addCollectionStatements(eventStream));
-		model.add(addViewStatements(eventStream.views()));
+		String hostName = ldesConfig.getHostName();
+		model.add(addCollectionStatements(eventStream, hostName));
+		model.add(addViewStatements(eventStream.views(), hostName));
 		model.add(ldesConfig.getDcat());
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addCollectionStatements(EventStream eventStream) {
-		String eventStreamId = ldesConfig.getHostName() + "/" + eventStream.collection();
+	private List<Statement> addCollectionStatements(EventStream eventStream, String hostName) {
+		String eventStreamId = hostName + "/" + eventStream.collection();
 		List<String> views = eventStream.views().stream().map(TreeNode::getFragmentId).toList();
 		EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(eventStreamId,
 				eventStream.timestampPath(), eventStream.versionOfPath(), eventStream.shape(), views);
 		return eventStreamInfoResponse.convertToStatements();
 	}
 
-	private List<Statement> addViewStatements(List<TreeNode> views) {
+	private List<Statement> addViewStatements(List<TreeNode> views, String hostName) {
 		final List<Statement> statements = new ArrayList<>();
 
 		views.forEach(view -> {
 			List<TreeRelationResponse> treeRelationResponses = view.getRelations().stream()
 					.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-							ldesConfig.getBaseUrl()
-									+ treeRelation.treeNode(),
+							hostName + treeRelation.treeNode(),
 							treeRelation.treeValue(),
 							treeRelation.treeValueType(), treeRelation.relation()))
 					.toList();

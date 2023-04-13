@@ -1,11 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -29,6 +30,7 @@ class EventStreamConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
+		AppConfig appConfig = new AppConfig();
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("http://localhost:8080");
 		ldesConfig.setCollectionName("mobility-hindrances");
@@ -43,8 +45,10 @@ class EventStreamConverterImplTest {
 				<http://www.w3.org/ns/dcat#Catalog>
 				.""").lang(Lang.NQUADS).toModel();
 		ldesConfig.setDcat(dcat);
+		ldesConfig.setDefaultView(true);
 
-		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig);
+		appConfig.setCollections(List.of(ldesConfig));
+		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, appConfig);
 	}
 
 	@Test
@@ -53,7 +57,8 @@ class EventStreamConverterImplTest {
 				"http://purl.org/dc/terms/isVersionOf",
 				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				List.of(createView("view1", List.of()), createView("view2",
-						List.of(new TreeRelation("path", "/node", "value", DATE_TIME_TYPE, "relation")))));
+						List.of(new TreeRelation("path", "/mobility-hindrances/node", "value", DATE_TIME_TYPE,
+								"relation")))));
 
 		Model model = eventStreamConverter.toModel(eventStream);
 
@@ -135,6 +140,6 @@ class EventStreamConverterImplTest {
 
 	private TreeNode createView(String viewName, List<TreeRelation> relations) {
 		return new TreeNode("http://localhost:8080/mobility-hindrances/" + viewName, false, false, true, relations,
-				List.of());
+				List.of(), "collectionName");
 	}
 }

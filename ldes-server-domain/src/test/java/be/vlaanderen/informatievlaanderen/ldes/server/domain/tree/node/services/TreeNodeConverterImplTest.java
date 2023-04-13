@@ -1,11 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -31,7 +32,9 @@ class TreeNodeConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
+		AppConfig appConfig = new AppConfig();
 		LdesConfig ldesConfig = new LdesConfig();
+		appConfig.setCollections(List.of(ldesConfig));
 		ldesConfig.setCollectionName(COLLECTION_NAME);
 		ldesConfig.setHostName(HOST_NAME);
 		ldesConfig.validation()
@@ -39,12 +42,13 @@ class TreeNodeConverterImplTest {
 		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, ldesConfig);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig);
 	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of());
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of(),
+				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(6, getNumberOfStatements(model));
@@ -54,7 +58,8 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of());
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of(),
+				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
 		assertEquals(2, getNumberOfStatements(model));
@@ -69,14 +74,14 @@ class TreeNodeConverterImplTest {
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
 		Member member = new Member(
-				"collectionName",
+				COLLECTION_NAME,
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", null, null,
 				ldesMemberModel,
 				List.of());
-		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
+		TreeRelation treeRelation = new TreeRelation("path", "/mobility-hindrances/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
-				List.of(member));
+				List.of(member), COLLECTION_NAME);
 
 		Model model = treeNodeConverter.toModel(treeNode);
 

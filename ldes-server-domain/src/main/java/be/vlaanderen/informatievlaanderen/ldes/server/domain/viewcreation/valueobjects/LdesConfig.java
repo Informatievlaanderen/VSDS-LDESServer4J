@@ -1,12 +1,10 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ConfigurationProperties(prefix = "ldes")
+import java.util.List;
+
 public class LdesConfig {
 
 	private String hostName;
@@ -16,6 +14,7 @@ public class LdesConfig {
 	private String versionOf;
 	private Validation validation = new Validation();
 	private Model dcat = ModelFactory.createDefaultModel();
+	private ViewConfig viewConfig = ViewConfig.empty();
 
 	public String getHostName() {
 		return hostName;
@@ -65,11 +64,8 @@ public class LdesConfig {
 		this.validation = validation;
 	}
 
-	public String getBaseUrl() {
-		return hostName + "/" + collectionName;
-	}
-
 	public static class Validation {
+
 		private String shape;
 		private boolean enabled = true;
 
@@ -88,6 +84,16 @@ public class LdesConfig {
 		public void setEnabled(boolean enabled) {
 			this.enabled = enabled;
 		}
+
+	}
+
+	public List<ViewSpecification> getViews() {
+		return viewConfig.getViews(collectionName);
+	}
+
+	public void setViews(List<ViewSpecification> views) {
+		views.forEach(viewSpec -> viewSpec.setCollectionName(collectionName));
+		viewConfig = viewConfig.withViews(views);
 	}
 
 	public void setDcat(Model dcat) {
@@ -96,6 +102,14 @@ public class LdesConfig {
 
 	public Model getDcat() {
 		return dcat;
+	}
+
+	public void setDefaultView(boolean defaultView) {
+		viewConfig = viewConfig.withDefaultView(defaultView);
+	}
+
+	public String getBaseUrl() {
+		return hostName + "/" + collectionName;
 	}
 
 }

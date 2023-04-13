@@ -25,7 +25,6 @@ public class LdesMemberEntity {
 	private final String model;
 	@Indexed
 	private final List<String> treeNodeReferences;
-
 	@Indexed
 	private final String collectionName;
 

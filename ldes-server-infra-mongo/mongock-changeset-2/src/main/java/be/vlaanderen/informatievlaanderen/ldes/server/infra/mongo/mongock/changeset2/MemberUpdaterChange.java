@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV3;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LocalDateTimeConverter;
@@ -24,12 +25,21 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 public class MemberUpdaterChange {
 
 	private final MongoTemplate mongoTemplate;
-	private final LdesConfig ldesConfig;
+	private final String timeStampPath;
+	private final String versionOfPath;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public MemberUpdaterChange(MongoTemplate mongoTemplate, LdesConfig ldesConfig) {
+	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfig appConfig) {
 		this.mongoTemplate = mongoTemplate;
-		this.ldesConfig = ldesConfig;
+
+		if (appConfig.getCollections().size() == 1) {
+			LdesConfig ldesConfig = appConfig.getCollections().get(0);
+			timeStampPath = ldesConfig.getTimestampPath();
+			versionOfPath = ldesConfig.getVersionOfPath();
+		} else {
+			timeStampPath = "";
+			versionOfPath = "";
+		}
 	}
 
 	/**
@@ -61,7 +71,7 @@ public class MemberUpdaterChange {
 
 	private LocalDateTime extractTimestamp(Model memberModel) {
 		LiteralImpl literalImpl = memberModel
-				.listStatements(null, createProperty(ldesConfig.getTimestampPath()), (RDFNode) null)
+				.listStatements(null, createProperty(timeStampPath), (RDFNode) null)
 				.nextOptional()
 				.map(statement -> (LiteralImpl) statement.getObject())
 				.orElse(null);
@@ -74,7 +84,7 @@ public class MemberUpdaterChange {
 
 	private String extractVersionOf(Model memberModel) {
 		return memberModel
-				.listStatements(null, createProperty(ldesConfig.getVersionOfPath()), (RDFNode) null)
+				.listStatements(null, createProperty(versionOfPath), (RDFNode) null)
 				.nextOptional()
 				.map(statement -> statement.getObject().toString())
 				.orElse(null);

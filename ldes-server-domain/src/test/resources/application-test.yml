@@ -1,9 +1,40 @@
-ldes:
-  collection-name: "exampleData"
-  host-name: "http://localhost:8089"
-  validation:
-    shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
-  member-type: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
-  timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
-  version-of: "http://purl.org/dc/terms/isVersionOf"
-  dcat: "dcat-test.ttl"
+collections:
+  - collection-name: "ldes-1"
+    host-name: "http://localhost:8089"
+    validation:
+      shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
+    member-type: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
+    timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
+    version-of: "http://purl.org/dc/terms/isVersionOf"
+    dcat: "dcat-test.ttl"
+    defaultView: "true"
+    views:
+      - name: "firstView"
+        fragmentations:
+          - name: "geospatial"
+            config:
+              maxZoomLevel: 15
+              fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+          - name: "timebased"
+            config:
+              memberLimit: 5
+        retention-policies:
+          - name: "timebased"
+            config:
+              duration: PT1M
+      - name: "secondView"
+        fragmentations:
+          - name: "timebased"
+            config:
+              memberLimit: 3
+  - collection-name: "ldes-2"
+    host-name: "http://localhost:8088"
+    member-type: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
+    timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
+    defaultView: "false"
+    views:
+      - name: "firstView"
+        fragmentations:
+          - name: "pagination"
+            config:
+              memberLimit: 21

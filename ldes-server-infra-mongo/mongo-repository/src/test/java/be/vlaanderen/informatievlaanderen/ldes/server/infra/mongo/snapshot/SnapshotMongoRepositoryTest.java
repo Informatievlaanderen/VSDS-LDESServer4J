@@ -17,7 +17,7 @@ class SnapshotMongoRepositoryTest {
 
 	@Test
 	void when_SnapshotIsSaved_SnapshotEntityIsStoredInMongoCollection() {
-		Snapshot snapshot = new Snapshot("id", "shape", LocalDateTime.now(), "snapshotOf");
+		Snapshot snapshot = new Snapshot("id", "collectionName", "shape", LocalDateTime.now(), "snapshotOf");
 
 		snapshotMongoRepository.saveSnapShot(snapshot);
 

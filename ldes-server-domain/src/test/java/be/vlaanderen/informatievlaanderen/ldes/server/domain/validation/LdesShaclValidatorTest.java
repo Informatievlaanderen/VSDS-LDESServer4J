@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -27,10 +27,10 @@ class LdesShaclValidatorTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.validation().setShape("validation/example-shape.ttl");
-		ldesConfig.validation().setEnabled(true);
-		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
+		LdesConfig specification = new LdesConfig();
+		specification.validation().setShape("validation/example-shape.ttl");
+		specification.validation().setEnabled(true);
+		ldesShaclValidator = new LdesShaclValidator(specification);
 	}
 
 	@Test

@@ -1,12 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.IngestionRestResponseEntityExceptionHandler;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,17 +30,18 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, LdesConfig.class, LdesShaclValidator.class })
+		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
 class MemberIngestionControllerTest {
 
 	@Autowired
@@ -52,7 +51,7 @@ class MemberIngestionControllerTest {
 	private MemberIngestService memberIngestService;
 
 	@Autowired
-	private LdesConfig ldesConfig;
+	private AppConfig appConfig;
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 
@@ -69,15 +68,12 @@ class MemberIngestionControllerTest {
 	void when_POSTRequestIsPerformedWithoutMemberId_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-id.nq", Lang.NQUADS);
 
-		var postRequest = post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString);
-
-		Exception outerException = assertThrows(Exception.class, () -> mockMvc.perform(postRequest));
-		Exception malFormedException = assertThrows(MalformedMemberIdException.class, () -> {
-			throw outerException.getCause();
-		});
-
-		assertEquals(malFormedException.getMessage(),
-				new MalformedMemberIdException(ldesConfig.getMemberType()).getMessage());
+		mockMvc.perform(post("/mobility-hindrances")
+				.contentType("application/n-quads")
+				.content(ldesMemberString))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(
+						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
 	}
 
 	@Test
@@ -106,18 +102,16 @@ class MemberIngestionControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = ldesConfig.getMemberType();
+		String ldesMemberType = appConfig.getCollections().get(0).getMemberType();
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 
-		MockHttpServletRequestBuilder postRequest = post("/mobility-hindrances")
+		mockMvc.perform(post("/mobility-hindrances")
 				.contentType("application/n-quads")
-				.content(ldesMemberStringWrongType);
-		Exception outerException = assertThrows(Exception.class, () -> mockMvc.perform(postRequest));
-		Exception actualException = assertThrows(MalformedMemberIdException.class, () -> {
-			throw outerException.getCause();
-		});
-		assertEquals(actualException.getMessage(), new MalformedMemberIdException(ldesMemberType).getMessage());
+				.content(ldesMemberStringWrongType))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(
+						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)

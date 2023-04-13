@@ -21,7 +21,8 @@ import static org.mockito.Mockito.*;
 
 class FragmentationExecutorImplTest {
 
-	private static final String VIEW_NAME = "view";
+	private static final String COLLECTION_NAME = "collectionName";
+	private static final String VIEW_NAME = COLLECTION_NAME + "/view";
 	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private FragmentationExecutorImpl fragmentationExecutor;
@@ -35,11 +36,12 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
-		LdesFragment ldesFragment = new LdesFragment("collectionName", VIEW_NAME,
+		LdesFragment ldesFragment = new LdesFragment(COLLECTION_NAME, VIEW_NAME,
 				List.of());
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 		Member member = mock(Member.class);
+		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
 
 		fragmentationExecutor.executeFragmentation(member);
 
@@ -50,17 +52,36 @@ class FragmentationExecutorImplTest {
 	}
 
 	@Test
+	void whenMemberIsFromDifferentCollection_thenItIsNotFragmented() {
+		final String alternativeViewName = "other/view";
+		final String alternativeCollection = "other";
+		LdesFragment ldesFragment = new LdesFragment(alternativeCollection, alternativeViewName, List.of());
+		when(ldesFragmentRepository.retrieveRootFragment(alternativeViewName))
+				.thenReturn(Optional.of(ldesFragment));
+		Member member = mock(Member.class);
+		when(member.getCollectionName()).thenReturn(alternativeCollection);
+
+		fragmentationExecutor.executeFragmentation(member);
+
+		verify(ldesFragmentRepository, times(0))
+				.retrieveRootFragment(alternativeViewName);
+		verify(fragmentationStrategy, times(0)).addMemberToFragment(eq(ldesFragment),
+				eq(member), any());
+	}
+
+	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
 		when(ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest("collectionName", VIEW_NAME,
+				.retrieveFragment(new LdesFragmentRequest(COLLECTION_NAME, VIEW_NAME,
 						List.of()).generateFragmentId()))
 				.thenReturn(Optional.empty());
 		Member member = mock(Member.class);
+		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
 
 		MissingRootFragmentException missingRootFragmentException = assertThrows(MissingRootFragmentException.class,
 				() -> fragmentationExecutor.executeFragmentation(member));
 
-		assertEquals("Could not retrieve root fragment for view view",
+		assertEquals("Could not retrieve root fragment for view collectionName/view",
 				missingRootFragmentException.getMessage());
 		verify(ldesFragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME);
@@ -68,12 +89,16 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
-		LdesFragment ldesFragment = new LdesFragment("collectionName", VIEW_NAME,
+		LdesFragment ldesFragment = new LdesFragment(COLLECTION_NAME, VIEW_NAME,
 				List.of());
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME))
 				.thenReturn(Optional.of(ldesFragment));
 		IntStream.range(0, 100).parallel()
-				.forEach(i -> fragmentationExecutor.executeFragmentation(mock(Member.class)));
+				.forEach(i -> {
+					Member member = mock(Member.class);
+					when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
+					fragmentationExecutor.executeFragmentation(member);
+				});
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
 		inOrder.verify(ldesFragmentRepository, times(1))

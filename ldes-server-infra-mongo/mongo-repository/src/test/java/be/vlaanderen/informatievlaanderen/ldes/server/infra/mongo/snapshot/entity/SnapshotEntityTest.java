@@ -11,7 +11,7 @@ class SnapshotEntityTest {
 
 	@Test
 	void test_ConversionFromAndToDomain() {
-		Snapshot snapshot = new Snapshot("id", "shape", LocalDateTime.now(), "snapshotOf");
+		Snapshot snapshot = new Snapshot("id", "collectionName", "shape", LocalDateTime.now(), "snapshotOf");
 
 		Snapshot convertedSnapshot = SnapshotEntity.fromSnapshot(snapshot).toSnapshot();
 
@@ -19,6 +19,7 @@ class SnapshotEntityTest {
 		assertEquals(snapshot.getSnapshotUntil(), convertedSnapshot.getSnapshotUntil());
 		assertEquals(snapshot.getSnapshotOf(), convertedSnapshot.getSnapshotOf());
 		assertEquals(snapshot.getShape(), convertedSnapshot.getShape());
+		assertEquals(snapshot.getCollectionName(), convertedSnapshot.getCollectionName());
 	}
 
 }

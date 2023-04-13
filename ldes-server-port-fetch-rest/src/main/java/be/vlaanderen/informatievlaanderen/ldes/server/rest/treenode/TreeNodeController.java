@@ -31,11 +31,13 @@ public class TreeNodeController {
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "${ldes.collectionname}/{view}")
+	@GetMapping(value = "{collectionname}/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String viewName,
-			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language) {
-		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
+			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language,
+			@PathVariable("collectionname") String collectionName) {
+		String fullViewName = "%s/%s".formatted(collectionName, viewName);
+		TreeNode treeNode = returnRequestedTreeNode(collectionName, response, fullViewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
 		return ResponseEntity
@@ -44,9 +46,9 @@ public class TreeNodeController {
 				.body(treeNode);
 	}
 
-	private TreeNode returnRequestedTreeNode(HttpServletResponse response, String viewName,
+	private TreeNode returnRequestedTreeNode(String collectionName, HttpServletResponse response, String viewName,
 			Map<String, String> fragmentationMap) {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", viewName,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(collectionName, viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
 

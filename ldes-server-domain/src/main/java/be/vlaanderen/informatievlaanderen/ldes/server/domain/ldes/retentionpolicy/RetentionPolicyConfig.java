@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -21,11 +21,11 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retenti
 public class RetentionPolicyConfig {
 
 	@Bean
-	public Map<String, List<RetentionPolicy>> retentionPolicyMap(
-			ViewConfig viewConfig) {
-		return viewConfig
-				.getViews()
+	public Map<String, List<RetentionPolicy>> retentionPolicyMap(AppConfig appConfig) {
+		return appConfig
+				.getCollections()
 				.stream()
+				.flatMap(ldesSpec -> ldesSpec.getViews().stream())
 				.collect(Collectors.toMap(ViewSpecification::getName,
 						viewSpecification -> viewSpecification
 								.getRetentionConfigs()

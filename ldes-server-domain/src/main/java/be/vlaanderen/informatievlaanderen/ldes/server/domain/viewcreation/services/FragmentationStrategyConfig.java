@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,10 +21,12 @@ public class FragmentationStrategyConfig {
 	@Qualifier("configured-fragmentation")
 	public Map<String, FragmentationStrategy> fragmentationStrategyMap(
 			FragmentationStrategyCreator fragmentationStrategyCreator,
-			ViewConfig viewConfig) {
-		return viewConfig
-				.getViews()
+			AppConfig appConfig) {
+
+		return appConfig
+				.getCollections()
 				.stream()
+				.flatMap(ldesSpec -> ldesSpec.getViews().stream())
 				.collect(Collectors.toMap(ViewSpecification::getName,
 						fragmentationStrategyCreator::createFragmentationStrategyForView));
 	}

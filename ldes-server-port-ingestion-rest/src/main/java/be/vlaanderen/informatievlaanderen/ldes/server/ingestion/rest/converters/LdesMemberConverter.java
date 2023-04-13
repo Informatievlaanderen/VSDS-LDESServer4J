@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import jakarta.annotation.PostConstruct;
 import org.apache.jena.rdf.model.Model;
@@ -15,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,12 +37,12 @@ import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
-	private final LdesConfig ldesConfig;
+	private final AppConfig appConfig;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public LdesMemberConverter(LdesConfig ldesConfig) {
+	public LdesMemberConverter(AppConfig appConfig) {
 		super(MediaType.ALL);
-		this.ldesConfig = ldesConfig;
+		this.appConfig = appConfig;
 	}
 
 	@Override
@@ -52,15 +55,21 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
 		Model memberModel = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
-		String memberId = extractMemberId(memberModel);
-		String versionOf = extractVersionOf(memberModel);
-		LocalDateTime timestamp = extractTimestamp(memberModel);
-		return new Member("collectionName", memberId, versionOf, timestamp, memberModel, List.of());
+
+		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+				.getRequest().getRequestURI().substring(1);
+		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
+
+		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());
+		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());
+		LocalDateTime timestamp = extractTimestamp(memberModel, ldesConfig.getTimestampPath());
+
+		return new Member(collectionName, memberId, versionOf, timestamp, memberModel, List.of());
 	}
 
-	private LocalDateTime extractTimestamp(Model memberModel) {
+	private LocalDateTime extractTimestamp(Model memberModel, String timestampPath) {
 		LiteralImpl literalImpl = memberModel
-				.listStatements(null, createProperty(ldesConfig.getTimestampPath()), (RDFNode) null)
+				.listStatements(null, createProperty(timestampPath), (RDFNode) null)
 				.nextOptional()
 				.map(statement -> (LiteralImpl) statement.getObject())
 				.orElse(null);
@@ -71,20 +80,20 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 	}
 
-	private String extractVersionOf(Model memberModel) {
+	private String extractVersionOf(Model memberModel, String versionOfPath) {
 		return memberModel
-				.listStatements(null, createProperty(ldesConfig.getVersionOfPath()), (RDFNode) null)
+				.listStatements(null, createProperty(versionOfPath), (RDFNode) null)
 				.nextOptional()
 				.map(statement -> statement.getObject().toString())
 				.orElse(null);
 	}
 
-	private String extractMemberId(Model model) {
+	private String extractMemberId(Model model, String memberType) {
 		return model
-				.listStatements(null, RDF_SYNTAX_TYPE, createResource(ldesConfig.getMemberType()))
+				.listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
 				.nextOptional()
 				.map(statement -> statement.getSubject().toString())
-				.orElseThrow(() -> new MalformedMemberIdException(ldesConfig.getMemberType()));
+				.orElseThrow(() -> new MalformedMemberIdException(memberType));
 	}
 
 	@Override

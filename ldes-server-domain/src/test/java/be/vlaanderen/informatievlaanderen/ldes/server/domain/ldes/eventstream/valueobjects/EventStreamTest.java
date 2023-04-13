@@ -27,10 +27,10 @@ class EventStreamTest {
 	void test_EqualityOfEventStreams() {
 		EventStream eventStream = new EventStream(COLLECTION,
 				TIMESTAMP_PATH, VERSION_OF_PATH, SHAPE,
-				List.of(new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of())));
+				List.of(new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of(), "collectionName")));
 		EventStream otherEventStream = new EventStream(COLLECTION,
 				TIMESTAMP_PATH, VERSION_OF_PATH, SHAPE,
-				List.of(new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of())));
+				List.of(new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of(), "collectionName")));
 
 		assertEquals(eventStream, otherEventStream);
 		assertEquals(eventStream, eventStream);
@@ -41,7 +41,7 @@ class EventStreamTest {
 	@ArgumentsSource(EventStreamArgumentProvider.class)
 	void test_InequalityOfEventStreams(Object otherEventStream) {
 		EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, SHAPE, List.of(
-				new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of())));
+				new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of(), "collectionName")));
 
 		assertNotEquals(eventStream, otherEventStream);
 	}
@@ -55,7 +55,8 @@ class EventStreamTest {
 					Arguments.of(new EventStream(COLLECTION,
 							"other timestamp path", "other version", SHAPE, List.of())),
 					Arguments.of(new EventStream("Other collection", TIMESTAMP_PATH, VERSION_OF_PATH, SHAPE,
-							List.of(new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of())))),
+							List.of(new TreeNode(TREE_NODE_ID, false, false, false, List.of(), List.of(),
+									"collectionName")))),
 					Arguments.of(new EventStream("Other collection", "other timestamp path",
 							"other version", "other shape", null)));
 		}

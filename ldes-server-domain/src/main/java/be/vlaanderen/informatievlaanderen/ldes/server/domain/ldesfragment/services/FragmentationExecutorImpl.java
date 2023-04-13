@@ -35,10 +35,18 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 		Observation parentObservation = Observation.createNotStarted("execute fragmentation",
 				observationRegistry)
 				.start();
-		fragmentationStrategyMap.entrySet().parallelStream().forEach(entry -> {
-			LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentObservation);
-			entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentObservation);
-		});
+
+		fragmentationStrategyMap
+				.entrySet()
+				.stream()
+				.filter(entry -> entry.getKey().split("/")[0].equals(member.getCollectionName()))
+				.toList()
+				.parallelStream()
+				.forEach(entry -> {
+					LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentObservation);
+					entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentObservation);
+				});
+
 		parentObservation.stop();
 	}
 

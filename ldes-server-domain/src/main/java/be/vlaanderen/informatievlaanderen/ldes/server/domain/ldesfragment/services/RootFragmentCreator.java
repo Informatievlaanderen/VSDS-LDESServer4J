@@ -5,4 +5,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 public interface RootFragmentCreator {
 
 	LdesFragment createRootFragmentForView(String viewName);
+
 }

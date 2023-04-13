@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
@@ -11,6 +10,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -20,6 +21,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -45,10 +47,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,32 +63,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
-		LdesConfig.class, RestConfig.class, TreeViewWebConfig.class,
+		AppConfig.class, RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
 
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
+	private String fullViewName;
 	private static final Integer CONFIGURED_MAX_AGE = 180;
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
 
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
-	private LdesConfig ldesConfig;
+	private AppConfig appConfig;
 	@Autowired
 	RestConfig restConfig;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 
+	@BeforeEach
+	void setUp() {
+		fullViewName = appConfig.getCollections().get(0).getCollectionName() + "/" + VIEW_NAME;
+	}
+
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+
+		final LdesConfig ldesConfig = appConfig.getCollections().get(0);
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(),
+				fullViewName,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
-				List.of());
+				List.of(), ldesConfig.getCollectionName());
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
@@ -102,7 +117,7 @@ class TreeNodeControllerTest {
 		assertEquals(expectedHeaderValue, headerValue);
 
 		headerValue = result.getResponse().getHeader("Etag");
-		String expectedEtag = "\"a94b581e9537a12f07470c02a46a30060d6e997c723d1e6b17b0e1b0897f05f8\"";
+		String expectedEtag = "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);
 
@@ -148,11 +163,13 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
 				List.of());
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, false, List.of(),
-				List.of());
+				List.of(), "collectionName");
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
+
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 
 		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
@@ -163,10 +180,12 @@ class TreeNodeControllerTest {
 	void when_GETRequestButMissingFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
+
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
@@ -181,10 +200,12 @@ class TreeNodeControllerTest {
 	void when_GETRequestButDeletedFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
+
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
@@ -226,14 +247,14 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
+		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
+			return new TreeNodeConverterImpl(prefixAdder, appConfig);
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
-			return new EtagCachingStrategy(ldesConfig);
+		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
+			return new EtagCachingStrategy(appConfig);
 		}
 	}
 }
