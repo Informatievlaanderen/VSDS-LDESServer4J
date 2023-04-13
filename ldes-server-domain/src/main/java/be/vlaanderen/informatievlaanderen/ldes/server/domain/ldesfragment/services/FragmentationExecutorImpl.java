@@ -36,7 +36,6 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 				observationRegistry)
 				.start();
 
-		// TODO: 13/04/2023 replace by viewname
 		fragmentationStrategyMap
 				.entrySet()
 				.stream()
@@ -47,6 +46,7 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 					LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentObservation);
 					entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentObservation);
 				});
+
 		parentObservation.stop();
 	}
 
