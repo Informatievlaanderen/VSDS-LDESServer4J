@@ -45,6 +45,7 @@ class EventStreamConverterImplTest {
 				<http://www.w3.org/ns/dcat#Catalog>
 				.""").lang(Lang.NQUADS).toModel();
 		ldesSpecification.setDcat(dcat);
+		ldesSpecification.setDefaultView(true);
 
 		ldesConfig.setLdesStreams(List.of(ldesSpecification));
 		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig);
