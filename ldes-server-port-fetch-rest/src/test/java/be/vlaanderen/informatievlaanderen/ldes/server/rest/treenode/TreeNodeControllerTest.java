@@ -21,6 +21,7 @@ import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -68,6 +69,7 @@ class TreeNodeControllerTest {
 
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private static final String VIEW_NAME = "view";
+	private String fullViewName;
 	private static final Integer CONFIGURED_MAX_AGE = 180;
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
 
@@ -80,6 +82,11 @@ class TreeNodeControllerTest {
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 
+	@BeforeEach
+	void setUp() {
+		fullViewName = appConfig.getCollections().get(0).getCollectionName() + "/" + VIEW_NAME;
+	}
+
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
@@ -87,7 +94,7 @@ class TreeNodeControllerTest {
 
 		final LdesConfig ldesConfig = appConfig.getCollections().get(0);
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(),
-				VIEW_NAME,
+				fullViewName,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
 				List.of(), ldesConfig.getCollectionName());
@@ -110,7 +117,7 @@ class TreeNodeControllerTest {
 		assertEquals(expectedHeaderValue, headerValue);
 
 		headerValue = result.getResponse().getHeader("Etag");
-		String expectedEtag = "\"a94b581e9537a12f07470c02a46a30060d6e997c723d1e6b17b0e1b0897f05f8\"";
+		String expectedEtag = "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);
 
@@ -156,7 +163,7 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
 				List.of());
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, false, List.of(),
 				List.of(), "collectionName");
@@ -173,7 +180,7 @@ class TreeNodeControllerTest {
 	void when_GETRequestButMissingFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
@@ -193,7 +200,7 @@ class TreeNodeControllerTest {
 	void when_GETRequestButDeletedFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
