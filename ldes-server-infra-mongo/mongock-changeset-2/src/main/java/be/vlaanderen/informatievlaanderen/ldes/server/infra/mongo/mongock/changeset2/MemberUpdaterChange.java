@@ -25,14 +25,21 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 public class MemberUpdaterChange {
 
 	private final MongoTemplate mongoTemplate;
-	private final LdesConfig ldesConfig;
+	private final String timeStampPath;
+	private final String versionOfPath;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
 	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfig appConfig) {
 		this.mongoTemplate = mongoTemplate;
-		// TODO: 13/04/2023 solve as part of VSDSPUB-618
-		// TODO: 13/04/2023 meer dan 1 collectie dan leeg en anders van de eerste
-		this.ldesConfig = appConfig.getCollections().get(0);
+
+		if (appConfig.getCollections().size() == 1) {
+			LdesConfig ldesConfig = appConfig.getCollections().get(0);
+			timeStampPath = ldesConfig.getTimestampPath();
+			versionOfPath = ldesConfig.getVersionOfPath();
+		} else {
+			timeStampPath = "";
+			versionOfPath = "";
+		}
 	}
 
 	/**
@@ -64,7 +71,7 @@ public class MemberUpdaterChange {
 
 	private LocalDateTime extractTimestamp(Model memberModel) {
 		LiteralImpl literalImpl = memberModel
-				.listStatements(null, createProperty(ldesConfig.getTimestampPath()), (RDFNode) null)
+				.listStatements(null, createProperty(timeStampPath), (RDFNode) null)
 				.nextOptional()
 				.map(statement -> (LiteralImpl) statement.getObject())
 				.orElse(null);
@@ -77,7 +84,7 @@ public class MemberUpdaterChange {
 
 	private String extractVersionOf(Model memberModel) {
 		return memberModel
-				.listStatements(null, createProperty(ldesConfig.getVersionOfPath()), (RDFNode) null)
+				.listStatements(null, createProperty(versionOfPath), (RDFNode) null)
 				.nextOptional()
 				.map(statement -> statement.getObject().toString())
 				.orElse(null);
