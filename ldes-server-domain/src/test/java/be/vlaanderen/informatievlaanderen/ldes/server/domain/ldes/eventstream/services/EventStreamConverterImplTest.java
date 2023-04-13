@@ -57,7 +57,8 @@ class EventStreamConverterImplTest {
 				"http://purl.org/dc/terms/isVersionOf",
 				"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				List.of(createView("view1", List.of()), createView("view2",
-						List.of(new TreeRelation("path", "/node", "value", DATE_TIME_TYPE, "relation")))));
+						List.of(new TreeRelation("path", "/mobility-hindrances/node", "value", DATE_TIME_TYPE,
+								"relation")))));
 
 		Model model = eventStreamConverter.toModel(eventStream);
 
