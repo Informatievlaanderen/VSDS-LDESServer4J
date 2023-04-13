@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -29,21 +31,23 @@ class EventStreamConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
-		ldesConfig.setHostName("http://localhost:8080");
-		ldesConfig.setCollectionName("mobility-hindrances");
-		ldesConfig.validation()
+		LdesConfig ldesConfig = new LdesConfig();
+		LdesSpecification ldesSpecification = new LdesSpecification();
+		ldesSpecification.setHostName("http://localhost:8080");
+		ldesSpecification.setCollectionName("mobility-hindrances");
+		ldesSpecification.validation()
 				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
-		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
-		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+		ldesSpecification.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
+		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesSpecification.setVersionOf("http://purl.org/dc/terms/isVersionOf");
 
 		Model dcat = RDFParserBuilder.create().fromString("""
 				<http://localhost:8080/metadata/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>
 				<http://www.w3.org/ns/dcat#Catalog>
 				.""").lang(Lang.NQUADS).toModel();
-		ldesConfig.setDcat(dcat);
+		ldesSpecification.setDcat(dcat);
 
+		ldesConfig.setLdesStreams(List.of(ldesSpecification));
 		eventStreamConverter = new EventStreamConverterImpl(prefixAdder, ldesConfig);
 	}
 

@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -31,14 +33,16 @@ class TreeNodeConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
-		ldesConfig.setCollectionName(COLLECTION_NAME);
-		ldesConfig.setHostName(HOST_NAME);
-		ldesConfig.validation()
+		LdesConfig ldesConfig = new LdesConfig();
+		LdesSpecification ldesSpecification = new LdesSpecification();
+		ldesConfig.setLdesStreams(List.of(ldesSpecification));
+		ldesSpecification.setCollectionName(COLLECTION_NAME);
+		ldesSpecification.setHostName(HOST_NAME);
+		ldesSpecification.validation()
 				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
-		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
-		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+		ldesSpecification.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
+		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesSpecification.setVersionOf("http://purl.org/dc/terms/isVersionOf");
 		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 	}
 

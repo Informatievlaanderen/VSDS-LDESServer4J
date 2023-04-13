@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 public class CollectionNotFoundException extends RuntimeException {
 	public CollectionNotFoundException(String collectionName) {

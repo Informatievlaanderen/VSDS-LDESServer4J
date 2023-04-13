@@ -1,17 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
-// TODO: 12/04/2023 remove when it is not used as bean anymore (replace with ldesconfig)
-@Configuration
-@ConfigurationProperties
 public class ViewConfig {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
@@ -20,12 +14,6 @@ public class ViewConfig {
 			"bidirectionalRelations", "false");
 	private final List<ViewSpecification> views;
 	private boolean defaultView;
-
-	public ViewConfig() {
-		// TODO: 12/04/2023 remove when viewconfig is not a bean anymore
-		views = new ArrayList<>();
-		defaultView = false;
-	}
 
 	public ViewConfig(List<ViewSpecification> views, boolean defaultView) {
 		this.views = views != null ? views : new ArrayList<>();

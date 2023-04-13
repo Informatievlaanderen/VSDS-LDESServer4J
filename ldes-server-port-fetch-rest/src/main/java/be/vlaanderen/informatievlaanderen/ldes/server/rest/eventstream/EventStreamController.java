@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,19 +20,23 @@ public class EventStreamController {
 	private final RestConfig restConfig;
 	private final EventStreamFactory eventStreamFactory;
 	private final CachingStrategy cachingStrategy;
+	private final LdesConfig ldesConfig;
 
 	public EventStreamController(RestConfig restConfig, EventStreamFactory eventStreamFactory,
-			CachingStrategy cachingStrategy) {
+								 CachingStrategy cachingStrategy, LdesConfig ldesConfig) {
 		this.restConfig = restConfig;
 		this.eventStreamFactory = eventStreamFactory;
 		this.cachingStrategy = cachingStrategy;
+		this.ldesConfig = ldesConfig;
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}")
 	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
-		EventStream eventStream = eventStreamFactory.getEventStream();
+
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(collectionName).orElseThrow();
+		EventStream eventStream = eventStreamFactory.getEventStream(ldesSpecification);
 
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);

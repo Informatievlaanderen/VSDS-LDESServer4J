@@ -11,6 +11,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -57,7 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
-		LdesConfigDeprecated.class, RestConfig.class, TreeViewWebConfig.class,
+		LdesConfig.class, RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
 
@@ -69,7 +71,7 @@ class TreeNodeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
-	private LdesConfigDeprecated ldesConfig;
+	private LdesConfig ldesConfig;
 	@Autowired
 	RestConfig restConfig;
 	@MockBean
@@ -86,8 +88,10 @@ class TreeNodeControllerTest {
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
 						VIEW_NAME)
 						.param("generatedAtTime",
 								FRAGMENTATION_VALUE_1)
@@ -154,7 +158,9 @@ class TreeNodeControllerTest {
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
-		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+
+		mockMvc.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
 				.andExpect(status().isUnsupportedMediaType());
 	}
@@ -168,8 +174,10 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
 
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
 						VIEW_NAME).accept("application/n-quads"))
 				.andDo(print())
 				.andExpect(status().isNotFound());
@@ -186,8 +194,10 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
 
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
+				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
 						VIEW_NAME).accept("application/n-quads"))
 				.andDo(print())
 				.andExpect(status().isGone());
@@ -226,13 +236,13 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final LdesConfigDeprecated ldesConfig) {
+		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfigDeprecated ldesConfig) {
+		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}

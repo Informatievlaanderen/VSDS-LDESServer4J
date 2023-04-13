@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -17,7 +18,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.IS_PART_OF_PROPERTY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -25,10 +29,10 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final LdesConfigDeprecated ldesConfig;
+	private final LdesConfig ldesConfig;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			LdesConfigDeprecated ldesConfig) {
+			LdesConfig ldesConfig) {
 		this.prefixAdder = prefixAdder;
 		this.ldesConfig = ldesConfig;
 	}
@@ -36,6 +40,9 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	@Override
 	public Model toModel(final TreeNode treeNode) {
 		Model model = ModelFactory.createDefaultModel();
+
+		LdesSpecification ldesSpec = ldesConfig.getLdesSpecification(treeNode.getCollectionName()).orElseThrow();
+
 		model.add(addTreeNodeStatements(treeNode));
 
 		if (!treeNode.getMembers().isEmpty()) {

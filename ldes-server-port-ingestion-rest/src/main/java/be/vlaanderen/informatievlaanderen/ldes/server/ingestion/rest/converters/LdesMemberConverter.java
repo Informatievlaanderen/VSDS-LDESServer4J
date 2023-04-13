@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import jakarta.annotation.PostConstruct;
 import org.apache.jena.rdf.model.Model;

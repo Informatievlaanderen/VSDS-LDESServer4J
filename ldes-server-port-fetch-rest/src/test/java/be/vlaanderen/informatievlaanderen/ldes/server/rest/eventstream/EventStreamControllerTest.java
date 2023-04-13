@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.se
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -56,7 +57,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
 @ContextConfiguration(classes = { EventStreamController.class,
-		LdesConfigDeprecated.class, RestConfig.class, EventStreamWebConfig.class })
+		LdesConfig.class, RestConfig.class, EventStreamWebConfig.class })
 class EventStreamControllerTest {
 
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
@@ -66,14 +67,14 @@ class EventStreamControllerTest {
 	@MockBean
 	private EventStreamFactory eventStreamFactory;
 	@Autowired
-	LdesConfigDeprecated ldesConfig;
+	LdesConfig ldesConfig;
 	@Autowired
 	RestConfig restConfig;
 
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
-		when(eventStreamFactory.getEventStream()).thenReturn(
+		when(eventStreamFactory.getEventStream(ldesSpecification)).thenReturn(
 				new EventStream("collection", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
@@ -126,7 +127,7 @@ class EventStreamControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		when(eventStreamFactory.getEventStream()).thenReturn(
+		when(eventStreamFactory.getEventStream(ldesSpecification)).thenReturn(
 				new EventStream("collection", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
 
@@ -156,13 +157,13 @@ class EventStreamControllerTest {
 	public static class EventStreamControllerTestConfiguration {
 
 		@Bean
-		public EventStreamConverter eventStreamConverter(final LdesConfigDeprecated ldesConfig) {
+		public EventStreamConverter eventStreamConverter(final LdesConfig ldesConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			return new EventStreamConverterImpl(prefixAdder, ldesConfig);
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfigDeprecated ldesConfig) {
+		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
 			return new EtagCachingStrategy(ldesConfig);
 		}
 	}

@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,10 +23,8 @@ class EventStreamFactoryImplTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesConfigDeprecated ldesConfig = getLdesConfig();
-		ViewConfig viewConfig = getViewConfig();
 		treeNodeFetcher = mock(TreeNodeFetcher.class);
-		eventStreamFactory = new EventStreamFactoryImpl(ldesConfig, viewConfig, treeNodeFetcher);
+		eventStreamFactory = new EventStreamFactoryImpl(treeNodeFetcher);
 	}
 
 	@Test
@@ -36,7 +33,7 @@ class EventStreamFactoryImplTest {
 				.thenReturn(createView("firstView"))
 				.thenReturn(createView("secondView"));
 
-		EventStream eventStream = eventStreamFactory.getEventStream();
+		EventStream eventStream = eventStreamFactory.getEventStream(getLdesSpecification());
 		assertEquals("mobility-hindrances", eventStream.collection());
 		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				eventStream.shape());
@@ -47,22 +44,19 @@ class EventStreamFactoryImplTest {
 		assertTrue(viewsInEventStream.contains("/secondView"));
 	}
 
-	private ViewConfig getViewConfig() {
+	private LdesSpecification getLdesSpecification() {
 		ViewSpecification firstViewSpecification = new ViewSpecification();
 		firstViewSpecification.setName("firstView");
 		ViewSpecification secondViewSpecification = new ViewSpecification();
 		secondViewSpecification.setName("secondView");
-		return new ViewConfig(List.of(firstViewSpecification, secondViewSpecification), false);
-	}
-
-	private LdesConfigDeprecated getLdesConfig() {
-		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
-		ldesConfig.setCollectionName("mobility-hindrances");
-		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		ldesConfig.validation()
+		LdesSpecification ldesSpecification = new LdesSpecification();
+		ldesSpecification.setCollectionName("mobility-hindrances");
+		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesSpecification.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+		ldesSpecification.validation()
 				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
-		return ldesConfig;
+		ldesSpecification.setViews(List.of(firstViewSpecification, secondViewSpecification));
+		return ldesSpecification;
 	}
 
 	private TreeNode createView(String viewName) {

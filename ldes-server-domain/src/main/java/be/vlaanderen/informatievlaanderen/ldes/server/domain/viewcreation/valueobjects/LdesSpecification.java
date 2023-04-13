@@ -110,5 +110,8 @@ public class LdesSpecification {
 		this.defaultView = defaultView;
 		this.viewConfig.setDefaultView(defaultView);
 	}
+	public String getBaseUrl() {
+		return hostName + "/" + collectionName;
+	}
 
 }
