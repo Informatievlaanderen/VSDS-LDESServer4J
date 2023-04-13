@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
@@ -59,8 +58,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName)
-				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
+		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 
 		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());
 		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());

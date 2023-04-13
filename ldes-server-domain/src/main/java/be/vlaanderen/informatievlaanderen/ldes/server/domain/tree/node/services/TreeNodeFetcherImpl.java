@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
@@ -21,8 +20,7 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 
 	@Override
 	public TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(ldesFragmentRequest.collectionName())
-				.orElseThrow(() -> new CollectionNotFoundException(ldesFragmentRequest.collectionName()));
+		LdesConfig ldesConfig = appConfig.getLdesConfig(ldesFragmentRequest.collectionName());
 
 		TreeNode treeNode = treeNodeFactory
 				.getTreeNode(new LdesFragment(

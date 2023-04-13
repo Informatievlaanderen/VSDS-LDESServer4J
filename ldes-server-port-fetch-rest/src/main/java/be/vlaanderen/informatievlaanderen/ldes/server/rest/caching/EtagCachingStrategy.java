@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -23,8 +22,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 
 	@Override
 	public String generateCacheIdentifier(EventStream eventStream) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection())
-				.orElseThrow(() -> new CollectionNotFoundException(eventStream.collection()));
+		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection());
 		return DigestUtils.sha256Hex(ldesConfig.getBaseUrl());
 	}
 

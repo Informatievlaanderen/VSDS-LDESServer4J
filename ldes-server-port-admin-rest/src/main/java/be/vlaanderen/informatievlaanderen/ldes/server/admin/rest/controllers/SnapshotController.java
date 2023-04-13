@@ -23,7 +23,7 @@ public class SnapshotController {
 
 	@PostMapping("{collection}/snapshots")
 	public void createSnapshot(@PathVariable("collection") String collectionName) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName).orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 		snapshotService.createSnapshot(ldesConfig);
 	}
 }

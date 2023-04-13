@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LdesMemberIngestionController {
@@ -26,9 +28,6 @@ public class LdesMemberIngestionController {
 	}
 
 	private void validateMember(Member member, String collectionName) {
-		new LdesShaclValidator(
-				appConfig.getLdesConfig(collectionName)
-						.orElseThrow(() -> new CollectionNotFoundException(collectionName)))
-				.validate(member);
+		new LdesShaclValidator(appConfig.getLdesConfig(collectionName)).validate(member);
 	}
 }

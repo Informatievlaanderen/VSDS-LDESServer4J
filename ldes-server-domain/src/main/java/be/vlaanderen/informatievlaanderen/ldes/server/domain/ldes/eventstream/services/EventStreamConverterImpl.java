@@ -28,7 +28,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 	}
 
 	public Model toModel(final EventStream eventStream) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection()).orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection());
 
 		Model model = ModelFactory.createDefaultModel();
 		model.add(addCollectionStatements(eventStream, ldesConfig));

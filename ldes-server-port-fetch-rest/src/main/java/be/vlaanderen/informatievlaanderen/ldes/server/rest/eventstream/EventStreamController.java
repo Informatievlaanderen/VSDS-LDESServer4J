@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -13,7 +12,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpHeaders.*;
+import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
+import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @RestController
 public class EventStreamController {
@@ -36,8 +37,7 @@ public class EventStreamController {
 	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName)
-				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
+		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 		EventStream eventStream = eventStreamFactory.getEventStream(ldesConfig);
 
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
