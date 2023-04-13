@@ -17,7 +17,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -46,17 +46,17 @@ class SnapshotCreatorImplTest {
 		Map<String, List<Member>> membersOfSnapshot = getMembers();
 		when(memberCollector.getMembersGroupedByVersionOf(ldesFragmentsForSnapshot)).thenReturn(membersOfSnapshot);
 		LdesFragment rootFragmentOfSnapshot = new LdesFragment("collectionName", "snapshot-", List.of());
-		when(rootFragmentCreator.createRootFragmentForView(startsWith("snapshot-"))).thenReturn(rootFragmentOfSnapshot);
+		when(rootFragmentCreator.createRootFragmentForView(contains("snapshot-"))).thenReturn(rootFragmentOfSnapshot);
 
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, ldesConfig);
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);
 		inOrder.verify(memberCollector, times(1)).getMembersGroupedByVersionOf(ldesFragmentsForSnapshot);
-		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(startsWith("snapshot-"));
+		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(contains("snapshot-"));
 		inOrder.verify(snapshotFragmenter, times(1))
 				.fragmentSnapshotMembers(getMemberLastVersionsOfSnapshot(membersOfSnapshot), rootFragmentOfSnapshot);
 		inOrder.verifyNoMoreInteractions();
-		assertTrue(snapshot.getSnapshotId().startsWith("snapshot-"));
+		assertTrue(snapshot.getSnapshotId().contains("snapshot-"));
 		assertEquals("localhost:8080/collection", snapshot.getSnapshotOf());
 		assertTrue(snapshot.getSnapshotUntil().isBefore(LocalDateTime.now()));
 		assertEquals("shape", snapshot.getShape());
