@@ -5,64 +5,65 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@Deprecated
 @Configuration
 @ConfigurationProperties(prefix = "ldes")
 public class LdesConfigDeprecated {
 
 	private String hostName;
-	private String collectionName;
 	private String memberType;
+	private String collectionName;
 	private String timestampPath;
-	private String versionOf;
 	private Validation validation = new Validation();
+	private String versionOf;
 	private Model dcat = ModelFactory.createDefaultModel();
-
-	public String getHostName() {
-		return hostName;
-	}
 
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
 	}
 
-	public String getCollectionName() {
-		return collectionName;
+	public String getHostName() {
+		return hostName;
 	}
 
 	public void setCollectionName(String collectionName) {
 		this.collectionName = collectionName;
 	}
 
-	public String getMemberType() {
-		return memberType;
+	public String getCollectionName() {
+		return collectionName;
 	}
 
 	public void setMemberType(String memberType) {
 		this.memberType = memberType;
 	}
 
-	public String getTimestampPath() {
-		return timestampPath;
+	public String getMemberType() {
+		return memberType;
 	}
 
 	public void setTimestampPath(String timestampPath) {
 		this.timestampPath = timestampPath;
 	}
 
-	public String getVersionOfPath() {
-		return versionOf;
+	public String getTimestampPath() {
+		return timestampPath;
 	}
 
 	public void setVersionOf(String versionOf) {
 		this.versionOf = versionOf;
 	}
 
-	public Validation validation() {
-		return validation;
+	public String getVersionOfPath() {
+		return versionOf;
 	}
 
 	public void setValidation(Validation validation) {
 		this.validation = validation;
+	}
+
+	public Validation validation() {
+		return validation;
 	}
 
 	public String getBaseUrl() {
@@ -73,29 +74,29 @@ public class LdesConfigDeprecated {
 		private String shape;
 		private boolean enabled = true;
 
-		public String getShape() {
-			return shape;
-		}
-
 		public void setShape(String shape) {
 			this.shape = shape;
 		}
 
-		public boolean isEnabled() {
-			return enabled;
+		public String getShape() {
+			return shape;
 		}
 
 		public void setEnabled(boolean enabled) {
 			this.enabled = enabled;
 		}
-	}
 
-	public void setDcat(Model dcat) {
-		this.dcat = dcat;
+		public boolean isEnabled() {
+			return enabled;
+		}
 	}
 
 	public Model getDcat() {
 		return dcat;
+	}
+
+	public void setDcat(Model dcat) {
+		this.dcat = dcat;
 	}
 
 }
