@@ -57,7 +57,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode, LdesConfig ldesConfig) {
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						ldesConfig.getBaseUrl() + treeRelation.treeNode(),
+						ldesConfig.getHostName() + treeRelation.treeNode(),
 						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
 				.toList();
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
