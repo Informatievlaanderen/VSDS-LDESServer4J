@@ -31,7 +31,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
 		LdesFragment ldesFragment = new LdesFragment(
-				"view", List.of(new FragmentPair("substring", "a")));
+				"collectionName", "view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 		String tileFragmentId = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"))
@@ -53,7 +53,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_TileFragmentDoesNotExist_RetrievedTileFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
-				"view", List.of(new FragmentPair("substring", "a")));
+				"collectionName", "view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 		LdesFragment tileFragment = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"));
@@ -74,7 +74,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
 		LdesFragment ldesFragment = new LdesFragment(
-				"view", List.of(new FragmentPair("substring", "a")));
+				"collectionName", "view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 
@@ -91,7 +91,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
 		LdesFragment ldesFragment = new LdesFragment(
-				"view", List.of(new FragmentPair("substring", "a")));
+				"collectionName", "view", List.of(new FragmentPair("substring", "a")));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId()))

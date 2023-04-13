@@ -26,13 +26,17 @@ public class LdesMemberEntity {
 	@Indexed
 	private final List<String> treeNodeReferences;
 
+	@Indexed
+	private final String collectionName;
+
 	public LdesMemberEntity(String id, String versionOf, LocalDateTime timestamp, final String model,
-			List<String> treeNodeReferences) {
+			List<String> treeNodeReferences, String collectionName) {
 		this.id = id;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 		this.model = model;
 		this.treeNodeReferences = treeNodeReferences;
+		this.collectionName = collectionName;
 	}
 
 	public String getModel() {
@@ -44,15 +48,17 @@ public class LdesMemberEntity {
 		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
 		String ldesMemberString = outputStream.toString();
 		return new LdesMemberEntity(member.getLdesMemberId(), member.getVersionOf(), member.getTimestamp(),
-				ldesMemberString, member.getTreeNodeReferences());
+				ldesMemberString, member.getTreeNodeReferences(), member.getCollectionName());
 	}
 
 	public Member toLdesMember() {
 		Model ldesMemberModel = RDFParserBuilder.create().fromString(this.model).lang(Lang.NQUADS).toModel();
-		return new Member(this.id, this.versionOf, this.timestamp, ldesMemberModel, this.treeNodeReferences);
+		return new Member(this.collectionName, this.id, this.versionOf, this.timestamp, ldesMemberModel,
+				this.treeNodeReferences);
 	}
 
 	public String getId() {
 		return id;
 	}
+
 }

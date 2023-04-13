@@ -35,7 +35,7 @@ public class EventStreamFactoryImpl implements EventStreamFactory {
 				.getViews()
 				.stream()
 				.map(ViewSpecification::getName)
-				.map(LdesFragmentRequest::createViewRequest)
+				.map(viewName -> LdesFragmentRequest.createViewRequest("collectionName", viewName))
 				.map(treeNodeFetcher::getFragment)
 				.toList();
 	}

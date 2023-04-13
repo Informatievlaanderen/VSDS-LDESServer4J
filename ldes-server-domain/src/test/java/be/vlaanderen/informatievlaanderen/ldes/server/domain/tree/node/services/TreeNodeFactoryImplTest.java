@@ -53,10 +53,10 @@ class TreeNodeFactoryImplTest {
 
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME, List.of());
+		LdesFragment ldesFragment = new LdesFragment("collectionName", VIEW_NAME, List.of());
 		ldesFragment.addRelation(new TreeRelation("path", "node", "value", "valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
-		List<Member> members = List.of(new Member("member", null, null, null, List.of()));
+		List<Member> members = List.of(new Member("collectionName", "member", null, null, null, List.of()));
 		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID);

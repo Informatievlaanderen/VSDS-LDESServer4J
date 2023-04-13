@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public record LdesFragmentRequest(String viewName, List<FragmentPair> fragmentPairs) {
+public record LdesFragmentRequest(String collectionName, String viewName, List<FragmentPair> fragmentPairs) {
 
-    public static LdesFragmentRequest createViewRequest(String viewName) {
-        return new LdesFragmentRequest(viewName, List.of());
+    public static LdesFragmentRequest createViewRequest(String collectionName, String viewName) {
+        return new LdesFragmentRequest(collectionName, viewName, List.of());
     }
 
     // @formatter:off

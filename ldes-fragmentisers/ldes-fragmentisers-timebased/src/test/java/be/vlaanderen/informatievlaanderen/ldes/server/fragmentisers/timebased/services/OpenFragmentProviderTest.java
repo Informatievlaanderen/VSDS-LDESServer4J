@@ -25,7 +25,7 @@ class OpenFragmentProviderTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
 		openFragmentProvider = new OpenFragmentProvider(fragmentCreator,
 				ldesFragmentRepository, 3L);
 	}
@@ -76,7 +76,7 @@ class OpenFragmentProviderTest {
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
 		LdesFragment completeFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair("OldPath",
+				"collectionName", VIEW_NAME, List.of(new FragmentPair("OldPath",
 						"OldValue")),
 				false, null, false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair("Path",

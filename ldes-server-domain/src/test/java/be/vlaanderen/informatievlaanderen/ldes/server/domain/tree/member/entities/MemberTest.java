@@ -28,7 +28,7 @@ class MemberTest {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				"collectionName", "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				null, null, createModel(ldesMemberString, Lang.NQUADS), List.of());
 
 		member.removeTreeMember();
@@ -41,7 +41,7 @@ class MemberTest {
 	@Test
 	void test_getters() {
 		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				"collectionName", "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
 				LocalDateTime.of(1, 1, 1, 1, 1, 1), ModelFactory.createDefaultModel(), List.of());
 		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
@@ -59,7 +59,7 @@ class MemberTest {
 				StandardCharsets.UTF_8);
 
 		Member member = new Member(
-				"http://localhost:8080/member/1",
+				"collectionName", "http://localhost:8080/member/1",
 				null, null, createModel(ldesMemberString, Lang.NQUADS), List.of());
 
 		assertEquals(4, member.getFragmentationObjects(".*",

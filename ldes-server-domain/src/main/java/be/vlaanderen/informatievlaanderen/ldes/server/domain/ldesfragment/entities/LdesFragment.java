@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class LdesFragment {
 
+	private final String collectionName;
 	private final String viewName;
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
@@ -21,12 +22,13 @@ public class LdesFragment {
 
 	private final List<TreeRelation> relations;
 
-	public LdesFragment(final String viewName, final List<FragmentPair> fragmentPairs) {
-		this(viewName, fragmentPairs, false, null, false, 0, new ArrayList<>());
+	public LdesFragment(String collectionName, final String viewName, final List<FragmentPair> fragmentPairs) {
+		this(collectionName, viewName, fragmentPairs, false, null, false, 0, new ArrayList<>());
 	}
 
-	public LdesFragment(String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
+	public LdesFragment(String collectionName, String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
 			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers, List<TreeRelation> relations) {
+		this.collectionName = collectionName;
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
@@ -70,7 +72,7 @@ public class LdesFragment {
 	public LdesFragment createChild(FragmentPair fragmentPair) {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
 		childFragmentPairs.add(fragmentPair);
-		return new LdesFragment(getViewName(), childFragmentPairs);
+		return new LdesFragment(getCollectionName(), getViewName(), childFragmentPairs);
 	}
 
 	public boolean isSoftDeleted() {
@@ -149,5 +151,9 @@ public class LdesFragment {
 
 	public boolean isRoot() {
 		return this.fragmentPairs.isEmpty();
+	}
+
+	public String getCollectionName() {
+		return collectionName;
 	}
 }

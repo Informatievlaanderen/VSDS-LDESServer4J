@@ -51,7 +51,8 @@ class MemberEntityTest {
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.NQUADS)
 				.toModel();
 
-		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+		return new Member("collectionName",
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
 				LocalDateTime.of(1, 1, 1, 1, 1), outputModel, List.of());
 	}

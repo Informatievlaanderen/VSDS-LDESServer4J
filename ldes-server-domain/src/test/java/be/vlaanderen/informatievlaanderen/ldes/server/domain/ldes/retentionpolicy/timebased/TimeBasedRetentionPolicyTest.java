@@ -16,7 +16,7 @@ class TimeBasedRetentionPolicyTest {
 
 	@Test
 	void when_FragmentIsLongEnoughImmutable_ItMatchesTheTimebasedRetentionPolicy() {
-		LdesFragment ldesFragment = new LdesFragment("view", List.of());
+		LdesFragment ldesFragment = new LdesFragment("collectionName", "view", List.of());
 
 		assertFalse(retentionPolicy.matchesPolicy(ldesFragment));
 		ldesFragment.makeImmutable();

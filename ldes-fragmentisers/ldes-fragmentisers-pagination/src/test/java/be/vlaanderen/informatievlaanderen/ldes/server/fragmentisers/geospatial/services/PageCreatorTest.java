@@ -32,7 +32,7 @@ class PageCreatorTest {
 	@Test
 	@DisplayName("Creating First Page Fragment")
 	void createFirstFragment() {
-		LdesFragment parentFragment = new LdesFragment(VIEW,
+		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW,
 				List.of());
 
 		LdesFragment newFragment = pageCreator.createFirstFragment(parentFragment);
@@ -44,10 +44,10 @@ class PageCreatorTest {
 	@Test
 	@DisplayName("Creating Next Page Fragment")
 	void createNextFragmentAndCreateRelations() {
-		LdesFragment parentFragment = new LdesFragment(VIEW,
+		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW,
 				List.of());
 		LdesFragment existingLdesFragment = new LdesFragment(
-				VIEW, List.of(new FragmentPair(PAGE_NUMBER,
+				"collectionName", VIEW, List.of(new FragmentPair(PAGE_NUMBER,
 						"1")));
 
 		LdesFragment newFragment = pageCreator.createNewFragment(existingLdesFragment, parentFragment);

@@ -33,7 +33,7 @@ class PaginationStrategyTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
 		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER, "1"));
 		fragmentationStrategy = new PaginationStrategy(decoratedFragmentationStrategy,
 				openPageProvider, ObservationRegistry.create(),

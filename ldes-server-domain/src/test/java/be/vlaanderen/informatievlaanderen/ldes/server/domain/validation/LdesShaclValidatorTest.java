@@ -82,6 +82,6 @@ class LdesShaclValidatorTest {
 		Model m = RDFParserBuilder.create()
 				.fromString(Files.lines(Paths.get(file.toURI())).collect(Collectors.joining())).lang(Lang.TTL)
 				.toModel();
-		return new Member("", null, null, m, new ArrayList<>());
+		return new Member("collectionName", "", null, null, m, new ArrayList<>());
 	}
 }

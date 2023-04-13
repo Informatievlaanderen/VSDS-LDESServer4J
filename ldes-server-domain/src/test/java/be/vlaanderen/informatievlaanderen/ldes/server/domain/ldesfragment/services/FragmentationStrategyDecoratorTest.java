@@ -32,7 +32,7 @@ class FragmentationStrategyDecoratorTest {
 	@Test
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
-		LdesFragment parentFragment = new LdesFragment(VIEW_NAME, List.of());
+		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW_NAME, List.of());
 		LdesFragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
 		TreeRelation expectedRelation = new TreeRelation("",
 				childFragment.getFragmentId(), "", "",
@@ -48,7 +48,7 @@ class FragmentationStrategyDecoratorTest {
 
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
-		LdesFragment parentFragment = new LdesFragment(VIEW_NAME, List.of());
+		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW_NAME, List.of());
 		Member member = mock(Member.class);
 		Observation span = mock(Observation.class);
 		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,

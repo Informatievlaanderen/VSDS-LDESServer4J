@@ -10,14 +10,16 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 
 public class Member {
 
+	private final String collectionName;
 	private final Model memberModel;
 	private final String memberId;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 	private final List<String> treeNodeReferences;
 
-	public Member(String memberId, String versionOf, LocalDateTime timestamp, final Model memberModel,
-			List<String> treeNodeReferences) {
+	public Member(String collectionName, String memberId, String versionOf, LocalDateTime timestamp,
+			final Model memberModel, List<String> treeNodeReferences) {
+		this.collectionName = collectionName;
 		this.memberId = memberId;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
@@ -31,25 +33,25 @@ public class Member {
 
 	public Object getFragmentationObject(String subjectFilter, String fragmentationPredicate) {
 		// @formatter:off
-        return getFragmentationObjects(subjectFilter, fragmentationPredicate)
-                .stream()
-                .findFirst()
-                .orElse(null);
-        // @formatter:on
+		return getFragmentationObjects(subjectFilter, fragmentationPredicate)
+				.stream()
+				.findFirst()
+				.orElse(null);
+		// @formatter:on
 	}
 
 	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationProperty) {
 		// @formatter:off
-        return memberModel
-                .listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
-                .toList()
-                .stream()
-                .filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-                .map(Statement::getObject)
-                .map(RDFNode::asLiteral)
-                .map(Literal::getValue)
-                .toList();
-        // @formatter:on
+		return memberModel
+				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+				.toList()
+				.stream()
+				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
+				.map(Statement::getObject)
+				.map(RDFNode::asLiteral)
+				.map(Literal::getValue)
+				.toList();
+		// @formatter:on
 	}
 
 	public String getLdesMemberId() {
@@ -75,4 +77,9 @@ public class Member {
 	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}
+
+	public String getCollectionName() {
+		return collectionName;
+	}
+
 }
