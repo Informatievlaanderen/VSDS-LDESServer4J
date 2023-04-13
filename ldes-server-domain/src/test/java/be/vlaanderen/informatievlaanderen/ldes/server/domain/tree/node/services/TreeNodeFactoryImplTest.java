@@ -24,7 +24,7 @@ class TreeNodeFactoryImplTest {
 	public static final String HOSTNAME = "http://localhost:8089";
 	public static final String COLLECTION_NAME = "collection";
 	public static final String VIEW_NAME = "treeNodeId";
-	public static final String TREE_NODE_ID = "/" + VIEW_NAME;
+	public static final String TREE_NODE_ID = "/" + COLLECTION_NAME + "/" + VIEW_NAME;
 
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;

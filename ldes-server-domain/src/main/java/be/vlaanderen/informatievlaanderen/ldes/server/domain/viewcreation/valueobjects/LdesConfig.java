@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.value
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LdesConfig {
