@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -18,7 +18,10 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.startsWith;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class SnapshotCreatorImplTest {
 
@@ -26,16 +29,15 @@ class SnapshotCreatorImplTest {
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final SnapshotFragmenter snapshotFragmenter = mock(SnapshotFragmenter.class);
 	private SnapShotCreator snapShotCreator;
+	private LdesConfig ldesConfig;
 
 	@BeforeEach
 	void setUp() {
-		LdesConfigDeprecated ldesConfig = new LdesConfigDeprecated();
+		ldesConfig = new LdesConfig();
 		ldesConfig.setHostName("localhost:8080");
 		ldesConfig.setCollectionName("collection");
-		LdesConfigDeprecated.Validation validation = new LdesConfigDeprecated.Validation();
-		validation.setShape("shape");
-		ldesConfig.setValidation(validation);
-		snapShotCreator = new SnapshotCreatorImpl(ldesConfig, memberCollector, rootFragmentCreator, snapshotFragmenter);
+		ldesConfig.validation().setShape("shape");
+		snapShotCreator = new SnapshotCreatorImpl(memberCollector, rootFragmentCreator, snapshotFragmenter);
 	}
 
 	@Test
@@ -46,7 +48,7 @@ class SnapshotCreatorImplTest {
 		LdesFragment rootFragmentOfSnapshot = new LdesFragment("collectionName", "snapshot-", List.of());
 		when(rootFragmentCreator.createRootFragmentForView(startsWith("snapshot-"))).thenReturn(rootFragmentOfSnapshot);
 
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot);
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, ldesConfig);
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);
 		inOrder.verify(memberCollector, times(1)).getMembersGroupedByVersionOf(ldesFragmentsForSnapshot);

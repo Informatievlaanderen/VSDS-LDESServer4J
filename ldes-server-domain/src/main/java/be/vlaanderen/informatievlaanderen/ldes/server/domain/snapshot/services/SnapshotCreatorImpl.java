@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -14,21 +15,20 @@ import java.util.stream.Collectors;
 
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
-	private final LdesConfigDeprecated ldesConfig;
+
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
 
-	public SnapshotCreatorImpl(LdesConfigDeprecated ldesConfig, MemberCollector memberCollector,
+	public SnapshotCreatorImpl(MemberCollector memberCollector,
 			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
-		this.ldesConfig = ldesConfig;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.snapshotFragmenter = snapshotFragmenter;
 	}
 
 	@Override
-	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot) {
+	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot, LdesConfig ldesConfig) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
 		Snapshot snapshot = new Snapshot("snapshot-" + snapshotTime,
 				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
