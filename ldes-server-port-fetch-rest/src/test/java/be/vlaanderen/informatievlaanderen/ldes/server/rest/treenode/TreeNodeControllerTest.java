@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -47,10 +46,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -83,7 +86,8 @@ class TreeNodeControllerTest {
 			String expectedHeaderValue) throws Exception {
 
 		final LdesSpecification ldesSpecification = ldesConfig.getLdesStreams().get(0);
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesSpecification.getCollectionName(), VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesSpecification.getCollectionName(),
+				VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
 				List.of(), ldesSpecification.getCollectionName());
