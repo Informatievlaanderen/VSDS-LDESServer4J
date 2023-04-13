@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV3;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LocalDateTimeConverter;
@@ -24,12 +25,13 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 public class MemberUpdaterChange {
 
 	private final MongoTemplate mongoTemplate;
-	private final LdesConfigDeprecated ldesConfig;
+	private final LdesConfig ldesConfig;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public MemberUpdaterChange(MongoTemplate mongoTemplate, LdesConfigDeprecated ldesConfig) {
+	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfig appConfig) {
 		this.mongoTemplate = mongoTemplate;
-		this.ldesConfig = ldesConfig;
+		// TODO: 13/04/2023 solve as part of VSDSPUB-618 
+		this.ldesConfig = appConfig.getCollections().get(0);
 	}
 
 	/**
