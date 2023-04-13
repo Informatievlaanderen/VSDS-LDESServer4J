@@ -20,10 +20,6 @@ public class ViewConfig {
 		this.defaultView = defaultView;
 	}
 
-	public List<ViewSpecification> getViews() {
-		return getViews(null);
-	}
-
 	public List<ViewSpecification> getViews(String collectionName) {
 		ArrayList<ViewSpecification> viewSpecifications = new ArrayList<>(views);
 		if (defaultView) {
