@@ -15,6 +15,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrate
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
@@ -47,6 +48,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -56,7 +58,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
 @ContextConfiguration(classes = { EventStreamController.class,
-		LdesConfig.class, RestConfig.class, EventStreamWebConfig.class })
+		LdesConfig.class, RestConfig.class, EventStreamWebConfig.class, RestResponseEntityExceptionHandler.class })
 class EventStreamControllerTest {
 
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
@@ -74,8 +76,9 @@ class EventStreamControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
 		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
-		when(eventStreamFactory.getEventStream(ldesSpecification)).thenReturn(
-				new EventStream("collection", "timestampPath", "versionOf", "shape",
+		when(eventStreamFactory.getEventStream(any())).thenReturn(
+				new EventStream(ldesSpecification.getCollectionName(), ldesSpecification.getTimestampPath(),
+						ldesSpecification.getVersionOfPath(), ldesSpecification.validation().getShape(),
 						List.of(createView("viewOne"), createView("viewTwo"))));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
 				ldesSpecification.getCollectionName())
@@ -86,7 +89,7 @@ class EventStreamControllerTest {
 		MvcResult result = resultActions.andReturn();
 
 		String etagHeaderValue = result.getResponse().getHeader(HttpHeaders.ETAG).replace("\"", "");
-		String expectedEtagHeaderValue = "0c9111a73bc6a46b00e47c029c2f0e2b340f744d87fce040591d2345dc1d0cb0";
+		String expectedEtagHeaderValue = "d8cd93fb6df91f6d19a6a87c3e645ebe32982a36cee85a75aa084a8ed90f789b";
 
 		assertNotNull(etagHeaderValue);
 		assertEquals(expectedEtagHeaderValue, etagHeaderValue);
@@ -101,7 +104,7 @@ class EventStreamControllerTest {
 
 	private String getObjectURI(Model model, Property property) {
 		return model
-				.listStatements(createResource("http://localhost:8080/collection"), property, (Resource) null)
+				.listStatements(createResource("http://localhost:8080/mobility-hindrances"), property, (Resource) null)
 				.nextOptional()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)
@@ -127,7 +130,7 @@ class EventStreamControllerTest {
 			throws Exception {
 		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 		when(eventStreamFactory.getEventStream(ldesSpecification)).thenReturn(
-				new EventStream("collection", "timestampPath", "versionOf", "shape",
+				new EventStream("mobility-hindrances", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
 
 		mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())
@@ -138,7 +141,7 @@ class EventStreamControllerTest {
 		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 
 		return new TreeNode(ldesSpecification.getBaseUrl() + "/" + viewName, false,
-				false, true, List.of(), List.of(), "collectionName");
+				false, true, List.of(), List.of(), ldesSpecification.getCollectionName());
 	}
 
 	static class MediaTypeRdfFormatsArgumentsProvider implements

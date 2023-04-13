@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
@@ -35,7 +36,8 @@ public class EventStreamController {
 	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(collectionName).orElseThrow();
+		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(collectionName)
+				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
 		EventStream eventStream = eventStreamFactory.getEventStream(ldesSpecification);
 
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
