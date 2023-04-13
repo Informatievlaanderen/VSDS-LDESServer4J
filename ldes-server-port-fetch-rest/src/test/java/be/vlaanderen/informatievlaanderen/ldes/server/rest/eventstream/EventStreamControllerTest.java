@@ -75,7 +75,7 @@ class EventStreamControllerTest {
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
-		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances").orElseThrow();
 		when(eventStreamFactory.getEventStream(any())).thenReturn(
 				new EventStream(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath(),
 						ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(),
@@ -128,7 +128,7 @@ class EventStreamControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances").orElseThrow();
 		when(eventStreamFactory.getEventStream(ldesConfig)).thenReturn(
 				new EventStream("mobility-hindrances", "timestampPath", "versionOf", "shape",
 						List.of(createView("viewOne"), createView("viewTwo"))));
@@ -138,7 +138,7 @@ class EventStreamControllerTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances").orElseThrow();
 
 		return new TreeNode(ldesConfig.getBaseUrl() + "/" + viewName, false,
 				false, true, List.of(), List.of(), ldesConfig.getCollectionName());

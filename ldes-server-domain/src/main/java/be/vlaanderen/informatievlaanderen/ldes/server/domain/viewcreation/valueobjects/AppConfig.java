@@ -21,7 +21,7 @@ public class AppConfig {
 		this.collections = collections;
 	}
 
-	public Optional<LdesConfig> getLdesSpecification(String collectionName) {
+	public Optional<LdesConfig> getLdesConfig(String collectionName) {
 		return getCollections()
 				.stream()
 				.filter(ldes -> ldes.getCollectionName().equals(collectionName))

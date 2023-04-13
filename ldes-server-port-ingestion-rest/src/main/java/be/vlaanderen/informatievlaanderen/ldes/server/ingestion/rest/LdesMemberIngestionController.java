@@ -27,7 +27,7 @@ public class LdesMemberIngestionController {
 
 	private void validateMember(Member member, String collectionName) {
 		new LdesShaclValidator(
-				appConfig.getLdesSpecification(collectionName)
+				appConfig.getLdesConfig(collectionName)
 						.orElseThrow(() -> new CollectionNotFoundException(collectionName)))
 				.validate(member);
 	}

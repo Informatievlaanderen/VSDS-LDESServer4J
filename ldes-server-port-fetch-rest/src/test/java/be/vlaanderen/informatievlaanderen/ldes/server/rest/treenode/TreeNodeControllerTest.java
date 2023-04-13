@@ -162,7 +162,7 @@ class TreeNodeControllerTest {
 				List.of(), "collectionName");
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
-		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances").orElseThrow();
 
 		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
@@ -178,7 +178,7 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
 
-		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances").orElseThrow();
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
@@ -198,7 +198,7 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
 
-		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances").orElseThrow();
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),

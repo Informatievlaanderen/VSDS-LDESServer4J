@@ -21,7 +21,7 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 
 	@Override
 	public TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest) {
-		LdesConfig ldesConfig = appConfig.getLdesSpecification(ldesFragmentRequest.collectionName())
+		LdesConfig ldesConfig = appConfig.getLdesConfig(ldesFragmentRequest.collectionName())
 				.orElseThrow(() -> new CollectionNotFoundException(ldesFragmentRequest.collectionName()));
 
 		TreeNode treeNode = treeNodeFactory

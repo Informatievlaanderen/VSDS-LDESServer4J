@@ -23,7 +23,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 
 	@Override
 	public String generateCacheIdentifier(EventStream eventStream) {
-		LdesConfig ldesConfig = appConfig.getLdesSpecification(eventStream.collection())
+		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection())
 				.orElseThrow(() -> new CollectionNotFoundException(eventStream.collection()));
 		return DigestUtils.sha256Hex(ldesConfig.getBaseUrl());
 	}

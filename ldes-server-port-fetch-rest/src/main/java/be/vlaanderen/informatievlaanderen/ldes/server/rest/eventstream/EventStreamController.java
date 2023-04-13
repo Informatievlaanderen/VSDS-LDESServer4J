@@ -36,7 +36,7 @@ public class EventStreamController {
 	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 
-		LdesConfig ldesConfig = appConfig.getLdesSpecification(collectionName)
+		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName)
 				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
 		EventStream eventStream = eventStreamFactory.getEventStream(ldesConfig);
 

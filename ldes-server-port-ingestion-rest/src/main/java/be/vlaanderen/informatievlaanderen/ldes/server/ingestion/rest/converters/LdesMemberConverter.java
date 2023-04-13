@@ -59,7 +59,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
-		LdesConfig ldesConfig = appConfig.getLdesSpecification(collectionName)
+		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName)
 				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
 
 		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());

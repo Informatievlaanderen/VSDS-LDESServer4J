@@ -42,7 +42,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	public Model toModel(final TreeNode treeNode) {
 		Model model = ModelFactory.createDefaultModel();
 
-		LdesConfig ldesConfig = appConfig.getLdesSpecification(treeNode.getCollectionName())
+		LdesConfig ldesConfig = appConfig.getLdesConfig(treeNode.getCollectionName())
 				.orElseThrow(() -> new CollectionNotFoundException(treeNode.getCollectionName()));
 
 		model.add(addTreeNodeStatements(treeNode, ldesConfig));
