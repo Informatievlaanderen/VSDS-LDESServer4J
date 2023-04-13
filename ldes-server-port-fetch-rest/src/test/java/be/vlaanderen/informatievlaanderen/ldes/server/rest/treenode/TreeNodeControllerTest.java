@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -80,14 +81,14 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+
+		final LdesSpecification ldesSpecification = ldesConfig.getLdesStreams().get(0);
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesSpecification.getCollectionName(), VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
-				List.of(), "collectionName");
+				List.of(), ldesSpecification.getCollectionName());
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
-
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
