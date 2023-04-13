@@ -46,7 +46,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		model.add(addTreeNodeStatements(treeNode, ldesConfig));
 
 		if (!treeNode.getMembers().isEmpty()) {
-			model.add(addEventStreamStatements(treeNode, ldesConfig));
+			model.add(addEventStreamStatements(treeNode, ldesConfig.getBaseUrl()));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
 		}
@@ -84,9 +84,9 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		}
 	}
 
-	private List<Statement> addEventStreamStatements(TreeNode treeNode, LdesConfig ldesConfig) {
+	private List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
 		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(ldesConfig.getBaseUrl());
+		Resource viewId = createResource(baseUrl);
 		statements.addAll(getEventStreamStatements(viewId));
 		statements.addAll(getMemberStatements(treeNode, viewId));
 		return statements;
