@@ -78,7 +78,7 @@ class TreeNodeConverterImplTest {
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", null, null,
 				ldesMemberModel,
 				List.of());
-		TreeRelation treeRelation = new TreeRelation("path", "/node", "value",
+		TreeRelation treeRelation = new TreeRelation("path", "/mobility-hindrances/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
 				List.of(member), COLLECTION_NAME);
