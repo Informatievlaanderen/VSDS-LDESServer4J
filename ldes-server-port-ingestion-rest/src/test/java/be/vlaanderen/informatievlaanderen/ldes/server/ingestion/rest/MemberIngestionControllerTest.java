@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.IngestionRestResponseEntityExceptionHandler;
 import org.apache.jena.riot.Lang;
@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, LdesConfig.class, IngestionRestResponseEntityExceptionHandler.class })
+		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
 class MemberIngestionControllerTest {
 
 	@Autowired
@@ -51,7 +51,7 @@ class MemberIngestionControllerTest {
 	private MemberIngestService memberIngestService;
 
 	@Autowired
-	private LdesConfig ldesConfig;
+	private AppConfig appConfig;
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 
@@ -102,7 +102,7 @@ class MemberIngestionControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = ldesConfig.getCollections().get(0).getMemberType();
+		String ldesMemberType = appConfig.getCollections().get(0).getMemberType();
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 

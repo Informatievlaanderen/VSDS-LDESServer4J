@@ -1,18 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.config.LdesConfigDeprecated;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.shacl.Shapes;
-import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 public class LdesShaclValidator extends AbstractShaclValidator {
-	private final LdesSpecification.Validation validationConfig;
+	private final LdesConfig.Validation validationConfig;
 
-	public LdesShaclValidator(final LdesSpecification ldesSpecification) {
-		validationConfig = ldesSpecification.validation();
+	public LdesShaclValidator(final LdesConfig ldesConfig) {
+		validationConfig = ldesConfig.validation();
 	}
 
 	@Override

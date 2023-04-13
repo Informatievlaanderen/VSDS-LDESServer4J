@@ -23,8 +23,8 @@ class FragmentationStrategyConfigTest {
 	@Test
 	void when_FragmentationStrategyConfigIsCorrectlyConfigured_MapOfFragmentationStrategiesIsReturned() {
 		FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
-		LdesConfig ldesConfig = getLdesConfig();
-		List<ViewSpecification> views = ldesConfig.getCollections().get(0).getViews();
+		AppConfig appConfig = getLdesConfig();
+		List<ViewSpecification> views = appConfig.getCollections().get(0).getViews();
 		FragmentationStrategy firstCreatedFragmentationStrategy = mock(FragmentationStrategy.class);
 		when(fragmentationStrategyCreator.createFragmentationStrategyForView(views.get(0)))
 				.thenReturn(firstCreatedFragmentationStrategy);
@@ -34,7 +34,7 @@ class FragmentationStrategyConfigTest {
 
 		FragmentationStrategyConfig fragmentationStrategyConfig = new FragmentationStrategyConfig();
 		Map<String, FragmentationStrategy> actualFragmentationStrategyMap = fragmentationStrategyConfig
-				.fragmentationStrategyMap(fragmentationStrategyCreator, ldesConfig);
+				.fragmentationStrategyMap(fragmentationStrategyCreator, appConfig);
 
 		Map<String, FragmentationStrategy> expectedFragmentationStrategyMap = Map.of("parcels/firstView",
 				firstCreatedFragmentationStrategy, "parcels/secondView", secondCreatedFragmentationStrategy);
@@ -47,21 +47,21 @@ class FragmentationStrategyConfigTest {
 		inOrder.verifyNoMoreInteractions();
 	}
 
-	private LdesConfig getLdesConfig() {
-		LdesConfig ldesConfig = new LdesConfig();
-		LdesSpecification ldesSpecification = getFirstLdesSpecification();
-		ldesConfig.setCollections(List.of(ldesSpecification));
-		return ldesConfig;
+	private AppConfig getLdesConfig() {
+		AppConfig appConfig = new AppConfig();
+		LdesConfig ldesConfig = getFirstLdesSpecification();
+		appConfig.setCollections(List.of(ldesConfig));
+		return appConfig;
 	}
 
-	private LdesSpecification getFirstLdesSpecification() {
-		LdesSpecification ldesSpecification = new LdesSpecification();
-		ldesSpecification.setHostName("http://localhost:8080");
-		ldesSpecification.setCollectionName("parcels");
-		ldesSpecification.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
-		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesSpecification.setViews(List.of(getFirstViewSpecification(), getSecondViewSpecification()));
-		return ldesSpecification;
+	private LdesConfig getFirstLdesSpecification() {
+		LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig.setHostName("http://localhost:8080");
+		ldesConfig.setCollectionName("parcels");
+		ldesConfig.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
+		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesConfig.setViews(List.of(getFirstViewSpecification(), getSecondViewSpecification()));
+		return ldesConfig;
 	}
 
 	private ViewSpecification getFirstViewSpecification() {

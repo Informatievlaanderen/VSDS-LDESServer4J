@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,19 +44,19 @@ class EventStreamFactoryImplTest {
 		assertTrue(viewsInEventStream.contains("/secondView"));
 	}
 
-	private LdesSpecification getLdesSpecification() {
+	private LdesConfig getLdesSpecification() {
 		ViewSpecification firstViewSpecification = new ViewSpecification();
 		firstViewSpecification.setName("firstView");
 		ViewSpecification secondViewSpecification = new ViewSpecification();
 		secondViewSpecification.setName("secondView");
-		LdesSpecification ldesSpecification = new LdesSpecification();
-		ldesSpecification.setCollectionName("mobility-hindrances");
-		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesSpecification.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		ldesSpecification.validation()
+		LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig.setCollectionName("mobility-hindrances");
+		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
+		ldesConfig.validation()
 				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
-		ldesSpecification.setViews(List.of(firstViewSpecification, secondViewSpecification));
-		return ldesSpecification;
+		ldesConfig.setViews(List.of(firstViewSpecification, secondViewSpecification));
+		return ldesConfig;
 	}
 
 	private TreeNode createView(String viewName) {

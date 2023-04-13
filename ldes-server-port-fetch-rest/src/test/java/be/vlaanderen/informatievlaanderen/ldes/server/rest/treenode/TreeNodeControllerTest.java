@@ -10,8 +10,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
-		LdesConfig.class, RestConfig.class, TreeViewWebConfig.class,
+		AppConfig.class, RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
 
@@ -74,7 +74,7 @@ class TreeNodeControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@Autowired
-	private LdesConfig ldesConfig;
+	private AppConfig appConfig;
 	@Autowired
 	RestConfig restConfig;
 	@MockBean
@@ -85,17 +85,17 @@ class TreeNodeControllerTest {
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
 
-		final LdesSpecification ldesSpecification = ldesConfig.getCollections().get(0);
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesSpecification.getCollectionName(),
+		final LdesConfig ldesConfig = appConfig.getCollections().get(0);
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(),
 				VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
-				List.of(), ldesSpecification.getCollectionName());
+				List.of(), ldesConfig.getCollectionName());
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
+				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 						VIEW_NAME)
 						.param("generatedAtTime",
 								FRAGMENTATION_VALUE_1)
@@ -162,9 +162,9 @@ class TreeNodeControllerTest {
 				List.of(), "collectionName");
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 
-		mockMvc.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
+		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
 				.andExpect(status().isUnsupportedMediaType());
 	}
@@ -178,10 +178,10 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
 
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
+				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 						VIEW_NAME).accept("application/n-quads"))
 				.andDo(print())
 				.andExpect(status().isNotFound());
@@ -198,10 +198,10 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
 
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
+		LdesConfig ldesConfig = appConfig.getLdesSpecification("mobility-hindrances").orElseThrow();
 
 		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", ldesSpecification.getCollectionName(),
+				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 						VIEW_NAME).accept("application/n-quads"))
 				.andDo(print())
 				.andExpect(status().isGone());
@@ -240,14 +240,14 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final LdesConfig ldesConfig) {
+		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, ldesConfig);
+			return new TreeNodeConverterImpl(prefixAdder, appConfig);
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final LdesConfig ldesConfig) {
-			return new EtagCachingStrategy(ldesConfig);
+		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
+			return new EtagCachingStrategy(appConfig);
 		}
 	}
 }

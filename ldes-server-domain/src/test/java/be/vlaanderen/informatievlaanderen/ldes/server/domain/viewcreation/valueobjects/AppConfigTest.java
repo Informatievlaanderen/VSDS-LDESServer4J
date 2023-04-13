@@ -16,32 +16,32 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { LdesConfig.class, PathToModelConverter.class })
+@SpringBootTest(classes = { AppConfig.class, PathToModelConverter.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
-class LdesConfigTest {
+class AppConfigTest {
 
 	@Autowired
-	private LdesConfig ldesConfig;
+	private AppConfig appConfig;
 
 	@Test
 	@DisplayName("Verify content of LdesConfig")
 	void when_LdesPropertiesAreInjected_TheyCanBeConsultedViaLdesConfig() {
-		verifyFirstLdes(ldesConfig.getCollections().get(0));
-		verifySecondLdes(ldesConfig.getCollections().get(1));
+		verifyFirstLdes(appConfig.getCollections().get(0));
+		verifySecondLdes(appConfig.getCollections().get(1));
 
 	}
 
-	private void verifySecondLdes(LdesSpecification ldesSpecification) {
-		assertEquals("http://localhost:8088", ldesSpecification.getHostName());
-		assertEquals("ldes-2", ldesSpecification.getCollectionName());
-		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesSpecification.getMemberType());
-		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesSpecification.getTimestampPath());
-		assertNull(ldesSpecification.getVersionOfPath());
-		assertNull(ldesSpecification.validation().getShape());
-		assertTrue(ldesSpecification.validation().isEnabled());
-		assertTrue(ldesSpecification.getDcat().isEmpty());
-		verifyDefaultViewSecondLdes(ldesSpecification.getViews());
+	private void verifySecondLdes(LdesConfig ldesConfig) {
+		assertEquals("http://localhost:8088", ldesConfig.getHostName());
+		assertEquals("ldes-2", ldesConfig.getCollectionName());
+		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
+		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
+		assertNull(ldesConfig.getVersionOfPath());
+		assertNull(ldesConfig.validation().getShape());
+		assertTrue(ldesConfig.validation().isEnabled());
+		assertTrue(ldesConfig.getDcat().isEmpty());
+		verifyDefaultViewSecondLdes(ldesConfig.getViews());
 	}
 
 	private void verifyDefaultViewSecondLdes(List<ViewSpecification> views) {
@@ -54,16 +54,16 @@ class LdesConfigTest {
 				Map.of("memberLimit", "21"));
 	}
 
-	void verifyFirstLdes(LdesSpecification ldesSpecification) {
-		assertEquals("ldes-1", ldesSpecification.getCollectionName());
-		assertEquals("http://localhost:8089", ldesSpecification.getHostName());
+	void verifyFirstLdes(LdesConfig ldesConfig) {
+		assertEquals("ldes-1", ldesConfig.getCollectionName());
+		assertEquals("http://localhost:8089", ldesConfig.getHostName());
 		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
-				ldesSpecification.validation().getShape());
-		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesSpecification.getMemberType());
-		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesSpecification.getTimestampPath());
-		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesSpecification.getVersionOfPath());
-		assertFalse(ldesSpecification.getDcat().isEmpty());
-		verifyViewsFirstLdes(ldesSpecification.getViews());
+				ldesConfig.validation().getShape());
+		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
+		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
+		assertEquals("http://purl.org/dc/terms/isVersionOf", ldesConfig.getVersionOfPath());
+		assertFalse(ldesConfig.getDcat().isEmpty());
+		verifyViewsFirstLdes(ldesConfig.getViews());
 	}
 
 	void verifyViewsFirstLdes(List<ViewSpecification> views) {

@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -28,7 +27,7 @@ class LdesShaclValidatorTest {
 
 	@BeforeEach
 	void setUp() {
-		LdesSpecification specification = new LdesSpecification();
+		LdesConfig specification = new LdesConfig();
 		specification.validation().setShape("validation/example-shape.ttl");
 		specification.validation().setEnabled(true);
 		ldesShaclValidator = new LdesShaclValidator(specification);
@@ -53,7 +52,7 @@ class LdesShaclValidatorTest {
 
 	@Test
 	void when_ValidateWithNoProvidedShape_thenReturnValid() throws URISyntaxException, IOException {
-		ldesShaclValidator = new LdesShaclValidator(new LdesSpecification());
+		ldesShaclValidator = new LdesShaclValidator(new LdesConfig());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
@@ -64,9 +63,9 @@ class LdesShaclValidatorTest {
 
 	@Test
 	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
-		LdesSpecification ldesSpecification = new LdesSpecification();
-		ldesSpecification.validation().setEnabled(false);
-		ldesShaclValidator = new LdesShaclValidator(ldesSpecification);
+		LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig.validation().setEnabled(false);
+		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));

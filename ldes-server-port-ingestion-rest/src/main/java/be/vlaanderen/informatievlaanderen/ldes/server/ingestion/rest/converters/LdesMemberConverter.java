@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import jakarta.annotation.PostConstruct;
 import org.apache.jena.rdf.model.Model;
@@ -38,12 +38,12 @@ import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
-	private final LdesConfig ldesConfig;
+	private final AppConfig appConfig;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public LdesMemberConverter(LdesConfig ldesConfig) {
+	public LdesMemberConverter(AppConfig appConfig) {
 		super(MediaType.ALL);
-		this.ldesConfig = ldesConfig;
+		this.appConfig = appConfig;
 	}
 
 	@Override
@@ -59,12 +59,12 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(collectionName)
+		LdesConfig ldesConfig = appConfig.getLdesSpecification(collectionName)
 				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
 
-		String memberId = extractMemberId(memberModel, ldesSpecification.getMemberType());
-		String versionOf = extractVersionOf(memberModel, ldesSpecification.getVersionOfPath());
-		LocalDateTime timestamp = extractTimestamp(memberModel, ldesSpecification.getTimestampPath());
+		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());
+		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());
+		LocalDateTime timestamp = extractTimestamp(memberModel, ldesConfig.getTimestampPath());
 
 		return new Member(collectionName, memberId, versionOf, timestamp, memberModel, List.of());
 	}

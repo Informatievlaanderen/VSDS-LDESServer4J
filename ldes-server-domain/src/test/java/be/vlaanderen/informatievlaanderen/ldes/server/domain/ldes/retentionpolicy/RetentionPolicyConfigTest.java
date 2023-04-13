@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.Test;
@@ -18,10 +18,10 @@ class RetentionPolicyConfigTest {
 
 	@Test
 	void when_TimeBasedRetentionPolicyIsDefinedInConfig_ItIsAddedToMap() {
-		LdesConfig ldesConfig = getLdesConfig("timebased");
+		AppConfig appConfig = getLdesConfig("timebased");
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
-		Map<String, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(ldesConfig);
+		Map<String, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig);
 		assertEquals(1, retentionPolicyMap.size());
 		assertEquals(1, retentionPolicyMap.get("parcels/firstView").size());
 		assertTrue(retentionPolicyMap.get("parcels/firstView").get(0) instanceof TimeBasedRetentionPolicy);
@@ -29,29 +29,29 @@ class RetentionPolicyConfigTest {
 
 	@Test
 	void when_OtherRetentionPoliciesAreDefinedInConfig_IllegalArgumentExceptionIsThrown() {
-		LdesConfig ldesConfig = getLdesConfig("other");
+		AppConfig appConfig = getLdesConfig("other");
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> retentionPolicyConfig.retentionPolicyMap(ldesConfig));
+				() -> retentionPolicyConfig.retentionPolicyMap(appConfig));
 		assertEquals("Invalid retention Policy: other", exception.getMessage());
 	}
 
-	private LdesConfig getLdesConfig(String policyName) {
-		LdesConfig ldesConfig = new LdesConfig();
-		LdesSpecification ldesSpecification = getFirstLdesSpecification(policyName);
-		ldesConfig.setCollections(List.of(ldesSpecification));
-		return ldesConfig;
+	private AppConfig getLdesConfig(String policyName) {
+		AppConfig appConfig = new AppConfig();
+		LdesConfig ldesConfig = getFirstLdesSpecification(policyName);
+		appConfig.setCollections(List.of(ldesConfig));
+		return appConfig;
 	}
 
-	private LdesSpecification getFirstLdesSpecification(String policyName) {
-		LdesSpecification ldesSpecification = new LdesSpecification();
-		ldesSpecification.setHostName("http://localhost:8080");
-		ldesSpecification.setCollectionName("parcels");
-		ldesSpecification.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
-		ldesSpecification.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesSpecification.setViews(List.of(getFirstViewSpecification(policyName)));
-		return ldesSpecification;
+	private LdesConfig getFirstLdesSpecification(String policyName) {
+		LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig.setHostName("http://localhost:8080");
+		ldesConfig.setCollectionName("parcels");
+		ldesConfig.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
+		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
+		ldesConfig.setViews(List.of(getFirstViewSpecification(policyName)));
+		return ldesConfig;
 	}
 
 	private ViewSpecification getFirstViewSpecification(String policyName) {

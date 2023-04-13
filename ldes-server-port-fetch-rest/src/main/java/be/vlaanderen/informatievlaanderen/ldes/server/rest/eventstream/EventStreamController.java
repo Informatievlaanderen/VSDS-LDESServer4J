@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,14 +21,14 @@ public class EventStreamController {
 	private final RestConfig restConfig;
 	private final EventStreamFactory eventStreamFactory;
 	private final CachingStrategy cachingStrategy;
-	private final LdesConfig ldesConfig;
+	private final AppConfig appConfig;
 
 	public EventStreamController(RestConfig restConfig, EventStreamFactory eventStreamFactory,
-			CachingStrategy cachingStrategy, LdesConfig ldesConfig) {
+			CachingStrategy cachingStrategy, AppConfig appConfig) {
 		this.restConfig = restConfig;
 		this.eventStreamFactory = eventStreamFactory;
 		this.cachingStrategy = cachingStrategy;
-		this.ldesConfig = ldesConfig;
+		this.appConfig = appConfig;
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
@@ -36,9 +36,9 @@ public class EventStreamController {
 	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 
-		LdesSpecification ldesSpecification = ldesConfig.getLdesSpecification(collectionName)
+		LdesConfig ldesConfig = appConfig.getLdesSpecification(collectionName)
 				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
-		EventStream eventStream = eventStreamFactory.getEventStream(ldesSpecification);
+		EventStream eventStream = eventStreamFactory.getEventStream(ldesConfig);
 
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
