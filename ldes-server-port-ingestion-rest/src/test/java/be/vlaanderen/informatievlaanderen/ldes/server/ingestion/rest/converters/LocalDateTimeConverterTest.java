@@ -23,4 +23,15 @@ class LocalDateTimeConverterTest {
 		LocalDateTime expectedLocalDateTime = LocalDateTime.of(2022, 5, 20, 9, 58, 15);
 		assertEquals(expectedLocalDateTime, actualLocalDateTime);
 	}
+
+	@Test
+	void test_conversionOfXsdTimeWithoutTimeZone() {
+		LiteralImpl typedLiteral = (LiteralImpl) createTypedLiteral("2023-04-14T12:10:30.629238",
+				TypeMapper.getInstance().getTypeByName("http://www.w3.org/2001/XMLSchema#dateTime"));
+
+		LocalDateTime actualLocalDateTime = localDateTimeConverter.getLocalDateTime(typedLiteral);
+
+		LocalDateTime expectedLocalDateTime = LocalDateTime.of(2023, 4, 14, 12, 10, 30, 629000000);
+		assertEquals(expectedLocalDateTime, actualLocalDateTime);
+	}
 }
