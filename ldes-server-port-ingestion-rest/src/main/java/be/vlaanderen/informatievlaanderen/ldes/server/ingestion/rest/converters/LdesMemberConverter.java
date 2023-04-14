@@ -63,8 +63,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());
 		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());
 		LocalDateTime timestamp = extractTimestamp(memberModel, ldesConfig.getTimestampPath());
-
-		return new Member(collectionName, memberId, versionOf, timestamp, memberModel, List.of());
+		return new Member(memberId, collectionName, null, versionOf, timestamp, memberModel, List.of());
 	}
 
 	private LocalDateTime extractTimestamp(Model memberModel, String timestampPath) {

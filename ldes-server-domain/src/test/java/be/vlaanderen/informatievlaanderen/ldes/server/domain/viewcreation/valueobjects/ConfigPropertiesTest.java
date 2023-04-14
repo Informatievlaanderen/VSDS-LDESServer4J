@@ -64,7 +64,7 @@ class ConfigPropertiesTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("collectionName", "some_id", null, null, null, List.of())),
+			return Stream.of(Arguments.of(new Member("some_id", "collectionName", 0L, null, null, null, List.of())),
 					Arguments.of((Object) null));
 		}
 	}

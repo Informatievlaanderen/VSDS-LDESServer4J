@@ -22,7 +22,7 @@ class TreeMemberRemoverImplTest {
 
 	@Test
 	void when_memberHasNoReferences_ItCanBeDeleted() {
-		when(memberRepository.getMember("memberId")).thenReturn(Optional.of(new Member("collectionName", "memberId", null, null, null, List.of())));
+		when(memberRepository.getMember("memberId")).thenReturn(Optional.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of())));
 		treeMemberRemover.tryRemovingMember("memberId");
 
 		verify(memberRepository, times(1)).getMember("memberId");
@@ -33,7 +33,7 @@ class TreeMemberRemoverImplTest {
 	@Test
 	void when_memberHasReferences_ItCannotBeDeleted() {
 		when(memberRepository.getMember("memberId"))
-				.thenReturn(Optional.of(new Member("collectionName", "memberId", null, null, null, List.of("reference"))));
+				.thenReturn(Optional.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of("reference"))));
 		treeMemberRemover.tryRemovingMember("memberId");
 
 		verify(memberRepository, times(1)).getMember("memberId");

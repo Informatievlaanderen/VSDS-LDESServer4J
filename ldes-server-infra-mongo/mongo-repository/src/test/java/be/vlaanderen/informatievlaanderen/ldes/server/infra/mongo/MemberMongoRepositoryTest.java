@@ -34,8 +34,8 @@ class MemberMongoRepositoryTest {
 	void when_LdesMemberIsSavedInRepository_CreatedResourceIsReturned() {
 		Model model = getModel();
 
-		Member treeMember = new Member("collectionName", "some_id",
-				"some_id", LocalDateTime.now(), model,
+		Member treeMember = new Member("some_id", "collectionName",
+				0L, "some_id", LocalDateTime.now(), model,
 				List.of());
 
 		ldesMemberMongoRepository.saveLdesMember(treeMember);
@@ -54,8 +54,9 @@ class MemberMongoRepositoryTest {
 
 	@Test
 	void when_getMember_MemberIsReturned() {
-		LdesMemberEntity ldesMemberEntity = new LdesMemberEntity("memberId", "memberId", LocalDateTime.now(),
-				getModelString(), List.of(), "collectionName");
+		LdesMemberEntity ldesMemberEntity = new LdesMemberEntity("memberId", "collectionName", 0L, "memberId",
+				LocalDateTime.now(),
+				getModelString(), List.of());
 		when(ldesMemberEntityRepository.findById("memberId")).thenReturn(Optional.of(ldesMemberEntity));
 
 		Optional<Member> member = ldesMemberMongoRepository.getMember("memberId");

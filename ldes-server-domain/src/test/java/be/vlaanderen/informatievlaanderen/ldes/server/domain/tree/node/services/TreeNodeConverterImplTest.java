@@ -74,8 +74,9 @@ class TreeNodeConverterImplTest {
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
 		Member member = new Member(
-				COLLECTION_NAME,
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", null, null,
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165",
+				"collectionName",
+				0L, null, null,
 				ldesMemberModel,
 				List.of());
 		TreeRelation treeRelation = new TreeRelation("path", "/mobility-hindrances/node", "value",
