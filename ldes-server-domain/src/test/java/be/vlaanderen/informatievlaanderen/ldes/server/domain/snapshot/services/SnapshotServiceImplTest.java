@@ -83,21 +83,23 @@ class SnapshotServiceImplTest {
 	@Test
 	void when_TreeNodesAreAvailable_And_PreviousSnapshotExists_TheyCanBeUsedToCreateSnapshot() {
 		final String prevSnapshotId = "prevId";
-		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment("by-page", List.of()));
-		when(ldesFragmentRepository.retrieveFragmentsOfView(prevSnapshotId)).thenReturn(treeNodesForSnapshot);
-		Optional<Snapshot> lastSnapshot = Optional.of(new Snapshot(prevSnapshotId, "shape", LocalDateTime.now().minusDays(1), "of"));
+		final String collectionName = "collectionName";
+		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment("collectionName", "by-page", List.of()));
+		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
+		Optional<Snapshot> lastSnapshot = Optional
+				.of(new Snapshot(prevSnapshotId, "shape", collectionName, LocalDateTime.now().minusDays(1), "of"));
 		when(snapshotRepository.getLastSnapshot()).thenReturn(lastSnapshot);
-		Snapshot snapshot = new Snapshot("id", "shape", LocalDateTime.now(), "of");
-		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot)).thenReturn(snapshot);
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("lastTreeNodeOfSnapshot", List.of());
+		Snapshot snapshot = new Snapshot("id", collectionName, "shape", LocalDateTime.now(), "of");
+		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig)).thenReturn(snapshot);
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("collectionName", "lastTreeNodeOfSnapshot", List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot, treeNodesForSnapshot))
 				.thenReturn(lastTreeNodeOfSnapshot);
 
-		snapshotService.createSnapshot();
+		snapshotService.createSnapshot(ldesConfig);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, snapShotCreator, snapshotRelationLinker, snapshotRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveFragmentsOfView(prevSnapshotId);
-		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(treeNodesForSnapshot);
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveFragmentsOfView(DEFAULT_VIEW_NAME);
+		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
 		inOrder.verify(snapshotRelationLinker, times(1)).addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(lastTreeNodeOfSnapshot);
