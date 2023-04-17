@@ -26,11 +26,6 @@ public class ViewName {
 		return new ViewName(collectionName, name);
 	}
 
-	// TODO: 17/04/2023 remove
-	public String getFullName() {
-		return collectionName + "/" + name;
-	}
-
 	@Override
 	public String toString() {
 		return collectionName + "/" + name;

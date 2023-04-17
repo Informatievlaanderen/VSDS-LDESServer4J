@@ -46,7 +46,7 @@ class ParentUpdaterImplTest {
 				"", "", GENERIC_TREE_RELATION));
 		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.toString(),
 				List.of())).thenReturn(Optional.of(PARENT));
-		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName().getFullName(),
+		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName().toString(),
 				PARENT.getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
 
 		parentUpdater.updateParent(DELETED_CHILD);

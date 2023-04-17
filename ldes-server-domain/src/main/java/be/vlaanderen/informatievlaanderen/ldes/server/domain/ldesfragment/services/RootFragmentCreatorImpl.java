@@ -19,7 +19,7 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 	@Override
 	public LdesFragment createRootFragmentForView(ViewName viewName) {
 		return ldesFragmentRepository
-				.retrieveRootFragment(viewName.getFullName())
+				.retrieveRootFragment(viewName.toString())
 				.orElseGet(() -> createRoot(viewName));
 	}
 

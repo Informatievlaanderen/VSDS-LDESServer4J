@@ -82,7 +82,7 @@ public class LdesFragmentEntity {
 		ViewName localViewName = ldesFragment.getViewName();
 		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
 				ldesFragment.getFragmentPairs().isEmpty(),
-				localViewName.getFullName(),
+				localViewName.toString(),
 				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
 				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
 				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations(), localViewName.getCollectionName());

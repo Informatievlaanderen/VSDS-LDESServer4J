@@ -44,7 +44,7 @@ class FragmentationExecutorImplTest {
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
 				List.of());
-		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.getFullName()))
+		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.toString()))
 				.thenReturn(Optional.of(ldesFragment));
 		Member member = mock(Member.class);
 		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
@@ -52,7 +52,7 @@ class FragmentationExecutorImplTest {
 		fragmentationExecutor.executeFragmentation(member);
 
 		verify(ldesFragmentRepository, times(1))
-				.retrieveRootFragment(VIEW_NAME.getFullName());
+				.retrieveRootFragment(VIEW_NAME.toString());
 		verify(fragmentationStrategy, times(1)).addMemberToFragment(eq(ldesFragment),
 				eq(member), any());
 	}
@@ -61,7 +61,7 @@ class FragmentationExecutorImplTest {
 	void whenMemberIsFromDifferentCollection_thenItIsNotFragmented() {
 		final ViewName alternativeViewName = new ViewName("otherCollection", "otherView");
 		LdesFragment ldesFragment = new LdesFragment(alternativeViewName, List.of());
-		when(ldesFragmentRepository.retrieveRootFragment(alternativeViewName.getFullName()))
+		when(ldesFragmentRepository.retrieveRootFragment(alternativeViewName.toString()))
 				.thenReturn(Optional.of(ldesFragment));
 		Member member = mock(Member.class);
 		when(member.getCollectionName()).thenReturn(alternativeViewName.getCollectionName());
@@ -69,7 +69,7 @@ class FragmentationExecutorImplTest {
 		fragmentationExecutor.executeFragmentation(member);
 
 		verify(ldesFragmentRepository, times(0))
-				.retrieveRootFragment(alternativeViewName.getFullName());
+				.retrieveRootFragment(alternativeViewName.toString());
 		verify(fragmentationStrategy, times(0)).addMemberToFragment(eq(ldesFragment),
 				eq(member), any());
 	}
@@ -89,14 +89,14 @@ class FragmentationExecutorImplTest {
 		assertEquals("Could not retrieve root fragment for view collectionName/view",
 				missingRootFragmentException.getMessage());
 		verify(ldesFragmentRepository, times(1))
-				.retrieveRootFragment(VIEW_NAME.getFullName());
+				.retrieveRootFragment(VIEW_NAME.toString());
 	}
 
 	@Test
 	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
 				List.of());
-		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.getFullName()))
+		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.toString()))
 				.thenReturn(Optional.of(ldesFragment));
 		IntStream.range(0, 100).parallel()
 				.forEach(i -> {
@@ -107,7 +107,7 @@ class FragmentationExecutorImplTest {
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, fragmentationStrategy);
 		inOrder.verify(ldesFragmentRepository, times(1))
-				.retrieveRootFragment(VIEW_NAME.getFullName());
+				.retrieveRootFragment(VIEW_NAME.toString());
 		inOrder.verify(fragmentationStrategy,
 				times(100)).addMemberToFragment(eq(ldesFragment),
 						any(), any());

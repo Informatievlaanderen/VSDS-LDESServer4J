@@ -32,18 +32,18 @@ class RootFragmentCreatorImplTest {
 		rootFragmentCreator.createRootFragmentForView(VIEW_NAME);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.getFullName());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.toString());
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(any());
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_RootFragmentExists_NothingHappens() {
-		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.getFullName())).thenReturn(Optional.of(mock(LdesFragment.class)));
+		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.toString())).thenReturn(Optional.of(mock(LdesFragment.class)));
 		rootFragmentCreator.createRootFragmentForView(VIEW_NAME);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.getFullName());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.toString());
 		inOrder.verifyNoMoreInteractions();
 	}
 }

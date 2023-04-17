@@ -12,13 +12,13 @@ class ViewNameTest {
 		ViewName base = new ViewName("colA", "viewA");
 		ViewName cloneWithOtherCollectionName = base.withCollectionName("colB");
 		assertEquals("colB", cloneWithOtherCollectionName.getCollectionName());
-		assertEquals("colB/viewA", cloneWithOtherCollectionName.getFullName());
+		assertEquals("colB/viewA", cloneWithOtherCollectionName.toString());
 	}
 
 	@Test
 	void getFullName() {
 		ViewName base = new ViewName("colA", "viewA");
-		assertEquals("colA/viewA", base.getFullName());
+		assertEquals("colA/viewA", base.toString());
 	}
 
 	@Test
@@ -51,7 +51,7 @@ class ViewNameTest {
 	@Test
 	void fromFullName() {
 		ViewName viewName = ViewName.fromFullName("collection/view");
-		assertEquals("collection/view", viewName.getFullName());
+		assertEquals("collection/view", viewName.toString());
 		assertEquals("collection", viewName.getCollectionName());
 	}
 
