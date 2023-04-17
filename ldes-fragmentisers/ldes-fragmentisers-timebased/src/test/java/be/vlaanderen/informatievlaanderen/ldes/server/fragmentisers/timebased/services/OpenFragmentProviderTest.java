@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,8 +13,13 @@ import org.mockito.InOrder;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class OpenFragmentProviderTest {
 
@@ -21,11 +27,11 @@ class OpenFragmentProviderTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private OpenFragmentProvider openFragmentProvider;
 	private static LdesFragment PARENT_FRAGMENT;
-	private static final String VIEW_NAME = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
 		openFragmentProvider = new OpenFragmentProvider(fragmentCreator,
 				ldesFragmentRepository, 3L);
 	}
@@ -76,7 +82,7 @@ class OpenFragmentProviderTest {
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
 		LdesFragment completeFragment = new LdesFragment(
-				"collectionName", VIEW_NAME, List.of(new FragmentPair("OldPath",
+				VIEW_NAME, List.of(new FragmentPair("OldPath",
 						"OldValue")),
 				false, null, false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair("Path",

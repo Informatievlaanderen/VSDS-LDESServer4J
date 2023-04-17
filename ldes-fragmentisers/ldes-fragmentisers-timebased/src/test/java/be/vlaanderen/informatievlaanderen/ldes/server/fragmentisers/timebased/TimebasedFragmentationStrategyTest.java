@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -15,11 +16,16 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class TimebasedFragmentationStrategyTest {
 
-	private static final String VIEW_NAME = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private final OpenFragmentProvider openFragmentProvider = mock(OpenFragmentProvider.class);
 	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 	private FragmentationStrategy fragmentationStrategy;
@@ -29,7 +35,7 @@ class TimebasedFragmentationStrategyTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
 		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair("generatedAtTime", "someTime"));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
 				openFragmentProvider, ObservationRegistry.create(),

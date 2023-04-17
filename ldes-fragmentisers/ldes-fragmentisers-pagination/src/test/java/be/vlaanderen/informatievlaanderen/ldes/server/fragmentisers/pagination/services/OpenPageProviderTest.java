@@ -1,8 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.PageCreator;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,8 +16,13 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class OpenPageProviderTest {
 
@@ -24,11 +30,11 @@ class OpenPageProviderTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private OpenPageProvider openPageProvider;
 	private static LdesFragment PARENT_FRAGMENT;
-	private static final String VIEW_NAME = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
 		openPageProvider = new OpenPageProvider(pageCreator,
 				ldesFragmentRepository, 3L);
 	}
@@ -79,7 +85,7 @@ class OpenPageProviderTest {
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
 		LdesFragment completeFragment = new LdesFragment(
-				"collectionName", VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
+				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
 						"2")),
 				false, null, false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
