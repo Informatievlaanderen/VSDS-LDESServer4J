@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,8 +24,9 @@ class TreeNodeFactoryImplTest {
 
 	public static final String HOSTNAME = "http://localhost:8089";
 	public static final String COLLECTION_NAME = "collection";
-	public static final String VIEW_NAME = "treeNodeId";
-	public static final String TREE_NODE_ID = "/" + COLLECTION_NAME + "/" + VIEW_NAME;
+	public static final String VIEW = "treeNodeId";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", VIEW);
+	public static final String TREE_NODE_ID = "/" + COLLECTION_NAME + "/" + VIEW;
 
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
@@ -53,7 +55,7 @@ class TreeNodeFactoryImplTest {
 
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {
-		LdesFragment ldesFragment = new LdesFragment("collectionName", VIEW_NAME, List.of());
+		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME, List.of());
 		ldesFragment.addRelation(new TreeRelation("path", "node", "value", "valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
 		List<Member> members = List.of(new Member("member", "collectionName", 0L, null, null, null, List.of()));

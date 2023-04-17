@@ -46,9 +46,9 @@ class EventStreamFactoryImplTest {
 
 	private LdesConfig getLdesSpecification() {
 		ViewSpecification firstViewSpecification = new ViewSpecification();
-		firstViewSpecification.setName("firstView");
+		firstViewSpecification.setFullViewName("firstView");
 		ViewSpecification secondViewSpecification = new ViewSpecification();
-		secondViewSpecification.setName("secondView");
+		secondViewSpecification.setFullViewName("secondView");
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");

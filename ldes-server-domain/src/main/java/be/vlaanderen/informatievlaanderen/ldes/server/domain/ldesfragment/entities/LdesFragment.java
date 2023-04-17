@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entit
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,8 +13,7 @@ import java.util.stream.Collectors;
 
 public class LdesFragment {
 
-	private final String collectionName;
-	private final String viewName;
+	private final ViewName viewName;
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
 	private LocalDateTime immutableTimestamp;
@@ -22,13 +22,12 @@ public class LdesFragment {
 
 	private final List<TreeRelation> relations;
 
-	public LdesFragment(String collectionName, final String viewName, final List<FragmentPair> fragmentPairs) {
-		this(collectionName, viewName, fragmentPairs, false, null, false, 0, new ArrayList<>());
+	public LdesFragment(ViewName viewName, final List<FragmentPair> fragmentPairs) {
+		this(viewName, fragmentPairs, false, null, false, 0, new ArrayList<>());
 	}
 
-	public LdesFragment(String collectionName, String viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
+	public LdesFragment(ViewName viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
 			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers, List<TreeRelation> relations) {
-		this.collectionName = collectionName;
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
@@ -72,7 +71,7 @@ public class LdesFragment {
 	public LdesFragment createChild(FragmentPair fragmentPair) {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
 		childFragmentPairs.add(fragmentPair);
-		return new LdesFragment(getCollectionName(), getViewName(), childFragmentPairs);
+		return new LdesFragment(getViewName(), childFragmentPairs);
 	}
 
 	public boolean isSoftDeleted() {
@@ -89,7 +88,7 @@ public class LdesFragment {
 				.map(FragmentPair::fragmentValue).findFirst();
 	}
 
-	public String getViewName() {
+	public ViewName getViewName() {
 		return this.viewName;
 	}
 
@@ -153,7 +152,4 @@ public class LdesFragment {
 		return this.fragmentPairs.isEmpty();
 	}
 
-	public String getCollectionName() {
-		return collectionName;
-	}
 }

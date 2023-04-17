@@ -1,10 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,7 +18,7 @@ class RetentionPolicyConfigTest {
 		AppConfig appConfig = getLdesConfig("timebased");
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
-		Map<String, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig);
+		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig);
 		assertEquals(1, retentionPolicyMap.size());
 		assertEquals(1, retentionPolicyMap.get("parcels/firstView").size());
 		assertTrue(retentionPolicyMap.get("parcels/firstView").get(0) instanceof TimeBasedRetentionPolicy);
@@ -56,7 +53,7 @@ class RetentionPolicyConfigTest {
 
 	private ViewSpecification getFirstViewSpecification(String policyName) {
 		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName("firstView");
+		viewSpecification.setFullViewName("firstView");
 		RetentionConfig retentionConfig = new RetentionConfig();
 		retentionConfig.setName(policyName);
 		retentionConfig.setConfig(Map.of("duration", "PT1M"));

@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.S
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -42,11 +43,13 @@ class SnapshotServiceImplTest {
 
 	@Test
 	void when_TreeNodesAreAvailable_TheyCanBeUsedToCreateSnapshot() {
-		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment("collectionName", "by-page", List.of()));
+		List<LdesFragment> treeNodesForSnapshot = List
+				.of(new LdesFragment(new ViewName("collectionName", "by-page"), List.of()));
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
 		Snapshot snapshot = new Snapshot("id", "collectionName", "shape", LocalDateTime.now(), "of");
 		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig)).thenReturn(snapshot);
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("collectionName", "lastTreeNodeOfSnapshot", List.of());
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "lastTreeNodeOfSnapshot"),
+				List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot, treeNodesForSnapshot))
 				.thenReturn(lastTreeNodeOfSnapshot);
 

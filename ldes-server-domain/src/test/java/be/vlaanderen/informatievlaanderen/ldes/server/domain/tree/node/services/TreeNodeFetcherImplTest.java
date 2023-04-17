@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class TreeNodeFetcherImplTest {
-	private static final String VIEW_NAME = "view";
+	private static final String VIEW = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", VIEW);
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private TreeNodeFactory treeNodeFactory;
 	private TreeNodeFetcherImpl treeNodeFetcher;
@@ -38,7 +40,7 @@ class TreeNodeFetcherImplTest {
 
 	@Test
 	void when_getFragment_WhenNoFragmentExists_ThenMissingFragmentExceptionIsThrown() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		when(treeNodeFactory.getTreeNode(ldesFragmentRequest.generateFragmentId(), ldesConfig))
 				.thenThrow(new MissingFragmentException(ldesFragmentRequest.generateFragmentId()));
@@ -53,7 +55,7 @@ class TreeNodeFetcherImplTest {
 
 	@Test
 	void when_getFragment_WhenFragmentIsDeleted_ThenDeletedFragmentExceptionIsThrown() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, true, false, List.of(),
 				List.of(), "collectionName");
@@ -69,7 +71,7 @@ class TreeNodeFetcherImplTest {
 
 	@Test
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", VIEW_NAME,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), true, false, false, List.of(),
 				List.of(), "collectionName");

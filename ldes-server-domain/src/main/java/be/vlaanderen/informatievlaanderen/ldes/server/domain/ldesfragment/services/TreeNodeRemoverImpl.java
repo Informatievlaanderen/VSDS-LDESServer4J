@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +18,12 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final MemberRepository memberRepository;
-	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
+	private final Map<ViewName, List<RetentionPolicy>> retentionPolicyMap;
 	private final TreeMemberRemover treeMemberRemover;
 	private final ParentUpdater parentUpdater;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
-			MemberRepository memberRepository, Map<String, List<RetentionPolicy>> retentionPolicyMap,
+			MemberRepository memberRepository, Map<ViewName, List<RetentionPolicy>> retentionPolicyMap,
 			TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -39,10 +40,10 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 				.stream()
 				.filter(stringListEntry -> !stringListEntry.getValue().isEmpty())
 				.forEach(entry -> {
-					String view = entry.getKey();
+					ViewName view = entry.getKey();
 					List<RetentionPolicy> retentionPolicies = entry.getValue();
 					List<LdesFragment> ldesFragments = ldesFragmentRepository
-							.retrieveNonDeletedImmutableFragmentsOfView(view)
+							.retrieveNonDeletedImmutableFragmentsOfView(view.getFullName())
 							.filter(ldesFragment -> retentionPolicies
 									.stream()
 									.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(ldesFragment)))

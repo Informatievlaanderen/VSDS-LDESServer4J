@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.enti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,13 +37,13 @@ public class LdesFragmentEntity {
 	@Indexed
 	private final String collectionName;
 
-	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
+	public LdesFragmentEntity(String id, Boolean root, ViewName viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable,
 			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, Integer numberOfMembers,
-			List<TreeRelation> relations, String collectionName) {
+			List<TreeRelation> relations) {
 		this.id = id;
 		this.root = root;
-		this.viewName = viewName;
+		this.viewName = viewName.getFullName();
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.softDeleted = softDeleted;
@@ -50,7 +51,7 @@ public class LdesFragmentEntity {
 		this.immutableTimestamp = immutableTimestamp;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
-		this.collectionName = collectionName;
+		this.collectionName = viewName.getCollectionName();
 	}
 
 	public String getId() {
@@ -63,7 +64,8 @@ public class LdesFragmentEntity {
 
 	public LdesFragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(collectionName, viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted,
+		return new LdesFragment(new ViewName(collectionName, viewName), fragmentPairs, immutable, immutableTimestamp,
+				softDeleted,
 				effectiveNumberOfMembers,
 				relations);
 	}
@@ -82,7 +84,7 @@ public class LdesFragmentEntity {
 				ldesFragment.getViewName(),
 				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
 				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
-				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations(), ldesFragment.getCollectionName());
+				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations());
 	}
 
 	public Boolean getRoot() {

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -13,23 +14,29 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class ParentUpdaterImplTest {
 
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private ParentUpdater parentUpdater;
 	private static final String VIEW = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", VIEW);
 	private static final LdesFragment DELETED_CHILD = new LdesFragment(
-			"collectionName", VIEW, List.of(new FragmentPair("key", "value")));
+			VIEW_NAME, List.of(new FragmentPair("key", "value")));
 	private static final LdesFragment NON_DELETED_CHILD = new LdesFragment(
-			"collectionName", VIEW, List.of(new FragmentPair("key", "value2")));
+			VIEW_NAME, List.of(new FragmentPair("key", "value2")));
 	private static LdesFragment PARENT;
 
 	@BeforeEach
 	void setUp() {
-		PARENT = new LdesFragment("collectionName", VIEW, List.of());
+		PARENT = new LdesFragment(VIEW_NAME, List.of());
 		parentUpdater = new ParentUpdaterImpl(ldesFragmentRepository);
 
 	}
@@ -40,7 +47,7 @@ class ParentUpdaterImplTest {
 				"", "", GENERIC_TREE_RELATION));
 		when(ldesFragmentRepository.retrieveMutableFragment(VIEW,
 				List.of())).thenReturn(Optional.of(PARENT));
-		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName(),
+		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName().getFullName(),
 				PARENT.getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
 
 		parentUpdater.updateParent(DELETED_CHILD);

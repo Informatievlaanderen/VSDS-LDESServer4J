@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,8 @@ class MemberCollectorImplTest {
 	}
 
 	private LdesFragment getLdesFragment(String pageNumber) {
-		return new LdesFragment("collectionName", "mobility-hindrances", List.of(new FragmentPair("page", pageNumber)));
+		return new LdesFragment(new ViewName("collectionName", "mobility-hindrances"),
+				List.of(new FragmentPair("page", pageNumber)));
 	}
 
 	private Stream<Member> getMemberStream() {

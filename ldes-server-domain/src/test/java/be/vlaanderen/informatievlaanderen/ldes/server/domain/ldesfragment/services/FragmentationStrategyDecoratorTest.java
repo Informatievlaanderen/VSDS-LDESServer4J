@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,7 @@ class FragmentationStrategyDecoratorTest {
 	FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
-	private static final String VIEW_NAME = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 
 	@BeforeEach
 	void setUp() {
@@ -32,7 +33,7 @@ class FragmentationStrategyDecoratorTest {
 	@Test
 	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
-		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW_NAME, List.of());
+		LdesFragment parentFragment = new LdesFragment(VIEW_NAME, List.of());
 		LdesFragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
 		TreeRelation expectedRelation = new TreeRelation("",
 				childFragment.getFragmentId(), "", "",
@@ -48,7 +49,7 @@ class FragmentationStrategyDecoratorTest {
 
 	@Test
 	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
-		LdesFragment parentFragment = new LdesFragment("collectionName", VIEW_NAME, List.of());
+		LdesFragment parentFragment = new LdesFragment(VIEW_NAME, List.of());
 		Member member = mock(Member.class);
 		Observation span = mock(Observation.class);
 		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,
