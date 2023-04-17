@@ -20,8 +20,8 @@ class RetentionPolicyConfigTest {
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
 		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig);
 		assertEquals(1, retentionPolicyMap.size());
-		assertEquals(1, retentionPolicyMap.get(ViewName.fromFullName("parcels/firstView")).size());
-		assertTrue(retentionPolicyMap.get(ViewName.fromFullName("parcels/firstView"))
+		assertEquals(1, retentionPolicyMap.get(ViewName.fromString("parcels/firstView")).size());
+		assertTrue(retentionPolicyMap.get(ViewName.fromString("parcels/firstView"))
 				.get(0) instanceof TimeBasedRetentionPolicy);
 	}
 

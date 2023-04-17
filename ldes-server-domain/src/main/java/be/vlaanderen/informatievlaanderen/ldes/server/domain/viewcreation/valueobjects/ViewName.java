@@ -12,7 +12,11 @@ public class ViewName {
 		this.collectionName = collectionName;
 	}
 
-	public static ViewName fromFullName(String viewName) {
+	public ViewName withCollectionName(String collectionName) {
+		return new ViewName(collectionName, name);
+	}
+
+	public static ViewName fromString(String viewName) {
 		if (!viewName.contains("/")) {
 			throw new IllegalArgumentException(
 					"Invalid full view name: %s. '/' char expected after collectionName.".formatted(viewName));
@@ -22,17 +26,13 @@ public class ViewName {
 		return new ViewName(splitViewName[0], splitViewName[1]);
 	}
 
-	public ViewName withCollectionName(String collectionName) {
-		return new ViewName(collectionName, name);
+	public String getCollectionName() {
+		return collectionName;
 	}
 
 	@Override
 	public String toString() {
 		return collectionName + "/" + name;
-	}
-
-	public String getCollectionName() {
-		return collectionName;
 	}
 
 	@Override

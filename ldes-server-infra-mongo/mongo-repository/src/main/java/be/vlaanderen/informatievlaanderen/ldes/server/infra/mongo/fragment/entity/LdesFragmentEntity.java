@@ -64,7 +64,7 @@ public class LdesFragmentEntity {
 
 	public LdesFragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(ViewName.fromFullName(viewName), fragmentPairs, immutable, immutableTimestamp,
+		return new LdesFragment(ViewName.fromString(viewName), fragmentPairs, immutable, immutableTimestamp,
 				softDeleted,
 				effectiveNumberOfMembers,
 				relations);

@@ -50,7 +50,7 @@ class ViewNameTest {
 
 	@Test
 	void fromFullName() {
-		ViewName viewName = ViewName.fromFullName("collection/view");
+		ViewName viewName = ViewName.fromString("collection/view");
 		assertEquals("collection/view", viewName.toString());
 		assertEquals("collection", viewName.getCollectionName());
 	}
