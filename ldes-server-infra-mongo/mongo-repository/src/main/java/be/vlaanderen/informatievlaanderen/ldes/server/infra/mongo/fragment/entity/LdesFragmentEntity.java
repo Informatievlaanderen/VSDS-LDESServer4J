@@ -38,9 +38,9 @@ public class LdesFragmentEntity {
 	private final String collectionName;
 
 	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
-							  Boolean immutable,
-							  Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, Integer numberOfMembers,
-							  List<TreeRelation> relations, String collectionName) {
+			Boolean immutable,
+			Boolean softDeleted, String parentId, LocalDateTime immutableTimestamp, Integer numberOfMembers,
+			List<TreeRelation> relations, String collectionName) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;

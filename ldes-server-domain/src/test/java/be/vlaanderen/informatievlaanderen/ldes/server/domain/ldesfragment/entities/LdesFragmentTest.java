@@ -41,13 +41,14 @@ class LdesFragmentTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1),
 						new FragmentPair(TILE, FRAGMENTATION_VALUE_2)));
 
-		assertEquals("/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&tile=0/0/0",
+		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&tile=0/0/0",
 				ldesFragment.getFragmentId());
-		assertEquals("/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z", ldesFragment.getParentId());
+		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z",
+				ldesFragment.getParentId());
 
 		ldesFragment = new LdesFragment(
 				VIEW_NAME, List.of());
-		assertEquals("/mobility-hindrances",
+		assertEquals("/collectionName/mobility-hindrances",
 				ldesFragment.getFragmentId());
 		assertEquals("root", ldesFragment.getParentId());
 

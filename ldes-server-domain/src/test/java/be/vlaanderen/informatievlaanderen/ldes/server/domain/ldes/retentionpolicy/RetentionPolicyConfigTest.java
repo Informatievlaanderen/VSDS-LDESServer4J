@@ -20,8 +20,9 @@ class RetentionPolicyConfigTest {
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
 		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig);
 		assertEquals(1, retentionPolicyMap.size());
-		assertEquals(1, retentionPolicyMap.get("parcels/firstView").size());
-		assertTrue(retentionPolicyMap.get("parcels/firstView").get(0) instanceof TimeBasedRetentionPolicy);
+		assertEquals(1, retentionPolicyMap.get(ViewName.fromFullName("parcels/firstView")).size());
+		assertTrue(retentionPolicyMap.get(ViewName.fromFullName("parcels/firstView"))
+				.get(0) instanceof TimeBasedRetentionPolicy);
 	}
 
 	@Test
@@ -47,13 +48,13 @@ class RetentionPolicyConfigTest {
 		ldesConfig.setCollectionName("parcels");
 		ldesConfig.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setViews(List.of(getFirstViewSpecification(policyName)));
+		ldesConfig.setViews(List.of(getFirstViewSpecification(policyName, ldesConfig.getCollectionName())));
 		return ldesConfig;
 	}
 
-	private ViewSpecification getFirstViewSpecification(String policyName) {
+	private ViewSpecification getFirstViewSpecification(String policyName, String collectionName) {
 		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setFullViewName("firstView");
+		viewSpecification.setName(new ViewName(collectionName, "firstView"));
 		RetentionConfig retentionConfig = new RetentionConfig();
 		retentionConfig.setName(policyName);
 		retentionConfig.setConfig(Map.of("duration", "PT1M"));

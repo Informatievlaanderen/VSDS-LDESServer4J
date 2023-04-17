@@ -16,19 +16,6 @@ public class ViewSpecification {
 		this.name = name;
 	}
 
-	// TODO: 17/04/2023 remove
-	/**
-	 * This is the full view name containing a prefixed collection name.
-	 *
-	 * @param name
-	 */
-	public void setFullViewName(String name) {
-		String[] nameParts = name.split("/");
-		String collectionName = nameParts[0];
-		String viewName = nameParts[1];
-		this.name = new ViewName(collectionName, viewName);
-	}
-
 	public void setCollectionName(String collectionName) {
 		name = name.withCollectionName(collectionName);
 	}

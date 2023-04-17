@@ -33,10 +33,10 @@ class SnapshotRelationLinkerImplTest {
 		LdesFragment ldesFragment = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodes);
 
-		assertEquals("/id?page=2", ldesFragment.getFragmentId());
+		assertEquals("/collectionName/id?page=2", ldesFragment.getFragmentId());
 		assertEquals(
-				List.of(new TreeRelation("", "/uncovered?fragment=1", "", "", GENERIC_TREE_RELATION),
-						new TreeRelation("", "/uncovered?fragment=2", "", "", GENERIC_TREE_RELATION)),
+				List.of(new TreeRelation("", "/collectionName/uncovered?fragment=1", "", "", GENERIC_TREE_RELATION),
+						new TreeRelation("", "/collectionName/uncovered?fragment=2", "", "", GENERIC_TREE_RELATION)),
 				ldesFragment.getRelations());
 	}
 

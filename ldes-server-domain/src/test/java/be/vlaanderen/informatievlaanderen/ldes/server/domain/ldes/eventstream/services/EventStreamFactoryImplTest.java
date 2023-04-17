@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,16 +46,16 @@ class EventStreamFactoryImplTest {
 	}
 
 	private LdesConfig getLdesSpecification() {
-		ViewSpecification firstViewSpecification = new ViewSpecification();
-		firstViewSpecification.setFullViewName("firstView");
-		ViewSpecification secondViewSpecification = new ViewSpecification();
-		secondViewSpecification.setFullViewName("secondView");
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
 		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
 		ldesConfig.validation()
 				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
+		ViewSpecification firstViewSpecification = new ViewSpecification();
+		firstViewSpecification.setName(new ViewName(ldesConfig.getCollectionName(), "firstView"));
+		ViewSpecification secondViewSpecification = new ViewSpecification();
+		secondViewSpecification.setName(new ViewName(ldesConfig.getCollectionName(), "secondView"));
 		ldesConfig.setViews(List.of(firstViewSpecification, secondViewSpecification));
 		return ldesConfig;
 	}

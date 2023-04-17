@@ -23,10 +23,10 @@ import static org.mockito.Mockito.when;
 class TreeNodeFactoryImplTest {
 
 	public static final String HOSTNAME = "http://localhost:8089";
-	public static final String COLLECTION_NAME = "collection";
+	public static final String COLLECTION_NAME = "collectionName";
 	public static final String VIEW = "treeNodeId";
-	private static final ViewName VIEW_NAME = new ViewName("collectionName", VIEW);
-	public static final String TREE_NODE_ID = "/" + COLLECTION_NAME + "/" + VIEW;
+	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
+	public static final String TREE_NODE_ID = "/" + VIEW_NAME.getFullName();
 
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
@@ -58,12 +58,12 @@ class TreeNodeFactoryImplTest {
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME, List.of());
 		ldesFragment.addRelation(new TreeRelation("path", "node", "value", "valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
-		List<Member> members = List.of(new Member("member", "collectionName", 0L, null, null, null, List.of()));
+		List<Member> members = List.of(new Member("member", COLLECTION_NAME, 0L, null, null, null, List.of()));
 		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, ldesConfig);
 
-		assertEquals(HOSTNAME + "/" + COLLECTION_NAME + ldesFragment.getFragmentId(), treeNode.getFragmentId());
+		assertEquals(HOSTNAME + ldesFragment.getFragmentId(), treeNode.getFragmentId());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isSoftDeleted());
 		assertEquals(members, treeNode.getMembers());

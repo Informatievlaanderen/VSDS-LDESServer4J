@@ -43,7 +43,8 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenNoFragmentExists_ThenMissingFragmentExceptionIsThrown() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs());
+		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
+				ldesFragmentRequest.fragmentPairs());
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig))
 				.thenThrow(new MissingFragmentException(ldesFragment.getFragmentId()));
 
@@ -59,7 +60,8 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenFragmentIsDeleted_ThenDeletedFragmentExceptionIsThrown() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs());
+		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
+				ldesFragmentRequest.fragmentPairs());
 		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, true, false, List.of(),
 				List.of(), "collectionName");
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig))
@@ -76,7 +78,8 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs());
+		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
+				ldesFragmentRequest.fragmentPairs());
 		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, false, false, List.of(),
 				List.of(), "collectionName");
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig))

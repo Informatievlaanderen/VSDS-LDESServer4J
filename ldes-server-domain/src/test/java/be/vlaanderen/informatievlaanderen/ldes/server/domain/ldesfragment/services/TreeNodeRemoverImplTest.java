@@ -40,15 +40,15 @@ class TreeNodeRemoverImplTest {
 	void when_NodeIsImmutableAndSatisfiesRetentionPoliciesOfView_NodeCanBeSoftDeleted() {
 		LdesFragment notReadyToDeleteFragment = notReadyToDeleteFragment();
 		LdesFragment readyToDeleteFragment = readyToDeleteFragment();
-		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("view"))
+		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("collectionName/view"))
 				.thenReturn(Stream.of(notReadyToDeleteFragment, readyToDeleteFragment));
-		when(memberRepository.getMembersByReference("/view"))
+		when(memberRepository.getMembersByReference("/collectionName/view"))
 				.thenReturn(Stream.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of())));
 
 		treeNodeRemover.removeTreeNodes();
 
 		verify(fragmentRepository,
-				times(1)).retrieveNonDeletedImmutableFragmentsOfView("view");
+				times(1)).retrieveNonDeletedImmutableFragmentsOfView("collectionName/view");
 		verify(fragmentRepository, times(1)).saveFragment(readyToDeleteFragment);
 		assertTrue(readyToDeleteFragment.isSoftDeleted());
 		verifyNoMoreInteractions(fragmentRepository);
