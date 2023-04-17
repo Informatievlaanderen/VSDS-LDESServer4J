@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -106,13 +107,15 @@ class AdminShapeRestControllerTest {
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateShape(anyString(), any());
-		assertEquals(1, applicationEvents.stream(ShaclChangedEvent.class).count());
+		ShaclChangedEvent event = applicationEvents.stream(ShaclChangedEvent.class).findFirst().orElseThrow();
+		assertEquals(collectionName, event.getCollectionName());
+		assertTrue(event.getShacl().isIsomorphicWith(expectedShapeModel));
 	}
 
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		String collectionName = "name1";
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 				.content(readDataFromFile("shape-without-type.ttl", Lang.TURTLE))
 				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
