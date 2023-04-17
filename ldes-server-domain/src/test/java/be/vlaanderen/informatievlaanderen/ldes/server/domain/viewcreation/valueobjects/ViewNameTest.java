@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ViewNameTest {
 
@@ -16,7 +17,7 @@ class ViewNameTest {
 	}
 
 	@Test
-	void getFullName() {
+	void test_toString() {
 		ViewName base = new ViewName("colA", "viewA");
 		assertEquals("colA/viewA", base.toString());
 	}
@@ -49,10 +50,16 @@ class ViewNameTest {
 	}
 
 	@Test
-	void fromFullName() {
+	void fromString_shouldCreateInstanceWithNames_whenInputContainsForwardSlashDelimiter() {
 		ViewName viewName = ViewName.fromString("collection/view");
 		assertEquals("collection/view", viewName.toString());
 		assertEquals("collection", viewName.getCollectionName());
 	}
 
+	@Test
+	void fromString_shouldThrowException_whenForwardSlashIsMissing() {
+		var exception = assertThrows(IllegalArgumentException.class, () -> ViewName.fromString("myView"));
+		assertEquals("Invalid full view name: myView. '/' char expected after collectionName.",
+				exception.getMessage());
+	}
 }
