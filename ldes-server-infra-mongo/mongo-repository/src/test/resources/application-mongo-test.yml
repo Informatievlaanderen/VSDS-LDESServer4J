@@ -1,1 +1,1 @@
-spring.mongodb.embedded.version: 3.2.2
+de.flapdoodle.mongodb.embedded.version: 4.0.2
