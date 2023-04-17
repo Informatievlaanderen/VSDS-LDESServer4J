@@ -16,6 +16,7 @@ public class ViewSpecification {
 		this.name = name;
 	}
 
+	// TODO: 17/04/2023 remove
 	/**
 	 * This is the full view name containing a prefixed collection name.
 	 *

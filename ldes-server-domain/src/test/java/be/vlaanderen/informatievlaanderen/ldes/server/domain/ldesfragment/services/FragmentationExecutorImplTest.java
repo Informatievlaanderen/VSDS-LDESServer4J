@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.ObservationRegistry;
@@ -78,8 +77,8 @@ class FragmentationExecutorImplTest {
 	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
 		when(ldesFragmentRepository
-				.retrieveFragment(new LdesFragmentRequest(VIEW_NAME,
-						List.of()).generateFragmentId()))
+				.retrieveFragment(new LdesFragment(VIEW_NAME,
+						List.of()).getFragmentId()))
 				.thenReturn(Optional.empty());
 		Member member = mock(Member.class);
 		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);

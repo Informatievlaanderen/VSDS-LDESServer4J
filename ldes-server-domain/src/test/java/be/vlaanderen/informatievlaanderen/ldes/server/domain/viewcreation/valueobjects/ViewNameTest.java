@@ -45,4 +45,12 @@ class ViewNameTest {
 		assertNotEquals(new ViewName(colA, "other").hashCode(), new ViewName(colA, nameA).hashCode());
 		assertNotEquals(new ViewName("other", "other").hashCode(), new ViewName(colA, nameA).hashCode());
 	}
+
+	@Test
+	void fromFullName() {
+		ViewName viewName = ViewName.fromFullName("collection/view");
+		assertEquals("collection/view", viewName.getFullName());
+		assertEquals("collection", viewName.getCollectionName());
+	}
+
 }
