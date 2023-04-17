@@ -12,8 +12,6 @@
 
     <properties>
         <relative-formatter-path>..</relative-formatter-path>
-        <cucumber.version>7.11.2</cucumber.version>
-        <junit-platform-suite.version>1.9.2</junit-platform-suite.version>
     </properties>
 
     <dependencies>
