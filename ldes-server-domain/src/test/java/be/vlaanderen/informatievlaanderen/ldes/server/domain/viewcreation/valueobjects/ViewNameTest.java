@@ -27,6 +27,8 @@ class ViewNameTest {
 		assertEquals("colA", base.getCollectionName());
 	}
 
+	@SuppressWarnings("java:S3415") // this is for assertNotEquals(viewNameA, null); where we need this order for
+									// our test
 	@Test
 	void testEqualsAndHashCode() {
 		String colA = "colA";
