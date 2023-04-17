@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
@@ -20,6 +21,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -32,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -44,12 +48,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminShapeRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
+@RecordApplicationEvents
 class AdminShapeRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
 	@MockBean
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
+
+	@Autowired
+	private ApplicationEvents applicationEvents;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -77,12 +85,9 @@ class AdminShapeRestControllerTest {
 	void when_ViewNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
 		when(ldesConfigModelService.retrieveView(collectionName, viewName))
 				.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
-		ResultActions resultActions = mockMvc
-				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
 				.andDo(print())
 				.andExpect(status().isNotFound());
 	}
@@ -101,6 +106,7 @@ class AdminShapeRestControllerTest {
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateShape(anyString(), any());
+		assertEquals(1, applicationEvents.stream(ShaclChangedEvent.class).count());
 	}
 
 	@Test

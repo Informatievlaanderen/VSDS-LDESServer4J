@@ -128,11 +128,11 @@ class MemberIngestionControllerTest {
 
 	@Test
 	void when_memberConformToShapeIsIngested_then_status200IsReturned() throws Exception {
-		Model oldShape = readModelFromFile("alternatives/example-shape-old.ttl", Lang.TURTLE);
+		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
 		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, oldShape));
 
-		String modelString = readModelStringFromFile("alternatives/example-data-old.ttl");
+		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
 				.andDo(print())
@@ -143,11 +143,11 @@ class MemberIngestionControllerTest {
 
 	@Test
 	void when_memberNotConformToShapeIsIngested_then_status400IsReturned() throws Exception {
-		Model oldShape = readModelFromFile("alternatives/example-shape-old.ttl", Lang.TURTLE);
+		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
 		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, oldShape));
 
-		String modelString = readModelStringFromFile("alternatives/example-data-new.ttl");
+		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
 				.andDo(print())
@@ -158,13 +158,13 @@ class MemberIngestionControllerTest {
 
 	@Test
 	void when_shapeIsUpdated_and_membersConformToShapeIsIngested_then_status200IsReturned() throws Exception {
-		Model oldShape = readModelFromFile("alternatives/example-shape-old.ttl", Lang.TURTLE);
-		Model newShape = readModelFromFile("alternatives/example-shape-new.ttl", Lang.TURTLE);
+		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
+		Model newShape = readModelFromFile("menu-items/example-shape-new.ttl", Lang.TURTLE);
 
 		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, oldShape)); // init server with old shape
 		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, newShape)); // update the server with new shape
 
-		String modelString = readModelStringFromFile("alternatives/example-data-new.ttl");
+		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
 				.andDo(print())

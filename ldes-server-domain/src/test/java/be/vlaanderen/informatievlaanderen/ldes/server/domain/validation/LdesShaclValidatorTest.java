@@ -49,18 +49,11 @@ class LdesShaclValidatorTest {
 
 		assertThrows(LdesShaclValidationException.class,
 				() -> ldesShaclValidator.validateShape(model));
-
-		Model mobilityModel = readModelFromFile("validation/mobility-hindrance/example-ldes-member.nq", Lang.NQUADS);
-		Model mobilityShape = readModelFromFile("validation/mobility-hindrance/shape.jsonld", Lang.JSONLD);
-
-		LdesShaclValidator mobilityValidator = new LdesShaclValidator(mobilityShape, new LdesConfig());
-
-		assertThrows(LdesShaclValidationException.class,
-				() -> mobilityValidator.validateShape(mobilityModel));
 	}
 
 	@Test
-	void when_ValidateWithNoProvidedShape_thenReturnValid() throws URISyntaxException, IOException {
+	void when_ValidateProvidedInvalidData_and_NoDbOrYamlShapeProvided_thenReturnValid()
+			throws URISyntaxException, IOException {
 		ldesShaclValidator = new LdesShaclValidator(null, new LdesConfig());
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
@@ -71,10 +64,54 @@ class LdesShaclValidatorTest {
 	}
 
 	@Test
+	void when_ValidateProvidedInvalidData_and_BothYamlAndDbShapeProvided_thenReturnInvalid()
+			throws URISyntaxException, IOException {
+		Model shape = readModelFromFile("validation/example-shape.ttl", Lang.TURTLE);
+
+		LdesConfig config = new LdesConfig();
+		LdesConfig.Validation validation = new LdesConfig.Validation();
+		validation.setShape("validation/example-shape.ttl");
+		config.setValidation(validation);
+
+		ldesShaclValidator = new LdesShaclValidator(shape, config);
+
+		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
+		Model invalidModel = invalidMember.getModel();
+		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidModel));
+	}
+
+	@Test
+	void when_ValidateProvidedInvalidData_and_OnlyYamlShapeProvided_thenReturnInvalid()
+			throws URISyntaxException, IOException {
+		LdesConfig config = new LdesConfig();
+		LdesConfig.Validation validation = new LdesConfig.Validation();
+		validation.setShape("validation/example-shape.ttl");
+		config.setValidation(validation);
+
+		ldesShaclValidator = new LdesShaclValidator(config);
+
+		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
+		Model invalidModel = invalidMember.getModel();
+		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidModel));
+	}
+
+	@Test
+	void when_ValidateProvidedInvalidAta_and_OnlyDbShapeProvided_thenReturnInvalid()
+			throws URISyntaxException, IOException {
+		Model shape = readModelFromFile("validation/example-shape.ttl", Lang.TURTLE);
+
+		ldesShaclValidator = new LdesShaclValidator(shape, new LdesConfig());
+
+		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
+		Model invalidModel = invalidMember.getModel();
+		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidModel));
+	}
+
+	@Test
 	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
 		LdesConfig ldesConfig = new LdesConfig();
 		ldesConfig.validation().setEnabled(false);
-		ldesShaclValidator = new LdesShaclValidator(null, ldesConfig);
+		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));

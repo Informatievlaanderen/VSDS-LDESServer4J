@@ -16,6 +16,12 @@
 	        sh:maxCount  1 ;
 	];
 	sh:property [
+            sh:path      :category ;
+            sh:nodeKind  sh:IRI ;
+            sh:maxCount  1 ;
+            sh:in (:mainDish :starter :dessert) ;
+    ];
+	sh:property [
 	        sh:path      :price ;
 	        sh:datatype  xsd:decimal ;
 	        sh:minCount  1 ;
@@ -26,3 +32,12 @@
 	        sh:datatype  xsd:string ;
 	        sh:minCount  1 ;
 	] .
+
+:mainDish a skos:Concept ;
+    skos:prefLabel "Main Dish" .
+
+:starter a skos:Concept ;
+    skos:prefLabel "Starter" .
+
+:dessert a skos:Concept ;
+    skos:prefLabel "Dessert" .

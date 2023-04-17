@@ -11,9 +11,14 @@ public class LdesShaclValidator extends AbstractShaclValidator {
 	private final LdesConfig.Validation validationConfig;
 	private final Model shaclShape;
 
-	public LdesShaclValidator(Model shaclShape, final LdesConfig ldesConfig) {
+	public LdesShaclValidator(final Model shaclShape, final LdesConfig ldesConfig) {
 		this.shaclShape = shaclShape;
-		validationConfig = ldesConfig.validation();
+		this.validationConfig = ldesConfig.validation();
+	}
+
+	public LdesShaclValidator(final LdesConfig ldesConfig) {
+		this.shaclShape = null;
+		this.validationConfig = ldesConfig.validation();
 	}
 
 	@Override
