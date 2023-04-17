@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 class LdesFragmentMongoRepositoryTest {
 
-	private static final String VIEW_NAME = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final String FIRST_VALUE = "2020-12-28T09:36:37.127Z";
 	private static final String SECOND_VALUE = "2020-12-29T09:36:37.127Z";
 	private static final String THIRD_VALUE = "2020-12-30T09:36:37.127Z";
@@ -42,15 +43,15 @@ class LdesFragmentMongoRepositoryTest {
 			List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
 		when(ldesFragmentEntityRepository
 				.findAllByImmutableAndViewName(false,
-						VIEW_NAME))
+						VIEW_NAME.toString()))
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
 						.filter(ldesFragmentEntity -> ldesFragmentEntity.getViewName()
-								.equals(VIEW_NAME))
+								.equals(VIEW_NAME.toString()))
 						.collect(Collectors.toList()));
 
 		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveMutableFragment(
-				VIEW_NAME,
+				VIEW_NAME.toString(),
 				List.of());
 
 		assertTrue(ldesFragment.isPresent());
@@ -71,7 +72,7 @@ class LdesFragmentMongoRepositoryTest {
 		private List<LdesFragmentEntity> firstImmutableSecondOtherView() {
 			return List.of(
 					createLdesFragmentEntity(true, VIEW_NAME, FIRST_VALUE),
-					createLdesFragmentEntity(false, "otherView", SECOND_VALUE),
+					createLdesFragmentEntity(false, new ViewName("c", "otherView"), SECOND_VALUE),
 					createLdesFragmentEntity(false, VIEW_NAME, THIRD_VALUE));
 		}
 
@@ -89,10 +90,8 @@ class LdesFragmentMongoRepositoryTest {
 					createLdesFragmentEntity(false, VIEW_NAME, THIRD_VALUE));
 		}
 
-		private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable,
-				String viewName,
-				String value) {
-			LdesFragment ldesFragment = new LdesFragment("collectionName", viewName,
+		private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, ViewName viewName, String value) {
+			LdesFragment ldesFragment = new LdesFragment(viewName,
 					List.of(new FragmentPair("generatedAtTime", value)),
 					immutable, LocalDateTime.now(), false, 0, List.of());
 			return LdesFragmentEntity.fromLdesFragment(ldesFragment);
