@@ -2,22 +2,29 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.value
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class ViewNameTest {
 
-	// TODO: 17/04/2023 testing
-
 	@Test
 	void withCollectionName() {
+		ViewName base = new ViewName("colA", "viewA");
+		ViewName cloneWithOtherCollectionName = base.withCollectionName("colB");
+		assertEquals("colB", cloneWithOtherCollectionName.getCollectionName());
+		assertEquals("colB/viewA", cloneWithOtherCollectionName.getFullName());
 	}
 
 	@Test
 	void getFullName() {
+		ViewName base = new ViewName("colA", "viewA");
+		assertEquals("colA/viewA", base.getFullName());
 	}
 
 	@Test
 	void getCollectionName() {
+		ViewName base = new ViewName("colA", "viewA");
+		assertEquals("colA", base.getCollectionName());
 	}
 
 	@Test
@@ -25,12 +32,15 @@ class ViewNameTest {
 		String colA = "colA";
 		String nameA = "nameA";
 
-		assertEquals(new ViewName(colA, nameA), new ViewName(colA, nameA));
-		assertNotEquals(new ViewName("other", nameA), new ViewName(colA, nameA));
-		assertNotEquals(new ViewName(colA, "other"), new ViewName(colA, nameA));
-		assertNotEquals(new ViewName("other", "other"), new ViewName(colA, nameA));
+		ViewName viewNameA = new ViewName(colA, nameA);
+		assertEquals(viewNameA, viewNameA);
+		assertEquals(new ViewName(colA, nameA), viewNameA);
+		assertNotEquals(new ViewName("other", nameA), viewNameA);
+		assertNotEquals(new ViewName(colA, "other"), viewNameA);
+		assertNotEquals(new ViewName("other", "other"), viewNameA);
+		assertNotEquals(viewNameA, null);
 
-		assertEquals(new ViewName(colA, nameA).hashCode(), new ViewName(colA, nameA).hashCode());
+		assertEquals(new ViewName(colA, nameA).hashCode(), viewNameA.hashCode());
 		assertNotEquals(new ViewName("other", nameA).hashCode(), new ViewName(colA, nameA).hashCode());
 		assertNotEquals(new ViewName(colA, "other").hashCode(), new ViewName(colA, nameA).hashCode());
 		assertNotEquals(new ViewName("other", "other").hashCode(), new ViewName(colA, nameA).hashCode());
