@@ -10,8 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig.DEFAULT_VIEW_NAME;
+import java.util.Optional;
 
 @Component
 public class SnapshotServiceImpl implements SnapshotService {

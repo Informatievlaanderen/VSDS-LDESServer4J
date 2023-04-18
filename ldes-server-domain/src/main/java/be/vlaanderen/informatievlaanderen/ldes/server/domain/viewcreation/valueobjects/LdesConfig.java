@@ -4,6 +4,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 public class LdesConfig {
 
@@ -106,6 +107,10 @@ public class LdesConfig {
 
 	public void setDefaultView(boolean defaultView) {
 		viewConfig = viewConfig.withDefaultView(defaultView);
+	}
+
+	public Optional<ViewSpecification> getDefaultView() {
+		return viewConfig.getDefaultPaginationView(collectionName);
 	}
 
 	public String getBaseUrl() {
