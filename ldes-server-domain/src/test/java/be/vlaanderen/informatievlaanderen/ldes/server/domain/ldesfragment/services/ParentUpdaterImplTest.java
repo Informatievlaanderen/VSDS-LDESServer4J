@@ -44,17 +44,17 @@ class ParentUpdaterImplTest {
 	void when_ParentIsPointingToDeletedChild_RelationIsRemovedAndNewRelationToNonDeletedChildIsAdded() {
 		PARENT.addRelation(new TreeRelation("", DELETED_CHILD.getFragmentId(),
 				"", "", GENERIC_TREE_RELATION));
-		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.toString(),
+		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.asString(),
 				List.of())).thenReturn(Optional.of(PARENT));
-		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName().toString(),
+		when(ldesFragmentRepository.retrieveNonDeletedChildFragment(PARENT.getViewName().asString(),
 				PARENT.getFragmentPairs())).thenReturn(Optional.of(NON_DELETED_CHILD));
 
 		parentUpdater.updateParent(DELETED_CHILD);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveMutableFragment(VIEW_NAME.toString(),
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveMutableFragment(VIEW_NAME.asString(),
 				List.of());
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveNonDeletedChildFragment(VIEW_NAME.toString(),
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveNonDeletedChildFragment(VIEW_NAME.asString(),
 				List.of());
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(PARENT);
 		inOrder.verifyNoMoreInteractions();
@@ -65,7 +65,7 @@ class ParentUpdaterImplTest {
 
 	@Test
 	void when_ParentDoesNotExist_ExceptionIsThrown() {
-		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.toString(),
+		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.asString(),
 				List.of())).thenReturn(Optional.empty());
 
 		MissingFragmentException missingFragmentException = assertThrows(MissingFragmentException.class,
@@ -78,13 +78,13 @@ class ParentUpdaterImplTest {
 	void when_ParentIsNotPointingToDeletedChild_ParentRemainsAsIsAndNoNeedToSave() {
 		PARENT.addRelation(new TreeRelation("", NON_DELETED_CHILD.getFragmentId(),
 				"", "", ""));
-		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.toString(), List.of()))
+		when(ldesFragmentRepository.retrieveMutableFragment(VIEW_NAME.asString(), List.of()))
 				.thenReturn(Optional.of(PARENT));
 
 		parentUpdater.updateParent(DELETED_CHILD);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveMutableFragment(VIEW_NAME.toString(), List.of());
+		inOrder.verify(ldesFragmentRepository, times(1)).retrieveMutableFragment(VIEW_NAME.asString(), List.of());
 		inOrder.verifyNoMoreInteractions();
 	}
 

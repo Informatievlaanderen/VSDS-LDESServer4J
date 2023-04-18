@@ -30,8 +30,7 @@ public class ViewName {
 		return collectionName;
 	}
 
-	@Override
-	public String toString() {
+	public String asString() {
 		return collectionName + "/" + name;
 	}
 

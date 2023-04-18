@@ -43,15 +43,15 @@ class LdesFragmentMongoRepositoryTest {
 			List<LdesFragmentEntity> entitiesInRepository, String expectedFragmentId) {
 		when(ldesFragmentEntityRepository
 				.findAllByImmutableAndViewName(false,
-						VIEW_NAME.toString()))
+						VIEW_NAME.asString()))
 				.thenReturn(entitiesInRepository.stream()
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
 						.filter(ldesFragmentEntity -> ldesFragmentEntity.getViewName()
-								.equals(VIEW_NAME.toString()))
+								.equals(VIEW_NAME.asString()))
 						.collect(Collectors.toList()));
 
 		Optional<LdesFragment> ldesFragment = ldesFragmentMongoRepository.retrieveMutableFragment(
-				VIEW_NAME.toString(),
+				VIEW_NAME.asString(),
 				List.of());
 
 		assertTrue(ldesFragment.isPresent());

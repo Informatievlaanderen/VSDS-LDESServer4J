@@ -55,8 +55,8 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 				.parentObservation(parentObservation).start();
 
 		LdesFragment ldesFragment = rootFragmentMap.computeIfAbsent(viewName, s -> ldesFragmentRepository
-				.retrieveRootFragment(viewName.toString())
-				.orElseThrow(() -> new MissingRootFragmentException(viewName.toString())));
+				.retrieveRootFragment(viewName.asString())
+				.orElseThrow(() -> new MissingRootFragmentException(viewName.asString())));
 
 		rootRetrievalObservation.stop();
 		return ldesFragment;

@@ -20,13 +20,13 @@ class ViewNameTest {
 		ViewName base = new ViewName("colA", "viewA");
 		ViewName cloneWithOtherCollectionName = base.withCollectionName("colB");
 		assertEquals("colB", cloneWithOtherCollectionName.getCollectionName());
-		assertEquals("colB/viewA", cloneWithOtherCollectionName.toString());
+		assertEquals("colB/viewA", cloneWithOtherCollectionName.asString());
 	}
 
 	@Test
-	void test_toString() {
+	void test_asString() {
 		ViewName base = new ViewName("colA", "viewA");
-		assertEquals("colA/viewA", base.toString());
+		assertEquals("colA/viewA", base.asString());
 	}
 
 	@Test
@@ -76,7 +76,7 @@ class ViewNameTest {
 	@Test
 	void fromString_shouldCreateInstanceWithNames_whenInputContainsForwardSlashDelimiter() {
 		ViewName viewName = ViewName.fromString("collection/view");
-		assertEquals("collection/view", viewName.toString());
+		assertEquals("collection/view", viewName.asString());
 		assertEquals("collection", viewName.getCollectionName());
 	}
 
