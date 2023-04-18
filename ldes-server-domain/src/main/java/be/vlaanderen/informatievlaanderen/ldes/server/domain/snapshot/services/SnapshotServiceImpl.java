@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 public class SnapshotServiceImpl implements SnapshotService {
@@ -31,14 +33,26 @@ public class SnapshotServiceImpl implements SnapshotService {
 
 	@Override
 	public void createSnapshot(LdesConfig ldesConfig) {
-		final ViewName viewName;
-		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
-		try {
-			viewName = retrieveLastSnapshot().getSnapshotId();
-		} catch (Exception e) {
-			viewName = new ViewName(ldesConfig.getCollectionName(), DEFAULT_VIEW_NAME);
+		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
+		String viewName= ldesConfig.getDefaultView().orElseThrow(() -> new SnapshotCreationException(
+						"No default pagination view configured for collection " + ldesConfig.getCollectionName()))
+				.getName();
+		List<LdesFragment> treeNodesForSnapshot;
+		if (lastSnapshot.isPresent()) {
+			List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(lastSnapshot.get().getSnapshotId());
+			List<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
+			String lastFragment = treeNodesOfSnapshot.stream().filter(ldesFragment -> !ldesFragment.isRoot())
+					.filter(ldesFragment -> !ldesFragment.isImmutable())
+					.map(LdesFragment::getRelations)
+					.flatMap(List::stream)
+					.map(TreeRelation::treeNode)
+					.findFirst().orElseThrow(() -> new RuntimeException("a"));
+			List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView.stream().filter(new GreaterOrEqualsPageFilter(lastFragment)).toList();
+			treeNodesForSnapshot = Stream.of(treeNodesOfSnapshot, relevantTreeNodesOfDefaultView).flatMap(List::stream).toList();
+		} else {
+			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
 		}
-		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME);
+
 		if (treeNodesForSnapshot.isEmpty()) {
 			throw new SnapshotCreationException(
 					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
@@ -54,8 +68,8 @@ public class SnapshotServiceImpl implements SnapshotService {
 		snapshotRepository.saveSnapShot(snapshot);
 	}
 
-	private Snapshot retrieveLastSnapshot() {
-		return snapshotRepository.getLastSnapshot().orElseThrow(RuntimeException::new);
+	private Optional<Snapshot> retrieveLastSnapshot() {
+		return snapshotRepository.getLastSnapshot();
 	}
 
 }
