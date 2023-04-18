@@ -9,7 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class FragmentationStrategyConfigTest {
 
@@ -33,11 +36,13 @@ class FragmentationStrategyConfigTest {
 				.thenReturn(secondCreatedFragmentationStrategy);
 
 		FragmentationStrategyConfig fragmentationStrategyConfig = new FragmentationStrategyConfig();
-		Map<String, FragmentationStrategy> actualFragmentationStrategyMap = fragmentationStrategyConfig
+		Map<ViewName, FragmentationStrategy> actualFragmentationStrategyMap = fragmentationStrategyConfig
 				.fragmentationStrategyMap(fragmentationStrategyCreator, appConfig);
 
-		Map<String, FragmentationStrategy> expectedFragmentationStrategyMap = Map.of("parcels/firstView",
-				firstCreatedFragmentationStrategy, "parcels/secondView", secondCreatedFragmentationStrategy);
+		Map<ViewName, FragmentationStrategy> expectedFragmentationStrategyMap = Map.of(
+				new ViewName("parcels", "firstView"),
+				firstCreatedFragmentationStrategy, new ViewName("parcels", "secondView"),
+				secondCreatedFragmentationStrategy);
 		assertEquals(expectedFragmentationStrategyMap, actualFragmentationStrategyMap);
 		InOrder inOrder = inOrder(fragmentationStrategyCreator);
 		inOrder.verify(fragmentationStrategyCreator, times(1))
@@ -60,13 +65,14 @@ class FragmentationStrategyConfigTest {
 		ldesConfig.setCollectionName("parcels");
 		ldesConfig.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setViews(List.of(getFirstViewSpecification(), getSecondViewSpecification()));
+		ldesConfig.setViews(List.of(getFirstViewSpecification(ldesConfig.getCollectionName()),
+				getSecondViewSpecification(ldesConfig.getCollectionName())));
 		return ldesConfig;
 	}
 
-	private ViewSpecification getFirstViewSpecification() {
+	private ViewSpecification getFirstViewSpecification(String collectionName) {
 		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName("firstView");
+		viewSpecification.setName(new ViewName(collectionName, "firstView"));
 		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL, GEOSPATIAL_PROPERTIES);
 		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED, TIMEBASED_PROPERTIES);
 		viewSpecification.setFragmentations(List.of(geospatialConfig, timebasedConfig));
@@ -80,9 +86,9 @@ class FragmentationStrategyConfigTest {
 		return geospatialConfig;
 	}
 
-	private ViewSpecification getSecondViewSpecification() {
+	private ViewSpecification getSecondViewSpecification(String collectionName) {
 		ViewSpecification secondViewSpecification = new ViewSpecification();
-		secondViewSpecification.setName("secondView");
+		secondViewSpecification.setName(new ViewName(collectionName, "secondView"));
 		FragmentationConfig secondTimebasedConfig = getFragmentationConfig(TIMEBASED, SECOND_TIMEBASED_PROPERTIES);
 		secondViewSpecification.setFragmentations(List.of(secondTimebasedConfig));
 		return secondViewSpecification;

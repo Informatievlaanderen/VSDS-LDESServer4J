@@ -6,12 +6,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,10 +33,10 @@ class SnapshotRelationLinkerImplTest {
 		LdesFragment ldesFragment = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodes);
 
-		assertEquals("/id?page=2", ldesFragment.getFragmentId());
+		assertEquals("/collectionName/id?page=2", ldesFragment.getFragmentId());
 		assertEquals(
-				List.of(new TreeRelation("", "/uncovered?fragment=1", "", "", GENERIC_TREE_RELATION),
-						new TreeRelation("", "/uncovered?fragment=2", "", "", GENERIC_TREE_RELATION)),
+				List.of(new TreeRelation("", "/collectionName/uncovered?fragment=1", "", "", GENERIC_TREE_RELATION),
+						new TreeRelation("", "/collectionName/uncovered?fragment=2", "", "", GENERIC_TREE_RELATION)),
 				ldesFragment.getRelations());
 	}
 
@@ -53,22 +55,24 @@ class SnapshotRelationLinkerImplTest {
 	}
 
 	private List<LdesFragment> getTreeNodes() {
-		LdesFragment rootTreeNode = new LdesFragment("collectionName", "root", List.of());
-		LdesFragment coveredTreeNode = new LdesFragment("collectionName", "covered",
+		LdesFragment rootTreeNode = new LdesFragment(new ViewName("collectionName", "root"), List.of());
+		LdesFragment coveredTreeNode = new LdesFragment(new ViewName("collectionName", "covered"),
 				List.of(new FragmentPair("fragment", "0")));
 		coveredTreeNode.makeImmutable();
 		return List.of(
 				rootTreeNode,
 				coveredTreeNode,
-				new LdesFragment("collectionName", "uncovered", List.of(new FragmentPair("fragment", "1"))),
-				new LdesFragment("collectionName", "uncovered", List.of(new FragmentPair("fragment", "2"))));
+				new LdesFragment(new ViewName("collectionName", "uncovered"),
+						List.of(new FragmentPair("fragment", "1"))),
+				new LdesFragment(new ViewName("collectionName", "uncovered"),
+						List.of(new FragmentPair("fragment", "2"))));
 	}
 
 	private List<LdesFragment> getTreeNodesOfSnapshot() {
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("collectionName", "id",
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "id"),
 				List.of(new FragmentPair("page", "2")));
-		LdesFragment rootTreeNodeOfSnapshot = new LdesFragment("collectionName", "id", List.of());
-		LdesFragment immutableTreeNodeOfSnapshot = new LdesFragment("collectionName", "id",
+		LdesFragment rootTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "id"), List.of());
+		LdesFragment immutableTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "id"),
 				List.of(new FragmentPair("page", "1")));
 		immutableTreeNodeOfSnapshot.makeImmutable();
 		return List.of(rootTreeNodeOfSnapshot, immutableTreeNodeOfSnapshot, lastTreeNodeOfSnapshot);

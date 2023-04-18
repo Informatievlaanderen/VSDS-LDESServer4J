@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,7 +22,7 @@ class FragmentationStrategyImplTest {
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
-		LdesFragment ldesFragment = new LdesFragment("collectionName", "view",
+		LdesFragment ldesFragment = new LdesFragment(new ViewName("collectionName", "view"),
 				List.of());
 		Member member = mock(Member.class);
 		when(member.getLdesMemberId()).thenReturn("memberId");

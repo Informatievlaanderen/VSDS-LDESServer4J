@@ -20,17 +20,17 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 
 	@Override
 	public TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(ldesFragmentRequest.collectionName());
+		LdesConfig ldesConfig = appConfig.getLdesConfig(ldesFragmentRequest.viewName().getCollectionName());
 
 		TreeNode treeNode = treeNodeFactory
 				.getTreeNode(new LdesFragment(
-						ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
+						ldesFragmentRequest.viewName(),
 						ldesFragmentRequest.fragmentPairs())
 						.getFragmentId(), ldesConfig);
 		if (treeNode.isSoftDeleted())
 			throw new DeletedFragmentException(
 					ldesConfig.getHostName()
-							+ new LdesFragment(ldesFragmentRequest.collectionName(), ldesFragmentRequest.viewName(),
+							+ new LdesFragment(ldesFragmentRequest.viewName(),
 									ldesFragmentRequest.fragmentPairs()).getFragmentId());
 		return treeNode;
 	}

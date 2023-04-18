@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpoli
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +17,7 @@ class TimeBasedRetentionPolicyTest {
 
 	@Test
 	void when_FragmentIsLongEnoughImmutable_ItMatchesTheTimebasedRetentionPolicy() {
-		LdesFragment ldesFragment = new LdesFragment("collectionName", "view", List.of());
+		LdesFragment ldesFragment = new LdesFragment(new ViewName("collectionName", "view"), List.of());
 
 		assertFalse(retentionPolicy.matchesPolicy(ldesFragment));
 		ldesFragment.makeImmutable();

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class SnapshotFragmenterImplTest {
 	@Test
 	void when_MembersAreSentForFragmentation_TheyAreFragmentedOneByOne() {
 		Set<Member> members = Set.of(new Member("id", "collectionName", 0L, null, null, null, List.of()));
-		LdesFragment rootTreeNode = new LdesFragment("collectionName", "view", List.of());
+		LdesFragment rootTreeNode = new LdesFragment(new ViewName("collectionName", "view"), List.of());
 
 		snapshotFragmenter.fragmentSnapshotMembers(members, rootTreeNode);
 

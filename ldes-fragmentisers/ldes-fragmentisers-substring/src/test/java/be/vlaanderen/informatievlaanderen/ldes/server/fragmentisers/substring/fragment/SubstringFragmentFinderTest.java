@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.f
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +13,14 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class SubstringFragmentFinderTest {
 
-	private static final String VIEW_NAME = "view";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static LdesFragment PARENT_FRAGMENT;
 	private SubstringFragmentCreator substringFragmentCreator;
 	private SubstringRelationsAttributer substringRelationsAttributer;
@@ -25,7 +29,7 @@ class SubstringFragmentFinderTest {
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(
-				"collectionName", VIEW_NAME, List.of());
+				VIEW_NAME, List.of());
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setMemberLimit(1);
 		substringRelationsAttributer = mock(SubstringRelationsAttributer.class);
@@ -50,10 +54,10 @@ class SubstringFragmentFinderTest {
 	@Test
 	void when_RootFragmentHasReachedItsLimit_FirstOpenFragmentIsReturned() {
 		LdesFragment rootFragment = new LdesFragment(
-				"collectionName", VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, null, false, 1,
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, null, false, 1,
 				List.of());
 		LdesFragment aFragment = new LdesFragment(
-				"collectionName", VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, null, false, 1,
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, null, false, 1,
 				List.of());
 		LdesFragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,

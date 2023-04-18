@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.enti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -63,7 +64,8 @@ public class LdesFragmentEntity {
 
 	public LdesFragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(collectionName, viewName, fragmentPairs, immutable, immutableTimestamp, softDeleted,
+		return new LdesFragment(ViewName.fromString(viewName), fragmentPairs, immutable, immutableTimestamp,
+				softDeleted,
 				effectiveNumberOfMembers,
 				relations);
 	}
@@ -77,12 +79,13 @@ public class LdesFragmentEntity {
 	}
 
 	public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
+		ViewName localViewName = ldesFragment.getViewName();
 		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
 				ldesFragment.getFragmentPairs().isEmpty(),
-				ldesFragment.getViewName(),
+				localViewName.toString(),
 				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
 				ldesFragment.isSoftDeleted(), ldesFragment.getParentId(), ldesFragment.getImmutableTimestamp(),
-				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations(), ldesFragment.getCollectionName());
+				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations(), localViewName.getCollectionName());
 	}
 
 	public Boolean getRoot() {

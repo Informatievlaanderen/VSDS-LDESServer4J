@@ -26,9 +26,9 @@ public class ParentUpdaterImpl implements ParentUpdater {
 		List<FragmentPair> parentPairs = new ArrayList<>(currentChild.getFragmentPairs());
 		parentPairs.remove(parentPairs.size() - 1);
 		LdesFragment parent = ldesFragmentRepository
-				.retrieveMutableFragment(currentChild.getViewName(), parentPairs)
+				.retrieveMutableFragment(currentChild.getViewName().toString(), parentPairs)
 				.orElseThrow(() -> new MissingFragmentException(
-						new LdesFragment(currentChild.getCollectionName(), currentChild.getViewName(), parentPairs)
+						new LdesFragment(currentChild.getViewName(), parentPairs)
 								.getFragmentId()));
 
 		Optional<TreeRelation> optionalOldTreeRelation = parent.getRelations().stream()
@@ -36,7 +36,7 @@ public class ParentUpdaterImpl implements ParentUpdater {
 		if (optionalOldTreeRelation.isPresent()) {
 			TreeRelation oldTreeRelation = optionalOldTreeRelation.get();
 			LdesFragment newChild = ldesFragmentRepository
-					.retrieveNonDeletedChildFragment(parent.getViewName(),
+					.retrieveNonDeletedChildFragment(parent.getViewName().toString(),
 							parentPairs)
 					.orElseThrow(() -> new RuntimeException("No non-deleted child"));
 			parent.deleteRelation(oldTreeRelation);

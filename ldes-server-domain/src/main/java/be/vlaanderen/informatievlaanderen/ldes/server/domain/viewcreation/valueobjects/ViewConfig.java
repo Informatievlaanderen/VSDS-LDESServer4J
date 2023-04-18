@@ -42,8 +42,7 @@ public class ViewConfig {
 
 	private ViewSpecification getDefaultPaginationView(String collectionName) {
 		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName(DEFAULT_VIEW_NAME);
-		viewSpecification.setCollectionName(collectionName);
+		viewSpecification.setName(new ViewName(collectionName, DEFAULT_VIEW_NAME));
 		viewSpecification.setRetentionPolicies(List.of());
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);

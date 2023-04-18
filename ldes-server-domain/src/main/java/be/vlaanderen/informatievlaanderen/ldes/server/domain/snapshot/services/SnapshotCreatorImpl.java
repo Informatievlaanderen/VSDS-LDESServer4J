@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -33,7 +34,8 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
 				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
-		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator.createRootFragmentForView(snapshot.getSnapshotId());
+		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator
+				.createRootFragmentForView(new ViewName(snapshot.getCollectionName(), snapshot.getSnapshotId()));
 		snapshotFragmenter.fragmentSnapshotMembers(membersOfSnapshot, rootTreeNodeOfSnapshot);
 		return snapshot;
 	}

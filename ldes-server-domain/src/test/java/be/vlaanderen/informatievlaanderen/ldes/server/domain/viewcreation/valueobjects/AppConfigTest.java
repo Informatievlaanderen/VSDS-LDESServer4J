@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = { AppConfig.class, PathToModelConverter.class })
+@SpringBootTest(classes = { AppConfig.class, PathToModelConverter.class, ViewNameConverter.class })
 @EnableConfigurationProperties
 @ActiveProfiles("test")
 class AppConfigTest {
@@ -47,7 +47,7 @@ class AppConfigTest {
 	private void verifyDefaultViewSecondLdes(List<ViewSpecification> views) {
 		assertEquals(1, views.size());
 		ViewSpecification firstViewSpecification = views.get(0);
-		assertEquals("ldes-2/firstView", firstViewSpecification.getName());
+		assertEquals(ViewName.fromString("ldes-2/firstView"), firstViewSpecification.getName());
 		assertEquals(1, firstViewSpecification.getFragmentations().size());
 		assertEquals(List.of(), firstViewSpecification.getRetentionConfigs());
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(0), "pagination",
@@ -70,7 +70,7 @@ class AppConfigTest {
 		assertEquals(3, views.size());
 
 		ViewSpecification firstViewSpecification = views.get(0);
-		assertEquals("ldes-1/firstView", firstViewSpecification.getName());
+		assertEquals(ViewName.fromString("ldes-1/firstView"), firstViewSpecification.getName());
 		assertEquals(2, firstViewSpecification.getFragmentations().size());
 		verifyViewSpecification(firstViewSpecification.getFragmentations().get(0), "geospatial",
 				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
@@ -81,14 +81,14 @@ class AppConfigTest {
 		verifyRetentionPolicy(retentionConfig);
 
 		ViewSpecification secondViewSpecification = views.get(1);
-		assertEquals("ldes-1/secondView", secondViewSpecification.getName());
+		assertEquals(ViewName.fromString("ldes-1/secondView"), secondViewSpecification.getName());
 		assertEquals(1, secondViewSpecification.getFragmentations().size());
 		assertEquals(List.of(), secondViewSpecification.getRetentionConfigs());
 		verifyViewSpecification(secondViewSpecification.getFragmentations().get(0), "timebased",
 				Map.of("memberLimit", "3"));
 
 		ViewSpecification defaultViewSpecification = views.get(2);
-		assertEquals("ldes-1/by-page", defaultViewSpecification.getName());
+		assertEquals(ViewName.fromString("ldes-1/by-page"), defaultViewSpecification.getName());
 		assertEquals(1, defaultViewSpecification.getFragmentations().size());
 		assertEquals(List.of(), defaultViewSpecification.getRetentionConfigs());
 		verifyViewSpecification(defaultViewSpecification.getFragmentations().get(0), "pagination",

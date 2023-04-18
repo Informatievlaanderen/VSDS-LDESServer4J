@@ -4,21 +4,20 @@ import java.util.List;
 
 public class ViewSpecification {
 
-	private String name;
-	private String collectionName;
+	private ViewName name;
 	private List<RetentionConfig> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
-	public String getName() {
-		return collectionName + "/" + name;
+	public ViewName getName() {
+		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(ViewName name) {
 		this.name = name;
 	}
 
 	public void setCollectionName(String collectionName) {
-		this.collectionName = collectionName;
+		name = name.withCollectionName(collectionName);
 	}
 
 	public List<FragmentationConfig> getFragmentations() {

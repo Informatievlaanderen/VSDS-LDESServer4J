@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
@@ -17,12 +18,18 @@ import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 class GeospatialFragmentationStrategyTest {
 
-	private static final String VIEW_NAME = "view";
-	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment("collectionName", VIEW_NAME, List.of());
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
+	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
 	private static final LdesFragment ROOT_TILE_FRAGMENT = PARENT_FRAGMENT
 			.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 

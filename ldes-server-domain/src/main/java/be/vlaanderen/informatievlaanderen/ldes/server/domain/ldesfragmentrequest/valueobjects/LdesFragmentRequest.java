@@ -1,13 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-public record LdesFragmentRequest(String collectionName, String viewName, List<FragmentPair> fragmentPairs) {
+public record LdesFragmentRequest(ViewName viewName, List<FragmentPair> fragmentPairs) {
 
-    public static LdesFragmentRequest createViewRequest(String collectionName, String viewName) {
-        return new LdesFragmentRequest(collectionName, viewName, List.of());
+    public static LdesFragmentRequest createViewRequest(ViewName viewName) {
+        return new LdesFragmentRequest(viewName, List.of());
     }
 
     // @formatter:off
@@ -25,22 +26,5 @@ public record LdesFragmentRequest(String collectionName, String viewName, List<F
         }
     }
     // @formatter:on
-
-    public String generateFragmentId() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("/").append(viewName);
-
-        if (!fragmentPairs.isEmpty()) {
-            stringBuilder.append("?");
-            stringBuilder.append(
-                    fragmentPairs
-                            .stream()
-                            .map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
-                            .collect(Collectors.joining("&"))
-            );
-        }
-
-        return stringBuilder.toString();
-    }
 
 }

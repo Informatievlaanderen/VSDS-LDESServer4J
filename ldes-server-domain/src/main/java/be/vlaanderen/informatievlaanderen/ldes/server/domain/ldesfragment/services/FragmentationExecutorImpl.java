@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,14 +16,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class FragmentationExecutorImpl implements FragmentationExecutor {
 
-	private final Map<String, FragmentationStrategy> fragmentationStrategyMap;
-	private final Map<String, LdesFragment> rootFragmentMap;
+	private final Map<ViewName, FragmentationStrategy> fragmentationStrategyMap;
+	private final Map<ViewName, LdesFragment> rootFragmentMap;
 	private final LdesFragmentRepository ldesFragmentRepository;
 
 	private final ObservationRegistry observationRegistry;
 
 	public FragmentationExecutorImpl(
-			@Qualifier("configured-fragmentation") Map<String, FragmentationStrategy> fragmentationStrategyMap,
+			@Qualifier("configured-fragmentation") Map<ViewName, FragmentationStrategy> fragmentationStrategyMap,
 			LdesFragmentRepository ldesFragmentRepository, ObservationRegistry observationRegistry) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
 		this.rootFragmentMap = new ConcurrentHashMap<>();
@@ -38,10 +39,8 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 		fragmentationStrategyMap
 				.entrySet()
-				.stream()
-				.filter(entry -> entry.getKey().split("/")[0].equals(member.getCollectionName()))
-				.toList()
 				.parallelStream()
+				.filter(entry -> entry.getKey().getCollectionName().equals(member.getCollectionName()))
 				.forEach(entry -> {
 					LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentObservation);
 					entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentObservation);
@@ -50,14 +49,14 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 		parentObservation.stop();
 	}
 
-	private LdesFragment retrieveRootFragmentOfView(String viewName, Observation parentObservation) {
+	private LdesFragment retrieveRootFragmentOfView(ViewName viewName, Observation parentObservation) {
 		Observation rootRetrievalObservation = Observation
 				.createNotStarted("retrieve root of view " + viewName, observationRegistry)
 				.parentObservation(parentObservation).start();
 
 		LdesFragment ldesFragment = rootFragmentMap.computeIfAbsent(viewName, s -> ldesFragmentRepository
-				.retrieveRootFragment(viewName)
-				.orElseThrow(() -> new MissingRootFragmentException(viewName)));
+				.retrieveRootFragment(viewName.toString())
+				.orElseThrow(() -> new MissingRootFragmentException(viewName.toString())));
 
 		rootRetrievalObservation.stop();
 		return ldesFragment;

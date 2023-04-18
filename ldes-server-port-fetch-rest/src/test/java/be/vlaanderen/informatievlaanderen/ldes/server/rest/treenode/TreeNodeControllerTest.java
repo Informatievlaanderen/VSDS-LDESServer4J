@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -12,6 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -93,10 +95,12 @@ class TreeNodeControllerTest {
 			String expectedHeaderValue) throws Exception {
 
 		final LdesConfig ldesConfig = appConfig.getCollections().get(0);
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ldesConfig.getCollectionName(),
-				fullViewName,
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(new ViewName(ldesConfig.getCollectionName(),
+				fullViewName),
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), immutable, false, false, List.of(),
+		final String fragmentId = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
+				.getFragmentId();
+		TreeNode treeNode = new TreeNode(fragmentId, immutable, false, false, List.of(),
 				List.of(), ldesConfig.getCollectionName());
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
@@ -117,7 +121,7 @@ class TreeNodeControllerTest {
 		assertEquals(expectedHeaderValue, headerValue);
 
 		headerValue = result.getResponse().getHeader("Etag");
-		String expectedEtag = "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
+		String expectedEtag = "\"46c730a8f248da5bf446ab7d81440be77929a11ef2086867b19d1e769fd98400\"";
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);
 
@@ -163,14 +167,14 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
-				List.of());
-		TreeNode treeNode = new TreeNode(ldesFragmentRequest.generateFragmentId(), false, false, false, List.of(),
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
+				new ViewName(ldesConfig.getCollectionName(), fullViewName), List.of());
+		final String fragmentId = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
+				.getFragmentId();
+		TreeNode treeNode = new TreeNode(fragmentId, false, false, false, List.of(),
 				List.of(), "collectionName");
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
-
-		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
-
 		mockMvc.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
 				VIEW_NAME).accept("application/json")).andDo(print())
 				.andExpect(status().isUnsupportedMediaType());
@@ -180,12 +184,12 @@ class TreeNodeControllerTest {
 	void when_GETRequestButMissingFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
+				new ViewName(ldesConfig.getCollectionName(), fullViewName),
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
-
-		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),
@@ -200,12 +204,12 @@ class TreeNodeControllerTest {
 	void when_GETRequestButDeletedFragmentExceptionIsThrown_NotFoundIsReturned()
 			throws Exception {
 
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest("collectionName", fullViewName,
+		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
+				new ViewName(ldesConfig.getCollectionName(), fullViewName),
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
-
-		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", ldesConfig.getCollectionName(),

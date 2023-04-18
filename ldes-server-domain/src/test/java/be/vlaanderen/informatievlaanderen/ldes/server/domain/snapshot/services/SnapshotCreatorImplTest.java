@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -45,14 +46,14 @@ class SnapshotCreatorImplTest {
 		List<LdesFragment> ldesFragmentsForSnapshot = getLdesFragmentsForSnapshot();
 		Map<String, List<Member>> membersOfSnapshot = getMembers();
 		when(memberCollector.getMembersGroupedByVersionOf(ldesFragmentsForSnapshot)).thenReturn(membersOfSnapshot);
-		LdesFragment rootFragmentOfSnapshot = new LdesFragment("collectionName", "snapshot-", List.of());
-		when(rootFragmentCreator.createRootFragmentForView(contains("snapshot-"))).thenReturn(rootFragmentOfSnapshot);
+		LdesFragment rootFragmentOfSnapshot = new LdesFragment(new ViewName("collectionName", "snapshot-"), List.of());
+		when(rootFragmentCreator.createRootFragmentForView(any())).thenReturn(rootFragmentOfSnapshot);
 
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, ldesConfig);
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);
 		inOrder.verify(memberCollector, times(1)).getMembersGroupedByVersionOf(ldesFragmentsForSnapshot);
-		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(contains("snapshot-"));
+		inOrder.verify(rootFragmentCreator, times(1)).createRootFragmentForView(any());
 		inOrder.verify(snapshotFragmenter, times(1))
 				.fragmentSnapshotMembers(getMemberLastVersionsOfSnapshot(membersOfSnapshot), rootFragmentOfSnapshot);
 		inOrder.verifyNoMoreInteractions();
@@ -79,9 +80,11 @@ class SnapshotCreatorImplTest {
 	}
 
 	private List<LdesFragment> getLdesFragmentsForSnapshot() {
-		LdesFragment ldesFragment = new LdesFragment("collectionName", "view", List.of());
-		LdesFragment ldesFragment1 = new LdesFragment("collectionName", "view", List.of(new FragmentPair("page", "1")));
-		LdesFragment ldesFragment2 = new LdesFragment("collectionName", "view", List.of(new FragmentPair("page", "2")));
+		LdesFragment ldesFragment = new LdesFragment(new ViewName("collectionName", "view"), List.of());
+		LdesFragment ldesFragment1 = new LdesFragment(new ViewName("collectionName", "view"),
+				List.of(new FragmentPair("page", "1")));
+		LdesFragment ldesFragment2 = new LdesFragment(new ViewName("collectionName", "view"),
+				List.of(new FragmentPair("page", "2")));
 		return List.of(ldesFragment, ldesFragment1, ldesFragment2);
 	}
 }

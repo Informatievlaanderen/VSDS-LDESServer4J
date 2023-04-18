@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,13 +20,19 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class FragmentationStrategyCreatorImplTest {
 	private static final Map<String, String> TIMEBASED_PROPERTIES = Map.of("timebasedProperty", "time");
 	private static final Map<String, String> GEOSPATIAL_PROPERTIES = Map.of("geospatialProperty", "geo");
 	private static final String GEOSPATIAL = "geospatial";
 	private static final String TIMEBASED = "timebased";
+	private static final ViewName VIEW_NAME = new ViewName("collectionName", "viewName");
 
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
@@ -43,7 +50,7 @@ class FragmentationStrategyCreatorImplTest {
 	@Test
 	void when_ViewSpecificationFragmentationConfigIsNull_FragmentationStrategyImplIsReturned() {
 		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName("firstView");
+		viewSpecification.setName(VIEW_NAME);
 
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
@@ -89,7 +96,7 @@ class FragmentationStrategyCreatorImplTest {
 
 	private ViewSpecification getViewSpecification() {
 		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName("firstView");
+		viewSpecification.setName(VIEW_NAME);
 		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL,
 				GEOSPATIAL_PROPERTIES);
 		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED,
