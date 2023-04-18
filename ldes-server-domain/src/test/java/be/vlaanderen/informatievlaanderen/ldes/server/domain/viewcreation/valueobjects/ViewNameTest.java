@@ -1,9 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ViewNameTest {
@@ -30,23 +38,41 @@ class ViewNameTest {
 
 	@SuppressWarnings("java:S3415") // this is for assertNotEquals(viewNameA, null); where we need this order for
 									// our test
-	@Test
-	void testEqualsAndHashCode() {
-		String colA = "colA";
-		String nameA = "nameA";
+	@ParameterizedTest
+	@ArgumentsSource(EqualityTestProvider.class)
+	void testEqualsAndHashCode(BiConsumer<Object, Object> test, ViewName a, ViewName b) {
+		test.accept(a, b);
+		if (a != null && b != null) {
+			test.accept(a.hashCode(), b.hashCode());
+		}
+	}
 
-		ViewName viewNameA = new ViewName(colA, nameA);
-		assertEquals(viewNameA, viewNameA);
-		assertEquals(new ViewName(colA, nameA), viewNameA);
-		assertNotEquals(new ViewName("other", nameA), viewNameA);
-		assertNotEquals(new ViewName(colA, "other"), viewNameA);
-		assertNotEquals(new ViewName("other", "other"), viewNameA);
-		assertNotEquals(viewNameA, null);
+	static class EqualityTestProvider implements ArgumentsProvider {
 
-		assertEquals(new ViewName(colA, nameA).hashCode(), viewNameA.hashCode());
-		assertNotEquals(new ViewName("other", nameA).hashCode(), new ViewName(colA, nameA).hashCode());
-		assertNotEquals(new ViewName(colA, "other").hashCode(), new ViewName(colA, nameA).hashCode());
-		assertNotEquals(new ViewName("other", "other").hashCode(), new ViewName(colA, nameA).hashCode());
+		private static final String collectionA = "collectionA";
+		private static final String nameA = "nameA";
+		private static final ViewName viewNameA = new ViewName(collectionA, nameA);
+
+		@Override
+		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+			return Stream.of(
+					Arguments.of(equals(), viewNameA, viewNameA),
+					Arguments.of(equals(), new ViewName(collectionA, nameA), viewNameA),
+					Arguments.of(notEquals(), new ViewName("otherCollection", nameA), viewNameA),
+					Arguments.of(notEquals(), new ViewName(collectionA, "otherName"), viewNameA),
+					Arguments.of(notEquals(), new ViewName("otherCollection", "otherName"), viewNameA),
+					Arguments.of(notEquals(), null, viewNameA),
+					Arguments.of(notEquals(), viewNameA, null));
+		}
+
+		private static BiConsumer<Object, Object> equals() {
+			return Assertions::assertEquals;
+		}
+
+		private static BiConsumer<Object, Object> notEquals() {
+			return Assertions::assertNotEquals;
+		}
+
 	}
 
 	@Test
