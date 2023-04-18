@@ -39,10 +39,8 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 		fragmentationStrategyMap
 				.entrySet()
-				.stream()
-				.filter(entry -> entry.getKey().getCollectionName().equals(member.getCollectionName()))
-				.toList()
 				.parallelStream()
+				.filter(entry -> entry.getKey().getCollectionName().equals(member.getCollectionName()))
 				.forEach(entry -> {
 					LdesFragment rootFragmentOfView = retrieveRootFragmentOfView(entry.getKey(), parentObservation);
 					entry.getValue().addMemberToFragment(rootFragmentOfView, member, parentObservation);
