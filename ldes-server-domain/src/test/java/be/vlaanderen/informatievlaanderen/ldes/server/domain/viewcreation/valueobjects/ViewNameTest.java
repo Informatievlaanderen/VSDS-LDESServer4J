@@ -11,8 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ViewNameTest {
 
@@ -36,14 +35,13 @@ class ViewNameTest {
 		assertEquals("colA", base.getCollectionName());
 	}
 
-	@SuppressWarnings("java:S3415") // this is for assertNotEquals(viewNameA, null); where we need this order for
-									// our test
 	@ParameterizedTest
 	@ArgumentsSource(EqualityTestProvider.class)
-	void testEqualsAndHashCode(BiConsumer<Object, Object> test, ViewName a, ViewName b) {
-		test.accept(a, b);
+	void testEqualsAndHashCode(BiConsumer<Object, Object> assertion, ViewName a, ViewName b) {
+		assertNotNull(assertion);
+		assertion.accept(a, b);
 		if (a != null && b != null) {
-			test.accept(a.hashCode(), b.hashCode());
+			assertion.accept(a.hashCode(), b.hashCode());
 		}
 	}
 
