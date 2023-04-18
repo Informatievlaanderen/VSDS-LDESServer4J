@@ -39,7 +39,7 @@ public class LdesFragment {
 
 	public String getFragmentId() {
 		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("/").append(viewName);
+		stringBuilder.append("/").append(viewName.asString());
 
 		if (!fragmentPairs.isEmpty()) {
 			stringBuilder.append("?");
@@ -103,7 +103,7 @@ public class LdesFragment {
 			parentPairs.remove(parentPairs.size() - 1);
 			StringBuilder stringBuilder = new StringBuilder();
 			stringBuilder
-					.append("/").append(viewName);
+					.append("/").append(viewName.asString());
 			if (!parentPairs.isEmpty()) {
 
 				stringBuilder.append("?");
