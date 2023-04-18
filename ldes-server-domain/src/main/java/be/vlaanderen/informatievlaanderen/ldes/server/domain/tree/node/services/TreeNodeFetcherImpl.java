@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -20,17 +21,18 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 
 	@Override
 	public TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(ldesFragmentRequest.viewName().getCollectionName());
+		final ViewName viewName = ldesFragmentRequest.viewName();
+		LdesConfig ldesConfig = appConfig.getLdesConfig(viewName.getCollectionName());
 
 		TreeNode treeNode = treeNodeFactory
 				.getTreeNode(new LdesFragment(
-						ldesFragmentRequest.viewName(),
+						viewName,
 						ldesFragmentRequest.fragmentPairs())
 						.getFragmentId(), ldesConfig);
 		if (treeNode.isSoftDeleted())
 			throw new DeletedFragmentException(
 					ldesConfig.getHostName()
-							+ new LdesFragment(ldesFragmentRequest.viewName(),
+							+ new LdesFragment(viewName,
 									ldesFragmentRequest.fragmentPairs()).getFragmentId());
 		return treeNode;
 	}

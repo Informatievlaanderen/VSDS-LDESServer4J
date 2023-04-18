@@ -26,7 +26,7 @@ class TreeNodeFactoryImplTest {
 	public static final String COLLECTION_NAME = "collectionName";
 	public static final String VIEW = "treeNodeId";
 	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
-	public static final String TREE_NODE_ID = "/" + VIEW_NAME.toString();
+	public static final String TREE_NODE_ID = "/" + VIEW_NAME.asString();
 
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
