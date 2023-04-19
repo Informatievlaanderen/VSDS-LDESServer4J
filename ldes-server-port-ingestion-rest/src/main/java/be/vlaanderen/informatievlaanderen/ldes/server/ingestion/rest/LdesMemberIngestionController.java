@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,6 @@ public class LdesMemberIngestionController {
 	private final AppConfig appConfig;
 	private final Map<String, Model> shapes;
 
-	@Autowired
 	public LdesMemberIngestionController(MemberIngestService memberIngestService, AppConfig appConfig) {
 		this.memberIngestService = memberIngestService;
 		this.appConfig = appConfig;

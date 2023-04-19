@@ -96,7 +96,7 @@ class LdesShaclValidatorTest {
 	}
 
 	@Test
-	void when_ValidateProvidedInvalidAta_and_OnlyDbShapeProvided_thenReturnInvalid()
+	void when_ValidateProvidedInvalidData_and_OnlyDbShapeProvided_thenReturnInvalid()
 			throws URISyntaxException, IOException {
 		Model shape = readModelFromFile("validation/example-shape.ttl", Lang.TURTLE);
 
