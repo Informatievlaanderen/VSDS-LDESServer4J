@@ -16,6 +16,7 @@
         <module>mongock-config</module>
         <module>mongock-changeset-1</module>
         <module>mongock-changeset-2</module>
+        <module>mongock-changeset-3</module>
     </modules>
 
     <properties>

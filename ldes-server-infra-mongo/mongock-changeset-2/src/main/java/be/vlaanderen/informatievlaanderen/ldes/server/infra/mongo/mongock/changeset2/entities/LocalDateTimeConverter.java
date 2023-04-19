@@ -5,15 +5,18 @@ import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 public class LocalDateTimeConverter {
 
 	public LocalDateTime getLocalDateTime(LiteralImpl literalImpl) {
 		RDFDatatype datatype = literalImpl.getDatatype();
 		XSDDateTime parse = (XSDDateTime) datatype.parse(literalImpl.getValue().toString());
-		return ZonedDateTime.parse(parse.toString(), DateTimeFormatter.ISO_DATE_TIME)
-				.toLocalDateTime();
+		Calendar calendar = parse.asCalendar();
+		TimeZone tz = calendar.getTimeZone();
+		ZoneId zoneId = tz.toZoneId();
+		return LocalDateTime.ofInstant(calendar.toInstant(), zoneId);
 	}
 }
