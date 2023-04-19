@@ -127,21 +127,25 @@ The server allows configurable fragment refresh times with the max-age and max-a
 
 ##### Example HTTP Ingest-Fetch Configuration
 
+The server can host one or more collections.
+
   ```yaml
   server.port: { http-port }
-  ldes:
-    collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
-    host-name: { hostname of LDES Server }
-    member-type: { Defines which syntax type is used to define the member id e.g. "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder" }
-    timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
-    version-of: { SHACL property path to the non-versioned identifier of the entity. }
-    validation:
-      shape: { URI to defined shape }
-      enabled: { Enables/Disables shacl validation on ingested members }
+  collections:
+      - collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
+        host-name: { hostname of LDES Server }
+        member-type: { Defines which syntax type is used to define the member id e.g. "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder" }
+        timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
+        version-of: { SHACL property path to the non-versioned identifier of the entity. }
+        validation:
+          shape: { URI to defined shape }
+          enabled: { Enables/Disables shacl validation on ingested members }
   rest:
     max-age: { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
     max-age-immutable: { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
   ```
+
+An example of a configuration containing multiple collections can be found [here](ldes-server-application/examples/multi-ldes-config-example.yml)
 
 ##### Example Mongo Configuration
 
@@ -155,37 +159,41 @@ Note that the database schema may evolve between releases. To update the schema 
 
 ##### Example Views Configuration
 
-By using the property `defaultView`, one can enable or disable a default paginated (100 members per page) view on the collection. By defining the `views` property, more custom views can be configured.
+By using the property `defaultView`, one can enable or disable a default paginated (100 members per page) view on the collection. By defining the `views` property on a collection, more custom views can be configured.
 
   ```yaml
-    defaultView: {"true" or "false"}
-    views:
-      - name: {name of the view}
-        fragmentations:
-          - name: {type of fragmentation}
-            config:
-              {Map of fragmentation properties}
+  collections:
+    - collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
+      defaultView: {"true" or "false"}
+      views:
+        - name: {name of the view}
+          fragmentations:
+            - name: {type of fragmentation}
+              config:
+                {Map of fragmentation properties}
   ```
 
 An example of a view configuration with two view is shown below
 
   ```yaml
-  defaultView: "true"
-  views:
-    - name: "firstView"
-      fragmentations:
-        - name: "geospatial"
-          config:
-            maxZoomLevel: 15
-            fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
-        - name: "pagination"
-          config:
-            memberLimit: 5
-    - name: "secondView"
-      fragmentations:
-        - name: "pagination"
-          config:
-            memberLimit: 3
+  collections:
+    - collection-name: "myCollection"
+      defaultView: "true"
+      views:
+        - name: "firstView"
+          fragmentations:
+            - name: "geospatial"
+              config:
+                maxZoomLevel: 15
+                fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+            - name: "pagination"
+              config:
+                memberLimit: 5
+        - name: "secondView"
+          fragmentations:
+            - name: "pagination"
+              config:
+                memberLimit: 3
   ```
 
 ##### Example Retention
@@ -262,8 +270,9 @@ Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
 
   ```yaml
-ldes:
-   dcat: { path of file or url containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
+collections:
+  - collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
+    dcat: { path of file or url containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
   ```
 
 ### Docker Setup
