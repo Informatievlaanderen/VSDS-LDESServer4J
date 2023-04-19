@@ -95,8 +95,7 @@ class TreeNodeControllerTest {
 			String expectedHeaderValue) throws Exception {
 
 		final LdesConfig ldesConfig = appConfig.getCollections().get(0);
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(new ViewName(ldesConfig.getCollectionName(),
-				fullViewName),
+		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		final String fragmentId = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
 				.getFragmentId();
@@ -121,7 +120,7 @@ class TreeNodeControllerTest {
 		assertEquals(expectedHeaderValue, headerValue);
 
 		headerValue = result.getResponse().getHeader("Etag");
-		String expectedEtag = "\"46c730a8f248da5bf446ab7d81440be77929a11ef2086867b19d1e769fd98400\"";
+		String expectedEtag = "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);
 
@@ -169,7 +168,7 @@ class TreeNodeControllerTest {
 			throws Exception {
 		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
-				new ViewName(ldesConfig.getCollectionName(), fullViewName), List.of());
+				ViewName.fromString(fullViewName), List.of());
 		final String fragmentId = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
 				.getFragmentId();
 		TreeNode treeNode = new TreeNode(fragmentId, false, false, false, List.of(),
@@ -186,7 +185,7 @@ class TreeNodeControllerTest {
 
 		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
-				new ViewName(ldesConfig.getCollectionName(), fullViewName),
+				ViewName.fromString(fullViewName),
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingFragmentException("fragmentId"));
@@ -206,7 +205,7 @@ class TreeNodeControllerTest {
 
 		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
-				new ViewName(ldesConfig.getCollectionName(), fullViewName),
+				ViewName.fromString(fullViewName),
 				List.of());
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new DeletedFragmentException("fragmentId"));
