@@ -14,11 +14,11 @@ public class ViewConfig {
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 	private final List<ViewSpecification> views;
-	private final boolean defaultView;
+	private final boolean hasDefaultView;
 
-	private ViewConfig(List<ViewSpecification> views, boolean defaultView) {
+	private ViewConfig(List<ViewSpecification> views, boolean hasDefaultView) {
 		this.views = views != null ? views : new ArrayList<>();
-		this.defaultView = defaultView;
+		this.hasDefaultView = hasDefaultView;
 	}
 
 	public static ViewConfig empty() {
@@ -26,7 +26,7 @@ public class ViewConfig {
 	}
 
 	public ViewConfig withViews(List<ViewSpecification> views) {
-		return new ViewConfig(views, defaultView);
+		return new ViewConfig(views, hasDefaultView);
 	}
 
 	public ViewConfig withDefaultView(boolean defaultView) {
@@ -35,7 +35,7 @@ public class ViewConfig {
 
 	public List<ViewSpecification> getViews(String collectionName) {
 		ArrayList<ViewSpecification> viewSpecifications = new ArrayList<>(views);
-		if (defaultView) {
+		if (hasDefaultView) {
 			viewSpecifications.add(getDefaultPaginationView(notNull(collectionName)));
 		}
 		return viewSpecifications;

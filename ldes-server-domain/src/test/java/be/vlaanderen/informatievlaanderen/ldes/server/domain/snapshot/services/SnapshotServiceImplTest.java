@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,13 +89,18 @@ class SnapshotServiceImplTest {
 	void when_TreeNodesAreAvailable_And_PreviousSnapshotExists_TheyCanBeUsedToCreateSnapshot() {
 		final String prevSnapshotId = "prevId";
 		final String collectionName = "collectionName";
-		List<LdesFragment> treeNodesForSnapshot = List
+		List<LdesFragment> treeNodesFromDefaultView = List.of(new LdesFragment("collectionName", "by-page", List.of()));
+		when(ldesFragmentRepository.retrieveFragmentsOfView(defaultViewName)).thenReturn(treeNodesFromDefaultView);
+		List<LdesFragment> treeNodesFromPrevSnapshot = List
 				.of(new LdesFragment("collectionName", defaultViewName, List.of()));
-		when(ldesFragmentRepository.retrieveFragmentsOfView(prevSnapshotId)).thenReturn(treeNodesForSnapshot);
+		when(ldesFragmentRepository.retrieveFragmentsOfView(prevSnapshotId)).thenReturn(treeNodesFromPrevSnapshot);
 		Optional<Snapshot> lastSnapshot = Optional
 				.of(new Snapshot(prevSnapshotId, "shape", collectionName, LocalDateTime.now().minusDays(1), "of"));
 		when(snapshotRepository.getLastSnapshot()).thenReturn(lastSnapshot);
 		Snapshot snapshot = new Snapshot("id", collectionName, "shape", LocalDateTime.now(), "of");
+		List<LdesFragment> treeNodesForSnapshot = new ArrayList<>();
+		treeNodesForSnapshot.addAll(treeNodesFromPrevSnapshot);
+		treeNodesForSnapshot.addAll(treeNodesFromDefaultView);
 		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig)).thenReturn(snapshot);
 		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment("collectionName", "lastTreeNodeOfSnapshot", List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot, treeNodesForSnapshot))

@@ -34,12 +34,13 @@ public class SnapshotServiceImpl implements SnapshotService {
 	@Override
 	public void createSnapshot(LdesConfig ldesConfig) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
-		String viewName= ldesConfig.getDefaultView().orElseThrow(() -> new SnapshotCreationException(
-						"No default pagination view configured for collection " + ldesConfig.getCollectionName()))
+		String viewName = ldesConfig.getDefaultView().orElseThrow(() -> new SnapshotCreationException(
+				"No default pagination view configured for collection " + ldesConfig.getCollectionName()))
 				.getName();
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
-			List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(lastSnapshot.get().getSnapshotId());
+			List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository
+					.retrieveFragmentsOfView(lastSnapshot.get().getSnapshotId());
 			List<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
 			String lastFragment = treeNodesOfSnapshot.stream().filter(ldesFragment -> !ldesFragment.isRoot())
 					.filter(ldesFragment -> !ldesFragment.isImmutable())
@@ -47,8 +48,11 @@ public class SnapshotServiceImpl implements SnapshotService {
 					.flatMap(List::stream)
 					.map(TreeRelation::treeNode)
 					.findFirst().orElseThrow(() -> new RuntimeException("a"));
-			List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView.stream().filter(new GreaterOrEqualsPageFilter(lastFragment)).toList();
-			treeNodesForSnapshot = Stream.of(treeNodesOfSnapshot, relevantTreeNodesOfDefaultView).flatMap(List::stream).toList();
+			List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView.stream()
+					.filter(ldesFragment -> !ldesFragment.isRoot()).filter(new GreaterOrEqualsPageFilter(lastFragment))
+					.toList();
+			treeNodesForSnapshot = Stream.of(treeNodesOfSnapshot, relevantTreeNodesOfDefaultView).flatMap(List::stream)
+					.toList();
 		} else {
 			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
 		}
