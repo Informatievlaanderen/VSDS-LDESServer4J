@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +17,16 @@ import org.springframework.web.bind.annotation.*;
 public class AdminShapeRestController {
 	private final LdesConfigModelService service;
 
-	@Autowired
-	@Qualifier("shapeShaclValidator")
-	private LdesConfigShaclValidator shapeValidator;
+	private final LdesConfigShaclValidator shapeValidator;
 
-	@Autowired
-	private ApplicationEventPublisher eventPublisher;
+	private final ApplicationEventPublisher eventPublisher;
 
-	@Autowired
-	public AdminShapeRestController(LdesConfigModelService service) {
+	public AdminShapeRestController(LdesConfigModelService service,
+			@Qualifier("shapeShaclValidator") LdesConfigShaclValidator shapeValidator,
+			ApplicationEventPublisher eventPublisher) {
 		this.service = service;
+		this.shapeValidator = shapeValidator;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@InitBinder

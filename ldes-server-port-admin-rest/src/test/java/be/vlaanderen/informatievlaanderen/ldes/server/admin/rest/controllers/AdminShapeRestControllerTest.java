@@ -14,15 +14,20 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -49,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminShapeRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
-@RecordApplicationEvents
+@Import(AdminShapeRestControllerTest.MockitoPublisherConfiguration.class)
 class AdminShapeRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
@@ -57,8 +62,10 @@ class AdminShapeRestControllerTest {
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
+	@Captor
+	ArgumentCaptor<ShaclChangedEvent> shaclChangedEventArgumentCaptor;
 	@Autowired
-	private ApplicationEvents applicationEvents;
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -106,10 +113,11 @@ class AdminShapeRestControllerTest {
 				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
-		verify(ldesConfigModelService, times(1)).updateShape(anyString(), any());
-		ShaclChangedEvent event = applicationEvents.stream(ShaclChangedEvent.class).findFirst().orElseThrow();
-		assertEquals(collectionName, event.getCollectionName());
-		assertTrue(event.getShacl().isIsomorphicWith(expectedShapeModel));
+		verify(ldesConfigModelService, times(1)).updateShape(eq(collectionName), any(LdesConfigModel.class));
+		verify(applicationEventPublisher, times(1)).publishEvent(shaclChangedEventArgumentCaptor.capture());
+		ShaclChangedEvent shaclChangedEvent = shaclChangedEventArgumentCaptor.getValue();
+		assertEquals(collectionName, shaclChangedEvent.getCollectionName());
+		assertTrue(shaclChangedEvent.getShacl().isIsomorphicWith(expectedShapeModel));
 	}
 
 	@Test
@@ -148,4 +156,13 @@ class AdminShapeRestControllerTest {
 		return RDFDataMgr.loadModel(uri);
 	}
 
+	@TestConfiguration
+	static class MockitoPublisherConfiguration {
+
+		@Bean
+		@Primary
+		ApplicationEventPublisher publisher() {
+			return mock(ApplicationEventPublisher.class);
+		}
+	}
 }
