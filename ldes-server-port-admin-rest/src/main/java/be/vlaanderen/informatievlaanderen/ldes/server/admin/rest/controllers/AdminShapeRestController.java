@@ -38,7 +38,7 @@ public class AdminShapeRestController {
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
+	public void putShape(@PathVariable String collectionName,
 			@RequestBody @Validated LdesConfigModel shape) {
 		eventPublisher.publishEvent(new ShaclChangedEvent(collectionName, shape.getModel()));
 		return ResponseEntity.ok(shape);
