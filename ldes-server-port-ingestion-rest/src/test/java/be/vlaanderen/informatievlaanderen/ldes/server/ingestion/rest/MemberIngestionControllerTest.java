@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.InMemoryShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -47,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
+		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class, InMemoryShaclCollection.class})
 class MemberIngestionControllerTest {
 	private final static String RESTAURANT = "restaurant";
 
