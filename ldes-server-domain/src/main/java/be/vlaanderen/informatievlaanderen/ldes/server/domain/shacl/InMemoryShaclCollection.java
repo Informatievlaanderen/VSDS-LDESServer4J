@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import jakarta.annotation.PostConstruct;
-import org.apache.jena.rdf.model.Model;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Component
 public class InMemoryShaclCollection implements ShaclCollection {
-	private final Map<String, Model> shapes;
+	private final Map<String, ShaclShape> shapes;
 	private final LdesConfigModelService ldesConfigModelService;
 
 	public InMemoryShaclCollection(LdesConfigModelService ldesConfigModelService) {
@@ -29,8 +29,8 @@ public class InMemoryShaclCollection implements ShaclCollection {
 	}
 
 	@Override
-	public LdesConfigModel retrieveShape(String collectionName) {
-		return new LdesConfigModel(collectionName, shapes.get(collectionName));
+	public ShaclShape retrieveShape(String collectionName) {
+		return shapes.get(collectionName);
 	}
 
 	@PostConstruct
