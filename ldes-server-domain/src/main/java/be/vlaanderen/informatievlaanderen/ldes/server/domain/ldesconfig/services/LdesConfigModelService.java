@@ -14,6 +14,8 @@ public interface LdesConfigModelService {
 
 	LdesConfigModel updateConfigModel(LdesConfigModel ldesConfigModel);
 
+	List<LdesConfigModel> retrieveAllShapes();
+
 	LdesConfigModel retrieveShape(String collectionName);
 
 	LdesConfigModel updateShape(String collectionName, LdesConfigModel shape);

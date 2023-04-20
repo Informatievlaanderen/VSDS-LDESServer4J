@@ -5,3 +5,6 @@ collections:
     membertype: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
     versionOf: "http://purl.org/dc/terms/isVersionOf"
     timestampPath: "http://www.w3.org/ns/prov#generatedAtTime"
+  - hostname: "http://localhost:8080"
+    collectionname: "restaurant"
+    membertype: "http://example.com/restaurant#MenuItem"

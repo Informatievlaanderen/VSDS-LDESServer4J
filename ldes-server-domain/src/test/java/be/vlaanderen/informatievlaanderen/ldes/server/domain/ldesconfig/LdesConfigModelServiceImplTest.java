@@ -20,6 +20,8 @@ class LdesConfigModelServiceImplTest {
 	LdesConfigModelService service;
 	private LdesConfigRepository repository;
 
+	private static final String COLLECTION_NAME_1 = "collectionName1";
+
 	@BeforeEach
 	void setUp() {
 		repository = mock(LdesConfigRepository.class);
@@ -28,19 +30,18 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionExists_thenDelete() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-empty.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel))
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel))
 				.thenReturn(Optional.empty());
 
-		service.deleteConfigModel(collectionName);
+		service.deleteConfigModel(COLLECTION_NAME_1);
 
-		verify(repository, times(1)).retrieveConfigModel(collectionName);
-		verify(repository, times(1)).deleteConfigModel(collectionName);
-		verify(repository, times(1)).retrieveConfigModel(collectionName);
-		assertThrows(MissingLdesConfigException.class, () -> service.retrieveConfigModel(collectionName));
+		verify(repository, times(1)).retrieveConfigModel(COLLECTION_NAME_1);
+		verify(repository, times(1)).deleteConfigModel(COLLECTION_NAME_1);
+		verify(repository, times(1)).retrieveConfigModel(COLLECTION_NAME_1);
+		assertThrows(MissingLdesConfigException.class, () -> service.retrieveConfigModel(COLLECTION_NAME_1));
 	}
 
 	@Test
@@ -75,12 +76,11 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionHasViews_ThenReturnOneById() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model view = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, view);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, view);
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
-		assertEquals(ldesConfigModel, service.retrieveConfigModel(collectionName));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
+		assertEquals(ldesConfigModel, service.retrieveConfigModel(COLLECTION_NAME_1));
 	}
 
 	@Test
@@ -96,10 +96,8 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionNameExist_UpdateStream() throws URISyntaxException {
-		final String collectionName = "collectionName1";
-
 		final Model newModel = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel newEventStreamModel = new LdesConfigModel(collectionName, newModel);
+		final LdesConfigModel newEventStreamModel = new LdesConfigModel(COLLECTION_NAME_1, newModel);
 
 		when(repository.saveConfigModel(newEventStreamModel)).thenReturn(newEventStreamModel);
 		service.updateConfigModel(newEventStreamModel);
@@ -108,31 +106,48 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionExists_RetrieveShape() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 		final Model shape = readModelFromFile("example-shape.ttl");
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
-		assertTrue(service.retrieveShape(collectionName).getModel().isIsomorphicWith(shape));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
+		assertTrue(service.retrieveShape(COLLECTION_NAME_1).getModel().isIsomorphicWith(shape));
+	}
+
+	@Test
+	void whenCollectionExists_thenRetrieveAllShapes() throws URISyntaxException {
+		final String collectionName2 = "collectionName2";
+
+		final Model model1 = readModelFromFile("ldes-with-named-view.ttl");
+		final LdesConfigModel ldesConfigModel1 = new LdesConfigModel(COLLECTION_NAME_1, model1);
+
+		final Model model2 = readModelFromFile("ldes-empty.ttl");
+		final LdesConfigModel ldesConfigModel2 = new LdesConfigModel(collectionName2, model2);
+
+		final Model shape = readModelFromFile("example-shape.ttl");
+
+		when(repository.retrieveAllConfigModels()).thenReturn(List.of(ldesConfigModel1, ldesConfigModel2));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel1));
+		when(repository.retrieveConfigModel(collectionName2)).thenReturn(Optional.of(ldesConfigModel2));
+
+		service.retrieveAllShapes()
+				.forEach(ldesConfigModel -> assertTrue(ldesConfigModel.getModel().isIsomorphicWith(shape)));
 	}
 
 	@Test
 	void whenCollectionExists_UpdateShape() throws URISyntaxException {
-		final String collectionName = "collectionName1";
-
 		final Model model = readModelFromFile("ldes-with-shape.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final Model newShape = readModelFromFile("example-shape.ttl");
 		final LdesConfigModel ldesConfigShape = new LdesConfigModel("shape", newShape);
 
 		final Model modelWitNewShape = readModelFromFile("ldes-with-named-view.ttl");
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
 
-		LdesConfigModel updatedLdesConfigShape = service.updateShape(collectionName, ldesConfigShape);
+		LdesConfigModel updatedLdesConfigShape = service.updateShape(COLLECTION_NAME_1, ldesConfigShape);
 
 		assertTrue(ldesConfigShape.getModel().isIsomorphicWith(updatedLdesConfigShape.getModel()));
 		assertTrue(ldesConfigModel.getModel().isIsomorphicWith(modelWitNewShape));
@@ -150,15 +165,14 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionExistsWithMultipleViews_RetrieveSingleView() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final String viewName = "view1";
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 
-		Model actualView = service.retrieveView(collectionName, viewName).getModel();
+		Model actualView = service.retrieveView(COLLECTION_NAME_1, viewName).getModel();
 		Model expectedView = readModelFromFile("view.ttl");
 
 		assertTrue(actualView.isIsomorphicWith(expectedView));
@@ -166,67 +180,63 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionExistsWithoutViews_thenThrowException() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-empty.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final String viewName = "nonExisting";
 
-		final String expectedMessage = "No view exists with identifier: " + collectionName + "/" + viewName;
+		final String expectedMessage = "No view exists with identifier: " + COLLECTION_NAME_1 + "/" + viewName;
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 
-		assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(collectionName, viewName),
+		assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(COLLECTION_NAME_1, viewName),
 				expectedMessage);
 	}
 
 	@Test
 	void whenCollectionHasNonExistingViewAndTriesToRetrieve_thenThrowException() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final String viewName = "nonExisting";
 
-		final String expectedMessage = "No view exists with identifier: " + collectionName + "/" + viewName;
+		final String expectedMessage = "No view exists with identifier: " + COLLECTION_NAME_1 + "/" + viewName;
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 
-		assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(collectionName, viewName),
+		assertThrows(MissingLdesConfigException.class, () -> service.retrieveView(COLLECTION_NAME_1, viewName),
 				expectedMessage);
 	}
 
 	@Test
 	void whenCollectionHasView_thenDeleteOne() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final String viewName = "view1";
 
 		final Model modelWithoutView = readModelFromFile("ldes-empty.ttl");
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
 
-		service.deleteView(collectionName, viewName);
+		service.deleteView(COLLECTION_NAME_1, viewName);
 
 		assertTrue(modelWithoutView.isIsomorphicWith(model));
 	}
 
 	@Test
 	void whenCollectionHasNonExistingViewAndTriesToDelete_thenThrowException() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final String viewName = "nonExisting";
 
-		final String expectedMessage = "No view exists with identifier: " + collectionName + "/" + viewName;
+		final String expectedMessage = "No view exists with identifier: " + COLLECTION_NAME_1 + "/" + viewName;
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 
-		assertThrows(MissingLdesConfigException.class, () -> service.deleteView(collectionName, viewName),
+		assertThrows(MissingLdesConfigException.class, () -> service.deleteView(COLLECTION_NAME_1, viewName),
 				expectedMessage);
 	}
 
@@ -256,32 +266,31 @@ class LdesConfigModelServiceImplTest {
 
 	@Test
 	void whenCollectionExistsAndTriesToAddExistingView_thenUpdateView() throws URISyntaxException {
-		final String collectionName = "collectionName1";
 		final String viewName = "view1";
 
 		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(collectionName, model);
+		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
 
 		final Model newView = readModelFromFile("updated-view.ttl");
 		final LdesConfigModel newLdesConfigView = new LdesConfigModel("view1", newView);
 
-		when(repository.retrieveConfigModel(collectionName)).thenReturn(Optional.of(ldesConfigModel));
+		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 		when(repository.saveConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
 
-		assertEquals(1, service.retrieveViews(collectionName).size());
+		assertEquals(1, service.retrieveViews(COLLECTION_NAME_1).size());
 
-		final Model oldView = service.retrieveView(collectionName, viewName).getModel();
+		final Model oldView = service.retrieveView(COLLECTION_NAME_1, viewName).getModel();
 		assertFalse(oldView.isIsomorphicWith(newView), "make sure the views are not equal/isomorphic");
-		assertEquals(1, service.retrieveViews(collectionName).size(),
+		assertEquals(1, service.retrieveViews(COLLECTION_NAME_1).size(),
 				"Make sure there is only one view in the collection");
 
-		service.addView(collectionName, newLdesConfigView);
+		service.addView(COLLECTION_NAME_1, newLdesConfigView);
 
 		verify(repository, times(1)).saveConfigModel(ldesConfigModel);
-		assertEquals(1, service.retrieveViews(collectionName).size(),
+		assertEquals(1, service.retrieveViews(COLLECTION_NAME_1).size(),
 				"make sure the view is updated and not added as second element");
 
-		final Model updatedView = service.retrieveView(collectionName, viewName).getModel();
+		final Model updatedView = service.retrieveView(COLLECTION_NAME_1, viewName).getModel();
 		assertTrue(updatedView.isIsomorphicWith(newView));
 		assertFalse(updatedView.isIsomorphicWith(oldView));
 	}

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
@@ -13,10 +14,17 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -32,6 +40,8 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -44,12 +54,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminShapeRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
+@Import(AdminShapeRestControllerTest.MockitoPublisherConfiguration.class)
 class AdminShapeRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
 	@MockBean
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
+
+	@Captor
+	ArgumentCaptor<ShaclChangedEvent> shaclChangedEventArgumentCaptor;
+	@Autowired
+	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -77,12 +93,9 @@ class AdminShapeRestControllerTest {
 	void when_ViewNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
 		when(ldesConfigModelService.retrieveView(collectionName, viewName))
 				.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
-		ResultActions resultActions = mockMvc
-				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
 				.andDo(print())
 				.andExpect(status().isNotFound());
 	}
@@ -100,13 +113,17 @@ class AdminShapeRestControllerTest {
 				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
 				.andExpect(status().isOk());
-		verify(ldesConfigModelService, times(1)).updateShape(anyString(), any());
+		verify(ldesConfigModelService, times(1)).updateShape(eq(collectionName), any(LdesConfigModel.class));
+		verify(applicationEventPublisher, times(1)).publishEvent(shaclChangedEventArgumentCaptor.capture());
+		ShaclChangedEvent shaclChangedEvent = shaclChangedEventArgumentCaptor.getValue();
+		assertEquals(collectionName, shaclChangedEvent.getCollectionName());
+		assertTrue(shaclChangedEvent.getShacl().isIsomorphicWith(expectedShapeModel));
 	}
 
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		String collectionName = "name1";
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 				.content(readDataFromFile("shape-without-type.ttl", Lang.TURTLE))
 				.contentType(MediaType.TEXT_PLAIN))
 				.andDo(print())
@@ -139,4 +156,13 @@ class AdminShapeRestControllerTest {
 		return RDFDataMgr.loadModel(uri);
 	}
 
+	@TestConfiguration
+	static class MockitoPublisherConfiguration {
+
+		@Bean
+		@Primary
+		ApplicationEventPublisher publisher() {
+			return mock(ApplicationEventPublisher.class);
+		}
+	}
 }
