@@ -35,7 +35,7 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator
-				.createRootFragmentForView(new ViewName(snapshot.getCollectionName(), snapshot.getSnapshotId()));
+				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));
 		snapshotFragmenter.fragmentSnapshotMembers(membersOfSnapshot, rootTreeNodeOfSnapshot);
 		return snapshot;
 	}
