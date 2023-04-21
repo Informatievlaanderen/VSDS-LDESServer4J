@@ -5,6 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InOrder;
@@ -25,6 +28,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -66,7 +71,6 @@ class AdminShapeRestControllerTest {
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
-
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -94,7 +98,7 @@ class AdminShapeRestControllerTest {
 
 			MvcResult result = resultActions.andReturn();
 			Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
-			Assertions.assertTrue(actualModel.isIsomorphicWith(expectedShapeModel));
+			assertTrue(actualModel.isIsomorphicWith(expectedShapeModel));
 		}
 
 		@Test
@@ -143,7 +147,6 @@ class AdminShapeRestControllerTest {
 				.andExpect(status().isBadRequest());
 	}
 
-
 	}
 
 	private String readDataFromFile(String fileName)
@@ -163,12 +166,6 @@ class AdminShapeRestControllerTest {
 
 	@TestConfiguration
 	static class AdminShapeRestControllerTestConfiguration {
-
-		@Bean
-		@Primary
-		ApplicationEventPublisher publisher() {
-			return mock(ApplicationEventPublisher.class);
-		}
 
 		@Bean
 		ShaclCollection shaclCollection() {

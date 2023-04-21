@@ -8,9 +8,6 @@ import java.util.Objects;
 public class ShaclChangedEvent {
 	private final ShaclShape shacl;
 
-	public ShaclChangedEvent(ShaclShape shacl) {
-		this.shacl = shacl;
-	}
 	public ShaclChangedEvent(String collectionName, Model shacl) {
 		this.shacl = new ShaclShape(collectionName, shacl);
 	}

@@ -18,7 +18,7 @@ public class AdminShapeRestController {
 	private final ShaclShapeService shaclShapeService;
 
 	public AdminShapeRestController(@Qualifier("shapeShaclValidator") LdesConfigShaclValidator shapeValidator,
-									ShaclShapeService shaclShapeService) {
+			ShaclShapeService shaclShapeService) {
 		this.shapeValidator = shapeValidator;
 		this.shaclShapeService = shaclShapeService;
 	}
@@ -35,10 +35,10 @@ public class AdminShapeRestController {
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/shape")
-	public void putShape(@PathVariable String collectionName,
-						 @RequestBody @Validated Model shape) {
+	public ResponseEntity<Model> putShape(@PathVariable String collectionName,
+			@RequestBody @Validated Model shape) {
 		shaclShapeService.updateShaclShape(new ShaclShape(collectionName, shape));
-return ResponseEntity.ok(shape);
+		return ResponseEntity.ok(shape);
 	}
 
 }
