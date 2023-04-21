@@ -34,7 +34,8 @@ public class LdesMemberIngestionController {
 
 	private void validateMember(Member member, String collectionName) {
 		Model shape = shaclCollection.retrieveShape(collectionName).getModel();
-		if (shape != null)
+		if (shape != null) {
 			new LdesShaclValidator(shape, appConfig.getLdesConfig(collectionName)).validate(member);
+		}
 	}
 }
