@@ -75,7 +75,7 @@ class SnapshotServiceImplTest {
 				() -> snapshotService.createSnapshot(ldesConfig));
 
 		assertEquals(
-				"Unable to create snapshot.\nCause: No TreeNodes available in view by-page which is used for snapshotting",
+				"Unable to create snapshot.\nCause: No TreeNodes available in view collection/by-page which is used for snapshotting",
 				snapshotCreationException.getMessage());
 	}
 }

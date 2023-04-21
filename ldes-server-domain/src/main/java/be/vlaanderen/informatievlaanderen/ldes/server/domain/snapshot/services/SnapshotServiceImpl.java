@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.S
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,11 +32,11 @@ public class SnapshotServiceImpl implements SnapshotService {
 
 	@Override
 	public void createSnapshot(LdesConfig ldesConfig) {
-		final String viewName = ldesConfig.getCollectionName() + "/" + DEFAULT_VIEW_NAME;
-		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
+		final ViewName viewName = new ViewName(ldesConfig.getCollectionName(), DEFAULT_VIEW_NAME);
+		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
 		if (treeNodesForSnapshot.isEmpty()) {
 			throw new SnapshotCreationException(
-					"No TreeNodes available in view " + viewName + " which is used for snapshotting");
+					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
 		}
 		createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
 	}
