@@ -25,8 +25,8 @@ class ShaclChangedEventTest {
 		ShaclChangedEvent shaclChangedEvent = new ShaclChangedEvent(COLLECTION_NAME,
 				ShaclChangedEventArgumentsProvider.getModel());
 
-		assertEquals(COLLECTION_NAME, shaclChangedEvent.getCollectionName());
-		assertTrue(ShaclChangedEventArgumentsProvider.getModel().isIsomorphicWith(shaclChangedEvent.getShacl()));
+		assertEquals(COLLECTION_NAME, shaclChangedEvent.getShacl().getCollection());
+		assertTrue(ShaclChangedEventArgumentsProvider.getModel().isIsomorphicWith(shaclChangedEvent.getShacl().getModel()));
 	}
 
 	@Test

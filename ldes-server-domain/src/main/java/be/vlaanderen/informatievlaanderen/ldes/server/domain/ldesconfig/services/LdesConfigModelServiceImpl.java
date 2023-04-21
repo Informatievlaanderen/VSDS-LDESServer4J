@@ -48,51 +48,6 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	}
 
 	@Override
-	public List<LdesConfigModel> retrieveAllShapes() {
-		return retrieveAllConfigModels()
-				.stream()
-				.map(configModel -> retrieveShape(configModel.getId()))
-				.toList();
-	}
-
-	@Override
-	public LdesConfigModel retrieveShape(String collectionName) {
-		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
-
-		Model shapeModel = ldesConfigModel.getModel().listStatements(null,
-				createProperty(SHAPE), (Resource) null).toList().stream().findFirst()
-				.map(statement -> retrieveAllStatements(statement.getResource(), ldesConfigModel.getModel()))
-				.map(statements -> {
-					Model model = ModelFactory.createDefaultModel();
-					model.add(statements);
-					return model;
-				})
-				.orElse(ModelFactory.createDefaultModel());
-		return LdesConfigModel.createLdesConfigShape(collectionName, shapeModel);
-	}
-
-	@Override
-	public LdesConfigModel updateShape(String collectionName, LdesConfigModel shape) {
-		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
-
-		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null);
-
-		if (iterator.hasNext()) {
-			Statement statement = iterator.nextStatement();
-			List<Statement> statements = retrieveAllStatements(statement, ldesConfigModel.getModel());
-			ldesConfigModel.getModel().remove(statements);
-		}
-
-		ldesConfigModel.getModel().add(shape.getModel());
-		Statement statement = ldesConfigModel.getModel().createStatement(idStringToResource(collectionName),
-				createProperty(SHAPE), idStringToResource(shape.getId()));
-		ldesConfigModel.getModel().add(statement);
-		repository.saveConfigModel(ldesConfigModel);
-
-		return shape;
-	}
-
-	@Override
 	public List<LdesConfigModel> retrieveViews(String collectionName) {
 		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
 

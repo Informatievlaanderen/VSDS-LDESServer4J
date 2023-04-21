@@ -13,6 +13,10 @@ public class ShaclShape {
 		this.model = model;
 	}
 
+	public String getCollection() {
+		return collection;
+	}
+
 	public Model getModel() {
 		return model;
 	}
@@ -23,11 +27,11 @@ public class ShaclShape {
 			return true;
 		if (!(o instanceof ShaclShape that))
 			return false;
-		return Objects.equals(collection, that.collection) && model.isIsomorphicWith(that.model);
+		return Objects.equals(collection, that.collection);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, model);
+		return Objects.hash(collection);
 	}
 }

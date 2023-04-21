@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 
@@ -9,6 +10,9 @@ public class ShaclChangedEvent {
 
 	public ShaclChangedEvent(ShaclShape shacl) {
 		this.shacl = shacl;
+	}
+	public ShaclChangedEvent(String collectionName, Model shacl) {
+		this.shacl = new ShaclShape(collectionName, shacl);
 	}
 
 	public ShaclShape getShacl() {

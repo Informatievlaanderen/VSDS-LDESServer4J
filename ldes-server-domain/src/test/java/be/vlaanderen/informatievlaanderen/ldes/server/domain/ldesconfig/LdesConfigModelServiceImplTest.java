@@ -105,55 +105,6 @@ class LdesConfigModelServiceImplTest {
 	}
 
 	@Test
-	void whenCollectionExists_RetrieveShape() throws URISyntaxException {
-		final Model model = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
-		final Model shape = readModelFromFile("example-shape.ttl");
-
-		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
-		assertTrue(service.retrieveShape(COLLECTION_NAME_1).getModel().isIsomorphicWith(shape));
-	}
-
-	@Test
-	void whenCollectionExists_thenRetrieveAllShapes() throws URISyntaxException {
-		final String collectionName2 = "collectionName2";
-
-		final Model model1 = readModelFromFile("ldes-with-named-view.ttl");
-		final LdesConfigModel ldesConfigModel1 = new LdesConfigModel(COLLECTION_NAME_1, model1);
-
-		final Model model2 = readModelFromFile("ldes-empty.ttl");
-		final LdesConfigModel ldesConfigModel2 = new LdesConfigModel(collectionName2, model2);
-
-		final Model shape = readModelFromFile("example-shape.ttl");
-
-		when(repository.retrieveAllConfigModels()).thenReturn(List.of(ldesConfigModel1, ldesConfigModel2));
-		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel1));
-		when(repository.retrieveConfigModel(collectionName2)).thenReturn(Optional.of(ldesConfigModel2));
-
-		service.retrieveAllShapes()
-				.forEach(ldesConfigModel -> assertTrue(ldesConfigModel.getModel().isIsomorphicWith(shape)));
-	}
-
-	@Test
-	void whenCollectionExists_UpdateShape() throws URISyntaxException {
-		final Model model = readModelFromFile("ldes-with-shape.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(COLLECTION_NAME_1, model);
-
-		final Model newShape = readModelFromFile("example-shape.ttl");
-		final LdesConfigModel ldesConfigShape = new LdesConfigModel("shape", newShape);
-
-		final Model modelWitNewShape = readModelFromFile("ldes-with-named-view.ttl");
-
-		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
-		when(repository.saveConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
-
-		LdesConfigModel updatedLdesConfigShape = service.updateShape(COLLECTION_NAME_1, ldesConfigShape);
-
-		assertTrue(ldesConfigShape.getModel().isIsomorphicWith(updatedLdesConfigShape.getModel()));
-		assertTrue(ldesConfigModel.getModel().isIsomorphicWith(modelWitNewShape));
-	}
-
-	@Test
 	void whenCollectionExists_RetrieveAllViews() throws URISyntaxException {
 		final String collectionName = "collectionName2";
 		final Model view = readModelFromFile("ldes-multiple-views.ttl");

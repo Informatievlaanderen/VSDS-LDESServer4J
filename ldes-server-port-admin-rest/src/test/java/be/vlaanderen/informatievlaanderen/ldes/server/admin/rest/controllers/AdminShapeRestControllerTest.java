@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingL
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -58,19 +59,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
 @Import(AdminShapeRestControllerTest.AdminShapeRestControllerTestConfiguration.class)
 class AdminShapeRestControllerTest {
-
 	@MockBean
-	private LdesConfigModelService ldesConfigModelService;
+	private ShaclShapeService shaclShapeService;
 
 	@MockBean
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
-	@Captor
-	ArgumentCaptor<ShaclChangedEvent> shaclChangedEventArgumentCaptor;
-
-	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -79,9 +74,9 @@ class AdminShapeRestControllerTest {
 	private ShaclCollection shaclCollection;
 
 	@BeforeEach
-    void setUp() {
-        when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
-    }
+	void setUp() {
+		when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
+	}
 
 	@Nested
 	class GetRequest {
@@ -138,15 +133,17 @@ class AdminShapeRestControllerTest {
 			assertTrue(shaclChangedEvent.getShacl().isIsomorphicWith(expectedShapeModel));
 		}
 
-		@Test
-		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
-			String collectionName = "name1";
-			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-					.content(readDataFromFile("shape-without-type.ttl"))
-					.contentType(Lang.TURTLE.getHeaderString()))
-					.andDo(print())
-					.andExpect(status().isBadRequest());
-		}
+	@Test
+	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
+		String collectionName = "name1";
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+						.content(readDataFromFile("shape-without-type.ttl"))
+						.contentType(Lang.TURTLE.getHeaderString()))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
+	}
+
+
 	}
 
 	private String readDataFromFile(String fileName)
