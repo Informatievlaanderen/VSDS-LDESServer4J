@@ -12,45 +12,43 @@ import java.util.List;
 @ChangeUnit(id = "member-updater-changeset-4", order = "4", author = "VSDS")
 public class MemberUpdaterChange {
 
-	private final MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
 
-	public MemberUpdaterChange(MongoTemplate mongoTemplate) {
-		this.mongoTemplate = mongoTemplate;
-	}
+    public MemberUpdaterChange(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
 
-	/**
-	 * This is the method with the migration code
-	 **/
-	@Execution
-	public void changeSet() {
-		List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
-		ldesMemberEntities.forEach(ldesMember -> {
-			final String newId = ldesMember.getCollectionName() + "/" + ldesMember.getId();
-			final LdesMemberEntityV4 updatedMember = new LdesMemberEntityV4(newId,
-					ldesMember.getCollectionName(), ldesMember.getSequenceNr(),
-					ldesMember.getVersionOf(), ldesMember.getTimestamp(), ldesMember.getModel(),
-					ldesMember.getTreeNodeReferences());
-			// we cannot change the id so we need to insert + delete
-			mongoTemplate.save(updatedMember);
-			mongoTemplate.remove(ldesMember);
-		});
-	}
+    /**
+     * This is the method with the migration code
+     **/
+    @Execution
+    public void changeSet() {
+        List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
+        ldesMemberEntities.forEach(ldesMember -> {
+            final String newId = ldesMember.getCollectionName() + "/" + ldesMember.getId();
+            final LdesMemberEntityV4 updatedMember = new LdesMemberEntityV4(newId,
+                    ldesMember.getCollectionName(), ldesMember.getSequenceNr(),
+                    ldesMember.getVersionOf(), ldesMember.getTimestamp(), ldesMember.getModel(),
+                    ldesMember.getTreeNodeReferences());
+            // we cannot change the id so we need to insert + delete
+            mongoTemplate.save(updatedMember);
+            mongoTemplate.remove(ldesMember);
+        });
+    }
 
-	@RollbackExecution
-	public void rollback() {
-		List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
-		ldesMemberEntities.forEach(ldesMember -> {
-			if (!ldesMember.getId().startsWith("http")) {
-				final String idWithoutPrefix = ldesMember.getId().substring(ldesMember.getId().indexOf("/") + 1);
-				final LdesMemberEntityV4 updatedMember = new LdesMemberEntityV4(idWithoutPrefix,
-						ldesMember.getCollectionName(), ldesMember.getSequenceNr(),
-						ldesMember.getVersionOf(), ldesMember.getTimestamp(), ldesMember.getModel(),
-						ldesMember.getTreeNodeReferences());
-				// we cannot change the id so we need to insert + delete
-				mongoTemplate.save(updatedMember);
-				mongoTemplate.remove(ldesMember);
-			}
-		});
-	}
+    @RollbackExecution
+    public void rollback() {
+        List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
+        ldesMemberEntities.forEach(ldesMember -> {
+            final String idWithoutPrefix = ldesMember.getId().substring(ldesMember.getId().indexOf("/") + 1);
+            final LdesMemberEntityV4 updatedMember = new LdesMemberEntityV4(idWithoutPrefix,
+                    ldesMember.getCollectionName(), ldesMember.getSequenceNr(),
+                    ldesMember.getVersionOf(), ldesMember.getTimestamp(), ldesMember.getModel(),
+                    ldesMember.getTreeNodeReferences());
+            // we cannot change the id so we need to insert + delete
+            mongoTemplate.save(updatedMember);
+            mongoTemplate.remove(ldesMember);
+        });
+    }
 
 }
