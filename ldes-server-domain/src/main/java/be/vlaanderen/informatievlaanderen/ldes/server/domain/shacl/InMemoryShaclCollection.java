@@ -21,13 +21,6 @@ public class InMemoryShaclCollection implements ShaclCollection {
 		this.ldesConfigModelService = ldesConfigModelService;
 	}
 
-	@PostConstruct
-	private void initShapeConfig() {
-		ldesConfigModelService
-				.retrieveAllShapes()
-				.forEach(ldesConfigModel -> shapes.put(ldesConfigModel.getId(), ldesConfigModel.getModel()));
-	}
-
 	@EventListener
 	public void handleShaclChangedEvent(ShaclChangedEvent event) {
 		shapes.put(event.getCollectionName(), event.getShacl());
@@ -38,5 +31,12 @@ public class InMemoryShaclCollection implements ShaclCollection {
 	@Override
 	public LdesConfigModel retrieveShape(String collectionName) {
 		return new LdesConfigModel(collectionName, shapes.get(collectionName));
+	}
+
+	@PostConstruct
+	private void initShapes() {
+		ldesConfigModelService
+				.retrieveAllShapes()
+				.forEach(ldesConfigModel -> shapes.put(ldesConfigModel.getId(), ldesConfigModel.getModel()));
 	}
 }

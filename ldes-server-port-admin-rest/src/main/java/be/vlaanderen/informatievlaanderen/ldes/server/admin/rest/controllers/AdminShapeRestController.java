@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class AdminShapeRestController {
 
 	private final LdesConfigShaclValidator shapeValidator;
-
 	private final ApplicationEventPublisher eventPublisher;
 	private final ShaclCollection shaclCollection;
 

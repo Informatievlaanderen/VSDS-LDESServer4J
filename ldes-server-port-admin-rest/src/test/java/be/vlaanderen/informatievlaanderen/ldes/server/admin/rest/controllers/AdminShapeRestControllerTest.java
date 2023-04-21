@@ -7,15 +7,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChanged
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,7 +46,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -70,78 +72,81 @@ class AdminShapeRestControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	@Autowired
+	private ShaclCollection shaclCollection;
+
 	@BeforeEach
     void setUp() {
         when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
     }
 
-	@Test
-	void when_StreamAndShapeArePresent_Then_ShapeIsReturned() throws Exception {
-		String collectionName = "name1";
-		Model expectedShapeModel = readModelFromFile("shape-1.ttl");
-		LdesConfigModel shapeConfigModel = LdesConfigModel.createLdesConfigShape(collectionName, expectedShapeModel);
-		when(ldesConfigModelService.retrieveShape(collectionName)).thenReturn(shapeConfigModel);
-		ResultActions resultActions = mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
-				.andDo(print())
-				.andExpect(status().isOk());
-		MvcResult result = resultActions.andReturn();
-		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
-		Assertions.assertTrue(actualModel.isIsomorphicWith(expectedShapeModel));
+	@Nested
+	class GetRequest {
+		@Test
+		void when_ShapeIsPresentArePresent_Then_ShapeIsReturned() throws Exception {
+			String collectionName = "name1";
+			Model expectedShapeModel = readModelFromFile("shape-1.ttl");
+			when(shaclCollection.retrieveShape(collectionName))
+					.thenReturn(new LdesConfigModel(collectionName, expectedShapeModel));
+
+			ResultActions resultActions = mockMvc
+					.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
+					.andDo(print())
+					.andExpect(status().isOk());
+
+			MvcResult result = resultActions.andReturn();
+			Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
+			Assertions.assertTrue(actualModel.isIsomorphicWith(expectedShapeModel));
+		}
+
+		@Test
+		void when_ViewNotPresent_Then_Returned404() throws Exception {
+			String collectionName = "name1";
+			String viewName = "view1";
+			when(ldesConfigModelService.retrieveView(collectionName, viewName))
+					.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
+
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+					.andDo(print())
+					.andExpect(status().isNotFound());
+		}
 	}
 
-	@Test
-	void when_ViewNotPresent_Then_Returned404() throws Exception {
-		String collectionName = "name1";
-		String viewName = "view1";
-		when(ldesConfigModelService.retrieveView(collectionName, viewName))
-				.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
-		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
-				.andDo(print())
-				.andExpect(status().isNotFound());
+	@Nested
+	class PutRequest {
+		@Test
+		void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
+			String collectionName = "name1";
+			String fileName = "shape-1.ttl";
+			Model expectedShapeModel = readModelFromFile(fileName);
+
+			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+					.content(readDataFromFile(fileName))
+					.contentType(MediaType.TEXT_PLAIN))
+					.andDo(print())
+					.andExpect(status().isOk());
+
+			InOrder inOrder = inOrder(ldesConfigShaclValidator, applicationEventPublisher);
+			inOrder.verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
+			inOrder.verify(applicationEventPublisher, times(1)).publishEvent(shaclChangedEventArgumentCaptor.capture());
+			inOrder.verifyNoMoreInteractions();
+			ShaclChangedEvent shaclChangedEvent = shaclChangedEventArgumentCaptor.getValue();
+			assertEquals(collectionName, shaclChangedEvent.getCollectionName());
+			assertTrue(shaclChangedEvent.getShacl().isIsomorphicWith(expectedShapeModel));
+		}
+
+		@Test
+		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
+			String collectionName = "name1";
+			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+					.content(readDataFromFile("shape-without-type.ttl"))
+					.contentType(MediaType.TEXT_PLAIN))
+					.andDo(print())
+					.andExpect(status().isBadRequest());
+		}
 	}
 
-	@Test
-	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
-		String collectionName = "name1";
-		String shapeName = "shape";
-		String fileName = "shape-1.ttl";
-		Model expectedShapeModel = readModelFromFile(fileName);
-		LdesConfigModel configModel = new LdesConfigModel(shapeName, expectedShapeModel);
-		when(ldesConfigModelService.addView(anyString(), any())).thenReturn(configModel);
-		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-				.content(readDataFromFile(fileName, Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
-				.andDo(print())
-				.andExpect(status().isOk());
-		verify(ldesConfigModelService, times(1)).updateShape(eq(collectionName), any(LdesConfigModel.class));
-		verify(applicationEventPublisher, times(1)).publishEvent(shaclChangedEventArgumentCaptor.capture());
-		ShaclChangedEvent shaclChangedEvent = shaclChangedEventArgumentCaptor.getValue();
-		assertEquals(collectionName, shaclChangedEvent.getCollectionName());
-		assertTrue(shaclChangedEvent.getShacl().isIsomorphicWith(expectedShapeModel));
-	}
-
-	@Test
-	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
-		String collectionName = "name1";
-		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-				.content(readDataFromFile("shape-without-type.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
-				.andDo(print())
-				.andExpect(status().isBadRequest());
-	}
-
-	@Test
-	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
-		String collectionName = "name1";
-		String fileName = "shape-1.ttl";
-		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-				.content(readDataFromFile(fileName, Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
-				.andDo(print());
-		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
-	}
-
-	private String readDataFromFile(String fileName, Lang rdfFormat)
+	private String readDataFromFile(String fileName)
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
@@ -163,6 +168,11 @@ class AdminShapeRestControllerTest {
 		@Primary
 		ApplicationEventPublisher publisher() {
 			return mock(ApplicationEventPublisher.class);
+		}
+
+		@Bean
+		ShaclCollection shaclCollection() {
+			return mock(ShaclCollection.class);
 		}
 	}
 }
