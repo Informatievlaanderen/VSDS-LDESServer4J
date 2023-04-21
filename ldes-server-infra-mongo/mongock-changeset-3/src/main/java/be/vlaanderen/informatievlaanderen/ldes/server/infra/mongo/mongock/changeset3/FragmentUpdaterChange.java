@@ -29,7 +29,8 @@ public class FragmentUpdaterChange {
 		if (appConfig.getCollections().size() == 1) {
 			LdesConfig ldesConfig = appConfig.getCollections().get(0);
 			collection = ldesConfig.getCollectionName();
-			viewNames = ldesConfig.getViews().stream().map(ViewSpecification::getName).map(s -> "/" + s).toList();
+			viewNames = ldesConfig.getViews().stream().map(ViewSpecification::getName).map(s -> "/" + s.asString())
+					.toList();
 		} else {
 			collection = "UNDEFINED_COLLECTION";
 			viewNames = List.of("UNDEFINED_VIEWNAME");
