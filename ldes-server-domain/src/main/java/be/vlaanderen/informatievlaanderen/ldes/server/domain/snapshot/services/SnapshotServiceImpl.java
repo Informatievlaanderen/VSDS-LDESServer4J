@@ -31,7 +31,8 @@ public class SnapshotServiceImpl implements SnapshotService {
 
 	@Override
 	public void createSnapshot(LdesConfig ldesConfig) {
-		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME);
+		final String viewName = ldesConfig.getCollectionName() + "/" + DEFAULT_VIEW_NAME;
+		List<LdesFragment> treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
 		if (treeNodesForSnapshot.isEmpty()) {
 			throw new SnapshotCreationException(
 					"No TreeNodes available in view " + DEFAULT_VIEW_NAME + " which is used for snapshotting");
