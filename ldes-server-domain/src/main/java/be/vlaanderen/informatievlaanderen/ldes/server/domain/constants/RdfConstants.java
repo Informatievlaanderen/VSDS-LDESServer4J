@@ -18,6 +18,7 @@ public class RdfConstants {
 	public static final Property TREE_MEMBER = createProperty(TREE, "member");
 	public static final String TREE_NODE_RESOURCE = TREE + "Node";
 	public static final String LDES = "https://w3id.org/ldes#";
+	public static final String SHACL = "http://www.w3.org/ns/shacl#";
 	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOfPath");
 	public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -36,6 +37,6 @@ public class RdfConstants {
 	public static final String VIEW = LDES + "view";
 	public static final String VIEW_TYPE = LDES + "View";
 	public static final String SHAPE = TREE + "shape";
-	public static final String NODE_SHAPE_TYPE = TREE + "NodeShape";
+	public static final String NODE_SHAPE_TYPE = SHACL + "NodeShape";
 	public static final String EVENT_STREAM_TYPE = LDES + "EventStream";
 }

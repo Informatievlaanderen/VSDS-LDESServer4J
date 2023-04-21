@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.PaginationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.PaginationStrategyWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;

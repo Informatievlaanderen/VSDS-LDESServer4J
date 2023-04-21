@@ -49,7 +49,8 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public List<LdesConfigModel> retrieveAllShapes() {
-		return retrieveAllConfigModels().stream()
+		return retrieveAllConfigModels()
+				.stream()
 				.map(configModel -> retrieveShape(configModel.getId()))
 				.toList();
 	}

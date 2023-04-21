@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -20,8 +20,10 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,28 +50,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
 		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
+@Import(MemberIngestionControllerTest.MemberIngestionControllerTestConfiguration.class)
 class MemberIngestionControllerTest {
-	private final static String RESTAURANT = "restaurant";
-
-	@Autowired
-	private ApplicationEventPublisher publisher;
-
+	private final static String RESTAURANT_COLLECTION = "restaurant";
+	private final static String MOBILITY_HINDRANCES_COLLECTION = "mobility-hindrances";
 	@Autowired
 	private MockMvc mockMvc;
-
 	@MockBean
 	private MemberIngestService memberIngestService;
-
-	@MockBean
-	private LdesConfigModelService ldesConfigModelService;
-
 	@Autowired
 	private AppConfig appConfig;
+	@Autowired
+	private ShaclCollection shaclCollection;
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
+		when(shaclCollection.retrieveShape(MOBILITY_HINDRANCES_COLLECTION))
+				.thenReturn(new LdesConfigModel(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
@@ -92,6 +91,8 @@ class MemberIngestionControllerTest {
 	void when_POSTRequestIsPerformed_LDesMemberIsSavedWithoutVersionOfAndTimestamp() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-version-of-timestamp.nq",
 				Lang.NQUADS);
+		when(shaclCollection.retrieveShape(MOBILITY_HINDRANCES_COLLECTION))
+				.thenReturn(new LdesConfigModel(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
@@ -130,7 +131,8 @@ class MemberIngestionControllerTest {
 	void when_memberConformToShapeIsIngested_then_status200IsReturned() throws Exception {
 		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
-		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, oldShape));
+		when(shaclCollection.retrieveShape(RESTAURANT_COLLECTION))
+				.thenReturn(new LdesConfigModel(RESTAURANT_COLLECTION, oldShape));
 
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
@@ -145,7 +147,8 @@ class MemberIngestionControllerTest {
 	void when_memberNotConformToShapeIsIngested_then_status400IsReturned() throws Exception {
 		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
-		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, oldShape));
+		when(shaclCollection.retrieveShape(RESTAURANT_COLLECTION))
+				.thenReturn(new LdesConfigModel(RESTAURANT_COLLECTION, oldShape));
 
 		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 
@@ -154,23 +157,6 @@ class MemberIngestionControllerTest {
 				.andExpect(status().isBadRequest());
 
 		verifyNoInteractions(memberIngestService);
-	}
-
-	@Test
-	void when_shapeIsUpdated_and_membersConformToShapeIsIngested_then_status200IsReturned() throws Exception {
-		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
-		Model newShape = readModelFromFile("menu-items/example-shape-new.ttl", Lang.TURTLE);
-
-		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, oldShape)); // init server with old shape
-		publisher.publishEvent(new ShaclChangedEvent(RESTAURANT, newShape)); // update the server with new shape
-
-		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
-
-		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
-				.andExpect(status().isOk());
-
-		verify(memberIngestService).addMember(any(Member.class));
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)
@@ -220,6 +206,15 @@ class MemberIngestionControllerTest {
 					Arguments.of("application/trix", Lang.TRIX),
 					Arguments.of("application/turtle", Lang.TURTLE),
 					Arguments.of("text/trig", Lang.TRIG));
+		}
+	}
+
+	@TestConfiguration
+	static class MemberIngestionControllerTestConfiguration {
+
+		@Bean
+		ShaclCollection shaclCollection() {
+			return mock(ShaclCollection.class);
 		}
 	}
 }
