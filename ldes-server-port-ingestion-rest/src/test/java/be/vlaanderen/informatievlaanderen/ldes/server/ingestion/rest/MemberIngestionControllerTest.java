@@ -48,7 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class, InMemoryShaclCollection.class})
+		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class,
+		InMemoryShaclCollection.class })
 class MemberIngestionControllerTest {
 	private final static String RESTAURANT = "restaurant";
 
