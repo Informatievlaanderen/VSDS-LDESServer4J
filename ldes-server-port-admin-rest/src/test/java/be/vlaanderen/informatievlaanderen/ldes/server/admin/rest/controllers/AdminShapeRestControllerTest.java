@@ -56,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminShapeRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
-@Import(AdminShapeRestControllerTest.MockitoPublisherConfiguration.class)
+@Import(AdminShapeRestControllerTest.AdminShapeRestControllerTestConfiguration.class)
 class AdminShapeRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
@@ -162,7 +162,7 @@ class AdminShapeRestControllerTest {
 	}
 
 	@TestConfiguration
-	static class MockitoPublisherConfiguration {
+	static class AdminShapeRestControllerTestConfiguration {
 
 		@Bean
 		@Primary
