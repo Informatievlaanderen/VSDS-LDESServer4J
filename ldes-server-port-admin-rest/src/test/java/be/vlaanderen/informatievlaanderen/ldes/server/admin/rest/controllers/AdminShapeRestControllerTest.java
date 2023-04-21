@@ -73,9 +73,6 @@ class AdminShapeRestControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@Autowired
-	private ShaclCollection shaclCollection;
-
 	@BeforeEach
 	void setUp() {
 		when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
@@ -87,8 +84,8 @@ class AdminShapeRestControllerTest {
 		void when_ShapeIsPresentArePresent_Then_ShapeIsReturned() throws Exception {
 			String collectionName = "name1";
 			Model expectedShapeModel = readModelFromFile("shape-1.ttl");
-			when(shaclCollection.retrieveShape(collectionName))
-					.thenReturn(Optional.of(new ShaclShape(collectionName, expectedShapeModel)));
+			when(shaclShapeService.retrieveShaclShape(collectionName))
+					.thenReturn(new ShaclShape(collectionName, expectedShapeModel));
 
 			ResultActions resultActions = mockMvc
 					.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
@@ -103,7 +100,7 @@ class AdminShapeRestControllerTest {
 		@Test
 		void when_ViewNotPresent_Then_Returned404() throws Exception {
 			String collectionName = "name1";
-			when(shaclCollection.retrieveShape(collectionName))
+			when(shaclShapeService.retrieveShaclShape(collectionName))
 					.thenThrow(new MissingShaclShapeException(collectionName));
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
