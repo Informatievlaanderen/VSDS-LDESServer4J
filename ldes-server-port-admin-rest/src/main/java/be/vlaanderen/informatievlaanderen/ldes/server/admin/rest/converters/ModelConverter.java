@@ -24,7 +24,7 @@ public class ModelConverter extends AbstractHttpMessageConverter<Model> {
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(LdesConfigModel.class);
+		return clazz.isAssignableFrom(Model.class);
 	}
 
 	@Override
