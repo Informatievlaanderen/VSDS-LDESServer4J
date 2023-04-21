@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ class GreaterOrEqualsPageFilterTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentRoot = new LdesFragment("collection", "view", List.of());
+		fragmentRoot = new LdesFragment(new ViewName("collection", "view"), List.of());
 		fragment1 = fragmentRoot.createChild(new FragmentPair(PAGE_NUMBER_KEY, "1"));
 		fragment2 = fragmentRoot.createChild(new FragmentPair(PAGE_NUMBER_KEY, "2"));
 		fragment3 = fragmentRoot.createChild(new FragmentPair(PAGE_NUMBER_KEY, "3"));

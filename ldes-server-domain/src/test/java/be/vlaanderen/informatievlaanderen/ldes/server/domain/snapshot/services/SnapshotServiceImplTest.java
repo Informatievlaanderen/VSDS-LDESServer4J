@@ -47,7 +47,7 @@ class SnapshotServiceImplTest {
 		ldesConfig.setCollectionName("collection");
 		ldesConfig.validation().setShape("shape");
 		ldesConfig.setDefaultView(true);
-		defaultViewName = ldesConfig.getDefaultView().get().getName();
+		defaultViewName = ldesConfig.getDefaultView().get().getName().asString();
 	}
 
 	@Test

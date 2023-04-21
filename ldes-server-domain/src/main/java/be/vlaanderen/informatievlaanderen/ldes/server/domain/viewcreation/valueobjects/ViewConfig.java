@@ -35,21 +35,23 @@ public class ViewConfig {
 
 	public List<ViewSpecification> getViews(String collectionName) {
 		ArrayList<ViewSpecification> viewSpecifications = new ArrayList<>(views);
-		if (hasDefaultView) {
-			viewSpecifications.add(getDefaultPaginationView(notNull(collectionName)));
-		}
+		getDefaultPaginationView(notNull(collectionName)).ifPresent(viewSpecifications::add);
 		return viewSpecifications;
 	}
 
-	private ViewSpecification getDefaultPaginationView(String collectionName) {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName(new ViewName(collectionName, DEFAULT_VIEW_NAME));
-		viewSpecification.setRetentionPolicies(List.of());
-		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
-		fragmentationConfig.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
-		viewSpecification.setFragmentations(List.of(fragmentationConfig));
-		return viewSpecification;
+	public Optional<ViewSpecification> getDefaultPaginationView(String collectionName) {
+		if (hasDefaultView) {
+			ViewSpecification viewSpecification = new ViewSpecification();
+			viewSpecification.setName(new ViewName(collectionName, DEFAULT_VIEW_NAME));
+			viewSpecification.setRetentionPolicies(List.of());
+			FragmentationConfig fragmentationConfig = new FragmentationConfig();
+			fragmentationConfig.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
+			fragmentationConfig.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
+			viewSpecification.setFragmentations(List.of(fragmentationConfig));
+			return Optional.of(viewSpecification);
+		} else {
+			return Optional.empty();
+		}
 	}
 
 }

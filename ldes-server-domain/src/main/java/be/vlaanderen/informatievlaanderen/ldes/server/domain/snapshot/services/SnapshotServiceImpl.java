@@ -36,7 +36,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
 		String viewName = ldesConfig.getDefaultView().orElseThrow(() -> new SnapshotCreationException(
 				"No default pagination view configured for collection " + ldesConfig.getCollectionName()))
-				.getName();
+				.getName().asString();
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
 			List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository
