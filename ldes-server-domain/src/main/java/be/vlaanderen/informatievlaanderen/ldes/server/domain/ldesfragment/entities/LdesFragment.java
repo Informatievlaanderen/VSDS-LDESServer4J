@@ -37,10 +37,6 @@ public class LdesFragment {
 		this.relations = relations;
 	}
 
-	// public static LdesFragment fromFragmentId(String fragmentId){
-	// this()
-	// }
-
 	public String getFragmentId() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("/").append(viewName.asString());
