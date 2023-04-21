@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -17,14 +17,13 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
 
 public class ModelConverter extends AbstractHttpMessageConverter<Model> {
 
 	@Override
 	protected boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(Model.class);
+		return Model.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -35,7 +34,7 @@ public class ModelConverter extends AbstractHttpMessageConverter<Model> {
 	@Override
 	protected Model readInternal(Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		return fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
+		return RdfModelConverter.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
 				Lang.TURTLE);
 	}
 
