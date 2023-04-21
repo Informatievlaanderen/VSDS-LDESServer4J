@@ -40,14 +40,13 @@ public class SnapshotServiceImpl implements SnapshotService {
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
 			List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository
-					.retrieveFragmentsOfView(lastSnapshot.get().getSnapshotId());
+					.retrieveFragmentsOfView(lastSnapshot.get().getSnapshotId()).stream()
+					.filter(ldesFragment -> !ldesFragment.isRoot()).toList();
 			List<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository.retrieveFragmentsOfView(viewName);
-			String lastFragment = treeNodesOfSnapshot.stream().filter(ldesFragment -> !ldesFragment.isRoot())
-					.filter(ldesFragment -> !ldesFragment.isImmutable())
-					.map(LdesFragment::getRelations)
-					.flatMap(List::stream)
-					.map(TreeRelation::treeNode)
-					.findFirst().orElseThrow(() -> new RuntimeException("a"));
+			String lastFragment = getNextFragmentFromSnapshot(treeNodesOfSnapshot)
+					.orElseThrow(() -> new SnapshotCreationException(
+							"First fragment of " + viewName + " after previous snapshot "
+									+ lastSnapshot.get().getSnapshotId() + " could not be found"));
 			List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView.stream()
 					.filter(ldesFragment -> !ldesFragment.isRoot()).filter(new GreaterOrEqualsPageFilter(lastFragment))
 					.toList();
@@ -76,4 +75,12 @@ public class SnapshotServiceImpl implements SnapshotService {
 		return snapshotRepository.getLastSnapshot();
 	}
 
+	private Optional<String> getNextFragmentFromSnapshot(List<LdesFragment> treeNodesOfSnapshot) {
+		return treeNodesOfSnapshot.stream().filter(ldesFragment -> !ldesFragment.isRoot())
+				.filter(ldesFragment -> !ldesFragment.isImmutable())
+				.map(LdesFragment::getRelations)
+				.flatMap(List::stream)
+				.map(TreeRelation::treeNode)
+				.findFirst();
+	}
 }

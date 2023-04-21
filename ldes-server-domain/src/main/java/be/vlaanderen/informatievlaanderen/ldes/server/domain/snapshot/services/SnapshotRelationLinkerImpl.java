@@ -38,6 +38,8 @@ public class SnapshotRelationLinkerImpl implements SnapshotRelationLinker {
 	private List<LdesFragment> getUncoveredTreeNodes(List<LdesFragment> ldesFragments) {
 		return ldesFragments
 				.stream()
+				.filter(ldesFragment -> !ldesFragment.isRoot())
+				.filter(ldesFragment -> !ldesFragment.isImmutable())
 				.filter(ldesFragment -> ldesFragment.getRelations().isEmpty()).toList();
 	}
 
