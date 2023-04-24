@@ -58,14 +58,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
 @Import(AdminShapeRestControllerTest.AdminShapeRestControllerTestConfiguration.class)
 class AdminShapeRestControllerTest {
+
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
+
 	@MockBean
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
 	@Captor
 	ArgumentCaptor<ShaclChangedEvent> shaclChangedEventArgumentCaptor;
+
 	@Autowired
 	private ApplicationEventPublisher applicationEventPublisher;
 
@@ -122,7 +125,7 @@ class AdminShapeRestControllerTest {
 
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.content(readDataFromFile(fileName))
-					.contentType(MediaType.TEXT_PLAIN))
+					.contentType(Lang.TURTLE.getHeaderString()))
 					.andDo(print())
 					.andExpect(status().isOk());
 
@@ -140,7 +143,7 @@ class AdminShapeRestControllerTest {
 			String collectionName = "name1";
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.content(readDataFromFile("shape-without-type.ttl"))
-					.contentType(MediaType.TEXT_PLAIN))
+					.contentType(Lang.TURTLE.getHeaderString()))
 					.andDo(print())
 					.andExpect(status().isBadRequest());
 		}

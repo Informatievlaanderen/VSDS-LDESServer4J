@@ -18,8 +18,9 @@ public class RdfModelConverter {
 	}
 
 	public static Lang getLang(MediaType contentType, RdfFormatException.LdesProcessDirection ldesProcessDirection) {
-		if (contentType.equals(MediaType.TEXT_HTML))
+		if (contentType.equals(MediaType.TEXT_HTML)) {
 			return TURTLE;
+		}
 		return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
 				.orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
 						.orElseThrow(() -> new RdfFormatException(contentType.toString(), ldesProcessDirection)));

@@ -99,7 +99,7 @@ class AdminViewsRestControllerTest {
 		when(ldesConfigModelService.addView(anyString(), any())).thenReturn(configModel);
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).addView(anyString(), any());
@@ -110,7 +110,7 @@ class AdminViewsRestControllerTest {
 		String collectionName = "name1";
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -124,7 +124,7 @@ class AdminViewsRestControllerTest {
 		when(ldesConfigModelService.addView(collectionName, ldesConfigModel)).thenReturn(ldesConfigModel);
 		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print());
 		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
 	}
