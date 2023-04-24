@@ -40,8 +40,7 @@ class ShaclShapeTest {
 			return Stream.of(
 					Arguments.of(new ShaclShape("other collection", getModel())),
 					Arguments.of((Object) null),
-					Arguments.of("String instead of shacl")
-			);
+					Arguments.of("String instead of shacl"));
 		}
 
 		public static Model getModel() {
