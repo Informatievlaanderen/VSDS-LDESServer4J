@@ -19,11 +19,6 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 
 	@Override
 	public ShaclShape updateShaclShape(ShaclShape shaclShape) {
-		// if (!repository.existByCollection(shaclShape.getCollection())) {
-		// throw new MissingShaclShapeException(shaclShape.getCollection());
-		// }
-		// TODO verify in some way that the collection exists before saving the
-		// shaclShape
 		shaclCollection.saveShape(shaclShape);
 		return shaclShape;
 	}

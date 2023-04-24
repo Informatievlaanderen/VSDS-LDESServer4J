@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 

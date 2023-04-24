@@ -1,14 +1,21 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.InvalidModelIdException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.riot.Lang;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
@@ -16,10 +23,12 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 @Component
 public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	private final LdesConfigRepository repository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Autowired
-	public LdesConfigModelServiceImpl(LdesConfigRepository repository) {
+	public LdesConfigModelServiceImpl(LdesConfigRepository repository, ApplicationEventPublisher eventPublisher) {
 		this.repository = repository;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
@@ -44,7 +53,12 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel updateConfigModel(LdesConfigModel ldesConfigModel) {
-		return repository.saveConfigModel(ldesConfigModel);
+		LdesConfigModel updatedConfigModel = repository.saveConfigModel(ldesConfigModel);
+
+		ShaclChangedEvent event = new ShaclChangedEvent(retrieveShaclShape(updatedConfigModel.getModel()));
+		eventPublisher.publishEvent(event);
+
+		return updatedConfigModel;
 	}
 
 	@Override
@@ -121,6 +135,29 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		model.add(viewStatements);
 
 		return new LdesConfigModel(viewName, model);
+	}
+
+	private ShaclShape retrieveShaclShape(Model model) {
+		Model shacl = model.listStatements().toList().stream()
+				.findFirst()
+				.map(statement -> retrieveAllStatements(statement, model))
+				.map(statements -> {
+					Model shape = ModelFactory.createDefaultModel();
+					shape.add(statements);
+					return shape;
+				})
+				.orElse(ModelFactory.createDefaultModel());
+
+		Optional<Statement> statementOptional = model
+				.listStatements(null, RDF_SYNTAX_TYPE, ResourceFactory.createResource(NODE_SHAPE_TYPE))
+				.nextOptional();
+		if (statementOptional.isPresent()) {
+			Statement statement = statementOptional.get();
+			String id = extractIdFromResource(statement.getSubject());
+
+			return new ShaclShape(id, shacl);
+		}
+		throw new InvalidModelIdException(RdfModelConverter.toString(model, Lang.TURTLE));
 	}
 
 	/**

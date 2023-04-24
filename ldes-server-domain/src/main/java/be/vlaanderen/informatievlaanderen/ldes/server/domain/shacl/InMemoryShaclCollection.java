@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import jakarta.annotation.PostConstruct;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -30,6 +32,13 @@ public class InMemoryShaclCollection implements ShaclCollection {
 		return shapes.stream()
 				.filter(shaclShape -> shaclShape.getCollection().equals(collectionName))
 				.findFirst();
+	}
+
+	@EventListener
+	public void handleShaclChangedEvent(ShaclChangedEvent event) {
+		shaclShapeRepository.saveShaclShape(event.getShacl());
+		shapes.remove(event.getShacl());
+		shapes.add(event.getShacl());
 	}
 
 	@PostConstruct

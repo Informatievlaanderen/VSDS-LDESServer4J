@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
@@ -9,6 +10,7 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.URISyntaxException;
 import java.util.*;
@@ -22,10 +24,13 @@ class LdesConfigModelServiceImplTest {
 
 	private static final String COLLECTION_NAME_1 = "collectionName1";
 
+	private ApplicationEventPublisher eventPublisher;
+
 	@BeforeEach
 	void setUp() {
 		repository = mock(LdesConfigRepository.class);
-		service = new LdesConfigModelServiceImpl(repository);
+		eventPublisher = mock(ApplicationEventPublisher.class);
+		service = new LdesConfigModelServiceImpl(repository, eventPublisher);
 	}
 
 	@Test
@@ -102,6 +107,7 @@ class LdesConfigModelServiceImplTest {
 		when(repository.saveConfigModel(newEventStreamModel)).thenReturn(newEventStreamModel);
 		service.updateConfigModel(newEventStreamModel);
 		verify(repository, times(1)).saveConfigModel(newEventStreamModel);
+		verify(eventPublisher).publishEvent(any(ShaclChangedEvent.class));
 	}
 
 	@Test
