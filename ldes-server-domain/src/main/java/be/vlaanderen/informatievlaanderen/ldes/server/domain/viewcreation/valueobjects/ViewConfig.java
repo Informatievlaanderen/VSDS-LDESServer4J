@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.value
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -13,11 +14,11 @@ public class ViewConfig {
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 	private final List<ViewSpecification> views;
-	private final boolean defaultView;
+	private final boolean hasDefaultView;
 
-	private ViewConfig(List<ViewSpecification> views, boolean defaultView) {
+	private ViewConfig(List<ViewSpecification> views, boolean hasDefaultView) {
 		this.views = views != null ? views : new ArrayList<>();
-		this.defaultView = defaultView;
+		this.hasDefaultView = hasDefaultView;
 	}
 
 	public static ViewConfig empty() {
@@ -25,7 +26,7 @@ public class ViewConfig {
 	}
 
 	public ViewConfig withViews(List<ViewSpecification> views) {
-		return new ViewConfig(views, defaultView);
+		return new ViewConfig(views, hasDefaultView);
 	}
 
 	public ViewConfig withDefaultView(boolean defaultView) {
@@ -34,21 +35,23 @@ public class ViewConfig {
 
 	public List<ViewSpecification> getViews(String collectionName) {
 		ArrayList<ViewSpecification> viewSpecifications = new ArrayList<>(views);
-		if (defaultView) {
-			viewSpecifications.add(getDefaultPaginationView(notNull(collectionName)));
-		}
+		getDefaultPaginationView(notNull(collectionName)).ifPresent(viewSpecifications::add);
 		return viewSpecifications;
 	}
 
-	private ViewSpecification getDefaultPaginationView(String collectionName) {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName(new ViewName(collectionName, DEFAULT_VIEW_NAME));
-		viewSpecification.setRetentionPolicies(List.of());
-		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
-		fragmentationConfig.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
-		viewSpecification.setFragmentations(List.of(fragmentationConfig));
-		return viewSpecification;
+	public Optional<ViewSpecification> getDefaultPaginationView(String collectionName) {
+		if (hasDefaultView) {
+			ViewSpecification viewSpecification = new ViewSpecification();
+			viewSpecification.setName(new ViewName(collectionName, DEFAULT_VIEW_NAME));
+			viewSpecification.setRetentionPolicies(List.of());
+			FragmentationConfig fragmentationConfig = new FragmentationConfig();
+			fragmentationConfig.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
+			fragmentationConfig.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
+			viewSpecification.setFragmentations(List.of(fragmentationConfig));
+			return Optional.of(viewSpecification);
+		} else {
+			return Optional.empty();
+		}
 	}
 
 }

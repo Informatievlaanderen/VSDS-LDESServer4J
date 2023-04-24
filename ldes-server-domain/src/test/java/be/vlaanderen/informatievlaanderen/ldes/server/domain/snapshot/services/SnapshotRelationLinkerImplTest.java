@@ -59,6 +59,7 @@ class SnapshotRelationLinkerImplTest {
 		LdesFragment coveredTreeNode = new LdesFragment(new ViewName("collectionName", "covered"),
 				List.of(new FragmentPair("fragment", "0")));
 		coveredTreeNode.makeImmutable();
+		coveredTreeNode.addRelation(new TreeRelation("", "", "", "", GENERIC_TREE_RELATION));
 		return List.of(
 				rootTreeNode,
 				coveredTreeNode,
