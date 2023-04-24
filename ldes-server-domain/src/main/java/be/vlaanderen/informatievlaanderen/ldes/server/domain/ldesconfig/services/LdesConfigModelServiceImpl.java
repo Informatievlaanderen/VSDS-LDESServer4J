@@ -1,21 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.InvalidModelIdException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.riot.Lang;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
@@ -55,7 +50,8 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	public LdesConfigModel updateConfigModel(LdesConfigModel ldesConfigModel) {
 		LdesConfigModel updatedConfigModel = repository.saveConfigModel(ldesConfigModel);
 
-		ShaclChangedEvent event = new ShaclChangedEvent(retrieveShaclShape(updatedConfigModel.getModel()));
+		ShaclChangedEvent event = new ShaclChangedEvent(updatedConfigModel.getId(),
+				retrieveShaclShapeModel(updatedConfigModel.getModel()));
 		eventPublisher.publishEvent(event);
 
 		return updatedConfigModel;
@@ -137,8 +133,8 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		return new LdesConfigModel(viewName, model);
 	}
 
-	private ShaclShape retrieveShaclShape(Model model) {
-		Model shacl = model.listStatements().toList().stream()
+	private Model retrieveShaclShapeModel(Model model) {
+		return model.listStatements().toList().stream()
 				.findFirst()
 				.map(statement -> retrieveAllStatements(statement, model))
 				.map(statements -> {
@@ -147,17 +143,6 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 					return shape;
 				})
 				.orElse(ModelFactory.createDefaultModel());
-
-		Optional<Statement> statementOptional = model
-				.listStatements(null, RDF_SYNTAX_TYPE, ResourceFactory.createResource(NODE_SHAPE_TYPE))
-				.nextOptional();
-		if (statementOptional.isPresent()) {
-			Statement statement = statementOptional.get();
-			String id = extractIdFromResource(statement.getSubject());
-
-			return new ShaclShape(id, shacl);
-		}
-		throw new InvalidModelIdException(RdfModelConverter.toString(model, Lang.TURTLE));
 	}
 
 	/**
