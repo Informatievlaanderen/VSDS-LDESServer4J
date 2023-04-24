@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -35,12 +35,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -68,7 +68,7 @@ class MemberIngestionControllerTest {
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
 		when(shaclCollection.retrieveShape(MOBILITY_HINDRANCES_COLLECTION))
-				.thenReturn(new LdesConfigModel(MOBILITY_HINDRANCES_COLLECTION, null));
+				.thenReturn(Optional.of(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null)));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
@@ -92,7 +92,7 @@ class MemberIngestionControllerTest {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-version-of-timestamp.nq",
 				Lang.NQUADS);
 		when(shaclCollection.retrieveShape(MOBILITY_HINDRANCES_COLLECTION))
-				.thenReturn(new LdesConfigModel(MOBILITY_HINDRANCES_COLLECTION, null));
+				.thenReturn(Optional.of(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null)));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
@@ -132,7 +132,7 @@ class MemberIngestionControllerTest {
 		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
 		when(shaclCollection.retrieveShape(RESTAURANT_COLLECTION))
-				.thenReturn(new LdesConfigModel(RESTAURANT_COLLECTION, oldShape));
+				.thenReturn(Optional.of(new ShaclShape(RESTAURANT_COLLECTION, oldShape)));
 
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
@@ -148,7 +148,7 @@ class MemberIngestionControllerTest {
 		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
 		when(shaclCollection.retrieveShape(RESTAURANT_COLLECTION))
-				.thenReturn(new LdesConfigModel(RESTAURANT_COLLECTION, oldShape));
+				.thenReturn(Optional.of(new ShaclShape(RESTAURANT_COLLECTION, oldShape)));
 
 		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 

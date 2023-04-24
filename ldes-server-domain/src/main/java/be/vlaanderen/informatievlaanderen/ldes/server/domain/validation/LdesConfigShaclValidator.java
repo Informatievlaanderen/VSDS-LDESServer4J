@@ -13,7 +13,7 @@ public class LdesConfigShaclValidator extends AbstractShaclValidator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return Model.class.equals(clazz);
+		return Model.class.isAssignableFrom(clazz);
 	}
 
 	@Override

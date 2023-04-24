@@ -2,9 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,20 +35,18 @@ class LdesConfigShaclValidatorTest {
 		return shape.collect(Collectors.joining("\n"));
 	}
 
-	private void initializeStreamValidator() {
+	@BeforeEach
+	void setUp() {
 		validator = new LdesConfigShaclValidator("eventstream/streams/shaclShapes/streamShaclShape.ttl");
 	}
 
 	@Test
 	void when_SupportedClassProvided_thenReturnTrue() {
-		initializeStreamValidator();
-		assertTrue(validator.supports(LdesConfigModel.class));
+		assertTrue(validator.supports(Model.class));
 	}
 
 	@Test
 	void when_UnsupportedClassProvided_thenReturnFalse() {
-		initializeStreamValidator();
-
 		assertFalse(validator.supports(EventStream.class));
 		assertFalse(validator.supports(Object.class));
 	}
@@ -56,7 +54,6 @@ class LdesConfigShaclValidatorTest {
 	@ParameterizedTest
 	@ArgumentsSource(LdesConfigShaclValidatorFileNameProvider.class)
 	void when_ValidateProvidedValidEventStream_thenReturnValid(String fileName) throws URISyntaxException {
-		initializeStreamValidator();
 		final Model validEventStream = readModelFromFile(fileName);
 
 		assertDoesNotThrow(() -> validator.validateShape(validEventStream));
@@ -81,8 +78,6 @@ class LdesConfigShaclValidatorTest {
 
 	@Test
 	void when_ValidateProvidedInvalidEventStream_thenReturnInvalid() throws URISyntaxException {
-		initializeStreamValidator();
-
 		final Model model = readModelFromFile("ldes-empty.ttl");
 		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
 	}

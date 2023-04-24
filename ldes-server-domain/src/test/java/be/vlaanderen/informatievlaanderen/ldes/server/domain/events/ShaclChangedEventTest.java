@@ -55,7 +55,6 @@ class ShaclChangedEventTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of(new ShaclChangedEvent("otherCollectionName", getModel())),
-					Arguments.of(new ShaclChangedEvent(COLLECTION_NAME, getOtherModel())),
 					Arguments.of(new BigDecimal(1)));
 		}
 

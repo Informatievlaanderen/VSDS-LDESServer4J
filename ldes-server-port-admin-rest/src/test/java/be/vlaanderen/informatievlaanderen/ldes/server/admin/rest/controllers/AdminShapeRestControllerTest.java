@@ -17,7 +17,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConf
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -34,6 +33,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -47,7 +47,6 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,17 +65,12 @@ class AdminShapeRestControllerTest {
 	@MockBean
 	private ShaclShapeService shaclShapeService;
 
-	@MockBean
+	@SpyBean
 	@Qualifier("shapeShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
 
 	@Autowired
 	private MockMvc mockMvc;
-
-	@BeforeEach
-	void setUp() {
-		when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
-	}
 
 	@Nested
 	class GetRequest {
@@ -138,6 +132,8 @@ class AdminShapeRestControllerTest {
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andDo(print())
 					.andExpect(status().isBadRequest());
+
+			verify(ldesConfigShaclValidator).validate(any(), any());
 		}
 
 	}
