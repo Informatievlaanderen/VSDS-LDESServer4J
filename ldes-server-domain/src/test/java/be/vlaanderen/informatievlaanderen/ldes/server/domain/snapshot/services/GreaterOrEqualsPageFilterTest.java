@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.GreaterOrEqualsPageFilterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,6 +44,15 @@ class GreaterOrEqualsPageFilterTest {
 	void when_Root_Then_False() {
 		filter = new GreaterOrEqualsPageFilter(fragment2.getFragmentId());
 		assertFalse(filter.test(fragmentRoot));
+	}
+
+	@Test
+	void when_MissingPageNumberKey_Then_Throws() {
+		String fragmentId = fragmentRoot.getFragmentId();
+		assertThrows(GreaterOrEqualsPageFilterException.class,
+				() -> new GreaterOrEqualsPageFilter(fragmentId),
+				"Could not create filter starting from fragment: " + fragmentRoot.getFragmentId() + " No value for key "
+						+ PAGE_NUMBER_KEY + " in fragment pairs.");
 	}
 
 }

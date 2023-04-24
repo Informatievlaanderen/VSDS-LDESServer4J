@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.GreaterOrEqualsPageFilterException;
 
 import java.util.function.Predicate;
 
@@ -10,7 +11,8 @@ public class GreaterOrEqualsPageFilter implements Predicate<LdesFragment> {
 	private final String page;
 
 	public GreaterOrEqualsPageFilter(String lastFragment) {
-		page = LdesFragmentIdentifier.fromFragmentId(lastFragment).getFragmentPairs().get(0).fragmentValue();
+		page = LdesFragmentIdentifier.fromFragmentId(lastFragment).getValueOfFragmentPairKey(PAGE_NUMBER_KEY)
+				.orElseThrow(() -> new GreaterOrEqualsPageFilterException(lastFragment));
 	}
 
 	@Override

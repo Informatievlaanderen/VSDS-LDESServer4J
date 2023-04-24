@@ -4,10 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.except
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class LdesFragmentIdentifier {
@@ -31,6 +28,11 @@ public class LdesFragmentIdentifier {
 
 	public List<FragmentPair> getFragmentPairs() {
 		return fragmentPairs;
+	}
+
+	public Optional<String> getValueOfFragmentPairKey(String key) {
+		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key)).map(FragmentPair::fragmentValue)
+				.findFirst();
 	}
 
 	public static LdesFragmentIdentifier fromFragmentId(String fragmentId) {
