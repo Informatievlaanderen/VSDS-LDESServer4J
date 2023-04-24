@@ -3,7 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ShaclShapeServiceImpl implements ShaclShapeService {
 	private final ShaclCollection shaclCollection;
 
