@@ -17,12 +17,13 @@ public class RdfModelConverter {
 	private RdfModelConverter() {
 	}
 
-	public static Lang getLang(MediaType contentType, RdfFormatException.LdesProcessDirection ldesProcessDirection) {
-		if (contentType.equals(MediaType.TEXT_HTML))
+	public static Lang getLang(MediaType contentType, RdfFormatException.RdfFormatContext rdfFormatContext) {
+		if (contentType.equals(MediaType.TEXT_HTML)) {
 			return TURTLE;
+		}
 		return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
 				.orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
-						.orElseThrow(() -> new RdfFormatException(contentType.toString(), ldesProcessDirection)));
+						.orElseThrow(() -> new RdfFormatException(contentType.toString(), rdfFormatContext)));
 	}
 
 	public static Model fromString(final String content, final Lang lang) {

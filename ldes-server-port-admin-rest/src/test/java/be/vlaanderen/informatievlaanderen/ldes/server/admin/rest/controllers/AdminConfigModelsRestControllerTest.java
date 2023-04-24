@@ -86,7 +86,7 @@ class AdminConfigModelsRestControllerTest {
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
 				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).updateConfigModel(any());
@@ -96,7 +96,7 @@ class AdminConfigModelsRestControllerTest {
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
 				.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -105,7 +105,7 @@ class AdminConfigModelsRestControllerTest {
 	void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
 		var request = put("/admin/api/v1/eventstreams")
 				.content(readDataFromFile("malformed-ldes.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN);
+				.contentType(Lang.TURTLE.getHeaderString());
 		mockMvc.perform(request).andDo(print());
 		mockMvc.perform(request)
 				.andExpect(status().isBadRequest());
@@ -118,7 +118,7 @@ class AdminConfigModelsRestControllerTest {
 		when(ldesConfigModelService.updateConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
 				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(MediaType.TEXT_PLAIN))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print());
 		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
 	}
