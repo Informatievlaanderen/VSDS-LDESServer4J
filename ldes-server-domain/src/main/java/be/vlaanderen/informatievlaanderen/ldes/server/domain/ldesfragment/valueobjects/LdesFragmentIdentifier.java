@@ -25,6 +25,14 @@ public class LdesFragmentIdentifier {
 		this.fragmentPairs = fragmentPairs;
 	}
 
+	public ViewName getViewName() {
+		return viewName;
+	}
+
+	public List<FragmentPair> getFragmentPairs() {
+		return fragmentPairs;
+	}
+
 	public static LdesFragmentIdentifier fromFragmentId(String fragmentId) {
 		try {
 			String[] splitString = fragmentId.substring(1).split("\\?");
