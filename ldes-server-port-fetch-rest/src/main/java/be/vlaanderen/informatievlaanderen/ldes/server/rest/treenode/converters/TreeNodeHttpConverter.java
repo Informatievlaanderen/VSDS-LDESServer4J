@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.FETCH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 

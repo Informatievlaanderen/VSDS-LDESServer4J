@@ -26,7 +26,8 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.LdesProcessDirection.INGEST;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.INGEST;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelServiceImpl.extractIdFromResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
@@ -49,7 +50,7 @@ public class LdesConfigModelConverter extends AbstractHttpMessageConverter<LdesC
 	@Override
 	protected LdesConfigModel readInternal(Class<? extends LdesConfigModel> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), INGEST);
+		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
 		Model model = fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 		String memberId = extractStreamId(model);
 		return new LdesConfigModel(memberId, model);
