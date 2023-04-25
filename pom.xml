@@ -43,7 +43,7 @@
         <spring-boot.version>3.0.6</spring-boot.version>
 
         <!-- JSON & RDF -->
-        <apache-jena.version>4.7.0</apache-jena.version>
+        <apache-jena.version>4.8.0</apache-jena.version>
         <json-simple.version>1.1.1</json-simple.version>
 
         <!-- TESTING -->
