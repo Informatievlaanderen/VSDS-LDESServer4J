@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import org.apache.jena.rdf.model.Model;
@@ -29,5 +30,15 @@ class InMemoryShaclCollectionTest {
 		Optional<ShaclShape> retrievedShape = memoryShaclCollection.retrieveShape(COLLECTION_NAME);
 		assertTrue(retrievedShape.isPresent());
 		assertEquals(shaclShape, retrievedShape.get());
+	}
+
+	@Test
+	void test_handleEvent() {
+		Model model = ModelFactory.createDefaultModel();
+
+		ShaclChangedEvent shaclChangedEvent = new ShaclChangedEvent(COLLECTION_NAME, model);
+		memoryShaclCollection.handleShaclChangedEvent(shaclChangedEvent);
+
+		verify(shaclShapeRepository).saveShaclShape(shaclChangedEvent.getShacl());
 	}
 }
