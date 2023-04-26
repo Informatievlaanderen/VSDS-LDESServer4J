@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 
@@ -37,12 +37,13 @@ public class EventStream {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (!(o instanceof EventStream that)) return false;
-		return Objects.equals(collection, that.collection);
+		if (o == null || getClass() != o.getClass()) return false;
+		EventStream that = (EventStream) o;
+		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath) && Objects.equals(versionOfPath, that.versionOfPath) && Objects.equals(views, that.views);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection);
+		return Objects.hash(collection, timestampPath, versionOfPath, views);
 	}
 }
