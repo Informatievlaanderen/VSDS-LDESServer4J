@@ -4,7 +4,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
-public class ShaclShapeValidator extends AbstractShaclValidator{
+public class ShaclShapeValidator extends AbstractShaclValidator {
 	@Override
 	protected void initializeShapes() {
 		shapes = Shapes.parse("shapeShaclShape.ttl");
