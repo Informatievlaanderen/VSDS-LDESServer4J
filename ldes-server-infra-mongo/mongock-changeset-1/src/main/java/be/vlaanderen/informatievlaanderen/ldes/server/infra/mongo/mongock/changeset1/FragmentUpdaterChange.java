@@ -30,8 +30,7 @@ public class FragmentUpdaterChange {
 	 **/
 	@Execution
 	public void changeSet() {
-		List<LdesFragmentEntityV1> fragmentEntityV1s = mongoTemplate.find(new Query(), LdesFragmentEntityV1.class);
-		fragmentEntityV1s.forEach(ldesFragmentEntityV1 -> {
+		mongoTemplate.stream(new Query(), LdesFragmentEntityV1.class).forEach(ldesFragmentEntityV1 -> {
 			String parentId = getParentId(ldesFragmentEntityV1.getFragmentPairs(), ldesFragmentEntityV1.getViewName());
 			LocalDateTime immutableTimestamp = Boolean.TRUE.equals(ldesFragmentEntityV1.isImmutable())
 					? LocalDateTime.now()
@@ -42,15 +41,13 @@ public class FragmentUpdaterChange {
 					ldesFragmentEntityV1.isImmutable(), false, parentId, immutableTimestamp,
 					ldesFragmentEntityV1.getMembers() == null ? 0 : ldesFragmentEntityV1.getMembers().size(),
 					ldesFragmentEntityV1.getRelations());
-			mongoTemplate
-					.save(ldesFragmentEntity);
+			mongoTemplate.save(ldesFragmentEntity);
 		});
 	}
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesFragmentEntityV2> ldesFragmentEntities = mongoTemplate.find(new Query(), LdesFragmentEntityV2.class);
-		ldesFragmentEntities.forEach(fragmentEntity -> {
+		mongoTemplate.stream(new Query(), LdesFragmentEntityV2.class).forEach(fragmentEntity -> {
 			Query query = new Query();
 			query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(fragmentEntity.getId()));
 			List<String> members = mongoTemplate.find(query, LdesMemberEntityV2.class).stream()
@@ -59,8 +56,7 @@ public class FragmentUpdaterChange {
 					fragmentEntity.getRoot(), fragmentEntity.getViewName(),
 					fragmentEntity.getFragmentPairs(),
 					fragmentEntity.isImmutable(), fragmentEntity.getRelations(), members);
-			mongoTemplate
-					.save(ldesFragmentEntityV1);
+			mongoTemplate.save(ldesFragmentEntityV1);
 		});
 	}
 

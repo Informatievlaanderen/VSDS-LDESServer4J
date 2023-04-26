@@ -47,8 +47,7 @@ public class MemberUpdaterChange {
 	 **/
 	@Execution
 	public void changeSet() {
-		List<LdesMemberEntityV2> ldesMemberEntityV2s = mongoTemplate.find(new Query(), LdesMemberEntityV2.class);
-		ldesMemberEntityV2s.forEach(ldesMember -> {
+		mongoTemplate.stream(new Query(), LdesMemberEntityV2.class).forEach(ldesMember -> {
 			Model ldesMemberModel = RDFParserBuilder.create().fromString(ldesMember.getModel()).lang(Lang.NQUADS)
 					.toModel();
 			String versionOf = extractVersionOf(ldesMemberModel);
@@ -62,9 +61,7 @@ public class MemberUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesMemberEntityV3> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV3.class);
-
-		ldesMemberEntities.forEach(ldesMember -> mongoTemplate
+		mongoTemplate.stream(new Query(), LdesMemberEntityV3.class).forEach(ldesMember -> mongoTemplate
 				.save(new LdesMemberEntityV2(ldesMember.getId(), ldesMember.getModel(),
 						ldesMember.getTreeNodeReferences())));
 	}
