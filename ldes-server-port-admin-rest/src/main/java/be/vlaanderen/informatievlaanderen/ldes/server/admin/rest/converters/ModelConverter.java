@@ -16,7 +16,10 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
 
 public class ModelConverter extends AbstractHttpMessageConverter<Model> {
@@ -34,8 +37,9 @@ public class ModelConverter extends AbstractHttpMessageConverter<Model> {
 	@Override
 	protected Model readInternal(Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
+		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
 		return RdfModelConverter.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
-				Lang.TURTLE);
+				lang);
 	}
 
 	@Override

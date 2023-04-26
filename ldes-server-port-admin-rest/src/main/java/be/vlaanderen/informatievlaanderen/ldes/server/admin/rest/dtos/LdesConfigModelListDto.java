@@ -14,8 +14,4 @@ public class LdesConfigModelListDto {
 	public List<LdesConfigModel> getLdesConfigModelList() {
 		return ldesConfigModelList;
 	}
-
-	public void setLdesConfigModelList(List<LdesConfigModel> ldesConfigModelList) {
-		this.ldesConfigModelList = ldesConfigModelList;
-	}
 }

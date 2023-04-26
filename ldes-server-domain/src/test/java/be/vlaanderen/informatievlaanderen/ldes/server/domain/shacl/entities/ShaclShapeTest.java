@@ -26,12 +26,16 @@ class ShaclShapeTest {
 		assertEquals(SHACL_SHAPE, SHACL_SHAPE);
 		assertEquals(other, other);
 		assertEquals(SHACL_SHAPE, other);
+		assertEquals(SHACL_SHAPE.hashCode(), other.hashCode());
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(ShaclShapeArgumentsProvider.class)
 	void test_inequality(Object other) {
 		assertNotEquals(SHACL_SHAPE, other);
+		if (other != null) {
+			assertNotEquals(SHACL_SHAPE.hashCode(), other.hashCode());
+		}
 	}
 
 	static class ShaclShapeArgumentsProvider implements ArgumentsProvider {

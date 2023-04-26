@@ -36,9 +36,7 @@ public class InMemoryShaclCollection implements ShaclCollection {
 
 	@EventListener
 	public void handleShaclChangedEvent(ShaclChangedEvent event) {
-		shaclShapeRepository.saveShaclShape(event.getShacl());
-		shapes.remove(event.getShacl());
-		shapes.add(event.getShacl());
+		saveShape(event.getShacl());
 	}
 
 	@PostConstruct

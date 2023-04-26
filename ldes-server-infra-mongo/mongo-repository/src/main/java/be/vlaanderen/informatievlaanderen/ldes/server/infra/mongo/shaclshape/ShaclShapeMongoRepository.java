@@ -36,9 +36,4 @@ public class ShaclShapeMongoRepository implements ShaclShapeRepository {
 		repository.save(converter.fromShaclShape(shaclShape));
 		return shaclShape;
 	}
-
-	@Override
-	public boolean existByCollection(String collectionName) {
-		return repository.existsById(collectionName);
-	}
 }

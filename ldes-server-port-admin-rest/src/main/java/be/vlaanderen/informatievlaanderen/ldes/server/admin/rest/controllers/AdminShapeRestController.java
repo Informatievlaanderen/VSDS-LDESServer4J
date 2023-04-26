@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import org.apache.jena.rdf.model.Model;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -28,16 +27,16 @@ public class AdminShapeRestController {
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<Model> getShape(@PathVariable String collectionName) {
+	public Model getShape(@PathVariable String collectionName) {
 		ShaclShape shape = shaclShapeService.retrieveShaclShape(collectionName);
-		return ResponseEntity.ok(shape.getModel());
+		return shape.getModel();
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<Model> putShape(@PathVariable String collectionName,
+	public Model putShape(@PathVariable String collectionName,
 			@RequestBody @Validated Model shape) {
 		shaclShapeService.updateShaclShape(new ShaclShape(collectionName, shape));
-		return ResponseEntity.ok(shape);
+		return shape;
 	}
 
 }
