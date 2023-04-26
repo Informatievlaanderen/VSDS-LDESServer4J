@@ -253,3 +253,4 @@ $RECYCLE.BIN/
 ### SRS Database
 ###
 Databases
+/ldes-server-application/src/main/resources/application.yml
