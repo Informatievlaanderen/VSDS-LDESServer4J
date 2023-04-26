@@ -77,8 +77,7 @@ class ShaclShapeMongoRepositoryTest {
 
 		final List<ShaclShape> expectedShapes = List.of(
 				new ShaclShape("c1", ModelFactory.createDefaultModel()),
-				new ShaclShape("c2", RdfModelConverter.fromString(shaclShapeString, Lang.TURTLE))
-		);
+				new ShaclShape("c2", RdfModelConverter.fromString(shaclShapeString, Lang.TURTLE)));
 
 		final List<ShaclShape> shaclShapes = repository.retrieveAllShaclShapes();
 
