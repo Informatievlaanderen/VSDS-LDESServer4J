@@ -20,6 +20,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.observability.ContextProviderFactory;
 import org.springframework.data.mongodb.observability.MongoObservationCommandListener;
@@ -58,9 +59,11 @@ public class MongoAutoConfiguration {
 		return new SnapshotMongoRepository(snapshotEntityRepository);
 	}
 
+	@Profile("monitoring") // This config can cause memory overflow issues when running large database migrations.
 	@Bean
 	MongoClientSettingsBuilderCustomizer mongoMetricsSynchronousContextProvider(ObservationRegistry registry) {
 		return clientSettingsBuilder -> clientSettingsBuilder.contextProvider(ContextProviderFactory.create(registry))
 				.addCommandListener(new MongoObservationCommandListener(registry));
 	}
+
 }

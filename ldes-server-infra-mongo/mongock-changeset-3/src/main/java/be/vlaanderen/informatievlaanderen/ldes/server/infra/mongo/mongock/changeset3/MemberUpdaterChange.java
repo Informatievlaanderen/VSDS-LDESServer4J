@@ -34,8 +34,7 @@ public class MemberUpdaterChange {
 	 **/
 	@Execution
 	public void changeSet() {
-		List<LdesMemberEntityV3> ldesMemberEntityV3s = mongoTemplate.find(new Query(), LdesMemberEntityV3.class);
-		ldesMemberEntityV3s.forEach(ldesMember -> {
+		mongoTemplate.stream(new Query(), LdesMemberEntityV3.class).forEach(ldesMember -> {
 			List<String> treeNodeReferences = ldesMember.getTreeNodeReferences().stream()
 					.map(treeNode -> "/" + collection + treeNode).toList();
 			mongoTemplate
@@ -47,9 +46,7 @@ public class MemberUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
-
-		ldesMemberEntities.forEach(ldesMember -> {
+		mongoTemplate.stream(new Query(), LdesMemberEntityV4.class).forEach(ldesMember -> {
 			List<String> treeNodeReferences = ldesMember.getTreeNodeReferences().stream()
 					.map(treeNode -> treeNode.split(collection)[1]).toList();
 
