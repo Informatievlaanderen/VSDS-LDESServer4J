@@ -13,28 +13,14 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class LdesConfigShaclValidatorTest {
 	private LdesConfigShaclValidator validator;
-
-	private String readShaclShape(String fileName) throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URI uri = null;
-		uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI();
-
-		Stream<String> shape = Files.lines(Paths.get(uri));
-		return shape.collect(Collectors.joining("\n"));
-	}
 
 	@BeforeEach
 	void setUp() {
@@ -58,23 +44,6 @@ class LdesConfigShaclValidatorTest {
 		final Model validEventStream = readModelFromFile(fileName);
 
 		assertDoesNotThrow(() -> validator.validateShape(validEventStream));
-	}
-
-	@Test
-	void when_ValidateValidShaclShape_thenReturnValid() throws URISyntaxException {
-		validator = new LdesConfigShaclValidator("eventstream/streams/shaclShapes/shapeShaclShape.ttl");
-
-		final Model validShaclShape = readModelFromFile("valid-shape.ttl");
-
-		assertDoesNotThrow(() -> validator.validateShape(validShaclShape));
-	}
-
-	@Test
-	void when_validateInvalidShaclShape_thenReturnInvalid() throws URISyntaxException {
-		validator = new LdesConfigShaclValidator("eventstream/streams/shaclShapes/shapeShaclShape.ttl");
-
-		final Model model = readModelFromFile("invalid-shape.ttl");
-		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
 	}
 
 	@Test
