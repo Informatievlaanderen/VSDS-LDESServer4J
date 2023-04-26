@@ -7,8 +7,6 @@ import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.List;
-
 @ChangeUnit(id = "member-updater-changeset-4", order = "4", author = "VSDS")
 public class MemberUpdaterChange {
 
@@ -23,8 +21,7 @@ public class MemberUpdaterChange {
      **/
     @Execution
     public void changeSet() {
-        List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
-        ldesMemberEntities.forEach(ldesMember -> {
+        mongoTemplate.stream(new Query(), LdesMemberEntityV4.class).forEach(ldesMember -> {
             final String newId = ldesMember.getCollectionName() + "/" + ldesMember.getId();
             final LdesMemberEntityV4 updatedMember = new LdesMemberEntityV4(newId,
                     ldesMember.getCollectionName(), ldesMember.getSequenceNr(),
@@ -38,8 +35,7 @@ public class MemberUpdaterChange {
 
     @RollbackExecution
     public void rollback() {
-        List<LdesMemberEntityV4> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV4.class);
-        ldesMemberEntities.forEach(ldesMember -> {
+        mongoTemplate.stream(new Query(), LdesMemberEntityV4.class).forEach(ldesMember -> {
             final String idWithoutPrefix = ldesMember.getId().substring(ldesMember.getId().indexOf("/") + 1);
             final LdesMemberEntityV4 updatedMember = new LdesMemberEntityV4(idWithoutPrefix,
                     ldesMember.getCollectionName(), ldesMember.getSequenceNr(),
