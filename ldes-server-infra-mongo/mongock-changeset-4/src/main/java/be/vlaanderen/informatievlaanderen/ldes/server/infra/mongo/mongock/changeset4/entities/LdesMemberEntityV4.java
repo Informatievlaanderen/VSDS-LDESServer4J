@@ -25,9 +25,9 @@ public class LdesMemberEntityV4 {
 	private final List<String> treeNodeReferences;
 
 	public LdesMemberEntityV4(String id, String collectionName, Long sequenceNr, String versionOf,
-                              LocalDateTime timestamp,
-                              final String model,
-                              List<String> treeNodeReferences) {
+			LocalDateTime timestamp,
+			final String model,
+			List<String> treeNodeReferences) {
 		this.id = id;
 		this.sequenceNr = sequenceNr;
 		this.versionOf = versionOf;
