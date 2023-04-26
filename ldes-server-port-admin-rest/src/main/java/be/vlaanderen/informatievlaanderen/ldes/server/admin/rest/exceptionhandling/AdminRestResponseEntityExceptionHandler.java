@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.InvalidM
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions.InvalidConfigOperationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import org.apache.jena.riot.RiotException;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +32,12 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	@ExceptionHandler(value = { InvalidModelIdException.class })
 	protected ResponseEntity<Object> handleInvalidModelException(
+			RuntimeException ex, WebRequest request) {
+		return handleException(ex, HttpStatus.BAD_REQUEST, request);
+	}
+
+	@ExceptionHandler(value = { InvalidConfigOperationException.class })
+	protected ResponseEntity<Object> handleInvalidConfigOperationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}

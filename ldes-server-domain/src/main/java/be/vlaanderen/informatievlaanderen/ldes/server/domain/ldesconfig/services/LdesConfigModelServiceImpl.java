@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.service
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions.InvalidConfigOperationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.*;
@@ -80,9 +81,7 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, ResourceFactory.createProperty(VIEW),
 				idStringToResource(view.getId()));
 		if (iterator.hasNext()) {
-			Statement statement = iterator.nextStatement();
-			List<Statement> statements = retrieveAllStatements(statement, ldesConfigModel.getModel());
-			ldesConfigModel.getModel().remove(statements);
+			throw new InvalidConfigOperationException("View with id: " + view.getId() + " already exists.");
 		}
 
 		Statement viewStatement = ldesConfigModel.getModel().createStatement(idStringToResource(collectionName),
