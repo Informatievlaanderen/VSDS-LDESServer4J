@@ -59,7 +59,8 @@ public class MongoAutoConfiguration {
 		return new SnapshotMongoRepository(snapshotEntityRepository);
 	}
 
-	@Profile("monitoring") // This config can cause memory overflow issues when running large database migrations.
+	@Profile("monitoring") // This config can cause memory overflow issues when running large database
+							// migrations.
 	@Bean
 	MongoClientSettingsBuilderCustomizer mongoMetricsSynchronousContextProvider(ObservationRegistry registry) {
 		return clientSettingsBuilder -> clientSettingsBuilder.contextProvider(ContextProviderFactory.create(registry))
