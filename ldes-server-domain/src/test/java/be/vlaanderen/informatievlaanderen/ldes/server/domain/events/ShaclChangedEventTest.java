@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,8 @@ class ShaclChangedEventTest {
 	void test_equality() {
 		ShaclChangedEvent shaclChangedEvent = new ShaclChangedEvent(COLLECTION_NAME,
 				ShaclChangedEventArgumentsProvider.getModel());
-		ShaclChangedEvent otherShaclChangedEvent = new ShaclChangedEvent(COLLECTION_NAME,
-				ShaclChangedEventArgumentsProvider.getModel());
+		ShaclShape otherShaclShape = new ShaclShape(COLLECTION_NAME, ShaclChangedEventArgumentsProvider.getModel());
+		ShaclChangedEvent otherShaclChangedEvent = new ShaclChangedEvent(otherShaclShape);
 		assertEquals(shaclChangedEvent, otherShaclChangedEvent);
 		assertEquals(shaclChangedEvent, shaclChangedEvent);
 		assertEquals(otherShaclChangedEvent, otherShaclChangedEvent);

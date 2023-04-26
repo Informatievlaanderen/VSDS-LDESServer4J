@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -49,8 +48,7 @@ class AdminShapeRestControllerTest {
 	private ShaclShapeService shaclShapeService;
 
 	@SpyBean
-	@Qualifier("shapeShaclValidator")
-	private LdesConfigShaclValidator ldesConfigShaclValidator;
+	private ShaclShapeValidator shaclShapeValidator;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -100,8 +98,8 @@ class AdminShapeRestControllerTest {
 					.andDo(print())
 					.andExpect(status().isOk());
 
-			InOrder inOrder = inOrder(ldesConfigShaclValidator, shaclShapeService);
-			inOrder.verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
+			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
+			inOrder.verify(shaclShapeValidator, times(1)).validate(any(), any());
 			inOrder.verify(shaclShapeService, times(1))
 					.updateShaclShape(new ShaclShape(collectionName, expectedShapeModel));
 			inOrder.verifyNoMoreInteractions();
@@ -116,7 +114,7 @@ class AdminShapeRestControllerTest {
 					.andDo(print())
 					.andExpect(status().isBadRequest());
 
-			verify(ldesConfigShaclValidator).validate(any(), any());
+			verify(shaclShapeValidator).validate(any(), any());
 		}
 
 	}
