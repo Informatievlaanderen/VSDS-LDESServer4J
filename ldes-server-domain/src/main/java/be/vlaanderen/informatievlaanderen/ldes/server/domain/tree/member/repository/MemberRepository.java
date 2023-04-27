@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Deprecated
 public interface MemberRepository {
 
 	Member saveLdesMember(Member member);
