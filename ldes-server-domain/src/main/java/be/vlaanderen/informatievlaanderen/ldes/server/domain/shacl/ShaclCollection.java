@@ -1,7 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+
+import java.util.Optional;
 
 public interface ShaclCollection {
-	LdesConfigModel retrieveShape(String collectionName);
+	Optional<ShaclShape> retrieveShape(String collectionName);
+
+	void saveShape(ShaclShape shaclShape);
 }

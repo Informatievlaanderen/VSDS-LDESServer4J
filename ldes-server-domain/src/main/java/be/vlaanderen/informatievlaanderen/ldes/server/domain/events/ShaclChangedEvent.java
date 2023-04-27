@@ -1,23 +1,22 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 
 public class ShaclChangedEvent {
-	private final String collectionName;
-	private final Model shacl;
+	private final ShaclShape shacl;
 
-	public ShaclChangedEvent(String collectionName, Model shacl) {
-		this.collectionName = collectionName;
+	public ShaclChangedEvent(ShaclShape shacl) {
 		this.shacl = shacl;
 	}
 
-	public String getCollectionName() {
-		return collectionName;
+	public ShaclChangedEvent(String collectionName, Model shacl) {
+		this.shacl = new ShaclShape(collectionName, shacl);
 	}
 
-	public Model getShacl() {
+	public ShaclShape getShacl() {
 		return shacl;
 	}
 
@@ -27,11 +26,11 @@ public class ShaclChangedEvent {
 			return true;
 		if (!(o instanceof ShaclChangedEvent that))
 			return false;
-		return Objects.equals(collectionName, that.collectionName) && shacl.isIsomorphicWith(that.shacl);
+		return Objects.equals(shacl, that.shacl);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collectionName, shacl);
+		return Objects.hash(shacl);
 	}
 }

@@ -1,10 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,10 +18,12 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 @Component
 public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 	private final LdesConfigRepository repository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Autowired
-	public LdesConfigModelServiceImpl(LdesConfigRepository repository) {
+	public LdesConfigModelServiceImpl(LdesConfigRepository repository, ApplicationEventPublisher eventPublisher) {
 		this.repository = repository;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
@@ -44,52 +48,13 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 
 	@Override
 	public LdesConfigModel updateConfigModel(LdesConfigModel ldesConfigModel) {
-		return repository.saveConfigModel(ldesConfigModel);
-	}
+		LdesConfigModel updatedConfigModel = repository.saveConfigModel(ldesConfigModel);
 
-	@Override
-	public List<LdesConfigModel> retrieveAllShapes() {
-		return retrieveAllConfigModels()
-				.stream()
-				.map(configModel -> retrieveShape(configModel.getId()))
-				.toList();
-	}
+		ShaclChangedEvent event = new ShaclChangedEvent(updatedConfigModel.getId(),
+				retrieveShaclShapeModel(updatedConfigModel.getModel()));
+		eventPublisher.publishEvent(event);
 
-	@Override
-	public LdesConfigModel retrieveShape(String collectionName) {
-		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
-
-		Model shapeModel = ldesConfigModel.getModel().listStatements(null,
-				createProperty(SHAPE), (Resource) null).toList().stream().findFirst()
-				.map(statement -> retrieveAllStatements(statement.getResource(), ldesConfigModel.getModel()))
-				.map(statements -> {
-					Model model = ModelFactory.createDefaultModel();
-					model.add(statements);
-					return model;
-				})
-				.orElse(ModelFactory.createDefaultModel());
-		return LdesConfigModel.createLdesConfigShape(collectionName, shapeModel);
-	}
-
-	@Override
-	public LdesConfigModel updateShape(String collectionName, LdesConfigModel shape) {
-		LdesConfigModel ldesConfigModel = retrieveConfigModel(collectionName);
-
-		StmtIterator iterator = ldesConfigModel.getModel().listStatements(null, createProperty(SHAPE), (Resource) null);
-
-		if (iterator.hasNext()) {
-			Statement statement = iterator.nextStatement();
-			List<Statement> statements = retrieveAllStatements(statement, ldesConfigModel.getModel());
-			ldesConfigModel.getModel().remove(statements);
-		}
-
-		ldesConfigModel.getModel().add(shape.getModel());
-		Statement statement = ldesConfigModel.getModel().createStatement(idStringToResource(collectionName),
-				createProperty(SHAPE), idStringToResource(shape.getId()));
-		ldesConfigModel.getModel().add(statement);
-		repository.saveConfigModel(ldesConfigModel);
-
-		return shape;
+		return updatedConfigModel;
 	}
 
 	@Override
@@ -166,6 +131,18 @@ public class LdesConfigModelServiceImpl implements LdesConfigModelService {
 		model.add(viewStatements);
 
 		return new LdesConfigModel(viewName, model);
+	}
+
+	private Model retrieveShaclShapeModel(Model model) {
+		return model.listStatements().toList().stream()
+				.findFirst()
+				.map(statement -> retrieveAllStatements(statement, model))
+				.map(statements -> {
+					Model shape = ModelFactory.createDefaultModel();
+					shape.add(statements);
+					return shape;
+				})
+				.orElse(ModelFactory.createDefaultModel());
 	}
 
 	/**

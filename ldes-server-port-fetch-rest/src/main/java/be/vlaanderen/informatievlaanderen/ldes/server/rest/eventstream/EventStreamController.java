@@ -39,7 +39,6 @@ public class EventStreamController {
 
 		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 		EventStream eventStream = eventStreamFactory.getEventStream(ldesConfig);
-
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
 		setContentTypeHeader(language, response);

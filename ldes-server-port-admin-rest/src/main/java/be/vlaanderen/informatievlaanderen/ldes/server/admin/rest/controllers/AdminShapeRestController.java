@@ -1,12 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.ResponseEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/api/v1")
 public class AdminShapeRestController {
 
-	private final LdesConfigShaclValidator shapeValidator;
-	private final ApplicationEventPublisher eventPublisher;
-	private final ShaclCollection shaclCollection;
+	private final ShaclShapeValidator shapeValidator;
+	private final ShaclShapeService shaclShapeService;
 
-	public AdminShapeRestController(@Qualifier("shapeShaclValidator") LdesConfigShaclValidator shapeValidator,
-			ApplicationEventPublisher eventPublisher, ShaclCollection shaclCollection) {
+	public AdminShapeRestController(ShaclShapeValidator shapeValidator,
+			ShaclShapeService shaclShapeService) {
 		this.shapeValidator = shapeValidator;
-		this.eventPublisher = eventPublisher;
-		this.shaclCollection = shaclCollection;
+		this.shaclShapeService = shaclShapeService;
 	}
 
 	@InitBinder
@@ -32,16 +27,16 @@ public class AdminShapeRestController {
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<LdesConfigModel> getShape(@PathVariable String collectionName) {
-		LdesConfigModel shape = shaclCollection.retrieveShape(collectionName);
-		return ResponseEntity.ok(shape);
+	public Model getShape(@PathVariable String collectionName) {
+		ShaclShape shape = shaclShapeService.retrieveShaclShape(collectionName);
+		return shape.getModel();
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/shape")
-	public ResponseEntity<LdesConfigModel> putShape(@PathVariable String collectionName,
-			@RequestBody @Validated LdesConfigModel shape) {
-		eventPublisher.publishEvent(new ShaclChangedEvent(collectionName, shape.getModel()));
-		return ResponseEntity.ok(shape);
+	public Model putShape(@PathVariable String collectionName,
+			@RequestBody @Validated Model shape) {
+		shaclShapeService.updateShaclShape(new ShaclShape(collectionName, shape));
+		return shape;
 	}
 
 }

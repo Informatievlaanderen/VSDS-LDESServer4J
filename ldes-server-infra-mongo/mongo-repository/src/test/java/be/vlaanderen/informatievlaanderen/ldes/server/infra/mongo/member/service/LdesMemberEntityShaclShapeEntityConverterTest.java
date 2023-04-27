@@ -12,7 +12,7 @@ import java.util.List;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class LdesMemberEntityConverterTest {
+class LdesMemberEntityShaclShapeEntityConverterTest {
 
 	private final LdesMemberEntityConverter converter = new LdesMemberEntityConverter();
 

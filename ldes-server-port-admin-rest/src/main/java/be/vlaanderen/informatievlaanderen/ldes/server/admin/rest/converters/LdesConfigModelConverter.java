@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.InvalidModelIdException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.InvalidModelIdException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -26,7 +26,6 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.fromString;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.INGEST;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelServiceImpl.extractIdFromResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
