@@ -9,7 +9,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/admin/api/v1")
+@RequestMapping("/admin/api/v1/eventstreams/{collectionName}/shape")
 public class AdminShapeRestController {
 
 	private final ShaclShapeValidator shapeValidator;
@@ -26,13 +26,13 @@ public class AdminShapeRestController {
 		binder.setValidator(shapeValidator);
 	}
 
-	@GetMapping("/eventstreams/{collectionName}/shape")
+	@GetMapping
 	public Model getShape(@PathVariable String collectionName) {
 		ShaclShape shape = shaclShapeService.retrieveShaclShape(collectionName);
 		return shape.getModel();
 	}
 
-	@PutMapping("/eventstreams/{collectionName}/shape")
+	@PutMapping
 	public Model putShape(@PathVariable String collectionName,
 			@RequestBody @Validated Model shape) {
 		shaclShapeService.updateShaclShape(new ShaclShape(collectionName, shape));

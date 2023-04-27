@@ -1,20 +1,23 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects;
 
 import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 
-public class EventStream {
+public class EventStreamHttpMessage {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final Model views;
+	private final Model shacl;
 
-	public EventStream(String collection, String timestampPath, String versionOfPath, Model views) {
+	public EventStreamHttpMessage(String collection, String timestampPath, String versionOfPath, Model views,
+			Model shacl) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
 		this.views = views;
+		this.shacl = shacl;
 	}
 
 	public String getCollection() {
@@ -33,19 +36,24 @@ public class EventStream {
 		return views;
 	}
 
+	public Model getShacl() {
+		return shacl;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		EventStream that = (EventStream) o;
+		EventStreamHttpMessage that = (EventStreamHttpMessage) o;
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
-				&& Objects.equals(versionOfPath, that.versionOfPath) && views.isIsomorphicWith(that.views);
+				&& Objects.equals(versionOfPath, that.versionOfPath)
+				&& views.isIsomorphicWith(that.views) && shacl.isIsomorphicWith(that.shacl);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, views);
+		return Objects.hash(collection, timestampPath, versionOfPath, views, shacl);
 	}
 }

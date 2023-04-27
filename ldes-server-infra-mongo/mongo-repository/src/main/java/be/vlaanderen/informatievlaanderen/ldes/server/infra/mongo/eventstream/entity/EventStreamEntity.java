@@ -1,10 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
 
 @Document(collation = "eventstreams")
 public class EventStreamEntity {
@@ -12,9 +9,9 @@ public class EventStreamEntity {
 	private final String id;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final List<TreeNode> views;
+	private final String views;
 
-	public EventStreamEntity(String id, String timestampPath, String versionOfPath, List<TreeNode> views) {
+	public EventStreamEntity(String id, String timestampPath, String versionOfPath, String views) {
 		this.id = id;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
@@ -33,7 +30,7 @@ public class EventStreamEntity {
 		return versionOfPath;
 	}
 
-	public List<TreeNode> getViews() {
+	public String getViews() {
 		return views;
 	}
 }
