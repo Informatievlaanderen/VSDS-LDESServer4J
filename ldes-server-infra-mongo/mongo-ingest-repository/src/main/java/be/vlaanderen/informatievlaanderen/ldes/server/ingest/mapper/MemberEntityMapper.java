@@ -9,6 +9,7 @@ import org.apache.jena.riot.RDFParserBuilder;
 
 import java.io.StringWriter;
 
+// TODO: 27/04/2023 test
 public class MemberEntityMapper {
 
     public MemberEntity toMemberEntity(Member member) {

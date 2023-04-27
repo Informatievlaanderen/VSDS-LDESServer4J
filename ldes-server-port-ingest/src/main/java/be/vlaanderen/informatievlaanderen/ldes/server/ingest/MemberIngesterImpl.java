@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+// TODO: 27/04/2023 test
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
@@ -30,17 +31,17 @@ public class MemberIngesterImpl implements MemberIngester {
         String memberId = member.getId().replaceAll("[\n\r\t]", "_");
         if (!memberExists) {
             Metrics.counter("ldes_server_ingested_members_count").increment();
-            storeLdesMember(member);
-            eventPublisher.publishEvent(new MemberIngestedEvent());
+            final Member savedMember = save(member);
+            eventPublisher.publishEvent(new MemberIngestedEvent(savedMember));
             log.debug("Member with id {} ingested.", memberId);
         } else {
             log.warn("Duplicate member ingested. Member with id {} already exist", memberId);
         }
     }
 
-    private Member storeLdesMember(Member member) {
+    private Member save(Member member) {
         member.removeTreeMember();
-        return memberRepository.saveLdesMember(member);
+        return memberRepository.saveMember(member);
     }
 
 }

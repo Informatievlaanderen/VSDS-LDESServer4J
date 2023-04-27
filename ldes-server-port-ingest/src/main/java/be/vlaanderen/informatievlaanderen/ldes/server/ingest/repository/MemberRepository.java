@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 
 public interface MemberRepository {
 
-    boolean memberExists(String ldesMemberId);
+    boolean memberExists(String memberId);
 
-    Member saveLdesMember(Member member);
+    Member saveMember(Member member);
 
 }

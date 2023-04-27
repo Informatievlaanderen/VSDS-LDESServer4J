@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import org.springframework.stereotype.Component;
 
+// TODO: 27/04/2023 komkommer testen
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
 
@@ -17,11 +18,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         this.memberEntityMapper = memberEntityMapper;
     }
 
-    public boolean memberExists(String ldesMemberId) {
-        return memberEntityRepository.existsById(ldesMemberId);
+    public boolean memberExists(String memberId) {
+        return memberEntityRepository.existsById(memberId);
     }
 
-    public Member saveLdesMember(Member member) {
+    public Member saveMember(Member member) {
         MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
         MemberEntity savedMemberEntity = memberEntityRepository.save(memberEntityToSave);
         return memberEntityMapper.toMember(savedMemberEntity);

@@ -1,13 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities;
 
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-// TODO: 27/04/2023 cleanup and only keep what we need
+// TODO: 27/04/2023 testing
 public class Member {
 
 	public static final String TREE = "https://w3id.org/tree#";
@@ -29,39 +31,16 @@ public class Member {
 		return model;
 	}
 
-	public Object getFragmentationObject(String subjectFilter, String fragmentationPredicate) {
-		// @formatter:off
-		return getFragmentationObjects(subjectFilter, fragmentationPredicate)
-				.stream()
-				.findFirst()
-				.orElse(null);
-		// @formatter:on
-	}
-
-	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationProperty) {
-		// @formatter:off
-		return model
-				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
-				.toList()
-				.stream()
-				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(Statement::getObject)
-				.map(RDFNode::asLiteral)
-				.map(Literal::getValue)
-				.toList();
-		// @formatter:on
-	}
-
 	public String getId() {
 		return id;
 	}
 
-	private Optional<Statement> getCurrentTreeMemberStatement() {
-		return model.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
-	}
-
 	public void removeTreeMember() {
 		getCurrentTreeMemberStatement().ifPresent(model::remove);
+	}
+
+	private Optional<Statement> getCurrentTreeMemberStatement() {
+		return model.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
 	}
 
 	public String getCollectionName() {
@@ -71,4 +50,5 @@ public class Member {
 	public Long getSequenceNr() {
 		return sequenceNr;
 	}
+
 }

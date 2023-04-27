@@ -1,5 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.events;
 
-// TODO: 27/04/2023 VSDSPUB-652
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+
 public class MemberIngestedEvent {
+
+    private final Member ingestedMember;
+
+    public MemberIngestedEvent(Member ingestedMember) {
+        this.ingestedMember = ingestedMember;
+    }
+
+    public Member getIngestedMember() {
+        return ingestedMember;
+    }
+
 }
