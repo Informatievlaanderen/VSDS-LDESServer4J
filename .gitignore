@@ -11,6 +11,7 @@
 ### Local application files
 ###
 **/application-local.yml
+**/application.yml
 
 ###
 ### Makefiles
@@ -253,4 +254,3 @@ $RECYCLE.BIN/
 ### SRS Database
 ###
 Databases
-/ldes-server-application/src/main/resources/application.yml
