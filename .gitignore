@@ -11,6 +11,7 @@
 ### Local application files
 ###
 **/application-local.yml
+**/application.yml
 
 ###
 ### Makefiles
