@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.events.MemberIngestedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

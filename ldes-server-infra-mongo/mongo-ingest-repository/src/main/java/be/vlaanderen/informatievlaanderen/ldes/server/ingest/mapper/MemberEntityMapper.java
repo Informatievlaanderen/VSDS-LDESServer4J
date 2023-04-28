@@ -6,10 +6,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
 
 // TODO: 27/04/2023 test
+@Component
 public class MemberEntityMapper {
 
     public MemberEntity toMemberEntity(Member member) {

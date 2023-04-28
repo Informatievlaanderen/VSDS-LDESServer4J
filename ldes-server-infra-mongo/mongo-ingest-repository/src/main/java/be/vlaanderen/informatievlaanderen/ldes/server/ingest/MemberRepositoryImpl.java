@@ -1,11 +1,12 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import org.springframework.stereotype.Component;
 
-// TODO: 27/04/2023 komkommer testen
+import java.util.Optional;
+
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
 
@@ -26,6 +27,11 @@ public class MemberRepositoryImpl implements MemberRepository {
         MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
         MemberEntity savedMemberEntity = memberEntityRepository.save(memberEntityToSave);
         return memberEntityMapper.toMember(savedMemberEntity);
+    }
+
+    @Override
+    public Optional<Member> findById(String id) {
+        return memberEntityRepository.findById(id).map(memberEntityMapper::toMember);
     }
 
 }
