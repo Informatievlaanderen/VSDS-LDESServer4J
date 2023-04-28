@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-// TODO: 27/04/2023 test
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 

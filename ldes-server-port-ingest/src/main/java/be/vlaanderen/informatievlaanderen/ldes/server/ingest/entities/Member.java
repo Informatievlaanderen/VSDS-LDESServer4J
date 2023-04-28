@@ -5,11 +5,11 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-// TODO: 27/04/2023 testing
 public class Member {
 
 	public static final String TREE = "https://w3id.org/tree#";
@@ -49,6 +49,19 @@ public class Member {
 
 	public Long getSequenceNr() {
 		return sequenceNr;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Member member = (Member) o;
+		return id.equals(member.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 
 }
