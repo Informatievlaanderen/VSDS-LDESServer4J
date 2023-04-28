@@ -13,6 +13,7 @@
 
     <dependencies>
 
+<!--        VSDS-->
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-server-port-ingest</artifactId>

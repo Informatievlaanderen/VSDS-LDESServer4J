@@ -13,10 +13,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-class SequenceGeneratorServiceTest {
+class DeprecatedSequenceGeneratorServiceTest {
 
 	private final MongoOperations mongoOperations = mock(MongoOperations.class);
-	private final SequenceGeneratorService sequenceGeneratorService = new SequenceGeneratorService(mongoOperations);
+	private final DeprecatedSequenceGeneratorService sequenceGeneratorService = new DeprecatedSequenceGeneratorService(mongoOperations);
 
 	@Test
 	void test_memberSequenceEntityIsNotNull() {

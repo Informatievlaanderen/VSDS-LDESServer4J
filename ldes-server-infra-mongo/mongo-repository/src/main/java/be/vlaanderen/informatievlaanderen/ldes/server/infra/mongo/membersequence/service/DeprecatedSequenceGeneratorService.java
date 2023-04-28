@@ -11,12 +11,13 @@ import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
+@Deprecated
 @Component
-public class SequenceGeneratorService {
+public class DeprecatedSequenceGeneratorService {
 
 	private final MongoOperations mongoOperations;
 
-	public SequenceGeneratorService(MongoOperations mongoOperations) {
+	public DeprecatedSequenceGeneratorService(MongoOperations mongoOperations) {
 		this.mongoOperations = mongoOperations;
 	}
 
