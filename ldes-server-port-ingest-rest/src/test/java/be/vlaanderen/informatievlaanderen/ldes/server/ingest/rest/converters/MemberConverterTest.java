@@ -9,8 +9,9 @@ class MemberConverterTest {
 
 	@Test
 	void test_writeInternal_isNotSupported() {
+		MemberConverter memberConverter = new MemberConverter(new AppConfig());
 		assertThrows(UnsupportedOperationException.class,
-				() -> new MemberConverter(new AppConfig()).writeInternal(null, null));
+				() -> memberConverter.writeInternal(null, null));
 	}
 
 }

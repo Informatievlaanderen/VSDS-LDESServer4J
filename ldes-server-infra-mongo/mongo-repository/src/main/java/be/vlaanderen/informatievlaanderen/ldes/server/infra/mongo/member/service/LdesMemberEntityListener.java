@@ -6,7 +6,10 @@ import org.springframework.data.mongodb.core.mapping.event.AbstractMongoEventLis
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 import org.springframework.stereotype.Component;
 
-@Deprecated
+/**
+ * @deprecated will be replaced in mongo-ingest-repository
+ */
+@Deprecated(forRemoval = true)
 @Component
 public class LdesMemberEntityListener extends AbstractMongoEventListener<LdesMemberEntity> {
 
