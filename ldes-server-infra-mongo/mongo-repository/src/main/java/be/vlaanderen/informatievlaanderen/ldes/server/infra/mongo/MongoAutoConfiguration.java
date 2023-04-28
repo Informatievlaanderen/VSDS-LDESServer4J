@@ -62,14 +62,14 @@ public class MongoAutoConfiguration {
 		return new SnapshotMongoRepository(snapshotEntityRepository);
 	}
 
-	@Profile("monitoring") // This config can cause memory overflow issues when running large database
-							// migrations.
 	@Bean
 	@ConditionalOnMissingBean
 	public ShaclShapeRepository shaclShapeMongoRepository(final ShaclShapeEntityRepository shaclShapeEntityRepository) {
 		return new ShaclShapeMongoRepository(shaclShapeEntityRepository);
 	}
 
+	@Profile("monitoring") // This config can cause memory overflow issues when running large database
+							// migrations.
 	@Bean
 	MongoClientSettingsBuilderCustomizer mongoMetricsSynchronousContextProvider(ObservationRegistry registry) {
 		return clientSettingsBuilder -> clientSettingsBuilder.contextProvider(ContextProviderFactory.create(registry))
