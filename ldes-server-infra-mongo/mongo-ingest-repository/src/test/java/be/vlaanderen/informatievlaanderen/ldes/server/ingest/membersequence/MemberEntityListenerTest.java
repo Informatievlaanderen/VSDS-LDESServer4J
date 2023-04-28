@@ -11,30 +11,30 @@ import static org.mockito.Mockito.verifyNoInteractions;
 
 class MemberEntityListenerTest {
 
-    private final SequenceGeneratorService sequenceGeneratorService = mock(SequenceGeneratorService.class);
-    private final MemberEntityListener ldesMemberEntityListener = new MemberEntityListener(
-            sequenceGeneratorService);
+	private final SequenceGeneratorService sequenceGeneratorService = mock(SequenceGeneratorService.class);
+	private final MemberEntityListener ldesMemberEntityListener = new MemberEntityListener(
+			sequenceGeneratorService);
 
-    @Test
-    void test_MemberHasNoIndex() {
-        MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", null, "model");
-        BeforeConvertEvent<MemberEntity> beforeConvertEvent = new BeforeConvertEvent<>(ldesMemberEntity,
-                "collection");
+	@Test
+	void test_MemberHasNoIndex() {
+		MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", null, "model");
+		BeforeConvertEvent<MemberEntity> beforeConvertEvent = new BeforeConvertEvent<>(ldesMemberEntity,
+				"collection");
 
-        ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
+		ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-        verify(sequenceGeneratorService, times(1)).generateSequence("collectionName");
-    }
+		verify(sequenceGeneratorService, times(1)).generateSequence("collectionName");
+	}
 
-    @Test
-    void test_MemberHasIndex() {
-        MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", 23L, "model");
-        BeforeConvertEvent<MemberEntity> beforeConvertEvent = new BeforeConvertEvent<>(ldesMemberEntity,
-                "collection");
+	@Test
+	void test_MemberHasIndex() {
+		MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", 23L, "model");
+		BeforeConvertEvent<MemberEntity> beforeConvertEvent = new BeforeConvertEvent<>(ldesMemberEntity,
+				"collection");
 
-        ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
+		ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-        verifyNoInteractions(sequenceGeneratorService);
-    }
+		verifyNoInteractions(sequenceGeneratorService);
+	}
 
 }

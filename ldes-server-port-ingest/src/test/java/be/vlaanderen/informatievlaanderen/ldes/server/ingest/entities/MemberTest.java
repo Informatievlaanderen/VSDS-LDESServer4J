@@ -26,66 +26,69 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MemberTest {
 
-    @Test
-    @DisplayName("Test correct replacing of TreeMember statement")
-    void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
-        Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
-        Member member = new Member(
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-                0L, model);
+	@Test
+	@DisplayName("Test correct replacing of TreeMember statement")
+	void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() throws IOException {
+		Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
+		Member member = new Member(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+				0L, model);
 
-        member.removeTreeMember();
-        Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
-                .orElse(null);
+		member.removeTreeMember();
+		Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
+				.orElse(null);
 
-        assertNull(statement);
-    }
+		assertNull(statement);
+	}
 
-    @Test
-    void testGetters() {
-        Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
-        Member member = new Member(
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-                0L, model);
+	@Test
+	void testGetters() {
+		Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
+		Member member = new Member(
+				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+				0L, model);
 
-        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", member.getId());
-        assertEquals(0L, member.getSequenceNr());
-        assertEquals("collectionName", member.getCollectionName());
-        assertTrue(member.getModel().isIsomorphicWith(model));
-    }
+		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+				member.getId());
+		assertEquals(0L, member.getSequenceNr());
+		assertEquals("collectionName", member.getCollectionName());
+		assertTrue(member.getModel().isIsomorphicWith(model));
+	}
 
-    @ParameterizedTest
-    @ArgumentsSource(EqualityTestProvider.class)
-    void testEqualsAndHashCode(BiConsumer<Object, Object> assertion, Member a, Member b) {
-        assertNotNull(assertion);
-        assertion.accept(a, b);
-        if (a != null && b != null) {
-            assertion.accept(a.hashCode(), b.hashCode());
-        }
-    }
+	@ParameterizedTest
+	@ArgumentsSource(EqualityTestProvider.class)
+	void testEqualsAndHashCode(BiConsumer<Object, Object> assertion, Member a, Member b) {
+		assertNotNull(assertion);
+		assertion.accept(a, b);
+		if (a != null && b != null) {
+			assertion.accept(a.hashCode(), b.hashCode());
+		}
+	}
 
-    static class EqualityTestProvider implements ArgumentsProvider {
+	static class EqualityTestProvider implements ArgumentsProvider {
 
-        private static final String idA = "idA";
-        private static final Member memberA = new Member(idA, null, null, null);
+		private static final String idA = "idA";
+		private static final Member memberA = new Member(idA, null, null, null);
 
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-            return Stream.of(
-                    Arguments.of(equals(), memberA, memberA),
-                    Arguments.of(equals(), new Member(idA, "otherCollection", 10L, ModelFactory.createDefaultModel()), memberA),
-                    Arguments.of(notEquals(), new Member("idB", "otherCollection", 10L, ModelFactory.createDefaultModel()), memberA),
-                    Arguments.of(notEquals(), new Member("idB", null, null, null), memberA));
-        }
+		@Override
+		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+			return Stream.of(
+					Arguments.of(equals(), memberA, memberA),
+					Arguments.of(equals(), new Member(idA, "otherCollection", 10L, ModelFactory.createDefaultModel()),
+							memberA),
+					Arguments.of(notEquals(),
+							new Member("idB", "otherCollection", 10L, ModelFactory.createDefaultModel()), memberA),
+					Arguments.of(notEquals(), new Member("idB", null, null, null), memberA));
+		}
 
-        private static BiConsumer<Object, Object> equals() {
-            return Assertions::assertEquals;
-        }
+		private static BiConsumer<Object, Object> equals() {
+			return Assertions::assertEquals;
+		}
 
-        private static BiConsumer<Object, Object> notEquals() {
-            return Assertions::assertNotEquals;
-        }
+		private static BiConsumer<Object, Object> notEquals() {
+			return Assertions::assertNotEquals;
+		}
 
-    }
+	}
 
 }

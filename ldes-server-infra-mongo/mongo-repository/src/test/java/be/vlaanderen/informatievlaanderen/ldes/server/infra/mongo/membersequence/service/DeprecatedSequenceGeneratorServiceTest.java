@@ -16,7 +16,8 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 class DeprecatedSequenceGeneratorServiceTest {
 
 	private final MongoOperations mongoOperations = mock(MongoOperations.class);
-	private final DeprecatedSequenceGeneratorService sequenceGeneratorService = new DeprecatedSequenceGeneratorService(mongoOperations);
+	private final DeprecatedSequenceGeneratorService sequenceGeneratorService = new DeprecatedSequenceGeneratorService(
+			mongoOperations);
 
 	@Test
 	void test_memberSequenceEntityIsNotNull() {

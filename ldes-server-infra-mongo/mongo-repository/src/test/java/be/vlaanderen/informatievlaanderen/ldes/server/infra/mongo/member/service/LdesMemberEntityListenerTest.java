@@ -11,7 +11,8 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 class LdesMemberEntityListenerTest {
-	private final DeprecatedSequenceGeneratorService sequenceGeneratorService = mock(DeprecatedSequenceGeneratorService.class);
+	private final DeprecatedSequenceGeneratorService sequenceGeneratorService = mock(
+			DeprecatedSequenceGeneratorService.class);
 	private final LdesMemberEntityListener ldesMemberEntityListener = new LdesMemberEntityListener(
 			sequenceGeneratorService);
 

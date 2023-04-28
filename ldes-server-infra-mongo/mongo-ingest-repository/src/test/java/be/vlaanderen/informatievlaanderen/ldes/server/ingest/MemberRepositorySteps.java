@@ -56,8 +56,8 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 		assertEquals(sequencNr, retrievedMemberPresent.getSequenceNr());
 	}
 
-    @Then("The member with id {string} will exist")
-    public void theMemberWithIdWillExist(String id) {
+	@Then("The member with id {string} will exist")
+	public void theMemberWithIdWillExist(String id) {
 		assertTrue(memberRepository.memberExists(id));
 	}
 

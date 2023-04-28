@@ -6,10 +6,10 @@ import java.util.Optional;
 
 public interface MemberRepository {
 
-    boolean memberExists(String memberId);
+	boolean memberExists(String memberId);
 
-    Member saveMember(Member member);
+	Member saveMember(Member member);
 
-    Optional<Member> findById(String id);
+	Optional<Member> findById(String id);
 
 }

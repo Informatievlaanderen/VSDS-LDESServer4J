@@ -46,8 +46,10 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	@Override
 	protected Member readInternal(Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = RdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), RdfFormatException.RdfFormatContext.INGEST);
-		Model memberModel = RdfModelConverter.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
+		Lang lang = RdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
+				RdfFormatException.RdfFormatContext.INGEST);
+		Model memberModel = RdfModelConverter
+				.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);

@@ -13,16 +13,16 @@ import java.io.StringWriter;
 @Component
 public class MemberEntityMapper {
 
-    public MemberEntity toMemberEntity(Member member) {
-        final StringWriter outputStream = new StringWriter();
-        RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
-        final String modelString = outputStream.toString();
-        return new MemberEntity(member.getId(), member.getCollectionName(), member.getSequenceNr(), modelString);
-    }
+	public MemberEntity toMemberEntity(Member member) {
+		final StringWriter outputStream = new StringWriter();
+		RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
+		final String modelString = outputStream.toString();
+		return new MemberEntity(member.getId(), member.getCollectionName(), member.getSequenceNr(), modelString);
+	}
 
-    public Member toMember(MemberEntity memberEntity) {
-        final Model model = RDFParserBuilder.create().fromString(memberEntity.getModel()).lang(Lang.NQUADS).toModel();
-        return new Member(memberEntity.getId(), memberEntity.getCollectionName(), memberEntity.getSequenceNr(), model);
-    }
+	public Member toMember(MemberEntity memberEntity) {
+		final Model model = RDFParserBuilder.create().fromString(memberEntity.getModel()).lang(Lang.NQUADS).toModel();
+		return new Member(memberEntity.getId(), memberEntity.getCollectionName(), memberEntity.getSequenceNr(), model);
+	}
 
 }
