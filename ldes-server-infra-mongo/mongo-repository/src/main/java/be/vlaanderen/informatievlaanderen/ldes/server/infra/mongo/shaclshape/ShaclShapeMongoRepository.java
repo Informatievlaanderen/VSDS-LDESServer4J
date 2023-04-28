@@ -36,4 +36,9 @@ public class ShaclShapeMongoRepository implements ShaclShapeRepository {
 		repository.save(converter.fromShaclShape(shaclShape));
 		return shaclShape;
 	}
+
+	@Override
+	public void deleteShaclShape(String collectionName) {
+		repository.deleteById(collectionName);
+	}
 }

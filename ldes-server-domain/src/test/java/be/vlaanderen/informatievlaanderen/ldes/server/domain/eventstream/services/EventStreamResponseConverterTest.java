@@ -1,8 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamHttpMessageConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamHttpMessageConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamHttpMessage;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
@@ -19,24 +18,26 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class EventStreamHttpMessageConverterImplTest {
-	private final EventStreamHttpMessageConverter eventStreamConverter = new EventStreamHttpMessageConverterImpl();
+class EventStreamResponseConverterTest {
+	private final EventStreamResponseConverter eventStreamConverter = new EventStreamResponseConverter();
 
 	@ParameterizedTest
 	@ArgumentsSource(ModelsArgumentProvider.class)
 	void when_modelReceived_then_eventStreamIsReturned(Model eventStreamToConvert, Model expectedViews,
 			Model expectedShape) {
-		EventStreamHttpMessage expectedEventStreamHttpMessage = new EventStreamHttpMessage("collectionName1",
-				"generatedAt", "1.1", expectedViews, expectedShape);
+		EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
+				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", expectedViews,
+				expectedShape);
 
-		assertEquals(expectedEventStreamHttpMessage, eventStreamConverter.fromModel(eventStreamToConvert));
+		assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamToConvert));
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(ModelsArgumentProvider.class)
 	void when_eventStreamReceived_then_modelIsReturned(Model expectedEventStream, Model views, Model shacl)
 			throws URISyntaxException {
-		final EventStreamHttpMessage eventStream = new EventStreamHttpMessage("collectionName1", "generatedAt", "1.1",
+		final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
+				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 				views, shacl);
 		final Model convertedModel = eventStreamConverter.toModel(eventStream);
 

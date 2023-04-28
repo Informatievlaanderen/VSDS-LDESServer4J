@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -20,8 +19,6 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -62,14 +58,10 @@ class AdminShapeRestControllerTest {
 			when(shaclShapeService.retrieveShaclShape(collectionName))
 					.thenReturn(new ShaclShape(collectionName, expectedShapeModel));
 
-			ResultActions resultActions = mockMvc
-					.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
 					.andDo(print())
-					.andExpect(status().isOk());
-
-			MvcResult result = resultActions.andReturn();
-			Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
-			assertTrue(actualModel.isIsomorphicWith(expectedShapeModel));
+					.andExpect(status().isOk())
+					.andExpect(IsIsomorphic.with(expectedShapeModel));
 		}
 
 		@Test

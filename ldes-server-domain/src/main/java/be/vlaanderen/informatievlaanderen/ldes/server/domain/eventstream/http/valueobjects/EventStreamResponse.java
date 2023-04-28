@@ -4,14 +4,14 @@ import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 
-public class EventStreamHttpMessage {
+public class EventStreamResponse {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final Model views;
 	private final Model shacl;
 
-	public EventStreamHttpMessage(String collection, String timestampPath, String versionOfPath, Model views,
+	public EventStreamResponse(String collection, String timestampPath, String versionOfPath, Model views,
 			Model shacl) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
@@ -46,7 +46,7 @@ public class EventStreamHttpMessage {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		EventStreamHttpMessage that = (EventStreamHttpMessage) o;
+		EventStreamResponse that = (EventStreamResponse) o;
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& views.isIsomorphicWith(that.views) && shacl.isIsomorphicWith(that.shacl);

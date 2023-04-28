@@ -63,6 +63,13 @@ class ShaclShapeServiceImplTest {
 		assertEquals(shaclShape, updateShaclShape);
 	}
 
+	@Test
+	void when_collectionExists_and_deleteShape_then_throwExceptionWithRetrieval() {
+		service.deleteShaclShape(COLLECTION_NAME_1);
+		verify(shaclCollection).deleteShape(COLLECTION_NAME_1);
+		assertThrows(MissingShaclShapeException.class, () -> service.retrieveShaclShape(COLLECTION_NAME_1));
+	}
+
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()

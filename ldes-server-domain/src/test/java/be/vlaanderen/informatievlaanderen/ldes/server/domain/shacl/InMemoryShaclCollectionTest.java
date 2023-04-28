@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import org.apache.jena.rdf.model.Model;
@@ -9,8 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class InMemoryShaclCollectionTest {
 
@@ -33,12 +34,10 @@ class InMemoryShaclCollectionTest {
 	}
 
 	@Test
-	void test_handleEvent() {
-		Model model = ModelFactory.createDefaultModel();
+	void test_deletion() {
+		memoryShaclCollection.deleteShape(COLLECTION_NAME);
+		verify(shaclShapeRepository).deleteShaclShape(COLLECTION_NAME);
 
-		ShaclChangedEvent shaclChangedEvent = new ShaclChangedEvent(COLLECTION_NAME, model);
-		memoryShaclCollection.handleShaclChangedEvent(shaclChangedEvent);
-
-		verify(shaclShapeRepository).saveShaclShape(shaclChangedEvent.getShacl());
+		assertTrue(memoryShaclCollection.retrieveShape(COLLECTION_NAME).isEmpty());
 	}
 }

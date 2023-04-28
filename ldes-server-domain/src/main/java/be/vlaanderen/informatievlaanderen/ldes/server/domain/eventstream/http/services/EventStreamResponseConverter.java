@@ -1,8 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamHttpMessage;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.*;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,34 +11,31 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
-@Component
-public class EventStreamHttpMessageConverterImpl implements EventStreamHttpMessageConverter {
+public class EventStreamResponseConverter {
 
-	@Override
-	public EventStreamHttpMessage fromModel(Model model) {
+	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final Model views = getViewsFromModel(model);
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamHttpMessage(collection, timestampPath, versionOfPath, views, shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, views, shacl);
 	}
 
-	@Override
-	public Model toModel(EventStreamHttpMessage eventStreamHttpMessage) {
-		final Resource subject = createResource(LDES + eventStreamHttpMessage.getCollection());
+	public Model toModel(EventStreamResponse eventStreamResponse) {
+		final Resource subject = createResource(LDES + eventStreamResponse.getCollection());
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
 				createResource(EVENT_STREAM_TYPE));
 		final Statement timestampPathStmt = createStatement(subject, LDES_TIMESTAMP_PATH,
-				createStringLiteral(eventStreamHttpMessage.getTimestampPath()));
+				createProperty(eventStreamResponse.getTimestampPath()));
 		final Statement versionOfStmt = createStatement(subject, LDES_VERSION_OF,
-				createStringLiteral(eventStreamHttpMessage.getVersionOfPath()));
+				createProperty(eventStreamResponse.getVersionOfPath()));
 
 		final Resource shaclResource = createResource(
-				getIdentifier(eventStreamHttpMessage.getShacl(), createResource(NODE_SHAPE_TYPE)));
+				getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE)));
 		final Statement shaclStmt = createStatement(subject, TREE_SHAPE, shaclResource);
 
-		List<Statement> viewStatements = eventStreamHttpMessage.getViews()
+		List<Statement> viewStatements = eventStreamResponse.getViews()
 				.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE))
 				.toList().stream()
 				.map(statement -> createStatement(subject, createProperty(VIEW), statement.getSubject()))
@@ -47,9 +43,9 @@ public class EventStreamHttpMessageConverterImpl implements EventStreamHttpMessa
 
 		return createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, shaclStmt))
-				.add(eventStreamHttpMessage.getViews())
+				.add(eventStreamResponse.getViews())
 				.add(viewStatements)
-				.add(eventStreamHttpMessage.getShacl());
+				.add(eventStreamResponse.getShacl());
 	}
 
 	private String getIdentifier(Model model, Resource object) {

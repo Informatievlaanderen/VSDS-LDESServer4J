@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.service.EventStreamConverter;
 import org.springframework.stereotype.Repository;
@@ -34,5 +34,10 @@ public class EventStreamMongoRepository implements EventStreamRepository {
 	public EventStream saveEventStream(EventStream eventStream) {
 		repository.save(converter.fromEventStream(eventStream));
 		return eventStream;
+	}
+
+	@Override
+	public void deleteEventStream(String collectionName) {
+		repository.deleteById(collectionName);
 	}
 }

@@ -2,37 +2,36 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,42 +39,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminConfigModelsRestController.class,
-		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
-class AdminConfigModelsRestControllerTest {
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminWebConfig.class,
+		AdminRestResponseEntityExceptionHandler.class })
+class AdminEventStreamsRestControllerTest {
 	@MockBean
-	private LdesConfigModelService ldesConfigModelService;
+	private EventStreamService eventStreamService;
+
 	@MockBean
-	@Qualifier("configShaclValidator")
-	private LdesConfigShaclValidator ldesConfigShaclValidator;
+	private ShaclShapeService shaclShapeService;
+
+	@SpyBean
+	private EventStreamValidator validator;
 
 	@Autowired
 	private MockMvc mockMvc;
-
-	@BeforeEach
-	void setUp() {
-		when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
-	}
 
 	@Test
 	void when_StreamPresent_Then_StreamIsReturned() throws Exception {
 		String collectionName = "name1";
 		Model model = readModelFromFile("ldes-1.ttl");
-		LdesConfigModel configModel = new LdesConfigModel(collectionName, model);
-		when(ldesConfigModelService.retrieveConfigModel(collectionName)).thenReturn(configModel);
-		ResultActions resultActions = mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
+		Model shape = readModelFromFile("example-shape.ttl");
+		EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
+				"http://purl.org/dc/terms/isVersionOf", ModelFactory.createDefaultModel());
+		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
+		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
+		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
-				.andExpect(status().isOk());
-		MvcResult result = resultActions.andReturn();
-		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
-		Assertions.assertTrue(actualModel.isIsomorphicWith(model));
+				.andExpect(status().isOk())
+				.andExpect(IsIsomorphic.with(model));
 	}
 
 	@Test
 	void when_StreamNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
-		when(ldesConfigModelService.retrieveConfigModel(collectionName))
-				.thenThrow(new MissingLdesConfigException(collectionName));
+		when(eventStreamService.retrieveEventStream(collectionName))
+				.thenThrow(new MissingEventStream(collectionName));
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isNotFound());
@@ -83,18 +81,23 @@ class AdminConfigModelsRestControllerTest {
 
 	@Test
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
+		final Model expectedModel = readModelFromFile("ldes-1.ttl");
+
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.content(readDataFromFile("ldes-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
-				.andExpect(status().isOk());
-		verify(ldesConfigModelService, times(1)).updateConfigModel(any());
+				.andExpect(status().isOk())
+				.andExpect(IsIsomorphic.with(expectedModel));
+
+		verify(eventStreamService).saveEventStream(any(EventStream.class));
+		verify(shaclShapeService).updateShaclShape(any(ShaclShape.class));
 	}
 
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-without-type.ttl", Lang.TURTLE))
+				.content(readDataFromFile("ldes-without-type.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
@@ -103,7 +106,7 @@ class AdminConfigModelsRestControllerTest {
 	@Test
 	void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
 		var request = put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("malformed-ldes.ttl", Lang.TURTLE))
+				.content(readDataFromFile("malformed-ldes.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString());
 		mockMvc.perform(request).andDo(print());
 		mockMvc.perform(request)
@@ -112,22 +115,18 @@ class AdminConfigModelsRestControllerTest {
 
 	@Test
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
-		final Model model = readModelFromFile("ldes-1.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel("collectionName1", model);
-		when(ldesConfigModelService.updateConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
-		mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print());
-		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
-	}
+		final Model expectedModel = readModelFromFile("ldes-1.ttl");
+		final EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
+				"http://purl.org/dc/terms/isVersionOf", ModelFactory.createDefaultModel());
 
-	private String readDataFromFile(String fileName, Lang rdfFormat)
-			throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-		return content;
+		when(eventStreamService.saveEventStream(eventStream)).thenReturn(eventStream);
+		mockMvc.perform(put("/admin/api/v1/eventstreams")
+				.content(readDataFromFile("ldes-1.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
+				.andDo(print())
+				.andExpect(IsIsomorphic.with(expectedModel));
+
+		verify(validator).validate(any(), any());
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
@@ -136,4 +135,12 @@ class AdminConfigModelsRestControllerTest {
 				.toString();
 		return RDFDataMgr.loadModel(uri);
 	}
+
+	private String readDataFromFile(String fileName)
+			throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		return Files.lines(path).collect(Collectors.joining());
+	}
+
 }

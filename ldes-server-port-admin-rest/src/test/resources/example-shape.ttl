@@ -1,12 +1,6 @@
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-
-ldes:collectionName1 a ldes:EventStream ;
-   ldes:timestampPath dcterms:created ;
-   ldes:versionOfPath dcterms:isVersionOf ;
-   tree:shape ldes:shape .
 
 ldes:shape a sh:NodeShape ;
    sh:nodeShape [
