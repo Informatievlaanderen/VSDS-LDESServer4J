@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -55,4 +56,13 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 		assertEquals(sequencNr, retrievedMemberPresent.getSequenceNr());
 	}
 
+    @Then("The member with id {string} will exist")
+    public void theMemberWithIdWillExist(String id) {
+		assertTrue(memberRepository.memberExists(id));
+	}
+
+	@And("Then The member with id {string} will not exist")
+	public void thenTheMemberWithIdWillNotExist(String id) {
+		assertFalse(memberRepository.memberExists(id));
+	}
 }
