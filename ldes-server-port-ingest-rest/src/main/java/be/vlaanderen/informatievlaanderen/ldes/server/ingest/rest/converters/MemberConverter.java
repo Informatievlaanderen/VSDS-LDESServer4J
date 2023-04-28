@@ -10,8 +10,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.Malf
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFFormat;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -23,8 +21,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
@@ -69,15 +65,8 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 
 	@Override
 	protected void writeInternal(Member member, HttpOutputMessage outputMessage)
-			throws UnsupportedOperationException, HttpMessageNotWritableException, IOException {
-		Model fragmentModel = member.getModel();
-
-		StringWriter outputStream = new StringWriter();
-
-		RDFDataMgr.write(outputStream, fragmentModel, RDFFormat.NQUADS);
-
-		OutputStream body = outputMessage.getBody();
-		body.write(outputStream.toString().getBytes());
+			throws UnsupportedOperationException, HttpMessageNotWritableException {
+		throw new UnsupportedOperationException();
 	}
 
 }

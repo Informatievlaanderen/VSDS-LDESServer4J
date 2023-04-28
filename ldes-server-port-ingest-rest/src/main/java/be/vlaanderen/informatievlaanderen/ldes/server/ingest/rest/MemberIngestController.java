@@ -17,7 +17,7 @@ public class MemberIngestController {
 	}
 
 	@PostMapping(value = "{collectionname}")
-	public void ingestLdesMember(@RequestBody Member member, @PathVariable("collectionname") String collectionName) {
+	public void ingestLdesMember(@RequestBody Member member) {
 		memberIngester.ingest(member);
 	}
 
