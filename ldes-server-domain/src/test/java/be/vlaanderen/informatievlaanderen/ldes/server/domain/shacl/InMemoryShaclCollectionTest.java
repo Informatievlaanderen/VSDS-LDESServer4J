@@ -35,6 +35,13 @@ class InMemoryShaclCollectionTest {
 
 	@Test
 	void test_deletion() {
+		Model model = ModelFactory.createDefaultModel();
+		ShaclShape shaclShape = new ShaclShape(COLLECTION_NAME, model);
+
+		memoryShaclCollection.saveShape(shaclShape);
+
+		assertTrue(memoryShaclCollection.retrieveShape(COLLECTION_NAME).isPresent());
+
 		memoryShaclCollection.deleteShape(COLLECTION_NAME);
 		verify(shaclShapeRepository).deleteShaclShape(COLLECTION_NAME);
 

@@ -21,7 +21,7 @@ public class InMemoryEventStreamCollection implements EventStreamCollection {
 
 	@Override
 	public List<EventStream> retrieveAllEventStreams() {
-		return (List<EventStream>) eventStreams.values();
+		return List.copyOf(eventStreams.values());
 	}
 
 	@Override

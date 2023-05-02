@@ -30,6 +30,7 @@ public class InMemoryShaclCollection implements ShaclCollection {
 	@Override
 	public void deleteShape(String collectionName) {
 		shaclShapeRepository.deleteShaclShape(collectionName);
+		shapes.removeIf(shaclShape -> shaclShape.getCollection().equals(collectionName));
 	}
 
 	@Override
