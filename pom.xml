@@ -56,7 +56,7 @@
         <de.flapdoodle.embed.mongo.version>4.6.2</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
-        <cucumber.version>7.11.2</cucumber.version>
+        <cucumber.version>7.12.0</cucumber.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>8.2.1</depencency-check-maven.version>
