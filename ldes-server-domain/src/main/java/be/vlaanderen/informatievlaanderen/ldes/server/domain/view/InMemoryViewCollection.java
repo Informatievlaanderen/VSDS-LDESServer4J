@@ -20,11 +20,7 @@ public class InMemoryViewCollection implements ViewCollection {
 
 	@Override
 	public Optional<ViewSpecification> getViewByViewName(ViewName viewName) {
-		if (views.containsKey(viewName)) {
-			return Optional.of(views.get(viewName));
-		} else {
-			return Optional.empty();
-		}
+		return Optional.ofNullable(views.get(viewName));
 	}
 
 	@Override

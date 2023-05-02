@@ -48,13 +48,11 @@ class AdminViewsRestControllerTest {
 
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
-
 	@MockBean
 	private ViewService viewService;
 	@MockBean
 	@Qualifier("viewShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
-
 	@Autowired
 	private MockMvc mockMvc;
 

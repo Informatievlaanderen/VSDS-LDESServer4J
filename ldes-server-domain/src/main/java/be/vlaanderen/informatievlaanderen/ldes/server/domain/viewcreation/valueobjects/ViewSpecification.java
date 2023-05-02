@@ -20,7 +20,7 @@ public class ViewSpecification {
 
 	public ViewSpecification() {
 		// TODO remove empty constructor so that ViewSpecification always has an
-		// identity
+		// identity. And remove (unused) setters.
 	}
 
 	public ViewName getName() {
