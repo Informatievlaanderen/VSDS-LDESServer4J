@@ -83,7 +83,7 @@ public class ViewSpecificationConverter {
 
     private static Map<String, String> extractConfigMap(List<Statement> statementList) {
         Map<String, String> configMap = new HashMap<>();
-        statementList.forEach(statement -> configMap.put(statement.getPredicate().toString(), statement.getObject().asLiteral().toString()));
+        statementList.stream().filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE)).forEach(statement -> configMap.put(statement.getPredicate().toString(), statement.getObject().asLiteral().toString()));
         return configMap;
     }
 
