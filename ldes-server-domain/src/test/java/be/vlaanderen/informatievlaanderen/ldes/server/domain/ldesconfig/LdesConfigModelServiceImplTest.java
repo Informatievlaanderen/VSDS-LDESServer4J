@@ -227,18 +227,21 @@ class LdesConfigModelServiceImplTest {
 			assertTrue(retrievedView.isIsomorphicWith(view));
 		}
 
-	@Test
-	void whenCollectionExistsAndTriesToAddExistingView_thenThrowException() throws URISyntaxException {
-		final String viewName = "view1";
+		@Test
+		void whenCollectionExistsAndTriesToAddExistingView_thenThrowException() throws URISyntaxException {
+			final String viewName = "view1";
 
-		final Model newView = readModelFromFile("updated-view.ttl");
-		final LdesConfigModel newLdesConfigView = new LdesConfigModel("view1", newView);
+			final Model newView = readModelFromFile("updated-view.ttl");
+			final LdesConfigModel newLdesConfigView = new LdesConfigModel("view1", newView);
 
-		when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
+			when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 
-		assertThrows(InvalidConfigOperationException.class, () -> service.addView(COLLECTION_NAME_1, newLdesConfigView),
-				"Unable to complete operation.\nCause: View with id: " + viewName + " already exists.");
-		verify(repository, never()).saveConfigModel(any());
+			assertThrows(InvalidConfigOperationException.class,
+					() -> service.addView(COLLECTION_NAME_1, newLdesConfigView),
+					"Unable to complete operation.\nCause: View with id: " + viewName + " already exists.");
+			verify(repository, never()).saveConfigModel(any());
+		}
+
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

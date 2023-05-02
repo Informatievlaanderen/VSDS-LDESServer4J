@@ -17,7 +17,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
