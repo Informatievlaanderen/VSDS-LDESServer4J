@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingL
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -48,9 +49,10 @@ class AdminViewsRestControllerTest {
 	@MockBean
 	private LdesConfigModelService ldesConfigModelService;
 	@MockBean
+	private ViewService viewService;
+	@MockBean
 	@Qualifier("viewShaclValidator")
 	private LdesConfigShaclValidator ldesConfigShaclValidator;
-
 	@Autowired
 	private MockMvc mockMvc;
 

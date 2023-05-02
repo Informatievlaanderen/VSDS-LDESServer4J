@@ -1,12 +1,27 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ViewSpecification {
+
+	// TODO with the new equals method this is an entity. So it needs to move.
 
 	private ViewName name;
 	private List<RetentionConfig> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
+
+	public ViewSpecification(ViewName name, List<RetentionConfig> retentionPolicies,
+			List<FragmentationConfig> fragmentations) {
+		this.name = name;
+		this.retentionPolicies = retentionPolicies;
+		this.fragmentations = fragmentations;
+	}
+
+	public ViewSpecification() {
+		// TODO remove empty constructor so that ViewSpecification always has an
+		// identity. And remove (unused) setters.
+	}
 
 	public ViewName getName() {
 		return name;
@@ -36,4 +51,17 @@ public class ViewSpecification {
 		this.retentionPolicies = retentionPolicies;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof ViewSpecification that))
+			return false;
+		return Objects.equals(name, that.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
 }

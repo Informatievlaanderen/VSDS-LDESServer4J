@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.dtos.LdesConfig
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +16,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin/api/v1")
 public class AdminViewsRestController {
 	private final LdesConfigModelService service;
+	// TODO use viewService instead of LdesConfigModelService
+	private final ViewService viewService;
+	private final LdesConfigShaclValidator viewValidator;
 
 	@Autowired
-	@Qualifier("viewShaclValidator")
-	private LdesConfigShaclValidator viewValidator;
-
-	@Autowired
-	public AdminViewsRestController(LdesConfigModelService service) {
+	public AdminViewsRestController(LdesConfigModelService service, ViewService viewService,
+			@Qualifier("viewShaclValidator") LdesConfigShaclValidator viewValidator) {
 		this.service = service;
+		this.viewService = viewService;
+		this.viewValidator = viewValidator;
 	}
 
 	@InitBinder
