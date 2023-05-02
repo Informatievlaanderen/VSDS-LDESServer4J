@@ -236,9 +236,10 @@ class LdesConfigModelServiceImplTest {
 
 			when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
 
-			assertThrows(InvalidConfigOperationException.class,
-					() -> service.addView(COLLECTION_NAME_1, newLdesConfigView),
-					"Unable to complete operation.\nCause: View with id: " + viewName + " already exists.");
+			Exception exception = assertThrows(InvalidConfigOperationException.class,
+					() -> service.addView(COLLECTION_NAME_1, newLdesConfigView));
+			assertEquals("Unable to complete operation.\nCause: View with id: " + viewName + " already exists.",
+					exception.getMessage());
 			verify(repository, never()).saveConfigModel(any());
 		}
 
