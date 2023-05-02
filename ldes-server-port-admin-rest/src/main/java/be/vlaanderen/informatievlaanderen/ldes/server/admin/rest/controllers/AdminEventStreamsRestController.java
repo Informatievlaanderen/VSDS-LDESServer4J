@@ -39,8 +39,7 @@ public class AdminEventStreamsRestController {
 	@GetMapping
 	public List<EventStreamResponse> getEventStreams() {
 		return eventStreamService.retrieveAllEventStreams().stream().map(eventStream -> {
-			String collection = eventStream.getCollection();
-			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collection);
+			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
 					eventStream.getVersionOfPath(), List.of(), shaclShape.getModel());
 		}).toList();

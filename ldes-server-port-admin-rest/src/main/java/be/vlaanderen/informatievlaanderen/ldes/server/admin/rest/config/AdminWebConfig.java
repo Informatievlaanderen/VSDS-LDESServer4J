@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.LdesConfigModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
@@ -19,6 +20,11 @@ public class AdminWebConfig {
 	@Bean
 	public ModelConverter modelConverter() {
 		return new ModelConverter();
+	}
+
+	@Bean
+	public EventStreamListHttpConverter eventStreamListHttpConverter() {
+		return new EventStreamListHttpConverter();
 	}
 
 	@Bean

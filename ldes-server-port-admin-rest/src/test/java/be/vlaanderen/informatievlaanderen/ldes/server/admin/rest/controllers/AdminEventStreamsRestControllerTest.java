@@ -25,21 +25,21 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminWebConfig.class,
-		AdminRestResponseEntityExceptionHandler.class })
+@ActiveProfiles({"test", "rest"})
+@ContextConfiguration(classes = {AdminEventStreamsRestController.class, AdminWebConfig.class,
+		AdminRestResponseEntityExceptionHandler.class})
 class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private EventStreamService eventStreamService;
@@ -52,6 +52,26 @@ class AdminEventStreamsRestControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Test
+	void when_StreamsPresent_then_StreamsAreReturned() throws Exception {
+		String collectionName = "name1";
+		Model expectedEventStreamsModel = readModelFromFile("multiple-ldes.ttl");
+		Model shape = readModelFromFile("example-shape.ttl");
+		List<EventStream> eventStreams = List.of(
+				new EventStream("name1", "http://purl.org/dc/terms/created",
+						"http://purl.org/dc/terms/isVersionOf"),
+				new EventStream("name2", "http://purl.org/dc/terms/created",
+						"http://purl.org/dc/terms/isVersionOf")
+		);
+		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
+		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
+		when(shaclShapeService.retrieveShaclShape("name2")).thenReturn(new ShaclShape("name2", shape));
+		mockMvc.perform(get("/admin/api/v1/eventstreams"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
+	}
 
 	@Test
 	void when_StreamPresent_Then_StreamIsReturned() throws Exception {
@@ -83,8 +103,8 @@ class AdminEventStreamsRestControllerTest {
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()))
+						.content(readDataFromFile("ldes-1.ttl"))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedModel));
@@ -96,8 +116,8 @@ class AdminEventStreamsRestControllerTest {
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-without-type.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()))
+						.content(readDataFromFile("ldes-without-type.ttl"))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -120,12 +140,23 @@ class AdminEventStreamsRestControllerTest {
 
 		when(eventStreamService.saveEventStream(eventStream)).thenReturn(eventStream);
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-				.content(readDataFromFile("ldes-1.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()))
+						.content(readDataFromFile("ldes-1.ttl"))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(IsIsomorphic.with(expectedModel));
 
 		verify(validator).validate(any(), any());
+	}
+
+	@Test
+	void when_collectionExists_and_triesToDelete_then_expectStatus200() throws Exception {
+		String collectionName = "name1";
+
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/name1"))
+				.andDo(print())
+				.andExpect(status().isOk());
+
+		verify(eventStreamService).deleteEventStream(collectionName);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
