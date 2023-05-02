@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions.InvalidConfigOperationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelServiceImpl;
@@ -227,31 +228,21 @@ class LdesConfigModelServiceImplTest {
 		}
 
 		@Test
-		void whenCollectionExistsAndTriesToAddExistingView_thenUpdateView() throws URISyntaxException {
+		void whenCollectionExistsAndTriesToAddExistingView_thenThrowException() throws URISyntaxException {
 			final String viewName = "view1";
+
 			final Model newView = readModelFromFile("updated-view.ttl");
 			final LdesConfigModel newLdesConfigView = new LdesConfigModel("view1", newView);
 
 			when(repository.retrieveConfigModel(COLLECTION_NAME_1)).thenReturn(Optional.of(ldesConfigModel));
-			when(repository.saveConfigModel(ldesConfigModel)).thenReturn(ldesConfigModel);
 
-			assertEquals(1, service.retrieveViews(COLLECTION_NAME_1).size());
-
-			final Model oldView = service.retrieveView(COLLECTION_NAME_1, viewName).getModel();
-			assertFalse(oldView.isIsomorphicWith(newView), "make sure the views are not equal/isomorphic");
-			assertEquals(1, service.retrieveViews(COLLECTION_NAME_1).size(),
-					"Make sure there is only one view in the collection");
-
-			service.addView(COLLECTION_NAME_1, newLdesConfigView);
-
-			verify(repository, times(1)).saveConfigModel(ldesConfigModel);
-			assertEquals(1, service.retrieveViews(COLLECTION_NAME_1).size(),
-					"make sure the view is updated and not added as second element");
-
-			final Model updatedView = service.retrieveView(COLLECTION_NAME_1, viewName).getModel();
-			assertTrue(updatedView.isIsomorphicWith(newView));
-			assertFalse(updatedView.isIsomorphicWith(oldView));
+			Exception exception = assertThrows(InvalidConfigOperationException.class,
+					() -> service.addView(COLLECTION_NAME_1, newLdesConfigView));
+			assertEquals("Unable to complete operation.\nCause: View with id: " + viewName + " already exists.",
+					exception.getMessage());
+			verify(repository, never()).saveConfigModel(any());
 		}
+
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
