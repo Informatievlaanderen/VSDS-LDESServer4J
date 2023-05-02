@@ -12,15 +12,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EventStreamServiceImplTest {
 	private static final String COLLECTION = "collection";
-	private static final EventStream EVENT_STREAM =  new EventStream(COLLECTION, "generatedAt", "isVersionOf", createDefaultModel());
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, "generatedAt", "isVersionOf");
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 
@@ -33,13 +33,14 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
-		EventStream other = new EventStream("other", "created", "versionOf", createDefaultModel());
+		EventStream other = new EventStream("other", "created", "versionOf");
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, other));
 		List<EventStream> eventStreams = service.retrieveAllEventStreams();
+		List<EventStream> expectedEventStreams = List.of(EVENT_STREAM, other);
 
 		verify(eventStreamCollection).retrieveAllEventStreams();
-		assertTrue(eventStreams.containsAll(List.of(EVENT_STREAM, other)));
+		assertEquals(expectedEventStreams, eventStreams);
 	}
 
 	@Test
@@ -58,7 +59,7 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_collectionExists_and_updateEventStream_then_expectUpdatedEventStream() {
-		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf", createDefaultModel());
+		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf");
 
 		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
 

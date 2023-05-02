@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -23,8 +22,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class EventStreamMongoRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
-	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt", "isVersionOf", "");
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf", createDefaultModel());
+	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
+			"isVersionOf");
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf");
 	private EventStreamMongoRepository mongoRepository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
@@ -39,16 +39,15 @@ class EventStreamMongoRepositoryTest {
 	void when_dbHasEntities_then_returnAll() {
 		when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
 				EVENT_STREAM_ENTITY,
-				new EventStreamEntity("other_collection", "created", "version", "")));
+				new EventStreamEntity("other_collection", "created", "version")));
 
 		List<EventStream> eventStreams = mongoRepository.retrieveAllEventStreams();
 		List<EventStream> expectedEventStreams = List.of(
 				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version", createDefaultModel())
+				new EventStream("other_collection", "created", "version")
 		);
 		verify(eventStreamEntityRepository).findAll();
-		assertEquals(2, eventStreams.size());
-		assertTrue(eventStreams.containsAll(expectedEventStreams));
+		assertEquals(expectedEventStreams, eventStreams);
 	}
 
 	@Test

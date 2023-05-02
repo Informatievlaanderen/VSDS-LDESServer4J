@@ -17,9 +17,8 @@ public class EventStreamResponseConverter {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
-		final Model views = getViewsFromModel(model);
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, views, shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, List.of(), shacl);
 	}
 
 	public Model toModel(EventStreamResponse eventStreamResponse) {
@@ -35,15 +34,12 @@ public class EventStreamResponseConverter {
 				getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE)));
 		final Statement shaclStmt = createStatement(subject, TREE_SHAPE, shaclResource);
 
-		List<Statement> viewStatements = eventStreamResponse.getViews()
-				.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE))
-				.toList().stream()
-				.map(statement -> createStatement(subject, createProperty(VIEW), statement.getSubject()))
+		List<Statement> viewStatements = eventStreamResponse.getViews().stream()
+				.map(view -> createStatement(subject, createProperty(VIEW), createProperty(view.getName().asString())))
 				.toList();
 
 		return createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, shaclStmt))
-				.add(eventStreamResponse.getViews())
 				.add(viewStatements)
 				.add(eventStreamResponse.getShacl());
 	}

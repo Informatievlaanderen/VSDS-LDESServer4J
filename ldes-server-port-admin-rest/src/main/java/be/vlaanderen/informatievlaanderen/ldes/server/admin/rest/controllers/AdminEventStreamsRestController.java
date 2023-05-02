@@ -42,7 +42,7 @@ public class AdminEventStreamsRestController {
 			String collection = eventStream.getCollection();
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collection);
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), eventStream.getViews(), shaclShape.getModel());
+					eventStream.getVersionOfPath(), List.of(), shaclShape.getModel());
 		}).toList();
 
 	}
@@ -53,8 +53,7 @@ public class AdminEventStreamsRestController {
 		EventStream eventStream = new EventStream(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getTimestampPath(),
-				eventStreamResponse.getVersionOfPath(),
-				eventStreamResponse.getViews());
+				eventStreamResponse.getVersionOfPath());
 		ShaclShape shaclShape = new ShaclShape(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getShacl());
@@ -69,7 +68,7 @@ public class AdminEventStreamsRestController {
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.getViews(), shaclShape.getModel());
+				eventStream.getVersionOfPath(), List.of(), shaclShape.getModel());
 	}
 
 	@DeleteMapping("/{collectionName}")

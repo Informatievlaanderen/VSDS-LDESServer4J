@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
@@ -60,7 +59,7 @@ class AdminEventStreamsRestControllerTest {
 		Model model = readModelFromFile("ldes-1.ttl");
 		Model shape = readModelFromFile("example-shape.ttl");
 		EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
-				"http://purl.org/dc/terms/isVersionOf", ModelFactory.createDefaultModel());
+				"http://purl.org/dc/terms/isVersionOf");
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
@@ -117,7 +116,7 @@ class AdminEventStreamsRestControllerTest {
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
 		final EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
-				"http://purl.org/dc/terms/isVersionOf", ModelFactory.createDefaultModel());
+				"http://purl.org/dc/terms/isVersionOf");
 
 		when(eventStreamService.saveEventStream(eventStream)).thenReturn(eventStream);
 		mockMvc.perform(put("/admin/api/v1/eventstreams")

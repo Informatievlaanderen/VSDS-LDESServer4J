@@ -17,12 +17,11 @@ class EventStreamTest {
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
 
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-			createDefaultModel());
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
 
 	@Test
 	void test_equality() {
-		final EventStream other = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, createDefaultModel());
+		final EventStream other = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
 
 		assertEquals(EVENT_STREAM, EVENT_STREAM);
 		assertEquals(other, other);
@@ -33,7 +32,7 @@ class EventStreamTest {
 	@ArgumentsSource(EventStreamArgumentProvider.class)
 	void test_inequality(Object other) {
 		assertNotEquals(EVENT_STREAM, other);
-		if(other != null) {
+		if (other != null) {
 			assertNotEquals(EVENT_STREAM.hashCode(), other.hashCode());
 		}
 	}
@@ -42,10 +41,10 @@ class EventStreamTest {
 		@Override
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
-					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", createDefaultModel()),
-					new EventStream(COLLECTION, "other", VERSION_OF_PATH, createDefaultModel()),
-					new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, createDefaultModel()),
-					new EventStream("other", "other", "other", createDefaultModel()),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, "other"),
+					new EventStream(COLLECTION, "other", VERSION_OF_PATH),
+					new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH),
+					new EventStream("other", "other", "other"),
 					null,
 					createDefaultModel()).map(Arguments::of);
 		}

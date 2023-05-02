@@ -9,13 +9,11 @@ public class EventStreamEntity {
 	private final String id;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final String views;
 
-	public EventStreamEntity(String id, String timestampPath, String versionOfPath, String views) {
+	public EventStreamEntity(String id, String timestampPath, String versionOfPath) {
 		this.id = id;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-		this.views = views;
 	}
 
 	public String getId() {
@@ -28,9 +26,5 @@ public class EventStreamEntity {
 
 	public String getVersionOfPath() {
 		return versionOfPath;
-	}
-
-	public String getViews() {
-		return views;
 	}
 }

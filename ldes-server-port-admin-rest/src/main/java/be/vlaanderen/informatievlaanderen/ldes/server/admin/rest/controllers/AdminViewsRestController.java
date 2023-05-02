@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.dtos.LdesConfigModelListDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/api/v1")
@@ -34,8 +36,8 @@ public class AdminViewsRestController {
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/views")
-	public ResponseEntity<LdesConfigModelListDto> getViews(@PathVariable String collectionName) {
-		return ResponseEntity.ok(new LdesConfigModelListDto(service.retrieveViews(collectionName)));
+	public ResponseEntity<List<ViewSpecification>> getViews(@PathVariable String collectionName) {
+		return ResponseEntity.ok(List.of());
 	}
 
 	@PutMapping("/eventstreams/{collectionName}/views")

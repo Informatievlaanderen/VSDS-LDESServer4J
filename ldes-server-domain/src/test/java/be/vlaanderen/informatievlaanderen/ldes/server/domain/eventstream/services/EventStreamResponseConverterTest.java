@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,6 +11,7 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -23,22 +23,19 @@ class EventStreamResponseConverterTest {
 
 	@ParameterizedTest
 	@ArgumentsSource(ModelsArgumentProvider.class)
-	void when_modelReceived_then_eventStreamIsReturned(Model eventStreamToConvert, Model expectedViews,
-			Model expectedShape) {
+	void test_fromModelToEventStreamResponse(Model eventStreamToConvert, Model expectedShape) {
 		EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
-				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", expectedViews,
-				expectedShape);
+				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", List.of(), expectedShape);
 
 		assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamToConvert));
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(ModelsArgumentProvider.class)
-	void when_eventStreamReceived_then_modelIsReturned(Model expectedEventStream, Model views, Model shacl)
-			throws URISyntaxException {
+	void test_fromEventStreamResponseToModel(Model expectedEventStream, Model shacl) {
 		final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-				views, shacl);
+				List.of(), shacl);
 		final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
 		assertTrue(expectedEventStream.isIsomorphicWith(convertedModel));
@@ -49,18 +46,16 @@ class EventStreamResponseConverterTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+			// TODO: add ldes with views to stream of arguments
 			return Stream.of(
-					Arguments.of(
-							readModelFromFile("eventstream/streams/ldes-with-named-views.ttl"),
-							readModelFromFile("eventstream/streams/views.ttl"),
-							getShacl()),
-					Arguments.of(
-							readModelFromFile("eventstream/streams/ldes-with-named-view.ttl"),
-							readModelFromFile("eventstream/streams/view.ttl"),
-							getShacl()),
+					// Arguments.of(
+					// readModelFromFile("eventstream/streams/ldes-with-named-views.ttl"),
+					// getShacl()),
+					// Arguments.of(
+					// readModelFromFile("eventstream/streams/ldes-with-named-view.ttl"),
+					// getShacl()),
 					Arguments.of(
 							readModelFromFile("eventstream/streams/ldes-empty.ttl"),
-							ModelFactory.createDefaultModel(),
 							getShacl()));
 		}
 

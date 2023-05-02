@@ -1,17 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
+import java.util.List;
 import java.util.Objects;
 
 public class EventStreamResponse {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final Model views;
+	private final List<ViewSpecification> views;
 	private final Model shacl;
 
-	public EventStreamResponse(String collection, String timestampPath, String versionOfPath, Model views,
+	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
+			List<ViewSpecification> views,
 			Model shacl) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
@@ -32,7 +35,7 @@ public class EventStreamResponse {
 		return versionOfPath;
 	}
 
-	public Model getViews() {
+	public List<ViewSpecification> getViews() {
 		return views;
 	}
 
@@ -49,7 +52,7 @@ public class EventStreamResponse {
 		EventStreamResponse that = (EventStreamResponse) o;
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
-				&& views.isIsomorphicWith(that.views) && shacl.isIsomorphicWith(that.shacl);
+				&& Objects.equals(views, that.views) && shacl.isIsomorphicWith(that.shacl);
 	}
 
 	@Override
