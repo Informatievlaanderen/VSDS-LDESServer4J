@@ -37,12 +37,14 @@ public class EventStreamListHttpConverter implements HttpMessageConverter<List<E
 	}
 
 	@Override
-	public List<EventStreamResponse> read(Class<? extends List<EventStreamResponse>> clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+	public List<EventStreamResponse> read(Class<? extends List<EventStreamResponse>> clazz,
+			HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
 	}
 
 	@Override
-	public void write(List<EventStreamResponse> eventStreamResponses, MediaType contentType, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+	public void write(List<EventStreamResponse> eventStreamResponses, MediaType contentType,
+			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
 		Model model = ModelFactory.createDefaultModel();
 		eventStreamResponses.stream()
 				.map(eventStreamResponseConverter::toModel)

@@ -7,15 +7,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueob
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,25 +29,21 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ActiveProfiles({"test", "rest"})
-@ContextConfiguration(classes = {AdminEventStreamsRestController.class, AdminWebConfig.class,
-		AdminRestResponseEntityExceptionHandler.class})
+@ActiveProfiles({ "test", "rest" })
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminWebConfig.class,
+		AdminRestResponseEntityExceptionHandler.class })
 class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private EventStreamService eventStreamService;
 
 	@MockBean
 	private ShaclShapeService shaclShapeService;
-
-	@SpyBean
-	private EventStreamValidator validator;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -62,15 +57,23 @@ class AdminEventStreamsRestControllerTest {
 				new EventStream("name1", "http://purl.org/dc/terms/created",
 						"http://purl.org/dc/terms/isVersionOf"),
 				new EventStream("name2", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf")
-		);
+						"http://purl.org/dc/terms/isVersionOf"));
+
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
 		when(shaclShapeService.retrieveShaclShape("name2")).thenReturn(new ShaclShape("name2", shape));
+
 		mockMvc.perform(get("/admin/api/v1/eventstreams"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
+
+		InOrder inOrder = inOrder(eventStreamService, shaclShapeService);
+		inOrder.verify(eventStreamService).retrieveAllEventStreams();
+		inOrder.verify(shaclShapeService).retrieveShaclShape(collectionName);
+		inOrder.verify(shaclShapeService).retrieveShaclShape("name2");
+		inOrder.verifyNoMoreInteractions();
+
 	}
 
 	@Test
@@ -80,46 +83,61 @@ class AdminEventStreamsRestControllerTest {
 		Model shape = readModelFromFile("example-shape.ttl");
 		EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
 				"http://purl.org/dc/terms/isVersionOf");
+
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
+
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(model));
+
+		InOrder inOrder = inOrder(eventStreamService, shaclShapeService);
+		inOrder.verify(eventStreamService).retrieveEventStream(collectionName);
+		inOrder.verify(shaclShapeService).retrieveShaclShape(collectionName);
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_StreamNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
+
 		when(eventStreamService.retrieveEventStream(collectionName))
 				.thenThrow(new MissingEventStream(collectionName));
+
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isNotFound());
+
+		verify(eventStreamService).retrieveEventStream(collectionName);
 	}
 
 	@Test
-	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
+	void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("ldes-1.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedModel));
 
-		verify(eventStreamService).saveEventStream(any(EventStream.class));
-		verify(shaclShapeService).updateShaclShape(any(ShaclShape.class));
+		InOrder inOrder = inOrder(eventStreamService, shaclShapeService);
+		inOrder.verify(eventStreamService).saveEventStream(any(EventStream.class));
+		inOrder.verify(shaclShapeService).updateShaclShape(any(ShaclShape.class));
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-without-type.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("ldes-without-type.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
+
+		verifyNoInteractions(eventStreamService, shaclShapeService);
 	}
 
 	@Test
@@ -130,22 +148,8 @@ class AdminEventStreamsRestControllerTest {
 		mockMvc.perform(request).andDo(print());
 		mockMvc.perform(request)
 				.andExpect(status().isBadRequest());
-	}
 
-	@Test
-	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
-		final Model expectedModel = readModelFromFile("ldes-1.ttl");
-		final EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
-				"http://purl.org/dc/terms/isVersionOf");
-
-		when(eventStreamService.saveEventStream(eventStream)).thenReturn(eventStream);
-		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print())
-				.andExpect(IsIsomorphic.with(expectedModel));
-
-		verify(validator).validate(any(), any());
+		verifyNoInteractions(eventStreamService, shaclShapeService);
 	}
 
 	@Test
@@ -157,6 +161,7 @@ class AdminEventStreamsRestControllerTest {
 				.andExpect(status().isOk());
 
 		verify(eventStreamService).deleteEventStream(collectionName);
+		verify(shaclShapeService).deleteShaclShape(collectionName);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
