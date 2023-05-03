@@ -11,6 +11,8 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retenti
 
 public class RetentionPolicyCreatorImpl implements RetentionPolicyCreator {
 
+	public static final String TIMEBASED_RETENTION_POLICY = "timebased";
+
 	@Override
 	public List<RetentionPolicy> createRetentionPolicyListForView(ViewSpecification viewSpecification) {
 		return viewSpecification
@@ -22,7 +24,7 @@ public class RetentionPolicyCreatorImpl implements RetentionPolicyCreator {
 
 	private RetentionPolicy getRetentionPolicy(RetentionConfig retentionConfig) {
 		// TODO update so that multiple retention policies can easily be incorporated
-		if ("timebased".equals(retentionConfig.getName())) {
+		if (TIMEBASED_RETENTION_POLICY.equals(retentionConfig.getName())) {
 			return new TimeBasedRetentionPolicy(
 					retentionConfig.getProperties().get(DURATION));
 		}
