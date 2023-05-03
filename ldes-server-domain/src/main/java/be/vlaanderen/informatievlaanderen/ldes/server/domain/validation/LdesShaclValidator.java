@@ -7,6 +7,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
+@Deprecated(forRemoval = true)
 public class LdesShaclValidator extends AbstractShaclValidator {
 	private final LdesConfig.Validation validationConfig;
 	private final Model shaclShape;
