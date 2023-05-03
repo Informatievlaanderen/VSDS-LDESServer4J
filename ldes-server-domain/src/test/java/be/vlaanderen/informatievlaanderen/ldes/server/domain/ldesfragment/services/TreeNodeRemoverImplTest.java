@@ -1,20 +1,27 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -28,13 +35,19 @@ class TreeNodeRemoverImplTest {
 
 	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
-	private final Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = Map
-			.of(new ViewName("collectionName", "view"), List.of(new TimeBasedRetentionPolicy("PT0S")));
+	private final Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = new HashMap<>();
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
 	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);
-	private final TreeNodeRemover treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, memberRepository,
-			retentionPolicyMap,
-			treeMemberRemover, parentUpdater);
+	private final RetentionPolicyCreator retentionPolicyCreator = new RetentionPolicyCreatorImpl();
+	private TreeNodeRemoverImpl treeNodeRemover;
+
+	@BeforeEach
+	void setUp() {
+		retentionPolicyMap.put(new ViewName("collectionName", "view"), List.of(new TimeBasedRetentionPolicy("PT0S")));
+		treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, memberRepository,
+				retentionPolicyMap,
+				treeMemberRemover, parentUpdater, retentionPolicyCreator);
+	}
 
 	@Test
 	void when_NodeIsImmutableAndSatisfiesRetentionPoliciesOfView_NodeCanBeSoftDeleted() {
@@ -56,6 +69,17 @@ class TreeNodeRemoverImplTest {
 		verifyNoMoreInteractions(parentUpdater);
 		verify(treeMemberRemover, times(1)).tryRemovingMember("memberId");
 		verifyNoMoreInteractions(treeMemberRemover);
+	}
+
+	@Test
+	void when_ViewAddedEventIsReceived_RetentionPolicyMapIsUpdated() {
+		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
+				List.of(), List.of());
+
+		assertFalse(retentionPolicyMap.containsKey(viewSpecification.getName()));
+		treeNodeRemover.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
+
+		assertTrue(retentionPolicyMap.containsKey(viewSpecification.getName()));
 	}
 
 	private LdesFragment notReadyToDeleteFragment() {
