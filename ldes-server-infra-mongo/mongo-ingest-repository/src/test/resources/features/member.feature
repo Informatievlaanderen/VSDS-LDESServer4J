@@ -36,4 +36,4 @@ Feature: MemberRepository
         | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
       When I save the members using the MemberRepository
       Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
-      And Then The member with id "http://test-data/mobility-hindrance/fantasy-id" will not exist
+      And The member with id "http://test-data/mobility-hindrance/fantasy-id" will not exist

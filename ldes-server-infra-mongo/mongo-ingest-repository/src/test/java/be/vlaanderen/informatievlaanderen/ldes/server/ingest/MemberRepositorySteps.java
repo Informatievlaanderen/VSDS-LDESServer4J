@@ -61,7 +61,7 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 		assertTrue(memberRepository.memberExists(id));
 	}
 
-	@And("Then The member with id {string} will not exist")
+	@And("The member with id {string} will not exist")
 	public void thenTheMemberWithIdWillNotExist(String id) {
 		assertFalse(memberRepository.memberExists(id));
 	}
