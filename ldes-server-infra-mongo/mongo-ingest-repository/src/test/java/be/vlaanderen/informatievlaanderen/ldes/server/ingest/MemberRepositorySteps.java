@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public class MemberRepositorySteps extends SpringIntegrationTest {
+public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 
 	private List<Member> members;
 	private Optional<Member> retrievedMember;

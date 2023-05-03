@@ -7,5 +7,5 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features")
-public class MemberRepositoryIT extends SpringIntegrationTest {
+public class MemberRepositoryIT extends MongoIngestIntegrationTest {
 }
