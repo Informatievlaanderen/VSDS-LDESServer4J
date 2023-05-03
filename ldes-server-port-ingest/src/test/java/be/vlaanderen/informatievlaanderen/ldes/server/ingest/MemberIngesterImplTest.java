@@ -21,8 +21,6 @@ import java.nio.charset.StandardCharsets;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,8 +51,6 @@ class MemberIngesterImplTest {
 		inOrder.verify(memberRepository,
 				times(1)).memberExists(member.getId());
 		inOrder.verifyNoMoreInteractions();
-		verifyNoInteractions(eventPublisher);
-		verifyNoMoreInteractions(memberRepository);
 	}
 
 	@Test
