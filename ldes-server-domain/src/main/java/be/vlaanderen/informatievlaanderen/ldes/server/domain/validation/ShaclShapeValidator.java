@@ -6,6 +6,7 @@ import org.springframework.validation.Errors;
 
 public class ShaclShapeValidator extends AbstractShaclValidator {
 	private static final String FILE_NAME = "shapeShaclShape.ttl";
+
 	@Override
 	protected void initializeShapes() {
 		shapes = Shapes.parse(FILE_NAME);
