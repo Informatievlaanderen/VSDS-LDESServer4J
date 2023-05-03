@@ -1,5 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
@@ -38,11 +41,14 @@ import static org.apache.jena.riot.RDFFormat.NQUADS;
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 	private final AppConfig appConfig;
+	private final EventStreamCollection eventStreamCollection;
+
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public LdesMemberConverter(AppConfig appConfig) {
+	public LdesMemberConverter(AppConfig appConfig, EventStreamCollection eventStreamCollection) {
 		super(MediaType.ALL);
 		this.appConfig = appConfig;
+		this.eventStreamCollection = eventStreamCollection;
 	}
 
 	@Override
@@ -59,10 +65,12 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
 		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
+		EventStream eventStream = eventStreamCollection.retrieveEventStream(collectionName)
+				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
 
 		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType(), collectionName);
-		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());
-		LocalDateTime timestamp = extractTimestamp(memberModel, ldesConfig.getTimestampPath());
+		String versionOf = extractVersionOf(memberModel, eventStream.getVersionOfPath());
+		LocalDateTime timestamp = extractTimestamp(memberModel, eventStream.getTimestampPath());
 		return new Member(memberId, collectionName, null, versionOf, timestamp, memberModel, List.of());
 	}
 

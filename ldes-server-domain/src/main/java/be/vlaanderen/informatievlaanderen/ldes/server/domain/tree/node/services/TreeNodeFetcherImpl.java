@@ -28,7 +28,7 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 				.getTreeNode(new LdesFragment(
 						viewName,
 						ldesFragmentRequest.fragmentPairs())
-						.getFragmentId(), ldesConfig);
+						.getFragmentId(), ldesConfig.getHostName(), ldesConfig.getCollectionName());
 		if (treeNode.isSoftDeleted())
 			throw new DeletedFragmentException(
 					ldesConfig.getHostName()

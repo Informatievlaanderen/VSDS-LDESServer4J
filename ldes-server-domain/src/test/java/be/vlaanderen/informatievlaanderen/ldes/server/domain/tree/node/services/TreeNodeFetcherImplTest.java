@@ -45,7 +45,7 @@ class TreeNodeFetcherImplTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs());
-		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig))
+		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig.getHostName(), ldesConfig.getCollectionName()))
 				.thenThrow(new MissingFragmentException(ldesFragment.getFragmentId()));
 
 		MissingFragmentException missingFragmentException = assertThrows(MissingFragmentException.class,
@@ -64,7 +64,7 @@ class TreeNodeFetcherImplTest {
 				ldesFragmentRequest.fragmentPairs());
 		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, true, false, List.of(),
 				List.of(), "collectionName");
-		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig))
+		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig.getHostName(), ldesConfig.getCollectionName()))
 				.thenReturn(treeNode);
 
 		DeletedFragmentException deletedFragmentException = assertThrows(DeletedFragmentException.class,
@@ -82,7 +82,7 @@ class TreeNodeFetcherImplTest {
 				ldesFragmentRequest.fragmentPairs());
 		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, false, false, List.of(),
 				List.of(), "collectionName");
-		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig))
+		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), ldesConfig.getHostName(), ldesConfig.getCollectionName()))
 				.thenReturn(treeNode);
 
 		TreeNode returnedTreeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);

@@ -21,14 +21,11 @@ import java.util.Optional;
 @Tag(name = "Ingest")
 public class LdesMemberIngestionController {
 	private final MemberIngestService memberIngestService;
-	private final AppConfig appConfig;
-
 	private final ShaclCollection shaclCollection;
 
-	public LdesMemberIngestionController(MemberIngestService memberIngestService, AppConfig appConfig,
+	public LdesMemberIngestionController(MemberIngestService memberIngestService,
 			ShaclCollection shaclCollection) {
 		this.memberIngestService = memberIngestService;
-		this.appConfig = appConfig;
 		this.shaclCollection = shaclCollection;
 	}
 
@@ -43,8 +40,6 @@ public class LdesMemberIngestionController {
 
 	private void validateMember(Member member, String collectionName) {
 		Optional<ShaclShape> shape = shaclCollection.retrieveShape(collectionName);
-		shape.ifPresent(
-				shaclShape -> new LdesShaclValidator(shaclShape.getModel(), appConfig.getLdesConfig(collectionName))
-						.validate(member));
+		shape.ifPresent(shaclShape -> new LdesShaclValidator(shaclShape.getModel()).validate(member));
 	}
 }

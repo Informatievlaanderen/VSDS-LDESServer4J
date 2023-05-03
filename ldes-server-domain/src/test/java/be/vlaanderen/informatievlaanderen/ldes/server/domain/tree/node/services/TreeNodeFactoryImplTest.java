@@ -47,7 +47,7 @@ class TreeNodeFactoryImplTest {
 	void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
 		MissingFragmentException treeNodeId = assertThrows(MissingFragmentException.class,
-				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, ldesConfig));
+				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, ldesConfig.getHostName(), ldesConfig.getCollectionName()));
 
 		assertEquals("No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
 				treeNodeId.getMessage());
@@ -61,7 +61,7 @@ class TreeNodeFactoryImplTest {
 		List<Member> members = List.of(new Member("member", COLLECTION_NAME, 0L, null, null, null, List.of()));
 		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
 
-		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, ldesConfig);
+		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, ldesConfig.getHostName(), ldesConfig.getCollectionName());
 
 		assertEquals(HOSTNAME + ldesFragment.getFragmentId(), treeNode.getFragmentId());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());

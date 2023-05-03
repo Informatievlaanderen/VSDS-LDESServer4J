@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -11,6 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionha
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,6 +66,17 @@ class MemberIngestionControllerTest {
 	private AppConfig appConfig;
 	@Autowired
 	private ShaclCollection shaclCollection;
+
+	@MockBean
+	private EventStreamCollection eventStreamCollection;
+
+	@BeforeEach
+	void setUp() {
+		when(eventStreamCollection.retrieveEventStream(MOBILITY_HINDRANCES_COLLECTION))
+				.thenReturn(Optional.of(new EventStream(MOBILITY_HINDRANCES_COLLECTION, null, null)));
+		when(eventStreamCollection.retrieveEventStream(RESTAURANT_COLLECTION))
+				.thenReturn(Optional.of(new EventStream(RESTAURANT_COLLECTION, null, null)));
+	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
