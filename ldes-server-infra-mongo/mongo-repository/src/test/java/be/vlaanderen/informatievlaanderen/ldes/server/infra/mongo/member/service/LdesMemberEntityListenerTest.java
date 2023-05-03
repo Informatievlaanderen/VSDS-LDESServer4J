@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence.service.SequenceGeneratorService;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence.service.DeprecatedSequenceGeneratorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 
@@ -11,7 +11,8 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 
 class LdesMemberEntityListenerTest {
-	private final SequenceGeneratorService sequenceGeneratorService = mock(SequenceGeneratorService.class);
+	private final DeprecatedSequenceGeneratorService sequenceGeneratorService = mock(
+			DeprecatedSequenceGeneratorService.class);
 	private final LdesMemberEntityListener ldesMemberEntityListener = new LdesMemberEntityListener(
 			sequenceGeneratorService);
 

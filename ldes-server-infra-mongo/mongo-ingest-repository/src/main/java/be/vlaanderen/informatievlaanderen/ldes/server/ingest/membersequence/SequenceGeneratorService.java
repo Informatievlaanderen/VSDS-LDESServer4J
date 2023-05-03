@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence.service;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence.entity.MemberSequenceEntity;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
