@@ -8,4 +8,6 @@ public interface ShaclCollection {
 	Optional<ShaclShape> retrieveShape(String collectionName);
 
 	void saveShape(ShaclShape shaclShape);
+
+	void deleteShape(String collectionName);
 }

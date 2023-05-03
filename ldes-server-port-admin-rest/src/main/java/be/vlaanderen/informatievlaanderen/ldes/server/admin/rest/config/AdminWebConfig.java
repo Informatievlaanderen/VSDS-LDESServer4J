@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.LdesConfigModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.LdesConfigModelListConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import org.springframework.context.annotation.Bean;
@@ -16,18 +18,18 @@ public class AdminWebConfig {
 	}
 
 	@Bean
-	public LdesConfigModelListConverter ldesConfigModelListConverter() {
-		return new LdesConfigModelListConverter();
-	}
-
-	@Bean
 	public ModelConverter modelConverter() {
 		return new ModelConverter();
 	}
 
-	@Bean("configShaclValidator")
-	public LdesConfigShaclValidator ldesConfigShaclValidator() {
-		return new LdesConfigShaclValidator("configShaclShape.ttl");
+	@Bean
+	public EventStreamListHttpConverter eventStreamListHttpConverter() {
+		return new EventStreamListHttpConverter();
+	}
+
+	@Bean
+	public EventStreamHttpConverter eventStreamHttpConverter() {
+		return new EventStreamHttpConverter();
 	}
 
 	@Bean(name = "viewShaclValidator")
@@ -39,5 +41,10 @@ public class AdminWebConfig {
 	@Bean
 	public ShaclShapeValidator shaclShapeValidator() {
 		return new ShaclShapeValidator();
+	}
+
+	@Bean
+	public EventStreamValidator eventStreamValidator() {
+		return new EventStreamValidator();
 	}
 }

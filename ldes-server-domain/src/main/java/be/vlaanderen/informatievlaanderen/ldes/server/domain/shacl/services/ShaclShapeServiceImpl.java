@@ -24,4 +24,9 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 		shaclCollection.saveShape(shaclShape);
 		return shaclShape;
 	}
+
+	@Override
+	public void deleteShaclShape(String collectionName) {
+		shaclCollection.deleteShape(collectionName);
+	}
 }

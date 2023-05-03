@@ -97,6 +97,22 @@ class ShaclShapeMongoRepositoryTest {
 		assertEquals(shaclShape, savedShaclShape);
 	}
 
+	@Test
+	void when_shaclDeleted_then_returnEmptyWithRetrieval() throws URISyntaxException, IOException {
+		final String shaclShapeString = loadShaclString();
+
+		when(shaclShapeEntityRepository.findById(COLLECTION))
+				.thenReturn(Optional.of(new ShaclShapeEntity(COLLECTION, shaclShapeString)))
+				.thenReturn(Optional.empty());
+
+		assertFalse(repository.retrieveShaclShape(COLLECTION).isEmpty());
+
+		repository.deleteShaclShape(COLLECTION);
+		verify(shaclShapeEntityRepository).deleteById(COLLECTION);
+
+		assertTrue(repository.retrieveShaclShape(COLLECTION).isEmpty());
+	}
+
 	private String loadShaclString() throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource("shacl/shacl-shape.ttl")).toURI());

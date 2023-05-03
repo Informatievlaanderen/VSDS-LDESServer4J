@@ -48,7 +48,7 @@ class LdesConfigShaclValidatorTest {
 
 	@Test
 	void when_ValidateProvidedInvalidEventStream_thenReturnInvalid() throws URISyntaxException {
-		final Model model = readModelFromFile("ldes-empty.ttl");
+		final Model model = readModelFromFile("valid-ldes-without-shape.ttl");
 		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
 	}
 

@@ -2,9 +2,11 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix example: <http://example.org/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
 
 ldes:collectionName1 a ldes:EventStream ;
-   ldes:versionOfPath "1.1" ;
+   ldes:timestampPath dcterms:created ;
+   ldes:versionOfPath dcterms:isVersionOf ;
    tree:shape ldes:shape ;
    ldes:view ldes:view1 .
 
