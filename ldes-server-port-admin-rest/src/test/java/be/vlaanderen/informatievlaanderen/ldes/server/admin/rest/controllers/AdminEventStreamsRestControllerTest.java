@@ -7,6 +7,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueob
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -27,6 +30,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -45,12 +49,16 @@ class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private ShaclShapeService shaclShapeService;
 
+	@MockBean
+	private ViewService viewService;
+
 	@Autowired
 	private MockMvc mockMvc;
 
 	@Test
 	void when_StreamsPresent_then_StreamsAreReturned() throws Exception {
 		String collectionName = "name1";
+		// TODO: add views to the turtle file for testing
 		Model expectedEventStreamsModel = readModelFromFile("multiple-ldes.ttl");
 		Model shape = readModelFromFile("example-shape.ttl");
 		List<EventStream> eventStreams = List.of(
@@ -62,15 +70,18 @@ class AdminEventStreamsRestControllerTest {
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
 		when(shaclShapeService.retrieveShaclShape("name2")).thenReturn(new ShaclShape("name2", shape));
+		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of());
 
 		mockMvc.perform(get("/admin/api/v1/eventstreams"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
-		InOrder inOrder = inOrder(eventStreamService, shaclShapeService);
+		InOrder inOrder = inOrder(eventStreamService, shaclShapeService, viewService);
 		inOrder.verify(eventStreamService).retrieveAllEventStreams();
+		inOrder.verify(viewService).getViewsByCollectionName(collectionName);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(collectionName);
+		inOrder.verify(viewService).getViewsByCollectionName("name2");
 		inOrder.verify(shaclShapeService).retrieveShaclShape("name2");
 		inOrder.verifyNoMoreInteractions();
 
@@ -86,14 +97,16 @@ class AdminEventStreamsRestControllerTest {
 
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
+		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of());
 
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(model));
 
-		InOrder inOrder = inOrder(eventStreamService, shaclShapeService);
+		InOrder inOrder = inOrder(eventStreamService, shaclShapeService, viewService);
 		inOrder.verify(eventStreamService).retrieveEventStream(collectionName);
+		inOrder.verify(viewService).getViewsByCollectionName(collectionName);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(collectionName);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -110,10 +123,13 @@ class AdminEventStreamsRestControllerTest {
 				.andExpect(status().isNotFound());
 
 		verify(eventStreamService).retrieveEventStream(collectionName);
+		verifyNoInteractions(shaclShapeService, viewService);
 	}
 
 	@Test
 	void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
+		// TODO: add views to turtle file for testing and delete 'never()' in
+		// viewService verification
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
@@ -123,8 +139,9 @@ class AdminEventStreamsRestControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedModel));
 
-		InOrder inOrder = inOrder(eventStreamService, shaclShapeService);
+		InOrder inOrder = inOrder(eventStreamService, shaclShapeService, viewService);
 		inOrder.verify(eventStreamService).saveEventStream(any(EventStream.class));
+		inOrder.verify(viewService, never()).addView(any(ViewSpecification.class));
 		inOrder.verify(shaclShapeService).updateShaclShape(any(ShaclShape.class));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -137,7 +154,7 @@ class AdminEventStreamsRestControllerTest {
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 
-		verifyNoInteractions(eventStreamService, shaclShapeService);
+		verifyNoInteractions(eventStreamService, shaclShapeService, viewService);
 	}
 
 	@Test
@@ -149,19 +166,33 @@ class AdminEventStreamsRestControllerTest {
 		mockMvc.perform(request)
 				.andExpect(status().isBadRequest());
 
-		verifyNoInteractions(eventStreamService, shaclShapeService);
+		verifyNoInteractions(eventStreamService, shaclShapeService, viewService);
 	}
 
 	@Test
 	void when_collectionExists_and_triesToDelete_then_expectStatus200() throws Exception {
 		String collectionName = "name1";
 
+		List<ViewSpecification> views = Stream.of("name1/view1", "name1/view2")
+				.map(ViewName::fromString)
+				.map(viewName -> {
+					ViewSpecification view = new ViewSpecification();
+					view.setName(viewName);
+					return view;
+				})
+				.toList();
+
+		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(views);
+
 		mockMvc.perform(delete("/admin/api/v1/eventstreams/name1"))
 				.andDo(print())
 				.andExpect(status().isOk());
 
-		verify(eventStreamService).deleteEventStream(collectionName);
-		verify(shaclShapeService).deleteShaclShape(collectionName);
+		InOrder inOrder = inOrder(eventStreamService, viewService, shaclShapeService);
+		inOrder.verify(eventStreamService).deleteEventStream(collectionName);
+		inOrder.verify(viewService).deleteViewByViewName(ViewName.fromString("name1/view1"));
+		inOrder.verify(viewService).deleteViewByViewName(ViewName.fromString("name1/view2"));
+		inOrder.verify(shaclShapeService).deleteShaclShape(collectionName);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

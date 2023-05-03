@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.*;
 
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ public class EventStreamResponseConverter {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
+		final List<ViewSpecification> views = List.of(); // TODO: extract view specifications from model
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, List.of(), shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, views, shacl);
 	}
 
 	public Model toModel(EventStreamResponse eventStreamResponse) {
@@ -34,13 +36,15 @@ public class EventStreamResponseConverter {
 				getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE)));
 		final Statement shaclStmt = createStatement(subject, TREE_SHAPE, shaclResource);
 
-		List<Statement> viewStatements = eventStreamResponse.getViews().stream()
+		final List<Statement> viewReferenceStatements = eventStreamResponse.getViews().stream()
 				.map(view -> createStatement(subject, createProperty(VIEW), createProperty(view.getName().asString())))
 				.toList();
 
+		// TODO: add view specifications to the model
+
 		return createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, shaclStmt))
-				.add(viewStatements)
+				.add(viewReferenceStatements)
 				.add(eventStreamResponse.getShacl());
 	}
 
