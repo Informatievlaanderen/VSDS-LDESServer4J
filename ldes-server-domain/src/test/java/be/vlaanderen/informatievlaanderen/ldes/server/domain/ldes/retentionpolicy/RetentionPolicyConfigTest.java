@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.junit.jupiter.api.Test;
@@ -13,12 +15,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RetentionPolicyConfigTest {
 
+	private final RetentionPolicyCreator retentionPolicyCreator = new RetentionPolicyCreatorImpl();
+
 	@Test
 	void when_TimeBasedRetentionPolicyIsDefinedInConfig_ItIsAddedToMap() {
 		AppConfig appConfig = getLdesConfig("timebased");
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
-		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig);
+		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig,
+				retentionPolicyCreator);
 		assertEquals(1, retentionPolicyMap.size());
 		assertEquals(1, retentionPolicyMap.get(ViewName.fromString("parcels/firstView")).size());
 		assertTrue(retentionPolicyMap.get(ViewName.fromString("parcels/firstView"))
@@ -31,7 +36,7 @@ class RetentionPolicyConfigTest {
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> retentionPolicyConfig.retentionPolicyMap(appConfig));
+				() -> retentionPolicyConfig.retentionPolicyMap(appConfig, retentionPolicyCreator));
 		assertEquals("Invalid retention Policy: other", exception.getMessage());
 	}
 

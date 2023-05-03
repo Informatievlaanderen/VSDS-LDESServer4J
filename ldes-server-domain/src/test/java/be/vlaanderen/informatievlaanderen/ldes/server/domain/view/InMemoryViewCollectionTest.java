@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,8 @@ import static org.mockito.Mockito.verify;
 class InMemoryViewCollectionTest {
 
 	private final ViewRepository viewRepository = mock(ViewRepository.class);
-	private final ViewCollection viewCollection = new InMemoryViewCollection(viewRepository);
+	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+	private final ViewCollection viewCollection = new InMemoryViewCollection(viewRepository, eventPublisher);
 
 	@Test
 	void test_InsertionAndRetrieval() {
