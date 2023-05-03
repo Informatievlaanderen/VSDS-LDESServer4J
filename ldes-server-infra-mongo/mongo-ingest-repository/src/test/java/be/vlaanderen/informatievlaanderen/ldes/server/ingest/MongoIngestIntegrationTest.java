@@ -13,7 +13,7 @@ import org.springframework.test.context.ContextConfiguration;
 @DataMongoTest
 @ActiveProfiles("mongo-test")
 @ContextConfiguration(classes = { MemberEntityRepository.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest"})
+@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest" })
 @SuppressWarnings("java:S2187")
 public class MongoIngestIntegrationTest {
 
