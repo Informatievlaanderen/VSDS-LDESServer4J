@@ -22,7 +22,7 @@ public class ViewSpecificationConverter {
 
     static final String TYPE_PREDICATE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
     static final String RETENTION_TYPE_OBJECT = "https://w3id.org/ldes#retentionPolicy";
-    static final String FRAGMENTATION_TYPE_OBJECT = "http://example.org/fragmentationStrategy";
+    static final String FRAGMENTATION_TYPE_OBJECT = "http://example.org/Fragmentation";
     static final String VIEW_TYPE_OBJECT = "https://w3id.org/tree#viewDescription";
 
     private ViewSpecificationConverter() {
@@ -119,7 +119,7 @@ public class ViewSpecificationConverter {
 
     private static Map<String, String> extractConfigMap(List<Statement> statementList) {
         Map<String, String> configMap = new HashMap<>();
-        statementList.stream().filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE)).forEach(statement -> configMap.put(statement.getPredicate().toString(), statement.getObject().asLiteral().toString()));
+        statementList.stream().filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE)).forEach(statement -> configMap.put(statement.getPredicate().toString(), statement.getObject().asLiteral().getString()));
         return configMap;
     }
 
