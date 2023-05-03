@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.MemberConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -34,9 +35,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -124,6 +125,18 @@ class MemberIngestControllerTest {
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
 				.andDo(print())
 				.andExpect(status().isOk());
+
+		verify(memberIngester).ingest(any(Member.class));
+	}
+
+	@Test
+	void whenIngestValidationExceptionIsThrown_thenStatus400IsReturned() throws Exception {
+		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
+		doThrow(new IngestValidationException("validationIssue")).when(memberIngester).ingest(any());
+
+		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
+				.andDo(print())
+				.andExpect(status().isBadRequest());
 
 		verify(memberIngester).ingest(any(Member.class));
 	}
