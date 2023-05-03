@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWeb
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
@@ -116,7 +116,7 @@ class AdminEventStreamsRestControllerTest {
 		String collectionName = "name1";
 
 		when(eventStreamService.retrieveEventStream(collectionName))
-				.thenThrow(new MissingEventStream(collectionName));
+				.thenThrow(new MissingEventStreamException(collectionName));
 
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
 				.andDo(print())

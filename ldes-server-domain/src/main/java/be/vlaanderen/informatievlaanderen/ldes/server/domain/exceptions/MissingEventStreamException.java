@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
-public class MissingEventStream extends RuntimeException {
+public class MissingEventStreamException extends RuntimeException {
 	private final String collection;
 
-	public MissingEventStream(String collection) {
+	public MissingEventStreamException(String collection) {
 		this.collection = collection;
 	}
 

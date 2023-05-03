@@ -65,16 +65,6 @@ public class EventStreamResponseConverter {
 		return createDefaultModel().add(shaclStatements);
 	}
 
-	private Model getViewsFromModel(Model model) {
-		Model views = createDefaultModel();
-		model.listStatements(null, createProperty(VIEW), (Resource) null)
-				.toList().stream()
-				.map(Statement::getResource)
-				.map(resource -> retrieveAllStatements(resource, model))
-				.forEach(views::add);
-		return views;
-	}
-
 	/**
 	 * @param resource
 	 *            the resource of which the according statements need to be

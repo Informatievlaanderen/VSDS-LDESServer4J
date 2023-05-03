@@ -5,9 +5,10 @@ import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
 public class EventStreamValidator extends AbstractShaclValidator {
+	private static final String FILE_NAME = "eventstreamShaclShape.ttl";
 	@Override
 	protected void initializeShapes() {
-		shapes = Shapes.parse("eventstreamShaclShape.ttl");
+		shapes = Shapes.parse(FILE_NAME);
 	}
 
 	@Override

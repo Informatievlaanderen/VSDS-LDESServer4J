@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +53,7 @@ class EventStreamServiceImplTest {
 	void when_collectionDoesNotExists_then_throwException() {
 		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 
-		Exception e = assertThrows(MissingEventStream.class, () -> service.retrieveEventStream(COLLECTION));
+		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
 	}
 
@@ -72,7 +72,7 @@ class EventStreamServiceImplTest {
 	@Test
 	void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
 		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
-		Exception e = assertThrows(MissingEventStream.class, () -> service.deleteEventStream(COLLECTION));
+		Exception e = assertThrows(MissingEventStreamException.class, () -> service.deleteEventStream(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
 	}
 
@@ -83,6 +83,6 @@ class EventStreamServiceImplTest {
 		service.deleteEventStream(COLLECTION);
 
 		verify(eventStreamCollection).deleteEventStream(COLLECTION);
-		assertThrows(MissingEventStream.class, () -> service.retrieveEventStream(COLLECTION));
+		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
 	}
 }

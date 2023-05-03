@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 
 import java.util.List;
 
@@ -21,13 +21,13 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@Override
 	public EventStream retrieveEventStream(String collectionName) {
 		return eventStreamCollection.retrieveEventStream(collectionName)
-				.orElseThrow(() -> new MissingEventStream(collectionName));
+				.orElseThrow(() -> new MissingEventStreamException(collectionName));
 	}
 
 	@Override
 	public void deleteEventStream(String collectionName) {
 		if (eventStreamCollection.retrieveEventStream(collectionName).isEmpty()) {
-			throw new MissingEventStream(collectionName);
+			throw new MissingEventStreamException(collectionName);
 		}
 
 		eventStreamCollection.deleteEventStream(collectionName);
