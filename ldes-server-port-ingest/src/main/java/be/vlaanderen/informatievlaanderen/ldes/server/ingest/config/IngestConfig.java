@@ -10,13 +10,14 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class IngestConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(IngestConfig.class);
+	private static final Logger log = LoggerFactory.getLogger(IngestConfig.class);
 
-    @ConditionalOnMissingBean
-    @Bean
-    public MemberIngestValidator defaultValidator() {
-        log.warn("No validator configured for ldes-server-port-ingest");
-        return member -> {};
-    }
+	@ConditionalOnMissingBean
+	@Bean
+	public MemberIngestValidator defaultValidator() {
+		log.warn("No validator configured for ldes-server-port-ingest");
+		return member -> {
+		};
+	}
 
 }

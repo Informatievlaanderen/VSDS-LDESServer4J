@@ -19,13 +19,12 @@ public class MemberIngesterImpl implements MemberIngester {
 	private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
 	public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
-							  ApplicationEventPublisher eventPublisher) {
+			ApplicationEventPublisher eventPublisher) {
 		this.validator = validator;
 		this.memberRepository = memberRepository;
 		this.eventPublisher = eventPublisher;
 	}
 
-	// TODO: 28/04/2023 include validator in testing
 	@Override
 	public void ingest(Member member) {
 		validator.validate(member);

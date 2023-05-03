@@ -4,6 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 
 public interface MemberIngestValidator {
 
-    void validate(Member member);
+	void validate(Member member);
 
 }
