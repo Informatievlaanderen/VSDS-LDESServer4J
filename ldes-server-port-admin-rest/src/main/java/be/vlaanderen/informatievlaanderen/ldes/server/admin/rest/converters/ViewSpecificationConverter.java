@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.ViewSpecificationConverterConfig.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.constants.ViewSpecificationConverterConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class ViewSpecificationConverter {
@@ -59,7 +59,8 @@ public class ViewSpecificationConverter {
 
 	private static List<RetentionConfig> retentionListFromStatements(List<Statement> statements) {
 		List<RetentionConfig> retentionList = new ArrayList<>();
-		for (Resource retention : statements.stream().filter(new ConfigFilterPredicate(RETENTION_TYPE))
+		for (Resource retention : statements.stream()
+				.filter(new ConfigFilterPredicate(RETENTION_TYPE))
 				.map(Statement::getSubject).toList()) {
 			List<Statement> retentionStatements = retrieveAllStatements(retention, statements);
 			RetentionConfig config = new RetentionConfig();
@@ -85,7 +86,8 @@ public class ViewSpecificationConverter {
 
 	private static List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {
 		List<FragmentationConfig> fragmentationList = new ArrayList<>();
-		for (Resource fragmentation : statements.stream().filter(new ConfigFilterPredicate(FRAGMENTATION_TYPE))
+		for (Resource fragmentation : statements.stream()
+				.filter(new ConfigFilterPredicate(FRAGMENTATION_TYPE))
 				.map(Statement::getSubject).toList()) {
 			List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
 			FragmentationConfig config = new FragmentationConfig();
@@ -113,7 +115,8 @@ public class ViewSpecificationConverter {
 
 	private static List<Statement> retrieveAllStatements(Resource resource, List<Statement> statements) {
 		List<Statement> statementList = new ArrayList<>();
-		statements.stream().filter(statement -> statement.getSubject().equals(resource))
+		statements.stream()
+				.filter(statement -> statement.getSubject().equals(resource))
 				.forEach(statement -> {
 					statementList.add(statement);
 					if (statement.getObject().isResource()) {
@@ -125,8 +128,10 @@ public class ViewSpecificationConverter {
 
 	private static Map<String, String> extractConfigMap(List<Statement> statementList) {
 		Map<String, String> configMap = new HashMap<>();
-		statementList.stream().filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE))
-				.forEach(statement -> configMap.put(statement.getPredicate().toString(),
+		statementList.stream()
+				.filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE))
+				.forEach(statement -> configMap.put(
+						statement.getPredicate().toString(),
 						statement.getObject().asLiteral().getString()));
 		return configMap;
 	}
