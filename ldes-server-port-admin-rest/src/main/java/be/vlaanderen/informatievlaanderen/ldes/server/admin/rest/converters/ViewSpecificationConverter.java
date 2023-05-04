@@ -16,14 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.ViewSpecificationConverterConfig.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class ViewSpecificationConverter {
-
-    static final String TYPE_PREDICATE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-    static final String RETENTION_TYPE_OBJECT = "https://w3id.org/ldes#retentionPolicy";
-    static final String FRAGMENTATION_TYPE_OBJECT = "http://example.org/Fragmentation";
-    static final String VIEW_TYPE_OBJECT = "https://w3id.org/tree#viewDescription";
 
     private ViewSpecificationConverter() {
     }
@@ -42,10 +38,12 @@ public class ViewSpecificationConverter {
 
     public static Model modelFromView(ViewSpecification view) {
         Model model = ModelFactory.createDefaultModel();
-        String viewName = view.getName().asString();
-        model.add(createStatement(createResource(viewName), createProperty(VIEW_TYPE_OBJECT), createResource()));
-        model.add(retentionStatementsFromList(viewName, view.getRetentionConfigs()));
-        model.add(fragmentationStatementsFromList(viewName, view.getFragmentations()));
+        String viewName = view.getName().getViewName();
+        Statement viewDescription = createStatement(createResource(viewName), createProperty(VIEW_TYPE_OBJECT), createResource());
+        model.add(viewDescription);
+        model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
+        model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
+
         return model;
     }
 
@@ -58,7 +56,7 @@ public class ViewSpecificationConverter {
 
     private static List<RetentionConfig> retentionListFromStatements(List<Statement> statements) {
         List<RetentionConfig> retentionList = new ArrayList<>();
-        for (Resource retention : statements.stream().filter(new ConfigFilterPredicate(RETENTION_TYPE_OBJECT)).map(Statement::getSubject).toList()) {
+        for (Resource retention : statements.stream().filter(new ConfigFilterPredicate(RETENTION_TYPE)).map(Statement::getSubject).toList()) {
             List<Statement> retentionStatements = retrieveAllStatements(retention, statements);
             RetentionConfig config = new RetentionConfig();
             config.setName(retention.toString());
@@ -68,21 +66,22 @@ public class ViewSpecificationConverter {
         return retentionList;
     }
 
-    private static List<Statement> retentionStatementsFromList(String viewName, List<RetentionConfig> retentionList) {
+    private static List<Statement> retentionStatementsFromList(Resource viewName, List<RetentionConfig> retentionList) {
         List<Statement> statements = new ArrayList<>();
         for (RetentionConfig retention : retentionList) {
+            Resource retentionResource = createResource();
             statements.add(createStatement(
-                    createResource(retention.getName()), createProperty(TYPE_PREDICATE), createResource(RETENTION_TYPE_OBJECT)));
+                    retentionResource, createProperty(TYPE_PREDICATE), createResource(RETENTION_TYPE)));
             retention.getConfig().forEach((key, value) -> statements.add(createStatement(
-                        createResource(retention.getName()), createProperty(key), createPlainLiteral(value))));
-            statements.add(createStatement(createResource(viewName), createProperty(RETENTION_TYPE_OBJECT), createResource(retention.getName())));
+                    retentionResource, createProperty(key), createPlainLiteral(value))));
+            statements.add(createStatement(viewName, createProperty(RETENTION_OBJECT), retentionResource));
         }
         return statements;
     }
 
     private static List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {
         List<FragmentationConfig> fragmentationList = new ArrayList<>();
-        for (Resource fragmentation : statements.stream().filter(new ConfigFilterPredicate(FRAGMENTATION_TYPE_OBJECT)).map(Statement::getSubject).toList()) {
+        for (Resource fragmentation : statements.stream().filter(new ConfigFilterPredicate(FRAGMENTATION_TYPE)).map(Statement::getSubject).toList()) {
             List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
             FragmentationConfig config = new FragmentationConfig();
             config.setName(fragmentation.toString());
@@ -93,14 +92,15 @@ public class ViewSpecificationConverter {
         return fragmentationList;
     }
 
-    private static List<Statement> fragmentationStatementsFromList(String viewName, List<FragmentationConfig> fragmentationList) {
+    private static List<Statement> fragmentationStatementsFromList(Resource viewName, List<FragmentationConfig> fragmentationList) {
         List<Statement> statements = new ArrayList<>();
         for (FragmentationConfig fragmentation : fragmentationList) {
+            Resource fragmentationResource = createResource();
             statements.add(createStatement(
-                    createResource(fragmentation.getName()), createProperty(TYPE_PREDICATE), createResource(FRAGMENTATION_TYPE_OBJECT)));
+                    fragmentationResource, createProperty(TYPE_PREDICATE), createResource(FRAGMENTATION_TYPE)));
             fragmentation.getConfig().forEach((key, value) -> statements.add(createStatement(
-                        createResource(fragmentation.getName()), createProperty(key), createPlainLiteral(value))));
-            statements.add(createStatement(createResource(viewName), createProperty(FRAGMENTATION_TYPE_OBJECT), createResource(fragmentation.getName())));
+                    fragmentationResource, createProperty(key), createPlainLiteral(value))));
+            statements.add(createStatement(viewName, createProperty(FRAGMENTATION_OBJECT), fragmentationResource));
         }
         return statements;
     }
