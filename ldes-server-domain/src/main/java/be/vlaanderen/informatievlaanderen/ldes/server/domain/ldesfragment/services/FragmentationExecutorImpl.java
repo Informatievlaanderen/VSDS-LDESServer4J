@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.Observation;
@@ -72,7 +73,14 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
+		// TODO create root fragment and refragment all earlier members of collection
 		fragmentationStrategyMap.put(event.getViewName(),
 				fragmentationStrategyCreator.createFragmentationStrategyForView(event.getViewSpecification()));
+	}
+
+	@EventListener
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		// TODO delete all ldesfragments of view
+		fragmentationStrategyMap.remove(event.getViewName());
 	}
 }

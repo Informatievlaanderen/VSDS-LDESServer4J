@@ -10,4 +10,6 @@ public interface ViewCollection {
 	Optional<ViewSpecification> getViewByViewName(ViewName viewName);
 
 	void addView(ViewSpecification viewSpecification);
+
+	void deleteViewByViewName(ViewName viewName);
 }

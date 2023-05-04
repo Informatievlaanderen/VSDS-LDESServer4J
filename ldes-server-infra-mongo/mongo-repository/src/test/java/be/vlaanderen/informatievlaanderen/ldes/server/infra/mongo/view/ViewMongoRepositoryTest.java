@@ -53,4 +53,13 @@ class ViewMongoRepositoryTest {
 		verify(viewEntityRepository).save(any(ViewEntity.class));
 	}
 
+	@Test
+	void test_deleteingOfView() {
+		final ViewName viewName = new ViewName("collection1", "view1");
+
+		repository.deleteViewByViewName(viewName);
+
+		verify(viewEntityRepository).deleteById(viewName.asString());
+	}
+
 }

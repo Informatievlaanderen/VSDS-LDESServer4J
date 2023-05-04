@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -76,6 +77,11 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		retentionPolicyMap.put(event.getViewName(),
 				retentionPolicyCreator.createRetentionPolicyListForView(event.getViewSpecification()));
+	}
+
+	@EventListener
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		retentionPolicyMap.remove(event.getViewName());
 	}
 
 }

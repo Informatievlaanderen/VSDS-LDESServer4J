@@ -49,4 +49,18 @@ class ViewServiceImplTest {
             verifyNoMoreInteractions(viewCollection);
         }
 	}
+
+	@Nested
+	class DeleteView {
+		private final ViewName viewName = new ViewName("collection", "view");
+
+		@Test
+		void when_ViewDoesNotExist_ViewIsAdded() {
+			viewService.deleteViewByViewName(viewName);
+
+			InOrder inOrder = inOrder(viewCollection);
+			inOrder.verify(viewCollection).deleteViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
 }
