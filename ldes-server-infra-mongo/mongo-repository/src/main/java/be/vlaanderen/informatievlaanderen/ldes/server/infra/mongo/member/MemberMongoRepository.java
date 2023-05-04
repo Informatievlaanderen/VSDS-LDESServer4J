@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service.LdesMemberEntityConverter;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,6 +17,8 @@ import java.util.stream.Stream;
 public class MemberMongoRepository implements MemberRepository {
 
 	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";
+	public static final String COLLECTION_NAME = "collectionName";
+	public static final String SEQUENCE_NR = "sequenceNr";
 	private final LdesMemberEntityRepository repository;
 	private final MongoTemplate mongoTemplate;
 	private final LdesMemberEntityConverter converter = new LdesMemberEntityConverter();
@@ -64,6 +67,14 @@ public class MemberMongoRepository implements MemberRepository {
 		Update update = new Update();
 		update.pull(TREE_NODE_REFERENCES, fragmentId);
 		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
+	}
+
+	@Override
+	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(COLLECTION_NAME).is(collectionName));
+		query.with(Sort.by(SEQUENCE_NR).ascending());
+		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(converter::toLdesMember);
 	}
 
 	@Override

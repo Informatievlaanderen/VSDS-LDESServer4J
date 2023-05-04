@@ -9,6 +9,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository.TREE_NODE_REFERENCES;
+import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -100,6 +101,18 @@ class MemberMongoRepositoryTest {
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is("treeNodeId"));
 
 		List<Member> members = ldesMemberMongoRepository.getMembersByReference("treeNodeId").toList();
+
+		verify(mongoTemplate, times(1)).find(query, LdesMemberEntity.class);
+
+	}
+
+	@Test
+	void when_GetMemberStreamOfCollection_StreamOfMembersOfCollectionIsReturned() {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(COLLECTION_NAME).is("collectionName"));
+		query.with(Sort.by(SEQUENCE_NR).ascending());
+
+		ldesMemberMongoRepository.getMemberStreamOfCollection("collectionName");
 
 		verify(mongoTemplate, times(1)).find(query, LdesMemberEntity.class);
 
