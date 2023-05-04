@@ -43,7 +43,7 @@ public class MongoAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MemberRepository ldesMemberMongoRepository(final LdesMemberEntityRepository ldesMemberEntityRepository,
-													  final MongoTemplate mongoTemplate) {
+			final MongoTemplate mongoTemplate) {
 		return new MemberMongoRepository(ldesMemberEntityRepository, mongoTemplate);
 	}
 
