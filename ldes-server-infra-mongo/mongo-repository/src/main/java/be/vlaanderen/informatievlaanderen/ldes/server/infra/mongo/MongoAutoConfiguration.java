@@ -1,11 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.EventStreamMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.LdesConfigMongoRepository;
@@ -63,6 +66,12 @@ public class MongoAutoConfiguration {
 	public SnapshotRepository snapshotMongoRepository(
 			final SnapshotEntityRepository snapshotEntityRepository) {
 		return new SnapshotMongoRepository(snapshotEntityRepository);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public EventStreamRepository eventStreamRepository(final EventStreamEntityRepository eventStreamEntityRepository) {
+		return new EventStreamMongoRepository(eventStreamEntityRepository);
 	}
 
 	@Bean
