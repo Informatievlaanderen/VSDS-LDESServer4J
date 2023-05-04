@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
@@ -10,6 +11,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.shacl.ShaclValidator;
 import org.apache.jena.shacl.Shapes;
 import org.apache.jena.shacl.ValidationReport;
+import org.springframework.context.event.EventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,36 +19,36 @@ import java.util.Map;
 public class ModelValidatorCollection {
 
     private final AppConfig appConfig;
-    private final ShaclCollection shaclCollection;
     private final Map<String, ModelValidator> validators = new HashMap<>();
 
-    public ModelValidatorCollection(AppConfig appConfig, ShaclCollection shaclCollection) {
+    public ModelValidatorCollection(AppConfig appConfig) {
         this.appConfig = appConfig;
-        this.shaclCollection = shaclCollection;
     }
 
     ModelValidator retrieveValidator(String collectionName) {
-        return validators.computeIfAbsent(collectionName, this::createValidator);
+        return validators.get(collectionName);
     }
 
-    private ModelValidator createValidator(String collectionName) {
+    @EventListener
+    public void handleShaclChangedEvent(ShaclChangedEvent event) {
+        final ShaclShape shacl = event.getShacl();
+        final String collectionName = shacl.getCollection();
         final LdesConfig.Validation validationConfig = appConfig.getLdesConfig(collectionName).validation();
 
-        return shaclCollection
-                .retrieveShape(collectionName)
-                .map(shaclShape -> from(shaclShape.getModel(), validationConfig))
-                .orElse(emptyValidator());
+        validators.compute(collectionName, (key, oldValue) -> from(shacl.getModel(), validationConfig));
     }
 
     private ModelValidator from(final Model shaclShape, LdesConfig.Validation validationConfig) {
-        if (validationConfig.isEnabled()) {
-            if (shaclShape != null) {
-                return shaclValidator(Shapes.parse(shaclShape));
-            }
+        if (!validationConfig.isEnabled()) {
+            return emptyValidator();
+        }
 
-            if (validationConfig.getShape() != null) {
-                return shaclValidator(Shapes.parse(RDFDataMgr.loadGraph(validationConfig.getShape())));
-            }
+        if (shaclShape != null) {
+            return shaclValidator(Shapes.parse(shaclShape));
+        }
+
+        if (validationConfig.getShape() != null) {
+            return shaclValidator(Shapes.parse(RDFDataMgr.loadGraph(validationConfig.getShape())));
         }
 
         return emptyValidator();

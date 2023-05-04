@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.DefaultMemberIngestValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
@@ -25,9 +24,9 @@ public class ValidationConfig {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public ModelValidatorCollection ingestValidatorCollection(AppConfig appConfig, ShaclCollection shaclCollection) {
+	public ModelValidatorCollection ingestValidatorCollection(AppConfig appConfig) {
 		log.info("Using default validator for ldes-server-port-ingest");
-		return new ModelValidatorCollection(appConfig, shaclCollection);
+		return new ModelValidatorCollection(appConfig);
 	}
 
 }
