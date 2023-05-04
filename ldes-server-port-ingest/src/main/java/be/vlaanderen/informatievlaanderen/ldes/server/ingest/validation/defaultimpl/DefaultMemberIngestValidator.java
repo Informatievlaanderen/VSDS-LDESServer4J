@@ -11,28 +11,28 @@ import java.util.Map;
 
 public class DefaultMemberIngestValidator implements MemberIngestValidator {
 
-    private final ModelIngestValidatorFactory validatorFactory;
-    private final Map<String, ModelIngestValidator> validators = new HashMap<>();
+	private final ModelIngestValidatorFactory validatorFactory;
+	private final Map<String, ModelIngestValidator> validators = new HashMap<>();
 
-    public DefaultMemberIngestValidator(ModelIngestValidatorFactory validatorFactory) {
-        this.validatorFactory = validatorFactory;
-    }
+	public DefaultMemberIngestValidator(ModelIngestValidatorFactory validatorFactory) {
+		this.validatorFactory = validatorFactory;
+	}
 
-    @EventListener
-    public void handleShaclChangedEvent(ShaclChangedEvent event) {
-        final ShaclShape shacl = event.getShacl();
-        final String collectionName = shacl.getCollection();
+	@EventListener
+	public void handleShaclChangedEvent(ShaclChangedEvent event) {
+		final ShaclShape shacl = event.getShacl();
+		final String collectionName = shacl.getCollection();
 
-        validators.compute(collectionName, (key, oldValue)
-                -> validatorFactory.createValidator(shacl.getModel(), collectionName));
-    }
+		validators.compute(collectionName,
+				(key, oldValue) -> validatorFactory.createValidator(shacl.getModel(), collectionName));
+	}
 
-    @Override
-    public void validate(Member member) {
-        var validator = validators.get(member.getCollectionName());
-        if (validator != null) {
-            validator.validate(member.getModel());
-        }
-    }
+	@Override
+	public void validate(Member member) {
+		var validator = validators.get(member.getCollectionName());
+		if (validator != null) {
+			validator.validate(member.getModel());
+		}
+	}
 
 }
