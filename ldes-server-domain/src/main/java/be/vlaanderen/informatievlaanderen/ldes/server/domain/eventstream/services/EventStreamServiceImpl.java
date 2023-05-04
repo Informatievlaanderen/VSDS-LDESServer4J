@@ -3,9 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class EventStreamServiceImpl implements EventStreamService {
 	private final EventStreamCollection eventStreamCollection;
 
