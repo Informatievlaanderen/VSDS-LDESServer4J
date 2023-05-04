@@ -1,8 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import jakarta.annotation.PostConstruct;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -11,11 +14,15 @@ import java.util.Set;
 
 @Component
 public class InMemoryShaclCollection implements ShaclCollection {
+
 	private final Set<ShaclShape> shapes;
 	private final ShaclShapeRepository shaclShapeRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
-	public InMemoryShaclCollection(ShaclShapeRepository shaclShapeRepository) {
+	public InMemoryShaclCollection(ShaclShapeRepository shaclShapeRepository,
+			ApplicationEventPublisher eventPublisher) {
 		this.shaclShapeRepository = shaclShapeRepository;
+		this.eventPublisher = eventPublisher;
 		this.shapes = new HashSet<>();
 	}
 
@@ -40,8 +47,14 @@ public class InMemoryShaclCollection implements ShaclCollection {
 				.findFirst();
 	}
 
-	@PostConstruct
-	private void initShapeConfig() {
-		shapes.addAll(shaclShapeRepository.retrieveAllShaclShapes());
+	@EventListener(ApplicationStartedEvent.class)
+	public void initShapeConfig() {
+		shaclShapeRepository
+				.retrieveAllShaclShapes()
+				.forEach(shaclShape -> {
+					shapes.add(shaclShape);
+					eventPublisher.publishEvent(new ShaclChangedEvent(shaclShape));
+				});
 	}
+
 }
