@@ -14,7 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class IngestionRestResponseEntityExceptionHandler
 		extends ResponseEntityExceptionHandler {
 
-	// TODO: 3/05/2023 add validation test
 	@ExceptionHandler(value = { MalformedMemberIdException.class, IngestValidationException.class })
 	protected ResponseEntity<Object> handleGeneralException(
 			RuntimeException ex, WebRequest request) {
