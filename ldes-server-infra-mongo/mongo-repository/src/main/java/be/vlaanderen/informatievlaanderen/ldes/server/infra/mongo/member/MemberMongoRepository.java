@@ -9,12 +9,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@Component
 public class MemberMongoRepository implements MemberRepository {
 
 	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";

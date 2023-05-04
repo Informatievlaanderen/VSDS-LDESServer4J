@@ -4,11 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.Vie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.ViewEntityConverter;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public class ViewMongoRepository implements ViewRepository {
 
 	private final ViewEntityRepository repository;

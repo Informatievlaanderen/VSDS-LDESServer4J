@@ -4,12 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.repository.ShaclShapeEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.service.ShaclShapeEntityConverter;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public class ShaclShapeMongoRepository implements ShaclShapeRepository {
 	private final ShaclShapeEntityRepository repository;
 	private final ShaclShapeEntityConverter converter = new ShaclShapeEntityConverter();
