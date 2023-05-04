@@ -4,8 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.Vie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import jakarta.annotation.PostConstruct;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -34,7 +35,7 @@ public class InMemoryViewCollection implements ViewCollection {
 		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
 	}
 
-	@PostConstruct
+	@EventListener(ApplicationStartedEvent.class)
 	private void initShapeConfig() {
 		viewRepository
 				.retrieveAllViews()

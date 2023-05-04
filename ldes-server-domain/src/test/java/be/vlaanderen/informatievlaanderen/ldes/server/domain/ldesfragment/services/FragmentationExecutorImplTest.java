@@ -4,17 +4,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -25,22 +22,21 @@ class FragmentationExecutorImplTest {
 
 	private static final String COLLECTION_NAME = "collectionName";
 	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, "view");
-	private final HashMap<ViewName, FragmentationStrategy> fragmentationMap = new HashMap<>();
 	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
+	private final FragmentationStrategyCollection fragmentationStrategyCollection = mock(
+			FragmentationStrategyCollection.class);
 	private FragmentationExecutorImpl fragmentationExecutor;
 
 	@BeforeEach
 	void setUp() {
-
-		fragmentationMap.put(VIEW_NAME, fragmentationStrategy);
-		fragmentationExecutor = new FragmentationExecutorImpl(fragmentationMap,
-				ldesFragmentRepository, ObservationRegistry.create(), fragmentationStrategyCreator);
+		fragmentationExecutor = new FragmentationExecutorImpl(
+				ldesFragmentRepository, ObservationRegistry.create(), fragmentationStrategyCollection);
 	}
 
 	@Test
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
+		when(fragmentationStrategyCollection.getFragmentationStrategyMap()).thenReturn(Map.of(VIEW_NAME,fragmentationStrategy));
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
 				List.of());
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.asString()))
@@ -75,6 +71,7 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
+		when(fragmentationStrategyCollection.getFragmentationStrategyMap()).thenReturn(Map.of(VIEW_NAME,fragmentationStrategy));
 		when(ldesFragmentRepository
 				.retrieveFragment(new LdesFragment(VIEW_NAME,
 						List.of()).getFragmentId()))
@@ -93,6 +90,7 @@ class FragmentationExecutorImplTest {
 
 	@Test
 	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
+		when(fragmentationStrategyCollection.getFragmentationStrategyMap()).thenReturn(Map.of(VIEW_NAME,fragmentationStrategy));
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
 				List.of());
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.asString()))
@@ -111,18 +109,6 @@ class FragmentationExecutorImplTest {
 				times(100)).addMemberToFragment(eq(ldesFragment),
 						any(), any());
 		inOrder.verifyNoMoreInteractions();
-	}
-
-	@Test
-	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
-		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
-				List.of(), List.of());
-
-		assertFalse(fragmentationMap.containsKey(viewSpecification.getName()));
-		fragmentationExecutor.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
-
-		assertTrue(fragmentationMap.containsKey(viewSpecification.getName()));
-		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
 	}
 
 }
