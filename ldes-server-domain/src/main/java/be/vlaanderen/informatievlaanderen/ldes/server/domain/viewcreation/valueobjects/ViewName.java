@@ -29,6 +29,7 @@ public class ViewName {
 	public String getCollectionName() {
 		return collectionName;
 	}
+
 	public String getViewName() {
 		return name;
 	}
