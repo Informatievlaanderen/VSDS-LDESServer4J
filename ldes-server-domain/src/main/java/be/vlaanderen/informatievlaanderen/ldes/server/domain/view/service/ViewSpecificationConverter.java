@@ -21,6 +21,10 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class ViewSpecificationConverter {
 
+	public static final String FRAGMENTATION_NAME = "name";
+	public static final String RETENTION_NAME = "name";
+	public static final String SERVER_PREFIX = "http://server.org/";
+
 	private ViewSpecificationConverter() {
 	}
 
@@ -39,7 +43,8 @@ public class ViewSpecificationConverter {
 	public static Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		String viewName = view.getName().getViewName();
-		Statement viewDescription = createStatement(createResource(viewName), createProperty(TREE_VIEW_DESCRIPTION),
+		Statement viewDescription = createStatement(createResource(SERVER_PREFIX + viewName),
+				createProperty(TREE_VIEW_DESCRIPTION),
 				createResource());
 		model.add(viewDescription);
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
@@ -51,7 +56,7 @@ public class ViewSpecificationConverter {
 	private static ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {
 		String nameString = statements.stream()
 				.filter(statement -> statement.getPredicate().toString().equals(TREE_VIEW_DESCRIPTION))
-				.map(statement -> statement.getSubject().toString()).findFirst()
+				.map(statement -> statement.getSubject().getLocalName()).findFirst()
 				.orElseThrow(() -> new ModelToViewConverterException("Missing type: " + TREE_VIEW_DESCRIPTION));
 
 		return new ViewName(collectionName, nameString);
@@ -64,8 +69,13 @@ public class ViewSpecificationConverter {
 				.map(Statement::getSubject).toList()) {
 			List<Statement> retentionStatements = retrieveAllStatements(retention, statements);
 			RetentionConfig config = new RetentionConfig();
-			config.setName(retention.toString());
-			config.setConfig(extractConfigMap(retentionStatements));
+			Map<String, String> configMap = extractConfigMap(retentionStatements);
+			// TODO verify Retention name corresponds with a valid policy
+			if (!configMap.containsKey(RETENTION_NAME)) {
+				throw new ModelToViewConverterException("Missing retention name");
+			}
+			config.setName(configMap.remove(RETENTION_NAME));
+			config.setConfig(configMap);
 			retentionList.add(config);
 		}
 		return retentionList;
@@ -78,7 +88,9 @@ public class ViewSpecificationConverter {
 			statements.add(createStatement(
 					retentionResource, RDF_SYNTAX_TYPE, createResource(RETENTION_TYPE)));
 			retention.getConfig().forEach((key, value) -> statements.add(createStatement(
-					retentionResource, createProperty(key), createPlainLiteral(value))));
+					retentionResource, createProperty(CUSTOM + key), createPlainLiteral(value))));
+			statements.add(createStatement(retentionResource, createProperty(CUSTOM + FRAGMENTATION_NAME),
+					createPlainLiteral(retention.getName())));
 			statements.add(createStatement(viewName, createProperty(RETENTION_TYPE), retentionResource));
 		}
 		return statements;
@@ -91,8 +103,13 @@ public class ViewSpecificationConverter {
 				.map(Statement::getSubject).toList()) {
 			List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
 			FragmentationConfig config = new FragmentationConfig();
-			config.setName(fragmentation.toString());
-			config.setConfig(extractConfigMap(fragmentationStatements));
+			Map<String, String> configMap = extractConfigMap(fragmentationStatements);
+			// TODO verify Fragmentation name corresponds with a valid strategy
+			if (!configMap.containsKey(FRAGMENTATION_NAME)) {
+				throw new ModelToViewConverterException("Missing fragmentation name");
+			}
+			config.setName(configMap.remove(FRAGMENTATION_NAME));
+			config.setConfig(configMap);
 			fragmentationList.add(config);
 		}
 
@@ -107,7 +124,9 @@ public class ViewSpecificationConverter {
 			statements.add(createStatement(
 					fragmentationResource, RDF_SYNTAX_TYPE, createResource(FRAGMENTATION_TYPE)));
 			fragmentation.getConfig().forEach((key, value) -> statements.add(createStatement(
-					fragmentationResource, createProperty(key), createPlainLiteral(value))));
+					fragmentationResource, createProperty(CUSTOM + key), createPlainLiteral(value))));
+			statements.add(createStatement(fragmentationResource, createProperty(CUSTOM + FRAGMENTATION_NAME),
+					createPlainLiteral(fragmentation.getName())));
 			statements.add(createStatement(viewName, createProperty(FRAGMENTATION_OBJECT), fragmentationResource));
 		}
 		return statements;
@@ -131,7 +150,7 @@ public class ViewSpecificationConverter {
 		statementList.stream()
 				.filter(statement -> !statement.getPredicate().toString().equals(RDF_SYNTAX_TYPE.toString()))
 				.forEach(statement -> configMap.put(
-						statement.getPredicate().toString(),
+						statement.getPredicate().getLocalName(),
 						statement.getObject().asLiteral().getString()));
 		return configMap;
 	}
