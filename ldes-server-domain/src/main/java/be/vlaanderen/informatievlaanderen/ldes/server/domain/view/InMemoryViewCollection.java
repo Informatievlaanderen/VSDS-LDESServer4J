@@ -45,7 +45,7 @@ public class InMemoryViewCollection implements ViewCollection {
 	}
 
 	@EventListener(ApplicationStartedEvent.class)
-	private void initShapeConfig() {
+	public void initShapeConfig() {
 		viewRepository
 				.retrieveAllViews()
 				.forEach(viewSpecification -> {

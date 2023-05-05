@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -31,13 +32,14 @@ public class InMemoryShaclCollection implements ShaclCollection {
 		shaclShapeRepository.saveShaclShape(shaclShape);
 		shapes.remove(shaclShape);
 		shapes.add(shaclShape);
-
+		eventPublisher.publishEvent(new ShaclChangedEvent(shaclShape));
 	}
 
 	@Override
 	public void deleteShape(String collectionName) {
 		shaclShapeRepository.deleteShaclShape(collectionName);
 		shapes.removeIf(shaclShape -> shaclShape.getCollection().equals(collectionName));
+		eventPublisher.publishEvent(new ShaclDeletedEvent(collectionName));
 	}
 
 	@Override
