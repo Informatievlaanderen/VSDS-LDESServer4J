@@ -17,63 +17,63 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ModelIngestValidatorFactoryTest {
 
-    private static final String COLLECTION_NAME = "collectionName";
+	private static final String COLLECTION_NAME = "collectionName";
 
-    private ModelIngestValidatorFactory factory;
-    private LdesConfig.Validation validation;
+	private ModelIngestValidatorFactory factory;
+	private LdesConfig.Validation validation;
 
-    @BeforeEach
-    void setUp() {
-        validation  = new LdesConfig.Validation();
-        final LdesConfig ldesConfig = new LdesConfig();
-        ldesConfig.setValidation(validation);
-        ldesConfig.setCollectionName(COLLECTION_NAME);
-        final AppConfig appConfig = new AppConfig();
-        appConfig.setCollections(List.of(ldesConfig));
-        factory = new ModelIngestValidatorFactory(appConfig);
-    }
+	@BeforeEach
+	void setUp() {
+		validation = new LdesConfig.Validation();
+		final LdesConfig ldesConfig = new LdesConfig();
+		ldesConfig.setValidation(validation);
+		ldesConfig.setCollectionName(COLLECTION_NAME);
+		final AppConfig appConfig = new AppConfig();
+		appConfig.setCollections(List.of(ldesConfig));
+		factory = new ModelIngestValidatorFactory(appConfig);
+	}
 
-    @Nested
-    class CreateValidator {
-        @Test
-        void shouldReturnEmpty_whenValidationIsDisabled() {
-            validation.setShape("validation/example-shape.ttl");
-            validation.setEnabled(false);
+	@Nested
+	class CreateValidator {
+		@Test
+		void shouldReturnEmpty_whenValidationIsDisabled() {
+			validation.setShape("validation/example-shape.ttl");
+			validation.setEnabled(false);
 
-            ModelIngestValidator validator = factory.createValidator(null, COLLECTION_NAME);
+			ModelIngestValidator validator = factory.createValidator(null, COLLECTION_NAME);
 
-            assertDoesNotThrow(() -> validator.validate(ModelFactory.createDefaultModel()));
-        }
+			assertDoesNotThrow(() -> validator.validate(ModelFactory.createDefaultModel()));
+		}
 
-        @Test
-        void shouldReturnValidatorFromProvidedShape_whenNotNull() {
-            validation.setShape(null);
-            Model shape = RDFParser.source("validation/example-shape.ttl").build().toModel();
+		@Test
+		void shouldReturnValidatorFromProvidedShape_whenNotNull() {
+			validation.setShape(null);
+			Model shape = RDFParser.source("validation/example-shape.ttl").build().toModel();
 
-            ModelIngestValidator validator = factory.createValidator(shape, COLLECTION_NAME);
+			ModelIngestValidator validator = factory.createValidator(shape, COLLECTION_NAME);
 
-            Model invalidModel = RDFParser.source("validation/example-data-invalid.ttl").build().toModel();
-            assertThrows(IngestValidationException.class, () -> validator.validate(invalidModel));
-        }
+			Model invalidModel = RDFParser.source("validation/example-data-invalid.ttl").build().toModel();
+			assertThrows(IngestValidationException.class, () -> validator.validate(invalidModel));
+		}
 
-        @Test
-        void shouldReturnValidatorFromConfig_whenProvidedShapeNullAndConfigNotNull() {
-            validation.setShape("validation/example-shape.ttl");
+		@Test
+		void shouldReturnValidatorFromConfig_whenProvidedShapeNullAndConfigNotNull() {
+			validation.setShape("validation/example-shape.ttl");
 
-            ModelIngestValidator validator = factory.createValidator(null, COLLECTION_NAME);
+			ModelIngestValidator validator = factory.createValidator(null, COLLECTION_NAME);
 
-            Model invalidModel = RDFParser.source("validation/example-data-invalid.ttl").build().toModel();
-            assertThrows(IngestValidationException.class, () -> validator.validate(invalidModel));
-        }
+			Model invalidModel = RDFParser.source("validation/example-data-invalid.ttl").build().toModel();
+			assertThrows(IngestValidationException.class, () -> validator.validate(invalidModel));
+		}
 
-        @Test
-        void shouldReturnEmptyValidator_whenNoValidationShapePresent() {
-            validation.setEnabled(true);
+		@Test
+		void shouldReturnEmptyValidator_whenNoValidationShapePresent() {
+			validation.setEnabled(true);
 
-            ModelIngestValidator validator = factory.createValidator(null, COLLECTION_NAME);
+			ModelIngestValidator validator = factory.createValidator(null, COLLECTION_NAME);
 
-            assertDoesNotThrow(() -> validator.validate(ModelFactory.createDefaultModel()));
-        }
-    }
+			assertDoesNotThrow(() -> validator.validate(ModelFactory.createDefaultModel()));
+		}
+	}
 
 }

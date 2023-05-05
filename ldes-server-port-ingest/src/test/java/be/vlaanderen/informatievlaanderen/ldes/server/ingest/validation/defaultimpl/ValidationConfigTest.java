@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ValidationConfigTest {
 
-    @Test
-    void test_configCanLoad() {
-        ValidationConfig validationConfig = new ValidationConfig();
-        var factory = assertDoesNotThrow(() -> validationConfig.modelIngestValidatorFactory(new AppConfig()));
-        assertDoesNotThrow(() -> validationConfig.ingestValidatorCollection(factory));
-    }
+	@Test
+	void test_configCanLoad() {
+		ValidationConfig validationConfig = new ValidationConfig();
+		var factory = assertDoesNotThrow(() -> validationConfig.modelIngestValidatorFactory(new AppConfig()));
+		assertDoesNotThrow(() -> validationConfig.ingestValidatorCollection(factory));
+	}
 
 }

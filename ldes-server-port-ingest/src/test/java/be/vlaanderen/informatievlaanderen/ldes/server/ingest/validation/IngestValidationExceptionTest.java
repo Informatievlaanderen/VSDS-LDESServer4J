@@ -6,9 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class IngestValidationExceptionTest {
 
-    @Test
-    void testMessageIsCorrect() {
-        assertEquals("Validation failed: \n\nmsg", new IngestValidationException("msg").getMessage());
-    }
+	@Test
+	void testMessageIsCorrect() {
+		assertEquals("Validation failed: \n\nmsg", new IngestValidationException("msg").getMessage());
+	}
 
 }

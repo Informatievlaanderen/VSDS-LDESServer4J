@@ -13,24 +13,24 @@ import static org.mockito.Mockito.when;
 
 class DefaultMemberIngestValidatorTest {
 
-    private DefaultMemberIngestValidator validator;
+	private DefaultMemberIngestValidator validator;
 
-    private ModelIngestValidatorFactory factory;
+	private ModelIngestValidatorFactory factory;
 
-    @BeforeEach
-    void setUp() {
-        factory = mock(ModelIngestValidatorFactory.class);
-        validator = new DefaultMemberIngestValidator(factory);
-    }
+	@BeforeEach
+	void setUp() {
+		factory = mock(ModelIngestValidatorFactory.class);
+		validator = new DefaultMemberIngestValidator(factory);
+	}
 
-    @Test
-    void validationShouldNotFail_whenThereAreNoValidators() {
-        Member member = createBasicMember();
+	@Test
+	void validationShouldNotFail_whenThereAreNoValidators() {
+		Member member = createBasicMember();
 
-        assertDoesNotThrow(() -> validator.validate(member));
-    }
+		assertDoesNotThrow(() -> validator.validate(member));
+	}
 
-    @Test
+	@Test
     void validationShouldThrowException_whenMemberIsInvalid() {
         when(factory.createValidator(null, "myCollection")).thenReturn(model -> {
             throw new IngestValidationException("invalid");
@@ -41,7 +41,7 @@ class DefaultMemberIngestValidatorTest {
         assertThrows(IngestValidationException.class, () -> validator.validate(member));
     }
 
-    @Test
+	@Test
     void validatorShouldBeOverWritten_onChangedEvent() {
         when(factory.createValidator(null, "myCollection"))
                 .thenReturn(model -> {throw new IngestValidationException("invalid");})
@@ -53,8 +53,8 @@ class DefaultMemberIngestValidatorTest {
         assertDoesNotThrow(() -> validator.validate(member));
     }
 
-    private Member createBasicMember() {
-        return new Member("id", "myCollection", 0L, null);
-    }
+	private Member createBasicMember() {
+		return new Member("id", "myCollection", 0L, null);
+	}
 
 }
