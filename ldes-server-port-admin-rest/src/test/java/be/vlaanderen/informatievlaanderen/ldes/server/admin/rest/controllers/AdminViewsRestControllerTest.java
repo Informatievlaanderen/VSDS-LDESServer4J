@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,6 +30,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -53,15 +53,33 @@ class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
 	@MockBean
-	@Qualifier("viewShaclValidator")
-	private LdesConfigShaclValidator ldesConfigShaclValidator;
+	private ViewValidator validator;
 	@Autowired
 	private MockMvc mockMvc;
 
 	@BeforeEach
     void setUp() {
-        when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
+        when(validator.supports(any())).thenReturn(true);
     }
+
+	@Test
+	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
+		String collectionName = "name1";
+		Model expectedViewModel1 = readModelFromFile("view-1.ttl");
+		ViewSpecification view1 = viewFromModel(expectedViewModel1, collectionName);
+		Model expectedViewModel2 = readModelFromFile("view-2.ttl");
+		ViewSpecification view2 = viewFromModel(expectedViewModel2, collectionName);
+		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of(view1, view2));
+
+		ResultActions resultActions = mockMvc
+				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views"))
+				.andDo(print())
+				.andExpect(status().isOk());
+		MvcResult result = resultActions.andReturn();
+		String s = result.getResponse().getContentAsString();
+		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
+		Assertions.assertTrue(actualModel.isIsomorphicWith(expectedViewModel1.add(expectedViewModel2)));
+	}
 
 	@Test
 	void when_StreamAndViewArePresent_Then_ViewIsReturned() throws Exception {
@@ -123,7 +141,7 @@ class AdminViewsRestControllerTest {
 				.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print());
-		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
+		verify(validator, times(1)).validate(any(), any());
 	}
 
 	private String readDataFromFile(String fileName, Lang rdfFormat)

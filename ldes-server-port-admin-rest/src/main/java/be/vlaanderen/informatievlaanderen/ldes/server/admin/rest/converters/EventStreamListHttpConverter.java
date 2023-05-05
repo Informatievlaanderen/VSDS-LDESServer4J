@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -9,16 +10,17 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.GenericHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class EventStreamListHttpConverter implements HttpMessageConverter<List<EventStreamResponse>> {
+public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamResponse>> {
 	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
 
 	@Override
@@ -27,8 +29,20 @@ public class EventStreamListHttpConverter implements HttpMessageConverter<List<E
 	}
 
 	@Override
+	public boolean canRead(Type type, Class<?> contextClass, MediaType mediaType) {
+		return false;
+	}
+
+	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
 		return List.class.isAssignableFrom(clazz);
+	}
+
+	@Override
+	public boolean canWrite(Type type, Class<?> clazz, MediaType mediaType) {
+		TypeToken<List<EventStreamResponse>> expectedType = new TypeToken<>() {
+		};
+		return canWrite(clazz, mediaType) && expectedType.isSupertypeOf(type);
 	}
 
 	@Override
@@ -39,6 +53,12 @@ public class EventStreamListHttpConverter implements HttpMessageConverter<List<E
 	@Override
 	public List<EventStreamResponse> read(Class<? extends List<EventStreamResponse>> clazz,
 			HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
+	}
+
+	@Override
+	public List<EventStreamResponse> read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
+			throws IOException, HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
 	}
 
@@ -55,5 +75,11 @@ public class EventStreamListHttpConverter implements HttpMessageConverter<List<E
 		RDFDataMgr.write(outputStream, model, Lang.TURTLE);
 
 		outputMessage.getBody().write(outputStream.toString().getBytes(StandardCharsets.UTF_8));
+	}
+
+	@Override
+	public void write(List<EventStreamResponse> eventStreamResponses, Type type, MediaType contentType,
+			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+		write(eventStreamResponses, contentType, outputMessage);
 	}
 }

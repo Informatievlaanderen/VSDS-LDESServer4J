@@ -1,0 +1,12 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix example: <http://example.org/> .
+@prefix server: <http://server.org/> .
+
+ldes:view2
+    tree:viewDescription [
+        ldes:retentionPolicy [
+            a ldes:retentionPolicy ;
+            example:duration "20" ;
+        ] ;
+    ] .
