@@ -6,10 +6,12 @@
 server:viewName tree:viewDescription [
     ldes:retentionPolicy [
         a ldes:retentionPolicy ;
+        example:name "retention" ;
         example:duration "10" ;
     ] ;
     example:fragmentationStrategy [
         a example:Fragmentation ;
+        example:name "fragmentation" ;
         example:pageSize "100" ;
         example:property "example/property" ;
     ] ;

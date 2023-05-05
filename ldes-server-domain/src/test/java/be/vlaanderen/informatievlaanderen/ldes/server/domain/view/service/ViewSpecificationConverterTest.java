@@ -17,23 +17,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.constants.ViewSpecificationConverterConstants.VIEW_TYPE_OBJECT;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ViewSpecificationConverterTest {
 	private static final String COLLECTION_NAME = "collection";
-	private static final String VIEW_NAME = "http://server.org/viewName";
+	private static final String VIEW_NAME = "viewName";
 	private ViewSpecification view;
 
 	@BeforeEach
 	void setup() {
 		RetentionConfig retentionConfig = new RetentionConfig();
 		retentionConfig.setName("retention");
-		retentionConfig.setConfig(Map.of("http://example.org/duration", "10"));
+		retentionConfig.setConfig(Map.of("duration", "10"));
 		List<RetentionConfig> retentions = List.of(retentionConfig);
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("fragmentation");
 		fragmentationConfig.setConfig(
-				Map.of("http://example.org/pageSize", "100", "http://example.org/property", "example/property"));
+				Map.of("pageSize", "100", "property", "example/property"));
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
 		view = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), retentions, fragmentations);
 	}
@@ -52,9 +53,27 @@ class ViewSpecificationConverterTest {
 	@Test
 	void when_MissingViewType_Then_ThrowException() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_without_type.ttl");
-		assertThrows(ModelToViewConverterException.class,
-				() -> ViewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME),
-				"Could not toModel model to ViewSpecification:\nMissing type: ");
+		Exception exception = assertThrows(ModelToViewConverterException.class,
+				() -> ViewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME));
+		assertEquals("Could not convert model to ViewSpecification:\nMissing type: " + VIEW_TYPE_OBJECT,
+				exception.getMessage());
+	}
+
+	@Test
+	void when_MissingFragmentationName_Then_ThrowException() throws URISyntaxException {
+		Model viewModel = readModelFromFile("viewconverter/view_missing_fragmentation_name.ttl");
+		Exception exception = assertThrows(ModelToViewConverterException.class,
+				() -> ViewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME));
+		assertEquals("Could not convert model to ViewSpecification:\nMissing fragmentation name",
+				exception.getMessage());
+	}
+
+	@Test
+	void when_MissingRetentionName_Then_ThrowException() throws URISyntaxException {
+		Model viewModel = readModelFromFile("viewconverter/view_missing_retention_name.ttl");
+		Exception exception = assertThrows(ModelToViewConverterException.class,
+				() -> ViewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME));
+		assertEquals("Could not convert model to ViewSpecification:\nMissing retention name", exception.getMessage());
 	}
 
 	@Test
