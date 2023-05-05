@@ -18,6 +18,7 @@ public class DefaultMemberIngestValidator implements MemberIngestValidator {
 		this.validatorFactory = validatorFactory;
 	}
 
+	// TODO: 5/05/2023 add testing
 	@EventListener
 	public void handleShaclChangedEvent(ShaclChangedEvent event) {
 		final ShaclShape shacl = event.getShacl();
