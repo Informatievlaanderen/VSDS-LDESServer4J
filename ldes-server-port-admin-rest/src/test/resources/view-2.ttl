@@ -3,10 +3,11 @@
 @prefix example: <http://example.org/> .
 @prefix server: <http://server.org/> .
 
-ldes:view2
+server:view2
     tree:viewDescription [
         ldes:retentionPolicy [
             a ldes:retentionPolicy ;
+            example:name "timebased";
             example:duration "20" ;
         ] ;
     ] .

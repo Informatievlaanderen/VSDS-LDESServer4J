@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWeb
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -12,7 +13,6 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -33,6 +33,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -69,7 +70,6 @@ class AdminViewsRestControllerTest {
 				.andDo(print())
 				.andExpect(status().isOk());
 		MvcResult result = resultActions.andReturn();
-		String s = result.getResponse().getContentAsString();
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
 		Assertions.assertTrue(actualModel.isIsomorphicWith(expectedViewModel1.add(expectedViewModel2)));
 	}
@@ -91,19 +91,17 @@ class AdminViewsRestControllerTest {
 	}
 
 	@Test
-	@Disabled
-	// TODO create a MissingViewException, similar to MissingShaclShapeException and
-	// MissingEventStreamException
 	void when_ViewNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		// when(viewService.getViewByViewName(new ViewName(collectionName, viewName)))
-		// .thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
-		ResultActions resultActions = mockMvc
+		when(viewService.getViewByViewName(new ViewName(collectionName, viewName)))
+				.thenThrow(new MissingViewException(new ViewName(collectionName, viewName)));
+		MvcResult mvcResult = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
 				.andDo(print())
-				.andExpect(status().isNotFound());
+				.andExpect(status().isNotFound()).andReturn();
+
+		assertEquals("Collection name1 does not have a view: view1", mvcResult.getResponse().getContentAsString());
 	}
 
 	@Test
@@ -111,7 +109,8 @@ class AdminViewsRestControllerTest {
 		String collectionName = "name1";
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
 		ViewSpecification view = viewFromModel(expectedViewModel, collectionName);
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
@@ -120,20 +119,10 @@ class AdminViewsRestControllerTest {
 	}
 
 	@Test
-	@Disabled
-	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
-		String collectionName = "name1";
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-				.content(readDataFromFile("view-without-type.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print())
-				.andExpect(status().isBadRequest());
-	}
-
-	@Test
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		String collectionName = "name1";
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print());

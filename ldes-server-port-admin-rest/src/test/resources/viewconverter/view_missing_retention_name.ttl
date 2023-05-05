@@ -6,8 +6,7 @@
 server:viewName tree:viewDescription [
     ldes:retentionPolicy [
         a ldes:retentionPolicy ;
-        example:name "retention" ;
-        example:duration "10" ;
+        ldes:duration "10" ;
     ] ;
     example:fragmentationStrategy [
         a example:Fragmentation ;

@@ -3,12 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -24,10 +25,9 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	// fragmentationStrategyMap should no longer be injected.
 	// But start from an empty Map and be filled via ViewAddedEvents.
 	public FragmentationStrategyCollectionImpl(
-			@Qualifier("configured-fragmentation") Map<ViewName, FragmentationStrategy> fragmentationStrategyMap,
 			RootFragmentCreator rootFragmentCreator, FragmentationStrategyCreator fragmentationStrategyCreator,
 			RefragmentationService refragmentationService, LdesFragmentRemover ldesFragmentRemover) {
-		this.fragmentationStrategyMap = fragmentationStrategyMap;
+		this.fragmentationStrategyMap = new HashMap<>();
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.refragmentationService = refragmentationService;
@@ -44,6 +44,14 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		FragmentationStrategy fragmentationStrategyForView = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(event.getViewSpecification());
 		refragmentationService.refragmentMembersForView(rootFragmentForView, fragmentationStrategyForView);
+		fragmentationStrategyMap.put(event.getViewName(),
+				fragmentationStrategyForView);
+	}
+
+	@EventListener
+	public void handleViewInitializationEvent(ViewInitializationEvent event) {
+		FragmentationStrategy fragmentationStrategyForView = fragmentationStrategyCreator
+				.createFragmentationStrategyForView(event.getViewSpecification());
 		fragmentationStrategyMap.put(event.getViewName(),
 				fragmentationStrategyForView);
 	}

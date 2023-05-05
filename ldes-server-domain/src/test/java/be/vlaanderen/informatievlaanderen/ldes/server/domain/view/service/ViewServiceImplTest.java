@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.Dupl
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.Nested;
@@ -47,7 +48,7 @@ class ViewServiceImplTest {
 
             DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class, () -> viewService.addView(view));
 
-            assertEquals("Collection collection already has a view: collection/view", duplicateViewException.getMessage());
+            assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
             InOrder inOrder = inOrder(viewRepository, eventPublisher);
             inOrder.verify(viewRepository).getViewByViewName(view.getName());
             inOrder.verifyNoMoreInteractions();
@@ -84,7 +85,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).retrieveAllViews();
-			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewAddedEvent.class));
+			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewInitializationEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}

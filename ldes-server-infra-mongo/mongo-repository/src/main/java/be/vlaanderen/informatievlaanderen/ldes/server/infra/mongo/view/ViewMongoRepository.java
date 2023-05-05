@@ -43,4 +43,12 @@ public class ViewMongoRepository implements ViewRepository {
 				.findById(viewName.asString())
 				.map(converter::toView);
 	}
+
+	@Override
+	public List<ViewSpecification> retrieveAllViewsOfCollection(String collectionName) {
+		return retrieveAllViews()
+				.stream()
+				.filter(viewSpecification -> viewSpecification.getName().getCollectionName().equals(collectionName))
+				.toList();
+	}
 }
