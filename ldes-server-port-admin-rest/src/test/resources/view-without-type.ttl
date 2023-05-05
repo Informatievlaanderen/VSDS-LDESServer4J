@@ -1,9 +1,12 @@
 @prefix ldes: <https://w3id.org/ldes#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix tree: <https://w3id.org/tree#>.
-@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix example: <http://example.org/> .
+@prefix server: <http://server.org/> .
 
 ldes:view1
     tree:viewDescription [
-        ldes:retentionPolicy "none"
+        ldes:retentionPolicy [
+                    a ldes:retentionPolicy ;
+                    example:duration "10" ;
+                ] ;
     ] .
