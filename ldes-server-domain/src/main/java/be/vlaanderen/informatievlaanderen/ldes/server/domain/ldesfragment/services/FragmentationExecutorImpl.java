@@ -4,14 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -20,21 +15,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class FragmentationExecutorImpl implements FragmentationExecutor {
 
-	private final Map<ViewName, FragmentationStrategy> fragmentationStrategyMap;
 	private final Map<ViewName, LdesFragment> rootFragmentMap;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final ObservationRegistry observationRegistry;
-	private final FragmentationStrategyCreator fragmentationStrategyCreator;
+	private final FragmentationStrategyCollection fragmentationStrategyCollection;
 
-	// TODO when the definiton of views in config is going to be deprecated, the
-	// fragmentationStrategyMap should no longer be injected.
-	// But start from an empty Map and be filled via ViewAddedEvents.
 	public FragmentationExecutorImpl(
-			@Qualifier("configured-fragmentation") Map<ViewName, FragmentationStrategy> fragmentationStrategyMap,
 			LdesFragmentRepository ldesFragmentRepository, ObservationRegistry observationRegistry,
-			FragmentationStrategyCreator fragmentationStrategyCreator) {
-		this.fragmentationStrategyMap = fragmentationStrategyMap;
-		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
+			FragmentationStrategyCollection fragmentationStrategyCollection) {
+		this.fragmentationStrategyCollection = fragmentationStrategyCollection;
 		this.rootFragmentMap = new ConcurrentHashMap<>();
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.observationRegistry = observationRegistry;
@@ -46,7 +35,8 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 				observationRegistry)
 				.start();
 
-		fragmentationStrategyMap
+		fragmentationStrategyCollection
+				.getFragmentationStrategyMap()
 				.entrySet()
 				.parallelStream()
 				.filter(entry -> entry.getKey().getCollectionName().equals(member.getCollectionName()))
@@ -69,18 +59,5 @@ public class FragmentationExecutorImpl implements FragmentationExecutor {
 
 		rootRetrievalObservation.stop();
 		return ldesFragment;
-	}
-
-	@EventListener
-	public void handleViewAddedEvent(ViewAddedEvent event) {
-		// TODO create root fragment and refragment all earlier members of collection
-		fragmentationStrategyMap.put(event.getViewName(),
-				fragmentationStrategyCreator.createFragmentationStrategyForView(event.getViewSpecification()));
-	}
-
-	@EventListener
-	public void handleViewDeletedEvent(ViewDeletedEvent event) {
-		// TODO delete all ldesfragments of view
-		fragmentationStrategyMap.remove(event.getViewName());
 	}
 }
