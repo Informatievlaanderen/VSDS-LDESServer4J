@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.constants.ViewSpecificationConverterConstants.VIEW_TYPE_OBJECT;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ViewSpecificationConverterTest {
