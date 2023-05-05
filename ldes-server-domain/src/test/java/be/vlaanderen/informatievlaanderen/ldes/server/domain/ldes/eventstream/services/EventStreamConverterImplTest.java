@@ -32,7 +32,7 @@ class EventStreamConverterImplTest {
 	void setUp() {
 		AppConfig appConfig = new AppConfig();
 		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("http://localhost:8080");
+		appConfig.setHostName("http://localhost:8080");
 		ldesConfig.setCollectionName("mobility-hindrances");
 		ldesConfig.validation()
 				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");

@@ -7,14 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @deprecated This will be replaced by the admin api, so that a server can be configured at runtime.
- * Hostname will probably be moved to the parent config class named AppConfig
- * MemberType will be deleted and another strategy will be used to extract the member id
+ * @deprecated This will be replaced by the admin api, so that a server can be
+ *             configured at runtime.
+ *             MemberType will be deleted and another strategy will be used to
+ *             extract the member id
  */
 @Deprecated(forRemoval = true)
 public class LdesConfig {
-
-	private String hostName;
 	private String collectionName;
 	private String memberType;
 	private String timestampPath;
@@ -22,14 +21,6 @@ public class LdesConfig {
 	private Validation validation = new Validation();
 	private Model dcat = ModelFactory.createDefaultModel();
 	private ViewConfig viewConfig = ViewConfig.empty();
-
-	public String getHostName() {
-		return hostName;
-	}
-
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
-	}
 
 	public String getCollectionName() {
 		return collectionName;
@@ -118,9 +109,4 @@ public class LdesConfig {
 	public Optional<ViewSpecification> getDefaultView() {
 		return viewConfig.getDefaultPaginationView(collectionName);
 	}
-
-	public String getBaseUrl() {
-		return hostName + "/" + collectionName;
-	}
-
 }

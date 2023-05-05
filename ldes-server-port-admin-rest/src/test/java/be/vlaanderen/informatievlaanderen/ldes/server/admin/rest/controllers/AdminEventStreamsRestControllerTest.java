@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminWebConfig.class,
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminWebConfig.class, AppConfig.class,
 		AdminRestResponseEntityExceptionHandler.class })
 class AdminEventStreamsRestControllerTest {
 	@MockBean

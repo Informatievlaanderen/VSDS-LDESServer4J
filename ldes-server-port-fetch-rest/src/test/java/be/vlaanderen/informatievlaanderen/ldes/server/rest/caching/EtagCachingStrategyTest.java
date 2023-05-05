@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -32,7 +31,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private String testGeneration(String hostname, String collection, List<TreeNode> views, String expectedEtag) {
-		setupCachingStrategy(hostname, collection);
+		setupCachingStrategy(hostname);
 		EventStream eventStream = new EventStream(collection, "", "", "", views);
 		String etag = cachingStrategy.generateCacheIdentifier(eventStream);
 
@@ -41,13 +40,9 @@ class EtagCachingStrategyTest {
 		return etag;
 	}
 
-	private void setupCachingStrategy(String hostname, String collection) {
+	private void setupCachingStrategy(String hostname) {
 		AppConfig appConfig = new AppConfig();
-		LdesConfig ldesConfig = new LdesConfig();
-		appConfig.setCollections(List.of(ldesConfig));
-		ldesConfig.setHostName(hostname);
-		ldesConfig.setCollectionName(collection);
-
+		appConfig.setHostName(hostname);
 		cachingStrategy = new EtagCachingStrategy(appConfig);
 	}
 }

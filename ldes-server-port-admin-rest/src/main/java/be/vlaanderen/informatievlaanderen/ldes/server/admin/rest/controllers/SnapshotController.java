@@ -17,17 +17,13 @@ public class SnapshotController {
 
 	private final SnapshotService snapshotService;
 
-	private final AppConfig appConfig;
-
-	public SnapshotController(SnapshotService snapshotService, AppConfig appConfig) {
+	public SnapshotController(SnapshotService snapshotService) {
 		this.snapshotService = snapshotService;
-		this.appConfig = appConfig;
 	}
 
 	@PostMapping("{collection}/snapshots")
 	@Operation(summary = "Creation of Snapshot")
 	public void createSnapshot(@PathVariable("collection") String collectionName) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
-		snapshotService.createSnapshot(ldesConfig);
+		snapshotService.createSnapshot(collectionName);
 	}
 }

@@ -1,3 +1,4 @@
+hostname: "http://localhost:8080"
 collections:
   - hostname: "http://localhost:8080"
     collectionname: "mobility-hindrances"

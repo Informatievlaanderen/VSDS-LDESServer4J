@@ -49,7 +49,6 @@ class RetentionPolicyConfigTest {
 
 	private LdesConfig getFirstLdesSpecification(String policyName) {
 		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("http://localhost:8080");
 		ldesConfig.setCollectionName("parcels");
 		ldesConfig.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
 		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");

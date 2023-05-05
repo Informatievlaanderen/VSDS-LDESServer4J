@@ -31,7 +31,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
 		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection());
 
 		Model model = ModelFactory.createDefaultModel();
-		String hostName = ldesConfig.getHostName();
+		String hostName = appConfig.getHostName();
 		model.add(addCollectionStatements(eventStream, hostName));
 		model.add(addViewStatements(eventStream.views(), hostName));
 		model.add(ldesConfig.getDcat());
