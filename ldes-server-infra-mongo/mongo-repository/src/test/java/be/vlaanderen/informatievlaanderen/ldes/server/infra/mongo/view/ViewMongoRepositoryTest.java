@@ -27,7 +27,7 @@ class ViewMongoRepositoryTest {
 	}
 
 	@Test
-    void test_retrievingAllViews() {
+    void test_retrievingAllViews_AND_retrievingAllViewsOfCollection() {
         when(viewEntityRepository.findAll())
                 .thenReturn(List.of(
                         new ViewEntity("collection1/view1", List.of(), List.of()),
@@ -35,14 +35,26 @@ class ViewMongoRepositoryTest {
                         new ViewEntity("collection2/view1", List.of(), List.of())));
 
         final List<ViewSpecification> expectedViews = List.of(
-                new ViewSpecification(new ViewName("collection1","view1"), List.of(), List.of()),
-                new ViewSpecification(new ViewName("collection1","view2"), List.of(), List.of()),
-                new ViewSpecification(new ViewName("collection2","view1"), List.of(), List.of()));
+                new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of()),
+                new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of()),
+                new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of()));
+        final List<ViewSpecification> viewsOfCollection1 = List.of(
+                new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of()),
+                new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of())
+        );
+        final List<ViewSpecification> viewsOfCollection2 = List.of(
+                new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of()));
 
-        final List<ViewSpecification> viewSpecifications = repository.retrieveAllViews();
-
-        verify(viewEntityRepository).findAll();
+        List<ViewSpecification> viewSpecifications = repository.retrieveAllViews();
         assertEquals(expectedViews, viewSpecifications);
+
+        viewSpecifications = repository.retrieveAllViewsOfCollection("collection1");
+        assertEquals(viewsOfCollection1, viewSpecifications);
+
+        viewSpecifications = repository.retrieveAllViewsOfCollection("collection2");
+        assertEquals(viewsOfCollection2, viewSpecifications);
+
+        verify(viewEntityRepository, times(3)).findAll();
     }
 
 	@Test
