@@ -27,4 +27,6 @@ public interface LdesFragmentRepository {
 	void incrementNumberOfMembers(String fragmentId);
 
 	List<LdesFragment> retrieveFragmentsOfView(String defaultViewName);
+
+	void removeLdesFragmentsOfView(String asString);
 }

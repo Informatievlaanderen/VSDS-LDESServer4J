@@ -23,4 +23,6 @@ public interface LdesFragmentEntityRepository extends MongoRepository<LdesFragme
 	Optional<LdesFragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
 
 	List<LdesFragmentEntity> findAllByViewName(String viewName);
+
+	List<LdesFragmentEntity> removeByViewName(String viewName);
 }
