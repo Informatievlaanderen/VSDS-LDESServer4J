@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ViewRepository {
 	List<ViewSpecification> retrieveAllViews();
@@ -11,4 +12,6 @@ public interface ViewRepository {
 	void saveView(ViewSpecification viewSpecification);
 
 	void deleteViewByViewName(ViewName viewName);
+
+	Optional<ViewSpecification> getViewByViewName(ViewName viewName);
 }
