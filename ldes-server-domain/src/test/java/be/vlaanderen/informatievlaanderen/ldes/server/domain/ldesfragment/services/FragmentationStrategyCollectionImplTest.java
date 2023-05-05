@@ -18,9 +18,9 @@ class FragmentationStrategyCollectionImplTest {
 	private final Map<ViewName, FragmentationStrategy> fragmentationStrategyMap = new HashMap<>();
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
-
+	private final RefragmentationService refragmentationService = mock(RefragmentationService.class);
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			fragmentationStrategyMap, rootFragmentCreator, fragmentationStrategyCreator);
+			fragmentationStrategyMap, rootFragmentCreator, fragmentationStrategyCreator, refragmentationService);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -33,6 +33,8 @@ class FragmentationStrategyCollectionImplTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
 
 		assertTrue(fragmentationStrategyMap.containsKey(viewSpecification.getName()));
+		verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
+		verify(refragmentationService).refragmentMembersForView(any(), any());
 		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
 
 		Map<ViewName, FragmentationStrategy> retrievedFragmentationStrategyMap = fragmentationStrategyCollection
