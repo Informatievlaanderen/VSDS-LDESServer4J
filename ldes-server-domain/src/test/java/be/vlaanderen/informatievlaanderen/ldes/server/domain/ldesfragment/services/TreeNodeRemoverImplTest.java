@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +73,7 @@ class TreeNodeRemoverImplTest {
 	}
 
 	@Test
-	void when_ViewAddedEventIsReceived_RetentionPolicyMapIsUpdated() {
+	void test_AddingAndDeletingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
 				List.of(), List.of());
 
@@ -80,6 +81,8 @@ class TreeNodeRemoverImplTest {
 		treeNodeRemover.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
 
 		assertTrue(retentionPolicyMap.containsKey(viewSpecification.getName()));
+		treeNodeRemover.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
+		assertFalse(retentionPolicyMap.containsKey(viewSpecification.getName()));
 	}
 
 	private LdesFragment notReadyToDeleteFragment() {

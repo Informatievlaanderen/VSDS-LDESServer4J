@@ -39,6 +39,6 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
-		throw new NotImplementedException();
+		viewCollection.deleteViewByViewName(viewName);
 	}
 }

@@ -37,6 +37,22 @@ class InMemoryViewCollectionTest {
 		assertEquals(view, retrievedView.get());
 	}
 
+	@Test
+	void test_deletion() {
+		ViewSpecification view = new ViewSpecification(new ViewName("collection", "view"),
+				getRetentionPolicies(),
+				getFragmentations());
+		viewCollection.addView(view);
+		Optional<ViewSpecification> retrievedView = viewCollection.getViewByViewName(view.getName());
+		assertTrue(retrievedView.isPresent());
+
+		viewCollection.deleteViewByViewName(view.getName());
+
+		verify(viewRepository).deleteViewByViewName(view.getName());
+		retrievedView = viewCollection.getViewByViewName(view.getName());
+		assertFalse(retrievedView.isPresent());
+	}
+
 	private List<FragmentationConfig> getFragmentations() {
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("GeoSpatial");

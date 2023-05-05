@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -114,7 +115,7 @@ class FragmentationExecutorImplTest {
 	}
 
 	@Test
-	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
+	void test_AddingAndDeletingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
 				List.of(), List.of());
 
@@ -123,6 +124,9 @@ class FragmentationExecutorImplTest {
 
 		assertTrue(fragmentationMap.containsKey(viewSpecification.getName()));
 		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
+
+		fragmentationExecutor.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
+		assertFalse(fragmentationMap.containsKey(viewSpecification.getName()));
 	}
 
 }
