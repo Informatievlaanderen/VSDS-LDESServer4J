@@ -25,4 +25,6 @@ public interface MemberRepository {
 	Stream<Member> getMembersByReference(String treeNodeId);
 
 	void removeMemberReference(String memberId, String fragmentId);
+
+	Stream<Member> getMemberStreamOfCollection(String collectionName);
 }
