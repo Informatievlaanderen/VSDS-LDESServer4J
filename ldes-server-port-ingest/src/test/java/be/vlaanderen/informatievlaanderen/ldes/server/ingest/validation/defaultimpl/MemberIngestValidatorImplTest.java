@@ -11,16 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class DefaultMemberIngestValidatorTest {
+class MemberIngestValidatorImplTest {
 
-	private DefaultMemberIngestValidator validator;
+	private MemberIngestValidatorImpl validator;
 
 	private ModelIngestValidatorFactory factory;
 
 	@BeforeEach
 	void setUp() {
 		factory = mock(ModelIngestValidatorFactory.class);
-		validator = new DefaultMemberIngestValidator(factory);
+		validator = new MemberIngestValidatorImpl(factory);
 	}
 
 	@Test

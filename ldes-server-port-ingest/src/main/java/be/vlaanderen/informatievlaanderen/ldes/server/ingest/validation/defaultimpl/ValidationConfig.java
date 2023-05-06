@@ -17,7 +17,7 @@ public class ValidationConfig {
 	@Bean
 	public MemberIngestValidator ingestValidatorCollection(ModelIngestValidatorFactory modelIngestValidatorFactory) {
 		log.info("Using default validator for ldes-server-port-ingest");
-		return new DefaultMemberIngestValidator(modelIngestValidatorFactory);
+		return new MemberIngestValidatorImpl(modelIngestValidatorFactory);
 	}
 
 	@ConditionalOnMissingBean

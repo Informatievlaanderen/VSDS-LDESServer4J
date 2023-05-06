@@ -4,17 +4,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChanged
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl.modelingestvalidator.ModelIngestValidator;
 import org.springframework.context.event.EventListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class DefaultMemberIngestValidator implements MemberIngestValidator {
+public class MemberIngestValidatorImpl implements MemberIngestValidator {
 
 	private final ModelIngestValidatorFactory validatorFactory;
 	private final Map<String, ModelIngestValidator> validators = new HashMap<>();
 
-	public DefaultMemberIngestValidator(ModelIngestValidatorFactory validatorFactory) {
+	public MemberIngestValidatorImpl(ModelIngestValidatorFactory validatorFactory) {
 		this.validatorFactory = validatorFactory;
 	}
 
