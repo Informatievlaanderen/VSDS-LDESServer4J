@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,18 @@ class MemberIngestValidatorImplTest {
         Member member = createBasicMember();
         assertDoesNotThrow(() -> validator.validate(member));
     }
+
+	@Test
+	void validatorShouldBeRemoved_onDeleteEvent() {
+		when(factory.createValidator(null, "myCollection"))
+				.thenReturn(model -> {throw new IngestValidationException("invalid");});
+		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
+		validator.handleShaclDeletedEvent(new ShaclDeletedEvent("myCollection"));
+
+		Member member = createBasicMember();
+
+		assertDoesNotThrow(() -> validator.validate(member));
+	}
 
 	private Member createBasicMember() {
 		return new Member("id", "myCollection", 0L, null);

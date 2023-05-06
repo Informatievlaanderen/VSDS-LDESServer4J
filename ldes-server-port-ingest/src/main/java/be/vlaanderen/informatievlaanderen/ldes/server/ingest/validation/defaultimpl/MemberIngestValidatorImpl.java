@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
@@ -26,6 +27,11 @@ public class MemberIngestValidatorImpl implements MemberIngestValidator {
 
 		validators.compute(collectionName,
 				(key, oldValue) -> validatorFactory.createValidator(shacl.getModel(), collectionName));
+	}
+
+	@EventListener
+	public void handleShaclDeletedEvent(ShaclDeletedEvent event) {
+		validators.remove(event.collectionName());
 	}
 
 	@Override
