@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import org.apache.jena.rdf.model.Model;
@@ -36,6 +37,7 @@ class InMemoryShaclCollectionTest {
 
 		verify(shaclShapeRepository).saveShaclShape(shaclShape);
 
+		verify(eventPublisher).publishEvent(any(ShaclChangedEvent.class));
 		Optional<ShaclShape> retrievedShape = memoryShaclCollection.retrieveShape(COLLECTION_NAME);
 		assertTrue(retrievedShape.isPresent());
 		assertEquals(shaclShape, retrievedShape.get());
@@ -52,6 +54,7 @@ class InMemoryShaclCollectionTest {
 
 		memoryShaclCollection.deleteShape(COLLECTION_NAME);
 		verify(shaclShapeRepository).deleteShaclShape(COLLECTION_NAME);
+		verify(eventPublisher).publishEvent(any(ShaclDeletedEvent.class));
 
 		assertTrue(memoryShaclCollection.retrieveShape(COLLECTION_NAME).isEmpty());
 	}
