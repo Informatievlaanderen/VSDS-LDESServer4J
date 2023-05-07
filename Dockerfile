@@ -23,6 +23,7 @@ COPY --from=app-stage ldes-server-infra-mongo/mongock-config/target/mongock-conf
 COPY --from=app-stage ldes-server-infra-mongo/mongock-changeset-1/target/mongock-changeset-1-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongock-changeset-2/target/mongock-changeset-2-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongock-changeset-3/target/mongock-changeset-3-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-mongo/mongock-changeset-5/target/mongock-changeset-5-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingestion-rest/target/ldes-server-port-ingestion-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/
