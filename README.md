@@ -49,16 +49,17 @@ open data.
 
 ## Set-up of the LDES Server
 
-The current implementation consists of 6 modules:
+The current implementation consists of the following modules:
 
 - `ldes-server-application` which starts the spring boot application
 - `ldes-server-domain` which contains the domain logic of the ldes server
 - `ldes-server-infra-mongo` which allows to store ldes members and fragments in a mongoDB
-- `ldes-server-port-ingestion-rest` which allows to ingest ldes members via HTTP
+- `ldes-server-port-ingest` which allows to ingest ldes members. A specific implementation (e.g. http, kafka, etc.) is required.
+- `ldes-server-port-ingest-rest` a http implementation for the ldes-server-port-ingest
 - `ldes-server-port-fetch-rest` which allows to retrieve fragments via HTTP
 - `ldes-fragmentisers` which support different types of fragmentations
 
-The modules `ldes-server-infra-mongo`, `ldes-server-port-ingestion-rest` and `ldes-server-port-fetch-rest` are built so
+The modules `ldes-server-infra-mongo`, `ldes-server-port-ingest-rest` and `ldes-server-port-fetch-rest` are built so
 that they can be replaced by other implementations without the need for code changes in ldes-server-domain.
 
 ## How To Run
@@ -100,7 +101,8 @@ To enrich the server, certain Maven profiles can be activated:
 
 | Profile Group                           | Profile Name             | Description                                                                     | Parameters                                                                  | Further Info                                                                                                                        |
 |-----------------------------------------|--------------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest              | Enables a HTTP endpoint for to insert LDES members.                             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Ingest v2**                      | http-ingest-v2           | Enables a HTTP endpoint to insert LDES members.                                 | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest              | Enables a HTTP endpoint to insert LDES members.                                 | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
 | **HTTP Endpoints (Fetch/Ingestion)**    | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments                              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
 | **Storage**                             | storage-mongo            | Allows the LDES server to read and write from a mongo database.                 | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
 | **Timebased Fragmentation[DEPRECATED]** | fragmentation-timebased  | Supports timebased fragmentation.                                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
@@ -354,6 +356,7 @@ mvn clean verify -Dunittestskip=true
 #### Auto-Configurable Modules
 
 - ldes-server-infra-mongo
+- ldes-server-port-ingest-rest
 - ldes-server-port-ingestion-rest
 - ldes-server-port-publication-rest
 - ldes-fragmentisers-timebased
