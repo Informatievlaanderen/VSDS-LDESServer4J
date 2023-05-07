@@ -19,6 +19,7 @@
         <module>mongock-changeset-3</module>
         <module>mongock-changeset-4</module>
         <module>mongo-ingest-repository</module>
+        <module>mongock-changeset-5</module>
     </modules>
 
     <properties>

@@ -79,7 +79,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongock-changeset-4</artifactId>
+                    <artifactId>mongock-changeset-5</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
