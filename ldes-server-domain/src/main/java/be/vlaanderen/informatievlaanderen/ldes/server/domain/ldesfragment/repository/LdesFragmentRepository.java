@@ -28,5 +28,5 @@ public interface LdesFragmentRepository {
 
 	Stream<LdesFragment> retrieveFragmentsOfView(String defaultViewName);
 
-	void removeLdesFragmentsOfView(String asString);
+	void removeLdesFragmentsOfView(String viewName);
 }
