@@ -62,7 +62,6 @@ public class AdminEventStreamsRestController {
 		ShaclShape shaclShape = new ShaclShape(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getShacl());
-		eventStreamResponse.getViews().forEach(viewService::addView);
 		eventStreamService.saveEventStream(eventStream);
 		shaclShapeService.updateShaclShape(shaclShape);
 		return eventStreamResponse;

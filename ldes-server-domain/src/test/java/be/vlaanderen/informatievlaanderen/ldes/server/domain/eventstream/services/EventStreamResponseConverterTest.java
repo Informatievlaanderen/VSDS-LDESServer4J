@@ -39,7 +39,6 @@ class EventStreamResponseConverterTest {
 			fragmentationConfig.setName("fragmentationStrategy");
 			fragmentationConfig.setConfig(Map.of("http://example.org/property", "ldes:propertyPath"));
 			views = List.of(
-
 					new ViewSpecification(
 							new ViewName("collectionName1", "https://w3id.org/ldes#view2"),
 							List.of(),

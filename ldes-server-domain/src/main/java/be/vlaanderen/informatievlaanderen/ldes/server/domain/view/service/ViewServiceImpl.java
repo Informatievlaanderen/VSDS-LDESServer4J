@@ -44,7 +44,7 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		throw new NotImplementedException();
+		return viewCollection.getViewsByCollectionName(collectionName);
 	}
 
 	@Override
