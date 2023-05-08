@@ -1,5 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions.InvalidConfigOperationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
@@ -15,7 +18,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MissingLdesConfigException.class, MissingShaclShapeException.class,
+	@ExceptionHandler(value = { MissingShaclShapeException.class,
 			MissingEventStreamException.class })
 	protected ResponseEntity<Object> hanldeMissingLdesConfigException(
 			RuntimeException ex, WebRequest request) {
@@ -24,19 +27,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	@ExceptionHandler(value = { LdesShaclValidationException.class })
 	protected ResponseEntity<Object> handleLdesShacleValidationException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.BAD_REQUEST, request);
-	}
-
-	// Todo: remove?
-	@ExceptionHandler(value = { InvalidModelIdException.class })
-	protected ResponseEntity<Object> handleInvalidModelException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.BAD_REQUEST, request);
-	}
-
-	@ExceptionHandler(value = { InvalidConfigOperationException.class })
-	protected ResponseEntity<Object> handleInvalidConfigOperationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
