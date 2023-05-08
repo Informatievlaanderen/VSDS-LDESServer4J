@@ -37,8 +37,7 @@ import java.util.stream.Collectors;
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -142,6 +141,15 @@ class AdminViewsRestControllerTest {
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print());
 		verify(validator, times(1)).validate(any(), any());
+	}
+
+	@Test
+	void when_Delete_Then_RemoveMethodCalled() throws Exception {
+		String collectionName = "name1";
+		String viewName = "view1";
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+				.andDo(print());
+		verify(viewService).deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
 	private String readDataFromFile(String fileName, Lang rdfFormat)

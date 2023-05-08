@@ -20,7 +20,6 @@ public class ViewValidator extends AbstractShaclValidator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		Model model = (Model) target;
-		validateShape(model);
+		// Waiting for shape to validate view
 	}
 }
