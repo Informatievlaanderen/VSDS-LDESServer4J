@@ -26,7 +26,7 @@ import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping(value = "/admin/api/v1/eventstreams")
-@Tag(name = "Event Stream")
+@Tag(name = "Event Streams")
 public class AdminEventStreamsRestController {
 
 	private final EventStreamService eventStreamService;

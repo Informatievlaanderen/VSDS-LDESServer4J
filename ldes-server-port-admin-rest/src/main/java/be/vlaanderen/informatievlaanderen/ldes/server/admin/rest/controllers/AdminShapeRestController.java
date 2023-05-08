@@ -16,7 +16,7 @@ import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping("/admin/api/v1/eventstreams/{collectionName}/shape")
-@Tag(name = "Shape")
+@Tag(name = "Shapes")
 public class AdminShapeRestController {
 
 	private final ShaclShapeValidator shapeValidator;

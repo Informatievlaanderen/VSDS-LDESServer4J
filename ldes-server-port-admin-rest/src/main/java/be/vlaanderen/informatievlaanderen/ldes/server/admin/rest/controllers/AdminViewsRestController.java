@@ -22,7 +22,7 @@ import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping("/admin/api/v1")
-@Tag(name = "View")
+@Tag(name = "Views")
 public class AdminViewsRestController {
 	private final LdesConfigModelService service;
 	// TODO use viewService instead of LdesConfigModelService
