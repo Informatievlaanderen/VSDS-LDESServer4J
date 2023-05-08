@@ -5,6 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobj
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/admin/api/v1")
+@Tag(name = "View")
 public class AdminViewsRestController {
 	private final LdesConfigModelService service;
 	// TODO use viewService instead of LdesConfigModelService
@@ -36,6 +40,11 @@ public class AdminViewsRestController {
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/views")
+	@ApiResponse(responseCode = "200", content = {
+			@Content(mediaType = "application/n-quads"),
+			@Content(mediaType = "application/ld+json"),
+			@Content(mediaType = "text/turtle")
+	})
 	public ResponseEntity<List<ViewSpecification>> getViews(@PathVariable String collectionName) {
 		return ResponseEntity.ok(List.of());
 	}

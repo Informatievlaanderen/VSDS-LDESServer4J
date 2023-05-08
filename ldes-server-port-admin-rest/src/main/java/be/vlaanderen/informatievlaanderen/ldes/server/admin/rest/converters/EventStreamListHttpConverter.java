@@ -18,6 +18,9 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
+
 public class EventStreamListHttpConverter implements HttpMessageConverter<List<EventStreamResponse>> {
 	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
 
@@ -45,6 +48,7 @@ public class EventStreamListHttpConverter implements HttpMessageConverter<List<E
 	@Override
 	public void write(List<EventStreamResponse> eventStreamResponses, MediaType contentType,
 			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+		Lang lang = getLang(contentType, REST_ADMIN);
 		Model model = ModelFactory.createDefaultModel();
 		eventStreamResponses.stream()
 				.map(eventStreamResponseConverter::toModel)
@@ -52,7 +56,7 @@ public class EventStreamListHttpConverter implements HttpMessageConverter<List<E
 
 		StringWriter outputStream = new StringWriter();
 
-		RDFDataMgr.write(outputStream, model, Lang.TURTLE);
+		RDFDataMgr.write(outputStream, model, lang);
 
 		outputMessage.getBody().write(outputStream.toString().getBytes(StandardCharsets.UTF_8));
 	}
