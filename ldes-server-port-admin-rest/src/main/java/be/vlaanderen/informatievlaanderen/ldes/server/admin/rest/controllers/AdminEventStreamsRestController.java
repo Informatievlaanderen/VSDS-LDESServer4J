@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
@@ -43,29 +44,30 @@ public class AdminEventStreamsRestController {
 	}
 
 	@GetMapping
-	@Operation(summary = "Retrieves list of configured Event Streams")
+	@Operation(summary = "Retrieve list of configured Event Streams")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = NQUADS),
 			@Content(mediaType = JSON_LD),
 			@Content(mediaType = TURTLE)
 	})
-	public List<EventStreamResponse> getEventStreams() {
-		return eventStreamService.retrieveAllEventStreams().stream().map(eventStream -> {
-			List<ViewSpecification> views = List.of();
-			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
-			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), views, shaclShape.getModel());
-		}).toList();
+	public String getEventStreams(@Parameter(hidden = true) @RequestHeader("Accept") String contentType) {
+		List<EventStreamResponse> eventStreamResponses = eventStreamService.retrieveAllEventStreams().stream()
+				.map(eventStream -> {
+					List<ViewSpecification> views = List.of();
+					ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
+					return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
+							eventStream.getVersionOfPath(), views, shaclShape.getModel());
+				}).toList();
 
+		return EventStreamHttpConverter.toString(eventStreamResponses, contentType);
 	}
 
 	@PutMapping(consumes = { JSON_LD, NQUADS, TURTLE })
-	@Operation(summary = "Creates an Event Stream based on the provided config")
-	public EventStreamResponse putEventStream(
-			@Parameter(description = "A valid RDF model defining the Event Stream", example = "<s> <p> <o>")
+	@Operation(summary = "Create an Event Stream based on the provided config")
+	public String putEventStream(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Event Stream")
 			@RequestBody String configuredEventStream,
-			@Parameter(hidden = true)
-			@RequestHeader("Content-Type") String contentType) {
+			@Parameter(hidden = true) @RequestHeader("Content-Type") String contentType) {
 		Model eventStreamModel = ModelConverter.toModel(configuredEventStream, contentType);
 		eventStreamValidator.validateShape(eventStreamModel);
 
@@ -80,28 +82,33 @@ public class AdminEventStreamsRestController {
 		eventStreamResponse.getViews().forEach(viewService::addView);
 		eventStreamService.saveEventStream(eventStream);
 		shaclShapeService.updateShaclShape(shaclShape);
-		return eventStreamResponse;
+
+		return EventStreamHttpConverter.toString(eventStreamResponse, contentType);
 	}
 
 	@GetMapping("/{collectionName}")
+	@Operation(summary = "Retrieve specific Event Stream configuration")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = NQUADS),
 			@Content(mediaType = JSON_LD),
 			@Content(mediaType = TURTLE)
 	})
-	public EventStreamResponse getEventStream(
-			@Parameter(description = "Collection name") @PathVariable String collectionName) {
+	public String getEventStream(@PathVariable String collectionName,
+			@Parameter(hidden = true) @RequestHeader("Accept") String contentType) {
 		EventStream eventStream = eventStreamService.retrieveEventStream(collectionName);
 		List<ViewSpecification> views = List.of();
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 
-		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
+		EventStreamResponse response = new EventStreamResponse(eventStream.getCollection(),
+				eventStream.getTimestampPath(),
 				eventStream.getVersionOfPath(), views, shaclShape.getModel());
+
+		return EventStreamHttpConverter.toString(response, contentType);
 	}
 
 	@DeleteMapping("/{collectionName}")
-	public ResponseEntity<Object> deleteEventStream(
-			@Parameter(description = "Collection name") @PathVariable String collectionName) {
+	@Operation(summary = "Delete an Event Stream")
+	public ResponseEntity<Void> deleteEventStream(@PathVariable String collectionName) {
 		// TODO: delete views by collectionName when this is added to the service
 		eventStreamService.deleteEventStream(collectionName);
 		shaclShapeService.deleteShaclShape(collectionName);

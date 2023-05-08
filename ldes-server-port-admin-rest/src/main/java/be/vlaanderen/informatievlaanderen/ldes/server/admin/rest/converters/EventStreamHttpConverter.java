@@ -3,58 +3,37 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.springframework.http.HttpInputMessage;
-import org.springframework.http.HttpOutputMessage;
+import org.apache.jena.riot.RDFWriter;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.http.converter.HttpMessageNotWritableException;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
-public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
-	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
+public class EventStreamHttpConverter {
+	private static final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
 
-	@Override
-	public boolean canRead(Class<?> clazz, MediaType mediaType) {
-		return false;
-	}
-
-	@Override
-	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-		return EventStreamResponse.class.isAssignableFrom(clazz);
-	}
-
-	@Override
-	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.ALL);
-	}
-
-	@Override
-	public EventStreamResponse read(Class<? extends EventStreamResponse> clazz, HttpInputMessage inputMessage)
-			throws HttpMessageNotReadableException {
-		throw new UnsupportedOperationException("Not supported to read an event stream response");
-	}
-
-	@Override
-	public void write(EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
-			throws IOException, HttpMessageNotWritableException {
-		Lang lang = getLang(contentType, REST_ADMIN);
+	public static String toString(EventStreamResponse eventStreamResponse, String contentType) {
+		Lang lang = getLang(MediaType.valueOf(contentType), REST_ADMIN);
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
-		StringWriter outputStream = new StringWriter();
 
-		RDFDataMgr.write(outputStream, eventStreamModel, lang);
+		return RDFWriter.source(eventStreamModel)
+				.lang(lang)
+				.asString();
+	}
 
-		OutputStream body = outputMessage.getBody();
-		body.write(outputStream.toString().getBytes(StandardCharsets.UTF_8));
+	public static String toString(List<EventStreamResponse> eventStreamResponses, String contentType) {
+		Lang lang = getLang(MediaType.valueOf(contentType), REST_ADMIN);
+		Model model = ModelFactory.createDefaultModel();
+		eventStreamResponses.stream()
+				.map(eventStreamResponseConverter::toModel)
+				.forEach(model::add);
+
+		return RDFWriter.source(model)
+				.lang(lang)
+				.asString();
 	}
 }
