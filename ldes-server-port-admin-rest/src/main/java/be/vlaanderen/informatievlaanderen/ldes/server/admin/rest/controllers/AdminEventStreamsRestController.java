@@ -80,7 +80,6 @@ public class AdminEventStreamsRestController {
 
 	@DeleteMapping("/{collectionName}")
 	public ResponseEntity<Object> deleteEventStream(@PathVariable String collectionName) {
-		// TODO: delete views by collectionName when this is added to the service
 		eventStreamService.deleteEventStream(collectionName);
 		viewService.getViewsByCollectionName(collectionName).stream()
 				.map(ViewSpecification::getName)

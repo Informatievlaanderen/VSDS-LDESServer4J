@@ -18,18 +18,16 @@ ldes:shape a sh:NodeShape ;
      ] ;
    sh:deactivated true .
 
-ldes:view1 a tree:Node ;
- tree:viewDescription [
+ldes:view1 tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
-       example:property ldes:propertyPath
+       example:property "ldes:propertyPath"
    ]
 ] .
 
-ldes:view2 a tree:Node ;
-  tree:viewDescription [
+ldes:view2 tree:viewDescription [
     example:fragmentationStrategy [
         a example:Fragmentation ;
-        example:property ldes:propertyPath
+        example:property "ldes:propertyPath"
     ]
 ] .

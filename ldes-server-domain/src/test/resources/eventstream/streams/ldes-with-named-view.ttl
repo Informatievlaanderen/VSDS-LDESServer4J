@@ -21,6 +21,6 @@ ldes:view1 a tree:Node ;
  tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
-       example:property ldes:propertyPath
+       example:property "ldes:propertyPath"
    ]
 ] .
