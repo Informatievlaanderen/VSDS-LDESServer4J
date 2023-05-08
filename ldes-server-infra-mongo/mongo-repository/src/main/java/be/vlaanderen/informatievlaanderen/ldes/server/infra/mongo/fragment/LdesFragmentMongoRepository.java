@@ -110,9 +110,4 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		repository.removeByViewName(viewName);
 	}
 
-	@Override
-	public void removeLdesFragmentsOfView(String viewName) {
-		repository.removeByViewName(viewName);
-	}
-
 }
