@@ -41,7 +41,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 		if (lastSnapshot.isPresent()) {
 			treeNodesForSnapshot = getTreeNodesForSnapshotFromPreviousSnapshot(viewName, lastSnapshot.get());
 		} else {
-			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
+			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString()).toList();
 		}
 
 		if (treeNodesForSnapshot.isEmpty()) {
@@ -74,14 +74,15 @@ public class SnapshotServiceImpl implements SnapshotService {
 
 	private List<LdesFragment> getTreeNodesForSnapshotFromPreviousSnapshot(ViewName viewName, Snapshot lastSnapshot) {
 		List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository
-				.retrieveFragmentsOfView(lastSnapshot.getSnapshotId()).stream()
+				.retrieveFragmentsOfView(lastSnapshot.getSnapshotId())
 				.filter(ldesFragment -> !ldesFragment.isRoot()).toList();
-		List<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
+		Stream<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository
+				.retrieveFragmentsOfView(viewName.asString());
 		String lastFragment = getNextFragmentFromSnapshot(treeNodesOfSnapshot)
 				.orElseThrow(() -> new SnapshotCreationException(
 						"First fragment of " + viewName.asString() + " after previous snapshot "
 								+ lastSnapshot.getSnapshotId() + " could not be found"));
-		List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView.stream()
+		List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView
 				.filter(ldesFragment -> !ldesFragment.isRoot()).filter(new GreaterOrEqualsPageFilter(lastFragment))
 				.toList();
 		return Stream.of(treeNodesOfSnapshot, relevantTreeNodesOfDefaultView).flatMap(List::stream)
