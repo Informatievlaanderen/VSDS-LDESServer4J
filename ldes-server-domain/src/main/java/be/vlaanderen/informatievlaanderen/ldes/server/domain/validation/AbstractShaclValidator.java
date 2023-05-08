@@ -15,7 +15,7 @@ public abstract class AbstractShaclValidator implements Validator {
 
 	protected abstract void initializeShapes();
 
-	protected void validateShape(Model model) {
+	public void validateShape(Model model) {
 		if (!initialized) {
 			initializeShapes();
 			initialized = true;
