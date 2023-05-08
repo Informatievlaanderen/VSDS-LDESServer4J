@@ -102,7 +102,7 @@ class MemberMongoRepositoryTest {
 
 		List<Member> members = ldesMemberMongoRepository.getMembersByReference("treeNodeId").toList();
 
-		verify(mongoTemplate, times(1)).find(query, LdesMemberEntity.class);
+		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
 
 	}
 
@@ -114,7 +114,7 @@ class MemberMongoRepositoryTest {
 
 		ldesMemberMongoRepository.getMemberStreamOfCollection("collectionName");
 
-		verify(mongoTemplate, times(1)).find(query, LdesMemberEntity.class);
+		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
 
 	}
 

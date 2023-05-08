@@ -17,6 +17,7 @@ import org.mockito.InOrder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig.DEFAULT_VIEW_NAME;
@@ -54,7 +55,8 @@ class SnapshotServiceImplTest {
 		String collectionName = ldesConfig.getCollectionName();
 		ViewName viewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
 		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment(viewName, List.of()));
-		when(ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString())).thenReturn(treeNodesForSnapshot);
+		when(ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString()))
+				.thenReturn(treeNodesForSnapshot.stream());
 		Snapshot snapshot = new Snapshot("id", collectionName, "shape", LocalDateTime.now(), "of");
 		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig)).thenReturn(snapshot);
 		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(collectionName, "lastTreeNodeOfSnapshot"),
@@ -76,7 +78,7 @@ class SnapshotServiceImplTest {
 
 	@Test
 	void when_NoTreeNodesAreAvailable_SnapshotCreationExceptionIsThrown() {
-		List<LdesFragment> treeNodesForSnapshot = List.of();
+		Stream<LdesFragment> treeNodesForSnapshot = Stream.of();
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
 
 		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,
@@ -96,7 +98,7 @@ class SnapshotServiceImplTest {
 
 		LdesFragment rootFragmentOfDefaultView = new LdesFragment(defaultViewName, List.of());
 		LdesFragment fragmentOfDefaultView = rootFragmentOfDefaultView.createChild(new FragmentPair("pageNumber", "1"));
-		List<LdesFragment> treeNodesFromDefaultView = List.of(rootFragmentOfDefaultView, fragmentOfDefaultView);
+		Stream<LdesFragment> treeNodesFromDefaultView = Stream.of(rootFragmentOfDefaultView, fragmentOfDefaultView);
 		when(ldesFragmentRepository.retrieveFragmentsOfView(defaultViewName.asString()))
 				.thenReturn(treeNodesFromDefaultView);
 
@@ -105,7 +107,7 @@ class SnapshotServiceImplTest {
 		fragmentOfSnapshot.addRelation(
 				new TreeRelation("", fragmentOfDefaultView.getFragmentId(), "", "", GENERIC_TREE_RELATION));
 
-		List<LdesFragment> treeNodesFromPrevSnapshot = List
+		Stream<LdesFragment> treeNodesFromPrevSnapshot = Stream
 				.of(rootFragmentOfSnapshot, fragmentOfSnapshot);
 		when(ldesFragmentRepository.retrieveFragmentsOfView(snapshotViewName.asString()))
 				.thenReturn(treeNodesFromPrevSnapshot);

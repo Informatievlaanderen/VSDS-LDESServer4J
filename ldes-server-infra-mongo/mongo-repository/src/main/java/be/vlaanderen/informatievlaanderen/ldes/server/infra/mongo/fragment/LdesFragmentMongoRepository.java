@@ -99,12 +99,15 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public List<LdesFragment> retrieveFragmentsOfView(String viewName) {
+	public Stream<LdesFragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)
-				.stream()
-				.map(LdesFragmentEntity::toLdesFragment)
-				.toList();
+				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public void removeLdesFragmentsOfView(String viewName) {
+		repository.removeByViewName(viewName);
 	}
 
 }

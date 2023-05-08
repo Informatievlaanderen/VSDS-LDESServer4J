@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -19,8 +20,10 @@ class FragmentationStrategyCollectionImplTest {
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
 	private final RefragmentationService refragmentationService = mock(RefragmentationService.class);
+	private final LdesFragmentRemover ldesFragmentRemover = mock(LdesFragmentRemover.class);
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			fragmentationStrategyMap, rootFragmentCreator, fragmentationStrategyCreator, refragmentationService);
+			fragmentationStrategyMap, rootFragmentCreator, fragmentationStrategyCreator, refragmentationService,
+			ldesFragmentRemover);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -40,6 +43,17 @@ class FragmentationStrategyCollectionImplTest {
 		Map<ViewName, FragmentationStrategy> retrievedFragmentationStrategyMap = fragmentationStrategyCollection
 				.getFragmentationStrategyMap();
 		assertEquals(retrievedFragmentationStrategyMap, fragmentationStrategyMap);
+	}
+
+	@Test
+	void when_ViewDeletedEventIsReceived_FragmentationStrategyIsRemovedFromMap() {
+		ViewName viewName = new ViewName(COLLECTION_NAME, "additonalView");
+		fragmentationStrategyMap.put(viewName, mock(FragmentationStrategy.class));
+
+		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(viewName));
+
+		assertFalse(fragmentationStrategyMap.containsKey(viewName));
+		verify(ldesFragmentRemover).removeLdesFragmentsOfView(viewName);
 	}
 
 }
