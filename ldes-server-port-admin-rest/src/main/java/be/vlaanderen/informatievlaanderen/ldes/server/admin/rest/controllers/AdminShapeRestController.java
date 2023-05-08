@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.web.bind.annotation.*;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.OpenAPIConfig.*;
+import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping("/admin/api/v1/eventstreams/{collectionName}/shape")
@@ -31,9 +31,9 @@ public class AdminShapeRestController {
 	@GetMapping
 	@Operation(summary = "Retrieve the shape for a collection")
 	@ApiResponse(responseCode = "200", content = {
-			@Content(mediaType = NQUADS),
-			@Content(mediaType = JSON_LD),
-			@Content(mediaType = TURTLE)
+			@Content(mediaType = contentTypeNQuads),
+			@Content(mediaType = contentTypeJSONLD),
+			@Content(mediaType = contentTypeTurtle)
 	})
 	public String getShape(@Parameter(hidden = true) @RequestHeader("Accept") String contentType,
 			@PathVariable String collectionName) {
@@ -41,7 +41,7 @@ public class AdminShapeRestController {
 		return ModelConverter.toString(shape.getModel(), contentType);
 	}
 
-	@PutMapping(consumes = { JSON_LD, NQUADS, TURTLE })
+	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
 	@Operation(summary = "Adds a shape to a collection")
 	public String putShape(@PathVariable String collectionName,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Shape of the collection") @RequestBody String shape,

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.OpenAPIConfig.*;
+import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping("/admin/api/v1")
@@ -46,7 +46,8 @@ public class AdminViewsRestController {
 		return ResponseEntity.ok(List.of());
 	}
 
-	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { JSON_LD, NQUADS, TURTLE })
+	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { contentTypeJSONLD, contentTypeNQuads,
+			contentTypeTurtle })
 	@Operation(summary = "Add a view to a collection")
 	public ResponseEntity<String> putViews(@PathVariable String collectionName,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining a view of the collection") @RequestBody String view,

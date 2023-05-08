@@ -32,6 +32,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -68,8 +69,8 @@ class AdminViewsRestControllerTest {
 		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
 		when(ldesConfigModelService.retrieveView(collectionName, viewName)).thenReturn(configModel);
 		ResultActions resultActions = mockMvc
-				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
-				.andDo(print())
+				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName)
+						.accept(contentTypeTurtle))
 				.andExpect(status().isOk());
 		MvcResult result = resultActions.andReturn();
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
@@ -80,13 +81,10 @@ class AdminViewsRestControllerTest {
 	void when_ViewNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
 		when(ldesConfigModelService.retrieveView(collectionName, viewName))
 				.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
-		ResultActions resultActions = mockMvc
-				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
-				.andDo(print())
+		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName)
+						.accept(contentTypeTurtle))
 				.andExpect(status().isNotFound());
 	}
 
@@ -97,9 +95,9 @@ class AdminViewsRestControllerTest {
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
 		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
 		when(ldesConfigModelService.addView(anyString(), any())).thenReturn(configModel);
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-				.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
-				.contentType(Lang.TURTLE.getHeaderString()))
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+						.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).addView(anyString(), any());
@@ -108,9 +106,9 @@ class AdminViewsRestControllerTest {
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		String collectionName = "name1";
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-				.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
-				.contentType(Lang.TURTLE.getHeaderString()))
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+						.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
@@ -122,19 +120,17 @@ class AdminViewsRestControllerTest {
 		final Model model = readModelFromFile("view-1.ttl");
 		final LdesConfigModel ldesConfigModel = new LdesConfigModel(viewName, model);
 		when(ldesConfigModelService.addView(collectionName, ldesConfigModel)).thenReturn(ldesConfigModel);
-		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
-				.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print());
-		verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
+				.contentType(Lang.TURTLE.getHeaderString()));
+		verify(ldesConfigShaclValidator, times(1)).validateShape(any());
 	}
 
 	private String readDataFromFile(String fileName, Lang rdfFormat)
 			throws URISyntaxException, IOException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-		return content;
+		return Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

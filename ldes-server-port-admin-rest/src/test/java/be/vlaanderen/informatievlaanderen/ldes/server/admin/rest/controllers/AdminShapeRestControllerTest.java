@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -49,6 +50,13 @@ class AdminShapeRestControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
+	private String readDataFromFile(String fileName)
+			throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		return Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+	}
+
 	@Nested
 	class GetRequest {
 		@Test
@@ -58,7 +66,8 @@ class AdminShapeRestControllerTest {
 			when(shaclShapeService.retrieveShaclShape(collectionName))
 					.thenReturn(new ShaclShape(collectionName, expectedShapeModel));
 
-			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+							.accept(contentTypeTurtle))
 					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
@@ -70,7 +79,8 @@ class AdminShapeRestControllerTest {
 			when(shaclShapeService.retrieveShaclShape(collectionName))
 					.thenThrow(new MissingShaclShapeException(collectionName));
 
-			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+							.accept(contentTypeTurtle))
 					.andDo(print())
 					.andExpect(status().isNotFound());
 		}
@@ -91,7 +101,7 @@ class AdminShapeRestControllerTest {
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
-			inOrder.verify(shaclShapeValidator, times(1)).validate(any(), any());
+			inOrder.verify(shaclShapeValidator, times(1)).validateShape(any());
 			inOrder.verify(shaclShapeService, times(1))
 					.updateShaclShape(new ShaclShape(collectionName, expectedShapeModel));
 			inOrder.verifyNoMoreInteractions();
@@ -106,17 +116,9 @@ class AdminShapeRestControllerTest {
 					.andDo(print())
 					.andExpect(status().isBadRequest());
 
-			verify(shaclShapeValidator).validate(any(), any());
+			verify(shaclShapeValidator).validateShape(any());
 		}
 
-	}
-
-	private String readDataFromFile(String fileName)
-			throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-		return content;
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

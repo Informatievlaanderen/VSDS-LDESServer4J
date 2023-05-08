@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.OpenAPIConfig.*;
+import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping(value = "/admin/api/v1/eventstreams")
@@ -46,9 +46,9 @@ public class AdminEventStreamsRestController {
 	@GetMapping
 	@Operation(summary = "Retrieve list of configured Event Streams")
 	@ApiResponse(responseCode = "200", content = {
-			@Content(mediaType = NQUADS),
-			@Content(mediaType = JSON_LD),
-			@Content(mediaType = TURTLE)
+			@Content(mediaType = contentTypeNQuads),
+			@Content(mediaType = contentTypeJSONLD),
+			@Content(mediaType = contentTypeTurtle)
 	})
 	public String getEventStreams(@Parameter(hidden = true) @RequestHeader("Accept") String contentType) {
 		List<EventStreamResponse> eventStreamResponses = eventStreamService.retrieveAllEventStreams().stream()
@@ -62,7 +62,7 @@ public class AdminEventStreamsRestController {
 		return EventStreamHttpConverter.toString(eventStreamResponses, contentType);
 	}
 
-	@PutMapping(consumes = { JSON_LD, NQUADS, TURTLE })
+	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
 	@Operation(summary = "Create an Event Stream based on the provided config")
 	public String putEventStream(
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Event Stream") @RequestBody String configuredEventStream,
@@ -88,9 +88,9 @@ public class AdminEventStreamsRestController {
 	@GetMapping("/{collectionName}")
 	@Operation(summary = "Retrieve specific Event Stream configuration")
 	@ApiResponse(responseCode = "200", content = {
-			@Content(mediaType = NQUADS),
-			@Content(mediaType = JSON_LD),
-			@Content(mediaType = TURTLE)
+			@Content(mediaType = contentTypeNQuads),
+			@Content(mediaType = contentTypeJSONLD),
+			@Content(mediaType = contentTypeTurtle)
 	})
 	public String getEventStream(@PathVariable String collectionName,
 			@Parameter(hidden = true) @RequestHeader("Accept") String contentType) {
