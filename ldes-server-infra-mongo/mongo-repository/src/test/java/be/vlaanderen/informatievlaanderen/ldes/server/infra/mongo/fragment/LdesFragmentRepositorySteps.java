@@ -61,7 +61,7 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 
 	@Then("the repository contains {int} ldesFragments with viewname {string}")
 	public void theRepositoryContainsLdesFragmentsWithViewname(int expectedNumberOfFragments, String viewName) {
-		assertEquals(expectedNumberOfFragments, ldesFragmentMongoRepository.retrieveFragmentsOfView(viewName).size());
+		assertEquals(expectedNumberOfFragments, ldesFragmentMongoRepository.retrieveFragmentsOfView(viewName).count());
 	}
 
 	@And("The retrieved ldesFragment has the same properties as ldesFragment {int}")

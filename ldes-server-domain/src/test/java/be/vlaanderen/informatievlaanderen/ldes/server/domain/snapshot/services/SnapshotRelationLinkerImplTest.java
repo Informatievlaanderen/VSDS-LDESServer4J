@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +27,7 @@ class SnapshotRelationLinkerImplTest {
 	@Test
 	void test_ConnectLastFragmentOfSnapshotToUncoveredFragments() {
 		Snapshot snapshot = new Snapshot("id", "collectionName", null, null, null);
-		List<LdesFragment> treeNodesOfSnapshot = getTreeNodesOfSnapshot();
+		Stream<LdesFragment> treeNodesOfSnapshot = getTreeNodesOfSnapshot();
 		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(treeNodesOfSnapshot);
 		List<LdesFragment> treeNodes = getTreeNodes();
 
@@ -43,7 +44,7 @@ class SnapshotRelationLinkerImplTest {
 	@Test
 	void when_NoMutableNonRootTreeNodeOfSnapshotIsAvailable_IllegalStateExceptionIsThrown() {
 		Snapshot snapshot = new Snapshot("id", "collectionName", null, null, null);
-		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(List.of());
+		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(Stream.of());
 		List<LdesFragment> treeNodes = List.of();
 
 		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,
@@ -69,14 +70,14 @@ class SnapshotRelationLinkerImplTest {
 						List.of(new FragmentPair("fragment", "2"))));
 	}
 
-	private List<LdesFragment> getTreeNodesOfSnapshot() {
+	private Stream<LdesFragment> getTreeNodesOfSnapshot() {
 		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "id"),
 				List.of(new FragmentPair("page", "2")));
 		LdesFragment rootTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "id"), List.of());
 		LdesFragment immutableTreeNodeOfSnapshot = new LdesFragment(new ViewName("collectionName", "id"),
 				List.of(new FragmentPair("page", "1")));
 		immutableTreeNodeOfSnapshot.makeImmutable();
-		return List.of(rootTreeNodeOfSnapshot, immutableTreeNodeOfSnapshot, lastTreeNodeOfSnapshot);
+		return Stream.of(rootTreeNodeOfSnapshot, immutableTreeNodeOfSnapshot, lastTreeNodeOfSnapshot);
 	}
 
 }
