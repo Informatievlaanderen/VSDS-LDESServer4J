@@ -294,7 +294,7 @@ use [config.local.env](docker-compose/config.local.env).
 
 #### The docker compose File
 
-Change the `env_file` to `config.env` or `config.local.env` in [compose.yml](compose.yml) according to
+Change the `env_file` to `config.env` or `config.local.env` in [compose.yml](docker-compose.yml) according to
 your needs.
 
 #### Starting the Dockerized Application

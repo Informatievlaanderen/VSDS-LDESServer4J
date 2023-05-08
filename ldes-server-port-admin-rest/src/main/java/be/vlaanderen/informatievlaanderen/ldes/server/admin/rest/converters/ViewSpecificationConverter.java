@@ -1,14 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.ModelToViewConverterException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,16 +17,24 @@ import java.util.function.Predicate;
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.constants.ViewSpecificationConverterConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
+@Component
 public class ViewSpecificationConverter {
 
 	public static final String FRAGMENTATION_NAME = "name";
 	public static final String RETENTION_NAME = "name";
-	public static final String SERVER_PREFIX = "http://server.org/";
+	private final String hostname;
 
-	private ViewSpecificationConverter() {
+	public ViewSpecificationConverter(AppConfig appConfig) {
+		if (appConfig.getCollections().size() == 1) {
+			LdesConfig ldesConfig = appConfig.getCollections().get(0);
+			hostname = ldesConfig.getHostName();
+		} else {
+			//todo update code when appconfig is reworked
+			hostname = "undefined";
+		}
 	}
 
-	public static ViewSpecification viewFromModel(Model viewModel, String collectionName) {
+	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
 		List<Statement> statements = viewModel.listStatements().toList();
 		ViewSpecification view = new ViewSpecification();
 
@@ -40,10 +46,10 @@ public class ViewSpecificationConverter {
 		return view;
 	}
 
-	public static Model modelFromView(ViewSpecification view) {
+	public Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
-		String viewName = view.getName().getViewName();
-		Statement viewDescription = createStatement(createResource(SERVER_PREFIX + viewName),
+		ViewName viewName = view.getName();
+		Statement viewDescription = createStatement(createResource(hostname + viewName.getCollectionName() + "/" + viewName.getViewName()),
 				createProperty(VIEW_TYPE_OBJECT),
 				createResource());
 		model.add(viewDescription);
@@ -53,7 +59,7 @@ public class ViewSpecificationConverter {
 		return model;
 	}
 
-	private static ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {
+	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {
 		String nameString = statements.stream()
 				.filter(statement -> statement.getPredicate().toString().equals(VIEW_TYPE_OBJECT))
 				.map(statement -> statement.getSubject().getLocalName()).findFirst()
@@ -62,7 +68,7 @@ public class ViewSpecificationConverter {
 		return new ViewName(collectionName, nameString);
 	}
 
-	private static List<RetentionConfig> retentionListFromStatements(List<Statement> statements) {
+	private List<RetentionConfig> retentionListFromStatements(List<Statement> statements) {
 		List<RetentionConfig> retentionList = new ArrayList<>();
 		for (Resource retention : statements.stream()
 				.filter(new ConfigFilterPredicate(RETENTION_TYPE))
@@ -81,7 +87,7 @@ public class ViewSpecificationConverter {
 		return retentionList;
 	}
 
-	private static List<Statement> retentionStatementsFromList(Resource viewName, List<RetentionConfig> retentionList) {
+	private List<Statement> retentionStatementsFromList(Resource viewName, List<RetentionConfig> retentionList) {
 		List<Statement> statements = new ArrayList<>();
 		for (RetentionConfig retention : retentionList) {
 			Resource retentionResource = createResource();
@@ -96,7 +102,7 @@ public class ViewSpecificationConverter {
 		return statements;
 	}
 
-	private static List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {
+	private List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {
 		List<FragmentationConfig> fragmentationList = new ArrayList<>();
 		for (Resource fragmentation : statements.stream()
 				.filter(new ConfigFilterPredicate(FRAGMENTATION_TYPE))
@@ -116,7 +122,7 @@ public class ViewSpecificationConverter {
 		return fragmentationList;
 	}
 
-	private static List<Statement> fragmentationStatementsFromList(Resource viewName,
+	private List<Statement> fragmentationStatementsFromList(Resource viewName,
 			List<FragmentationConfig> fragmentationList) {
 		List<Statement> statements = new ArrayList<>();
 		for (FragmentationConfig fragmentation : fragmentationList) {
@@ -132,7 +138,7 @@ public class ViewSpecificationConverter {
 		return statements;
 	}
 
-	private static List<Statement> retrieveAllStatements(Resource resource, List<Statement> statements) {
+	private List<Statement> retrieveAllStatements(Resource resource, List<Statement> statements) {
 		List<Statement> statementList = new ArrayList<>();
 		statements.stream()
 				.filter(statement -> statement.getSubject().equals(resource))
@@ -145,7 +151,7 @@ public class ViewSpecificationConverter {
 		return statementList;
 	}
 
-	private static Map<String, String> extractConfigMap(List<Statement> statementList) {
+	private Map<String, String> extractConfigMap(List<Statement> statementList) {
 		Map<String, String> configMap = new HashMap<>();
 		statementList.stream()
 				.filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE))

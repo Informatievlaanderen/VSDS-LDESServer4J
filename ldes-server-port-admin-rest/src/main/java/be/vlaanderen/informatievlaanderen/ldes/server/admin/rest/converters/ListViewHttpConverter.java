@@ -20,6 +20,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ListViewHttpConverter implements GenericHttpMessageConverter<List<ViewSpecification>> {
+	private final ViewSpecificationConverter viewSpecificationConverter;
+
+	public ListViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
+		this.viewSpecificationConverter = viewSpecificationConverter;
+	}
+
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
 		return false;
@@ -69,7 +75,7 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 	public void write(List<ViewSpecification> views, MediaType contentType,
 			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
 		Model model = ModelFactory.createDefaultModel();
-		views.stream().map(ViewSpecificationConverter::modelFromView).forEach(model::add);
+		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
 
 		StringWriter outputStream = new StringWriter();
 

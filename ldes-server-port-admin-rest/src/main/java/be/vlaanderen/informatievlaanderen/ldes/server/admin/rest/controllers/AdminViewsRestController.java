@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -12,17 +13,17 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
-
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminViewsRestController {
 	private final ViewService viewService;
 	private final ViewValidator viewValidator;
+	private final ViewSpecificationConverter viewConverter;
 
-	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator) {
+	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator, ViewSpecificationConverter viewConverter) {
 		this.viewService = viewService;
 		this.viewValidator = viewValidator;
+		this.viewConverter = viewConverter;
 	}
 
 	@InitBinder
@@ -38,7 +39,7 @@ public class AdminViewsRestController {
 	@PutMapping("/eventstreams/{collectionName}/views")
 	public ResponseEntity<Object> putViews(@PathVariable String collectionName,
 			@RequestBody @Validated Model view) {
-		viewService.addView(viewFromModel(view, collectionName));
+		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 		return ResponseEntity.ok().build();
 	}
 

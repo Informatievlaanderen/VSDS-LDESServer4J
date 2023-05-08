@@ -15,10 +15,15 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.modelFromView;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
 
 public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification> {
+
+	private final ViewSpecificationConverter viewSpecificationConverter;
+
+	public ViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
+		this.viewSpecificationConverter = viewSpecificationConverter;
+	}
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
@@ -45,7 +50,7 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	public void write(ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		StringWriter outputStream = new StringWriter();
-		Model model = modelFromView(view);
+		Model model = viewSpecificationConverter.modelFromView(view);
 
 		RDFDataMgr.write(outputStream, model, TURTLE);
 
