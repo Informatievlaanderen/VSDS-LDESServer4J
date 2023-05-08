@@ -6,11 +6,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection {
 
 	private final Map<ViewName, List<RetentionPolicy>> retentionPolicyMap;
