@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @SuppressWarnings("java:S100")
 public interface LdesFragmentEntityRepository extends MongoRepository<LdesFragmentEntity, String> {
@@ -22,7 +23,7 @@ public interface LdesFragmentEntityRepository extends MongoRepository<LdesFragme
 
 	Optional<LdesFragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
 
-	List<LdesFragmentEntity> findAllByViewName(String viewName);
+	Stream<LdesFragmentEntity> findAllByViewName(String viewName);
 
 	List<LdesFragmentEntity> removeByViewName(String viewName);
 }

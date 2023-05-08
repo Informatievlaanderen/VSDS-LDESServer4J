@@ -102,7 +102,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	public Stream<LdesFragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)
-				.stream()
 				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
