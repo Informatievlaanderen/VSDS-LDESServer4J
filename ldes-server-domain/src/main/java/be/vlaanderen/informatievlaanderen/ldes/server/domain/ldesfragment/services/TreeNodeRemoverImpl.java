@@ -14,6 +14,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,12 +32,12 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	// retentionPolicyMap should no longer be injected.
 	// But start from an empty Map and be filled via ViewAddedEvents.
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
-			MemberRepository memberRepository, Map<ViewName, List<RetentionPolicy>> retentionPolicyMap,
+			MemberRepository memberRepository,
 			TreeMemberRemover treeMemberRemover,
 			ParentUpdater parentUpdater, RetentionPolicyCreator retentionPolicyCreator) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberRepository = memberRepository;
-		this.retentionPolicyMap = retentionPolicyMap;
+		this.retentionPolicyMap = new HashMap<>();
 		this.treeMemberRemover = treeMemberRemover;
 		this.parentUpdater = parentUpdater;
 		this.retentionPolicyCreator = retentionPolicyCreator;

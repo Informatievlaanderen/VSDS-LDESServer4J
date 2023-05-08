@@ -21,6 +21,8 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class ViewSpecificationConverter {
 
+	public static final String FRAGMENTATION_NAME = "name";
+
 	private ViewSpecificationConverter() {
 	}
 
@@ -51,7 +53,7 @@ public class ViewSpecificationConverter {
 	private static ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {
 		String nameString = statements.stream()
 				.filter(statement -> statement.getPredicate().toString().equals(VIEW_TYPE_OBJECT))
-				.map(statement -> statement.getSubject().toString()).findFirst()
+				.map(statement -> statement.getSubject().getLocalName()).findFirst()
 				.orElseThrow(() -> new ModelToViewConverterException("Missing type: " + VIEW_TYPE_OBJECT));
 
 		return new ViewName(collectionName, nameString);
@@ -91,8 +93,10 @@ public class ViewSpecificationConverter {
 				.map(Statement::getSubject).toList()) {
 			List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
 			FragmentationConfig config = new FragmentationConfig();
-			config.setName(fragmentation.toString());
-			config.setConfig(extractConfigMap(fragmentationStatements));
+			Map<String, String> configMap = extractConfigMap(fragmentationStatements);
+			// TODO verify Fragmentation name corresponds with a valid strategy
+			config.setName(configMap.remove(FRAGMENTATION_NAME));
+			config.setConfig(configMap);
 			fragmentationList.add(config);
 		}
 
@@ -131,7 +135,7 @@ public class ViewSpecificationConverter {
 		statementList.stream()
 				.filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE))
 				.forEach(statement -> configMap.put(
-						statement.getPredicate().toString(),
+						statement.getPredicate().getLocalName(),
 						statement.getObject().asLiteral().getString()));
 		return configMap;
 	}

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -24,10 +25,9 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	// fragmentationStrategyMap should no longer be injected.
 	// But start from an empty Map and be filled via ViewAddedEvents.
 	public FragmentationStrategyCollectionImpl(
-			@Qualifier("configured-fragmentation") Map<ViewName, FragmentationStrategy> fragmentationStrategyMap,
 			RootFragmentCreator rootFragmentCreator, FragmentationStrategyCreator fragmentationStrategyCreator,
 			RefragmentationService refragmentationService, LdesFragmentRemover ldesFragmentRemover) {
-		this.fragmentationStrategyMap = fragmentationStrategyMap;
+		this.fragmentationStrategyMap = new HashMap<>();
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.refragmentationService = refragmentationService;
