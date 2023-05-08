@@ -74,13 +74,13 @@ public class MemberMongoRepository implements MemberRepository {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(COLLECTION_NAME).is(collectionName));
 		query.with(Sort.by(SEQUENCE_NR).ascending());
-		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(converter::toLdesMember);
+		return mongoTemplate.stream(query, LdesMemberEntity.class).map(converter::toLdesMember);
 	}
 
 	@Override
 	public Stream<Member> getMembersByReference(String treeNodeId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId));
-		return mongoTemplate.find(query, LdesMemberEntity.class).stream().map(converter::toLdesMember);
+		return mongoTemplate.stream(query, LdesMemberEntity.class).map(converter::toLdesMember);
 	}
 }

@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repositor
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.ViewEntityConverter;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ViewMongoRepository implements ViewRepository {
 
@@ -34,5 +35,12 @@ public class ViewMongoRepository implements ViewRepository {
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
 		repository.deleteById(viewName.asString());
+	}
+
+	@Override
+	public Optional<ViewSpecification> getViewByViewName(ViewName viewName) {
+		return repository
+				.findById(viewName.asString())
+				.map(converter::toView);
 	}
 }

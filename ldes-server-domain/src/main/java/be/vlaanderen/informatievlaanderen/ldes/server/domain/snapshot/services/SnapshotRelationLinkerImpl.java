@@ -45,7 +45,6 @@ public class SnapshotRelationLinkerImpl implements SnapshotRelationLinker {
 
 	private LdesFragment getLastTreeNodeOfSnapshot(Snapshot snapshot) {
 		return ldesFragmentRepository.retrieveFragmentsOfView(snapshot.getSnapshotId())
-				.stream()
 				.filter(ldesFragment -> !ldesFragment.isImmutable())
 				.filter(ldesFragment -> !ldesFragment.isRoot()).findFirst()
 				.orElseThrow(() -> new SnapshotCreationException(
