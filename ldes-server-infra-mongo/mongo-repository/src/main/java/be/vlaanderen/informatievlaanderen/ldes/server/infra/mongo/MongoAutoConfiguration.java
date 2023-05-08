@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
@@ -11,8 +10,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.Ev
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.LdesConfigMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.repository.LdesConfigEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.ShaclShapeMongoRepository;
@@ -52,13 +49,6 @@ public class MongoAutoConfiguration {
 	public LdesFragmentRepository ldesFragmentMongoRepository(
 			final LdesFragmentEntityRepository ldesFragmentEntityRepository, final MongoTemplate mongoTemplate) {
 		return new LdesFragmentMongoRepository(ldesFragmentEntityRepository, mongoTemplate);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
-	public LdesConfigRepository ldesConfigMongoRepository(
-			final LdesConfigEntityRepository ldesConfigEntityRepository) {
-		return new LdesConfigMongoRepository(ldesConfigEntityRepository);
 	}
 
 	@Bean

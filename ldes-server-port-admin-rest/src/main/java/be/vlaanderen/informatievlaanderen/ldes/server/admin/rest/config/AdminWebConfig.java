@@ -9,10 +9,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AdminWebConfig {
-	@Bean
-	public LdesConfigModelConverter ldesConfigModelConverter() {
-		return new LdesConfigModelConverter();
-	}
 
 	@Bean
 	public ModelConverter modelConverter() {
