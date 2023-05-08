@@ -49,8 +49,7 @@ public class AdminViewsRestController {
 	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { JSON_LD, NQUADS, TURTLE })
 	@Operation(summary = "Add a view to a collection")
 	public ResponseEntity<String> putViews(@PathVariable String collectionName,
-			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining a view of the collection")
-			@RequestBody String view,
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining a view of the collection") @RequestBody String view,
 			@Parameter(hidden = true) @RequestHeader("Content-Type") String contentType) {
 		LdesConfigModel viewModel = LdesConfigModelConverter.toModel(view, contentType);
 		viewValidator.validateShape(viewModel.getModel());

@@ -65,8 +65,7 @@ public class AdminEventStreamsRestController {
 	@PutMapping(consumes = { JSON_LD, NQUADS, TURTLE })
 	@Operation(summary = "Create an Event Stream based on the provided config")
 	public String putEventStream(
-			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Event Stream")
-			@RequestBody String configuredEventStream,
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Event Stream") @RequestBody String configuredEventStream,
 			@Parameter(hidden = true) @RequestHeader("Content-Type") String contentType) {
 		Model eventStreamModel = ModelConverter.toModel(configuredEventStream, contentType);
 		eventStreamValidator.validateShape(eventStreamModel);

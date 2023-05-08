@@ -44,8 +44,7 @@ public class AdminShapeRestController {
 	@PutMapping(consumes = { JSON_LD, NQUADS, TURTLE })
 	@Operation(summary = "Adds a shape to a collection")
 	public String putShape(@PathVariable String collectionName,
-			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Shape of the collection")
-			@RequestBody String shape,
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Shape of the collection") @RequestBody String shape,
 			@Parameter(hidden = true) @RequestHeader("Content-Type") String contentType) {
 		Model shapeModel = ModelConverter.toModel(shape, contentType);
 		shapeValidator.validateShape(shapeModel);
