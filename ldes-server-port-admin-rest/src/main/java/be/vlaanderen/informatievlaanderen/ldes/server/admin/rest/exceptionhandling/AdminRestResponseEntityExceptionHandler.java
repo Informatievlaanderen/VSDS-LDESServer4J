@@ -32,6 +32,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
+	// Todo: remove?
 	@ExceptionHandler(value = { InvalidModelIdException.class })
 	protected ResponseEntity<Object> handleInvalidModelException(
 			RuntimeException ex, WebRequest request) {
