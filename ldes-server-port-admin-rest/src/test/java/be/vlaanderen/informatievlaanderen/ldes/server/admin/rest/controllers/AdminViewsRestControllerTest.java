@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
