@@ -44,7 +44,9 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		return viewCollection.getViewsByCollectionName(collectionName);
+		return viewRepository.retrieveAllViews().stream()
+				.filter(view -> view.getName().getCollectionName().equals(collectionName))
+				.toList();
 	}
 
 	@Override
