@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
@@ -27,10 +28,12 @@ import static org.apache.jena.riot.WebContent.*;
 public class AdminViewsRestController {
 	private final ViewService viewService;
 	private final ViewValidator viewValidator;
+	private final ViewSpecificationConverter viewConverter;
 
-	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator) {
+	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator, ViewSpecificationConverter viewConverter) {
 		this.viewService = viewService;
 		this.viewValidator = viewValidator;
+		this.viewConverter = viewConverter;
 	}
 
 	@InitBinder
@@ -52,7 +55,7 @@ public class AdminViewsRestController {
 	@Operation(summary = "Add a view to a collection")
 	public ResponseEntity<Void> putViews(@PathVariable String collectionName,
 			@Parameter(schema = @Schema(implementation = String.class), description = "A valid RDF model defining a view for a collection") @RequestBody @Validated Model view) {
-		viewService.addView(ViewSpecificationConverter.viewFromModel(view, collectionName));
+		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 		return ResponseEntity.ok().build();
 	}
 
