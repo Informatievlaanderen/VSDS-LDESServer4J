@@ -1,25 +1,27 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ViewServiceImplTest {
 
-	private final ViewCollection viewCollection = mock(ViewCollection.class);
-
-	private final ViewService viewService = new ViewServiceImpl(viewCollection);
+	private final ViewRepository viewRepository = mock(ViewRepository.class);
+	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+	private final ViewServiceImpl viewService = new ViewServiceImpl(viewRepository, eventPublisher);
 
 	@Nested
 	class AddView {
@@ -28,25 +30,27 @@ class ViewServiceImplTest {
 
 		@Test
         void when_ViewDoesNotExist_ViewIsAdded() {
-            when(viewCollection.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+            when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
 
             viewService.addView(view);
 
-            InOrder inOrder = inOrder(viewCollection);
-            inOrder.verify(viewCollection).getViewByViewName(view.getName());
-            inOrder.verify(viewCollection).addView(view);
+            InOrder inOrder = inOrder(viewRepository, eventPublisher);
+            inOrder.verify(viewRepository).getViewByViewName(view.getName());
+            inOrder.verify(viewRepository).saveView(view);
+            inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
             inOrder.verifyNoMoreInteractions();
         }
 
 		@Test
         void when_ViewDoesExist_DuplicateViewExceptionIsThrown() {
-            when(viewCollection.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
+            when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
 
             DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class, () -> viewService.addView(view));
 
             assertEquals("Collection collection already has a view: collection/view", duplicateViewException.getMessage());
-            verify(viewCollection).getViewByViewName(view.getName());
-            verifyNoMoreInteractions(viewCollection);
+            InOrder inOrder = inOrder(viewRepository, eventPublisher);
+            inOrder.verify(viewRepository).getViewByViewName(view.getName());
+            inOrder.verifyNoMoreInteractions();
         }
 	}
 
@@ -58,8 +62,29 @@ class ViewServiceImplTest {
 		void when_ViewDoesNotExist_ViewIsAdded() {
 			viewService.deleteViewByViewName(viewName);
 
-			InOrder inOrder = inOrder(viewCollection);
-			inOrder.verify(viewCollection).deleteViewByViewName(viewName);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
+			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
+
+	@Nested
+	class InitViews {
+		@Test
+		void when_ApplicationIsStartedUp_ViewAddedEventsAreSent() {
+			ViewSpecification firstViewSpecification = new ViewSpecification(new ViewName("collection", "view"),
+					List.of(), List.of());
+			ViewSpecification secondViewSpecification = new ViewSpecification(new ViewName("collection", "view2"),
+					List.of(), List.of());
+			when(viewRepository.retrieveAllViews())
+					.thenReturn(List.of(firstViewSpecification, secondViewSpecification));
+
+			viewService.initViews();
+
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).retrieveAllViews();
+			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewAddedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}

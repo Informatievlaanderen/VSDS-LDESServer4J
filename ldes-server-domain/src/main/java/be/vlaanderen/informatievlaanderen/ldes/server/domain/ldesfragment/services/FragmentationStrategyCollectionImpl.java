@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +18,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	private final RootFragmentCreator rootFragmentCreator;
 	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 	private final RefragmentationService refragmentationService;
+	private final LdesFragmentRemover ldesFragmentRemover;
 
 	// TODO when the definition of views in config is going to be deprecated, the
 	// fragmentationStrategyMap should no longer be injected.
@@ -24,11 +26,12 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	public FragmentationStrategyCollectionImpl(
 			@Qualifier("configured-fragmentation") Map<ViewName, FragmentationStrategy> fragmentationStrategyMap,
 			RootFragmentCreator rootFragmentCreator, FragmentationStrategyCreator fragmentationStrategyCreator,
-			RefragmentationService refragmentationService) {
+			RefragmentationService refragmentationService, LdesFragmentRemover ldesFragmentRemover) {
 		this.fragmentationStrategyMap = fragmentationStrategyMap;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.refragmentationService = refragmentationService;
+		this.ldesFragmentRemover = ldesFragmentRemover;
 	}
 
 	public Map<ViewName, FragmentationStrategy> getFragmentationStrategyMap() {
@@ -43,5 +46,11 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		refragmentationService.refragmentMembersForView(rootFragmentForView, fragmentationStrategyForView);
 		fragmentationStrategyMap.put(event.getViewName(),
 				fragmentationStrategyForView);
+	}
+
+	@EventListener
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		ldesFragmentRemover.removeLdesFragmentsOfView(event.getViewName());
+		fragmentationStrategyMap.remove(event.getViewName());
 	}
 }
