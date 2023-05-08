@@ -67,7 +67,7 @@ class AdminShapeRestControllerTest {
 					.thenReturn(new ShaclShape(collectionName, expectedShapeModel));
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-							.accept(contentTypeTurtle))
+					.accept(contentTypeTurtle))
 					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
@@ -80,7 +80,7 @@ class AdminShapeRestControllerTest {
 					.thenThrow(new MissingShaclShapeException(collectionName));
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-							.accept(contentTypeTurtle))
+					.accept(contentTypeTurtle))
 					.andDo(print())
 					.andExpect(status().isNotFound());
 		}

@@ -84,7 +84,7 @@ class AdminViewsRestControllerTest {
 		when(ldesConfigModelService.retrieveView(collectionName, viewName))
 				.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName)
-						.accept(contentTypeTurtle))
+				.accept(contentTypeTurtle))
 				.andExpect(status().isNotFound());
 	}
 
@@ -96,8 +96,8 @@ class AdminViewsRestControllerTest {
 		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
 		when(ldesConfigModelService.addView(anyString(), any())).thenReturn(configModel);
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-						.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk());
 		verify(ldesConfigModelService, times(1)).addView(anyString(), any());
@@ -107,8 +107,8 @@ class AdminViewsRestControllerTest {
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		String collectionName = "name1";
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-						.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
