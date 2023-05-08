@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.Dupl
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.commons.lang3.NotImplementedException;
@@ -57,6 +58,7 @@ public class ViewServiceImpl implements ViewService {
 	public void initViews() {
 		viewRepository
 				.retrieveAllViews()
-				.forEach(viewSpecification -> eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification)));
+				.forEach(viewSpecification -> eventPublisher
+						.publishEvent(new ViewInitializationEvent(viewSpecification)));
 	}
 }

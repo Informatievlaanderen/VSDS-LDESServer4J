@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +45,14 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		FragmentationStrategy fragmentationStrategyForView = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(event.getViewSpecification());
 		refragmentationService.refragmentMembersForView(rootFragmentForView, fragmentationStrategyForView);
+		fragmentationStrategyMap.put(event.getViewName(),
+				fragmentationStrategyForView);
+	}
+
+	@EventListener
+	public void handleViewInitializationEvent(ViewInitializationEvent event) {
+		FragmentationStrategy fragmentationStrategyForView = fragmentationStrategyCreator
+				.createFragmentationStrategyForView(event.getViewSpecification());
 		fragmentationStrategyMap.put(event.getViewName(),
 				fragmentationStrategyForView);
 	}
