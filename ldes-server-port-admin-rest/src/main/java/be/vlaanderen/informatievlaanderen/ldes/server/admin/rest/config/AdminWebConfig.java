@@ -26,13 +26,13 @@ public class AdminWebConfig {
 	}
 
 	@Bean
-	public ViewHttpConverter viewHttpConverter() {
-		return new ViewHttpConverter();
+	public ViewHttpConverter viewHttpConverter(final ViewSpecificationConverter viewSpecificationConverter) {
+		return new ViewHttpConverter(viewSpecificationConverter);
 	}
 
 	@Bean
-	public ListViewHttpConverter listViewHttpConverter() {
-		return new ListViewHttpConverter();
+	public ListViewHttpConverter listViewHttpConverter(final ViewSpecificationConverter viewSpecificationConverter) {
+		return new ListViewHttpConverter(viewSpecificationConverter);
 	}
 
 	@Bean
