@@ -83,7 +83,7 @@ class ViewServiceImplTest {
 			ViewSpecification actualViewSpecification = viewService.getViewByViewName(viewName);
 
 			assertEquals(expectedViewSpecification, actualViewSpecification);
-			InOrder inOrder = inOrder(viewRepository);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).getViewByViewName(viewName);
 			inOrder.verifyNoMoreInteractions();
 		}
@@ -95,8 +95,27 @@ class ViewServiceImplTest {
 			MissingViewException missingViewException = assertThrows(MissingViewException.class, () -> viewService.getViewByViewName(viewName));
 
 			assertEquals("Collection collection does not have a view: view", missingViewException.getMessage());
-			InOrder inOrder = inOrder(viewRepository);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).getViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
+
+	@Nested
+	class GetViewsOfCollection {
+		private final ViewName viewName = new ViewName("collection", "view");
+		private final ViewSpecification expectedViewSpecification = new ViewSpecification(viewName, List.of(),
+				List.of());
+
+		@Test
+		void when_GetViewAndViewIsPresent_ViewIsReturned() {
+			when(viewRepository.retrieveAllViewsOfCollection(viewName.getCollectionName())).thenReturn(List.of(expectedViewSpecification));
+
+			List<ViewSpecification> actualViewSpecifications = viewService.getViewsByCollectionName(viewName.getCollectionName());
+
+			assertEquals(List.of(expectedViewSpecification), actualViewSpecifications);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).retrieveAllViewsOfCollection(viewName.getCollectionName());
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
