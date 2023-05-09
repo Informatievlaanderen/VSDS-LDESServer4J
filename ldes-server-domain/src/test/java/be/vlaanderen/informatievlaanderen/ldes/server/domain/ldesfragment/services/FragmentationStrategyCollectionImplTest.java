@@ -75,5 +75,4 @@ class FragmentationStrategyCollectionImplTest {
 		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
 		verifyNoMoreInteractions(fragmentationStrategyCreator, rootFragmentCreator, refragmentationService);
 	}
-
 }
