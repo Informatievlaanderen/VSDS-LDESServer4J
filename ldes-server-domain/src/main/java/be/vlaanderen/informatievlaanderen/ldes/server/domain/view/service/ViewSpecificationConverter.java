@@ -29,7 +29,7 @@ public class ViewSpecificationConverter {
 			LdesConfig ldesConfig = appConfig.getCollections().get(0);
 			hostname = ldesConfig.getHostName();
 		} else {
-			//todo update code when appconfig is reworked
+			// todo update code when appconfig is reworked
 			hostname = "undefined";
 		}
 	}
@@ -49,7 +49,8 @@ public class ViewSpecificationConverter {
 	public Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
-		Statement viewDescription = createStatement(createResource(hostname + viewName.getCollectionName() + "/" + viewName.getViewName()),
+		Statement viewDescription = createStatement(
+				createResource(hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName()),
 				createProperty(TREE_VIEW_DESCRIPTION),
 				createResource());
 		model.add(viewDescription);

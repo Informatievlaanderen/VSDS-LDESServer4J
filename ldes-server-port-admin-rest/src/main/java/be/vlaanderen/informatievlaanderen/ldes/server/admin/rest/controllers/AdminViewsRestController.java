@@ -30,7 +30,8 @@ public class AdminViewsRestController {
 	private final ViewValidator viewValidator;
 	private final ViewSpecificationConverter viewConverter;
 
-	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator, ViewSpecificationConverter viewConverter) {
+	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator,
+			ViewSpecificationConverter viewConverter) {
 		this.viewService = viewService;
 		this.viewValidator = viewValidator;
 		this.viewConverter = viewConverter;
