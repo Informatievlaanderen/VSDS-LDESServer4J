@@ -21,9 +21,6 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	private final RefragmentationService refragmentationService;
 	private final LdesFragmentRemover ldesFragmentRemover;
 
-	// TODO when the definition of views in config is going to be deprecated, the
-	// fragmentationStrategyMap should no longer be injected.
-	// But start from an empty Map and be filled via ViewAddedEvents.
 	public FragmentationStrategyCollectionImpl(
 			RootFragmentCreator rootFragmentCreator, FragmentationStrategyCreator fragmentationStrategyCreator,
 			RefragmentationService refragmentationService, LdesFragmentRemover ldesFragmentRemover) {

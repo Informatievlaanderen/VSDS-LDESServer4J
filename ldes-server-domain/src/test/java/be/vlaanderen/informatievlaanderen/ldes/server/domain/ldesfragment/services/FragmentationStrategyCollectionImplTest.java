@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -56,6 +57,23 @@ class FragmentationStrategyCollectionImplTest {
 		assertFalse(
 				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
 		verify(ldesFragmentRemover).removeLdesFragmentsOfView(viewSpecification.getName());
+	}
+
+	@Test
+	void when_ViewInitializedEventIsReceived_FragmentationStrategyIsAddedToMap() {
+		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
+				List.of(), List.of());
+		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
+				.thenReturn(mock(FragmentationStrategy.class));
+		assertFalse(
+				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
+
+		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
+
+		assertTrue(
+				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
+		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
+		verifyNoMoreInteractions(fragmentationStrategyCreator, rootFragmentCreator, refragmentationService);
 	}
 
 }
