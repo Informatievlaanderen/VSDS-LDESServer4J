@@ -1,7 +1,7 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix tree: <https://w3id.org/tree#>.
 @prefix example: <http://example.org/> .
-@prefix server: <http://server.org/> .
+@prefix server: <http://localhost:8080/collection/> .
 
 server:viewName tree:viewDescription [
     ldes:retentionPolicy [
