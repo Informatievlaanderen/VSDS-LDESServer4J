@@ -9,4 +9,6 @@ public interface SnapshotRepository {
 	void saveSnapShot(Snapshot snapshot);
 
 	Optional<Snapshot> getLastSnapshot();
+
+	void deleteSnapshotsByCollectionName(String collectionName);
 }

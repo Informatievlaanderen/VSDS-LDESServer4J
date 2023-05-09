@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,12 +18,16 @@ public class EventStreamServiceImpl implements EventStreamService {
 	private final EventStreamCollection eventStreamCollection;
 	private final ViewService viewService;
 	private final ShaclShapeService shaclShapeService;
+	private final ApplicationEventPublisher eventPublisher;
 
 	public EventStreamServiceImpl(EventStreamCollection eventStreamCollection, ViewService viewService,
 			ShaclShapeService shaclShapeService) {
+	public EventStreamServiceImpl(EventStreamCollection eventStreamCollection,
+			ApplicationEventPublisher eventPublisher) {
 		this.eventStreamCollection = eventStreamCollection;
 		this.viewService = viewService;
 		this.shaclShapeService = shaclShapeService;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
@@ -57,7 +62,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 				.map(ViewSpecification::getName)
 				.forEach(viewService::deleteViewByViewName);
 		shaclShapeService.deleteShaclShape(collectionName);
-	}
+		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
+		}
 
 	@Override
 	public EventStreamResponse saveEventStream(EventStreamResponse eventStreamResponse) {

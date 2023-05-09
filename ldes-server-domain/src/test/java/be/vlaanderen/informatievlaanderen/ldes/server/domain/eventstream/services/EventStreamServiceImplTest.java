@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,8 @@ class EventStreamServiceImplTest {
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 	@Mock
+	private ApplicationEventPublisher eventPublisher;
+	@Mock
 	private ViewService viewService;
 	@Mock
 	private ShaclShapeService shaclShapeService;
@@ -45,7 +48,7 @@ class EventStreamServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService);
+		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService, eventPublisher);
 	}
 
 	@Test
