@@ -67,13 +67,13 @@ jobs:
       # Docker
       - name: Define docker variables
         run: |
-          if [[ ${{ github.ref_name == 'main' }} ]]; then
+          if [ ${{ github.ref_name == 'main' }} ]; then
             echo "IMAGE_TAG=${{ env.version }}" >> $GITHUB_ENV
           else
             echo "IMAGE_TAG=$(date 'YYYYMMDDTHHmm')" >> $GITHUB_ENV
           fi
 
-          if [[ ${{ !contains(env.version, 'SNAPSHOT') }} ]]; then
+          if [ ${{ !contains(env.version, 'SNAPSHOT') }} ]; then
             echo "LATEST=latest" >> $GITHUB_ENV
           fi
       - name: Log in to the DockerHub Container registry
