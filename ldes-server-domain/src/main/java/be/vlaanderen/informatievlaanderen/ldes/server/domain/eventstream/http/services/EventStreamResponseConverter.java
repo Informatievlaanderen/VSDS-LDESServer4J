@@ -8,19 +8,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.EVENT_STREAM_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_TIMESTAMP_PATH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_VERSION_OF;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_SHAPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.VIEW;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 public class EventStreamResponseConverter {
+
+	public static final String CUSTOM = "http://example.org/";
+	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
 
 	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
+		final String memberType = getResource(model, MEMBER_TYPE);
 		final List<ViewSpecification> views = List.of(); // TODO: extract view specifications from model
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, views, shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views, shacl);
 	}
 
 	public Model toModel(EventStreamResponse eventStreamResponse) {
@@ -31,6 +44,8 @@ public class EventStreamResponseConverter {
 				createProperty(eventStreamResponse.getTimestampPath()));
 		final Statement versionOfStmt = createStatement(subject, LDES_VERSION_OF,
 				createProperty(eventStreamResponse.getVersionOfPath()));
+		final Statement memberType = createStatement(subject, MEMBER_TYPE,
+				createProperty(eventStreamResponse.getMemberType()));
 
 		final Resource shaclResource = createResource(
 				getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE)));
@@ -43,7 +58,7 @@ public class EventStreamResponseConverter {
 		// TODO: add view specifications to the model
 
 		return createDefaultModel()
-				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, shaclStmt))
+				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, shaclStmt))
 				.add(viewReferenceStatements)
 				.add(eventStreamResponse.getShacl());
 	}
