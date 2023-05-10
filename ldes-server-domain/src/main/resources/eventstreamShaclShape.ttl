@@ -33,6 +33,7 @@
     sh:nodeKind sh:IRI ;
     sh:description "The object property that indicates the type of a member."@en;
     sh:maxCount 1;
+    sh:minCount 1;
     sh:name "memberType"@en;
     sh:path <http://example.org/memberType>
   ] .
