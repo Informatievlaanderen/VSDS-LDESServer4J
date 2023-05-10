@@ -16,7 +16,7 @@ public class TreeMemberRemoverImpl implements TreeMemberRemover {
 		this.memberRepository = memberRepository;
 	}
 
-	public void tryRemovingMember(String memberId) {
+	public void tryDeletingMember(String memberId) {
 		Optional<Member> member = memberRepository.getMember(memberId);
 		if (member.isPresent() && member.get().getTreeNodeReferences().isEmpty()) {
 			memberRepository.deleteMember(memberId);

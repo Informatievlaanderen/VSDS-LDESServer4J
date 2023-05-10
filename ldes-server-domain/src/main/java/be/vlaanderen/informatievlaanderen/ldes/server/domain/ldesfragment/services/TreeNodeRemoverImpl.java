@@ -11,6 +11,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 @Component
 public class TreeNodeRemoverImpl implements TreeNodeRemover {
@@ -18,17 +20,15 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final MemberRepository memberRepository;
 	private final TreeMemberRemover treeMemberRemover;
-	private final ParentUpdater parentUpdater;
 	private final RetentionPolicyCollection retentionPolicyCollection;
 
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			MemberRepository memberRepository,
 			TreeMemberRemover treeMemberRemover,
-			ParentUpdater parentUpdater, RetentionPolicyCollection retentionPolicyCollection) {
+			RetentionPolicyCollection retentionPolicyCollection) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberRepository = memberRepository;
 		this.treeMemberRemover = treeMemberRemover;
-		this.parentUpdater = parentUpdater;
 		this.retentionPolicyCollection = retentionPolicyCollection;
 	}
 
@@ -38,30 +38,42 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 				.getRetentionPolicyMap()
 				.entrySet()
 				.stream()
-				.filter(stringListEntry -> !stringListEntry.getValue().isEmpty())
-				.forEach(entry -> {
-					ViewName view = entry.getKey();
-					List<RetentionPolicy> retentionPolicies = entry.getValue();
-					List<LdesFragment> ldesFragments = ldesFragmentRepository
-							.retrieveNonDeletedImmutableFragmentsOfView(view.asString())
-							.filter(ldesFragment -> retentionPolicies
-									.stream()
-									.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(ldesFragment)))
-							.toList();
-					ldesFragments.forEach(ldesFragment -> {
-						ldesFragment.setSoftDeleted(true);
-						ldesFragmentRepository.saveFragment(ldesFragment);
-						parentUpdater.updateParent(ldesFragment);
-						memberRepository
-								.getMembersByReference(ldesFragment.getFragmentId())
-								.map(Member::getLdesMemberId)
-								.forEach(memberId -> {
-									memberRepository.removeMemberReference(memberId,
-											ldesFragment.getFragmentId());
-									treeMemberRemover.tryRemovingMember(memberId);
-								});
-					});
-				});
+				.filter(this::viewHasRetentionPolicies)
+				.forEach(viewWithRetentionPolicies -> removeMembersFromViewThatMatchRetentionPolicies(
+						viewWithRetentionPolicies.getKey(), viewWithRetentionPolicies.getValue()));
+	}
+
+	private boolean viewHasRetentionPolicies(Map.Entry<ViewName, List<RetentionPolicy>> entry) {
+		return !entry.getValue().isEmpty();
+	}
+
+	private void removeMembersFromViewThatMatchRetentionPolicies(ViewName view,
+			List<RetentionPolicy> retentionPoliciesOfView) {
+		ldesFragmentRepository
+				.retrieveFragmentsOfView(view.asString())
+				.forEach(ldesFragmentOfView -> removeMembersFromFragmentOfViewThatMatchRetentionPolicies(
+						retentionPoliciesOfView, ldesFragmentOfView));
+	}
+
+	private void removeMembersFromFragmentOfViewThatMatchRetentionPolicies(
+			List<RetentionPolicy> retentionPoliciesOfView, LdesFragment ldesFragmentOfView) {
+		Stream<Member> membersOfFragment = memberRepository
+				.getMembersByReference(ldesFragmentOfView.getFragmentId());
+		membersOfFragment
+				.filter(member -> memberMatchesAllRetentionPoliciesOfView(retentionPoliciesOfView, member))
+				.forEach(member -> removeMemberFromFragmentOfViewAndTryDeletingMember(ldesFragmentOfView, member));
+	}
+
+	private void removeMemberFromFragmentOfViewAndTryDeletingMember(LdesFragment ldesFragment, Member member) {
+		memberRepository.removeMemberReference(member.getLdesMemberId(),
+				ldesFragment.getFragmentId());
+		treeMemberRemover.tryDeletingMember(member.getLdesMemberId());
+	}
+
+	private boolean memberMatchesAllRetentionPoliciesOfView(List<RetentionPolicy> retentionPolicies, Member member) {
+		return retentionPolicies
+				.stream()
+				.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(member));
 	}
 
 }
