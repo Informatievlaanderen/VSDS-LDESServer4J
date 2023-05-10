@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
 
 @RestController
 @RequestMapping("/admin/api/v1")
@@ -38,7 +37,7 @@ public class AdminViewsRestController {
 	@PutMapping("/eventstreams/{collectionName}/views")
 	public ResponseEntity<Object> putViews(@PathVariable String collectionName,
 			@RequestBody @Validated Model view) {
-		viewService.addView(viewFromModel(view, collectionName));
+		viewService.addView(ViewSpecificationConverter.viewFromModel(view, collectionName));
 		return ResponseEntity.ok().build();
 	}
 

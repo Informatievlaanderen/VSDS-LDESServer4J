@@ -1,6 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.ModelToViewConverterException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -18,10 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ViewSpecificationConverterTest {
-
 	private static final String COLLECTION_NAME = "collection";
 	private static final String VIEW_NAME = "http://server.org/viewName";
 	private ViewSpecification view;
@@ -78,5 +76,4 @@ class ViewSpecificationConverterTest {
 	private boolean compareList(List expected, List actual) {
 		return expected.containsAll(actual) && actual.containsAll(expected);
 	}
-
 }

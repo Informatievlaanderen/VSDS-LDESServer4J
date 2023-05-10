@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception;
 
 public class ModelToViewConverterException extends RuntimeException {
 	private final String cause;
