@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -65,28 +64,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
 				.map(LdesFragmentEntity::toLdesFragment);
-	}
-
-	@Override
-	public Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName) {
-		return repository
-				.findAllByImmutableAndSoftDeletedAndViewName(true, false, viewName)
-				.stream()
-				.map(LdesFragmentEntity::toLdesFragment);
-	}
-
-	@Override
-	public Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
-			List<FragmentPair> fragmentPairList) {
-		return repository
-				.findAllBySoftDeletedAndViewName(false,
-						viewName)
-				.stream()
-				.filter(ldesFragmentEntity -> Collections
-						.indexOfSubList(ldesFragmentEntity.getFragmentPairs(), fragmentPairList) != -1
-						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentPairs()))
-				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentId));
 	}
 
 	@Override
