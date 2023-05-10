@@ -73,7 +73,7 @@ jobs:
             echo "IMAGE_TAG=$(date 'YYYYMMDDTHHmm')" >> $GITHUB_ENV
           fi
 
-          if [[ ${{ contains(env.version, 'SNAPSHOT') }} ]]; then
+          if [[ ${{ !contains(env.version, 'SNAPSHOT') }} ]]; then
             echo "LATEST=latest" >> $GITHUB_ENV
           fi
       - name: Log in to the DockerHub Container registry
@@ -96,11 +96,8 @@ jobs:
         with:
           images: ${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=tag
-            type=ref,event=pr
             type=raw,value=${{env.IMAGE_TAG}}
-            type=raw,value={{env.LATEST}}
+            type=raw,value=${{env.LATEST}}
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
