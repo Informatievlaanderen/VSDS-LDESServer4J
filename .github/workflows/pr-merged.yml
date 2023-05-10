@@ -65,6 +65,7 @@ jobs:
           if [[ "${{ env.version }}" != *"SNAPSHOT"* ]]; then
             echo "LATEST=latest" >> $GITHUB_ENV
           fi
+          echo "${{ env.latest }} and ${{env.image_tag}}"
       - name: Analyse & publish package
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
