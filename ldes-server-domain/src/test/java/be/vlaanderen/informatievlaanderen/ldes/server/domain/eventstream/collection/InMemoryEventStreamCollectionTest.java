@@ -19,7 +19,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class InMemoryEventStreamCollectionTest {
 	private static final String COLLECTION_NAME = "collection1";
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf", memberType);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf",
+			"memberType");
 	@Mock
 	private EventStreamRepository repository;
 	private EventStreamCollection eventStreamCollection;

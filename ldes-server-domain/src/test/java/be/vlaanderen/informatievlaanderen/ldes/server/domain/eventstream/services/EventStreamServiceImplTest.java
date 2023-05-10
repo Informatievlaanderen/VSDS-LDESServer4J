@@ -20,7 +20,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class EventStreamServiceImplTest {
 	private static final String COLLECTION = "collection";
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, "generatedAt", "isVersionOf", memberType);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, "generatedAt", "isVersionOf",
+			"memberType");
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 
@@ -33,7 +34,7 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
-		EventStream other = new EventStream("other", "created", "versionOf", memberType);
+		EventStream other = new EventStream("other", "created", "versionOf", "memberType");
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, other));
 		List<EventStream> eventStreams = service.retrieveAllEventStreams();
@@ -59,7 +60,7 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_collectionExists_and_updateEventStream_then_expectUpdatedEventStream() {
-		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf", memberType);
+		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf", "memberType");
 
 		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
 

@@ -21,15 +21,18 @@ class EventStreamResponseTest {
 	private static final String COLLECTION = "collection";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
+	private static final String MEMBER_TYPE_PATH = "memberType";
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
-			VERSION_OF_PATH, memberType, List.of(), ModelFactory.createDefaultModel());
+			VERSION_OF_PATH, MEMBER_TYPE_PATH, List.of(), ModelFactory.createDefaultModel());
 
 	@Test
 	void test_equality() {
-		EventStreamResponse other = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, memberType, List.of(),
+		EventStreamResponse other = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+				MEMBER_TYPE_PATH, List.of(),
 				ModelFactory.createDefaultModel());
 
 		assertEquals(EVENT_STREAM_RESPONSE, other);
+		assertEquals(EVENT_STREAM_RESPONSE, EVENT_STREAM_RESPONSE);
 	}
 
 	@ParameterizedTest
@@ -47,19 +50,21 @@ class EventStreamResponseTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
-					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, memberType, List.of(),
+					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE_PATH, List.of(),
 							ModelFactory.createDefaultModel().add(ResourceFactory.createResource(),
 									RdfConstants.IS_PART_OF_PROPERTY, "object")),
-					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, memberType, null,
+					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE_PATH, null,
 							ModelFactory.createDefaultModel()),
-					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, "other", memberType, List.of(),
+					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, "other", MEMBER_TYPE_PATH, List.of(),
 							ModelFactory.createDefaultModel()),
-					new EventStreamResponse(COLLECTION, "other", VERSION_OF_PATH, memberType, List.of(),
+					new EventStreamResponse(COLLECTION, "other", VERSION_OF_PATH, MEMBER_TYPE_PATH, List.of(),
 							ModelFactory.createDefaultModel()),
-					new EventStreamResponse("other", TIMESTAMP_PATH, VERSION_OF_PATH, memberType, List.of(),
+					new EventStreamResponse("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE_PATH, List.of(),
+							ModelFactory.createDefaultModel()),
+					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, "other", List.of(),
 							ModelFactory.createDefaultModel()),
 					null,
-					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, memberType)).map(Arguments::of);
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE_PATH)).map(Arguments::of);
 		}
 	}
 }

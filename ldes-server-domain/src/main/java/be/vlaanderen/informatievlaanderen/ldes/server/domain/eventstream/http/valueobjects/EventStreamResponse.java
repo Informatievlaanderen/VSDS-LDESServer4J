@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class EventStreamResponse {
+
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
@@ -15,8 +16,8 @@ public class EventStreamResponse {
 	private final Model shacl;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-							   String memberType, List<ViewSpecification> views,
-							   Model shacl) {
+			String memberType, List<ViewSpecification> views,
+			Model shacl) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
@@ -58,11 +59,12 @@ public class EventStreamResponse {
 		EventStreamResponse that = (EventStreamResponse) o;
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
+				&& Objects.equals(memberType, that.memberType)
 				&& Objects.equals(views, that.views) && shacl.isIsomorphicWith(that.shacl);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, views, shacl);
+		return Objects.hash(collection, timestampPath, versionOfPath, memberType, views, shacl);
 	}
 }

@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,7 +10,8 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.stream.Stream;
 
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class EventStreamTest {
 	private static final String COLLECTION = "collection_name";
@@ -19,23 +19,24 @@ class EventStreamTest {
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final String MEMBER_TYPE = "memberType";
 
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+			MEMBER_TYPE);
 
 	@Test
-	void test_equality() {
-		final EventStream other = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
+	void test_inequality() {
+		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 
-		assertEquals(EVENT_STREAM, EVENT_STREAM);
-		assertEquals(other, other);
-		assertEquals(EVENT_STREAM, other);
+		assertNotEquals(EVENT_STREAM, other);
+		assertNotEquals(EVENT_STREAM, null);
+		assertNotEquals(EVENT_STREAM, createDefaultModel());
 	}
 
 	@ParameterizedTest
 	@ArgumentsSource(EventStreamArgumentProvider.class)
-	void test_inequality(Object other) {
-		assertNotEquals(EVENT_STREAM, other);
+	void test_equality(Object other) {
+		assertEquals(EVENT_STREAM, other);
 		if (other != null) {
-			assertNotEquals(EVENT_STREAM.hashCode(), other.hashCode());
+			assertEquals(EVENT_STREAM.hashCode(), other.hashCode());
 		}
 	}
 
@@ -43,12 +44,13 @@ class EventStreamTest {
 		@Override
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
+					EVENT_STREAM,
 					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", MEMBER_TYPE),
 					new EventStream(COLLECTION, "other", VERSION_OF_PATH, MEMBER_TYPE),
-					new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE),
-					new EventStream("other", "other", "other", MEMBER_TYPE),
-					null,
-					createDefaultModel()).map(Arguments::of);
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE),
+					new EventStream(COLLECTION, "other", "other", MEMBER_TYPE),
+					new EventStream(COLLECTION, "other", "other", "other"))
+					.map(Arguments::of);
 		}
 	}
 }

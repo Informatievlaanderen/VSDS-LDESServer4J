@@ -46,7 +46,7 @@ public class AdminEventStreamsRestController {
 			List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), memberType, views, shaclShape.getModel());
+					eventStream.getVersionOfPath(), eventStream.getMemberType(), views, shaclShape.getModel());
 		}).toList();
 
 	}
@@ -75,7 +75,7 @@ public class AdminEventStreamsRestController {
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), memberType, views, shaclShape.getModel());
+				eventStream.getVersionOfPath(), eventStream.getMemberType(), views, shaclShape.getModel());
 	}
 
 	@DeleteMapping("/{collectionName}")

@@ -63,9 +63,11 @@ class AdminEventStreamsRestControllerTest {
 		Model shape = readModelFromFile("example-shape.ttl");
 		List<EventStream> eventStreams = List.of(
 				new EventStream("name1", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf", memberType),
+						"http://purl.org/dc/terms/isVersionOf",
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"),
 				new EventStream("name2", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf", memberType));
+						"http://purl.org/dc/terms/isVersionOf",
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"));
 
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
@@ -93,7 +95,7 @@ class AdminEventStreamsRestControllerTest {
 		Model model = readModelFromFile("ldes-1.ttl");
 		Model shape = readModelFromFile("example-shape.ttl");
 		EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
-				"http://purl.org/dc/terms/isVersionOf", memberType);
+				"http://purl.org/dc/terms/isVersionOf", "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
 
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
