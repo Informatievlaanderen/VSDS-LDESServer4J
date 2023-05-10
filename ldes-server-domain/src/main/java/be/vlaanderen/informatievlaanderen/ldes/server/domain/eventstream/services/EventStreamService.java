@@ -1,15 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 
 import java.util.List;
 
 public interface EventStreamService {
-	List<EventStream> retrieveAllEventStreams();
+	List<EventStreamResponse> retrieveAllEventStreams();
 
-	EventStream retrieveEventStream(String collectionName);
+	EventStreamResponse retrieveEventStream(String collectionName);
 
 	void deleteEventStream(String collectionName);
 
-	EventStream saveEventStream(EventStream eventStream);
+	EventStreamResponse saveEventStream(EventStreamResponse eventStream);
 }
