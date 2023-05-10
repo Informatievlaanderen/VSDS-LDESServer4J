@@ -54,7 +54,8 @@ class EventStreamResponseConverterTest {
 		@Test
 		void when_modelHasViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shacl);
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shacl);
 
 			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
 		}
@@ -83,7 +84,9 @@ class EventStreamResponseConverterTest {
 		@Test
 		void when_modelHasNoViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", List.of(), shacl);
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(),
+					shacl);
 
 			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
 		}
@@ -91,7 +94,8 @@ class EventStreamResponseConverterTest {
 		@Test
 		void when_eventStreamResponseHasNoViews_then_convertToModel() {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 

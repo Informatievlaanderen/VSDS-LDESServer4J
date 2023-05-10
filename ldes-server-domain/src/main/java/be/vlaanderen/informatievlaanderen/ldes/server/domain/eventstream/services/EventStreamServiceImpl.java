@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -64,7 +64,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 		EventStream eventStream = new EventStream(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getTimestampPath(),
-				eventStreamResponse.getVersionOfPath());
+				eventStreamResponse.getVersionOfPath(),
+				eventStreamResponse.getMemberType());
 		ShaclShape shaclShape = new ShaclShape(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getShacl());

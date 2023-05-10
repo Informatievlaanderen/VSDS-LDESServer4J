@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -30,9 +30,10 @@ class EventStreamServiceImplTest {
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final String MEMBER_TYPE = "memberType";
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+			MEMBER_TYPE);
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
-			VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel());
+			VERSION_OF_PATH, MEMBER_TYPE, List.of(), ModelFactory.createDefaultModel());
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 	@Mock
@@ -54,7 +55,8 @@ class EventStreamServiceImplTest {
 		List<ViewSpecification> views = List
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of()));
 
-		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf", "memberType",
+		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
+				"memberType",
 				views, ModelFactory.createDefaultModel());
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
@@ -105,12 +107,16 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_collectionExists_and_updateEventStream_then_expectUpdatedEventStream() {
+		final String timeStampPath = "generatedAt";
+		final String versionOfPath = "versionOf";
+		final String memberType = "typeOfMember";
 		ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
-		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf", "memberType");
+		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath, memberType);
 
 		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
 		when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
-		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, "generatedAt", "versionOf",
+		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
+				memberType,
 				List.of(), ModelFactory.createDefaultModel());
 
 		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);

@@ -52,14 +52,6 @@ class AdminEventStreamsRestControllerTest {
 		String collectionName = "name1";
 		Model expectedEventStreamsModel = readModelFromFile("multiple-ldes.ttl");
 		Model shape = readModelFromFile("example-shape.ttl");
-		List<EventStream> eventStreams = List.of(
-				new EventStream("name1", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf",
-						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"),
-				new EventStream("name2", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf",
-						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"));
-						"http://purl.org/dc/terms/isVersionOf"));
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("fragmentationStrategy");
 		fragmentationConfig.setConfig(Map.of("http://example.org/property", "ldes:propertyPath"));
@@ -79,9 +71,11 @@ class AdminEventStreamsRestControllerTest {
 
 		List<EventStreamResponse> eventStreams = List.of(
 				new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf", views, shape),
+						"http://purl.org/dc/terms/isVersionOf",
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shape),
 				new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf", List.of(singleView), shape));
+						"http://purl.org/dc/terms/isVersionOf",
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(singleView), shape));
 
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 
@@ -99,7 +93,8 @@ class AdminEventStreamsRestControllerTest {
 		Model model = readModelFromFile("ldes-1.ttl");
 		Model shape = readModelFromFile("example-shape.ttl");
 		EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
-				"http://purl.org/dc/terms/isVersionOf", "http://purl.org/dc/terms/isVersionOf", "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(), shape);
+				"http://purl.org/dc/terms/isVersionOf", "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
+				List.of(), shape);
 
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 
@@ -132,6 +127,7 @@ class AdminEventStreamsRestControllerTest {
 				"name1",
 				"http://purl.org/dc/terms/created",
 				"http://purl.org/dc/terms/isVersionOf",
+				"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 				List.of(),
 				shape);
 
