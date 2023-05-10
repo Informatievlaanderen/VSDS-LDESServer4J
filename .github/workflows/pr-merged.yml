@@ -66,9 +66,16 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
       # Docker
       - name: Define docker variables
-        env: |
-          IMAGE_TAG: ${{ github.ref_name == 'main' && env.version || date 'YYYYMMDDTHHmm' }}
-          LATEST: ${ contains(env.version, "SNAPSHOT") && 'latest' || '')
+        run: |
+          if [[ ${{ github.ref_name == 'main' }} ]]; then
+            echo "IMAGE_TAG=${{ env.version }}" >> $GITHUB_ENV
+          else
+            echo "IMAGE_TAG=${{ date 'YYYYMMDDTHHmm' }}" >> $GITHUB_ENV
+          fi
+
+          if [[ ${{ contains(env.version, "SNAPSHOT") }} ]]; then
+            echo "LATEST=latest" >> $GITHUB_ENV
+          fi
       - name: Log in to the DockerHub Container registry
         if: github.ref_name == 'main'
         uses: docker/login-action@v2
