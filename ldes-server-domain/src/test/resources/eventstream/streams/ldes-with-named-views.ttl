@@ -3,10 +3,13 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix example: <http://example.org/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix custom: <http://example.org/> .
+@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#>
 
 ldes:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
+   custom:memberType mobiliteit:Mobiliteitshinder ;
    tree:shape ldes:shape ;
    ldes:view ldes:view1 ;
    ldes:view ldes:view2 .
@@ -18,18 +21,16 @@ ldes:shape a sh:NodeShape ;
      ] ;
    sh:deactivated true .
 
-ldes:view1 a tree:Node ;
- tree:viewDescription [
+ldes:view1 tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
-       example:property ldes:propertyPath
+       example:property "ldes:propertyPath"
    ]
 ] .
 
-ldes:view2 a tree:Node ;
-  tree:viewDescription [
+ldes:view2 tree:viewDescription [
     example:fragmentationStrategy [
         a example:Fragmentation ;
-        example:property ldes:propertyPath
+        example:property "ldes:propertyPath"
     ]
 ] .

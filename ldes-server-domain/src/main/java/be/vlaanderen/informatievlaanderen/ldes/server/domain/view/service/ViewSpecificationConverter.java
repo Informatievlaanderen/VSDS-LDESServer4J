@@ -1,6 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptions.ModelToViewConverterException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.constants.ViewSpecificationConverterConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class ViewSpecificationConverter {
@@ -39,7 +39,7 @@ public class ViewSpecificationConverter {
 	public static Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		String viewName = view.getName().getViewName();
-		Statement viewDescription = createStatement(createResource(viewName), createProperty(VIEW_TYPE_OBJECT),
+		Statement viewDescription = createStatement(createResource(viewName), createProperty(TREE_VIEW_DESCRIPTION),
 				createResource());
 		model.add(viewDescription);
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
@@ -50,9 +50,9 @@ public class ViewSpecificationConverter {
 
 	private static ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {
 		String nameString = statements.stream()
-				.filter(statement -> statement.getPredicate().toString().equals(VIEW_TYPE_OBJECT))
+				.filter(statement -> statement.getPredicate().toString().equals(TREE_VIEW_DESCRIPTION))
 				.map(statement -> statement.getSubject().toString()).findFirst()
-				.orElseThrow(() -> new ModelToViewConverterException("Missing type: " + VIEW_TYPE_OBJECT));
+				.orElseThrow(() -> new ModelToViewConverterException("Missing type: " + TREE_VIEW_DESCRIPTION));
 
 		return new ViewName(collectionName, nameString);
 	}
@@ -76,10 +76,10 @@ public class ViewSpecificationConverter {
 		for (RetentionConfig retention : retentionList) {
 			Resource retentionResource = createResource();
 			statements.add(createStatement(
-					retentionResource, createProperty(TYPE_PREDICATE), createResource(RETENTION_TYPE)));
+					retentionResource, RDF_SYNTAX_TYPE, createResource(RETENTION_TYPE)));
 			retention.getConfig().forEach((key, value) -> statements.add(createStatement(
 					retentionResource, createProperty(key), createPlainLiteral(value))));
-			statements.add(createStatement(viewName, createProperty(RETENTION_OBJECT), retentionResource));
+			statements.add(createStatement(viewName, createProperty(RETENTION_TYPE), retentionResource));
 		}
 		return statements;
 	}
@@ -105,7 +105,7 @@ public class ViewSpecificationConverter {
 		for (FragmentationConfig fragmentation : fragmentationList) {
 			Resource fragmentationResource = createResource();
 			statements.add(createStatement(
-					fragmentationResource, createProperty(TYPE_PREDICATE), createResource(FRAGMENTATION_TYPE)));
+					fragmentationResource, RDF_SYNTAX_TYPE, createResource(FRAGMENTATION_TYPE)));
 			fragmentation.getConfig().forEach((key, value) -> statements.add(createStatement(
 					fragmentationResource, createProperty(key), createPlainLiteral(value))));
 			statements.add(createStatement(viewName, createProperty(FRAGMENTATION_OBJECT), fragmentationResource));
@@ -129,7 +129,7 @@ public class ViewSpecificationConverter {
 	private static Map<String, String> extractConfigMap(List<Statement> statementList) {
 		Map<String, String> configMap = new HashMap<>();
 		statementList.stream()
-				.filter(statement -> !statement.getPredicate().toString().equals(TYPE_PREDICATE))
+				.filter(statement -> !statement.getPredicate().toString().equals(RDF_SYNTAX_TYPE.toString()))
 				.forEach(statement -> configMap.put(
 						statement.getPredicate().toString(),
 						statement.getObject().asLiteral().getString()));
@@ -146,7 +146,7 @@ public class ViewSpecificationConverter {
 
 		@Override
 		public boolean test(Statement statement) {
-			return statement.getPredicate().toString().equals(TYPE_PREDICATE)
+			return statement.getPredicate().toString().equals(RDF_SYNTAX_TYPE.toString())
 					&& statement.getObject().toString().equals(type);
 		}
 	}

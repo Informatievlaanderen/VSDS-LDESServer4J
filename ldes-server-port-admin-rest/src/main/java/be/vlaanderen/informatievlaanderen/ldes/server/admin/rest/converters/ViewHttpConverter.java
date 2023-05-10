@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -15,7 +16,6 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.modelFromView;
 import static org.apache.jena.riot.RDFFormat.TURTLE;
 
 public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification> {
@@ -45,7 +45,7 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	public void write(ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		StringWriter outputStream = new StringWriter();
-		Model model = modelFromView(view);
+		Model model = ViewSpecificationConverter.modelFromView(view);
 
 		RDFDataMgr.write(outputStream, model, TURTLE);
 

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,7 +51,7 @@ public class AdminViewsRestController {
 	@Operation(summary = "Add a view to a collection")
 	public ResponseEntity<Object> putViews(@PathVariable String collectionName,
 			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining a view of the collection") @RequestBody @Validated Model view) {
-		viewService.addView(viewFromModel(view, collectionName));
+		viewService.addView(ViewSpecificationConverter.viewFromModel(view, collectionName));
 		return ResponseEntity.ok().build();
 	}
 
