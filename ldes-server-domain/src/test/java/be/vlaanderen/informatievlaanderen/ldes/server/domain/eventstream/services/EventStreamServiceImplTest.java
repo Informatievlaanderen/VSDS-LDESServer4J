@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class EventStreamServiceImplTest {
 	private static final String COLLECTION = "collection";
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, "generatedAt", "isVersionOf");
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, "generatedAt", "isVersionOf",
+			"memberType");
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 
@@ -33,7 +34,7 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
-		EventStream other = new EventStream("other", "created", "versionOf");
+		EventStream other = new EventStream("other", "created", "versionOf", "memberType");
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, other));
 		List<EventStream> eventStreams = service.retrieveAllEventStreams();
@@ -59,7 +60,7 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_collectionExists_and_updateEventStream_then_expectUpdatedEventStream() {
-		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf");
+		EventStream eventStream = new EventStream(COLLECTION, "generatedAt", "versionOf", "memberType");
 
 		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
 
