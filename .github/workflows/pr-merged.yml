@@ -57,7 +57,7 @@ jobs:
       - name: Define docker variables
         run: echo "date={$(date +'%Y-%m-%d')}" >> $GITHUB_STATE
         env:
-          IMAGE_TAG: ${{ github.ref_name == 'main' && env.version || env.date }}
+          IMAGE_TAG: ${{ github.ref_name != 'main' && env.version || env.date }}
           LATEST: ${{ !contains(env.version, 'SNAPSHOT') && 'latest' || '' }}
       - name: Analyse & publish package
         run: |
