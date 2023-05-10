@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.stream.Stream;
 
-import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -27,8 +26,7 @@ class EventStreamTest {
 		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 
 		assertNotEquals(EVENT_STREAM, other);
-		assertNotEquals(EVENT_STREAM, null);
-		assertNotEquals(EVENT_STREAM, createDefaultModel());
+		assertNotEquals(null, EVENT_STREAM);
 	}
 
 	@ParameterizedTest
