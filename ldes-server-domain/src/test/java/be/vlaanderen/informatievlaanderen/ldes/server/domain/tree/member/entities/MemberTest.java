@@ -8,6 +8,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MemberTest {
 
@@ -70,6 +72,27 @@ class MemberTest {
 
 	private Model createModel(final String ldesMember, final Lang lang) {
 		return RDFParserBuilder.create().fromString(ldesMember).lang(lang).toModel();
+	}
+
+	@Nested
+	class GetMemberIdWithoutPrefix {
+		@Test
+		void shouldThrowException_whenIdHasNoPrefix() {
+			Member member = new Member(
+					"http://localhost:8080/member/1", "collectionName",
+					0L, null, null, null, List.of());
+
+			assertThrows(IllegalStateException.class, member::getMemberIdWithoutPrefix);
+		}
+
+		@Test
+		void shouldReturnIdWithoutPrefix_whenIdHasPrefix() {
+			Member member = new Member(
+					"parcels/http://localhost:8080/member/1", "collectionName",
+					0L, null, null, null, List.of());
+
+			assertEquals("http://localhost:8080/member/1", member.getMemberIdWithoutPrefix());
+		}
 	}
 
 }
