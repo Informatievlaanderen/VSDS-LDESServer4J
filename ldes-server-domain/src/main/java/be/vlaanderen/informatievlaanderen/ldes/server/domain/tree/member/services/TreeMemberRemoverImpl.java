@@ -1,11 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class TreeMemberRemoverImpl implements TreeMemberRemover {
