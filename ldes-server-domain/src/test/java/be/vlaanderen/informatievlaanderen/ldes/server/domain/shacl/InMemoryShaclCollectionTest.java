@@ -1,32 +1,72 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class InMemoryShaclCollectionTest {
 
-	private final LdesConfigModelService ldesConfigModelService = mock(LdesConfigModelService.class);
-	private final InMemoryShaclCollection memoryShaclCollection = new InMemoryShaclCollection(ldesConfigModelService);
+	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
+	private final ShaclShapeRepository shaclShapeRepository = mock(ShaclShapeRepository.class);
+	private final InMemoryShaclCollection memoryShaclCollection = new InMemoryShaclCollection(shaclShapeRepository,
+			eventPublisher);
 	private static final String COLLECTION_NAME = "collection";
 
 	@Test
 	void test_InsertionAndRetrieval() {
 		Model model = ModelFactory.createDefaultModel();
 
-		memoryShaclCollection.handleShaclChangedEvent(new ShaclChangedEvent(COLLECTION_NAME, model));
+		ShaclShape shaclShape = new ShaclShape(COLLECTION_NAME, model);
+		memoryShaclCollection.saveShape(shaclShape);
 
-		verify(ldesConfigModelService, times(1)).updateShape(eq(COLLECTION_NAME), any(LdesConfigModel.class));
+		verify(shaclShapeRepository).saveShaclShape(shaclShape);
 
-		LdesConfigModel ldesConfigModel = memoryShaclCollection.retrieveShape(COLLECTION_NAME);
-		assertEquals(COLLECTION_NAME, ldesConfigModel.getId());
-		assertTrue(model.isIsomorphicWith(ldesConfigModel.getModel()));
+		Optional<ShaclShape> retrievedShape = memoryShaclCollection.retrieveShape(COLLECTION_NAME);
+		assertTrue(retrievedShape.isPresent());
+		assertEquals(shaclShape, retrievedShape.get());
 	}
 
+	@Test
+	void test_deletion() {
+		Model model = ModelFactory.createDefaultModel();
+		ShaclShape shaclShape = new ShaclShape(COLLECTION_NAME, model);
+
+		memoryShaclCollection.saveShape(shaclShape);
+
+		assertTrue(memoryShaclCollection.retrieveShape(COLLECTION_NAME).isPresent());
+
+		memoryShaclCollection.deleteShape(COLLECTION_NAME);
+		verify(shaclShapeRepository).deleteShaclShape(COLLECTION_NAME);
+
+		assertTrue(memoryShaclCollection.retrieveShape(COLLECTION_NAME).isEmpty());
+	}
+
+	@Test
+	void initShapeConfig() {
+		Model model = ModelFactory.createDefaultModel();
+		ShaclShape shaclShape = new ShaclShape(COLLECTION_NAME, model);
+		ShaclShape shaclShape2 = new ShaclShape("otherCollection", model);
+		when(shaclShapeRepository.retrieveAllShaclShapes()).thenReturn(List.of(shaclShape, shaclShape2));
+
+		memoryShaclCollection.initShapeConfig();
+
+		verify(eventPublisher, times(2)).publishEvent((ShaclChangedEvent) any());
+		assertTrue(memoryShaclCollection.retrieveShape(COLLECTION_NAME).isPresent());
+		assertTrue(memoryShaclCollection.retrieveShape("otherCollection").isPresent());
+	}
 }

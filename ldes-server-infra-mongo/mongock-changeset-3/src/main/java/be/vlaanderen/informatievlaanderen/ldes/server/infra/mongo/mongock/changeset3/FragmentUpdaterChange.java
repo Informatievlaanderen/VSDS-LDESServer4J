@@ -42,8 +42,7 @@ public class FragmentUpdaterChange {
 	 **/
 	@Execution
 	public void changeSet() {
-		List<LdesFragmentEntityV2> fragmentEntityV2s = mongoTemplate.find(new Query(), LdesFragmentEntityV2.class);
-		fragmentEntityV2s.forEach(ldesFragmentEntityV2 -> {
+		mongoTemplate.stream(new Query(), LdesFragmentEntityV2.class).forEach(ldesFragmentEntityV2 -> {
 			if (!viewNames.contains(ldesFragmentEntityV2.getId())) {
 				List<TreeRelation> updatedRelations = ldesFragmentEntityV2.getRelations().stream()
 						.map(treeRelation -> new TreeRelation(treeRelation.treePath(),
@@ -60,8 +59,7 @@ public class FragmentUpdaterChange {
 						ldesFragmentEntityV2.getImmutableTimestamp(),
 						ldesFragmentEntityV2.getNumberOfMembers(),
 						updatedRelations, collection);
-				mongoTemplate
-						.save(ldesFragmentEntity);
+				mongoTemplate.save(ldesFragmentEntity);
 				mongoTemplate.remove(query(where("_id").is(ldesFragmentEntityV2.getId())), LdesFragmentEntityV2.class);
 			}
 		});
@@ -73,8 +71,7 @@ public class FragmentUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesFragmentEntityV3> ldesFragmentEntities = mongoTemplate.find(new Query(), LdesFragmentEntityV3.class);
-		ldesFragmentEntities.forEach(fragmentEntity -> {
+		mongoTemplate.stream(new Query(), LdesFragmentEntityV3.class).forEach(fragmentEntity -> {
 			List<TreeRelation> updatedRelations = fragmentEntity.getRelations().stream()
 					.map(treeRelation -> new TreeRelation(treeRelation.treePath(),
 							removeCollectionPrefix(treeRelation.treeNode()), treeRelation.treeValue(),
@@ -89,8 +86,7 @@ public class FragmentUpdaterChange {
 							: removeCollectionPrefix(fragmentEntity.getParentId()),
 					fragmentEntity.getImmutableTimestamp(), fragmentEntity.getNumberOfMembers(),
 					updatedRelations);
-			mongoTemplate
-					.save(ldesFragmentEntityV2);
+			mongoTemplate.save(ldesFragmentEntityV2);
 			mongoTemplate.remove(query(where("_id").is(fragmentEntity.getId())), LdesFragmentEntityV3.class);
 
 		});

@@ -30,6 +30,10 @@ public class ViewName {
 		return collectionName;
 	}
 
+	public String getViewName() {
+		return name;
+	}
+
 	public String asString() {
 		return collectionName + "/" + name;
 	}

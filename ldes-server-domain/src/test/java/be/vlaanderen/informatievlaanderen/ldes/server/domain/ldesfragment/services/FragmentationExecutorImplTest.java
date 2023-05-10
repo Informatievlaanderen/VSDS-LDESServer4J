@@ -4,40 +4,40 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class FragmentationExecutorImplTest {
 
 	private static final String COLLECTION_NAME = "collectionName";
 	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, "view");
+	private final HashMap<ViewName, FragmentationStrategy> fragmentationMap = new HashMap<>();
 	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
 	private FragmentationExecutorImpl fragmentationExecutor;
 
 	@BeforeEach
 	void setUp() {
-		fragmentationExecutor = new FragmentationExecutorImpl(Map.of(VIEW_NAME,
-				fragmentationStrategy),
-				ldesFragmentRepository, ObservationRegistry.create());
+
+		fragmentationMap.put(VIEW_NAME, fragmentationStrategy);
+		fragmentationExecutor = new FragmentationExecutorImpl(fragmentationMap,
+				ldesFragmentRepository, ObservationRegistry.create(), fragmentationStrategyCreator);
 	}
 
 	@Test
@@ -112,7 +112,21 @@ class FragmentationExecutorImplTest {
 				times(100)).addMemberToFragment(eq(ldesFragment),
 						any(), any());
 		inOrder.verifyNoMoreInteractions();
+	}
 
+	@Test
+	void test_AddingAndDeletingViews() {
+		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
+				List.of(), List.of());
+
+		assertFalse(fragmentationMap.containsKey(viewSpecification.getName()));
+		fragmentationExecutor.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
+
+		assertTrue(fragmentationMap.containsKey(viewSpecification.getName()));
+		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
+
+		fragmentationExecutor.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
+		assertFalse(fragmentationMap.containsKey(viewSpecification.getName()));
 	}
 
 }

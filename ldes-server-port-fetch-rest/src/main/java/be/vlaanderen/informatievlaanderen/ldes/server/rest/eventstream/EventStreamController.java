@@ -6,17 +6,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
-import static org.springframework.http.HttpHeaders.CONTENT_DISPOSITION;
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.HttpHeaders.*;
 
 @RestController
+@Tag(name = "Fetch")
 public class EventStreamController {
 
 	private final RestConfig restConfig;
@@ -34,12 +35,12 @@ public class EventStreamController {
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}")
-	public ResponseEntity<EventStream> retrieveLdesFragment(@RequestHeader(HttpHeaders.ACCEPT) String language,
+	@Operation(summary = "Retrieve an Linked Data Event Stream")
+	public ResponseEntity<EventStream> retrieveLdes(@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 
 		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 		EventStream eventStream = eventStreamFactory.getEventStream(ldesConfig);
-
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
 		setContentTypeHeader(language, response);

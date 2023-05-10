@@ -1,12 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -21,16 +25,21 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private final Map<ViewName, List<RetentionPolicy>> retentionPolicyMap;
 	private final TreeMemberRemover treeMemberRemover;
 	private final ParentUpdater parentUpdater;
+	private final RetentionPolicyCreator retentionPolicyCreator;
 
+	// TODO when the definiton of views in config is going to be deprecated, the
+	// retentionPolicyMap should no longer be injected.
+	// But start from an empty Map and be filled via ViewAddedEvents.
 	public TreeNodeRemoverImpl(LdesFragmentRepository ldesFragmentRepository,
 			MemberRepository memberRepository, Map<ViewName, List<RetentionPolicy>> retentionPolicyMap,
 			TreeMemberRemover treeMemberRemover,
-			ParentUpdater parentUpdater) {
+			ParentUpdater parentUpdater, RetentionPolicyCreator retentionPolicyCreator) {
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.memberRepository = memberRepository;
 		this.retentionPolicyMap = retentionPolicyMap;
 		this.treeMemberRemover = treeMemberRemover;
 		this.parentUpdater = parentUpdater;
+		this.retentionPolicyCreator = retentionPolicyCreator;
 	}
 
 	@Scheduled(fixedDelay = 10000)
@@ -62,6 +71,17 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 								});
 					});
 				});
+	}
+
+	@EventListener
+	public void handleViewAddedEvent(ViewAddedEvent event) {
+		retentionPolicyMap.put(event.getViewName(),
+				retentionPolicyCreator.createRetentionPolicyListForView(event.getViewSpecification()));
+	}
+
+	@EventListener
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		retentionPolicyMap.remove(event.getViewName());
 	}
 
 }

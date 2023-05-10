@@ -26,8 +26,7 @@ public class MemberUpdaterChange {
 	 **/
 	@Execution
 	public void changeSet() {
-		List<LdesMemberEntityV1> ldesMemberEntityV1s = mongoTemplate.find(new Query(), LdesMemberEntityV1.class);
-		ldesMemberEntityV1s.forEach(ldesMember -> {
+		mongoTemplate.stream(new Query(), LdesMemberEntityV1.class).forEach(ldesMember -> {
 			Query query = new Query();
 			query.addCriteria(Criteria.where(MEMBERS).is(ldesMember.getId()));
 			List<String> treeNodeReferences = mongoTemplate.find(query, LdesFragmentEntityV1.class).stream()
@@ -39,8 +38,7 @@ public class MemberUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
-		List<LdesMemberEntityV2> ldesMemberEntities = mongoTemplate.find(new Query(), LdesMemberEntityV2.class);
-		ldesMemberEntities.forEach(ldesMember -> mongoTemplate
+		mongoTemplate.stream(new Query(), LdesMemberEntityV2.class).forEach(ldesMember -> mongoTemplate
 				.save(new LdesMemberEntityV1(ldesMember.getId(), ldesMember.getModel())));
 	}
 }

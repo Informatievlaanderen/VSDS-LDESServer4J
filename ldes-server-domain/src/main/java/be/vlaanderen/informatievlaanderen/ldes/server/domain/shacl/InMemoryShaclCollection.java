@@ -1,42 +1,60 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import jakarta.annotation.PostConstruct;
-import org.apache.jena.rdf.model.Model;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class InMemoryShaclCollection implements ShaclCollection {
-	private final Map<String, Model> shapes;
-	private final LdesConfigModelService ldesConfigModelService;
 
-	public InMemoryShaclCollection(LdesConfigModelService ldesConfigModelService) {
-		this.shapes = new HashMap<>();
-		this.ldesConfigModelService = ldesConfigModelService;
-	}
+	private final Set<ShaclShape> shapes;
+	private final ShaclShapeRepository shaclShapeRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
-	@EventListener
-	public void handleShaclChangedEvent(ShaclChangedEvent event) {
-		shapes.put(event.getCollectionName(), event.getShacl());
-		ldesConfigModelService.updateShape(event.getCollectionName(),
-				new LdesConfigModel(event.getCollectionName(), event.getShacl()));
+	public InMemoryShaclCollection(ShaclShapeRepository shaclShapeRepository,
+			ApplicationEventPublisher eventPublisher) {
+		this.shaclShapeRepository = shaclShapeRepository;
+		this.eventPublisher = eventPublisher;
+		this.shapes = new HashSet<>();
 	}
 
 	@Override
-	public LdesConfigModel retrieveShape(String collectionName) {
-		return new LdesConfigModel(collectionName, shapes.get(collectionName));
+	public void saveShape(ShaclShape shaclShape) {
+		shaclShapeRepository.saveShaclShape(shaclShape);
+		shapes.remove(shaclShape);
+		shapes.add(shaclShape);
+
 	}
 
-	@PostConstruct
-	private void initShapes() {
-		ldesConfigModelService
-				.retrieveAllShapes()
-				.forEach(ldesConfigModel -> shapes.put(ldesConfigModel.getId(), ldesConfigModel.getModel()));
+	@Override
+	public void deleteShape(String collectionName) {
+		shaclShapeRepository.deleteShaclShape(collectionName);
+		shapes.removeIf(shaclShape -> shaclShape.getCollection().equals(collectionName));
 	}
+
+	@Override
+	public Optional<ShaclShape> retrieveShape(String collectionName) {
+		return shapes.stream()
+				.filter(shaclShape -> shaclShape.getCollection().equals(collectionName))
+				.findFirst();
+	}
+
+	@EventListener(ApplicationStartedEvent.class)
+	public void initShapeConfig() {
+		shaclShapeRepository
+				.retrieveAllShaclShapes()
+				.forEach(shaclShape -> {
+					shapes.add(shaclShape);
+					eventPublisher.publishEvent(new ShaclChangedEvent(shaclShape));
+				});
+	}
+
 }

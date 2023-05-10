@@ -16,6 +16,8 @@
         <module>ldes-fragmentisers</module>
         <module>ldes-queues</module>
         <module>ldes-server-port-admin-rest</module>
+        <module>ldes-server-port-ingest</module>
+        <module>ldes-server-port-ingest-rest</module>
     </modules>
 
     <properties>
@@ -27,11 +29,12 @@
         <maven.compiler.release>17</maven.compiler.release>
         <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
         <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
-        <maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <springdoc-openapi-starter-webmvc-ui>2.1.0</springdoc-openapi-starter-webmvc-ui>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -48,14 +51,15 @@
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.9.2</junit-platform-suite.version>
+        <junit-platform-suite.version>1.9.3</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.9.2</jupiter.version>
+        <jupiter.version>5.9.3</jupiter.version>
         <mockito.version>5.3.1</mockito.version>
         <byte-buddy.version>1.14.4</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.6.2</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
+        <cucumber.version>7.12.0</cucumber.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>8.2.1</depencency-check-maven.version>
@@ -75,6 +79,7 @@
         <!-- CODE FORMATTER -->
         <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
+        <!--suppress UnresolvedMavenProperty -->
         <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
         <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
 
@@ -108,6 +113,11 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi-starter-webmvc-ui}</version>
             </dependency>
 
             <!-- JSON & RDF -->
@@ -177,6 +187,36 @@
                 <groupId>org.awaitility</groupId>
                 <artifactId>awaitility</artifactId>
                 <version>${awaitility.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-java</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-spring</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-core</artifactId>
+                <version>${cucumber.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-junit-platform-engine</artifactId>
+                <version>${cucumber.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -337,6 +377,9 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <skip>${integrationtestskip}</skip>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
                 </configuration>
                 <executions>
                     <execution>

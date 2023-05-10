@@ -19,7 +19,6 @@ public class LdesFragment {
 	private LocalDateTime immutableTimestamp;
 	private Boolean softDeleted;
 	private final int numberOfMembers;
-
 	private final List<TreeRelation> relations;
 
 	public LdesFragment(ViewName viewName, final List<FragmentPair> fragmentPairs) {

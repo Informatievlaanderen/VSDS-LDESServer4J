@@ -2,38 +2,23 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,8 +28,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -56,32 +40,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminShapeRestController.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
-@Import(AdminShapeRestControllerTest.AdminShapeRestControllerTestConfiguration.class)
 class AdminShapeRestControllerTest {
-
 	@MockBean
-	private LdesConfigModelService ldesConfigModelService;
+	private ShaclShapeService shaclShapeService;
 
-	@MockBean
-	@Qualifier("shapeShaclValidator")
-	private LdesConfigShaclValidator ldesConfigShaclValidator;
-
-	@Captor
-	ArgumentCaptor<ShaclChangedEvent> shaclChangedEventArgumentCaptor;
-
-	@Autowired
-	private ApplicationEventPublisher applicationEventPublisher;
+	@SpyBean
+	private ShaclShapeValidator shaclShapeValidator;
 
 	@Autowired
 	private MockMvc mockMvc;
 
-	@Autowired
-	private ShaclCollection shaclCollection;
-
-	@BeforeEach
-    void setUp() {
-        when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
-    }
+	private String readDataFromFile(String fileName)
+			throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		return Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
+	}
 
 	@Nested
 	class GetRequest {
@@ -89,27 +63,24 @@ class AdminShapeRestControllerTest {
 		void when_ShapeIsPresentArePresent_Then_ShapeIsReturned() throws Exception {
 			String collectionName = "name1";
 			Model expectedShapeModel = readModelFromFile("shape-1.ttl");
-			when(shaclCollection.retrieveShape(collectionName))
-					.thenReturn(new LdesConfigModel(collectionName, expectedShapeModel));
+			when(shaclShapeService.retrieveShaclShape(collectionName))
+					.thenReturn(new ShaclShape(collectionName, expectedShapeModel));
 
-			ResultActions resultActions = mockMvc
-					.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape"))
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+					.accept(contentTypeTurtle))
 					.andDo(print())
-					.andExpect(status().isOk());
-
-			MvcResult result = resultActions.andReturn();
-			Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
-			Assertions.assertTrue(actualModel.isIsomorphicWith(expectedShapeModel));
+					.andExpect(status().isOk())
+					.andExpect(IsIsomorphic.with(expectedShapeModel));
 		}
 
 		@Test
 		void when_ViewNotPresent_Then_Returned404() throws Exception {
 			String collectionName = "name1";
-			String viewName = "view1";
-			when(ldesConfigModelService.retrieveView(collectionName, viewName))
-					.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
+			when(shaclShapeService.retrieveShaclShape(collectionName))
+					.thenThrow(new MissingShaclShapeException(collectionName));
 
-			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+					.accept(contentTypeTurtle))
 					.andDo(print())
 					.andExpect(status().isNotFound());
 		}
@@ -129,13 +100,11 @@ class AdminShapeRestControllerTest {
 					.andDo(print())
 					.andExpect(status().isOk());
 
-			InOrder inOrder = inOrder(ldesConfigShaclValidator, applicationEventPublisher);
-			inOrder.verify(ldesConfigShaclValidator, times(1)).validate(any(), any());
-			inOrder.verify(applicationEventPublisher, times(1)).publishEvent(shaclChangedEventArgumentCaptor.capture());
+			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
+			inOrder.verify(shaclShapeValidator, times(1)).validateShape(any());
+			inOrder.verify(shaclShapeService, times(1))
+					.updateShaclShape(new ShaclShape(collectionName, expectedShapeModel));
 			inOrder.verifyNoMoreInteractions();
-			ShaclChangedEvent shaclChangedEvent = shaclChangedEventArgumentCaptor.getValue();
-			assertEquals(collectionName, shaclChangedEvent.getCollectionName());
-			assertTrue(shaclChangedEvent.getShacl().isIsomorphicWith(expectedShapeModel));
 		}
 
 		@Test
@@ -146,15 +115,10 @@ class AdminShapeRestControllerTest {
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andDo(print())
 					.andExpect(status().isBadRequest());
-		}
-	}
 
-	private String readDataFromFile(String fileName)
-			throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		String content = Files.lines(Paths.get(file.toURI())).collect(Collectors.joining("\n"));
-		return content;
+			verify(shaclShapeValidator).validateShape(any());
+		}
+
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
@@ -162,20 +126,5 @@ class AdminShapeRestControllerTest {
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
 				.toString();
 		return RDFDataMgr.loadModel(uri);
-	}
-
-	@TestConfiguration
-	static class AdminShapeRestControllerTestConfiguration {
-
-		@Bean
-		@Primary
-		ApplicationEventPublisher publisher() {
-			return mock(ApplicationEventPublisher.class);
-		}
-
-		@Bean
-		ShaclCollection shaclCollection() {
-			return mock(ShaclCollection.class);
-		}
 	}
 }
