@@ -53,6 +53,12 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Define docker variables
+        run: echo "{date}={$(date +'%Y-%m-%d')}" >> $GITHUB_STATE
+        env: |
+          IMAGE_TAG: ${{ github.ref_name == 'main' && env.version || env.date }}
+          LATEST: ${{ !contains(env.version, 'SNAPSHOT') && 'latest' || '' }}
       - name: Analyse & publish package
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar deploy -Dsonar.projectKey=Informatievlaanderen_VSDS-LDESServer4J -Pcoverage
@@ -65,11 +71,7 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
       # Docker
-      - name: Define docker variables
-        run: echo "{date}={$(date +'%Y-%m-%d')}" >> $GITHUB_STATE
-        env: |
-          IMAGE_TAG: ${{ github.ref == 'refs/heads/main' && env.version || env.date }}
-          LATEST: ${{ !contains(env.version, 'SNAPSHOT') && 'latest' || '') }}
+      
       - name: Log in to the DockerHub Container registry
         if: github.ref_name == 'main'
         uses: docker/login-action@v2
