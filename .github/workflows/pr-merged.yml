@@ -73,7 +73,7 @@ jobs:
             echo "IMAGE_TAG=$(date 'YYYYMMDDTHHmm')" >> $GITHUB_ENV
           fi
 
-          if [[ ${{ contains(env.version, "SNAPSHOT") }} ]]; then
+          if [[ ${{ contains(env.version, 'SNAPSHOT') }} ]]; then
             echo "LATEST=latest" >> $GITHUB_ENV
           fi
       - name: Log in to the DockerHub Container registry
@@ -83,7 +83,7 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Log in to the GitHub Container registry
-        if: github.ref_name == 'develop'
+        if: github.ref_name != 'main'
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
