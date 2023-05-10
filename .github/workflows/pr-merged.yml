@@ -68,7 +68,7 @@ jobs:
       - name: Define docker variables
         run: echo "Building tags $IMAGE_TAG $LATEST."
         env: |
-          IMAGE_TAG: ${{ github.ref_name == 'main' && env.version || date 'YYYYMMDDTHHmm' }}
+          IMAGE_TAG: ${{ github.ref == 'refs/heads/main' && env.version || format('{0:YYYYMMDDTHHmm}', github.event.head_commit.timestamp) }}
           LATEST: ${ !contains(env.version, "SNAPSHOT") && 'latest' || '')
       - name: Log in to the DockerHub Container registry
         if: github.ref_name == 'main'
