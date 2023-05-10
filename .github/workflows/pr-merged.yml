@@ -70,7 +70,7 @@ jobs:
           if [[ ${{ github.ref_name == 'main' }} ]]; then
             echo "IMAGE_TAG=${{ env.version }}" >> $GITHUB_ENV
           else
-            echo "IMAGE_TAG=${{ date 'YYYYMMDDTHHmm' }}" >> $GITHUB_ENV
+            echo "IMAGE_TAG=$(date 'YYYYMMDDTHHmm')" >> $GITHUB_ENV
           fi
 
           if [[ ${{ contains(env.version, "SNAPSHOT") }} ]]; then
