@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -39,14 +40,12 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
-		throw new NotImplementedException();
+		return viewRepository.getViewByViewName(viewName).orElseThrow(() -> new MissingViewException(viewName));
 	}
 
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		return viewRepository.retrieveAllViews().stream()
-				.filter(view -> view.getName().getCollectionName().equals(collectionName))
-				.toList();
+		return viewRepository.retrieveAllViewsOfCollection(collectionName);
 	}
 
 	@Override
@@ -59,6 +58,7 @@ public class ViewServiceImpl implements ViewService {
 	public void initViews() {
 		viewRepository
 				.retrieveAllViews()
-				.forEach(viewSpecification -> eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification)));
+				.forEach(viewSpecification -> eventPublisher
+						.publishEvent(new ViewInitializationEvent(viewSpecification)));
 	}
 }

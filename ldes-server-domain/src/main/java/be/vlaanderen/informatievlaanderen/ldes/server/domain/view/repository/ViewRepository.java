@@ -14,4 +14,6 @@ public interface ViewRepository {
 	void deleteViewByViewName(ViewName viewName);
 
 	Optional<ViewSpecification> getViewByViewName(ViewName viewName);
+
+	List<ViewSpecification> retrieveAllViewsOfCollection(String collectionName);
 }

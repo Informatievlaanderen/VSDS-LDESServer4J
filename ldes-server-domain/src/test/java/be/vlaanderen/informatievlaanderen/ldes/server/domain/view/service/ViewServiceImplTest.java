@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.junit.jupiter.api.Nested;
@@ -47,7 +49,7 @@ class ViewServiceImplTest {
 
             DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class, () -> viewService.addView(view));
 
-            assertEquals("Collection collection already has a view: collection/view", duplicateViewException.getMessage());
+            assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
             InOrder inOrder = inOrder(viewRepository, eventPublisher);
             inOrder.verify(viewRepository).getViewByViewName(view.getName());
             inOrder.verifyNoMoreInteractions();
@@ -70,6 +72,55 @@ class ViewServiceImplTest {
 	}
 
 	@Nested
+	class GetView {
+		private final ViewName viewName = new ViewName("collection", "view");
+
+		@Test
+		void when_GetViewAndViewIsPresent_ViewIsReturned() {
+			ViewSpecification expectedViewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(expectedViewSpecification));
+
+			ViewSpecification actualViewSpecification = viewService.getViewByViewName(viewName);
+
+			assertEquals(expectedViewSpecification, actualViewSpecification);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void when_GetViewAndViewIsNotPresent_ViewIsReturned() {
+			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.empty());
+
+			MissingViewException missingViewException = assertThrows(MissingViewException.class, () -> viewService.getViewByViewName(viewName));
+
+			assertEquals("Collection collection does not have a view: view", missingViewException.getMessage());
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
+
+	@Nested
+	class GetViewsOfCollection {
+		private final ViewName viewName = new ViewName("collection", "view");
+		private final ViewSpecification expectedViewSpecification = new ViewSpecification(viewName, List.of(),
+				List.of());
+
+		@Test
+		void when_GetViewAndViewIsPresent_ViewIsReturned() {
+			when(viewRepository.retrieveAllViewsOfCollection(viewName.getCollectionName())).thenReturn(List.of(expectedViewSpecification));
+
+			List<ViewSpecification> actualViewSpecifications = viewService.getViewsByCollectionName(viewName.getCollectionName());
+
+			assertEquals(List.of(expectedViewSpecification), actualViewSpecifications);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).retrieveAllViewsOfCollection(viewName.getCollectionName());
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
+
+	@Nested
 	class InitViews {
 		@Test
 		void when_ApplicationIsStartedUp_ViewAddedEventsAreSent() {
@@ -84,7 +135,7 @@ class ViewServiceImplTest {
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).retrieveAllViews();
-			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewAddedEvent.class));
+			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewInitializationEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
