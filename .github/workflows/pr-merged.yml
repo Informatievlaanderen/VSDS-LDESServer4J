@@ -82,10 +82,22 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: Informatievlaanderen
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=raw,value=${{env.IMAGE_TAG}}
+            type=raw,value={{env.LATEST}}
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: .
           push: true
-          tags: ${{ env.IMAGE_TAG }} ${{ env.LATEST_TAG }}
+          tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
