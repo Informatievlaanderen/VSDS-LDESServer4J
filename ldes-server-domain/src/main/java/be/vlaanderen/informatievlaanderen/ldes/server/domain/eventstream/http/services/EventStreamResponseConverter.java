@@ -8,9 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.EVENT_STREAM_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_TIMESTAMP_PATH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_VERSION_OF;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_SHAPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.VIEW;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 public class EventStreamResponseConverter {
 
@@ -49,7 +58,7 @@ public class EventStreamResponseConverter {
 		// TODO: add view specifications to the model
 
 		return createDefaultModel()
-				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, shaclStmt))
+				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, shaclStmt))
 				.add(viewReferenceStatements)
 				.add(eventStreamResponse.getShacl());
 	}
