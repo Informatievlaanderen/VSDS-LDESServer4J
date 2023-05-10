@@ -55,7 +55,7 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Define docker variables
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_STATE
+        run: echo "date=$(date +'%Y-%m-%d')" >> $$GITHUB_ENV
         env:
           IMAGE_TAG: ${{ github.ref == 'refs/heads/main' && env.version || env.date }}
           LATEST: ${{ contains(env.version, 'SNAPSHOT') && 'latest' || '' }}
