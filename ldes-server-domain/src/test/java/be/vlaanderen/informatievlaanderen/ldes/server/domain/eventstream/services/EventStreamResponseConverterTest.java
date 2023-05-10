@@ -25,7 +25,7 @@ class EventStreamResponseConverterTest {
 	@ArgumentsSource(ModelsArgumentProvider.class)
 	void test_fromModelToEventStreamResponse(Model eventStreamToConvert, Model expectedShape) {
 		EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
-				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", List.of(), expectedShape);
+				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", memberType, List.of(), expectedShape);
 
 		assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamToConvert));
 	}
@@ -35,7 +35,7 @@ class EventStreamResponseConverterTest {
 	void test_fromEventStreamResponseToModel(Model expectedEventStream, Model shacl) {
 		final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 				"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-				List.of(), shacl);
+                memberType, List.of(), shacl);
 		final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
 		assertTrue(expectedEventStream.isIsomorphicWith(convertedModel));

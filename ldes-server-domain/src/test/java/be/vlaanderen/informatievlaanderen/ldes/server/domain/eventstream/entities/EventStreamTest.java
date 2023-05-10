@@ -1,5 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,12 +17,13 @@ class EventStreamTest {
 	private static final String COLLECTION = "collection_name";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
+	private static final String MEMBER_TYPE = "memberType";
 
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 
 	@Test
 	void test_equality() {
-		final EventStream other = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
+		final EventStream other = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 
 		assertEquals(EVENT_STREAM, EVENT_STREAM);
 		assertEquals(other, other);
@@ -41,10 +43,10 @@ class EventStreamTest {
 		@Override
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
-					new EventStream(COLLECTION, TIMESTAMP_PATH, "other"),
-					new EventStream(COLLECTION, "other", VERSION_OF_PATH),
-					new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH),
-					new EventStream("other", "other", "other"),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", MEMBER_TYPE),
+					new EventStream(COLLECTION, "other", VERSION_OF_PATH, MEMBER_TYPE),
+					new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE),
+					new EventStream("other", "other", "other", MEMBER_TYPE),
 					null,
 					createDefaultModel()).map(Arguments::of);
 		}

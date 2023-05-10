@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
@@ -46,7 +46,7 @@ public class AdminEventStreamsRestController {
 			List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), views, shaclShape.getModel());
+					eventStream.getVersionOfPath(), memberType, views, shaclShape.getModel());
 		}).toList();
 
 	}
@@ -57,7 +57,8 @@ public class AdminEventStreamsRestController {
 		EventStream eventStream = new EventStream(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getTimestampPath(),
-				eventStreamResponse.getVersionOfPath());
+				eventStreamResponse.getVersionOfPath(),
+				eventStreamResponse.getMemberType());
 		ShaclShape shaclShape = new ShaclShape(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getShacl());
@@ -74,7 +75,7 @@ public class AdminEventStreamsRestController {
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), views, shaclShape.getModel());
+				eventStream.getVersionOfPath(), memberType, views, shaclShape.getModel());
 	}
 
 	@DeleteMapping("/{collectionName}")

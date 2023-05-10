@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -63,9 +63,9 @@ class AdminEventStreamsRestControllerTest {
 		Model shape = readModelFromFile("example-shape.ttl");
 		List<EventStream> eventStreams = List.of(
 				new EventStream("name1", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf"),
+						"http://purl.org/dc/terms/isVersionOf", memberType),
 				new EventStream("name2", "http://purl.org/dc/terms/created",
-						"http://purl.org/dc/terms/isVersionOf"));
+						"http://purl.org/dc/terms/isVersionOf", memberType));
 
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));
@@ -93,7 +93,7 @@ class AdminEventStreamsRestControllerTest {
 		Model model = readModelFromFile("ldes-1.ttl");
 		Model shape = readModelFromFile("example-shape.ttl");
 		EventStream eventStream = new EventStream("name1", "http://purl.org/dc/terms/created",
-				"http://purl.org/dc/terms/isVersionOf");
+				"http://purl.org/dc/terms/isVersionOf", memberType);
 
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(collectionName)).thenReturn(new ShaclShape("name1", shape));

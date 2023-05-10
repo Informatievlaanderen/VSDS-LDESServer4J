@@ -10,15 +10,17 @@ public class EventStreamResponse {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
+	private final String memberType;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-			List<ViewSpecification> views,
-			Model shacl) {
+							   String memberType, List<ViewSpecification> views,
+							   Model shacl) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
+		this.memberType = memberType;
 		this.views = views;
 		this.shacl = shacl;
 	}
@@ -33,6 +35,10 @@ public class EventStreamResponse {
 
 	public String getVersionOfPath() {
 		return versionOfPath;
+	}
+
+	public String getMemberType() {
+		return memberType;
 	}
 
 	public List<ViewSpecification> getViews() {

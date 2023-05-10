@@ -1,16 +1,19 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities;
 
 import java.util.Objects;
 
 public class EventStream {
+
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
+	private final String memberType;
 
-	public EventStream(String collection, String timestampPath, String versionOfPath) {
+	public EventStream(String collection, String timestampPath, String versionOfPath, String memberType) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
+		this.memberType = memberType;
 	}
 
 	public String getCollection() {
@@ -25,6 +28,10 @@ public class EventStream {
 		return versionOfPath;
 	}
 
+	public String getMemberType() {
+		return memberType;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -32,12 +39,11 @@ public class EventStream {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		EventStream that = (EventStream) o;
-		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
-				&& Objects.equals(versionOfPath, that.versionOfPath);
+		return Objects.equals(collection, that.collection);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath);
+		return Objects.hash(collection);
 	}
 }

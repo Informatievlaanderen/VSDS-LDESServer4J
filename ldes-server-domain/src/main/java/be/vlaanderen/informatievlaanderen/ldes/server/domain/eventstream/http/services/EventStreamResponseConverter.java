@@ -14,13 +14,17 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class EventStreamResponseConverter {
 
+	public static final String CUSTOM = "http://example.org/";
+	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
+
 	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
+		final String memberType = getResource(model, MEMBER_TYPE);
 		final List<ViewSpecification> views = List.of(); // TODO: extract view specifications from model
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, views, shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views, shacl);
 	}
 
 	public Model toModel(EventStreamResponse eventStreamResponse) {
@@ -31,6 +35,8 @@ public class EventStreamResponseConverter {
 				createProperty(eventStreamResponse.getTimestampPath()));
 		final Statement versionOfStmt = createStatement(subject, LDES_VERSION_OF,
 				createProperty(eventStreamResponse.getVersionOfPath()));
+		final Statement memberType = createStatement(subject, MEMBER_TYPE,
+				createProperty(eventStreamResponse.getMemberType()));
 
 		final Resource shaclResource = createResource(
 				getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE)));
