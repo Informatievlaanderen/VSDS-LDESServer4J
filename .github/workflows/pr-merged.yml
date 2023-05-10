@@ -67,6 +67,7 @@ jobs:
       # Docker
       - name: Define docker variables
         runs-on: ubuntu-latest
+        run: echo "Building tags $IMAGE_TAG $LATEST."
         env: |
           IMAGE_TAG: ${{ github.ref_name == 'main' && env.version || date 'YYYYMMDDTHHmm' }}
           LATEST: ${ !contains(env.version, "SNAPSHOT") && 'latest' || '')
