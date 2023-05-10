@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,18 +29,18 @@ class TreeNodeFetcherImplTest {
 	private TreeNodeFactory treeNodeFactory;
 	private TreeNodeFetcherImpl treeNodeFetcher;
 	private AppConfig appConfig;
-	private EventStream eventStream;
+	private EventStreamResponse eventStream;
 
 	@BeforeEach
 	void setUp() {
 		treeNodeFactory = mock(TreeNodeFactory.class);
 		appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8089");
-		EventStreamCollection eventStreamCollection = mock(EventStreamCollection.class);
-		eventStream = new EventStream(COLLECTION, null, null);
-		treeNodeFetcher = new TreeNodeFetcherImpl(appConfig, treeNodeFactory, eventStreamCollection);
+		EventStreamService eventStreamService = mock(EventStreamService.class);
+		eventStream = new EventStreamResponse(COLLECTION, null, null, null, null, null);
+		treeNodeFetcher = new TreeNodeFetcherImpl(appConfig, treeNodeFactory, eventStreamService);
 
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
+		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 	}
 
 	@Test

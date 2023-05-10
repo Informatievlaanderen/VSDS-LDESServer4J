@@ -6,7 +6,7 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 
 
-:name1 a ldes:EventStream ;
+ldes:name1 a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
     custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;

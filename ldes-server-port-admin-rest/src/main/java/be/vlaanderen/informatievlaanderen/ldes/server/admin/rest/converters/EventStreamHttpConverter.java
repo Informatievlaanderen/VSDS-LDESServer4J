@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFWriter;
 import org.springframework.http.HttpInputMessage;
@@ -20,11 +19,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
-	private final EventStreamResponseConverter eventStreamResponseConverter;
-
-	public EventStreamHttpConverter(AppConfig appConfig) {
-		eventStreamResponseConverter = new EventStreamResponseConverter(appConfig);
-	}
+	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {

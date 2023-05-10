@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,13 +16,13 @@ public class AdminWebConfig {
 	}
 
 	@Bean
-	public EventStreamListHttpConverter eventStreamListHttpConverter(final AppConfig appConfig) {
-		return new EventStreamListHttpConverter(appConfig);
+	public EventStreamListHttpConverter eventStreamListHttpConverter() {
+		return new EventStreamListHttpConverter();
 	}
 
 	@Bean
-	public EventStreamHttpConverter eventStreamHttpConverter(final AppConfig appConfig) {
-		return new EventStreamHttpConverter(appConfig);
+	public EventStreamHttpConverter eventStreamHttpConverter() {
+		return new EventStreamHttpConverter();
 	}
 
 	@Bean

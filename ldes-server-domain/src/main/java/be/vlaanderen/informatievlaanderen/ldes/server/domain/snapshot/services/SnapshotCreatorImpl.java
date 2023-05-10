@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -33,11 +32,11 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 
 	@Override
 	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
-			EventStream eventStream, ShaclShape shape) {
+			EventStreamResponse eventStream) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
 		String collectionName = eventStream.getCollection();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
-				shape.getModel(), snapshotTime, appConfig.getHostName() + "/" + collectionName);
+				eventStream.getShacl(), snapshotTime, appConfig.getHostName() + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator
 				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));

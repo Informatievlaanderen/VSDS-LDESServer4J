@@ -1,14 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -31,27 +28,22 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final AppConfig appConfig;
-	private final EventStreamCollection eventStreamCollection;
-	private final ShaclCollection shaclCollection;
+	private final EventStreamService eventStreamService;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			AppConfig appConfig, EventStreamCollection eventStreamCollection, ShaclCollection shaclCollection) {
+			AppConfig appConfig, EventStreamService eventStreamService) {
 		this.prefixAdder = prefixAdder;
 		this.appConfig = appConfig;
-		this.eventStreamCollection = eventStreamCollection;
-		this.shaclCollection = shaclCollection;
+		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
 	public Model toModel(final TreeNode treeNode) {
 		Model model = ModelFactory.createDefaultModel();
 
-		EventStream eventStream = eventStreamCollection.retrieveEventStream(treeNode.getCollectionName())
-				.orElseThrow(() -> new MissingEventStreamException(treeNode.getCollectionName()));
+		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(treeNode.getCollectionName());
 
-		ShaclShape shape = shaclCollection.retrieveShape(treeNode.getCollectionName()).orElseThrow();
-
-		model.add(addTreeNodeStatements(treeNode, eventStream, shape));
+		model.add(addTreeNodeStatements(treeNode, eventStream));
 
 		if (!treeNode.getMembers().isEmpty()) {
 			String baseUrl = appConfig.getHostName() + "/" + eventStream.getCollection();
@@ -63,7 +55,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addTreeNodeStatements(TreeNode treeNode, EventStream eventStream, ShaclShape shape) {
+	private List<Statement> addTreeNodeStatements(TreeNode treeNode, EventStreamResponse eventStream) {
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
 						appConfig.getHostName() + treeRelation.treeNode(),
@@ -72,13 +64,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
 				treeRelationResponses);
 		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shape);
+		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream);
 
 		return statements;
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
-			EventStream eventStream, ShaclShape shape) {
+			EventStreamResponse eventStream) {
 		String baseUrl = appConfig.getHostName() + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
@@ -90,7 +82,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					null,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			statements.addAll(shape.getModel().listStatements().toList());
+			statements.addAll(eventStream.getShacl().listStatements().toList());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}

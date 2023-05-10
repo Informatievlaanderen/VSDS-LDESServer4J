@@ -1,17 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -28,36 +24,30 @@ public class SnapshotServiceImpl implements SnapshotService {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final SnapshotRepository snapshotRepository;
 	private final SnapshotRelationLinker snapshotRelationLinker;
-	private final EventStreamCollection eventStreamCollection;
-	private final ViewCollection viewCollection;
-	private final ShaclCollection shaclCollection;
+	private final EventStreamService eventStreamService;
 
 	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, LdesFragmentRepository ldesFragmentRepository,
 			SnapshotRepository snapshotRepository, SnapshotRelationLinker snapshotRelationLinker,
-			EventStreamCollection eventStreamCollection, ViewCollection viewCollection,
-			ShaclCollection shaclCollection) {
+			EventStreamService eventStreamService) {
 		this.snapShotCreator = snapShotCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.snapshotRepository = snapshotRepository;
 		this.snapshotRelationLinker = snapshotRelationLinker;
-		this.eventStreamCollection = eventStreamCollection;
-		this.viewCollection = viewCollection;
-		this.shaclCollection = shaclCollection;
+		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
 	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
 
-		EventStream eventStream = eventStreamCollection.retrieveEventStream(collectionName)
-				.orElseThrow(() -> new MissingEventStreamException(collectionName));
+		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
 
-		ViewName viewName = viewCollection.getViewByViewName(new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME))
+		ViewName viewName = eventStream.getViews().stream()
 				.map(ViewSpecification::getName)
+				.filter(name -> name.equals(new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME)))
+				.findFirst()
 				.orElseThrow(() -> new SnapshotCreationException(
 						"No default pagination view configured for collection " + collectionName));
-
-		ShaclShape shape = shaclCollection.retrieveShape(collectionName).orElseThrow();
 
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
@@ -70,12 +60,12 @@ public class SnapshotServiceImpl implements SnapshotService {
 			throw new SnapshotCreationException(
 					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
 		}
-		createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream, shape);
+		createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream);
 	}
 
 	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
-			EventStream eventStream, ShaclShape shape) {
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream, shape);
+			EventStreamResponse eventStream) {
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream);
 		LdesFragment lastTreeNodeOfSnapshot = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		ldesFragmentRepository.saveFragment(lastTreeNodeOfSnapshot);

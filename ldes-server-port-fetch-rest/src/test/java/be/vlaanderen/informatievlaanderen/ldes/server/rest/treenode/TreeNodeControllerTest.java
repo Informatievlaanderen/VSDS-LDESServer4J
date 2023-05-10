@@ -2,15 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
@@ -48,7 +46,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -84,9 +81,7 @@ class TreeNodeControllerTest {
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 	@MockBean
-	private EventStreamCollection eventStreamCollection;
-	@MockBean
-	private ShaclCollection shaclCollection;
+	private EventStreamService eventStreamService;
 
 	@BeforeEach
 	void setUp() {
@@ -96,9 +91,10 @@ class TreeNodeControllerTest {
 	@ParameterizedTest(name = "Correct getting of an open LdesFragment from the  REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
-																   String expectedHeaderValue) throws Exception {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION_NAME)).thenReturn(Optional.of(new EventStream(COLLECTION_NAME, null, null)));
-		when(shaclCollection.retrieveShape(COLLECTION_NAME)).thenReturn(Optional.of(new ShaclShape(COLLECTION_NAME, ModelFactory.createDefaultModel())));
+			String expectedHeaderValue) throws Exception {
+		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME, null, null, null, List.of(),
+				ModelFactory.createDefaultModel());
+		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
@@ -123,7 +119,8 @@ class TreeNodeControllerTest {
 		assertEquals(expectedHeaderValue, headerValue);
 
 		headerValue = result.getResponse().getHeader("Etag");
-//		String expectedEtag = "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
+		// String expectedEtag =
+		// "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
 		String expectedEtag = "\"c7ea36907e9d946b78513ef4f5e30002a4d3be1b675589727a8516452e74fea8\"";
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);
@@ -253,9 +250,9 @@ class TreeNodeControllerTest {
 
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig,
-				final EventStreamCollection eventStreamCollection, final ShaclCollection shaclCollection) {
+				final EventStreamService eventStreamService) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamCollection, shaclCollection);
+			return new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService);
 		}
 
 		@Bean

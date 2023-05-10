@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converte
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -21,11 +20,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 
 public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-	private final EventStreamResponseConverter eventStreamResponseConverter;
-
-	public EventStreamResponseHttpConverter(AppConfig appConfig) {
-		this.eventStreamResponseConverter = new EventStreamResponseConverter(appConfig);
-	}
+	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
@@ -44,7 +39,7 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 
 	@Override
 	public EventStreamResponse read(Class<? extends EventStreamResponse> clazz, HttpInputMessage inputMessage)
-			throws IOException, HttpMessageNotReadableException {
+			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException();
 	}
 

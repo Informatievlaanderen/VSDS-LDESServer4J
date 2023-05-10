@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
@@ -45,8 +45,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -78,13 +77,13 @@ class EventStreamControllerTest {
 	private ViewService viewService;
 	@MockBean
 	private ShaclShapeService shaclShapeService;
-	private EventStream eventStream;
+	private EventStreamResponse eventStream;
 	private ShaclShape shaclShape;
 
 	@BeforeEach
 	void setUp() {
-		eventStream = new EventStream(COLLECTION, "http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf");
+		eventStream = new EventStreamResponse(COLLECTION, "http://www.w3.org/ns/prov#generatedAtTime",
+				"http://purl.org/dc/terms/isVersionOf", "memberType", List.of(), ModelFactory.createDefaultModel());
 
 		Model shacl = createDefaultModel().add(createResource(appConfig.getHostName() + "/" + COLLECTION),
 				createProperty(NODE_SHAPE_TYPE),
@@ -124,7 +123,7 @@ class EventStreamControllerTest {
 
 	private String getObjectURI(Model model, Property property) {
 		return model
-				.listStatements(createResource("http://localhost:8080/mobility-hindrances"), property, (Resource) null)
+				.listStatements(createResource(LDES + "mobility-hindrances"), property, (Resource) null)
 				.nextOptional()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)

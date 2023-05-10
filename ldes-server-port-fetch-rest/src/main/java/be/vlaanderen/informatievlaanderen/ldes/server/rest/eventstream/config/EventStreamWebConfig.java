@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +10,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 public class EventStreamWebConfig {
 
 	@Bean
-	public HttpMessageConverter<EventStreamResponse> eventStreamResponseHttpMessageConverter(
-			final AppConfig appConfig) {
-		return new EventStreamResponseHttpConverter(appConfig);
+	public HttpMessageConverter<EventStreamResponse> eventStreamResponseHttpMessageConverter() {
+		return new EventStreamResponseHttpConverter();
 	}
+
 }

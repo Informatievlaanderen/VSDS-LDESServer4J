@@ -43,8 +43,7 @@ class TreeNodeFactoryImplTest {
 		memberRepository = mock(MemberRepository.class);
 		appConfig = new AppConfig();
 		appConfig.setHostName(HOSTNAME);
-		ldesConfig = new LdesConfig();
-		eventStreamResponse = new EventStreamResponse(COLLECTION_NAME, null, null, List.of(), null);
+		eventStreamResponse = new EventStreamResponse(COLLECTION_NAME, null, null, null, List.of(), null);
 		treeNodeFactory = new TreeNodeFactoryImpl(ldesFragmentRepository, memberRepository);
 	}
 

@@ -1,11 +1,10 @@
-@prefix : <http://localhost:8080/> .
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix custom: <http://example.org/> .
 
-:collectionName1 a ldes:EventStream ;
+ldes:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;

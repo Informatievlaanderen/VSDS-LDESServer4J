@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.*;
@@ -15,18 +14,13 @@ import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class EventStreamResponseConverter {
-	private final AppConfig appConfig;
-
-	public EventStreamResponseConverter(AppConfig appConfig) {
-		this.appConfig = appConfig;
-	}
 
 	public static final String CUSTOM = "http://example.org/";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
 
 	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).orElseThrow()
-				.replace(appConfig.getHostName() + "/", "");
+				.replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);
@@ -36,7 +30,7 @@ public class EventStreamResponseConverter {
 	}
 
 	public Model toModel(EventStreamResponse eventStreamResponse) {
-		final Resource subject = createResource(appConfig.getHostName() + "/" + eventStreamResponse.getCollection());
+		final Resource subject = createResource(LDES + eventStreamResponse.getCollection());
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
 				createResource(EVENT_STREAM_TYPE));
 		final Statement timestampPathStmt = createStatement(subject, LDES_TIMESTAMP_PATH,
@@ -51,7 +45,8 @@ public class EventStreamResponseConverter {
 				.flatMap(model -> model.listStatements().toList().stream())
 				.toList();
 
-		List<Statement> statements = new ArrayList<>(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt));
+		List<Statement> statements = new ArrayList<>(
+				List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType));
 
 		getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE))
 				.map(ResourceFactory::createResource)
