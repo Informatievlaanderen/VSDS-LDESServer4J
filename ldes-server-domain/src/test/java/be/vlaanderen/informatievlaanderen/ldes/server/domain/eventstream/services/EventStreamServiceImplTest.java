@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -39,6 +42,8 @@ class EventStreamServiceImplTest {
 	private EventStreamCollection eventStreamCollection;
 	@Mock
 	private ApplicationEventPublisher eventPublisher;
+	@Captor
+	ArgumentCaptor<EventStreamDeletedEvent> deletedEventArgumentCaptor;
 	@Mock
 	private ViewService viewService;
 	@Mock
@@ -135,10 +140,9 @@ class EventStreamServiceImplTest {
 		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 		Exception e = assertThrows(MissingEventStreamException.class, () -> service.deleteEventStream(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
-
 		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
 		verifyNoMoreInteractions(eventStreamCollection);
-		verifyNoInteractions(viewService, shaclShapeService);
+		verifyNoInteractions(viewService, shaclShapeService, eventPublisher);
 	}
 
 	@Test
@@ -147,7 +151,10 @@ class EventStreamServiceImplTest {
 
 		service.deleteEventStream(COLLECTION);
 
-		verify(eventStreamCollection).deleteEventStream(COLLECTION);
+		InOrder inOrder = Mockito.inOrder(eventStreamCollection, eventPublisher);
+		inOrder.verify(eventStreamCollection).deleteEventStream(COLLECTION);
+		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
+		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());
 		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
 	}
 }
