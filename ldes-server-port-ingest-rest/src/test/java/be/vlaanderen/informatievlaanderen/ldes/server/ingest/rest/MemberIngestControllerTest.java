@@ -114,8 +114,8 @@ class MemberIngestControllerTest {
 		when(eventStreamService.retrieveEventStream(anyString())).thenThrow(MissingEventStreamException.class);
 
 		mockMvc.perform(post("/another-collection-name")
-						.contentType("application/n-quads")
-						.content(ldesMemberString))
+				.contentType("application/n-quads")
+				.content(ldesMemberString))
 				.andExpect(status().isNotFound());
 	}
 

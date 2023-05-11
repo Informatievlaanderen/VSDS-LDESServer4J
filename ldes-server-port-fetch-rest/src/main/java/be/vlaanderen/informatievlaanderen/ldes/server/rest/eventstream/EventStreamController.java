@@ -13,9 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpHeaders.*;
-import java.util.List;
-
-import static org.springframework.http.HttpHeaders.*;
 
 @RestController
 @Tag(name = "Fetch")
