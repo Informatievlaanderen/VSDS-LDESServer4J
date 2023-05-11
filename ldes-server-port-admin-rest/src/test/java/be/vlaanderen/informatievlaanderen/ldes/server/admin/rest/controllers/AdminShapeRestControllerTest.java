@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminShapeRestController.class,
+@ContextConfiguration(classes = { AdminShapeRestController.class, AppConfig.class,
 		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
 class AdminShapeRestControllerTest {
 	@MockBean
@@ -95,7 +96,7 @@ class AdminShapeRestControllerTest {
 			Model expectedShapeModel = readModelFromFile(fileName);
 
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-							.accept(contentTypeTurtle)
+					.accept(contentTypeTurtle)
 					.content(readDataFromFile(fileName))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isOk());
@@ -111,7 +112,7 @@ class AdminShapeRestControllerTest {
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 			String collectionName = "name1";
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
-							.accept(contentTypeTurtle)
+					.accept(contentTypeTurtle)
 					.content(readDataFromFile("shape-without-type.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());

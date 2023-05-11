@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +22,12 @@ public class EtagCachingStrategy implements CachingStrategy {
 
 	@Override
 	public String generateCacheIdentifier(EventStream eventStream) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(eventStream.collection());
-		return DigestUtils.sha256Hex(ldesConfig.getBaseUrl());
+		return DigestUtils.sha256Hex(appConfig.getHostName() + "/" + eventStream.collection());
+	}
+
+	@Override
+	public String generateCacheIdentifier(EventStreamResponse eventStream) {
+		return DigestUtils.sha256Hex(appConfig.getHostName() + "/" + eventStream.getCollection());
 	}
 
 	@Override

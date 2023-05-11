@@ -19,7 +19,8 @@ public class EventStreamResponseConverter {
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
 
 	public EventStreamResponse fromModel(Model model) {
-		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
+		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).orElseThrow()
+				.replace(LDES, "");
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);
@@ -44,9 +45,13 @@ public class EventStreamResponseConverter {
 				.flatMap(model -> model.listStatements().toList().stream())
 				.toList();
 
-		final Resource shaclResource = createResource(
-				getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE)));
-		final Statement shaclStmt = createStatement(subject, TREE_SHAPE, shaclResource);
+		List<Statement> statements = new ArrayList<>(
+				List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType));
+
+		getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE))
+				.map(ResourceFactory::createResource)
+				.map(resource -> createStatement(subject, TREE_SHAPE, resource))
+				.ifPresent(statements::add);
 
 		final List<Statement> viewReferenceStatements = eventStreamResponse.getViews().stream()
 				.map(view -> createStatement(subject, createProperty(VIEW),
@@ -54,15 +59,15 @@ public class EventStreamResponseConverter {
 				.toList();
 
 		return createDefaultModel()
-				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, shaclStmt))
+				.add(statements)
 				.add(views)
 				.add(viewReferenceStatements)
 				.add(eventStreamResponse.getShacl());
 	}
 
-	private String getIdentifier(Model model, Resource object) {
+	private Optional<String> getIdentifier(Model model, Resource object) {
 		Optional<Statement> stmtOptional = model.listStatements(null, RDF_SYNTAX_TYPE, object).nextOptional();
-		return stmtOptional.map(statement -> statement.getSubject().toString()).orElseThrow();
+		return stmtOptional.map(statement -> statement.getSubject().toString());
 	}
 
 	private String getResource(Model model, Property predicate) {

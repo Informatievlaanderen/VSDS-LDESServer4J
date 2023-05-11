@@ -1,6 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParserBuilder;
+import org.apache.jena.riot.RDFWriter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -25,11 +29,13 @@ public class SnapshotEntity {
 	}
 
 	public Snapshot toSnapshot() {
-		return new Snapshot(this.snapshotId, this.collectionName, this.shape, this.snapshotUntil, this.snapshotOf);
+		Model shapeModel = RDFParserBuilder.create().fromString(this.shape).lang(Lang.TURTLE).toModel();
+		return new Snapshot(this.snapshotId, this.collectionName, shapeModel, this.snapshotUntil, this.snapshotOf);
 	}
 
 	public static SnapshotEntity fromSnapshot(Snapshot snapshot) {
-		return new SnapshotEntity(snapshot.getSnapshotId(), snapshot.getCollectionName(), snapshot.getShape(),
+		String shapeString = RDFWriter.source(snapshot.getShape()).lang(Lang.TURTLE).asString();
+		return new SnapshotEntity(snapshot.getSnapshotId(), snapshot.getCollectionName(), shapeString,
 				snapshot.getSnapshotUntil(),
 				snapshot.getSnapshotOf());
 	}

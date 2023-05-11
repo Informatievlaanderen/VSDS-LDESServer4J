@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionh
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ public class IngestionRestResponseEntityExceptionHandler
 				new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { CollectionNotFoundException.class })
+	@ExceptionHandler(value = { CollectionNotFoundException.class, MissingEventStreamException.class })
 	protected ResponseEntity<Object> handleNotFoundException(RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
