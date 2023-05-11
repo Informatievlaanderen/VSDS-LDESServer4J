@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,13 +18,21 @@ public class AdminWebConfig {
 	}
 
 	@Bean
-	public EventStreamListHttpConverter eventStreamListHttpConverter() {
-		return new EventStreamListHttpConverter();
+	public EventStreamResponseConverter eventStreamResponseConverter(
+			final ViewSpecificationConverter viewSpecificationConverter) {
+		return new EventStreamResponseConverter(viewSpecificationConverter);
 	}
 
 	@Bean
-	public EventStreamHttpConverter eventStreamHttpConverter() {
-		return new EventStreamHttpConverter();
+	public EventStreamHttpConverter eventStreamHttpConverter(
+			final EventStreamResponseConverter eventStreamResponseConverter) {
+		return new EventStreamHttpConverter(eventStreamResponseConverter);
+	}
+
+	@Bean
+	public EventStreamListHttpConverter eventStreamListHttpConverter(
+			final EventStreamResponseConverter eventStreamResponseConverter) {
+		return new EventStreamListHttpConverter(eventStreamResponseConverter);
 	}
 
 	@Bean

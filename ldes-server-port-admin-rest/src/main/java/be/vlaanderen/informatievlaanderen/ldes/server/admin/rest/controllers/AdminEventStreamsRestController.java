@@ -26,13 +26,14 @@ import static org.apache.jena.riot.WebContent.*;
 public class AdminEventStreamsRestController {
 
 	private final EventStreamService eventStreamService;
-	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
+	private final EventStreamResponseConverter eventStreamResponseConverter;
 	private final EventStreamValidator eventStreamValidator;
 
 	public AdminEventStreamsRestController(EventStreamService eventStreamService,
-			EventStreamValidator eventStreamValidator) {
+			EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamService = eventStreamService;
 		this.eventStreamValidator = eventStreamValidator;
+		this.eventStreamResponseConverter = eventStreamResponseConverter;
 	}
 
 	@InitBinder
