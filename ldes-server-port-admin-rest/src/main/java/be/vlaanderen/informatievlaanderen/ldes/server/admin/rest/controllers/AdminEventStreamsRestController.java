@@ -1,16 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,10 +54,15 @@ public class AdminEventStreamsRestController {
 		return eventStreamService.retrieveAllEventStreams();
 	}
 
-	@PutMapping
+	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
 	@Operation(summary = "Create an Event Stream based on the provided config")
+	@ApiResponse(responseCode = "200", content = {
+			@Content(mediaType = contentTypeNQuads),
+			@Content(mediaType = contentTypeJSONLD),
+			@Content(mediaType = contentTypeTurtle)
+	})
 	public EventStreamResponse putEventStream(
-			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining the Event Stream") @RequestBody @Validated Model eventStreamModel) {
+			@Parameter(schema = @Schema(implementation = String.class), description = "A valid RDF model defining the event stream") @RequestBody @Validated Model eventStreamModel) {
 		EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
 		return eventStreamService.saveEventStream(eventStreamResponse);
 	}
@@ -72,7 +80,7 @@ public class AdminEventStreamsRestController {
 
 	@DeleteMapping("/{collectionName}")
 	@Operation(summary = "Delete an Event Stream")
-	public ResponseEntity<Object> deleteEventStream(@PathVariable String collectionName) {
+	public ResponseEntity<Void> deleteEventStream(@PathVariable String collectionName) {
 		eventStreamService.deleteEventStream(collectionName);
 		return ResponseEntity.ok().build();
 	}

@@ -34,6 +34,7 @@ import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -133,8 +134,9 @@ class AdminEventStreamsRestControllerTest {
 		when(eventStreamService.saveEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-1.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
+						.accept(contentTypeTurtle)
+				.content(readDataFromFile("ldes-1.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedModel));
 
@@ -144,8 +146,8 @@ class AdminEventStreamsRestControllerTest {
 	@Test
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("ldes-without-type.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("ldes-without-type.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isBadRequest());
 
 		verifyNoInteractions(eventStreamService);
@@ -154,8 +156,8 @@ class AdminEventStreamsRestControllerTest {
 	@Test
 	void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.content(readDataFromFile("malformed-ldes.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("malformed-ldes.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isBadRequest());
 
 		verifyNoInteractions(eventStreamService);

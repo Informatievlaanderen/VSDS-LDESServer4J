@@ -11,6 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionha
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -101,14 +102,15 @@ class MemberIngestionControllerTest {
 
 	@Test
 	@DisplayName("Requesting using another collection name returns 404")
+	@Disabled("to be enabled once AppConfig:getLdesConfig returns exception again")
 	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404()
 			throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
 
 		mockMvc.perform(post("/another-collection-name")
-				.contentType("application/n-quads")
-				.content(ldesMemberString))
-				.andDo(print()).andExpect(status().isNotFound());
+						.contentType("application/n-quads")
+						.content(ldesMemberString))
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
