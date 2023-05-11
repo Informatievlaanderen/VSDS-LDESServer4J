@@ -81,7 +81,7 @@
         <skipFormatCode>false</skipFormatCode>
         <!--suppress UnresolvedMavenProperty -->
         <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
-        <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
+        <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
         <!-- HASHING -->
         <commons-codec.version>1.15</commons-codec.version>
