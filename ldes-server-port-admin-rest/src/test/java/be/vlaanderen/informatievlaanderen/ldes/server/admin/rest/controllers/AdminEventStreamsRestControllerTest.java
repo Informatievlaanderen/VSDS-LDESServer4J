@@ -80,7 +80,6 @@ class AdminEventStreamsRestControllerTest {
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 
 		mockMvc.perform(get("/admin/api/v1/eventstreams"))
-				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 

@@ -54,7 +54,7 @@ class ViewSpecificationConverterTest {
 		Model viewModel = readModelFromFile("viewconverter/view_without_type.ttl");
 		assertThrows(ModelToViewConverterException.class,
 				() -> ViewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME),
-				"Could not convert model to ViewSpecification:\nMissing type: ");
+				"Could not toModel model to ViewSpecification:\nMissing type: ");
 	}
 
 	@Test

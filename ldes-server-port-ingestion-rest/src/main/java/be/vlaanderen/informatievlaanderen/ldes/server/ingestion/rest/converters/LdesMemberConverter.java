@@ -60,7 +60,7 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 				.getRequest().getRequestURI().substring(1);
 		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 
-		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());
+		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType(), collectionName);
 		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());
 		LocalDateTime timestamp = extractTimestamp(memberModel, ldesConfig.getTimestampPath());
 		return new Member(memberId, collectionName, null, versionOf, timestamp, memberModel, List.of());
@@ -87,11 +87,11 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 				.orElse(null);
 	}
 
-	private String extractMemberId(Model model, String memberType) {
+	private String extractMemberId(Model model, String memberType, String collectionName) {
 		return model
 				.listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
 				.nextOptional()
-				.map(statement -> statement.getSubject().toString())
+				.map(statement -> collectionName + "/" + statement.getSubject().toString())
 				.orElseThrow(() -> new MalformedMemberIdException(memberType));
 	}
 
