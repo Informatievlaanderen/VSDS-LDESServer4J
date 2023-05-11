@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -52,9 +51,9 @@ class AdminViewsRestControllerTest {
 	private MockMvc mockMvc;
 
 	@BeforeEach
-    void setUp() {
-        when(validator.supports(any())).thenReturn(true);
-    }
+	void setUp() {
+		when(validator.supports(any())).thenReturn(true);
+	}
 
 	@Test
 	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
@@ -120,7 +119,7 @@ class AdminViewsRestControllerTest {
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()))
+				.contentType(Lang.TURTLE.getHeaderString()));
 		verify(validator, times(1)).validate(any(), any());
 	}
 
@@ -128,7 +127,7 @@ class AdminViewsRestControllerTest {
 	void when_Delete_Then_RemoveMethodCalled() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName));
 		verify(viewService).deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 

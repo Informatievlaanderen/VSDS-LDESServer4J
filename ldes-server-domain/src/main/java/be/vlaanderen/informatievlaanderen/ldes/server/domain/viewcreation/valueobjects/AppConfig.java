@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,7 +25,7 @@ public class AppConfig {
 				.stream()
 				.filter(ldes -> ldes.getCollectionName().equals(collectionName))
 				.findFirst()
-				.orElseThrow(() -> new CollectionNotFoundException(collectionName));
+				.orElse(new LdesConfig());
 	}
 
 }

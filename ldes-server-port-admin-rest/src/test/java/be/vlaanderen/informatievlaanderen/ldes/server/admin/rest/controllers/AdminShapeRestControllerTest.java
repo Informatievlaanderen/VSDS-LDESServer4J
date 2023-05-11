@@ -95,9 +95,9 @@ class AdminShapeRestControllerTest {
 			Model expectedShapeModel = readModelFromFile(fileName);
 
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+							.accept(contentTypeTurtle)
 					.content(readDataFromFile(fileName))
 					.contentType(Lang.TURTLE.getHeaderString()))
-					.andDo(print())
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
@@ -111,9 +111,9 @@ class AdminShapeRestControllerTest {
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 			String collectionName = "name1";
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+							.accept(contentTypeTurtle)
 					.content(readDataFromFile("shape-without-type.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
-					.andDo(print())
 					.andExpect(status().isBadRequest());
 
 			verify(shaclShapeValidator).validateShape(any());

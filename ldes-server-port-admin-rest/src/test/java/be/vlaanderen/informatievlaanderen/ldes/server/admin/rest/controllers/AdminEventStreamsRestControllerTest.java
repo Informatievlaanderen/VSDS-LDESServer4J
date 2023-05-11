@@ -30,10 +30,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -79,7 +79,7 @@ class AdminEventStreamsRestControllerTest {
 
 		when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 
-		mockMvc.perform(get("/admin/api/v1/eventstreams"))
+		mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeTurtle))
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
@@ -97,7 +97,7 @@ class AdminEventStreamsRestControllerTest {
 
 		when(eventStreamService.retrieveEventStream(collectionName)).thenReturn(eventStream);
 
-		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName))
+		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName).accept(contentTypeTurtle))
 				.andExpect(status().isOk())
 				.andExpect(IsIsomorphic.with(model));
 
@@ -133,6 +133,7 @@ class AdminEventStreamsRestControllerTest {
 		when(eventStreamService.saveEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
+						.accept(contentTypeTurtle)
 				.content(readDataFromFile("ldes-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isOk())

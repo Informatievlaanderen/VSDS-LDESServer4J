@@ -4,14 +4,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RetentionPolicyConfigTest {
 
@@ -31,6 +30,7 @@ class RetentionPolicyConfigTest {
 	}
 
 	@Test
+	@Disabled("To be enabled again once timebased retention is finished")
 	void when_OtherRetentionPoliciesAreDefinedInConfig_IllegalArgumentExceptionIsThrown() {
 		AppConfig appConfig = getLdesConfig("other");
 

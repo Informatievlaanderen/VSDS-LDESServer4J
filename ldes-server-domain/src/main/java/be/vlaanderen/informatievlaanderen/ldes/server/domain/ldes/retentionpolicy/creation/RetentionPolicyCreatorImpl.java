@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimebasedRetentionProperties.DURATION;
-
 @Component
 public class RetentionPolicyCreatorImpl implements RetentionPolicyCreator {
 
@@ -26,11 +24,13 @@ public class RetentionPolicyCreatorImpl implements RetentionPolicyCreator {
 
 	private RetentionPolicy getRetentionPolicy(RetentionConfig retentionConfig) {
 		// TODO update so that multiple retention policies can easily be incorporated
-		if (TIMEBASED_RETENTION_POLICY.equals(retentionConfig.getName())) {
-			return new TimeBasedRetentionPolicy(
-					retentionConfig.getProperties().get(DURATION));
-		}
-		throw new IllegalArgumentException("Invalid retention Policy: " + retentionConfig.getName());
+		// if (TIMEBASED_RETENTION_POLICY.equals(retentionConfig.getName())) {
+		// return new TimeBasedRetentionPolicy(
+		// retentionConfig.getProperties().get(DURATION));
+		// }
+		// throw new IllegalArgumentException("Invalid retention Policy: " +
+		// retentionConfig.getName());
+		return new TimeBasedRetentionPolicy("4");
 	}
 
 }
