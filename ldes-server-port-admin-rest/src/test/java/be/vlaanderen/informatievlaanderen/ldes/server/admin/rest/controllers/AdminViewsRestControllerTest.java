@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -55,9 +54,9 @@ class AdminViewsRestControllerTest {
 	private MockMvc mockMvc;
 
 	@BeforeEach
-    void setUp() {
-        when(validator.supports(any())).thenReturn(true);
-    }
+	void setUp() {
+		when(validator.supports(any())).thenReturn(true);
+	}
 
 	@Test
 	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
@@ -70,7 +69,6 @@ class AdminViewsRestControllerTest {
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views"))
-				.andDo(print())
 				.andExpect(status().isOk());
 		MvcResult result = resultActions.andReturn();
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
@@ -86,7 +84,6 @@ class AdminViewsRestControllerTest {
 		when(viewService.getViewByViewName(new ViewName(collectionName, viewName))).thenReturn(view);
 		ResultActions resultActions = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
-				.andDo(print())
 				.andExpect(status().isOk());
 		MvcResult result = resultActions.andReturn();
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
@@ -101,7 +98,6 @@ class AdminViewsRestControllerTest {
 				.thenThrow(new MissingViewException(new ViewName(collectionName, viewName)));
 		MvcResult mvcResult = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
-				.andDo(print())
 				.andExpect(status().isNotFound()).andReturn();
 
 		assertEquals("Collection name1 does not have a view: view1", mvcResult.getResponse().getContentAsString());
@@ -116,7 +112,6 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print())
 				.andExpect(status().isOk());
 		verify(viewService, times(1)).addView(view);
 	}
@@ -127,8 +122,7 @@ class AdminViewsRestControllerTest {
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print());
+				.contentType(Lang.TURTLE.getHeaderString()));
 		verify(validator, times(1)).validate(any(), any());
 	}
 
@@ -136,8 +130,7 @@ class AdminViewsRestControllerTest {
 	void when_Delete_Then_RemoveMethodCalled() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
-				.andDo(print());
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName));
 		verify(viewService).deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 

@@ -5,8 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFWriter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -15,10 +14,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamResponse>> {
 	private final EventStreamResponseConverter eventStreamResponseConverter;
@@ -56,13 +57,13 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 
 	@Override
 	public List<EventStreamResponse> read(Class<? extends List<EventStreamResponse>> clazz,
-			HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+			HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
 	}
 
 	@Override
 	public List<EventStreamResponse> read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
-			throws IOException, HttpMessageNotReadableException {
+			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
 	}
 
@@ -74,11 +75,10 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 				.map(eventStreamResponseConverter::toModel)
 				.forEach(model::add);
 
-		StringWriter outputStream = new StringWriter();
-
-		RDFDataMgr.write(outputStream, model, Lang.TURTLE);
-
-		outputMessage.getBody().write(outputStream.toString().getBytes(StandardCharsets.UTF_8));
+		outputMessage.getBody().write(RDFWriter.source(model)
+				.lang(getLang(contentType, REST_ADMIN))
+				.asString()
+				.getBytes(StandardCharsets.UTF_8));
 	}
 
 	@Override

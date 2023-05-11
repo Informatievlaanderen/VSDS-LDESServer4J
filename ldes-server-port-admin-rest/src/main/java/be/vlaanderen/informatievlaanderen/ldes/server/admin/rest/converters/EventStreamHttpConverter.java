@@ -3,8 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFWriter;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -13,10 +12,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private final EventStreamResponseConverter eventStreamResponseConverter;
@@ -50,11 +50,10 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	public void write(EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
-		StringWriter outputStream = new StringWriter();
 
-		RDFDataMgr.write(outputStream, eventStreamModel, Lang.TURTLE);
-
-		OutputStream body = outputMessage.getBody();
-		body.write(outputStream.toString().getBytes(StandardCharsets.UTF_8));
+		outputMessage.getBody().write(RDFWriter.source(eventStreamModel)
+				.lang(getLang(contentType, REST_ADMIN))
+				.asString()
+				.getBytes(StandardCharsets.UTF_8));
 	}
 }
