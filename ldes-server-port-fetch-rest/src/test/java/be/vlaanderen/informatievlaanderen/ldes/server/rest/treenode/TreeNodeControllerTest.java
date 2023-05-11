@@ -74,10 +74,6 @@ class TreeNodeControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-	@Autowired
-	private AppConfig appConfig;
-	@Autowired
-	RestConfig restConfig;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
 	@MockBean
@@ -119,8 +115,7 @@ class TreeNodeControllerTest {
 		assertEquals(expectedHeaderValue, headerValue);
 
 		headerValue = result.getResponse().getHeader("Etag");
-		// String expectedEtag =
-		// "\"d6c127819f561f89be27695007d7f078434b1abcb62981d363a0bef68bda4735\"";
+
 		String expectedEtag = "\"c7ea36907e9d946b78513ef4f5e30002a4d3be1b675589727a8516452e74fea8\"";
 		assertNotNull(headerValue);
 		assertEquals(expectedEtag, headerValue);

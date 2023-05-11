@@ -2,18 +2,19 @@ spring:
   main:
     allow-bean-definition-overriding: true
 
-host-name: "http://localhost:8080"
-collections:
-    collection-name: "parcels"
-    member-type: "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"
-    timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
-    version-of: "http://purl.org/dc/terms/isVersionOf"
-    views:
-      - name: "by-page"
-        fragmentations:
-          - name: "pagination"
-            config:
-              memberLimit: 100
+ldes-server:
+  host-name: "http://localhost:8080"
+  collections:
+      collection-name: "parcels"
+      member-type: "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"
+      timestamp-path: "http://www.w3.org/ns/prov#generatedAtTime"
+      version-of: "http://purl.org/dc/terms/isVersionOf"
+      views:
+        - name: "by-page"
+          fragmentations:
+            - name: "pagination"
+              config:
+                memberLimit: 100
 
 # Prevents error of tracing endpoint not found
 management:

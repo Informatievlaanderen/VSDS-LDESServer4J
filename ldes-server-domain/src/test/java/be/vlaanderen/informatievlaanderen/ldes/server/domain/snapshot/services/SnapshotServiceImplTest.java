@@ -34,7 +34,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 class SnapshotServiceImplTest {
-	// private static final String COLLECTION_NAME = "collection";
+	private static final String COLLECTION_NAME = "collection";
 	private EventStreamResponse eventStream;
 	private final SnapShotCreator snapShotCreator = mock(SnapShotCreator.class);
 	private final SnapshotRepository snapshotRepository = mock(SnapshotRepository.class);
@@ -47,11 +47,11 @@ class SnapshotServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "by-page"), List.of(),
+		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "by-page"), List.of(),
 				List.of());
-		eventStream = new EventStreamResponse("collection", "generated", "versionOf", "memberType",
+		eventStream = new EventStreamResponse(COLLECTION_NAME, "generated", "versionOf", "memberType",
 				List.of(viewSpecification), null);
-		when(eventStreamService.retrieveEventStream("collection")).thenReturn(eventStream);
+		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
 	}
 
 	@Test
@@ -86,8 +86,9 @@ class SnapshotServiceImplTest {
 		Stream<LdesFragment> treeNodesForSnapshot = Stream.of();
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
 
+		String collection = eventStream.getCollection();
 		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,
-				() -> snapshotService.createSnapshot(eventStream.getCollection()));
+				() -> snapshotService.createSnapshot(collection));
 
 		assertEquals(
 				"Unable to create snapshot.\nCause: No TreeNodes available in view collection/by-page which is used for snapshotting",
@@ -96,8 +97,7 @@ class SnapshotServiceImplTest {
 
 	@Test
 	void when_TreeNodesAreAvailable_And_PreviousSnapshotExists_TheyCanBeUsedToCreateSnapshot() {
-		final String collectionName = "collection";
-		final ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
+		final ViewName defaultViewName = new ViewName(COLLECTION_NAME, DEFAULT_VIEW_NAME);
 		final String snapshotName = "snapshot";
 		final ViewName snapshotViewName = new ViewName(snapshotName, DEFAULT_VIEW_NAME);
 
@@ -118,17 +118,17 @@ class SnapshotServiceImplTest {
 				.thenReturn(treeNodesFromPrevSnapshot);
 
 		Optional<Snapshot> lastSnapshot = Optional
-				.of(new Snapshot(snapshotViewName.asString(), collectionName, ModelFactory.createDefaultModel(),
+				.of(new Snapshot(snapshotViewName.asString(), COLLECTION_NAME, ModelFactory.createDefaultModel(),
 						LocalDateTime.now().minusDays(1),
 						"of"));
 		when(snapshotRepository.getLastSnapshot()).thenReturn(lastSnapshot);
-		Snapshot snapshot = new Snapshot("id", collectionName, ModelFactory.createDefaultModel(), LocalDateTime.now(),
+		Snapshot snapshot = new Snapshot("id", COLLECTION_NAME, ModelFactory.createDefaultModel(), LocalDateTime.now(),
 				"of");
 		List<LdesFragment> treeNodesForSnapshot = List.of(fragmentOfDefaultView, fragmentOfSnapshot);
 		ListArgumentMatcher treeNodesForSnapshotArgument = new ListArgumentMatcher(treeNodesForSnapshot);
 		when(snapShotCreator.createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument), eq(eventStream)))
 				.thenReturn(snapshot);
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(collectionName, "lastTreeNodeOfSnapshot"),
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(COLLECTION_NAME, "lastTreeNodeOfSnapshot"),
 				List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(eq(snapshot),
 				argThat(treeNodesForSnapshotArgument)))

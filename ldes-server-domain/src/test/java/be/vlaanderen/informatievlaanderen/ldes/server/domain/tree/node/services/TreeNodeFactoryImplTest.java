@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,6 @@ class TreeNodeFactoryImplTest {
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
 	private MemberRepository memberRepository;
-	private LdesConfig ldesConfig;
 	private AppConfig appConfig;
 	private EventStreamResponse eventStreamResponse;
 

@@ -6,13 +6,6 @@ import org.apache.jena.rdf.model.ModelFactory;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @deprecated This will be replaced by the admin api, so that a server can be
- *             configured at runtime.
- *             MemberType will be deleted and another strategy will be used to
- *             extract the member id
- */
-@Deprecated(forRemoval = true)
 public class LdesConfig {
 	private String collectionName;
 	private String memberType;
