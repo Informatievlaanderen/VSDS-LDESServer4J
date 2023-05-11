@@ -3,9 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -89,8 +87,6 @@ class ViewSpecificationConverterTest {
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
-		String v = RDFWriter.source(actualModel).lang(Lang.TURTLE).build().asString();
-		String v2 = RDFWriter.source(viewModel).lang(Lang.TURTLE).build().asString();
 		assertTrue(viewModel.isIsomorphicWith(actualModel));
 	}
 
