@@ -17,6 +17,11 @@ public class EventStreamResponseConverter {
 
 	public static final String CUSTOM = "http://example.org/";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
+	private final ViewSpecificationConverter viewSpecificationConverter;
+
+	public EventStreamResponseConverter(ViewSpecificationConverter viewSpecificationConverter) {
+		this.viewSpecificationConverter = viewSpecificationConverter;
+	}
 
 	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).replace(LDES, "");
@@ -40,7 +45,7 @@ public class EventStreamResponseConverter {
 				createProperty(eventStreamResponse.getMemberType()));
 
 		final List<Statement> views = eventStreamResponse.getViews().stream()
-				.map(ViewSpecificationConverter::modelFromView)
+				.map(viewSpecificationConverter::modelFromView)
 				.flatMap(model -> model.listStatements().toList().stream())
 				.toList();
 
@@ -50,7 +55,7 @@ public class EventStreamResponseConverter {
 
 		final List<Statement> viewReferenceStatements = eventStreamResponse.getViews().stream()
 				.map(view -> createStatement(subject, createProperty(VIEW),
-						createProperty(view.getName().getViewName())))
+						viewSpecificationConverter.getIRIFromViewName(view.getName())))
 				.toList();
 
 		return createDefaultModel()
@@ -85,7 +90,7 @@ public class EventStreamResponseConverter {
 					return statements;
 				})
 				.map(statements -> createDefaultModel().add(statements))
-				.map(viewModel -> ViewSpecificationConverter.viewFromModel(viewModel, collection))
+				.map(viewModel -> viewSpecificationConverter.viewFromModel(viewModel, collection))
 				.toList();
 	}
 

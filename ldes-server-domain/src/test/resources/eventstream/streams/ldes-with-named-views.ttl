@@ -5,14 +5,15 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix custom: <http://example.org/> .
 @prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#>
+@prefix server: <http://localhost:8080/collectionName1/> .
 
 ldes:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    custom:memberType mobiliteit:Mobiliteitshinder ;
    tree:shape ldes:shape ;
-   ldes:view ldes:view1 ;
-   ldes:view ldes:view2 .
+   ldes:view server:view1 ;
+   ldes:view server:view2 .
 
 ldes:shape a sh:NodeShape ;
    sh:nodeShape [
@@ -21,16 +22,18 @@ ldes:shape a sh:NodeShape ;
      ] ;
    sh:deactivated true .
 
-ldes:view1 tree:viewDescription [
+server:view1 tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
+       example:name "fragmentationStrategy" ;
        example:property "ldes:propertyPath"
    ]
 ] .
 
-ldes:view2 tree:viewDescription [
+server:view2 tree:viewDescription [
     example:fragmentationStrategy [
         a example:Fragmentation ;
+        example:name "fragmentationStrategy" ;
         example:property "ldes:propertyPath"
     ]
 ] .

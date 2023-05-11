@@ -50,7 +50,7 @@ public class ViewSpecificationConverter {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
 		Statement viewDescription = createStatement(
-				createResource(hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName()),
+				getIRIFromViewName(viewName),
 				createProperty(TREE_VIEW_DESCRIPTION),
 				createResource());
 		model.add(viewDescription);
@@ -58,6 +58,10 @@ public class ViewSpecificationConverter {
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
+	}
+
+	public Resource getIRIFromViewName(ViewName viewName) {
+		return createResource(hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName());
 	}
 
 	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {

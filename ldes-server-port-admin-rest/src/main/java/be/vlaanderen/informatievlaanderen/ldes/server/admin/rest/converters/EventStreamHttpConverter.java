@@ -19,7 +19,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
-	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
+	private final EventStreamResponseConverter eventStreamResponseConverter;
+
+	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+		this.eventStreamResponseConverter = eventStreamResponseConverter;
+	}
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
