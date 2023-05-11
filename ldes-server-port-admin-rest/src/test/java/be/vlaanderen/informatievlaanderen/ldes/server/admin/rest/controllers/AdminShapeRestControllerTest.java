@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -14,8 +16,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,13 +37,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminShapeRestController.class,
-		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminShapeRestController.class, ModelConverter.class,
+		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class })
 class AdminShapeRestControllerTest {
 	@MockBean
 	private ShaclShapeService shaclShapeService;
@@ -68,7 +71,6 @@ class AdminShapeRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.accept(contentTypeTurtle))
-					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
 		}
@@ -81,7 +83,6 @@ class AdminShapeRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.accept(contentTypeTurtle))
-					.andDo(print())
 					.andExpect(status().isNotFound());
 		}
 	}
@@ -95,9 +96,9 @@ class AdminShapeRestControllerTest {
 			Model expectedShapeModel = readModelFromFile(fileName);
 
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+					.accept(contentTypeTurtle)
 					.content(readDataFromFile(fileName))
 					.contentType(Lang.TURTLE.getHeaderString()))
-					.andDo(print())
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
@@ -111,9 +112,9 @@ class AdminShapeRestControllerTest {
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 			String collectionName = "name1";
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
+					.accept(contentTypeTurtle)
 					.content(readDataFromFile("shape-without-type.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
-					.andDo(print())
 					.andExpect(status().isBadRequest());
 
 			verify(shaclShapeValidator).validateShape(any());
@@ -126,5 +127,13 @@ class AdminShapeRestControllerTest {
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
 				.toString();
 		return RDFDataMgr.loadModel(uri);
+	}
+
+	@TestConfiguration
+	static class AdminShapeRestControllerTestConfig {
+		@Bean
+		public ModelConverter modelConverter() {
+			return new ModelConverter(new PrefixAdderImpl());
+		}
 	}
 }

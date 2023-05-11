@@ -9,6 +9,6 @@ public class ModelToViewConverterException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "Could not toModel model to ViewSpecification:\n" + cause;
+		return "Could not convert model to ViewSpecification:\n" + cause;
 	}
 }

@@ -1,9 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ViewName {
-
+public class ViewName implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 1848404092753207934L;
 	private final String name;
 	private final String collectionName;
 

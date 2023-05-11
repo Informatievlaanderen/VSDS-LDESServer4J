@@ -2,9 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
 import org.apache.jena.rdf.model.Model;
@@ -27,11 +26,11 @@ import java.util.Objects;
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 
-	private final AppConfig appConfig;
+	private EventStreamService eventStreamService;
 
-	public MemberConverter(AppConfig appConfig) {
+	public MemberConverter(EventStreamService eventStreamService) {
 		super(MediaType.ALL);
-		this.appConfig = appConfig;
+		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
@@ -49,9 +48,10 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
 
-		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType());
+		String memberType = eventStreamService.retrieveMemberType(collectionName);
+
+		String memberId = extractMemberId(memberModel, memberType);
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 

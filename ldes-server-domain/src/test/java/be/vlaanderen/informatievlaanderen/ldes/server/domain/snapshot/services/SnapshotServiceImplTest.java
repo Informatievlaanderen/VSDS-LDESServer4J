@@ -1,5 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
@@ -8,8 +11,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.S
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.testServices.ListArgumentMatcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -25,50 +28,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class SnapshotServiceImplTest {
+	private static final String COLLECTION_NAME = "collection";
 	private final SnapShotCreator snapShotCreator = mock(SnapShotCreator.class);
 	private final SnapshotRepository snapshotRepository = mock(SnapshotRepository.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final SnapshotRelationLinker snapshotRelationLinker = mock(SnapshotRelationLinker.class);
+	private final EventStreamService eventStreamService = mock(EventStreamService.class);
 
 	private final SnapshotService snapshotService = new SnapshotServiceImpl(snapShotCreator, ldesFragmentRepository,
-			snapshotRepository, snapshotRelationLinker);
-
-	private LdesConfig ldesConfig;
+			snapshotRepository, snapshotRelationLinker, eventStreamService);
 
 	@BeforeEach
 	void setUp() {
-		ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("localhost:8080");
-		ldesConfig.setCollectionName("collection");
-		ldesConfig.validation().setShape("shape");
-		ldesConfig.setDefaultView(true);
+		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(
+				new EventStreamResponse(COLLECTION_NAME, "timestampPath", "versionOf", "memberType", true, List.of(), null));
 	}
 
 	@Test
 	void when_TreeNodesAreAvailable_TheyCanBeUsedToCreateSnapshot() {
-		String collectionName = ldesConfig.getCollectionName();
-		ViewName viewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
+		ViewName viewName = new ViewName(COLLECTION_NAME, DEFAULT_VIEW_NAME);
 		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment(viewName, List.of()));
 		when(ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString()))
 				.thenReturn(treeNodesForSnapshot.stream());
-		Snapshot snapshot = new Snapshot("id", collectionName, "shape", LocalDateTime.now(), "of");
-		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig)).thenReturn(snapshot);
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(collectionName, "lastTreeNodeOfSnapshot"),
+		Snapshot snapshot = new Snapshot("id", COLLECTION_NAME, ModelFactory.createDefaultModel(), LocalDateTime.now(),
+				"of");
+		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, COLLECTION_NAME)).thenReturn(snapshot);
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(COLLECTION_NAME, "lastTreeNodeOfSnapshot"),
 				List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot, treeNodesForSnapshot))
 				.thenReturn(lastTreeNodeOfSnapshot);
 
-		snapshotService.createSnapshot(ldesConfig);
+		snapshotService.createSnapshot(COLLECTION_NAME);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, snapShotCreator, snapshotRelationLinker, snapshotRepository);
 		inOrder.verify(ldesFragmentRepository, times(1)).retrieveFragmentsOfView(viewName.asString());
-		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
+		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(treeNodesForSnapshot, COLLECTION_NAME);
 		inOrder.verify(snapshotRelationLinker, times(1)).addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(lastTreeNodeOfSnapshot);
@@ -77,12 +74,22 @@ class SnapshotServiceImplTest {
 	}
 
 	@Test
+	void when_NoDefaultViewIsProvided_then_ThrowExceptionWithCreation() {
+		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(new EventStreamResponse(COLLECTION_NAME, "timestamp", "versionOf", "memberType", false, List.of(), null));
+
+		String expectedErrorMessage = String.format("Unable to create snapshot.\nCause: No default pagination view configured for collection %s", COLLECTION_NAME);
+
+		Exception e = assertThrows(SnapshotCreationException.class, () -> snapshotService.createSnapshot(COLLECTION_NAME));
+		assertEquals(expectedErrorMessage, e.getMessage());
+	}
+
+	@Test
 	void when_NoTreeNodesAreAvailable_SnapshotCreationExceptionIsThrown() {
 		Stream<LdesFragment> treeNodesForSnapshot = Stream.of();
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
 
 		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,
-				() -> snapshotService.createSnapshot(ldesConfig));
+				() -> snapshotService.createSnapshot(COLLECTION_NAME));
 
 		assertEquals(
 				"Unable to create snapshot.\nCause: No TreeNodes available in view collection/by-page which is used for snapshotting",
@@ -90,9 +97,16 @@ class SnapshotServiceImplTest {
 	}
 
 	@Test
+	void when_eventStreamIsDeleted_then_deleteSnapshot() {
+		final EventStreamDeletedEvent event = new EventStreamDeletedEvent("collection");
+		((SnapshotServiceImpl) snapshotService)
+				.handleEventStreamDeletedEvent(event);
+		verify(snapshotRepository).deleteSnapshotsByCollectionName(event.collectionName());
+	}
+
+	@Test
 	void when_TreeNodesAreAvailable_And_PreviousSnapshotExists_TheyCanBeUsedToCreateSnapshot() {
-		final String collectionName = "collection";
-		final ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
+		final ViewName defaultViewName = new ViewName(COLLECTION_NAME, DEFAULT_VIEW_NAME);
 		final String snapshotName = "snapshot";
 		final ViewName snapshotViewName = new ViewName(snapshotName, DEFAULT_VIEW_NAME);
 
@@ -113,26 +127,28 @@ class SnapshotServiceImplTest {
 				.thenReturn(treeNodesFromPrevSnapshot);
 
 		Optional<Snapshot> lastSnapshot = Optional
-				.of(new Snapshot(snapshotViewName.asString(), "shape", collectionName, LocalDateTime.now().minusDays(1),
+				.of(new Snapshot(snapshotViewName.asString(), COLLECTION_NAME, ModelFactory.createDefaultModel(),
+						LocalDateTime.now().minusDays(1),
 						"of"));
 		when(snapshotRepository.getLastSnapshot()).thenReturn(lastSnapshot);
-		Snapshot snapshot = new Snapshot("id", collectionName, "shape", LocalDateTime.now(), "of");
+		Snapshot snapshot = new Snapshot("id", COLLECTION_NAME, ModelFactory.createDefaultModel(), LocalDateTime.now(),
+				"of");
 		List<LdesFragment> treeNodesForSnapshot = List.of(fragmentOfDefaultView, fragmentOfSnapshot);
 		ListArgumentMatcher treeNodesForSnapshotArgument = new ListArgumentMatcher(treeNodesForSnapshot);
-		when(snapShotCreator.createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument), eq(ldesConfig)))
+		when(snapShotCreator.createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument), eq(COLLECTION_NAME)))
 				.thenReturn(snapshot);
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(collectionName, "lastTreeNodeOfSnapshot"),
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(COLLECTION_NAME, "lastTreeNodeOfSnapshot"),
 				List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(eq(snapshot),
 				argThat(treeNodesForSnapshotArgument)))
 				.thenReturn(lastTreeNodeOfSnapshot);
 
-		snapshotService.createSnapshot(ldesConfig);
+		snapshotService.createSnapshot(COLLECTION_NAME);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, snapShotCreator, snapshotRelationLinker, snapshotRepository);
 		inOrder.verify(ldesFragmentRepository, times(1)).retrieveFragmentsOfView(snapshotViewName.asString());
 		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument),
-				eq(ldesConfig));
+				eq(COLLECTION_NAME));
 		inOrder.verify(snapshotRelationLinker, times(1)).addRelationsToUncoveredTreeNodes(eq(snapshot),
 				argThat(treeNodesForSnapshotArgument));
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(lastTreeNodeOfSnapshot);

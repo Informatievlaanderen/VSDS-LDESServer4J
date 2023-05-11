@@ -1,13 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,22 +24,28 @@ public class SnapshotServiceImpl implements SnapshotService {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final SnapshotRepository snapshotRepository;
 	private final SnapshotRelationLinker snapshotRelationLinker;
+	private final EventStreamService eventStreamService;
 
 	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, LdesFragmentRepository ldesFragmentRepository,
-			SnapshotRepository snapshotRepository,
-			SnapshotRelationLinker snapshotRelationLinker) {
+			SnapshotRepository snapshotRepository, SnapshotRelationLinker snapshotRelationLinker,
+			EventStreamService eventStreamService) {
 		this.snapShotCreator = snapShotCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.snapshotRepository = snapshotRepository;
 		this.snapshotRelationLinker = snapshotRelationLinker;
+		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
-	public void createSnapshot(LdesConfig ldesConfig) {
+	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
-		ViewName viewName = ldesConfig.getDefaultView().orElseThrow(() -> new SnapshotCreationException(
-				"No default pagination view configured for collection " + ldesConfig.getCollectionName()))
-				.getName();
+
+		if (!eventStreamService.retrieveEventStream(collectionName).isDefaultViewEnabled()) {
+			throw new SnapshotCreationException(
+					"No default pagination view configured for collection " + collectionName);
+		}
+		ViewName viewName = new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME);
+
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
 			treeNodesForSnapshot = getTreeNodesForSnapshotFromPreviousSnapshot(viewName, lastSnapshot.get());
@@ -48,11 +57,22 @@ public class SnapshotServiceImpl implements SnapshotService {
 			throw new SnapshotCreationException(
 					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
 		}
-		createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
+		createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 	}
 
-	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot, LdesConfig ldesConfig) {
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
+	@Override
+	public void deleteSnapshot(String collectionName) {
+		snapshotRepository.deleteSnapshotsByCollectionName(collectionName);
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		deleteSnapshot(event.collectionName());
+	}
+
+	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
+			String collectionName) {
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 		LdesFragment lastTreeNodeOfSnapshot = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		ldesFragmentRepository.saveFragment(lastTreeNodeOfSnapshot);

@@ -3,15 +3,18 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix tree: <https://w3id.org/tree#>.
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix server: <http://localhost:8080/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 
-ldes:name1 a ldes:EventStream ;
+server:name1 a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
     custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
-    tree:shape ldes:shape .
+    custom:hasDefaultView "true"^^xsd:boolean ;
+    tree:shape server:shape .
 
-ldes:shape a sh:NodeShape ;
+server:shape a sh:NodeShape ;
    sh:nodeShape [
      sh:closed true ;
      sh:propertyShape []

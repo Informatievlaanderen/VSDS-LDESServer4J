@@ -33,7 +33,7 @@ class MemberIngestValidatorImplTest {
 
 	@Test
     void validationShouldThrowException_whenMemberIsInvalid() {
-        when(factory.createValidator(null, "myCollection")).thenReturn(model -> {
+        when(factory.createValidator(null)).thenReturn(model -> {
             throw new IngestValidationException("invalid");
         });
         validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
@@ -44,7 +44,7 @@ class MemberIngestValidatorImplTest {
 
 	@Test
     void validatorShouldBeOverWritten_onChangedEvent() {
-        when(factory.createValidator(null, "myCollection"))
+        when(factory.createValidator(null))
                 .thenReturn(model -> {throw new IngestValidationException("invalid");})
                 .thenReturn(model -> {});
         validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
@@ -56,7 +56,7 @@ class MemberIngestValidatorImplTest {
 
 	@Test
 	void validatorShouldBeRemoved_onDeleteEvent() {
-		when(factory.createValidator(null, "myCollection"))
+		when(factory.createValidator(null))
 				.thenReturn(model -> {throw new IngestValidationException("invalid");});
 		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 		validator.handleShaclDeletedEvent(new ShaclDeletedEvent("myCollection"));

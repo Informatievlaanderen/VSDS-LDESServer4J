@@ -4,47 +4,56 @@
 @prefix tree: <https://w3id.org/tree#> .
 @prefix example: <http://example.org/> .
 @prefix custom: <http://example.org/> .
+@prefix server: <http://localhost:8080/> .
+@prefix col: <http://localhost:8080/name1/> .
+@prefix col2: <http://localhost:8080/name2/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
-ldes:name1 a ldes:EventStream ;
+server:name1 a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
-    ldes:view ldes:view2, ldes:view3 ;
+    ldes:view col:view2, col:view3 ;
     custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
-    tree:shape ldes:shape .
+    custom:hasDefaultView "false"^^xsd:boolean ;
+    tree:shape server:shape .
 
 
-ldes:name2 a ldes:EventStream ;
+server:name2 a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
-    ldes:view ldes:view1 ;
+    ldes:view col2:view1 ;
     custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
-    tree:shape ldes:shape .
+    custom:hasDefaultView "true"^^xsd:boolean ;
+    tree:shape server:shape .
 
 
-ldes:shape a sh:NodeShape ;
+server:shape a sh:NodeShape ;
    sh:nodeShape [
      sh:closed true ;
      sh:propertyShape []
      ] ;
    sh:deactivated true .
 
-ldes:view1 tree:viewDescription [
+col2:view1 tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
+       example:name "fragmentationStrategy" ;
        example:property "ldes:propertyPath"
    ]
 ] .
 
-ldes:view2 tree:viewDescription [
+col:view2 tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
+       example:name "fragmentationStrategy" ;
        example:property "ldes:propertyPath"
    ]
 ] .
 
-ldes:view3 tree:viewDescription [
+col:view3 tree:viewDescription [
    example:fragmentationStrategy [
        a example:Fragmentation ;
+       example:name "fragmentationStrategy" ;
        example:property "ldes:propertyPath"
    ]
 ] .

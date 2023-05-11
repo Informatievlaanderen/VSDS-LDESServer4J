@@ -12,16 +12,18 @@ public class EventStreamResponse {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final String memberType;
+	private final boolean defaultViewEnabled;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-			String memberType, List<ViewSpecification> views,
+			String memberType, boolean defaultViewEnabled, List<ViewSpecification> views,
 			Model shacl) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
 		this.memberType = memberType;
+		this.defaultViewEnabled = defaultViewEnabled;
 		this.views = views;
 		this.shacl = shacl;
 	}
@@ -40,6 +42,10 @@ public class EventStreamResponse {
 
 	public String getMemberType() {
 		return memberType;
+	}
+
+	public boolean isDefaultViewEnabled() {
+		return defaultViewEnabled;
 	}
 
 	public List<ViewSpecification> getViews() {

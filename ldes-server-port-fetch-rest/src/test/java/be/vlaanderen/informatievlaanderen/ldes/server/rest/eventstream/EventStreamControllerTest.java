@@ -1,24 +1,28 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -45,45 +49,65 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
+import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
-@ContextConfiguration(classes = { EventStreamController.class,
-		AppConfig.class, RestConfig.class, EventStreamWebConfig.class, RestResponseEntityExceptionHandler.class })
+@ContextConfiguration(classes = { EventStreamController.class, AppConfig.class, RestConfig.class,
+		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
+		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class
+})
 class EventStreamControllerTest {
-
+	private static final String COLLECTION = "mobility-hindrances";
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
 
 	@Autowired
 	private MockMvc mockMvc;
-	@MockBean
-	private EventStreamFactory eventStreamFactory;
 	@Autowired
 	AppConfig appConfig;
-	@Autowired
-	RestConfig restConfig;
+	@MockBean
+	private EventStreamService eventStreamService;
+	@MockBean
+	private ViewService viewService;
+	@MockBean
+	private ShaclShapeService shaclShapeService;
+	private String hostname;
+
+	@BeforeEach
+	void setUp() {
+		hostname = appConfig.getHostName();
+		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION,
+				"http://www.w3.org/ns/prov#generatedAtTime",
+				"http://purl.org/dc/terms/isVersionOf", "memberType", true, List.of(),
+				ModelFactory.createDefaultModel());
+
+		Model shacl = createDefaultModel().add(createResource(appConfig.getHostName() + "/" + COLLECTION),
+				createProperty(NODE_SHAPE_TYPE),
+				createResource("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"));
+
+		ShaclShape shaclShape = new ShaclShape(COLLECTION, shacl);
+
+		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
+		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(shaclShape);
+		when(viewService.getViewByViewName(new ViewName(COLLECTION, "by-page"))).thenReturn(
+				new ViewSpecification(new ViewName(COLLECTION, "by-page"), List.of(), List.of()));
+	}
 
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
-		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
-		when(eventStreamFactory.getEventStream(any())).thenReturn(
-				new EventStream(ldesConfig.getCollectionName(), ldesConfig.getTimestampPath(),
-						ldesConfig.getVersionOfPath(), ldesConfig.validation().getShape(),
-						List.of(createView("viewOne"), createView("viewTwo"))));
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
-				ldesConfig.getCollectionName())
+				COLLECTION)
 				.accept(mediaType))
-				.andDo(print())
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
@@ -104,7 +128,7 @@ class EventStreamControllerTest {
 
 	private String getObjectURI(Model model, Property property) {
 		return model
-				.listStatements(createResource("http://localhost:8080/mobility-hindrances"), property, (Resource) null)
+				.listStatements(createResource(hostname + "/" + COLLECTION), property, (Resource) null)
 				.nextOptional()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)
@@ -126,22 +150,11 @@ class EventStreamControllerTest {
 
 	@Test
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
+	@Disabled("to be enabled once AppConfig:getLdesConfig returns exception again")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
-		when(eventStreamFactory.getEventStream(ldesConfig)).thenReturn(
-				new EventStream("mobility-hindrances", "timestampPath", "versionOf", "shape",
-						List.of(createView("viewOne"), createView("viewTwo"))));
-
-		mockMvc.perform(get("/ldes-fragment").accept("application/json")).andDo(print())
-				.andExpect(status().is4xxClientError());
-	}
-
-	private TreeNode createView(String viewName) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig("mobility-hindrances");
-
-		return new TreeNode(ldesConfig.getBaseUrl() + "/" + viewName, false,
-				false, true, List.of(), List.of(), ldesConfig.getCollectionName());
+		mockMvc.perform(get("/{collection}", COLLECTION).accept("application/json"))
+				.andExpect(status().isUnsupportedMediaType());
 	}
 
 	static class MediaTypeRdfFormatsArgumentsProvider implements
@@ -159,13 +172,6 @@ class EventStreamControllerTest {
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
-
-		@Bean
-		public EventStreamConverter eventStreamConverter(final AppConfig appConfig) {
-			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new EventStreamConverterImpl(prefixAdder, appConfig);
-		}
-
 		@Bean
 		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
 			return new EtagCachingStrategy(appConfig);

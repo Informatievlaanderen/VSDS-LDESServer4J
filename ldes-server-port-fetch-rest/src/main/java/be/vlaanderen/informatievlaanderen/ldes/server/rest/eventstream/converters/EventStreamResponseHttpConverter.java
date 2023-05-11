@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -13,20 +13,17 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
-public class EventStreamHttpConverter implements HttpMessageConverter<EventStream> {
-
+public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
+	private final EventStreamResponseConverter eventStreamResponseConverter;
 
-	private final EventStreamConverter eventStreamConverter;
-
-	public EventStreamHttpConverter(EventStreamConverter eventStreamConverter) {
-		this.eventStreamConverter = eventStreamConverter;
+	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+		this.eventStreamResponseConverter = eventStreamResponseConverter;
 	}
 
 	@Override
@@ -36,7 +33,7 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 
 	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-		return clazz.isAssignableFrom(EventStream.class);
+		return EventStreamResponse.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -45,20 +42,16 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	}
 
 	@Override
-	public EventStream read(Class<? extends EventStream> clazz, HttpInputMessage inputMessage)
+	public EventStreamResponse read(Class<? extends EventStreamResponse> clazz, HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void write(EventStream eventStream, MediaType contentType, HttpOutputMessage outputMessage)
+	public void write(EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-
-		OutputStream body = outputMessage.getBody();
 		Lang rdfFormat = getLang(contentType, FETCH);
-		Model fragmentModel = eventStreamConverter.toModel(eventStream);
-		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
-		body.write(outputString.getBytes());
+		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
+		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, rdfFormat);
 	}
-
 }

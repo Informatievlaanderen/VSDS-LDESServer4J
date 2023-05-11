@@ -30,7 +30,8 @@ public class RetentionPolicyCreatorImpl implements RetentionPolicyCreator {
 			return new TimeBasedRetentionPolicy(
 					retentionConfig.getProperties().get(DURATION));
 		}
-		throw new IllegalArgumentException("Invalid retention Policy: " + retentionConfig.getName());
+		throw new IllegalArgumentException("Invalid retention Policy: " +
+				retentionConfig.getName());
 	}
 
 }

@@ -1,20 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,13 +25,14 @@ import static org.apache.jena.riot.WebContent.*;
 public class AdminEventStreamsRestController {
 
 	private final EventStreamService eventStreamService;
-	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
+	private final EventStreamResponseConverter eventStreamResponseConverter;
 	private final EventStreamValidator eventStreamValidator;
 
 	public AdminEventStreamsRestController(EventStreamService eventStreamService,
-			EventStreamValidator eventStreamValidator) {
+			EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamService = eventStreamService;
 		this.eventStreamValidator = eventStreamValidator;
+		this.eventStreamResponseConverter = eventStreamResponseConverter;
 	}
 
 	@InitBinder
@@ -54,7 +53,13 @@ public class AdminEventStreamsRestController {
 
 	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
 	@Operation(summary = "Create an Event Stream based on the provided config")
-	public EventStreamResponse putEventStream(@RequestBody @Validated Model eventStreamModel) {
+	@ApiResponse(responseCode = "200", content = {
+			@Content(mediaType = contentTypeNQuads),
+			@Content(mediaType = contentTypeJSONLD),
+			@Content(mediaType = contentTypeTurtle)
+	})
+	public EventStreamResponse putEventStream(
+			@Parameter(schema = @Schema(implementation = String.class), description = "A valid RDF model defining the event stream") @RequestBody @Validated Model eventStreamModel) {
 		EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
 		return eventStreamService.saveEventStream(eventStreamResponse);
 	}
@@ -72,9 +77,8 @@ public class AdminEventStreamsRestController {
 
 	@DeleteMapping("/{collectionName}")
 	@Operation(summary = "Delete an Event Stream")
-	public ResponseEntity<Void> deleteEventStream(@PathVariable String collectionName) {
+	public void deleteEventStream(@PathVariable String collectionName) {
 		eventStreamService.deleteEventStream(collectionName);
-		return ResponseEntity.ok().build();
 	}
 
 }

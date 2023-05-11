@@ -7,5 +7,7 @@ public interface CachingStrategy {
 
 	String generateCacheIdentifier(EventStream eventStream);
 
+	String generateCacheIdentifier(String collectionName);
+
 	String generateCacheIdentifier(TreeNode treeNode);
 }
