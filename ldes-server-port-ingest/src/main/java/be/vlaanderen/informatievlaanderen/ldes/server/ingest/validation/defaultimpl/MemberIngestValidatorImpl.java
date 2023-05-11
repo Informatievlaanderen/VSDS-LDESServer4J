@@ -26,7 +26,7 @@ public class MemberIngestValidatorImpl implements MemberIngestValidator {
 		final String collectionName = shacl.getCollection();
 
 		validators.compute(collectionName,
-				(key, oldValue) -> validatorFactory.createValidator(shacl.getModel(), collectionName));
+				(key, oldValue) -> validatorFactory.createValidator(shacl.getModel()));
 	}
 
 	@EventListener

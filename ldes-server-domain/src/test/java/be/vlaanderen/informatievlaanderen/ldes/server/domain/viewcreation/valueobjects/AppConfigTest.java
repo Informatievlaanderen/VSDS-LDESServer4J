@@ -33,7 +33,6 @@ class AppConfigTest {
 	}
 
 	private void verifySecondLdes(LdesConfig ldesConfig) {
-		assertEquals("http://localhost:8088", ldesConfig.getHostName());
 		assertEquals("ldes-2", ldesConfig.getCollectionName());
 		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());
 		assertEquals("http://www.w3.org/ns/prov#generatedAtTime", ldesConfig.getTimestampPath());
@@ -56,7 +55,6 @@ class AppConfigTest {
 
 	void verifyFirstLdes(LdesConfig ldesConfig) {
 		assertEquals("ldes-1", ldesConfig.getCollectionName());
-		assertEquals("http://localhost:8089", ldesConfig.getHostName());
 		assertEquals("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
 				ldesConfig.validation().getShape());
 		assertEquals("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", ldesConfig.getMemberType());

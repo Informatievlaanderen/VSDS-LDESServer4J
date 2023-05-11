@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.stereotype.Component;
 
@@ -16,23 +17,26 @@ import java.util.stream.Collectors;
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
 
+	private final AppConfig appConfig;
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
 
-	public SnapshotCreatorImpl(MemberCollector memberCollector,
+	public SnapshotCreatorImpl(AppConfig appConfig, MemberCollector memberCollector,
 			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
+		this.appConfig = appConfig;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.snapshotFragmenter = snapshotFragmenter;
 	}
 
 	@Override
-	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot, LdesConfig ldesConfig) {
+	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
+			EventStreamResponse eventStream) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		String collectionName = ldesConfig.getCollectionName();
+		String collectionName = eventStream.getCollection();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
-				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
+				eventStream.getShacl(), snapshotTime, appConfig.getHostName() + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator
 				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));

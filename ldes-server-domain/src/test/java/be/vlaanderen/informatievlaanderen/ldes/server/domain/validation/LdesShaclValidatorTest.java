@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -23,15 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class LdesShaclValidatorTest {
-
 	private LdesShaclValidator ldesShaclValidator;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException, IOException {
-		LdesConfig specification = new LdesConfig();
 		Model model = readLdesMemberFromFile("validation/example-shape.ttl").getModel();
-		specification.validation().setEnabled(true);
-		ldesShaclValidator = new LdesShaclValidator(model, specification);
+		ldesShaclValidator = new LdesShaclValidator(model);
 	}
 
 	@Test
@@ -52,9 +48,9 @@ class LdesShaclValidatorTest {
 	}
 
 	@Test
-	void when_ValidateProvidedInvalidData_and_NoDbOrYamlShapeProvided_thenReturnValid()
+	void when_ValidateProvidedInvalidData_and_NoShapeProvided_thenReturnValid()
 			throws URISyntaxException, IOException {
-		ldesShaclValidator = new LdesShaclValidator(null, new LdesConfig());
+		ldesShaclValidator = new LdesShaclValidator(null);
 
 		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
 		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
@@ -64,60 +60,15 @@ class LdesShaclValidatorTest {
 	}
 
 	@Test
-	void when_ValidateProvidedInvalidData_and_BothYamlAndDbShapeProvided_thenReturnInvalid()
+	void when_ValidateProvidedInvalidData_and_ShapeProvided_thenReturnInvalid()
 			throws URISyntaxException, IOException {
 		Model shape = readModelFromFile("validation/example-shape.ttl", Lang.TURTLE);
 
-		LdesConfig config = new LdesConfig();
-		LdesConfig.Validation validation = new LdesConfig.Validation();
-		validation.setShape("validation/example-shape.ttl");
-		config.setValidation(validation);
-
-		ldesShaclValidator = new LdesShaclValidator(shape, config);
+		ldesShaclValidator = new LdesShaclValidator(shape);
 
 		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
 		Model invalidModel = invalidMember.getModel();
 		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidModel));
-	}
-
-	@Test
-	void when_ValidateProvidedInvalidData_and_OnlyYamlShapeProvided_thenReturnInvalid()
-			throws URISyntaxException, IOException {
-		LdesConfig config = new LdesConfig();
-		LdesConfig.Validation validation = new LdesConfig.Validation();
-		validation.setShape("validation/example-shape.ttl");
-		config.setValidation(validation);
-
-		ldesShaclValidator = new LdesShaclValidator(config);
-
-		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		Model invalidModel = invalidMember.getModel();
-		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidModel));
-	}
-
-	@Test
-	void when_ValidateProvidedInvalidData_and_OnlyDbShapeProvided_thenReturnInvalid()
-			throws URISyntaxException, IOException {
-		Model shape = readModelFromFile("validation/example-shape.ttl", Lang.TURTLE);
-
-		ldesShaclValidator = new LdesShaclValidator(shape, new LdesConfig());
-
-		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		Model invalidModel = invalidMember.getModel();
-		assertThrows(LdesShaclValidationException.class, () -> ldesShaclValidator.validateShape(invalidModel));
-	}
-
-	@Test
-	void when_ValidateWithValidationNotEnabled_thenReturnValid() throws URISyntaxException, IOException {
-		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.validation().setEnabled(false);
-		ldesShaclValidator = new LdesShaclValidator(ldesConfig);
-
-		Member validMember = readLdesMemberFromFile("validation/example-data.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(validMember.getModel()));
-
-		Member invalidMember = readLdesMemberFromFile("validation/example-data-invalid.ttl");
-		assertDoesNotThrow(() -> ldesShaclValidator.validateShape(invalidMember.getModel()));
 	}
 
 	private Member readLdesMemberFromFile(String fileName)
