@@ -50,22 +50,6 @@ class ViewSpecificationConverterTest {
 				actualView.getRetentionConfigs().stream().map(RetentionConfig::getConfig).toList()));
 	}
 
-	/*
-	 * @Test
-	 *
-	 * @Disabled
-	 * void when_MissingViewType_Then_ThrowException() throws URISyntaxException {
-	 *
-	 * Model viewModel = readModelFromFile("viewconverter/view_without_type.ttl");
-	 * Exception exception = assertThrows(ModelToViewConverterException.class,
-	 * () -> viewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME));
-	 * assertEquals("Could not convert model to ViewSpecification:\nMissing type: "
-	 * + VIEW_TYPE_OBJECT,
-	 * exception.getMessage());
-	 *
-	 * }
-	 */
-
 	@Test
 	void when_MissingFragmentationName_Then_ThrowException() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_missing_fragmentation_name.ttl");
