@@ -93,11 +93,11 @@ class SnapshotServiceImplTest {
 				snapshotCreationException.getMessage());
 	}
 
-
 	@Test
 	void when_eventStreamIsDeleted_then_deleteSnapshot() {
 		final String collectionName = "collection";
-		((SnapshotServiceImpl) snapshotService).handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+		((SnapshotServiceImpl) snapshotService)
+				.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
 		verify(snapshotRepository).deleteSnapshotsByCollectionName(collectionName);
 	}
 
