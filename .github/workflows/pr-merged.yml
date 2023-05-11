@@ -99,7 +99,7 @@ jobs:
           images: ${{ env.IMAGES }}
           tags: |
             type=raw,value=${{env.IMAGE_TAG}}
-            type=raw,value={{env.LATEST}}
+            type=raw,value=${{env.LATEST}}
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
