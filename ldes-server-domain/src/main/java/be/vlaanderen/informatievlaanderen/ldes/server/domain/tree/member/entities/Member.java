@@ -60,6 +60,13 @@ public class Member {
 		return memberId;
 	}
 
+	public String getMemberIdWithoutPrefix() {
+		if (memberId.startsWith("http")) {
+			throw new IllegalStateException("id '%s' does not contain a prefix".formatted(memberId));
+		}
+		return memberId.substring(memberId.indexOf("/") + 1);
+	}
+
 	private Optional<Statement> getCurrentTreeMemberStatement() {
 		return memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
 	}
