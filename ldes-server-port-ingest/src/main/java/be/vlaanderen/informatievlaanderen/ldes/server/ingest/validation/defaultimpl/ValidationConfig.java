@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +21,8 @@ public class ValidationConfig {
 
 	@ConditionalOnMissingBean
 	@Bean
-	public ModelIngestValidatorFactory modelIngestValidatorFactory(AppConfig appConfig) {
-		return new ModelIngestValidatorFactory(appConfig);
+	public ModelIngestValidatorFactory modelIngestValidatorFactory() {
+		return new ModelIngestValidatorFactory();
 	}
 
 }

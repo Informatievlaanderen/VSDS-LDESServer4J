@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,12 +19,11 @@ import java.util.stream.Collectors;
 public class RetentionPolicyConfig {
 
 	@Bean
-	public Map<ViewName, List<RetentionPolicy>> retentionPolicyMap(AppConfig appConfig,
+	public Map<ViewName, List<RetentionPolicy>> retentionPolicyMap(EventStreamService eventStreamService,
 			RetentionPolicyCreator retentionPolicyCreator) {
-		return appConfig
-				.getCollections()
-				.stream()
-				.flatMap(ldesSpec -> ldesSpec.getViews().stream())
+
+		return eventStreamService.retrieveAllEventStreams().stream()
+				.flatMap(eventStream -> eventStream.getViews().stream())
 				.collect(Collectors.toMap(ViewSpecification::getName,
 						retentionPolicyCreator::createRetentionPolicyListForView));
 	}

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.entity.SnapshotEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.repository.SnapshotEntityRepository;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,8 @@ class SnapshotMongoRepositoryTest {
 
 	@Test
 	void when_SnapshotIsSaved_SnapshotEntityIsStoredInMongoCollection() {
-		Snapshot snapshot = new Snapshot("id", "collectionName", "shape", LocalDateTime.now(), "snapshotOf");
+		Snapshot snapshot = new Snapshot("id", "collectionName", ModelFactory.createDefaultModel(), LocalDateTime.now(),
+				"snapshotOf");
 
 		snapshotMongoRepository.saveSnapShot(snapshot);
 

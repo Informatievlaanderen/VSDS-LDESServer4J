@@ -6,11 +6,20 @@ import org.springframework.context.annotation.Configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-@ConfigurationProperties
+@ConfigurationProperties(prefix = "ldes-server")
 @Configuration
 public class AppConfig {
-
+	private String hostName;
 	private List<LdesConfig> collections = new ArrayList<>();
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public AppConfig setHostName(String hostName) {
+		this.hostName = hostName;
+		return this;
+	}
 
 	public List<LdesConfig> getCollections() {
 		return collections;

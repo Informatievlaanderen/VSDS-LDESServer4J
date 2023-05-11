@@ -1,6 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -11,6 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionha
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +39,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,6 +68,17 @@ class MemberIngestionControllerTest {
 	private AppConfig appConfig;
 	@Autowired
 	private ShaclCollection shaclCollection;
+
+	@MockBean
+	private EventStreamService eventStreamService;
+
+	@BeforeEach
+	void setUp() {
+		when(eventStreamService.retrieveEventStream(MOBILITY_HINDRANCES_COLLECTION))
+				.thenReturn(new EventStreamResponse(MOBILITY_HINDRANCES_COLLECTION, null, null, "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(), null));
+		when(eventStreamService.retrieveEventStream(RESTAURANT_COLLECTION))
+				.thenReturn(new EventStreamResponse(RESTAURANT_COLLECTION, null, null, "http://example.com/restaurant#MenuItem", List.of(), null));
+	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
@@ -106,10 +122,11 @@ class MemberIngestionControllerTest {
 	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404()
 			throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
+		when(eventStreamService.retrieveEventStream(anyString())).thenThrow(MissingEventStreamException.class);
 
 		mockMvc.perform(post("/another-collection-name")
-						.contentType("application/n-quads")
-						.content(ldesMemberString))
+				.contentType("application/n-quads")
+				.content(ldesMemberString))
 				.andExpect(status().isNotFound());
 	}
 

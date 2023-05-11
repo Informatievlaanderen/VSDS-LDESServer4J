@@ -1,9 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -11,17 +18,25 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RetentionPolicyConfigTest {
 
 	private final RetentionPolicyCreator retentionPolicyCreator = new RetentionPolicyCreatorImpl();
+	private EventStreamService eventStreamService;
+
+	@BeforeEach
+	void setUp() {
+		eventStreamService = mock(EventStreamService.class);
+	}
 
 	@Test
 	void when_TimeBasedRetentionPolicyIsDefinedInConfig_ItIsAddedToMap() {
-		AppConfig appConfig = getLdesConfig("timebased");
+		when(eventStreamService.retrieveAllEventStreams()).thenReturn(List.of(getFirstEventStream("timebased")));
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
-		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(appConfig,
+		Map<ViewName, List<RetentionPolicy>> retentionPolicyMap = retentionPolicyConfig.retentionPolicyMap(eventStreamService,
 				retentionPolicyCreator);
 		assertEquals(1, retentionPolicyMap.size());
 		assertEquals(1, retentionPolicyMap.get(ViewName.fromString("parcels/firstView")).size());
@@ -32,29 +47,24 @@ class RetentionPolicyConfigTest {
 	@Test
 	@Disabled("To be enabled again once timebased retention is finished")
 	void when_OtherRetentionPoliciesAreDefinedInConfig_IllegalArgumentExceptionIsThrown() {
-		AppConfig appConfig = getLdesConfig("other");
+		when(eventStreamService.retrieveAllEventStreams()).thenReturn(List.of(getFirstEventStream("other")));
 
 		RetentionPolicyConfig retentionPolicyConfig = new RetentionPolicyConfig();
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-				() -> retentionPolicyConfig.retentionPolicyMap(appConfig, retentionPolicyCreator));
+				() -> retentionPolicyConfig.retentionPolicyMap(eventStreamService, retentionPolicyCreator));
 		assertEquals("Invalid retention Policy: other", exception.getMessage());
 	}
 
-	private AppConfig getLdesConfig(String policyName) {
-		AppConfig appConfig = new AppConfig();
-		LdesConfig ldesConfig = getFirstLdesSpecification(policyName);
-		appConfig.setCollections(List.of(ldesConfig));
-		return appConfig;
-	}
+	private EventStreamResponse getFirstEventStream(String policyName) {
+		String collectionName = "parcels";
+		return new EventStreamResponse(
+				collectionName,
+				"http://www.w3.org/ns/prov#generatedAtTime",
+				null,
+				"https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel",
+				List.of(getFirstViewSpecification(policyName, collectionName)),
+				ModelFactory.createDefaultModel());
 
-	private LdesConfig getFirstLdesSpecification(String policyName) {
-		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("http://localhost:8080");
-		ldesConfig.setCollectionName("parcels");
-		ldesConfig.setMemberType("https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
-		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setViews(List.of(getFirstViewSpecification(policyName, ldesConfig.getCollectionName())));
-		return ldesConfig;
 	}
 
 	private ViewSpecification getFirstViewSpecification(String policyName, String collectionName) {
