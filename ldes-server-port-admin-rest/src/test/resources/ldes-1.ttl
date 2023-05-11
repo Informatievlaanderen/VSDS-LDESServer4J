@@ -1,4 +1,3 @@
-@prefix : <http://localhost:8080/>
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix custom: <http://example.org/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
