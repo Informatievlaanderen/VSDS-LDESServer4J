@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -11,7 +10,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +34,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,8 +65,8 @@ class MemberIngestControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		when(eventStreamService.retrieveEventStream("mobility-hindrances")).thenReturn(new EventStreamResponse("mobility-hindrances", null, null, "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(), ModelFactory.createDefaultModel()));
-		when(eventStreamService.retrieveEventStream("restaurant")).thenReturn(new EventStreamResponse("restaurant", null, null, "http://example.com/restaurant#MenuItem", List.of(), ModelFactory.createDefaultModel()));
+		when(eventStreamService.retrieveMemberType("mobility-hindrances")).thenReturn("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
+		when(eventStreamService.retrieveMemberType("restaurant")).thenReturn("http://example.com/restaurant#MenuItem");
 	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")

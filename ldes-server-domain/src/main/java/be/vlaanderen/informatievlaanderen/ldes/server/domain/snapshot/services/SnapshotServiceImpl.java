@@ -1,14 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -26,25 +24,23 @@ public class SnapshotServiceImpl implements SnapshotService {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final SnapshotRepository snapshotRepository;
 	private final SnapshotRelationLinker snapshotRelationLinker;
-	private final EventStreamService eventStreamService;
+	private final ViewService viewService;
 
 	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, LdesFragmentRepository ldesFragmentRepository,
 			SnapshotRepository snapshotRepository, SnapshotRelationLinker snapshotRelationLinker,
-			EventStreamService eventStreamService) {
+			ViewService viewService) {
 		this.snapShotCreator = snapShotCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.snapshotRepository = snapshotRepository;
 		this.snapshotRelationLinker = snapshotRelationLinker;
-		this.eventStreamService = eventStreamService;
+		this.viewService = viewService;
 	}
 
 	@Override
 	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
 
-		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
-
-		ViewName viewName = eventStream.getViews().stream()
+		ViewName viewName = viewService.getViewsByCollectionName(collectionName).stream()
 				.map(ViewSpecification::getName)
 				.filter(name -> name.equals(new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME)))
 				.findFirst()
@@ -62,7 +58,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 			throw new SnapshotCreationException(
 					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
 		}
-		createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream);
+		createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 	}
 
 	@Override
@@ -76,8 +72,8 @@ public class SnapshotServiceImpl implements SnapshotService {
 	}
 
 	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
-			EventStreamResponse eventStream) {
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream);
+			String collectionName) {
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 		LdesFragment lastTreeNodeOfSnapshot = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		ldesFragmentRepository.saveFragment(lastTreeNodeOfSnapshot);

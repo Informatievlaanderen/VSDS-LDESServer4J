@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -28,13 +28,15 @@ class SnapshotCreatorImplTest {
 	private final MemberCollector memberCollector = mock(MemberCollector.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final SnapshotFragmenter snapshotFragmenter = mock(SnapshotFragmenter.class);
+	private final ShaclShapeService shaclShapeService = mock(ShaclShapeService.class);
 	private SnapShotCreator snapShotCreator;
 
 	@BeforeEach
 	void setUp() {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName("localhost:8080");
-		snapShotCreator = new SnapshotCreatorImpl(appConfig, memberCollector, rootFragmentCreator, snapshotFragmenter);
+		snapShotCreator = new SnapshotCreatorImpl(appConfig, memberCollector, rootFragmentCreator, snapshotFragmenter,
+				shaclShapeService);
 	}
 
 	@Test
@@ -45,9 +47,7 @@ class SnapshotCreatorImplTest {
 		LdesFragment rootFragmentOfSnapshot = new LdesFragment(new ViewName("collectionName", "snapshot-"), List.of());
 		when(rootFragmentCreator.createRootFragmentForView(any())).thenReturn(rootFragmentOfSnapshot);
 
-		EventStreamResponse eventStream = new EventStreamResponse("collection", null, null, null, null,
-				ModelFactory.createDefaultModel());
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, eventStream);
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, "collection");
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);
 		inOrder.verify(memberCollector, times(1)).getMembersGroupedByVersionOf(ldesFragmentsForSnapshot);
