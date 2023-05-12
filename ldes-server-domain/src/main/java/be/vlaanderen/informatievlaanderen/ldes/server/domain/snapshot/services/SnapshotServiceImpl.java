@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
@@ -11,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -61,6 +63,16 @@ public class SnapshotServiceImpl implements SnapshotService {
 					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
 		}
 		createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream);
+	}
+
+	@Override
+	public void deleteSnapshot(String collectionName) {
+		snapshotRepository.deleteSnapshotsByCollectionName(collectionName);
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		deleteSnapshot(event.collectionName());
 	}
 
 	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,

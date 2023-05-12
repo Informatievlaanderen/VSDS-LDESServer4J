@@ -4,5 +4,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.entit
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface SnapshotEntityRepository extends MongoRepository<SnapshotEntity, String> {
-
+	void deleteByCollectionName(String collectionName);
 }
