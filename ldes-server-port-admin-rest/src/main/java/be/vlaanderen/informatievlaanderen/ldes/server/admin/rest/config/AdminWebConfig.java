@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,23 +18,25 @@ public class AdminWebConfig {
 	}
 
 	@Bean
-	public EventStreamListHttpConverter eventStreamListHttpConverter() {
-		return new EventStreamListHttpConverter();
+	public EventStreamHttpConverter eventStreamHttpConverter(
+			final EventStreamResponseConverter eventStreamResponseConverter) {
+		return new EventStreamHttpConverter(eventStreamResponseConverter);
 	}
 
 	@Bean
-	public EventStreamHttpConverter eventStreamHttpConverter() {
-		return new EventStreamHttpConverter();
+	public EventStreamListHttpConverter eventStreamListHttpConverter(
+			final EventStreamResponseConverter eventStreamResponseConverter) {
+		return new EventStreamListHttpConverter(eventStreamResponseConverter);
 	}
 
 	@Bean
-	public ViewHttpConverter viewHttpConverter() {
-		return new ViewHttpConverter();
+	public ViewHttpConverter viewHttpConverter(final ViewSpecificationConverter viewSpecificationConverter) {
+		return new ViewHttpConverter(viewSpecificationConverter);
 	}
 
 	@Bean
-	public ListViewHttpConverter listViewHttpConverter() {
-		return new ListViewHttpConverter();
+	public ListViewHttpConverter listViewHttpConverter(final ViewSpecificationConverter viewSpecificationConverter) {
+		return new ListViewHttpConverter(viewSpecificationConverter);
 	}
 
 	@Bean
