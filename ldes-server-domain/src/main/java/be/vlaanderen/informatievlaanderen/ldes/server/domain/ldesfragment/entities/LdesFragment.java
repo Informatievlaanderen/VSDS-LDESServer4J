@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,22 +15,18 @@ public class LdesFragment {
 	private final ViewName viewName;
 	private final List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
-	private LocalDateTime immutableTimestamp;
-	private Boolean softDeleted;
 	private final int numberOfMembers;
 	private final List<TreeRelation> relations;
 
 	public LdesFragment(ViewName viewName, final List<FragmentPair> fragmentPairs) {
-		this(viewName, fragmentPairs, false, null, false, 0, new ArrayList<>());
+		this(viewName, fragmentPairs, false, 0, new ArrayList<>());
 	}
 
-	public LdesFragment(ViewName viewName, List<FragmentPair> fragmentPairs, Boolean immutable,
-			LocalDateTime immutableTimestamp, Boolean softDeleted, int numberOfMembers, List<TreeRelation> relations) {
+	public LdesFragment(ViewName viewName, List<FragmentPair> fragmentPairs, Boolean immutable, int numberOfMembers,
+			List<TreeRelation> relations) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
-		this.immutableTimestamp = immutableTimestamp;
-		this.softDeleted = softDeleted;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
 	}
@@ -56,7 +51,6 @@ public class LdesFragment {
 
 	public void makeImmutable() {
 		this.immutable = true;
-		this.immutableTimestamp = LocalDateTime.now();
 	}
 
 	public boolean isImmutable() {
@@ -67,14 +61,6 @@ public class LdesFragment {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
 		childFragmentPairs.add(fragmentPair);
 		return new LdesFragment(getViewName(), childFragmentPairs);
-	}
-
-	public boolean isSoftDeleted() {
-		return this.softDeleted;
-	}
-
-	public LocalDateTime getImmutableTimestamp() {
-		return this.immutableTimestamp;
 	}
 
 	public Optional<String> getValueOfKey(String key) {
