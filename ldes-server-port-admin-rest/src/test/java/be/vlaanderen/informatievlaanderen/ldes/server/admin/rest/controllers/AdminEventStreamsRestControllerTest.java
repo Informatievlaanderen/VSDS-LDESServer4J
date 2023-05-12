@@ -135,7 +135,7 @@ class AdminEventStreamsRestControllerTest {
 		when(eventStreamService.saveEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams")
-						.accept(contentTypeTurtle)
+				.accept(contentTypeTurtle)
 				.content(readDataFromFile("ldes-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isOk())

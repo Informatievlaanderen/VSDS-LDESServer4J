@@ -97,8 +97,8 @@ class MemberIngestControllerTest {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
 
 		mockMvc.perform(post("/another-collection-name")
-						.contentType("application/n-quads")
-						.content(ldesMemberString))
+				.contentType("application/n-quads")
+				.content(ldesMemberString))
 				.andExpect(status().isNotFound());
 	}
 
