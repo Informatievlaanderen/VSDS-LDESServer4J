@@ -148,7 +148,7 @@ class EventStreamServiceImplTest {
 
 		service.deleteEventStream(COLLECTION);
 
-		InOrder inOrder = Mockito.inOrder(eventStreamCollection, eventPublisher);
+		InOrder inOrder = inOrder(eventStreamCollection, eventPublisher);
 		inOrder.verify(eventStreamCollection).deleteEventStream(COLLECTION);
 		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
 		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());

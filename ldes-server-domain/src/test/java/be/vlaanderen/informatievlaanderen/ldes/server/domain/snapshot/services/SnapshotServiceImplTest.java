@@ -95,10 +95,10 @@ class SnapshotServiceImplTest {
 
 	@Test
 	void when_eventStreamIsDeleted_then_deleteSnapshot() {
-		final String collectionName = "collection";
+		final EventStreamDeletedEvent event = new EventStreamDeletedEvent("collection");
 		((SnapshotServiceImpl) snapshotService)
-				.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
-		verify(snapshotRepository).deleteSnapshotsByCollectionName(collectionName);
+				.handleEventStreamDeletedEvent(event);
+		verify(snapshotRepository).deleteSnapshotsByCollectionName(event.collectionName());
 	}
 
 	@Test
