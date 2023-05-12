@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -52,22 +51,22 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 		ldesFragmentRepository
 				.retrieveFragmentsOfView(view.asString())
 				.forEach(ldesFragmentOfView -> removeMembersFromFragmentOfViewThatMatchRetentionPolicies(
-						retentionPoliciesOfView, ldesFragmentOfView));
+						retentionPoliciesOfView, ldesFragmentOfView.getFragmentId()));
 	}
 
 	private void removeMembersFromFragmentOfViewThatMatchRetentionPolicies(
-			List<RetentionPolicy> retentionPoliciesOfView, LdesFragment ldesFragmentOfView) {
+			List<RetentionPolicy> retentionPoliciesOfView, String ldesFragmentId) {
 		Stream<Member> membersOfFragment = memberRepository
-				.getMembersByReference(ldesFragmentOfView.getFragmentId());
+				.getMembersByReference(ldesFragmentId);
 		membersOfFragment
 				.filter(member -> memberMatchesAllRetentionPoliciesOfView(retentionPoliciesOfView, member))
-				.forEach(member -> removeMemberFromFragmentOfViewAndTryDeletingMember(ldesFragmentOfView, member));
+				.forEach(member -> removeMemberFromFragmentOfViewAndTryDeletingMember(ldesFragmentId, member));
 	}
 
-	private void removeMemberFromFragmentOfViewAndTryDeletingMember(LdesFragment ldesFragment, Member member) {
+	private void removeMemberFromFragmentOfViewAndTryDeletingMember(String ldesFragmentId, Member member) {
 		memberRepository.removeMemberReference(member.getLdesMemberId(),
-				ldesFragment.getFragmentId());
-		treeMemberRemover.tryDeletingMember(member.getLdesMemberId());
+				ldesFragmentId);
+		treeMemberRemover.deletingMemberFromCollection(member.getLdesMemberId());
 	}
 
 	private boolean memberMatchesAllRetentionPoliciesOfView(List<RetentionPolicy> retentionPolicies, Member member) {

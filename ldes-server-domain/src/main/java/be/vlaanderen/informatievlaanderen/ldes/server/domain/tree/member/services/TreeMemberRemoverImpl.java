@@ -16,11 +16,13 @@ public class TreeMemberRemoverImpl implements TreeMemberRemover {
 		this.memberRepository = memberRepository;
 	}
 
-	public void tryDeletingMember(String memberId) {
-		Optional<Member> member = memberRepository.getMember(memberId);
-		if (member.isPresent() && member.get().getTreeNodeReferences().isEmpty()) {
-			memberRepository.deleteMember(memberId);
-			Metrics.counter("ldes_server_deleted_members_count").increment();
-		}
+	public void deletingMemberFromCollection(String memberId) {
+		memberRepository
+				.getMember(memberId)
+				.filter(member -> member.getTreeNodeReferences().isEmpty())
+				.ifPresent(member -> {
+					memberRepository.deleteMember(memberId);
+					Metrics.counter("ldes_server_deleted_members_count").increment();
+				});
 	}
 }

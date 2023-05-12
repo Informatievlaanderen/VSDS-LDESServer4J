@@ -23,7 +23,7 @@ class TreeMemberRemoverImplTest {
 	@Test
 	void when_memberHasNoReferences_ItCanBeDeleted() {
 		when(memberRepository.getMember("memberId")).thenReturn(Optional.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of())));
-		treeMemberRemover.tryDeletingMember("memberId");
+		treeMemberRemover.deletingMemberFromCollection("memberId");
 
 		verify(memberRepository, times(1)).getMember("memberId");
 		verify(memberRepository, times(1)).deleteMember("memberId");
@@ -34,7 +34,7 @@ class TreeMemberRemoverImplTest {
 	void when_memberHasReferences_ItCannotBeDeleted() {
 		when(memberRepository.getMember("memberId"))
 				.thenReturn(Optional.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of("reference"))));
-		treeMemberRemover.tryDeletingMember("memberId");
+		treeMemberRemover.deletingMemberFromCollection("memberId");
 
 		verify(memberRepository, times(1)).getMember("memberId");
 		verifyNoMoreInteractions(memberRepository);
@@ -43,7 +43,7 @@ class TreeMemberRemoverImplTest {
 	@Test
 	void when_memberDoesNotExistAnymore_ItCannotBeDeleted() {
 		when(memberRepository.getMember("memberId")).thenReturn(Optional.empty());
-		treeMemberRemover.tryDeletingMember("memberId");
+		treeMemberRemover.deletingMemberFromCollection("memberId");
 
 		verify(memberRepository, times(1)).getMember("memberId");
 		verifyNoMoreInteractions(memberRepository);

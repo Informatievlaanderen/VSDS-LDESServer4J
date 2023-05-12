@@ -57,14 +57,14 @@ class TreeNodeRemoverImplTest {
 		inOrder.verify(memberRepository).getMembersByReference(firstLdesFragmentOfView.getFragmentId());
 		inOrder.verify(memberRepository).removeMemberReference(firstMember.getLdesMemberId(),
 				firstLdesFragmentOfView.getFragmentId());
-		inOrder.verify(treeMemberRemover).tryDeletingMember(firstMember.getLdesMemberId());
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(firstMember.getLdesMemberId());
 		inOrder.verify(memberRepository).removeMemberReference(secondMember.getLdesMemberId(),
 				firstLdesFragmentOfView.getFragmentId());
-		inOrder.verify(treeMemberRemover).tryDeletingMember(secondMember.getLdesMemberId());
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(secondMember.getLdesMemberId());
 		inOrder.verify(memberRepository).getMembersByReference(secondLdesFragmentOfView.getFragmentId());
 		inOrder.verify(memberRepository).removeMemberReference(thirdMember.getLdesMemberId(),
 				secondLdesFragmentOfView.getFragmentId());
-		inOrder.verify(treeMemberRemover).tryDeletingMember(thirdMember.getLdesMemberId());
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(thirdMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 	}
 
