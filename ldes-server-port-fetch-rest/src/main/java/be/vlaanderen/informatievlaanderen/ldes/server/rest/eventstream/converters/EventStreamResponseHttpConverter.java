@@ -20,7 +20,11 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 
 public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
+	private final EventStreamResponseConverter eventStreamResponseConverter;
+
+	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+		this.eventStreamResponseConverter = eventStreamResponseConverter;
+	}
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {

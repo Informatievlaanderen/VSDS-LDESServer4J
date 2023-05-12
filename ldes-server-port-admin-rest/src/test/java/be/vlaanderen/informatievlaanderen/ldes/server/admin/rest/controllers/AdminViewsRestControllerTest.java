@@ -3,11 +3,14 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -42,13 +45,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminViewsRestController.class,
-		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class,
+		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class,
+		EventStreamResponseConverter.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
 	@MockBean
 	private ViewValidator validator;
+	@Autowired
+	private ViewSpecificationConverter converter;
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -61,9 +67,9 @@ class AdminViewsRestControllerTest {
 	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
 		String collectionName = "name1";
 		Model expectedViewModel1 = readModelFromFile("view-1.ttl");
-		ViewSpecification view1 = ViewSpecificationConverter.viewFromModel(expectedViewModel1, collectionName);
+		ViewSpecification view1 = converter.viewFromModel(expectedViewModel1, collectionName);
 		Model expectedViewModel2 = readModelFromFile("view-2.ttl");
-		ViewSpecification view2 = ViewSpecificationConverter.viewFromModel(expectedViewModel2, collectionName);
+		ViewSpecification view2 = converter.viewFromModel(expectedViewModel2, collectionName);
 		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of(view1, view2));
 
 		ResultActions resultActions = mockMvc
@@ -79,7 +85,7 @@ class AdminViewsRestControllerTest {
 		String collectionName = "name1";
 		String viewName = "view1";
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		ViewSpecification view = ViewSpecificationConverter.viewFromModel(expectedViewModel, collectionName);
+		ViewSpecification view = converter.viewFromModel(expectedViewModel, collectionName);
 		when(viewService.getViewByViewName(new ViewName(collectionName, viewName))).thenReturn(view);
 		ResultActions resultActions = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName)
@@ -108,7 +114,8 @@ class AdminViewsRestControllerTest {
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 		String collectionName = "name1";
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		ViewSpecification view = ViewSpecificationConverter.viewFromModel(expectedViewModel, collectionName);
+		ViewSpecification view = converter.viewFromModel(expectedViewModel, collectionName);
+
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
 						.content(readDataFromFile("view-1.ttl"))
 						.contentType(Lang.TURTLE.getHeaderString()))

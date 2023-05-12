@@ -2,9 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -39,8 +42,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminWebConfig.class,
-		AdminRestResponseEntityExceptionHandler.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class, AdminWebConfig.class,
+		AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class,
+		EventStreamResponseConverter.class })
 class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private EventStreamService eventStreamService;
@@ -55,18 +59,18 @@ class AdminEventStreamsRestControllerTest {
 		Model shape = readModelFromFile("example-shape.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("fragmentationStrategy");
-		fragmentationConfig.setConfig(Map.of("http://example.org/property", "ldes:propertyPath"));
+		fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 		ViewSpecification singleView = new ViewSpecification(
-				new ViewName("name2", "https://w3id.org/ldes#view1"),
+				new ViewName("name2", "view1"),
 				List.of(),
 				List.of(fragmentationConfig));
 		List<ViewSpecification> views = List.of(
 				new ViewSpecification(
-						new ViewName("name1", "https://w3id.org/ldes#view2"),
+						new ViewName("name1", "view2"),
 						List.of(),
 						List.of(fragmentationConfig)),
 				new ViewSpecification(
-						new ViewName("name1", "https://w3id.org/ldes#view3"),
+						new ViewName("name1", "view3"),
 						List.of(),
 						List.of(fragmentationConfig)));
 

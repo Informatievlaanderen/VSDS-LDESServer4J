@@ -19,7 +19,11 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
-	private final EventStreamResponseConverter eventStreamResponseConverter = new EventStreamResponseConverter();
+	private final EventStreamResponseConverter eventStreamResponseConverter;
+
+	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+		this.eventStreamResponseConverter = eventStreamResponseConverter;
+	}
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
