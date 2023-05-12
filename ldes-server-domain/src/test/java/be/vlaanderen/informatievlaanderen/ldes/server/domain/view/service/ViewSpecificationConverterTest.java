@@ -23,9 +23,7 @@ class ViewSpecificationConverterTest {
 	@BeforeEach
 	void setup() {
 		AppConfig appConfig = new AppConfig();
-		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("http://localhost:8080");
-		appConfig.setCollections(List.of(ldesConfig));
+		appConfig.setHostName("http://localhost:8080");
 		viewSpecificationConverter = new ViewSpecificationConverter(appConfig);
 		RetentionConfig retentionConfig = new RetentionConfig();
 		retentionConfig.setName("retention");
