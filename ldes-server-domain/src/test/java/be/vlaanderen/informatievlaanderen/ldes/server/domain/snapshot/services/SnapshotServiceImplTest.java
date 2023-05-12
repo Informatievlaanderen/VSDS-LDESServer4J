@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -11,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.S
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.testServices.ListArgumentMatcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -33,45 +32,41 @@ import static org.mockito.Mockito.*;
 
 class SnapshotServiceImplTest {
 	private static final String COLLECTION_NAME = "collection";
-	private EventStreamResponse eventStream;
 	private final SnapShotCreator snapShotCreator = mock(SnapShotCreator.class);
 	private final SnapshotRepository snapshotRepository = mock(SnapshotRepository.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final SnapshotRelationLinker snapshotRelationLinker = mock(SnapshotRelationLinker.class);
-	private final EventStreamService eventStreamService = mock(EventStreamService.class);
+	private final ViewService viewService = mock(ViewService.class);
 
 	private final SnapshotService snapshotService = new SnapshotServiceImpl(snapShotCreator, ldesFragmentRepository,
-			snapshotRepository, snapshotRelationLinker, eventStreamService);
+			snapshotRepository, snapshotRelationLinker, viewService);
 
 	@BeforeEach
 	void setUp() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "by-page"), List.of(),
 				List.of());
-		eventStream = new EventStreamResponse(COLLECTION_NAME, "generated", "versionOf", "memberType",
-				List.of(viewSpecification), null);
-		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
+		when(viewService.getViewsByCollectionName(COLLECTION_NAME)).thenReturn(List.of(viewSpecification));
 	}
 
 	@Test
 	void when_TreeNodesAreAvailable_TheyCanBeUsedToCreateSnapshot() {
-		String collectionName = eventStream.getCollection();
-		ViewName viewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
+		ViewName viewName = new ViewName(COLLECTION_NAME, DEFAULT_VIEW_NAME);
 		List<LdesFragment> treeNodesForSnapshot = List.of(new LdesFragment(viewName, List.of()));
 		when(ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString()))
 				.thenReturn(treeNodesForSnapshot.stream());
-		Snapshot snapshot = new Snapshot("id", collectionName, ModelFactory.createDefaultModel(), LocalDateTime.now(),
+		Snapshot snapshot = new Snapshot("id", COLLECTION_NAME, ModelFactory.createDefaultModel(), LocalDateTime.now(),
 				"of");
-		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream)).thenReturn(snapshot);
-		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(collectionName, "lastTreeNodeOfSnapshot"),
+		when(snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, COLLECTION_NAME)).thenReturn(snapshot);
+		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(COLLECTION_NAME, "lastTreeNodeOfSnapshot"),
 				List.of());
 		when(snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot, treeNodesForSnapshot))
 				.thenReturn(lastTreeNodeOfSnapshot);
 
-		snapshotService.createSnapshot(eventStream.getCollection());
+		snapshotService.createSnapshot(COLLECTION_NAME);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, snapShotCreator, snapshotRelationLinker, snapshotRepository);
 		inOrder.verify(ldesFragmentRepository, times(1)).retrieveFragmentsOfView(viewName.asString());
-		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(treeNodesForSnapshot, eventStream);
+		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(treeNodesForSnapshot, COLLECTION_NAME);
 		inOrder.verify(snapshotRelationLinker, times(1)).addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(lastTreeNodeOfSnapshot);
@@ -84,9 +79,8 @@ class SnapshotServiceImplTest {
 		Stream<LdesFragment> treeNodesForSnapshot = Stream.of();
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
 
-		String collection = eventStream.getCollection();
 		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,
-				() -> snapshotService.createSnapshot(collection));
+				() -> snapshotService.createSnapshot(COLLECTION_NAME));
 
 		assertEquals(
 				"Unable to create snapshot.\nCause: No TreeNodes available in view collection/by-page which is used for snapshotting",
@@ -132,7 +126,7 @@ class SnapshotServiceImplTest {
 				"of");
 		List<LdesFragment> treeNodesForSnapshot = List.of(fragmentOfDefaultView, fragmentOfSnapshot);
 		ListArgumentMatcher treeNodesForSnapshotArgument = new ListArgumentMatcher(treeNodesForSnapshot);
-		when(snapShotCreator.createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument), eq(eventStream)))
+		when(snapShotCreator.createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument), eq(COLLECTION_NAME)))
 				.thenReturn(snapshot);
 		LdesFragment lastTreeNodeOfSnapshot = new LdesFragment(new ViewName(COLLECTION_NAME, "lastTreeNodeOfSnapshot"),
 				List.of());
@@ -140,12 +134,12 @@ class SnapshotServiceImplTest {
 				argThat(treeNodesForSnapshotArgument)))
 				.thenReturn(lastTreeNodeOfSnapshot);
 
-		snapshotService.createSnapshot(eventStream.getCollection());
+		snapshotService.createSnapshot(COLLECTION_NAME);
 
 		InOrder inOrder = inOrder(ldesFragmentRepository, snapShotCreator, snapshotRelationLinker, snapshotRepository);
 		inOrder.verify(ldesFragmentRepository, times(1)).retrieveFragmentsOfView(snapshotViewName.asString());
 		inOrder.verify(snapShotCreator, times(1)).createSnapshotForTreeNodes(argThat(treeNodesForSnapshotArgument),
-				eq(eventStream));
+				eq(COLLECTION_NAME));
 		inOrder.verify(snapshotRelationLinker, times(1)).addRelationsToUncoveredTreeNodes(eq(snapshot),
 				argThat(treeNodesForSnapshotArgument));
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(lastTreeNodeOfSnapshot);
