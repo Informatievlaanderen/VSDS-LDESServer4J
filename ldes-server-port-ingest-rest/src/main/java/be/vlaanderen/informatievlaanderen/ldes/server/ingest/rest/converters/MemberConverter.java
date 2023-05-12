@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -49,9 +48,10 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
-		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
 
-		String memberId = extractMemberId(memberModel, eventStream.getMemberType());
+		String memberType = eventStreamService.retrieveMemberType(collectionName);
+
+		String memberId = extractMemberId(memberModel, memberType);
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 

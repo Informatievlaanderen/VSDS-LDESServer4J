@@ -42,7 +42,7 @@ public class EventStreamController {
 
 		return ResponseEntity
 				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(eventStream))
+				.eTag(cachingStrategy.generateCacheIdentifier(eventStream.getCollection()))
 				.body(eventStream);
 	}
 

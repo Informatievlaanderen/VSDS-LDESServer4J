@@ -51,6 +51,13 @@ public class EventStreamServiceImpl implements EventStreamService {
 	}
 
 	@Override
+	public String retrieveMemberType(String collectionName) {
+		return eventStreamCollection.retrieveEventStream(collectionName)
+				.map(EventStream::getMemberType)
+				.orElseThrow(() -> new MissingEventStreamException(collectionName));
+	}
+
+	@Override
 	public void deleteEventStream(String collectionName) {
 		if (eventStreamCollection.retrieveEventStream(collectionName).isEmpty()) {
 			throw new MissingEventStreamException(collectionName);

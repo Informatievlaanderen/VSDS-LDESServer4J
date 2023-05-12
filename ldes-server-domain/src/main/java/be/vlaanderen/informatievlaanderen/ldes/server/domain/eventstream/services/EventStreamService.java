@@ -9,6 +9,8 @@ public interface EventStreamService {
 
 	EventStreamResponse retrieveEventStream(String collectionName);
 
+	String retrieveMemberType(String collectionName);
+
 	void deleteEventStream(String collectionName);
 
 	EventStreamResponse saveEventStream(EventStreamResponse eventStream);

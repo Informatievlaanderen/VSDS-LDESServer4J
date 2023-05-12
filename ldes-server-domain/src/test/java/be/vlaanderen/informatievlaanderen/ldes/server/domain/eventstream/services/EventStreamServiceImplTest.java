@@ -21,8 +21,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -87,7 +86,7 @@ class EventStreamServiceImplTest {
 	}
 
 	@Test
-	void when_collectionExists_then_retrieveShape() {
+	void when_collectionExists_then_retrieveEventStream() {
 		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
 		when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
 		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
@@ -101,13 +100,33 @@ class EventStreamServiceImplTest {
 	}
 
 	@Test
-	void when_collectionDoesNotExists_then_throwException() {
+	void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
 		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 
 		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
 		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
+	}
+
+	@Test
+	void when_collectionExists_and_retrieveMemberType_then_retrieveMemberType() {
+		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+
+		String memberType = assertDoesNotThrow(() -> service.retrieveMemberType(COLLECTION));
+		assertEquals(MEMBER_TYPE, memberType);
+		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verifyNoInteractions(viewService, shaclShapeService);
+	}
+
+	@Test
+	void when_collectionDoesNotExist_and_retrieveMemberType_then_throwException() {
+		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+
+		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveMemberType(COLLECTION));
+		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
+		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verifyNoInteractions(shaclShapeService, viewService);
 	}
 
 	@Test
