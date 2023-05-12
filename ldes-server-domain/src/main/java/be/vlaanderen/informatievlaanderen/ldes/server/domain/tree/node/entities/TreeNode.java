@@ -9,18 +9,16 @@ import java.util.Objects;
 public class TreeNode {
 	private final String fragmentId;
 	private final boolean immutable;
-	private final boolean softDeleted;
 	private final boolean isView;
 	private final List<TreeRelation> relations;
 	private final List<Member> members;
 	private final String collectionName;
 
-	public TreeNode(String fragmentId, boolean immutable, boolean softDeleted, boolean isView,
+	public TreeNode(String fragmentId, boolean immutable, boolean isView,
 			List<TreeRelation> relations,
 			List<Member> members, String collectionName) {
 		this.fragmentId = fragmentId;
 		this.immutable = immutable;
-		this.softDeleted = softDeleted;
 		this.isView = isView;
 		this.relations = relations;
 		this.members = members;
@@ -33,10 +31,6 @@ public class TreeNode {
 
 	public boolean isImmutable() {
 		return immutable;
-	}
-
-	public boolean isSoftDeleted() {
-		return softDeleted;
 	}
 
 	public List<TreeRelation> getRelations() {

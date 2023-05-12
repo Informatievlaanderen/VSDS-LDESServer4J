@@ -27,7 +27,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, false, true, List.of(), List.of(), "collectionName");
+		return new TreeNode("/" + viewName, false, true, List.of(), List.of(), "collectionName");
 	}
 
 	private String testGeneration(String hostname, String collection, List<TreeNode> views, String expectedEtag) {

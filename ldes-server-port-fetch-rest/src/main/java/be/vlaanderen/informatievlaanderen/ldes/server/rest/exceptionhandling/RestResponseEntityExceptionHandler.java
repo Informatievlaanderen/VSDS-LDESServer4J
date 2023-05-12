@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import org.springframework.http.HttpHeaders;
@@ -20,12 +19,6 @@ public class RestResponseEntityExceptionHandler
 	protected ResponseEntity<Object> handleNotFoundException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
-	}
-
-	@ExceptionHandler(value = { DeletedFragmentException.class })
-	protected ResponseEntity<Object> handleDeletedFragmentException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.GONE, request);
 	}
 
 	@ExceptionHandler(value = { RdfFormatException.class })

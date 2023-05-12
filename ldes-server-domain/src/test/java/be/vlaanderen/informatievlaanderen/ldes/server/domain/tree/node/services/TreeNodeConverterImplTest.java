@@ -52,7 +52,7 @@ class TreeNodeConverterImplTest {
 	@Test
 	@Disabled("Figure out what to do with shape")
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of(),
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
 				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
@@ -63,7 +63,7 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of(),
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(), List.of(),
 				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
@@ -86,7 +86,7 @@ class TreeNodeConverterImplTest {
 				List.of());
 		TreeRelation treeRelation = new TreeRelation("path", "/mobility-hindrances/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
 				List.of(member), COLLECTION_NAME);
 
 		Model model = treeNodeConverter.toModel(treeNode);

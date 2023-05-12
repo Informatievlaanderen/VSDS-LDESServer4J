@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -96,7 +95,7 @@ class TreeNodeControllerTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		final String fragmentId = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
 				.getFragmentId();
-		TreeNode treeNode = new TreeNode(fragmentId, immutable, false, false, List.of(),
+		TreeNode treeNode = new TreeNode(fragmentId, immutable, false, List.of(),
 				List.of(), COLLECTION_NAME);
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
@@ -166,7 +165,7 @@ class TreeNodeControllerTest {
 				ViewName.fromString(fullViewName), List.of());
 		final String fragmentId = new LdesFragment(ldesFragmentRequest.viewName(), ldesFragmentRequest.fragmentPairs())
 				.getFragmentId();
-		TreeNode treeNode = new TreeNode(fragmentId, false, false, false, List.of(),
+		TreeNode treeNode = new TreeNode(fragmentId, false, false, List.of(),
 				List.of(), COLLECTION_NAME);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
@@ -191,25 +190,6 @@ class TreeNodeControllerTest {
 				.andDo(print())
 				.andExpect(status().isNotFound());
 		assertEquals("No fragment exists with fragment identifier: fragmentId",
-				resultActions.andReturn().getResponse().getContentAsString());
-	}
-
-	@Test
-	void when_GETRequestButDeletedFragmentExceptionIsThrown_NotFoundIsReturned()
-			throws Exception {
-
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(
-				ViewName.fromString(fullViewName),
-				List.of());
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
-				.thenThrow(new DeletedFragmentException("fragmentId"));
-
-		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME,
-						VIEW_NAME).accept("application/n-quads"))
-				.andDo(print())
-				.andExpect(status().isGone());
-		assertEquals("Fragment with following identifier has been deleted: fragmentId",
 				resultActions.andReturn().getResponse().getContentAsString());
 	}
 
