@@ -27,9 +27,7 @@ class EventStreamResponseConverterTest {
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		AppConfig appConfig = new AppConfig();
-		LdesConfig ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("http://localhost:8080");
-		appConfig.setCollections(List.of(ldesConfig));
+		appConfig.setHostName("http://localhost:8080");
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig);
 		eventStreamConverter = new EventStreamResponseConverter(viewSpecificationConverter);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");

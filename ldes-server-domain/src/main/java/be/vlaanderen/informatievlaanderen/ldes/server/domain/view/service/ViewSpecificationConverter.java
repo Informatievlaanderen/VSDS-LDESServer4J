@@ -25,13 +25,7 @@ public class ViewSpecificationConverter {
 	private final String hostname;
 
 	public ViewSpecificationConverter(AppConfig appConfig) {
-		if (appConfig.getCollections().size() == 1) {
-			LdesConfig ldesConfig = appConfig.getCollections().get(0);
-			hostname = ldesConfig.getHostName();
-		} else {
-			// todo update code when appconfig is reworked
-			hostname = "undefined";
-		}
+		hostname = appConfig.getHostName();
 	}
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {

@@ -18,12 +18,6 @@ public class AdminWebConfig {
 	}
 
 	@Bean
-	public EventStreamResponseConverter eventStreamResponseConverter(
-			final ViewSpecificationConverter viewSpecificationConverter) {
-		return new EventStreamResponseConverter(viewSpecificationConverter);
-	}
-
-	@Bean
 	public EventStreamHttpConverter eventStreamHttpConverter(
 			final EventStreamResponseConverter eventStreamResponseConverter) {
 		return new EventStreamHttpConverter(eventStreamResponseConverter);

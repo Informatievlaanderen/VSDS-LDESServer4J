@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
@@ -44,7 +45,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class, AdminWebConfig.class,
-		AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class })
+		AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class,
+		EventStreamResponseConverter.class })
 class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private EventStreamService eventStreamService;
