@@ -16,7 +16,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class ViewServiceImplTest {
@@ -31,29 +32,61 @@ class ViewServiceImplTest {
 				List.of());
 
 		@Test
-        void when_ViewDoesNotExist_ViewIsAdded() {
-            when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+		void when_ViewDoesNotExist_ViewIsAdded() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
 
-            viewService.addView(view);
+			viewService.addView(view);
 
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).getViewByViewName(view.getName());
-            inOrder.verify(viewRepository).saveView(view);
-            inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
-            inOrder.verifyNoMoreInteractions();
-        }
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verify(viewRepository).saveView(view);
+			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
+			inOrder.verifyNoMoreInteractions();
+		}
 
 		@Test
-        void when_ViewDoesExist_DuplicateViewExceptionIsThrown() {
-            when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
+		void when_ViewDoesExist_DuplicateViewExceptionIsThrown() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
 
-            DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class, () -> viewService.addView(view));
+			DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class, () -> viewService.addView(view));
 
-            assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).getViewByViewName(view.getName());
-            inOrder.verifyNoMoreInteractions();
-        }
+			assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verifyNoMoreInteractions();
+		}
+	}
+
+	@Nested
+	class AddDefaultView {
+		private static final String COLLECTION = "collection";
+		private static final ViewName VIEW_NAME = new ViewName(COLLECTION, "by-page");
+
+
+		@Test
+		void when_DefaultViewDoesNotExist_then_DefaultViewIsAdded() {
+			when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.empty());
+
+			viewService.addDefaultView(COLLECTION);
+
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(VIEW_NAME);
+			inOrder.verify(viewRepository).saveView(any(ViewSpecification.class));
+			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void when_DefaultViewExists_then_ThrowDuplicateViewExcpetion() {
+			final ViewSpecification view = new ViewSpecification(VIEW_NAME, List.of(), List.of());
+			when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.of(view));
+
+			Exception e = assertThrows(DuplicateViewException.class, () -> viewService.addDefaultView(COLLECTION));
+			assertEquals("Collection collection already has a view: by-page", e.getMessage());
+			verify(viewRepository).getViewByViewName(VIEW_NAME);
+			verifyNoMoreInteractions(viewRepository);
+			verifyNoInteractions(eventPublisher);
+		}
 	}
 
 	@Nested
