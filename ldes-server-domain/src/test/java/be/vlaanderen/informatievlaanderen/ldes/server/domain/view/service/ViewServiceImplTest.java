@@ -62,7 +62,6 @@ class ViewServiceImplTest {
 		private static final String COLLECTION = "collection";
 		private static final ViewName VIEW_NAME = new ViewName(COLLECTION, "by-page");
 
-
 		@Test
 		void when_DefaultViewDoesNotExist_then_DefaultViewIsAdded() {
 			when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.empty());
