@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -16,12 +15,14 @@ class TimeBasedRetentionPolicyTest {
 	RetentionPolicy retentionPolicy = new TimeBasedRetentionPolicy("PT1S");
 
 	@Test
-	void when_FragmentIsLongEnoughImmutable_ItMatchesTheTimebasedRetentionPolicy() {
-		LdesFragment ldesFragment = new LdesFragment(new ViewName("collectionName", "view"), List.of());
+	void when_TimestampOfMemberIsNull_ItDoesNotMatchTheTimebasedRetentionPolicy() {
+		Member ldesFragment = new Member("id", null, null, null, null, null, null);
+		assertFalse(retentionPolicy.matchesPolicy(ldesFragment));
+	}
 
-		assertFalse(retentionPolicy.matchesPolicy(ldesFragment));
-		ldesFragment.makeImmutable();
-		assertFalse(retentionPolicy.matchesPolicy(ldesFragment));
+	@Test
+	void when_TimestampOfMemberIsLongEnoughAgo_ItMatchesTheTimebasedRetentionPolicy() {
+		Member ldesFragment = new Member("id", null, null, null, LocalDateTime.now(), null, null);
 		await().atMost(2, TimeUnit.SECONDS).until(() -> retentionPolicy.matchesPolicy(ldesFragment));
 	}
 }
