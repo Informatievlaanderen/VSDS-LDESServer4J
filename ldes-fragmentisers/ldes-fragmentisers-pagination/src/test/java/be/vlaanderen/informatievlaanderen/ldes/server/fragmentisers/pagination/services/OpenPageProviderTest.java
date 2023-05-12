@@ -85,7 +85,7 @@ class OpenPageProviderTest {
 		LdesFragment completeFragment = new LdesFragment(
 				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
 						"2")),
-				false, null, false, 3, List.of());
+				false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"3"));
 		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))

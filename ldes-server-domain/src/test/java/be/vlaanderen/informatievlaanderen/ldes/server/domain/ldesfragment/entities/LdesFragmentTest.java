@@ -10,8 +10,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LdesFragmentTest {
@@ -79,10 +77,8 @@ class LdesFragmentTest {
 		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
 				List.of(PARENT_FRAGMENT_PAIR));
 		assertFalse(ldesFragment.isImmutable());
-		assertNull(ldesFragment.getImmutableTimestamp());
 		ldesFragment.makeImmutable();
 		assertTrue(ldesFragment.isImmutable());
-		assertNotNull(ldesFragment.getImmutableTimestamp());
 	}
 
 	@Test

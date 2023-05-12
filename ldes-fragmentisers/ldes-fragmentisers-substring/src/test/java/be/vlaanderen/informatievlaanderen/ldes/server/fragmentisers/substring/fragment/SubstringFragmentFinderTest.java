@@ -54,10 +54,10 @@ class SubstringFragmentFinderTest {
 	@Test
 	void when_RootFragmentHasReachedItsLimit_FirstOpenFragmentIsReturned() {
 		LdesFragment rootFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, null, false, 1,
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, 1,
 				List.of());
 		LdesFragment aFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, null, false, 1,
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, 1,
 				List.of());
 		LdesFragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,

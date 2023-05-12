@@ -84,7 +84,7 @@ class OpenFragmentProviderTest {
 		LdesFragment completeFragment = new LdesFragment(
 				VIEW_NAME, List.of(new FragmentPair("OldPath",
 						"OldValue")),
-				false, null, false, 3, List.of());
+				false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair("Path",
 				"Value"));
 		when(ldesFragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))

@@ -29,8 +29,6 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 				ViewName.fromString(row.get("viewName")),
 				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs")),
 				Boolean.parseBoolean(row.get("immutable")),
-				null,
-				Boolean.parseBoolean(row.get("softDeleted")),
 				Integer.parseInt(row.get("numberOfMembers")),
 				List.of());
 	}
@@ -73,8 +71,6 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 		assertEquals(expectedLdesFragment.getViewName(), actualLdesFragment.getViewName());
 		assertEquals(expectedLdesFragment.getFragmentPairs(), actualLdesFragment.getFragmentPairs());
 		assertEquals(expectedLdesFragment.isImmutable(), actualLdesFragment.isImmutable());
-		assertEquals(expectedLdesFragment.getImmutableTimestamp(), actualLdesFragment.getImmutableTimestamp());
-		assertEquals(expectedLdesFragment.isSoftDeleted(), actualLdesFragment.isSoftDeleted());
 		assertEquals(expectedLdesFragment.getNumberOfMembers(), actualLdesFragment.getNumberOfMembers());
 		assertEquals(expectedLdesFragment.getRelations(), actualLdesFragment.getRelations());
 	}
