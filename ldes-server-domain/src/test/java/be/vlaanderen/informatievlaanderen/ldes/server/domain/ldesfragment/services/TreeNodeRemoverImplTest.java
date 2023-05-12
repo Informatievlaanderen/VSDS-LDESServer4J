@@ -3,24 +3,21 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TreeNodeRemoverImplTest {
 
@@ -29,47 +26,54 @@ class TreeNodeRemoverImplTest {
 	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
-	private final ParentUpdater parentUpdater = mock(ParentUpdater.class);
 	private final RetentionPolicyCollection retentionPolicyCollection = mock(RetentionPolicyCollection.class);
 	private TreeNodeRemoverImpl treeNodeRemover;
 
 	@BeforeEach
 	void setUp() {
 		treeNodeRemover = new TreeNodeRemoverImpl(fragmentRepository, memberRepository,
-				treeMemberRemover, parentUpdater, retentionPolicyCollection);
+				treeMemberRemover, retentionPolicyCollection);
 	}
 
 	@Test
-	void when_NodeIsImmutableAndSatisfiesRetentionPoliciesOfView_NodeCanBeSoftDeleted() {
+	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreDeleted() {
 		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(new ViewName("collectionName", "view"), List.of(new TimeBasedRetentionPolicy("PT0S"))));
-		LdesFragment notReadyToDeleteFragment = notReadyToDeleteFragment();
-		LdesFragment readyToDeleteFragment = readyToDeleteFragment();
-		when(fragmentRepository.retrieveNonDeletedImmutableFragmentsOfView("collectionName/view"))
-				.thenReturn(Stream.of(notReadyToDeleteFragment, readyToDeleteFragment));
-		when(memberRepository.getMembersByReference("/collectionName/view"))
-				.thenReturn(Stream.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of())));
+		LdesFragment firstLdesFragmentOfView = ldesFragment("1");
+		LdesFragment secondLdesFragmentOfView = ldesFragment("2");
+		when(fragmentRepository.retrieveFragmentsOfView(VIEW_NAME.asString()))
+				.thenReturn(Stream.of(firstLdesFragmentOfView, secondLdesFragmentOfView));
+		Member firstMember = getMember("1");
+		Member secondMember = getMember("2");
+		when(memberRepository.getMembersByReference(firstLdesFragmentOfView.getFragmentId()))
+				.thenReturn(Stream.of(firstMember, secondMember));
+		Member thirdMember = getMember("3");
+		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentId()))
+				.thenReturn(Stream.of(thirdMember));
 
 		treeNodeRemover.removeTreeNodes();
 
-		verify(fragmentRepository,
-				times(1)).retrieveNonDeletedImmutableFragmentsOfView("collectionName/view");
-		verify(fragmentRepository, times(1)).saveFragment(readyToDeleteFragment);
-		assertTrue(readyToDeleteFragment.isSoftDeleted());
-		verifyNoMoreInteractions(fragmentRepository);
-		verify(parentUpdater, times(1)).updateParent(readyToDeleteFragment);
-		verifyNoMoreInteractions(parentUpdater);
-		verify(treeMemberRemover, times(1)).tryRemovingMember("memberId");
-		verifyNoMoreInteractions(treeMemberRemover);
+		InOrder inOrder = inOrder(fragmentRepository, memberRepository, treeMemberRemover);
+		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(VIEW_NAME.asString());
+		inOrder.verify(memberRepository).getMembersByReference(firstLdesFragmentOfView.getFragmentId());
+		inOrder.verify(memberRepository).removeMemberReference(firstMember.getLdesMemberId(),
+				firstLdesFragmentOfView.getFragmentId());
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(firstMember.getLdesMemberId());
+		inOrder.verify(memberRepository).removeMemberReference(secondMember.getLdesMemberId(),
+				firstLdesFragmentOfView.getFragmentId());
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(secondMember.getLdesMemberId());
+		inOrder.verify(memberRepository).getMembersByReference(secondLdesFragmentOfView.getFragmentId());
+		inOrder.verify(memberRepository).removeMemberReference(thirdMember.getLdesMemberId(),
+				secondLdesFragmentOfView.getFragmentId());
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(thirdMember.getLdesMemberId());
+		inOrder.verifyNoMoreInteractions();
 	}
 
-	private LdesFragment notReadyToDeleteFragment() {
-		return new LdesFragment(VIEW_NAME, List.of(), true,
-				LocalDateTime.now().plusDays(1), false, 0, List.of());
+	private Member getMember(String memberId) {
+		return new Member(memberId, null, null, null, LocalDateTime.now(), null, null);
 	}
 
-	private LdesFragment readyToDeleteFragment() {
-		return new LdesFragment(
-				VIEW_NAME, List.of(), true, LocalDateTime.now(), false, 0, List.of());
+	private LdesFragment ldesFragment(String page) {
+		return new LdesFragment(VIEW_NAME, List.of(new FragmentPair("page", page)));
 	}
 
 }
