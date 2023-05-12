@@ -1,8 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DeletedFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -29,18 +26,13 @@ class TreeNodeFetcherImplTest {
 	private TreeNodeFactory treeNodeFactory;
 	private TreeNodeFetcherImpl treeNodeFetcher;
 	private AppConfig appConfig;
-	private EventStreamResponse eventStream;
 
 	@BeforeEach
 	void setUp() {
 		treeNodeFactory = mock(TreeNodeFactory.class);
 		appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8089");
-		EventStreamService eventStreamService = mock(EventStreamService.class);
-		eventStream = new EventStreamResponse(COLLECTION, null, null, null, null, null);
-		treeNodeFetcher = new TreeNodeFetcherImpl(appConfig, treeNodeFactory, eventStreamService);
-
-		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
+		treeNodeFetcher = new TreeNodeFetcherImpl(appConfig, treeNodeFactory);
 	}
 
 	@Test
@@ -50,7 +42,7 @@ class TreeNodeFetcherImplTest {
 		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs());
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), appConfig.getHostName(),
-				eventStream.getCollection()))
+				COLLECTION))
 				.thenThrow(new MissingFragmentException(ldesFragment.getFragmentId()));
 
 		MissingFragmentException missingFragmentException = assertThrows(MissingFragmentException.class,
@@ -62,34 +54,15 @@ class TreeNodeFetcherImplTest {
 	}
 
 	@Test
-	void when_getFragment_WhenFragmentIsDeleted_ThenDeletedFragmentExceptionIsThrown() {
-		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
-				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
-				ldesFragmentRequest.fragmentPairs());
-		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, true, false, List.of(),
-				List.of(), "collectionName");
-		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), appConfig.getHostName(),
-				eventStream.getCollection()))
-				.thenReturn(treeNode);
-
-		DeletedFragmentException deletedFragmentException = assertThrows(DeletedFragmentException.class,
-				() -> treeNodeFetcher.getFragment(ldesFragmentRequest));
-		assertEquals(
-				"Fragment with following identifier has been deleted: http://localhost:8089/collectionName/view?generatedAtTime=2020-12-28T09:36:09.72Z",
-				deletedFragmentException.getMessage());
-	}
-
-	@Test
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs());
-		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, false, false, List.of(),
+		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, false, List.of(),
 				List.of(), "collectionName");
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), appConfig.getHostName(),
-				eventStream.getCollection()))
+				COLLECTION))
 				.thenReturn(treeNode);
 
 		TreeNode returnedTreeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);

@@ -59,10 +59,6 @@ public class LdesFragment {
 		this.immutableTimestamp = LocalDateTime.now();
 	}
 
-	public void setSoftDeleted(boolean softDeleted) {
-		this.softDeleted = softDeleted;
-	}
-
 	public boolean isImmutable() {
 		return this.immutable;
 	}
@@ -141,10 +137,6 @@ public class LdesFragment {
 
 	public List<TreeRelation> getRelations() {
 		return relations;
-	}
-
-	public void deleteRelation(TreeRelation oldTreeRelation) {
-		relations.remove(oldTreeRelation);
 	}
 
 	public boolean isRoot() {
