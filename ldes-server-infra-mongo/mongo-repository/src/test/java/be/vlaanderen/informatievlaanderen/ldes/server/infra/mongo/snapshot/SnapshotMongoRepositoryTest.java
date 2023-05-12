@@ -27,4 +27,10 @@ class SnapshotMongoRepositoryTest {
 		verifyNoMoreInteractions(snapshotEntityRepository);
 	}
 
+	@Test
+	void when_snapshotIsDeleted_then_SnapshotEntityIsDeletedInMongoCollection() {
+		snapshotMongoRepository.deleteSnapshotsByCollectionName("collection");
+		verify(snapshotEntityRepository).deleteByCollectionName("collection");
+		verifyNoMoreInteractions(snapshotEntityRepository);
+	}
 }
