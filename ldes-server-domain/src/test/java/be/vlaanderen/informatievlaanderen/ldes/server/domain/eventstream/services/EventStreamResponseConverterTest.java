@@ -27,7 +27,7 @@ class EventStreamResponseConverterTest {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8080");
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig);
-		eventStreamConverter = new EventStreamResponseConverter(viewSpecificationConverter);
+		eventStreamConverter = new EventStreamResponseConverter(appConfig, viewSpecificationConverter);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 	}
 
@@ -100,7 +100,6 @@ class EventStreamResponseConverterTest {
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
-
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
 	}
