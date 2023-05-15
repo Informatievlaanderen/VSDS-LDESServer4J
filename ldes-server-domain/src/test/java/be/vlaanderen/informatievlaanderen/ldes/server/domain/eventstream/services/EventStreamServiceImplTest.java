@@ -146,9 +146,10 @@ class EventStreamServiceImplTest {
 		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
 
 		assertEquals(eventStreamResponse, updatedEventStream);
-		verify(eventStreamCollection).saveEventStream(eventStream);
-		verify(shaclShapeService).updateShaclShape(shaclShape);
-		verifyNoInteractions(viewService);
+		InOrder inOrder = inOrder(eventStreamCollection, shaclShapeService, viewService);
+		inOrder.verify(eventStreamCollection).saveEventStream(eventStream);
+		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
+		inOrder.verify(viewService).addDefaultView(COLLECTION);
 	}
 
 	@Test
