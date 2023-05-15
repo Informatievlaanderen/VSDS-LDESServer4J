@@ -102,9 +102,6 @@ class EventStreamResponseConverterTest {
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
-
-			String v = RDFWriter.source(convertedModel).lang(Lang.TURTLE).asString();
-			String v2 = RDFWriter.source(eventStreamModel).lang(Lang.TURTLE).asString();
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
 	}
