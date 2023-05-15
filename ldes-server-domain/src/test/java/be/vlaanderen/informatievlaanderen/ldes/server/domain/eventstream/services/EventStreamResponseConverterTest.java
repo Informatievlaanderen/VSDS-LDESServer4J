@@ -5,7 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,7 @@ class EventStreamResponseConverterTest {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8080");
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig);
-		eventStreamConverter = new EventStreamResponseConverter(viewSpecificationConverter);
+		eventStreamConverter = new EventStreamResponseConverter(appConfig, viewSpecificationConverter);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 	}
 
@@ -101,6 +103,8 @@ class EventStreamResponseConverterTest {
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
+			String v = RDFWriter.source(convertedModel).lang(Lang.TURTLE).asString();
+			String v2 = RDFWriter.source(eventStreamModel).lang(Lang.TURTLE).asString();
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
 	}

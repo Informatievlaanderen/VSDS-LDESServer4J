@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
@@ -19,15 +20,16 @@ public class EventStreamResponseConverter {
 
 	public static final String CUSTOM = "http://example.org/";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
+	private final String hostname;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 
-	public EventStreamResponseConverter(ViewSpecificationConverter viewSpecificationConverter) {
+	public EventStreamResponseConverter(AppConfig appConfig, ViewSpecificationConverter viewSpecificationConverter) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
+		hostname = appConfig.getHostName();
 	}
 
 	public EventStreamResponse fromModel(Model model) {
-		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).orElseThrow()
-				.replace(LDES, "");
+		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).orElseThrow().getLocalName();
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);
@@ -37,7 +39,7 @@ public class EventStreamResponseConverter {
 	}
 
 	public Model toModel(EventStreamResponse eventStreamResponse) {
-		final Resource subject = createResource(LDES + eventStreamResponse.getCollection());
+		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection());
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
 				createResource(EVENT_STREAM_TYPE));
 		final Statement timestampPathStmt = createStatement(subject, LDES_TIMESTAMP_PATH,
@@ -56,7 +58,6 @@ public class EventStreamResponseConverter {
 				List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType));
 
 		getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE))
-				.map(ResourceFactory::createResource)
 				.map(resource -> createStatement(subject, TREE_SHAPE, resource))
 				.ifPresent(statements::add);
 
@@ -72,9 +73,13 @@ public class EventStreamResponseConverter {
 				.add(eventStreamResponse.getShacl());
 	}
 
-	private Optional<String> getIdentifier(Model model, Resource object) {
+	private Resource getIRIFromCollectionName(String name) {
+		return createResource(hostname + "/" + name);
+	}
+
+	private Optional<Resource> getIdentifier(Model model, Resource object) {
 		Optional<Statement> stmtOptional = model.listStatements(null, RDF_SYNTAX_TYPE, object).nextOptional();
-		return stmtOptional.map(statement -> statement.getSubject().toString());
+		return stmtOptional.map(Statement::getSubject);
 	}
 
 	private String getResource(Model model, Property predicate) {
