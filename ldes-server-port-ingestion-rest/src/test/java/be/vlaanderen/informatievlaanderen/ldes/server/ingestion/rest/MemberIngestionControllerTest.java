@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -67,7 +67,7 @@ class MemberIngestionControllerTest {
 	@Autowired
 	private AppConfig appConfig;
 	@Autowired
-	private ShaclCollection shaclCollection;
+	private ShaclShapeService shapeService;
 
 	@MockBean
 	private EventStreamService eventStreamService;
@@ -84,8 +84,8 @@ class MemberIngestionControllerTest {
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void when_POSTRequestIsPerformed_LDesMemberIsSaved(String contentType, Lang rdfFormat) throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
-		when(shaclCollection.retrieveShape(MOBILITY_HINDRANCES_COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null)));
+		when(shapeService.retrieveShaclShape(MOBILITY_HINDRANCES_COLLECTION))
+				.thenReturn(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
@@ -108,8 +108,8 @@ class MemberIngestionControllerTest {
 	void when_POSTRequestIsPerformed_LDesMemberIsSavedWithoutVersionOfAndTimestamp() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-version-of-timestamp.nq",
 				Lang.NQUADS);
-		when(shaclCollection.retrieveShape(MOBILITY_HINDRANCES_COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null)));
+		when(shapeService.retrieveShaclShape(MOBILITY_HINDRANCES_COLLECTION))
+				.thenReturn(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
 				.andDo(print()).andExpect(status().isOk());
@@ -150,8 +150,8 @@ class MemberIngestionControllerTest {
 	void when_memberConformToShapeIsIngested_then_status200IsReturned() throws Exception {
 		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
-		when(shaclCollection.retrieveShape(RESTAURANT_COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(RESTAURANT_COLLECTION, oldShape)));
+		when(shapeService.retrieveShaclShape(RESTAURANT_COLLECTION))
+				.thenReturn(new ShaclShape(RESTAURANT_COLLECTION, oldShape));
 
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
@@ -166,8 +166,8 @@ class MemberIngestionControllerTest {
 	void when_memberNotConformToShapeIsIngested_then_status400IsReturned() throws Exception {
 		Model oldShape = readModelFromFile("menu-items/example-shape-old.ttl", Lang.TURTLE);
 
-		when(shaclCollection.retrieveShape(RESTAURANT_COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(RESTAURANT_COLLECTION, oldShape)));
+		when(shapeService.retrieveShaclShape(RESTAURANT_COLLECTION))
+				.thenReturn(new ShaclShape(RESTAURANT_COLLECTION, oldShape));
 
 		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 
@@ -232,8 +232,8 @@ class MemberIngestionControllerTest {
 	static class MemberIngestionControllerTestConfiguration {
 
 		@Bean
-		ShaclCollection shaclCollection() {
-			return mock(ShaclCollection.class);
+		ShaclShapeService shapeService() {
+			return mock(ShaclShapeService.class);
 		}
 	}
 }
