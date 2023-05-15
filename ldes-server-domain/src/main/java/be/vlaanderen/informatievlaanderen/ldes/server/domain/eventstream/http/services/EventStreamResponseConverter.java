@@ -29,7 +29,8 @@ public class EventStreamResponseConverter {
 	}
 
 	public EventStreamResponse fromModel(Model model) {
-		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).orElseThrow().getLocalName();
+		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).map(Resource::getLocalName)
+				.orElseThrow();
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);

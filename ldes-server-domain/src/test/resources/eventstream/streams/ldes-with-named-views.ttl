@@ -4,7 +4,7 @@
 @prefix example: <http://example.org/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix custom: <http://example.org/> .
-@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#>
+@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
 @prefix col: <http://localhost:8080/collectionName1/> .
 @prefix server: <http://localhost:8080/> .
 
