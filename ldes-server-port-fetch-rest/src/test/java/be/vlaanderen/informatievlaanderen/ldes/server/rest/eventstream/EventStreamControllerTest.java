@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
@@ -15,7 +17,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
@@ -47,7 +49,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -61,9 +64,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
-@ContextConfiguration(classes = { EventStreamController.class,
-		AppConfig.class, RestConfig.class, EventStreamWebConfig.class, RestResponseEntityExceptionHandler.class,
-		ViewSpecificationConverter.class, EventStreamResponseConverter.class })
+@ContextConfiguration(classes = { EventStreamController.class, AppConfig.class, RestConfig.class,
+		RestResponseEntityExceptionHandler.class })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
@@ -175,6 +177,18 @@ class EventStreamControllerTest {
 		@Bean
 		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
 			return new EtagCachingStrategy(appConfig);
+		}
+
+		@Bean
+		EventStreamResponseConverter eventStreamResponseConverter(final AppConfig appConfig) {
+			return new EventStreamResponseConverterImpl(appConfig, new ViewSpecificationConverter(appConfig),
+					new PrefixAdderImpl());
+		}
+
+		@Bean
+		public EventStreamResponseHttpConverter eventStreamResponseHttpConverter(
+				final EventStreamResponseConverter eventStreamResponseConverter) {
+			return new EventStreamResponseHttpConverter(eventStreamResponseConverter);
 		}
 	}
 }

@@ -1,11 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
@@ -17,7 +22,10 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -41,9 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class, AdminWebConfig.class,
-		AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class,
-		EventStreamResponseConverter.class })
+@Import(AdminEventStreamsRestControllerTest.AdminEventStreamsRestControllerTestConfig.class)
+@ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class,
+		AdminRestResponseEntityExceptionHandler.class })
 class AdminEventStreamsRestControllerTest {
 	@MockBean
 	private EventStreamService eventStreamService;
@@ -199,4 +207,35 @@ class AdminEventStreamsRestControllerTest {
 		return Files.lines(path).collect(Collectors.joining());
 	}
 
+	@TestConfiguration
+	static class AdminEventStreamsRestControllerTestConfig {
+
+		@Bean
+		public EventStreamValidator eventStreamValidator() {
+			return new EventStreamValidator();
+		}
+
+		@Bean
+		public EventStreamResponseConverter eventStreamResponseConverter(final AppConfig appConfig) {
+			return new EventStreamResponseConverterImpl(appConfig, new ViewSpecificationConverter(appConfig),
+					new PrefixAdderImpl());
+		}
+
+		@Bean
+		public EventStreamHttpConverter eventStreamHttpConverter(
+				final EventStreamResponseConverter eventStreamResponseConverter) {
+			return new EventStreamHttpConverter(eventStreamResponseConverter);
+		}
+
+		@Bean
+		public EventStreamListHttpConverter eventStreamListHttpConverter(
+				final EventStreamResponseConverter eventStreamResponseConverter) {
+			return new EventStreamListHttpConverter(eventStreamResponseConverter);
+		}
+
+		@Bean
+		public ModelConverter modelConverter() {
+			return new ModelConverter();
+		}
+	}
 }

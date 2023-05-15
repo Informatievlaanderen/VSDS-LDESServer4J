@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.RDFWriter;
+import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -15,13 +15,13 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamResponse>> {
+	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
 
 	public EventStreamListHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
@@ -52,7 +52,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.ALL);
+		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
 	}
 
 	@Override
@@ -75,10 +75,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 				.map(eventStreamResponseConverter::toModel)
 				.forEach(model::add);
 
-		outputMessage.getBody().write(RDFWriter.source(model)
-				.lang(getLang(contentType, REST_ADMIN))
-				.asString()
-				.getBytes(StandardCharsets.UTF_8));
+		RDFDataMgr.write(outputMessage.getBody(), model, getLang(contentType, REST_ADMIN));
 	}
 
 	@Override

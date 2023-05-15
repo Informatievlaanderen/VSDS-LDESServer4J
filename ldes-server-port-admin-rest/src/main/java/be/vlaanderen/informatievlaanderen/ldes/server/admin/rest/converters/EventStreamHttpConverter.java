@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.RDFWriter;
+import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -12,13 +12,13 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
+	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
 
 	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
@@ -37,7 +37,7 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.ALL);
+		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
 	}
 
 	@Override
@@ -51,9 +51,6 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
 
-		outputMessage.getBody().write(RDFWriter.source(eventStreamModel)
-				.lang(getLang(contentType, REST_ADMIN))
-				.asString()
-				.getBytes(StandardCharsets.UTF_8));
+		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, getLang(contentType, REST_ADMIN));
 	}
 }
