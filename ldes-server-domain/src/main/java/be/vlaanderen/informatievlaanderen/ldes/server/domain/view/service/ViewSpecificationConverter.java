@@ -25,7 +25,7 @@ public class ViewSpecificationConverter {
 	private final String hostname;
 
 	public ViewSpecificationConverter(AppConfig appConfig) {
-		hostname = appConfig.getHostName();
+		this.hostname = appConfig.getHostName();
 	}
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {

@@ -82,9 +82,11 @@ class EventStreamControllerTest {
 	private ShaclShapeService shaclShapeService;
 	private EventStreamResponse eventStream;
 	private ShaclShape shaclShape;
+	private String hostname;
 
 	@BeforeEach
 	void setUp() {
+		hostname = appConfig.getHostName();
 		eventStream = new EventStreamResponse(COLLECTION, "http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType", List.of(), ModelFactory.createDefaultModel());
 
@@ -126,7 +128,7 @@ class EventStreamControllerTest {
 
 	private String getObjectURI(Model model, Property property) {
 		return model
-				.listStatements(createResource(LDES + "mobility-hindrances"), property, (Resource) null)
+				.listStatements(createResource(hostname + "/" + COLLECTION), property, (Resource) null)
 				.nextOptional()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)
