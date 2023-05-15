@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.ShaclCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesShaclValidator;
@@ -14,18 +14,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @Tag(name = "Ingest")
 public class LdesMemberIngestionController {
 	private final MemberIngestService memberIngestService;
-	private final ShaclCollection shaclCollection;
+	private final ShaclShapeService shapeService;
 
 	public LdesMemberIngestionController(MemberIngestService memberIngestService,
-			ShaclCollection shaclCollection) {
+			ShaclShapeService shapeService) {
 		this.memberIngestService = memberIngestService;
-		this.shaclCollection = shaclCollection;
+		this.shapeService = shapeService;
 	}
 
 	@PostMapping(value = "{collectionname}")
@@ -38,7 +36,7 @@ public class LdesMemberIngestionController {
 	}
 
 	private void validateMember(Member member, String collectionName) {
-		Optional<ShaclShape> shape = shaclCollection.retrieveShape(collectionName);
-		shape.ifPresent(shaclShape -> new LdesShaclValidator(shaclShape.getModel()).validate(member));
+		ShaclShape shape = shapeService.retrieveShaclShape(collectionName);
+		new LdesShaclValidator(shape.getModel()).validate(member);
 	}
 }
