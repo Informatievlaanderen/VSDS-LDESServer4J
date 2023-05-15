@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.Vie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -14,10 +15,15 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
 public class ViewServiceImpl implements ViewService {
+	public static final String DEFAULT_VIEW_NAME = "by-page";
+	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
+	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
+			"bidirectionalRelations", "false");
 
 	private final ViewRepository viewRepository;
 	private final ApplicationEventPublisher eventPublisher;
@@ -30,12 +36,23 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public void addView(ViewSpecification viewSpecification) {
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
-		if (view.isEmpty()) {
-			viewRepository.saveView(viewSpecification);
-			eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
-		} else {
+		if (view.isPresent()) {
 			throw new DuplicateViewException(viewSpecification.getName());
 		}
+
+		viewRepository.saveView(viewSpecification);
+		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
+	}
+
+	@Override
+	public void addDefaultView(String collectionName) {
+		ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
+		FragmentationConfig fragmentation = new FragmentationConfig();
+		fragmentation.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
+		fragmentation.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
+
+		ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(fragmentation));
+		addView(defaultView);
 	}
 
 	@Override

@@ -83,6 +83,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 				eventStreamResponse.getShacl());
 		eventStreamCollection.saveEventStream(eventStream);
 		shaclShapeService.updateShaclShape(shaclShape);
+		viewService.addDefaultView(eventStream.getCollection());
 		return eventStreamResponse;
 	}
 }
