@@ -235,7 +235,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Bean
 		public ModelConverter modelConverter() {
-			return new ModelConverter();
+			return new ModelConverter(new PrefixAdderImpl());
 		}
 	}
 }

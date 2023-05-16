@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.List
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
@@ -20,7 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -43,9 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class, ModelConverter.class,
-		ViewHttpConverter.class, ListViewHttpConverter.class, AdminRestResponseEntityExceptionHandler.class,
-		ViewSpecificationConverter.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class, ViewHttpConverter.class,
+		ListViewHttpConverter.class, AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
@@ -152,4 +154,11 @@ class AdminViewsRestControllerTest {
 		return RDFDataMgr.loadModel(uri);
 	}
 
+	@TestConfiguration
+	static class AdminViewsRestController {
+		@Bean
+		public ModelConverter modelConverter() {
+			return new ModelConverter(new PrefixAdderImpl());
+		}
+	}
 }

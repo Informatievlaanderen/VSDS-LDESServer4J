@@ -74,29 +74,26 @@ class EventStreamControllerTest {
 	private MockMvc mockMvc;
 	@Autowired
 	AppConfig appConfig;
-	@Autowired
-	RestConfig restConfig;
 	@MockBean
 	private EventStreamService eventStreamService;
 	@MockBean
 	private ViewService viewService;
 	@MockBean
 	private ShaclShapeService shaclShapeService;
-	private EventStreamResponse eventStream;
-	private ShaclShape shaclShape;
 	private String hostname;
 
 	@BeforeEach
 	void setUp() {
 		hostname = appConfig.getHostName();
-		eventStream = new EventStreamResponse(COLLECTION, "http://www.w3.org/ns/prov#generatedAtTime",
+		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION,
+				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType", List.of(), ModelFactory.createDefaultModel());
 
 		Model shacl = createDefaultModel().add(createResource(appConfig.getHostName() + "/" + COLLECTION),
 				createProperty(NODE_SHAPE_TYPE),
 				createResource("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"));
 
-		shaclShape = new ShaclShape(COLLECTION, shacl);
+		ShaclShape shaclShape = new ShaclShape(COLLECTION, shacl);
 
 		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(shaclShape);
