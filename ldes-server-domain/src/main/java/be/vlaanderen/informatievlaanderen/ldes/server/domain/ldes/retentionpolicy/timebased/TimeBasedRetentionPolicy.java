@@ -4,19 +4,20 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.DurationP
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class TimeBasedRetentionPolicy implements RetentionPolicy {
-	private final String duration;
+	private final Duration duration;
 
 	public TimeBasedRetentionPolicy(String duration) {
-		this.duration = duration;
+		this.duration = DurationParser.parseText(duration);
 	}
 
 	@Override
 	public boolean matchesPolicy(Member member) {
 		LocalDateTime immutableTimestamp = member.getTimestamp();
 		return immutableTimestamp != null
-				&& LocalDateTime.now().isAfter(immutableTimestamp.plus(DurationParser.parseText(duration)));
+				&& LocalDateTime.now().isAfter(immutableTimestamp.plus(duration));
 	}
 }
