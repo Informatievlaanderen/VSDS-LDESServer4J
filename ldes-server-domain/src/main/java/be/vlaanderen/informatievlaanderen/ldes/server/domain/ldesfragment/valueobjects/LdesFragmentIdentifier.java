@@ -31,7 +31,8 @@ public class LdesFragmentIdentifier {
 	}
 
 	public Optional<String> getValueOfFragmentPairKey(String key) {
-		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key)).map(FragmentPair::fragmentValue)
+		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key))
+				.map(FragmentPair::fragmentValue)
 				.findFirst();
 	}
 
@@ -67,6 +68,27 @@ public class LdesFragmentIdentifier {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public String getParentId() {
+
+		if (!this.fragmentPairs.isEmpty()) {
+			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
+			parentPairs.remove(parentPairs.size() - 1);
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder
+					.append("/").append(viewName.asString());
+			if (!parentPairs.isEmpty()) {
+
+				stringBuilder.append("?");
+				stringBuilder
+						.append(parentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
+								"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
+			}
+			return stringBuilder.toString();
+		}
+
+		return "root";
 	}
 
 	@Override
