@@ -41,7 +41,7 @@ class TreeNodeConverterImplTest {
 
 		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", List.of(), null);
+				"http://purl.org/dc/terms/isVersionOf", "memberType", false, List.of(), null);
 
 		EventStreamService eventStreamService = mock(EventStreamService.class);
 		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);

@@ -62,7 +62,7 @@ class EventStreamResponseConverterTest {
 		void when_modelHasViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shacl);
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shacl);
 
 			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
 		}
@@ -72,7 +72,7 @@ class EventStreamResponseConverterTest {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					views, shacl);
+					false, views, shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
@@ -91,7 +91,7 @@ class EventStreamResponseConverterTest {
 		void when_modelHasNoViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(),
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, List.of(),
 					shacl);
 
 			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
@@ -102,7 +102,7 @@ class EventStreamResponseConverterTest {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					List.of(), shacl);
+					false, List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}

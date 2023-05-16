@@ -30,10 +30,11 @@ class EventStreamServiceImplTest {
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final String MEMBER_TYPE = "memberType";
+	private static final boolean HAS_DEFAULT_VIEW = false;
 	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-			MEMBER_TYPE);
+			MEMBER_TYPE, HAS_DEFAULT_VIEW);
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
-			VERSION_OF_PATH, MEMBER_TYPE, List.of(), ModelFactory.createDefaultModel());
+			VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 	@Mock
@@ -55,13 +56,14 @@ class EventStreamServiceImplTest {
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
 		final String otherCollection = "other";
-		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", "memberType");
+		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", "memberType",
+				HAS_DEFAULT_VIEW);
 		List<ViewSpecification> views = List
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of()));
 
 		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
 				"memberType",
-				views, ModelFactory.createDefaultModel());
+				HAS_DEFAULT_VIEW, views, ModelFactory.createDefaultModel());
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
@@ -130,18 +132,41 @@ class EventStreamServiceImplTest {
 	}
 
 	@Test
-	void when_collectionExists_and_updateEventStream_then_expectUpdatedEventStream() {
+	void when_updateExistingEventStream_and_defaultViewDisabled_then_expectUpdatedEventStream() {
 		final String timeStampPath = "generatedAt";
 		final String versionOfPath = "versionOf";
 		final String memberType = "typeOfMember";
 		ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
-		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath, memberType);
+		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath, memberType,
+				HAS_DEFAULT_VIEW);
 
 		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
 		when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
 		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
-				memberType,
-				List.of(), ModelFactory.createDefaultModel());
+				memberType, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
+
+		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
+
+		assertEquals(eventStreamResponse, updatedEventStream);
+		InOrder inOrder = inOrder(eventStreamCollection, shaclShapeService, viewService);
+		inOrder.verify(eventStreamCollection).saveEventStream(eventStream);
+		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	void when_updateExistingEventStream_and_defaultViewEnabled_then_expectUpdatedEventStream() {
+		final String timeStampPath = "generatedAt";
+		final String versionOfPath = "versionOf";
+		final String memberType = "typeOfMember";
+		ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
+		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath, memberType,
+				true);
+
+		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
+		when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
+		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
+				memberType, true, List.of(), ModelFactory.createDefaultModel());
 
 		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
 
