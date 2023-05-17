@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -15,8 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,12 +38,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminShapeRestController.class, ModelConverter.class,
+@Import(AdminShapeRestControllerTest.AdminShapeRestControllerTestConfig.class)
+@ContextConfiguration(classes = { AppConfig.class, AdminShapeRestController.class,
 		AdminRestResponseEntityExceptionHandler.class })
 class AdminShapeRestControllerTest {
 	@MockBean
@@ -69,7 +73,6 @@ class AdminShapeRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.accept(contentTypeTurtle))
-					.andDo(print())
 					.andExpect(status().isOk())
 					.andExpect(IsIsomorphic.with(expectedShapeModel));
 		}
@@ -82,7 +85,6 @@ class AdminShapeRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.accept(contentTypeTurtle))
-					.andDo(print())
 					.andExpect(status().isNotFound());
 		}
 	}
@@ -127,5 +129,13 @@ class AdminShapeRestControllerTest {
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
 				.toString();
 		return RDFDataMgr.loadModel(uri);
+	}
+
+	@TestConfiguration
+	static class AdminShapeRestControllerTestConfig {
+		@Bean
+		public ModelConverter modelConverter() {
+			return new ModelConverter(new PrefixAdderImpl());
+		}
 	}
 }

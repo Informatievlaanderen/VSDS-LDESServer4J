@@ -58,7 +58,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -152,7 +151,7 @@ class EventStreamControllerTest {
 	@Disabled("to be enabled once AppConfig:getLdesConfig returns exception again")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
-		mockMvc.perform(get("/{collection}", COLLECTION).accept("application/json")).andDo(print())
+		mockMvc.perform(get("/{collection}", COLLECTION).accept("application/json"))
 				.andExpect(status().isUnsupportedMediaType());
 	}
 
