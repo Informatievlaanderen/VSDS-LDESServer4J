@@ -56,14 +56,14 @@ public class TimeBasedFragmentCreator {
 				.addRelation(new TreeRelation(treePath,
 						newFragment.getFragmentId(),
 						newFragment.getValueOfKey(fragmentKey).orElseThrow(
-								() -> new MissingFragmentValueException(newFragment.getFragmentId(),
+								() -> new MissingFragmentValueException(newFragment.getFragmentId().asString(),
 										fragmentKey)),
 						DATE_TIME_TYPE,
 						TREE_GREATER_THAN_OR_EQUAL_TO_RELATION));
 		newFragment
 				.addRelation(new TreeRelation(treePath, completeLdesFragment.getFragmentId(),
 						completeLdesFragment.getValueOfKey(fragmentKey).orElseThrow(
-								() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId(),
+								() -> new MissingFragmentValueException(completeLdesFragment.getFragmentId().asString(),
 										fragmentKey)),
 						DATE_TIME_TYPE,
 						TREE_LESSER_THAN_OR_EQUAL_TO_RELATION));

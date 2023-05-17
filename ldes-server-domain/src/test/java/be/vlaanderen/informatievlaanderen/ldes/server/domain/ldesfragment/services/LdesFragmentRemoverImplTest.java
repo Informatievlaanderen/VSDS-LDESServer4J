@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -58,8 +59,9 @@ class LdesFragmentRemoverImplTest {
 	}
 
 	private LdesFragment getLdesFragment(String fragmentValue) {
-		LdesFragment firstLdesFragment = new LdesFragment(new ViewName("collectionName", "view"),
-				List.of(new FragmentPair("page", fragmentValue)));
+		LdesFragment firstLdesFragment = new LdesFragment(
+				new LdesFragmentIdentifier(new ViewName("collectionName", "view"),
+						List.of(new FragmentPair("page", fragmentValue))));
 		return firstLdesFragment;
 	}
 

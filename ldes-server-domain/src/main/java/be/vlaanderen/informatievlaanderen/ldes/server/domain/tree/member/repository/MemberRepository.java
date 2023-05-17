@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 
 import java.util.Optional;
@@ -20,11 +21,11 @@ public interface MemberRepository {
 
 	void deleteMember(String memberId);
 
-	void addMemberReference(String memberId, String fragmentId);
+	void addMemberReference(String memberId, LdesFragmentIdentifier fragmentId);
 
-	Stream<Member> getMembersByReference(String treeNodeId);
+	Stream<Member> getMembersByReference(LdesFragmentIdentifier treeNodeId);
 
-	void removeMemberReference(String memberId, String fragmentId);
+	void removeMemberReference(String memberId, LdesFragmentIdentifier fragmentId);
 
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 }

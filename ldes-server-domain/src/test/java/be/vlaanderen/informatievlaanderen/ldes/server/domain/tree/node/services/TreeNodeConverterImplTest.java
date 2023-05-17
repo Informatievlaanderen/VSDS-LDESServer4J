@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -84,7 +85,8 @@ class TreeNodeConverterImplTest {
 				0L, null, null,
 				ldesMemberModel,
 				List.of());
-		TreeRelation treeRelation = new TreeRelation("path", "/mobility-hindrances/node", "value",
+		TreeRelation treeRelation = new TreeRelation("path",
+				LdesFragmentIdentifier.fromFragmentId("/mobility-hindrances/node"), "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
 				List.of(member), COLLECTION_NAME);

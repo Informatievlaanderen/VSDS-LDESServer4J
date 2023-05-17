@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
@@ -23,6 +24,9 @@ import static org.mockito.Mockito.when;
 class GeospatialFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
+	private final FragmentPair substringPair = new FragmentPair("substring", "a");
+	private final FragmentPair geoRootPair = new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT);
+	private final FragmentPair geoPair = new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202");
 
 	private LdesFragmentRepository ldesFragmentRepository;
 	private GeospatialFragmentCreator geospatialFragmentCreator;
@@ -37,11 +41,12 @@ class GeospatialFragmentCreatorTest {
 
 	@Test
 	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
-		LdesFragment ldesFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair("substring", "a")));
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
+				VIEW_NAME, List.of(substringPair)));
 		LdesFragment rootFragment = ldesFragment
-				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
-		String tileFragmentId = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"))
+				.createChild(geoRootPair);
+		LdesFragmentIdentifier tileFragmentId = ldesFragment
+				.createChild(geoPair)
 				.getFragmentId();
 
 		when(ldesFragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
@@ -49,7 +54,7 @@ class GeospatialFragmentCreatorTest {
 		LdesFragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
 				"15/101/202", rootFragment);
 
-		assertEquals("/collectionName/view?substring=a&tile=15/101/202",
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoPair)),
 				childFragment.getFragmentId());
 		verify(ldesFragmentRepository,
 				times(1)).retrieveFragment(tileFragmentId);
@@ -59,11 +64,11 @@ class GeospatialFragmentCreatorTest {
 
 	@Test
 	void when_TileFragmentDoesNotExist_RetrievedTileFragmentIsReturned() {
-		LdesFragment ldesFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair("substring", "a")));
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
+				VIEW_NAME, List.of(substringPair)));
 		LdesFragment rootFragment = ldesFragment
-				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
-		LdesFragment tileFragment = ldesFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202"));
+				.createChild(geoRootPair);
+		LdesFragment tileFragment = ldesFragment.createChild(geoPair);
 
 		when(ldesFragmentRepository.retrieveFragment(tileFragment.getFragmentId()))
 				.thenReturn(Optional.of(tileFragment));
@@ -71,7 +76,7 @@ class GeospatialFragmentCreatorTest {
 		LdesFragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
 				"15/101/202", rootFragment);
 
-		assertEquals("/collectionName/view?substring=a&tile=15/101/202",
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoPair)),
 				childFragment.getFragmentId());
 		verify(ldesFragmentRepository,
 				times(1)).retrieveFragment(tileFragment.getFragmentId());
@@ -80,34 +85,36 @@ class GeospatialFragmentCreatorTest {
 
 	@Test
 	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
-		LdesFragment ldesFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair("substring", "a")));
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
+				VIEW_NAME, List.of(substringPair)));
 		LdesFragment rootFragment = ldesFragment
-				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
+				.createChild(geoRootPair);
 
 		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId())).thenReturn(Optional.empty());
 
 		LdesFragment returnedFragment = geospatialFragmentCreator.getOrCreateRootFragment(ldesFragment,
 				FRAGMENT_KEY_TILE_ROOT);
 
-		assertEquals("/collectionName/view?substring=a&tile=0/0/0", returnedFragment.getFragmentId());
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoRootPair)),
+				returnedFragment.getFragmentId());
 		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
 		verify(ldesFragmentRepository, times(1)).saveFragment(returnedFragment);
 	}
 
 	@Test
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
-		LdesFragment ldesFragment = new LdesFragment(
-				VIEW_NAME, List.of(new FragmentPair("substring", "a")));
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
+				VIEW_NAME, List.of(substringPair)));
 		LdesFragment rootFragment = ldesFragment
-				.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
+				.createChild(geoRootPair);
 		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
 				.thenReturn(Optional.of(rootFragment));
 
 		LdesFragment returnedFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
 				FRAGMENT_KEY_TILE_ROOT, rootFragment);
 
-		assertEquals("/collectionName/view?substring=a&tile=0/0/0", returnedFragment.getFragmentId());
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoRootPair)),
+				returnedFragment.getFragmentId());
 		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
 		verifyNoMoreInteractions(ldesFragmentRepository);
 	}

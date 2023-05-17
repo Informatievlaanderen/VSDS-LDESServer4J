@@ -10,9 +10,9 @@ public class GreaterOrEqualsPageFilter implements Predicate<LdesFragment> {
 	public static final String PAGE_NUMBER_KEY = "pageNumber";
 	private final String page;
 
-	public GreaterOrEqualsPageFilter(String lastFragment) {
-		page = LdesFragmentIdentifier.fromFragmentId(lastFragment).getValueOfFragmentPairKey(PAGE_NUMBER_KEY)
-				.orElseThrow(() -> new GreaterOrEqualsPageFilterException(lastFragment));
+	public GreaterOrEqualsPageFilter(LdesFragmentIdentifier lastFragment) {
+		page = lastFragment.getValueOfFragmentPairKey(PAGE_NUMBER_KEY)
+				.orElseThrow(() -> new GreaterOrEqualsPageFilterException(lastFragment.asString()));
 	}
 
 	@Override

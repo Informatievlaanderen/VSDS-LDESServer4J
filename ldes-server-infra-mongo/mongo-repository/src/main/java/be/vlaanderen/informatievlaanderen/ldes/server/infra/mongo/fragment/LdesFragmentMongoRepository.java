@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
@@ -32,9 +33,9 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveFragment(String fragmentId) {
+	public Optional<LdesFragment> retrieveFragment(LdesFragmentIdentifier fragmentId) {
 		return repository
-				.findById(fragmentId)
+				.findById(fragmentId.asString())
 				.map(LdesFragmentEntity::toLdesFragment);
 	}
 
@@ -46,17 +47,17 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 						viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentId));
+				.min(Comparator.comparing(fragment -> fragment.getFragmentId().asString()));
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenChildFragment(String parentId) {
+	public Optional<LdesFragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
 				.findAllByImmutableAndParentId(false,
 						parentId)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentId));
+				.min(Comparator.comparing(fragment -> fragment.getFragmentId().asString()));
 	}
 
 	@Override
@@ -67,7 +68,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public void incrementNumberOfMembers(String fragmentId) {
+	public void incrementNumberOfMembers(LdesFragmentIdentifier fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(fragmentId));
 

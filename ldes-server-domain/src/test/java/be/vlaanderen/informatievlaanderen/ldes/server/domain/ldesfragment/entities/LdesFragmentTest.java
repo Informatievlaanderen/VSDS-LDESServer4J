@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,9 @@ class LdesFragmentTest {
 
 	@Test
 	void when_LdesFragmentIsImmutable_IsImmutableReturnsTrue() {
-		LdesFragment ldesFragment = new LdesFragment(
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
 				VIEW_NAME,
-				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1))));
 		assertFalse(ldesFragment.isImmutable());
 		ldesFragment.makeImmutable();
 		assertTrue(ldesFragment.isImmutable());
@@ -34,29 +35,29 @@ class LdesFragmentTest {
 
 	@Test
 	void get_FragmentId() {
-		LdesFragment ldesFragment = new LdesFragment(
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
 				VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1),
-						new FragmentPair(TILE, FRAGMENTATION_VALUE_2)));
+						new FragmentPair(TILE, FRAGMENTATION_VALUE_2))));
 
 		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&tile=0/0/0",
-				ldesFragment.getFragmentId());
+				ldesFragment.getFragmentId().asString());
 		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z",
 				ldesFragment.getParentId());
 
-		ldesFragment = new LdesFragment(
-				VIEW_NAME, List.of());
+		ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
+				VIEW_NAME, List.of()));
 		assertEquals("/collectionName/mobility-hindrances",
-				ldesFragment.getFragmentId());
+				ldesFragment.getFragmentId().asString());
 		assertEquals("root", ldesFragment.getParentId());
 
 	}
 
 	@Test
 	void when_ValueIsAbsent_GetValueOfKeyReturnsOptionalEmpty() {
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1),
-						new FragmentPair(TILE, FRAGMENTATION_VALUE_2)));
+						new FragmentPair(TILE, FRAGMENTATION_VALUE_2))));
 		assertTrue(ldesFragment.getValueOfKey("unexistingKey").isEmpty());
 		assertEquals(Optional.of(FRAGMENTATION_VALUE_1), ldesFragment.getValueOfKey(GENERATED_AT_TIME));
 		assertEquals(Optional.of(FRAGMENTATION_VALUE_2), ldesFragment.getValueOfKey(TILE));
@@ -65,7 +66,8 @@ class LdesFragmentTest {
 	@Test
 	void when_childIsCreated_ViewIsSameAndFragmentPairsAreExtended() {
 		ViewName viewName = VIEW_NAME;
-		LdesFragment ldesFragment = new LdesFragment(viewName, List.of(PARENT_FRAGMENT_PAIR));
+		LdesFragment ldesFragment = new LdesFragment(
+				new LdesFragmentIdentifier(viewName, List.of(PARENT_FRAGMENT_PAIR)));
 		LdesFragment child = ldesFragment.createChild(CHILD_FRAGMENT_PAIR);
 		assertEquals(List.of(PARENT_FRAGMENT_PAIR, CHILD_FRAGMENT_PAIR), child.getFragmentPairs());
 		assertFalse(child.isImmutable());
@@ -74,8 +76,8 @@ class LdesFragmentTest {
 
 	@Test
 	void when_LdesFragmentIsMadeImmutable_ImmutableTimeStampIsSet() {
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
-				List.of(PARENT_FRAGMENT_PAIR));
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
+				List.of(PARENT_FRAGMENT_PAIR)));
 		assertFalse(ldesFragment.isImmutable());
 		ldesFragment.makeImmutable();
 		assertTrue(ldesFragment.isImmutable());
@@ -83,9 +85,9 @@ class LdesFragmentTest {
 
 	@Test
 	void testEquals() {
-		LdesFragment a = new LdesFragment(new ViewName("collectionName", "a"), List.of());
-		LdesFragment a2 = new LdesFragment(new ViewName("collectionName", "a"), List.of());
-		LdesFragment c = new LdesFragment(new ViewName("collectionName", "c"), List.of());
+		LdesFragment a = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "a"), List.of()));
+		LdesFragment a2 = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "a"), List.of()));
+		LdesFragment c = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "c"), List.of()));
 
 		assertEquals(a, a2);
 		assertEquals(a2, a);
@@ -94,9 +96,9 @@ class LdesFragmentTest {
 
 	@Test
 	void testHashCode() {
-		LdesFragment a = new LdesFragment(new ViewName("collectionName", "a"), List.of());
-		LdesFragment a2 = new LdesFragment(new ViewName("collectionName", "a"), List.of());
-		LdesFragment c = new LdesFragment(new ViewName("collectionName", "c"), List.of());
+		LdesFragment a = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "a"), List.of()));
+		LdesFragment a2 = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "a"), List.of()));
+		LdesFragment c = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "c"), List.of()));
 
 		assertEquals(a.hashCode(), a2.hashCode());
 		assertEquals(a2.hashCode(), a.hashCode());

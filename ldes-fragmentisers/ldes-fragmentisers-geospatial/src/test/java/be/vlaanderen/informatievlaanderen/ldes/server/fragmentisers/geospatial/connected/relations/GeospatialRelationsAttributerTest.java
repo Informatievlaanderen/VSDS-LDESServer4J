@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -15,12 +16,12 @@ class GeospatialRelationsAttributerTest {
 
 	private final GeospatialRelationsAttributer geospatialRelationsAttributer = new GeospatialRelationsAttributer();
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final LdesFragment CHILD_FRAGMENT = new LdesFragment(VIEW_NAME,
+	private static final LdesFragment CHILD_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
 			List.of(new FragmentPair(FRAGMENT_KEY_TILE,
-					"1/1/1")));
+					"1/1/1"))));
 
 	private static final TreeRelation EXPECTED_RELATION = new TreeRelation("http://www.opengis.net/ont/geosparql#asWKT",
-			"/collectionName/view?tile=1/1/1",
+			LdesFragmentIdentifier.fromFragmentId("/collectionName/view?tile=1/1/1"),
 			"<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POLYGON ((180 0, 180 -85.0511287798066, 0 -85.0511287798066, 0 0, 180 0))",
 			"http://www.opengis.net/ont/geosparql#wktLiteral",
 			"https://w3id.org/tree#GeospatiallyContainsRelation");

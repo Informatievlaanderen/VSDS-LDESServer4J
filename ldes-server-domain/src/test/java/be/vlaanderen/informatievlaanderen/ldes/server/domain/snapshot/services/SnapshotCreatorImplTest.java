@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
@@ -45,7 +46,8 @@ class SnapshotCreatorImplTest {
 		List<LdesFragment> ldesFragmentsForSnapshot = getLdesFragmentsForSnapshot();
 		Map<String, List<Member>> membersOfSnapshot = getMembers();
 		when(memberCollector.getMembersGroupedByVersionOf(ldesFragmentsForSnapshot)).thenReturn(membersOfSnapshot);
-		LdesFragment rootFragmentOfSnapshot = new LdesFragment(new ViewName("collectionName", "snapshot-"), List.of());
+		LdesFragment rootFragmentOfSnapshot = new LdesFragment(
+				new LdesFragmentIdentifier(new ViewName("collectionName", "snapshot-"), List.of()));
 		when(rootFragmentCreator.createRootFragmentForView(any())).thenReturn(rootFragmentOfSnapshot);
 
 		when(shaclShapeService.retrieveShaclShape("collection"))
@@ -81,11 +83,12 @@ class SnapshotCreatorImplTest {
 	}
 
 	private List<LdesFragment> getLdesFragmentsForSnapshot() {
-		LdesFragment ldesFragment = new LdesFragment(new ViewName("collectionName", "view"), List.of());
-		LdesFragment ldesFragment1 = new LdesFragment(new ViewName("collectionName", "view"),
-				List.of(new FragmentPair("page", "1")));
-		LdesFragment ldesFragment2 = new LdesFragment(new ViewName("collectionName", "view"),
-				List.of(new FragmentPair("page", "2")));
+		LdesFragment ldesFragment = new LdesFragment(
+				new LdesFragmentIdentifier(new ViewName("collectionName", "view"), List.of()));
+		LdesFragment ldesFragment1 = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "view"),
+				List.of(new FragmentPair("page", "1"))));
+		LdesFragment ldesFragment2 = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "view"),
+				List.of(new FragmentPair("page", "2"))));
 		return List.of(ldesFragment, ldesFragment1, ldesFragment2);
 	}
 }

@@ -56,7 +56,7 @@ public class LdesFragmentIdentifier {
 
 	}
 
-	public String getFragmentId() {
+	public String asString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("/").append(viewName.asString());
 

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
@@ -55,7 +56,7 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	}
 
 	private void removeMembersFromFragmentOfViewThatMatchRetentionPolicies(
-			List<RetentionPolicy> retentionPoliciesOfView, String ldesFragmentId) {
+			List<RetentionPolicy> retentionPoliciesOfView, LdesFragmentIdentifier ldesFragmentId) {
 		Stream<Member> membersOfFragment = memberRepository
 				.getMembersByReference(ldesFragmentId);
 		membersOfFragment
@@ -63,7 +64,8 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 				.forEach(member -> removeMemberFromFragmentOfViewAndTryDeletingMember(ldesFragmentId, member));
 	}
 
-	private void removeMemberFromFragmentOfViewAndTryDeletingMember(String ldesFragmentId, Member member) {
+	private void removeMemberFromFragmentOfViewAndTryDeletingMember(LdesFragmentIdentifier ldesFragmentId,
+			Member member) {
 		memberRepository.removeMemberReference(member.getLdesMemberId(),
 				ldesFragmentId);
 		treeMemberRemover.deletingMemberFromCollection(member.getLdesMemberId());

@@ -17,20 +17,20 @@ public class LdesFragment {
 	private final int numberOfMembers;
 	private final List<TreeRelation> relations;
 
-	public LdesFragment(ViewName viewName, final List<FragmentPair> fragmentPairs) {
-		this(viewName, fragmentPairs, false, 0, new ArrayList<>());
+	public LdesFragment(LdesFragmentIdentifier identifier) {
+		this(identifier, false, 0, new ArrayList<>());
 	}
 
-	public LdesFragment(ViewName viewName, List<FragmentPair> fragmentPairs, Boolean immutable, int numberOfMembers,
+	public LdesFragment(LdesFragmentIdentifier identifier, Boolean immutable, int numberOfMembers,
 			List<TreeRelation> relations) {
-		this.identifier = new LdesFragmentIdentifier(viewName, fragmentPairs);
+		this.identifier = identifier;
 		this.immutable = immutable;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
 	}
 
-	public String getFragmentId() {
-		return identifier.getFragmentId();
+	public LdesFragmentIdentifier getFragmentId() {
+		return identifier;
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
@@ -49,7 +49,7 @@ public class LdesFragment {
 		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(
 				this.identifier.getFragmentPairs().stream().toList());
 		childFragmentPairs.add(fragmentPair);
-		return new LdesFragment(getViewName(), childFragmentPairs);
+		return new LdesFragment(new LdesFragmentIdentifier(getViewName(), childFragmentPairs));
 	}
 
 	public Optional<String> getValueOfKey(String key) {

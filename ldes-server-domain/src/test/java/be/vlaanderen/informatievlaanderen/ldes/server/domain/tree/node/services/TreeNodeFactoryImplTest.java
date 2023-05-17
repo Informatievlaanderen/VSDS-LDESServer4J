@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -27,7 +28,7 @@ class TreeNodeFactoryImplTest {
 	public static final String COLLECTION_NAME = "collectionName";
 	public static final String VIEW = "treeNodeId";
 	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, VIEW);
-	public static final String TREE_NODE_ID = "/" + VIEW_NAME.asString();
+	public static final LdesFragmentIdentifier TREE_NODE_ID = new LdesFragmentIdentifier(VIEW_NAME, List.of());
 
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
@@ -59,8 +60,9 @@ class TreeNodeFactoryImplTest {
 
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME, List.of());
-		ldesFragment.addRelation(new TreeRelation("path", "node", "value", "valueType", "relation"));
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		ldesFragment.addRelation(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
+				"valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
 		List<Member> members = List.of(new Member("member", COLLECTION_NAME, 0L, null, null, null, List.of()));
 		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
@@ -68,10 +70,13 @@ class TreeNodeFactoryImplTest {
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, appConfig.getHostName(),
 				eventStreamResponse.getCollection());
 
-		assertEquals(HOSTNAME + ldesFragment.getFragmentId(), treeNode.getFragmentId());
+		assertEquals(HOSTNAME + ldesFragment.getFragmentId().asString(), treeNode.getFragmentId());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());
 		assertEquals(members, treeNode.getMembers());
-		assertEquals(List.of(new TreeRelation("path", "node", "value", "valueType", "relation")),
+		assertEquals(
+				List.of(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
+						"valueType",
+						"relation")),
 				treeNode.getRelations());
 	}
 

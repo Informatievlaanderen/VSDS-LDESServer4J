@@ -59,12 +59,12 @@ class LdesFragmentIdentifierTest {
 
 	@Test
 	void when_RootFragmentIdentifier_Then_CreateFragmentIdString() {
-		assertEquals(rootIdString, rootFragmentId.getFragmentId());
+		assertEquals(rootIdString, rootFragmentId.asString());
 	}
 
 	@Test
 	void when_NonRootFragmentIdentifier_Then_CreateFragmentIdString() {
-		assertEquals(fragmentIdString, fragmentId.getFragmentId());
+		assertEquals(fragmentIdString, fragmentId.asString());
 	}
 
 }

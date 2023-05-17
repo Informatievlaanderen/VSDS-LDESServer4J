@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import org.apache.jena.rdf.model.*;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,10 @@ public class Member {
 	private final String memberId;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
-	private final List<String> treeNodeReferences;
+	private final List<LdesFragmentIdentifier> treeNodeReferences;
 
 	public Member(String memberId, String collectionName, Long sequenceNr, String versionOf, LocalDateTime timestamp,
-			final Model memberModel, List<String> treeNodeReferences) {
+			final Model memberModel, List<LdesFragmentIdentifier> treeNodeReferences) {
 		this.collectionName = collectionName;
 		this.memberId = memberId;
 		this.sequenceNr = sequenceNr;
@@ -71,7 +72,7 @@ public class Member {
 		return memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
 	}
 
-	public List<String> getTreeNodeReferences() {
+	public List<LdesFragmentIdentifier> getTreeNodeReferences() {
 		return treeNodeReferences;
 	}
 

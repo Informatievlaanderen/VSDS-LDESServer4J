@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
@@ -52,20 +53,20 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public synchronized void addMemberReference(String memberId, String fragmentId) {
+	public synchronized void addMemberReference(String memberId, LdesFragmentIdentifier fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(memberId));
 		Update update = new Update();
-		update.push(TREE_NODE_REFERENCES, fragmentId);
+		update.push(TREE_NODE_REFERENCES, fragmentId.asString());
 		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
 	}
 
 	@Override
-	public void removeMemberReference(String memberId, String fragmentId) {
+	public void removeMemberReference(String memberId, LdesFragmentIdentifier fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(memberId));
 		Update update = new Update();
-		update.pull(TREE_NODE_REFERENCES, fragmentId);
+		update.pull(TREE_NODE_REFERENCES, fragmentId.asString());
 		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
 	}
 
@@ -78,9 +79,9 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public Stream<Member> getMembersByReference(String treeNodeId) {
+	public Stream<Member> getMembersByReference(LdesFragmentIdentifier treeNodeId) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId));
+		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId.asString()));
 		return mongoTemplate.stream(query, LdesMemberEntity.class).map(converter::toLdesMember);
 	}
 }

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
@@ -54,7 +55,7 @@ class LdesFragmentMongoRepositoryTest {
 				List.of());
 
 		assertTrue(ldesFragment.isPresent());
-		assertEquals(expectedFragmentId, ldesFragment.get().getFragmentId());
+		assertEquals(expectedFragmentId, ldesFragment.get().getFragmentId().asString());
 	}
 
 	static class LdesFragmentEntityListProvider implements ArgumentsProvider {
@@ -90,8 +91,8 @@ class LdesFragmentMongoRepositoryTest {
 		}
 
 		private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, ViewName viewName, String value) {
-			LdesFragment ldesFragment = new LdesFragment(viewName,
-					List.of(new FragmentPair("generatedAtTime", value)),
+			LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(viewName,
+					List.of(new FragmentPair("generatedAtTime", value))),
 					immutable, 0, List.of());
 			return LdesFragmentEntity.fromLdesFragment(ldesFragment);
 		}
