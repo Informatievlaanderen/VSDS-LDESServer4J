@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -9,9 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.S
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.testServices.ListArgumentMatcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,16 +36,15 @@ class SnapshotServiceImplTest {
 	private final SnapshotRepository snapshotRepository = mock(SnapshotRepository.class);
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final SnapshotRelationLinker snapshotRelationLinker = mock(SnapshotRelationLinker.class);
-	private final ViewService viewService = mock(ViewService.class);
+	private final EventStreamService eventStreamService = mock(EventStreamService.class);
 
 	private final SnapshotService snapshotService = new SnapshotServiceImpl(snapShotCreator, ldesFragmentRepository,
-			snapshotRepository, snapshotRelationLinker, viewService);
+			snapshotRepository, snapshotRelationLinker, eventStreamService);
 
 	@BeforeEach
 	void setUp() {
-		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "by-page"), List.of(),
-				List.of());
-		when(viewService.getViewsByCollectionName(COLLECTION_NAME)).thenReturn(List.of(viewSpecification));
+		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(
+				new EventStreamResponse(COLLECTION_NAME, "timestampPath", "versionOf", "memberType", true, List.of(), null));
 	}
 
 	@Test
