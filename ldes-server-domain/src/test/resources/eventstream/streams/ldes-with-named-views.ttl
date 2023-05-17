@@ -7,11 +7,13 @@
 @prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
 @prefix col: <http://localhost:8080/collectionName1/> .
 @prefix server: <http://localhost:8080/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 server:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    custom:memberType mobiliteit:Mobiliteitshinder ;
+   custom:hasDefaultView "false"^^xsd:boolean ;
    tree:shape col:shape ;
    ldes:view col:view1 ;
    ldes:view col:view2 .

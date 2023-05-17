@@ -85,10 +85,10 @@ class AdminEventStreamsRestControllerTest {
 			eventStreams = List.of(
 					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shape),
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shape),
 					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(singleView), shape));
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(singleView), shape));
 		}
 
 		@Test
@@ -149,7 +149,7 @@ class AdminEventStreamsRestControllerTest {
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					false, List.of(), shape);
+					true, List.of(), shape);
 
 			when(eventStreamService.saveEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 

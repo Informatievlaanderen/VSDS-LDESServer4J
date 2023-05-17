@@ -91,7 +91,7 @@ class EventStreamResponseConverterTest {
 		void when_modelHasNoViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, List.of(),
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(),
 					shacl);
 
 			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
@@ -102,7 +102,7 @@ class EventStreamResponseConverterTest {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					false, List.of(), shacl);
+					true, List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}

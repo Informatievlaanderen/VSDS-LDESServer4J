@@ -36,7 +36,13 @@
     sh:minCount 1;
     sh:name "memberType"@en;
     sh:path <http://example.org/memberType>
-  ] .
+  ], [
+    sh:datatype xsd:boolean ;
+    sh:description "The object property that indicates whether the object has a default view."@en;
+    sh:maxCount 1;
+    sh:name "hasDefaultView"@en;
+    sh:path <http://example.org/hasDefaultView>
+] .
 
 
 shsh:

@@ -5,11 +5,13 @@
 @prefix custom: <http://example.org/> .
 @prefix server: <http://localhost:8080/> .
 @prefix col: <http://localhost:8080/collectionName1/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 server:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
+   custom:hasDefaultView "true"^^xsd:boolean ;
    tree:shape col:shape .
 
 col:shape a sh:NodeShape ;
