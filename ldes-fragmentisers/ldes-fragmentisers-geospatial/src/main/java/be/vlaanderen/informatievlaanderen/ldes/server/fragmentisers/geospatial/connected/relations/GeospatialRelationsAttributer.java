@@ -22,7 +22,7 @@ public class GeospatialRelationsAttributer {
 
 	private String getWKT(LdesFragment currentFragment) {
 		String fragmentWKT = currentFragment.getValueOfKey(FRAGMENT_KEY_TILE).orElseThrow(
-				() -> new MissingFragmentValueException(currentFragment.getFragmentId(), FRAGMENT_KEY_TILE));
+				() -> new MissingFragmentValueException(currentFragment.getFragmentId().asString(), FRAGMENT_KEY_TILE));
 		Tile currentTile = TileConverter.fromString(fragmentWKT);
 		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
 		return BoundingBoxConverter.toWKT(currentBoundingBox);

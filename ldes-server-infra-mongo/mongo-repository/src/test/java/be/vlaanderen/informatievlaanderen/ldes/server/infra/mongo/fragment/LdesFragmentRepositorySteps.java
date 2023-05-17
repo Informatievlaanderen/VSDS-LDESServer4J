@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.SpringIntegrationTest;
@@ -25,9 +26,9 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public LdesFragment ldesFragmentEntryTransformer(Map<String, String> row) {
-		return new LdesFragment(
+		return new LdesFragment(new LdesFragmentIdentifier(
 				ViewName.fromString(row.get("viewName")),
-				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs")),
+				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				Boolean.parseBoolean(row.get("immutable")),
 				Integer.parseInt(row.get("numberOfMembers")),
 				List.of());
@@ -54,7 +55,8 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 
 	@Then("The ldesFragment with id {string} can be retrieved from the database")
 	public void theLdesFragmentWithIdCanBeRetrievedFromTheDatabase(String fragmentId) {
-		retrievedLdesFragment = ldesFragmentMongoRepository.retrieveFragment(fragmentId);
+		retrievedLdesFragment = ldesFragmentMongoRepository
+				.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(fragmentId));
 	}
 
 	@Then("the repository contains {int} ldesFragments with viewname {string}")

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,7 +33,7 @@ class OpenPageProviderTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
+		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		openPageProvider = new OpenPageProvider(pageCreator,
 				ldesFragmentRepository, 3L);
 	}
@@ -82,9 +83,9 @@ class OpenPageProviderTest {
 	@Test
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
-		LdesFragment completeFragment = new LdesFragment(
+		LdesFragment completeFragment = new LdesFragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
-						"2")),
+						"2"))),
 				false, 3, List.of());
 		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"3"));

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,28 +35,28 @@ class PageCreatorTest {
 	@Test
 	@DisplayName("Creating First Page Fragment")
 	void createFirstFragment() {
-		LdesFragment parentFragment = new LdesFragment(VIEW_NAME,
-				List.of());
+		LdesFragment parentFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
+				List.of()));
 
 		LdesFragment newFragment = pageCreator.createFirstFragment(parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		assertTrue(newFragment.getFragmentId().contains("/collectionName/view?pageNumber=" + FIRST_PAGE_NUMBER));
+		assertTrue(newFragment.getFragmentPairs().contains(new FragmentPair("pageNumber", FIRST_PAGE_NUMBER)));
 	}
 
 	@Test
 	@DisplayName("Creating Next Page Fragment")
 	void createNextFragmentAndCreateRelations() {
-		LdesFragment parentFragment = new LdesFragment(VIEW_NAME,
-				List.of());
-		LdesFragment existingLdesFragment = new LdesFragment(
+		LdesFragment parentFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
+				List.of()));
+		LdesFragment existingLdesFragment = new LdesFragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
-						"1")));
+						"1"))));
 
 		LdesFragment newFragment = pageCreator.createNewFragment(existingLdesFragment, parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		assertTrue(newFragment.getFragmentId().contains("/collectionName/view?pageNumber=2"));
+		assertTrue(newFragment.getFragmentPairs().contains(new FragmentPair("pageNumber", "2")));
 		InOrder inOrder = inOrder(ldesFragmentRepository);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
 		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
@@ -65,7 +66,7 @@ class PageCreatorTest {
 
 	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
 		assertEquals("/collectionName/view?pageNumber",
-				ldesFragment.getFragmentId().split("=")[0]);
+				ldesFragment.getFragmentId().asString().split("=")[0]);
 		assertEquals(VIEW_NAME, ldesFragment.getViewName());
 		assertTrue(ldesFragment.getValueOfKey(PAGE_NUMBER).isPresent());
 	}

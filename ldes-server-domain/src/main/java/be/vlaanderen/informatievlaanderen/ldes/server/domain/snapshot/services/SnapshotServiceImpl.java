@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
@@ -75,7 +76,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 		return snapshotRepository.getLastSnapshot();
 	}
 
-	private Optional<String> getNextFragmentFromSnapshot(List<LdesFragment> treeNodesOfSnapshot) {
+	private Optional<LdesFragmentIdentifier> getNextFragmentFromSnapshot(List<LdesFragment> treeNodesOfSnapshot) {
 		return treeNodesOfSnapshot.stream().filter(ldesFragment -> !ldesFragment.isRoot())
 				.filter(ldesFragment -> !ldesFragment.isImmutable())
 				.map(LdesFragment::getRelations)
@@ -90,7 +91,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 				.filter(ldesFragment -> !ldesFragment.isRoot()).toList();
 		Stream<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository
 				.retrieveFragmentsOfView(viewName.asString());
-		String lastFragment = getNextFragmentFromSnapshot(treeNodesOfSnapshot)
+		LdesFragmentIdentifier lastFragment = getNextFragmentFromSnapshot(treeNodesOfSnapshot)
 				.orElseThrow(() -> new SnapshotCreationException(
 						"First fragment of " + viewName.asString() + " after previous snapshot "
 								+ lastSnapshot.getSnapshotId() + " could not be found"));

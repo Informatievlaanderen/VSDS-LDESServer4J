@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -26,7 +27,8 @@ class RefragmentationServiceImplTest {
 		List<Member> members = List.of(getMember("1"), getMember("2"), getMember("3"));
 		when(memberRepository.getMemberStreamOfCollection(COLLECTION_NAME))
 				.thenReturn(members.stream());
-		LdesFragment parentFragment = new LdesFragment(new ViewName(COLLECTION_NAME, VIEW), List.of());
+		LdesFragment parentFragment = new LdesFragment(
+				new LdesFragmentIdentifier(new ViewName(COLLECTION_NAME, VIEW), List.of()));
 
 		refragmentationService.refragmentMembersForView(parentFragment, fragmentationStrategy);
 

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -28,18 +29,18 @@ public class LdesFragmentEntity {
 	@Indexed
 	private final String collectionName;
 
-	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
+	public LdesFragmentEntity(LdesFragmentIdentifier id, Boolean root,
 			Boolean immutable, String parentId, Integer numberOfMembers,
-			List<TreeRelation> relations, String collectionName) {
-		this.id = id;
+			List<TreeRelation> relations) {
+		this.id = id.asString();
 		this.root = root;
-		this.viewName = viewName;
-		this.fragmentPairs = fragmentPairs;
+		this.viewName = id.getViewName().asString();
+		this.fragmentPairs = id.getFragmentPairs();
 		this.immutable = immutable;
 		this.parentId = parentId;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
-		this.collectionName = collectionName;
+		this.collectionName = id.getViewName().getCollectionName();
 	}
 
 	public String getId() {
@@ -52,7 +53,7 @@ public class LdesFragmentEntity {
 
 	public LdesFragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(ViewName.fromString(viewName), fragmentPairs, immutable,
+		return new LdesFragment(new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs), immutable,
 				effectiveNumberOfMembers,
 				relations);
 	}
@@ -66,16 +67,12 @@ public class LdesFragmentEntity {
 	}
 
 	public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
-		ViewName localViewName = ldesFragment.getViewName();
 		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
 				ldesFragment.isRoot(),
-				localViewName.asString(),
-				ldesFragment.getFragmentPairs(),
 				ldesFragment.isImmutable(),
 				ldesFragment.getParentId(),
 				ldesFragment.getNumberOfMembers(),
-				ldesFragment.getRelations(),
-				localViewName.getCollectionName());
+				ldesFragment.getRelations());
 	}
 
 	public Boolean getRoot() {

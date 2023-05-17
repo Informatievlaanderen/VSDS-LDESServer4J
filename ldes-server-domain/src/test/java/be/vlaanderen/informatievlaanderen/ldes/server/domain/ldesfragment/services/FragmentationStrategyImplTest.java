@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -22,8 +23,8 @@ class FragmentationStrategyImplTest {
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
-		LdesFragment ldesFragment = new LdesFragment(new ViewName("collectionName", "view"),
-				List.of());
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "view"),
+				List.of()));
 		Member member = mock(Member.class);
 		when(member.getLdesMemberId()).thenReturn("memberId");
 
