@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
@@ -64,7 +63,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
 @ContextConfiguration(classes = { EventStreamController.class, AppConfig.class, RestConfig.class,
-		RestResponseEntityExceptionHandler.class })
+		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
+		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class
+})
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
 	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
@@ -173,18 +174,6 @@ class EventStreamControllerTest {
 		@Bean
 		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
 			return new EtagCachingStrategy(appConfig);
-		}
-
-		@Bean
-		EventStreamResponseConverter eventStreamResponseConverter(final AppConfig appConfig) {
-			return new EventStreamResponseConverterImpl(appConfig, new ViewSpecificationConverter(appConfig),
-					new PrefixAdderImpl());
-		}
-
-		@Bean
-		public EventStreamResponseHttpConverter eventStreamResponseHttpConverter(
-				final EventStreamResponseConverter eventStreamResponseConverter) {
-			return new EventStreamResponseHttpConverter(eventStreamResponseConverter);
 		}
 	}
 }

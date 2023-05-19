@@ -59,9 +59,10 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		Model eventStreamModel = createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType))
 				.add(eventStreamResponse.getShacl())
-				.add(getShaclReferenceStatement(eventStreamResponse.getShacl(), subject))
 				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
 				.add(getViewStatements(eventStreamResponse.getViews()));
+
+		getShaclReferenceStatement(eventStreamResponse.getShacl(), subject).ifPresent(eventStreamModel::add);
 
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
 	}
@@ -81,10 +82,9 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.toList();
 	}
 
-	private Statement getShaclReferenceStatement(Model shacl, Resource subject) {
+	private Optional<Statement> getShaclReferenceStatement(Model shacl, Resource subject) {
 		return getIdentifier(shacl, createResource(NODE_SHAPE_TYPE))
-				.map(resource -> createStatement(subject, TREE_SHAPE, resource))
-				.orElse(null);
+				.map(resource -> createStatement(subject, TREE_SHAPE, resource));
 	}
 
 	private Resource getIRIFromCollectionName(String name) {
