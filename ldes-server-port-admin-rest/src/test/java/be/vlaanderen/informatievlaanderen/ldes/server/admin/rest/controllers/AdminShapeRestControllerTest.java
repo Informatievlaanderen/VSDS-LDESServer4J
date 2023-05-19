@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -42,9 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@Import(AdminShapeRestControllerTest.AdminShapeRestControllerTestConfig.class)
-@ContextConfiguration(classes = { AppConfig.class, AdminShapeRestController.class,
-		AdminRestResponseEntityExceptionHandler.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminShapeRestController.class, ModelConverter.class,
+		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class })
 class AdminShapeRestControllerTest {
 	@MockBean
 	private ShaclShapeService shaclShapeService;

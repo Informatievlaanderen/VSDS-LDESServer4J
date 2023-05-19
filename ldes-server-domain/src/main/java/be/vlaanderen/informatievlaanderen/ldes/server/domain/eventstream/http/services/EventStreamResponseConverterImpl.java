@@ -26,7 +26,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	private final PrefixAdder prefixAdder;
 
 	public EventStreamResponseConverterImpl(AppConfig appConfig, ViewSpecificationConverter viewSpecificationConverter,
-											PrefixAdder prefixAdder) {
+			PrefixAdder prefixAdder) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
 		hostname = appConfig.getHostName();
 		this.prefixAdder = prefixAdder;
@@ -69,7 +69,8 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject) {
 		return views.stream()
 				.map(ViewSpecification::getName)
-				.map(viewName -> createStatement(subject, createProperty(VIEW), viewSpecificationConverter.getIRIFromViewName(viewName)))
+				.map(viewName -> createStatement(subject, createProperty(VIEW),
+						viewSpecificationConverter.getIRIFromViewName(viewName)))
 				.toList();
 	}
 
@@ -120,9 +121,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	}
 
 	/**
-	 * @param resource the resource of which the according statements need to be
-	 *                 retrieved
-	 * @param model    the model of which all the statements need to be retrieved
+	 * @param resource
+	 *            the resource of which the according statements need to be
+	 *            retrieved
+	 * @param model
+	 *            the model of which all the statements need to be retrieved
 	 * @return a list of all the according statement of the model
 	 */
 	private List<Statement> retrieveAllStatements(Resource resource, Model model) {

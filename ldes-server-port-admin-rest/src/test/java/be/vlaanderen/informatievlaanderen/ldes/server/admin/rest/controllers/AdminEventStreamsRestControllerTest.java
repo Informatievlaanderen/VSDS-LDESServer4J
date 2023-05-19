@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.Even
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
@@ -22,10 +21,7 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,8 +45,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@Import(AdminEventStreamsRestControllerTest.AdminEventStreamsRestControllerTestConfig.class)
-@ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class,
+@ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class, ModelConverter.class,
+		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
+		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamValidator.class,
 		AdminRestResponseEntityExceptionHandler.class })
 class AdminEventStreamsRestControllerTest {
 	@MockBean
@@ -207,35 +204,4 @@ class AdminEventStreamsRestControllerTest {
 		return Files.lines(path).collect(Collectors.joining());
 	}
 
-	@TestConfiguration
-	static class AdminEventStreamsRestControllerTestConfig {
-
-		@Bean
-		public EventStreamValidator eventStreamValidator() {
-			return new EventStreamValidator();
-		}
-
-		@Bean
-		public EventStreamResponseConverter eventStreamResponseConverter(final AppConfig appConfig) {
-			return new EventStreamResponseConverterImpl(appConfig, new ViewSpecificationConverter(appConfig),
-					new PrefixAdderImpl());
-		}
-
-		@Bean
-		public EventStreamHttpConverter eventStreamHttpConverter(
-				final EventStreamResponseConverter eventStreamResponseConverter) {
-			return new EventStreamHttpConverter(eventStreamResponseConverter);
-		}
-
-		@Bean
-		public EventStreamListHttpConverter eventStreamListHttpConverter(
-				final EventStreamResponseConverter eventStreamResponseConverter) {
-			return new EventStreamListHttpConverter(eventStreamResponseConverter);
-		}
-
-		@Bean
-		public ModelConverter modelConverter() {
-			return new ModelConverter(new PrefixAdderImpl());
-		}
-	}
 }

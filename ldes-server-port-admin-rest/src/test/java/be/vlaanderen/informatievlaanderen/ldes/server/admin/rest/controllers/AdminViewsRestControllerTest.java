@@ -21,10 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,9 +44,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@Import(AdminViewsRestControllerTest.AdminViewsRestControllerTestConfig.class)
-@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class, ViewHttpConverter.class,
-		ListViewHttpConverter.class, AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class, PrefixAdderImpl.class,
+		ModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class, ViewSpecificationConverter.class,
+		AdminRestResponseEntityExceptionHandler.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
@@ -154,13 +151,5 @@ class AdminViewsRestControllerTest {
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
 				.toString();
 		return RDFDataMgr.loadModel(uri);
-	}
-
-	@TestConfiguration
-	static class AdminViewsRestControllerTestConfig {
-		@Bean
-		public ModelConverter modelConverter() {
-			return new ModelConverter(new PrefixAdderImpl());
-		}
 	}
 }
