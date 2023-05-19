@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
@@ -48,10 +47,5 @@ public class AdminWebConfig {
 	@Bean
 	public ShaclShapeValidator shaclShapeValidator() {
 		return new ShaclShapeValidator();
-	}
-
-	@Bean
-	public EventStreamValidator eventStreamValidator() {
-		return new EventStreamValidator();
 	}
 }
