@@ -26,7 +26,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	private final PrefixAdder prefixAdder;
 
 	public EventStreamResponseConverterImpl(AppConfig appConfig, ViewSpecificationConverter viewSpecificationConverter,
-			PrefixAdder prefixAdder) {
+											PrefixAdder prefixAdder) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
 		hostname = appConfig.getHostName();
 		this.prefixAdder = prefixAdder;
@@ -58,23 +58,32 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 
 		Model eventStreamModel = createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType))
-				.add(eventStreamResponse.getShacl());
-
-		eventStreamResponse.getViews().stream()
-				.map(viewSpecificationConverter::modelFromView)
-				.flatMap(model -> model.listStatements().toList().stream())
-				.forEach(eventStreamModel::add);
-
-		getIdentifier(eventStreamResponse.getShacl(), createResource(NODE_SHAPE_TYPE))
-				.map(resource -> createStatement(subject, TREE_SHAPE, resource))
-				.ifPresent(eventStreamModel::add);
-
-		eventStreamResponse.getViews().stream()
-				.map(view -> createStatement(subject, createProperty(VIEW),
-						viewSpecificationConverter.getIRIFromViewName(view.getName())))
-				.forEach(eventStreamModel::add);
+				.add(eventStreamResponse.getShacl())
+				.add(getShaclReferenceStatement(eventStreamResponse.getShacl(), subject))
+				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
+				.add(getViewStatements(eventStreamResponse.getViews()));
 
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
+	}
+
+	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject) {
+		return views.stream()
+				.map(ViewSpecification::getName)
+				.map(viewName -> createStatement(subject, createProperty(VIEW), viewSpecificationConverter.getIRIFromViewName(viewName)))
+				.toList();
+	}
+
+	private List<Statement> getViewStatements(List<ViewSpecification> views) {
+		return views.stream()
+				.map(viewSpecificationConverter::modelFromView)
+				.flatMap(model -> model.listStatements().toList().stream())
+				.toList();
+	}
+
+	private Statement getShaclReferenceStatement(Model shacl, Resource subject) {
+		return getIdentifier(shacl, createResource(NODE_SHAPE_TYPE))
+				.map(resource -> createStatement(subject, TREE_SHAPE, resource))
+				.orElse(null);
 	}
 
 	private Resource getIRIFromCollectionName(String name) {
@@ -111,11 +120,9 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	}
 
 	/**
-	 * @param resource
-	 *            the resource of which the according statements need to be
-	 *            retrieved
-	 * @param model
-	 *            the model of which all the statements need to be retrieved
+	 * @param resource the resource of which the according statements need to be
+	 *                 retrieved
+	 * @param model    the model of which all the statements need to be retrieved
 	 * @return a list of all the according statement of the model
 	 */
 	private List<Statement> retrieveAllStatements(Resource resource, Model model) {
