@@ -1,12 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ListViewHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.AdminWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
@@ -45,9 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class,
-		AdminWebConfig.class, AdminRestResponseEntityExceptionHandler.class, ViewSpecificationConverter.class,
-		EventStreamResponseConverter.class })
+@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class, PrefixAdderImpl.class,
+		ModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class, ViewSpecificationConverter.class,
+		AdminRestResponseEntityExceptionHandler.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
@@ -117,8 +121,8 @@ class AdminViewsRestControllerTest {
 		ViewSpecification view = converter.viewFromModel(expectedViewModel, collectionName);
 
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-						.content(readDataFromFile("view-1.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
+				.content(readDataFromFile("view-1.ttl"))
+				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isOk());
 		verify(viewService, times(1)).addView(view);
 	}
@@ -153,5 +157,4 @@ class AdminViewsRestControllerTest {
 				.toString();
 		return RDFDataMgr.loadModel(uri);
 	}
-
 }

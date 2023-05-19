@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -48,31 +47,28 @@ public class AdminViewsRestController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json")
 	})
-	public ResponseEntity<List<ViewSpecification>> getViews(@PathVariable String collectionName) {
-		return ResponseEntity.ok(viewService.getViewsByCollectionName(collectionName));
+	public List<ViewSpecification> getViews(@PathVariable String collectionName) {
+		return viewService.getViewsByCollectionName(collectionName);
 	}
 
 	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { contentTypeJSONLD, contentTypeNQuads,
 			contentTypeTurtle })
 	@Operation(summary = "Add a view to a collection")
-	public ResponseEntity<Void> putViews(@PathVariable String collectionName,
+	public void putViews(@PathVariable String collectionName,
 			@Parameter(schema = @Schema(implementation = String.class), description = "A valid RDF model defining a view for a collection") @RequestBody @Validated Model view) {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
-		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
 	@Operation(summary = "Delete a specific view for a collection")
-	public ResponseEntity<Void> deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
+	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
-		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
 	@Operation(summary = "Retrieve a specific view config for a collection")
-	public ResponseEntity<ViewSpecification> getView(@PathVariable String collectionName,
+	public ViewSpecification getView(@PathVariable String collectionName,
 			@PathVariable String viewName) {
-		ViewSpecification view = viewService.getViewByViewName(new ViewName(collectionName, viewName));
-		return ResponseEntity.ok(view);
+		return viewService.getViewByViewName(new ViewName(collectionName, viewName));
 	}
 }
