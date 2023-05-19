@@ -15,12 +15,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ListViewHttpConverter implements GenericHttpMessageConverter<List<ViewSpecification>> {
+	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final ViewSpecificationConverter viewSpecificationConverter;
 
 	public ListViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
@@ -44,7 +43,7 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 
 	@Override
 	public List<ViewSpecification> read(Type type, Class<?> contextClass, HttpInputMessage inputMessage)
-			throws IOException, HttpMessageNotReadableException {
+			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of viewSpecifications");
 	}
 
@@ -63,12 +62,12 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(MediaType.ALL);
+		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
 	}
 
 	@Override
 	public List<ViewSpecification> read(Class<? extends List<ViewSpecification>> clazz,
-			HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+			HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of viewSpecifications");
 	}
 
@@ -78,10 +77,6 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 		Model model = ModelFactory.createDefaultModel();
 		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
 
-		StringWriter outputStream = new StringWriter();
-
-		RDFDataMgr.write(outputStream, model, Lang.TURTLE);
-
-		outputMessage.getBody().write(outputStream.toString().getBytes(StandardCharsets.UTF_8));
+		RDFDataMgr.write(outputMessage.getBody(), model, Lang.TURTLE);
 	}
 }

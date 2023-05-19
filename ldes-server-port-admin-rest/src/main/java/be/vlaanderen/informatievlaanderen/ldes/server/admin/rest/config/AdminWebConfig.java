@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
@@ -13,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 public class AdminWebConfig {
 
 	@Bean
-	public ModelConverter modelConverter() {
-		return new ModelConverter();
+	public ModelConverter modelConverter(final PrefixAdder prefixAdder) {
+		return new ModelConverter(prefixAdder);
 	}
 
 	@Bean
