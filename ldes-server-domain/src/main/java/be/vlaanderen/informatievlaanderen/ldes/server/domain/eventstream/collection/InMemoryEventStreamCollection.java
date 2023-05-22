@@ -2,7 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collec
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
-import jakarta.annotation.PostConstruct;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -44,7 +45,7 @@ public class InMemoryEventStreamCollection implements EventStreamCollection {
 		eventStreams.remove(collectionName);
 	}
 
-	@PostConstruct
+	@EventListener(ApplicationStartedEvent.class)
 	public void initCollection() {
 		Map<String, EventStream> initialized = repository.retrieveAllEventStreams()
 				.stream()
