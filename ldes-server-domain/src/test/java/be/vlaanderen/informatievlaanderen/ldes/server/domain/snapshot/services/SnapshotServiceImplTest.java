@@ -74,6 +74,16 @@ class SnapshotServiceImplTest {
 	}
 
 	@Test
+	void when_NoDefaultViewIsProvided_then_ThrowExceptionWithCreation() {
+		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(new EventStreamResponse(COLLECTION_NAME, "timestamp", "versionOf", "memberType", false, List.of(), null));
+
+		String expectedErrorMessage = String.format("Unable to create snapshot.\nCause: No default pagination view configured for collection %s", COLLECTION_NAME);
+
+		Exception e = assertThrows(SnapshotCreationException.class, () -> snapshotService.createSnapshot(COLLECTION_NAME));
+		assertEquals(expectedErrorMessage, e.getMessage());
+	}
+
+	@Test
 	void when_NoTreeNodesAreAvailable_SnapshotCreationExceptionIsThrown() {
 		Stream<LdesFragment> treeNodesForSnapshot = Stream.of();
 		when(ldesFragmentRepository.retrieveFragmentsOfView(DEFAULT_VIEW_NAME)).thenReturn(treeNodesForSnapshot);
