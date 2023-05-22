@@ -88,7 +88,8 @@ class AdminEventStreamsRestControllerTest {
 							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shape),
 					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(singleView), shape));
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(singleView),
+							shape));
 		}
 
 		@Test
@@ -114,7 +115,7 @@ class AdminEventStreamsRestControllerTest {
 			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					false, List.of(), shape);
+					true, List.of(), shape);
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 

@@ -87,7 +87,8 @@ class EventStreamControllerTest {
 		hostname = appConfig.getHostName();
 		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", true, List.of(), ModelFactory.createDefaultModel());
+				"http://purl.org/dc/terms/isVersionOf", "memberType", true, List.of(),
+				ModelFactory.createDefaultModel());
 
 		Model shacl = createDefaultModel().add(createResource(appConfig.getHostName() + "/" + COLLECTION),
 				createProperty(NODE_SHAPE_TYPE),
