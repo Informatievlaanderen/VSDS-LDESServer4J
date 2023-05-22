@@ -53,14 +53,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {AdminEventStreamsRestController.class, AppConfig.class})
-@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AppConfig.class })
+@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.validation",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling"})
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling" })
 public class AdminEventStreamsRestControllerSteps {
 	private static final String COLLECTION = "name1";
 	private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
@@ -79,8 +79,10 @@ public class AdminEventStreamsRestControllerSteps {
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {
 		final String collection2 = "name2";
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, false);
-		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
+				false);
+		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
+				true);
 		Model shape = readModelFromFile("example-shape.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("fragmentationStrategy");
@@ -102,15 +104,16 @@ public class AdminEventStreamsRestControllerSteps {
 		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION)).thenReturn(views);
 		when(viewRepository.retrieveAllViewsOfCollection(collection2)).thenReturn(List.of(singleView));
-		when(shaclShapeRepository.retrieveShaclShape(COLLECTION)).thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
-		when(shaclShapeRepository.retrieveShaclShape(collection2)).thenReturn(Optional.of(new ShaclShape(collection2, shape)));
+		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
+				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
+		when(shaclShapeRepository.retrieveShaclShape(collection2))
+				.thenReturn(Optional.of(new ShaclShape(collection2, shape)));
 	}
 
 	@When("the client calls {string}")
 	public void theClientCallsAdminApiVEventStreams(String url) throws Exception {
 		resultActions = mockMvc.perform(get(url).accept(MediaType.valueOf("text/turtle")));
 	}
-
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -144,10 +147,10 @@ public class AdminEventStreamsRestControllerSteps {
 	public void aDbContainingOneEventStream() throws URISyntaxException {
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
 		Model shape = readModelFromFile("example-shape.ttl");
-		when(shaclShapeRepository.retrieveShaclShape(COLLECTION)).thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
+		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
+				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
 	}
-
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
