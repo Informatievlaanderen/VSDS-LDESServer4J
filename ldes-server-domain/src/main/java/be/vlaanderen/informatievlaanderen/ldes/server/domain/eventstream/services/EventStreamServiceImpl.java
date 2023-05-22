@@ -35,7 +35,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 			List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), eventStream.getMemberType(), views, shaclShape.getModel());
+					eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(),
+					views, shaclShape.getModel());
 		}).toList();
 	}
 
@@ -47,7 +48,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.getMemberType(), views, shaclShape.getModel());
+				eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(), views,
+				shaclShape.getModel());
 	}
 
 	@Override
@@ -77,13 +79,16 @@ public class EventStreamServiceImpl implements EventStreamService {
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getTimestampPath(),
 				eventStreamResponse.getVersionOfPath(),
-				eventStreamResponse.getMemberType());
+				eventStreamResponse.getMemberType(),
+				eventStreamResponse.isDefaultViewEnabled());
 		ShaclShape shaclShape = new ShaclShape(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getShacl());
 		eventStreamCollection.saveEventStream(eventStream);
 		shaclShapeService.updateShaclShape(shaclShape);
-		viewService.addDefaultView(eventStream.getCollection());
+		if (eventStreamResponse.isDefaultViewEnabled()) {
+			viewService.addDefaultView(eventStream.getCollection());
+		}
 		return eventStreamResponse;
 	}
 }

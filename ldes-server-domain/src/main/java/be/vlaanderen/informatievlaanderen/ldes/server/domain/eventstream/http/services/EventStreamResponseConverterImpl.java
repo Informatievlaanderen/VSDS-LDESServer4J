@@ -21,6 +21,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 
 	public static final String CUSTOM = "http://example.org/";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
+	public static final Property HAS_DEFAULT_VIEW = createProperty(CUSTOM, "hasDefaultView");
 	private final String hostname;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
@@ -38,10 +39,12 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.orElseThrow();
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
+		final boolean hasDefaultView = getHasDefaultViewResource(model);
 		final List<ViewSpecification> views = getViews(model, collection);
 		final String memberType = getResource(model, MEMBER_TYPE);
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views, shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, hasDefaultView, views,
+				shacl);
 	}
 
 	@Override
@@ -55,9 +58,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				createProperty(eventStreamResponse.getVersionOfPath()));
 		final Statement memberType = createStatement(subject, MEMBER_TYPE,
 				createProperty(eventStreamResponse.getMemberType()));
+		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
+				createTypedLiteral(eventStreamResponse.isDefaultViewEnabled()));
 
 		Model eventStreamModel = createDefaultModel()
-				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType))
+				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, hasDefaultStmt))
 				.add(eventStreamResponse.getShacl())
 				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
 				.add(getViewStatements(eventStreamResponse.getViews()));
@@ -65,6 +70,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		getShaclReferenceStatement(eventStreamResponse.getShacl(), subject).ifPresent(eventStreamModel::add);
 
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
+	}
+
+	private boolean getHasDefaultViewResource(Model model) {
+		return model.listStatements(null, HAS_DEFAULT_VIEW, (Resource) null).nextOptional()
+				.map(statement -> statement.getObject().asLiteral().getBoolean()).orElse(false);
 	}
 
 	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject) {

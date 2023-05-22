@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -7,10 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -25,28 +24,27 @@ public class SnapshotServiceImpl implements SnapshotService {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final SnapshotRepository snapshotRepository;
 	private final SnapshotRelationLinker snapshotRelationLinker;
-	private final ViewService viewService;
+	private final EventStreamService eventStreamService;
 
 	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, LdesFragmentRepository ldesFragmentRepository,
 			SnapshotRepository snapshotRepository, SnapshotRelationLinker snapshotRelationLinker,
-			ViewService viewService) {
+			EventStreamService eventStreamService) {
 		this.snapShotCreator = snapShotCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.snapshotRepository = snapshotRepository;
 		this.snapshotRelationLinker = snapshotRelationLinker;
-		this.viewService = viewService;
+		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
 	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
 
-		ViewName viewName = viewService.getViewsByCollectionName(collectionName).stream()
-				.map(ViewSpecification::getName)
-				.filter(name -> name.equals(new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME)))
-				.findFirst()
-				.orElseThrow(() -> new SnapshotCreationException(
-						"No default pagination view configured for collection " + collectionName));
+		if (!eventStreamService.retrieveEventStream(collectionName).isDefaultViewEnabled()) {
+			throw new SnapshotCreationException(
+					"No default pagination view configured for collection " + collectionName);
+		}
+		ViewName viewName = new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME);
 
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
