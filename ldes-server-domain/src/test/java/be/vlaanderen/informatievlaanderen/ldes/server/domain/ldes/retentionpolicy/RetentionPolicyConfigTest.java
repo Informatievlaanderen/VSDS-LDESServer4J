@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -62,7 +61,7 @@ class RetentionPolicyConfigTest {
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				null,
 				"https://vlaanderen.be/implementatiemodel/gebouwenregister#Perceel",
-				List.of(getFirstViewSpecification(policyName, collectionName)),
+				false, List.of(getFirstViewSpecification(policyName, collectionName)),
 				ModelFactory.createDefaultModel());
 
 	}

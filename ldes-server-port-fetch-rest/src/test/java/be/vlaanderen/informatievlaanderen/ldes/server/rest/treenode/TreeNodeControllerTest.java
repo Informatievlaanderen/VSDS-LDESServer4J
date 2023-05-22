@@ -87,7 +87,7 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
-		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME, null, null, null, List.of(),
+		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME, null, null, null, false, List.of(),
 				ModelFactory.createDefaultModel());
 		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
 
