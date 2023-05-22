@@ -34,4 +34,8 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.findById(id).map(memberEntityMapper::toMember);
 	}
 
+	@Override
+	public void deleteMembersByCollection(String collectionName) {
+		memberEntityRepository.deleteAllByCollectionName(collectionName);
+	}
 }
