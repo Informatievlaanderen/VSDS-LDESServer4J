@@ -27,7 +27,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
-        <maven-assembly-plugin.version>3.5.0</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-release-plugin.version>3.0.0</maven-release-plugin.version>
         <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
@@ -43,7 +43,7 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>3.0.6</spring-boot.version>
+        <spring-boot.version>3.1.0</spring-boot.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.8.0</apache-jena.version>
@@ -81,7 +81,7 @@
         <skipFormatCode>false</skipFormatCode>
         <!--suppress UnresolvedMavenProperty -->
         <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
-        <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
+        <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
         <!-- HASHING -->
         <commons-codec.version>1.15</commons-codec.version>
