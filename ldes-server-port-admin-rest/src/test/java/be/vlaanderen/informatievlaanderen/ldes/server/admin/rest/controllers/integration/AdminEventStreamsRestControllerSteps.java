@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.in
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
@@ -72,7 +72,7 @@ public class AdminEventStreamsRestControllerSteps {
 	@MockBean
 	private DcatViewService dcatViewService;
 	@MockBean
-	private EventStreamCollection eventStreamRepository;
+	private EventStreamRepository eventStreamRepository;
 	@MockBean
 	private ViewRepository viewRepository;
 	@MockBean
@@ -142,7 +142,7 @@ public class AdminEventStreamsRestControllerSteps {
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
 		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(eventStreamRepository).retrieveAllEventStreams();
+		verify(eventStreamRepository, times(2)).retrieveAllEventStreams();
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
