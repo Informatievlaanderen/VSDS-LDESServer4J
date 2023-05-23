@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
@@ -14,7 +14,10 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.InOrder;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -36,7 +39,7 @@ class EventStreamServiceImplTest {
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
 	@Mock
-	private EventStreamCollection eventStreamCollection;
+	private EventStreamRepository eventStreamRepository;
 	@Mock
 	private ApplicationEventPublisher eventPublisher;
 	@Captor
@@ -50,7 +53,7 @@ class EventStreamServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService, eventPublisher);
+		service = new EventStreamServiceImpl(eventStreamRepository, viewService, shaclShapeService, eventPublisher);
 	}
 
 	@Test
@@ -65,7 +68,7 @@ class EventStreamServiceImplTest {
 				"memberType",
 				HAS_DEFAULT_VIEW, views, ModelFactory.createDefaultModel());
 
-		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
+		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
 		when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
 
@@ -78,8 +81,8 @@ class EventStreamServiceImplTest {
 		List<EventStreamResponse> expectedEventStreams = List.of(EVENT_STREAM_RESPONSE, otherEventStreamResponse);
 		assertEquals(expectedEventStreams, eventStreams);
 
-		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService);
-		inOrder.verify(eventStreamCollection).retrieveAllEventStreams();
+		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService);
+		inOrder.verify(eventStreamRepository).retrieveAllEventStreams();
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(otherCollection);
@@ -89,45 +92,45 @@ class EventStreamServiceImplTest {
 
 	@Test
 	void when_collectionExists_then_retrieveEventStream() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
 		when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
 		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
 
 		assertEquals(EVENT_STREAM_RESPONSE, service.retrieveEventStream(COLLECTION));
 
-		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService);
-		inOrder.verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService);
+		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
 	}
 
 	@Test
 	void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 
 		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
 	}
 
 	@Test
 	void when_collectionExists_and_retrieveMemberType_then_retrieveMemberType() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
 
 		String memberType = assertDoesNotThrow(() -> service.retrieveMemberType(COLLECTION));
 		assertEquals(MEMBER_TYPE, memberType);
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
 	}
 
 	@Test
 	void when_collectionDoesNotExist_and_retrieveMemberType_then_throwException() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 
 		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveMemberType(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(shaclShapeService, viewService);
 	}
 
@@ -140,7 +143,7 @@ class EventStreamServiceImplTest {
 		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath, memberType,
 				HAS_DEFAULT_VIEW);
 
-		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
+		when(eventStreamRepository.saveEventStream(eventStream)).thenReturn(eventStream);
 		when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
 		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
 				memberType, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
@@ -148,8 +151,8 @@ class EventStreamServiceImplTest {
 		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
 
 		assertEquals(eventStreamResponse, updatedEventStream);
-		InOrder inOrder = inOrder(eventStreamCollection, shaclShapeService, viewService);
-		inOrder.verify(eventStreamCollection).saveEventStream(eventStream);
+		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+		inOrder.verify(eventStreamRepository).saveEventStream(eventStream);
 		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -163,7 +166,7 @@ class EventStreamServiceImplTest {
 		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath, memberType,
 				true);
 
-		when(eventStreamCollection.saveEventStream(eventStream)).thenReturn(eventStream);
+		when(eventStreamRepository.saveEventStream(eventStream)).thenReturn(eventStream);
 		when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
 		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
 				memberType, true, List.of(), ModelFactory.createDefaultModel());
@@ -171,30 +174,30 @@ class EventStreamServiceImplTest {
 		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
 
 		assertEquals(eventStreamResponse, updatedEventStream);
-		InOrder inOrder = inOrder(eventStreamCollection, shaclShapeService, viewService);
-		inOrder.verify(eventStreamCollection).saveEventStream(eventStream);
+		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+		inOrder.verify(eventStreamRepository).saveEventStream(eventStream);
 		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
 		inOrder.verify(viewService).addDefaultView(COLLECTION);
 	}
 
 	@Test
 	void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 		Exception e = assertThrows(MissingEventStreamException.class, () -> service.deleteEventStream(COLLECTION));
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
-		verifyNoMoreInteractions(eventStreamCollection);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verifyNoMoreInteractions(eventStreamRepository);
 		verifyNoInteractions(viewService, shaclShapeService, eventPublisher);
 	}
 
 	@Test
 	void when_collectionExists_and_triesToDeleteEventStream_then_throwExceptionWithRetrieval() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM)).thenReturn(Optional.empty());
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM)).thenReturn(Optional.empty());
 
 		service.deleteEventStream(COLLECTION);
 
-		InOrder inOrder = inOrder(eventStreamCollection, eventPublisher);
-		inOrder.verify(eventStreamCollection).deleteEventStream(COLLECTION);
+		InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
+		inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
 		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
 		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());
 		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
