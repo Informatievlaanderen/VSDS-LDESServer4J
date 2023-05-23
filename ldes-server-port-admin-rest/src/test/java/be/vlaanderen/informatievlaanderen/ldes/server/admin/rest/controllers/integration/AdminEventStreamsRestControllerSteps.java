@@ -1,14 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.integration;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -16,20 +11,12 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -49,31 +36,12 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@CucumberContextConfiguration
-@EnableAutoConfiguration
-@ActiveProfiles("test")
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AppConfig.class, PrefixAdderImpl.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.validation",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling" })
-public class AdminEventStreamsRestControllerSteps {
+public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest {
 	private static final String COLLECTION = "name1";
 	private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	private static final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 	private ResultActions resultActions;
-	@MockBean
-	private EventStreamCollection eventStreamRepository;
-	@MockBean
-	private ViewRepository viewRepository;
-	@MockBean
-	private ShaclShapeRepository shaclShapeRepository;
 	@Autowired
 	private MockMvc mockMvc;
 
@@ -102,7 +70,7 @@ public class AdminEventStreamsRestControllerSteps {
 						List.of(),
 						List.of(fragmentationConfig)));
 
-		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
+		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION)).thenReturn(views);
 		when(viewRepository.retrieveAllViewsOfCollection(collection2)).thenReturn(List.of(singleView));
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
@@ -139,7 +107,7 @@ public class AdminEventStreamsRestControllerSteps {
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
 		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(eventStreamRepository).retrieveAllEventStreams();
+		verify(eventStreamCollection).retrieveAllEventStreams();
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
@@ -150,41 +118,41 @@ public class AdminEventStreamsRestControllerSteps {
 		Model shape = readModelFromFile("example-shape.ttl");
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
-		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
+		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
 	}
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
 		Model expectedModel = readModelFromFile("ldes-1.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
 
 	@Given("an empty db")
 	public void anEmptyDb() {
-		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 	}
 
 	@And("I verify the db interaction")
 	public void iVerifyTheDbInteraction() {
-		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeRepository, viewRepository);
-		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		InOrder inOrder = inOrder(eventStreamCollection, shaclShapeRepository, viewRepository);
+		inOrder.verify(eventStreamCollection).retrieveEventStream(COLLECTION);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@And("I verify the event stream retrieval interaction")
 	public void iVerifyTheEventStreamRetrievalInteraction() {
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
 	}
 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
-		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
+		assertEquals(Optional.empty(), eventStreamCollection.retrieveEventStream(COLLECTION));
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
 		final Model shacl = readModelFromFile("example-shape.ttl");
-		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
+		when(eventStreamCollection.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
@@ -201,7 +169,7 @@ public class AdminEventStreamsRestControllerSteps {
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
-		verify(eventStreamRepository).saveEventStream(any());
+		verify(eventStreamCollection).saveEventStream(any());
 		verify(shaclShapeRepository).saveShaclShape(any());
 	}
 
@@ -215,7 +183,7 @@ public class AdminEventStreamsRestControllerSteps {
 
 	@And("I verify the absent of interactions")
 	public void iVerifyTheAbsentOfInteractions() {
-		verifyNoInteractions(eventStreamRepository);
+		verifyNoInteractions(eventStreamCollection);
 	}
 
 	@When("the client deletes the event stream")
@@ -225,8 +193,8 @@ public class AdminEventStreamsRestControllerSteps {
 
 	@And("I verify the db interactions")
 	public void iVerifyTheDbInteractions() {
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-		verify(eventStreamRepository).deleteEventStream(COLLECTION);
+		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verify(eventStreamCollection).deleteEventStream(COLLECTION);
 		verify(shaclShapeRepository).deleteShaclShape(COLLECTION);
 	}
 }
