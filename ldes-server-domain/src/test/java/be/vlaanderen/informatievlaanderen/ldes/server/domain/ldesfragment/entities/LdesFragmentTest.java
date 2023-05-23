@@ -43,13 +43,13 @@ class LdesFragmentTest {
 		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&tile=0/0/0",
 				ldesFragment.getFragmentId().asString());
 		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z",
-				ldesFragment.getParentId());
+				ldesFragment.getParentIdAsString());
 
 		ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of()));
 		assertEquals("/collectionName/mobility-hindrances",
 				ldesFragment.getFragmentId().asString());
-		assertEquals("root", ldesFragment.getParentId());
+		assertEquals("root", ldesFragment.getParentIdAsString());
 
 	}
 
@@ -81,6 +81,20 @@ class LdesFragmentTest {
 		assertFalse(ldesFragment.isImmutable());
 		ldesFragment.makeImmutable();
 		assertTrue(ldesFragment.isImmutable());
+	}
+
+	@Test
+	void when_ParentExists_Then_ReturnIdParent() {
+		LdesFragment parent = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(PARENT_FRAGMENT_PAIR)));
+		LdesFragment child = parent.createChild(CHILD_FRAGMENT_PAIR);
+		assertEquals(parent.getFragmentId(), child.getParentId().get());
+		assertEquals(parent.getFragmentId().asString(), child.getParentIdAsString());
+	}
+	@Test
+	void when_ParentDoesNotExists_Then_ReturnEmpty() {
+		LdesFragment rootFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		assertEquals(Optional.empty(), rootFragment.getParentId());
+		assertEquals("root", rootFragment.getParentIdAsString());
 	}
 
 	@Test

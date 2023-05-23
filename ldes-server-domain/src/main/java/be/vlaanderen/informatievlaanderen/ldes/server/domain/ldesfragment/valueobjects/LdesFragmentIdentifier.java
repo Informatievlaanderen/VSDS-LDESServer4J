@@ -70,25 +70,15 @@ public class LdesFragmentIdentifier {
 		return stringBuilder.toString();
 	}
 
-	public String getParentId() {
+	public Optional<LdesFragmentIdentifier> getParentId() {
 
 		if (!this.fragmentPairs.isEmpty()) {
 			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
 			parentPairs.remove(parentPairs.size() - 1);
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder
-					.append("/").append(viewName.asString());
-			if (!parentPairs.isEmpty()) {
 
-				stringBuilder.append("?");
-				stringBuilder
-						.append(parentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
-								"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
-			}
-			return stringBuilder.toString();
+			return Optional.of(new LdesFragmentIdentifier(viewName, parentPairs));
 		}
-
-		return "root";
+		return Optional.empty();
 	}
 
 	@Override

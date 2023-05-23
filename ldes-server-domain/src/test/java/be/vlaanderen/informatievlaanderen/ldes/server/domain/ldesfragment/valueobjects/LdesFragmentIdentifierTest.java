@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,6 +66,16 @@ class LdesFragmentIdentifierTest {
 	@Test
 	void when_NonRootFragmentIdentifier_Then_CreateFragmentIdString() {
 		assertEquals(fragmentIdString, fragmentId.asString());
+	}
+
+	@Test
+	void when_KeyPresent_Then_ReturnKey() {
+		assertEquals(fragmentPairValue1, fragmentId.getValueOfFragmentPairKey(fragmentPairKey1).get());
+	}
+
+	@Test
+	void when_KeyNotPresent_Then_ReturnEmptyOptional() {
+		assertEquals(Optional.empty(), fragmentId.getValueOfFragmentPairKey("NotPresent"));
 	}
 
 }

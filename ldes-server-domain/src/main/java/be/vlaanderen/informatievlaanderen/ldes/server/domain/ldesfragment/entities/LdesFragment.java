@@ -64,8 +64,12 @@ public class LdesFragment {
 		return this.numberOfMembers;
 	}
 
-	public String getParentId() {
+	public Optional<LdesFragmentIdentifier> getParentId() {
 		return identifier.getParentId();
+	}
+
+	public String getParentIdAsString() {
+		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> "root");
 	}
 
 	@Override
