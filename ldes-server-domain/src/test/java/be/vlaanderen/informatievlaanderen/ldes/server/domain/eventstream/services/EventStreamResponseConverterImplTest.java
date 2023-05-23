@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
@@ -31,7 +32,7 @@ class EventStreamResponseConverterImplTest {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8080");
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig,
-				new RetentionModelExtractor());
+				new RetentionModelExtractor(), new FragmentationConfigExtractor());
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamResponseConverterImpl(appConfig, viewSpecificationConverter, prefixAdder);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
