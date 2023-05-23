@@ -20,6 +20,7 @@ class LdesFragmentTest {
 	private static final String GENERATED_AT_TIME = "generatedAtTime";
 	private static final String FRAGMENTATION_VALUE_2 = "0/0/0";
 	private static final String TILE = "tile";
+	private static final String ROOT = "root";
 	public static final FragmentPair PARENT_FRAGMENT_PAIR = new FragmentPair("a", "b");
 	public static final FragmentPair CHILD_FRAGMENT_PAIR = new FragmentPair("c", "d");
 
@@ -49,7 +50,7 @@ class LdesFragmentTest {
 				VIEW_NAME, List.of()));
 		assertEquals("/collectionName/mobility-hindrances",
 				ldesFragment.getFragmentId().asString());
-		assertEquals("root", ldesFragment.getParentIdAsString());
+		assertEquals(ROOT, ldesFragment.getParentIdAsString());
 
 	}
 
@@ -94,7 +95,7 @@ class LdesFragmentTest {
 	void when_ParentDoesNotExists_Then_ReturnEmpty() {
 		LdesFragment rootFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		assertEquals(Optional.empty(), rootFragment.getParentId());
-		assertEquals("root", rootFragment.getParentIdAsString());
+		assertEquals(ROOT, rootFragment.getParentIdAsString());
 	}
 
 	@Test
