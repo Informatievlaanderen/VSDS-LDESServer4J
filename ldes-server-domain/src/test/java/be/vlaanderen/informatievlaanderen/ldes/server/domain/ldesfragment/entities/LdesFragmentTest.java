@@ -91,7 +91,6 @@ class LdesFragmentTest {
 		assertEquals(parent.getFragmentId(), child.getParentId().get());
 		assertEquals(parent.getFragmentIdString(), child.getParentIdAsString());
 	}
-
 	@Test
 	void when_ParentDoesNotExists_Then_ReturnEmpty() {
 		LdesFragment rootFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
