@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment.ROOT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -20,7 +21,6 @@ class LdesFragmentTest {
 	private static final String GENERATED_AT_TIME = "generatedAtTime";
 	private static final String FRAGMENTATION_VALUE_2 = "0/0/0";
 	private static final String TILE = "tile";
-	private static final String ROOT = "root";
 	public static final FragmentPair PARENT_FRAGMENT_PAIR = new FragmentPair("a", "b");
 	public static final FragmentPair CHILD_FRAGMENT_PAIR = new FragmentPair("c", "d");
 
@@ -91,6 +91,7 @@ class LdesFragmentTest {
 		assertEquals(parent.getFragmentId(), child.getParentId().get());
 		assertEquals(parent.getFragmentId().asString(), child.getParentIdAsString());
 	}
+
 	@Test
 	void when_ParentDoesNotExists_Then_ReturnEmpty() {
 		LdesFragment rootFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
