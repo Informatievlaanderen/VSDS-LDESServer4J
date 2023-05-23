@@ -12,6 +12,7 @@ import java.util.Optional;
 
 public class LdesFragment {
 
+	public static final String ROOT = "root";
 	private final LdesFragmentIdentifier identifier;
 	private Boolean immutable;
 	private final int numberOfMembers;
@@ -69,7 +70,7 @@ public class LdesFragment {
 	}
 
 	public String getParentIdAsString() {
-		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> "root");
+		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> ROOT);
 	}
 
 	@Override
