@@ -21,7 +21,7 @@ import java.util.List;
 import static org.apache.jena.riot.WebContent.*;
 
 @RestController
-@RequestMapping("/admin/api/v1")
+@RequestMapping("/admin/api/v1/eventstreams/{collectionName}/views")
 @Tag(name = "Views")
 public class AdminViewsRestController {
 	private final ViewService viewService;
@@ -40,7 +40,7 @@ public class AdminViewsRestController {
 		binder.setValidator(viewValidator);
 	}
 
-	@GetMapping("/eventstreams/{collectionName}/views")
+	@GetMapping
 	@Operation(summary = "Retrieve a list of configured views for a collection")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = "application/json")
@@ -49,7 +49,7 @@ public class AdminViewsRestController {
 		return viewService.getViewsByCollectionName(collectionName);
 	}
 
-	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { contentTypeJSONLD, contentTypeNQuads,
+	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads,
 			contentTypeTurtle })
 	@Operation(summary = "Add a view to a collection")
 	public void putViews(@PathVariable String collectionName,
@@ -57,13 +57,13 @@ public class AdminViewsRestController {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 	}
 
-	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
+	@DeleteMapping("/{viewName}")
 	@Operation(summary = "Delete a specific view for a collection")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
-	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
+	@GetMapping("/{viewName}")
 	@Operation(summary = "Retrieve a specific view config for a collection")
 	public ViewSpecification getView(@PathVariable String collectionName,
 			@PathVariable String viewName) {
