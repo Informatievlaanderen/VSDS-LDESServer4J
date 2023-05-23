@@ -70,7 +70,7 @@ public class LdesFragmentEntity {
 		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
 				ldesFragment.isRoot(),
 				ldesFragment.isImmutable(),
-				ldesFragment.getParentId(),
+				ldesFragment.getParentIdAsString(),
 				ldesFragment.getNumberOfMembers(),
 				ldesFragment.getRelations());
 	}
