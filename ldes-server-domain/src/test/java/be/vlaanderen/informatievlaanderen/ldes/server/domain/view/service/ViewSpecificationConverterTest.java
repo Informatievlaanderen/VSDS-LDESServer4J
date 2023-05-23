@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -31,7 +30,8 @@ class ViewSpecificationConverterTest {
 	void setup() throws URISyntaxException {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8080");
-		viewSpecificationConverter = new ViewSpecificationConverter(appConfig, new RetentionModelExtractor());
+		viewSpecificationConverter = new ViewSpecificationConverter(appConfig, new RetentionModelExtractor(),
+				new FragmentationConfigExtractor());
 		Model retentionModel = readModelFromFile("retentionpolicy/timebased/valid_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("fragmentation");
@@ -71,9 +71,31 @@ class ViewSpecificationConverterTest {
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
-		System.out.println(RdfModelConverter.toString(viewModel, Lang.TURTLE));
-		System.out.println(RdfModelConverter.toString(actualModel, Lang.TURTLE));
 		assertTrue(viewModel.isIsomorphicWith(actualModel));
+	}
+
+	@Test
+	void when_MultipleFragmentationStrategies_Then_OrderIsKept() throws URISyntaxException {
+		Model viewModel = readModelFromFile("viewconverter/view_multiple_fragmentations.ttl");
+		ViewSpecification expectedViewSpecification = getExpectedViewSpecification();
+
+		ViewSpecification viewSpecification = viewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME);
+
+		assertEquals(expectedViewSpecification.getFragmentations(), viewSpecification.getFragmentations());
+		assertEquals(expectedViewSpecification.getRetentionConfigs(), viewSpecification.getRetentionConfigs());
+	}
+
+	private ViewSpecification getExpectedViewSpecification() {
+		FragmentationConfig geospatialConfig = new FragmentationConfig();
+		geospatialConfig.setName("geospatial");
+		geospatialConfig.setConfig(
+				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
+		FragmentationConfig paginationConfig = new FragmentationConfig();
+		paginationConfig.setName("pagination");
+		paginationConfig.setConfig(
+				Map.of("memberLimit", "100"));
+		List<FragmentationConfig> fragmentations = List.of(geospatialConfig, paginationConfig);
+		return new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), fragmentations);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

@@ -7,9 +7,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.CUSTOM;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_OBJECT;
@@ -30,10 +28,13 @@ public class ViewSpecificationConverter {
 	public static final String FRAGMENTATION_NAME = "name";
 	private final String hostname;
 	private final RetentionModelExtractor retentionModelExtractor;
+	private final FragmentationConfigExtractor fragmentationConfigExtractor;
 
-	public ViewSpecificationConverter(AppConfig appConfig, RetentionModelExtractor retentionModelExtractor) {
+	public ViewSpecificationConverter(AppConfig appConfig, RetentionModelExtractor retentionModelExtractor,
+			FragmentationConfigExtractor fragmentationConfigExtractor) {
 		this.hostname = appConfig.getHostName();
 		this.retentionModelExtractor = retentionModelExtractor;
+		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
 	}
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
@@ -43,12 +44,12 @@ public class ViewSpecificationConverter {
 		view.setName(viewNameFromStatements(statements, collectionName));
 		view.setCollectionName(collectionName);
 		view.setRetentionPolicies(retentionModelExtractor.extractRetentionStatements(viewModel));
-		view.setFragmentations(fragmentationListFromStatements(statements));
-
+		view.setFragmentations(fragmentationConfigExtractor.extractFragmentationConfigs(statements));
 		return view;
 	}
 
-	public Model modelFromView(ViewSpecification view) {
+	public Model
+	modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
 		Statement viewDescription = createStatement(
@@ -102,28 +103,10 @@ public class ViewSpecificationConverter {
 		return new ViewName(collectionName, nameString);
 	}
 
-	private List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {
-		List<FragmentationConfig> fragmentationList = new ArrayList<>();
-		for (RDFNode fragmentation : statements.stream()
-				.filter(new ConfigFilterPredicate(FRAGMENTATION_OBJECT))
-				.map(Statement::getObject).toList()) {
-			List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
-			FragmentationConfig config = new FragmentationConfig();
-			Map<String, String> configMap = extractConfigMap(fragmentationStatements);
-			if (!configMap.containsKey(FRAGMENTATION_NAME)) {
-				throw new ModelToViewConverterException("Missing fragmentation name");
-			}
-			config.setName(configMap.remove(FRAGMENTATION_NAME));
-			config.setConfig(configMap);
-			fragmentationList.add(config);
-		}
-
-		return fragmentationList;
-	}
-
 	private List<Statement> fragmentationStatementsFromList(Resource viewName,
 			List<FragmentationConfig> fragmentationList) {
 		List<Statement> statements = new ArrayList<>();
+
 		for (FragmentationConfig fragmentation : fragmentationList) {
 			Resource fragmentationResource = createResource();
 			statements.add(createStatement(
@@ -137,26 +120,4 @@ public class ViewSpecificationConverter {
 		return statements;
 	}
 
-	private List<Statement> retrieveAllStatements(RDFNode resource, List<Statement> statements) {
-		List<Statement> statementList = new ArrayList<>();
-		statements.stream()
-				.filter(statement -> statement.getSubject().equals(resource))
-				.forEach(statement -> {
-					statementList.add(statement);
-					if (statement.getObject().isResource()) {
-						statementList.addAll(retrieveAllStatements(statement.getResource(), statements));
-					}
-				});
-		return statementList;
-	}
-
-	private Map<String, String> extractConfigMap(List<Statement> statementList) {
-		Map<String, String> configMap = new HashMap<>();
-		statementList.stream()
-				.filter(statement -> !statement.getPredicate().toString().equals(RDF_SYNTAX_TYPE.toString()))
-				.forEach(statement -> configMap.put(
-						statement.getPredicate().getLocalName(),
-						statement.getObject().asLiteral().getString()));
-		return configMap;
-	}
 }
