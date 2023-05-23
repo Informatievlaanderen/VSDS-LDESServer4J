@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.in
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
@@ -53,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AppConfig.class })
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AppConfig.class, PrefixAdderImpl.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
