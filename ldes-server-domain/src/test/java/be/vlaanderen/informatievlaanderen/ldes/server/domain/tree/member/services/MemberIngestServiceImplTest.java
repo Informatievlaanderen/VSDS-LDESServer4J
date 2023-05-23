@@ -78,13 +78,15 @@ class MemberIngestServiceImplTest {
 	void when_EventStreamIsDeleted_then_DeleteAllMembers() throws IOException {
 		final String collection = "collectionName";
 		final String memberId = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1";
-		final String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+		final String ldesMemberString = FileUtils.readFileToString(
+				ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		final Member member = new Member(
 				memberId, collection, 0L, null, null, RdfModelConverter.fromString(ldesMemberString, Lang.NQUADS),
 				List.of());
 		when(memberRepository.getMemberStreamOfCollection(collection)).thenReturn(Stream.of(member));
-		((MemberIngestServiceImpl) memberIngestService).handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collection));
+		((MemberIngestServiceImpl) memberIngestService)
+				.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collection));
 		InOrder inOrder = inOrder(memberRepository);
 		inOrder.verify(memberRepository).getMemberStreamOfCollection(collection);
 		inOrder.verify(memberRepository).deleteMember(memberId);
