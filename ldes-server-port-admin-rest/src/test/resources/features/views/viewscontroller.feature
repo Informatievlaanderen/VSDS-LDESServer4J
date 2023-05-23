@@ -1,6 +1,5 @@
 Feature: views can be configured at runtime
-  Scenario: get all views of a collection
-    Given a dbs containing multiple eventstreams
-    When the clients calls "/admin/api/v1/eventstreams"
-    Then the clients receives HTTP status 200
-    And the clients receives a valid list of event streams
+  Scenario: Add a view to a collection
+    When A PUT request is made to "/admin/api/v1/eventstreams/collection/views" with body from file "view-1.ttl"
+    Then The ViewSpecification with id "collection/view1" is saved in the ViewRepository
+    And HTTP Status code 200 is received

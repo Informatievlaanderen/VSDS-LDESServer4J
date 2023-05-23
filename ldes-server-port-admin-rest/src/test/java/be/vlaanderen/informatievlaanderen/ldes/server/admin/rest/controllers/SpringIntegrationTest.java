@@ -22,7 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AppConfig.class, PrefixAdderImpl.class })
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminViewsRestController.class,
+		AppConfig.class, PrefixAdderImpl.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
