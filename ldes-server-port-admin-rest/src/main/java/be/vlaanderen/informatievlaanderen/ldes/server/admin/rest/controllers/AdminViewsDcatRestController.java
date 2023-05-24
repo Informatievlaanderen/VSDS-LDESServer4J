@@ -86,7 +86,7 @@ public class AdminViewsDcatRestController {
 		dcatViewService.update(new ViewName(collectionName, viewName), dcat);
 	}
 
-	@DeleteMapping("/{viewName}")
+	@DeleteMapping
 	@Operation(summary = "Delete dcat metadata for a view")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		dcatViewService.remove(new ViewName(collectionName, viewName));

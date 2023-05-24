@@ -100,7 +100,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
+					.andExpect(IsIsomorphicResult.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
 		}
@@ -121,7 +121,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(IsIsomorphic.with(model));
+					.andExpect(IsIsomorphicResult.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
 		}
@@ -159,7 +159,7 @@ class AdminEventStreamsRestControllerTest {
 					.content(readDataFromFile("ldes-1.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isOk())
-					.andExpect(IsIsomorphic.with(expectedModel));
+					.andExpect(IsIsomorphicResult.with(expectedModel));
 
 			verify(eventStreamService).saveEventStream(any(EventStreamResponse.class));
 		}
