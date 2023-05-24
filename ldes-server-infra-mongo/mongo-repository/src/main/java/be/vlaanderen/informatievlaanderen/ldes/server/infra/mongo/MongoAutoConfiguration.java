@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.repositories.ServerDcatRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -13,6 +14,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesF
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.ServerDcatMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.repository.ServerDcatEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.ShaclShapeMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.repository.ShaclShapeEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.SnapshotMongoRepository;
@@ -78,6 +81,12 @@ public class MongoAutoConfiguration {
 	@ConditionalOnMissingBean
 	public ViewRepository viewMongoRepository(final ViewEntityRepository viewEntityRepository) {
 		return new ViewMongoRepository(viewEntityRepository);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public ServerDcatRepository serverDcatRepository(final ServerDcatEntityRepository serverDcatEntityRepository) {
+		return new ServerDcatMongoRepository(serverDcatEntityRepository);
 	}
 
 	@Bean
