@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
 import static org.apache.commons.lang3.Validate.notNull;
@@ -20,6 +19,6 @@ public class DcatView {
         return new DcatView(notNull(viewName), dcat);
     }
 
-    // TODO: 24/05/2023 eq and hash
+    // TODO TVB: 24/05/2023 eq and hash
 
 }
