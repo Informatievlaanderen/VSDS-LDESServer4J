@@ -25,7 +25,8 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
-	@ExceptionHandler(value = { LdesShaclValidationException.class, RiotException.class, IllegalArgumentException.class })
+	@ExceptionHandler(value = { LdesShaclValidationException.class, RiotException.class,
+			IllegalArgumentException.class })
 	protected ResponseEntity<Object> handleBadRequest(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);

@@ -20,26 +20,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DcatViewValidatorTest {
 
 	private final static String validDcatView = """
-					@prefix dct:   <http://purl.org/dc/terms/> .
-					@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-					@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
-					@prefix org:   <http://www.w3.org/ns/org#> .
-					@prefix legal: <http://www.w3.org/ns/legal#> .
-					@prefix m8g:   <http://data.europa.eu/m8g/>
-					@prefix locn:  <http://www.w3.org/ns/locn#>
-					@prefix skos:  <http://www.w3.org/2004/02/skos/core#>
-					     
-					[] a dcat:DataService ;
-							dct:title "My geo-spatial view"@en ;
-							dct:description "Geospatial fragmentation for my LDES"@en ;
-							dct:license [
-									a dct:LicenseDocument ;
-									dct:type [
-											a skos:Concept;
-											skos:prefLabel "some public license"@en
-									]
-							] .
-	""";
+							@prefix dct:   <http://purl.org/dc/terms/> .
+							@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+							@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+							@prefix org:   <http://www.w3.org/ns/org#> .
+							@prefix legal: <http://www.w3.org/ns/legal#> .
+							@prefix m8g:   <http://data.europa.eu/m8g/>
+							@prefix locn:  <http://www.w3.org/ns/locn#>
+							@prefix skos:  <http://www.w3.org/2004/02/skos/core#>
+
+							[] a dcat:DataService ;
+									dct:title "My geo-spatial view"@en ;
+									dct:description "Geospatial fragmentation for my LDES"@en ;
+									dct:license [
+											a dct:LicenseDocument ;
+											dct:type [
+													a skos:Concept;
+													skos:prefLabel "some public license"@en
+											]
+									] .
+			""";
 
 	private DcatViewValidator validator;
 
@@ -51,7 +51,7 @@ class DcatViewValidatorTest {
 	@Test
 	void should_NotThrowAnything_when_Valid() {
 		final Model model = RDFParser.fromString(validDcatView).lang(Lang.TURTLE).build().toModel();
-		//noinspection DataFlowIssue
+		// noinspection DataFlowIssue
 		assertDoesNotThrow(() -> validator.validate(model, null));
 	}
 
@@ -60,7 +60,7 @@ class DcatViewValidatorTest {
 	void should_ThrowIllegalArgumentException_when_Invalid(String name, String turtleDcatString) {
 		assertNotNull(name);
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
-		//noinspection DataFlowIssue
+		// noinspection DataFlowIssue
 		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
 	}
 
@@ -70,11 +70,12 @@ class DcatViewValidatorTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of("should_ThrowException_when_DataServiceHasIdentity", createDataServiceWithIdentity()),
-					Arguments.of("should_ThrowException_when_ModelHasMultipleDataServices", createModelWithMultipleDataServices()),
-					Arguments.of("should_ThrowException_when_ModelHasServesDatasetPredicate", createModelWithServesDatasetPredicate()),
+					Arguments.of("should_ThrowException_when_ModelHasMultipleDataServices",
+							createModelWithMultipleDataServices()),
+					Arguments.of("should_ThrowException_when_ModelHasServesDatasetPredicate",
+							createModelWithServesDatasetPredicate()),
 					Arguments.of("should_ThrowException_when_ModelHasADataset", createModelWithADataset()),
-					Arguments.of("should_ThrowException_when_ModelHasACatalog", createModelWithACatalog())
-			);
+					Arguments.of("should_ThrowException_when_ModelHasACatalog", createModelWithACatalog()));
 		}
 
 		private String createDataServiceWithIdentity() {
@@ -84,17 +85,17 @@ class DcatViewValidatorTest {
 		private String createModelWithMultipleDataServices() {
 			return validDcatView + "\n\n" +
 					"""
-                        [] a dcat:DataService ;
-                          dct:title "My geo-spatial view"@en ;
-                          dct:description "Geospatial fragmentation for my LDES"@en ;
-                          dct:license [
-                            a dct:LicenseDocument ;
-                            dct:type [
-                              a skos:Concept;
-                              skos:prefLabel "some public license"@en
-                            ]
-                          ] .
-                    """;
+							    [] a dcat:DataService ;
+							      dct:title "My geo-spatial view"@en ;
+							      dct:description "Geospatial fragmentation for my LDES"@en ;
+							      dct:license [
+							        a dct:LicenseDocument ;
+							        dct:type [
+							          a skos:Concept;
+							          skos:prefLabel "some public license"@en
+							        ]
+							      ] .
+							""";
 		}
 
 		private String createModelWithServesDatasetPredicate() {
@@ -106,19 +107,19 @@ class DcatViewValidatorTest {
 		private String createModelWithADataset() {
 			return validDcatView + "\n\n" +
 					"""
-                        [] a dcat:Dataset ;
-                          dct:title "My dataset"@en ;
-                          dct:description "Geospatial dataset for my LDES"@en .
-                    """;
+							    [] a dcat:Dataset ;
+							      dct:title "My dataset"@en ;
+							      dct:description "Geospatial dataset for my LDES"@en .
+							""";
 		}
 
 		private String createModelWithACatalog() {
 			return validDcatView + "\n\n" +
 					"""
-                        [] a dcat:Catalog ;
-                          dct:title "My catalog"@en ;
-                          dct:description "Geospatial catalog for my LDES"@en .
-                    """;
+							    [] a dcat:Catalog ;
+							      dct:title "My catalog"@en ;
+							      dct:description "Geospatial catalog for my LDES"@en .
+							""";
 		}
 
 	}
