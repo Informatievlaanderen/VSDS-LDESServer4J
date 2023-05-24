@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.Mode
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -21,8 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.function.ToDoubleBiFunction;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,6 +29,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -108,21 +108,32 @@ class AdminViewsDcatRestControllerTest {
             mockMvc.perform(put(BASE_URL)
                             .content(writeToTurtle(dcat))
                             .contentType(Lang.TURTLE.getHeaderString()))
-                    .andExpect(status().isCreated());
+                    .andExpect(status().isOk());
 
             verify(dcatViewService)
                     .update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
         }
 
         @Test
-        void should_Return404_when_ResourceNotFound() {
-            // TODO: 24/05/2023
+        void should_Return404_when_ResourceNotFound() throws Exception {
+            doThrow(MissingViewDcatException.class).when(dcatViewService).update(any(), any());
+
+            Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
+            mockMvc.perform(put(BASE_URL)
+                            .content(writeToTurtle(dcat))
+                            .contentType(Lang.TURTLE.getHeaderString()))
+                    .andExpect(status().isNotFound());
+
+            verify(dcatViewService)
+                    .update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
         }
     }
 
     @Test
-    void DELETE() {
-        // TODO: 24/05/2023
+    void should_Return200_when_DeletedSuccessfully() throws Exception {
+        mockMvc.perform(delete(BASE_URL)).andExpect(status().isOk());
+
+        verify(dcatViewService).remove(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)));
     }
 
     private Model readTurtleFromFile(String path) {
