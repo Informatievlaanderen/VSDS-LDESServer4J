@@ -28,7 +28,7 @@ public class AdminViewsRestController {
 	private final ViewValidator viewValidator;
 	private final ViewSpecificationConverter viewConverter;
 
-	// TODO: 23/05/2023 inject dcat service
+	// TODO TVB: 23/05/2023 inject dcat service
 	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator,
 			ViewSpecificationConverter viewConverter) {
 		this.viewService = viewService;
@@ -58,14 +58,14 @@ public class AdminViewsRestController {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 	}
 
-	// TODO: 23/05/2023 delete dcat
+	// TODO TVB: 23/05/2023 delete dcat
 	@DeleteMapping("/{viewName}")
 	@Operation(summary = "Delete a specific view for a collection")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
-	// TODO: 23/05/2023 add dcat
+	// TODO TVB: 23/05/2023 add dcat
 	@GetMapping("/{viewName}")
 	@Operation(summary = "Retrieve a specific view config for a collection")
 	public ViewSpecification getView(@PathVariable String collectionName,

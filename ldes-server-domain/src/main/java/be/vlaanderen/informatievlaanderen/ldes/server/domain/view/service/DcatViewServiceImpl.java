@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.apache.jena.rdf.model.Model;
 import org.springframework.stereotype.Service;
 
-// TODO: 24/05/2023 test
+// TODO TVB: 24/05/2023 test
 @Service
 public class DcatViewServiceImpl implements DcatViewService {
 
