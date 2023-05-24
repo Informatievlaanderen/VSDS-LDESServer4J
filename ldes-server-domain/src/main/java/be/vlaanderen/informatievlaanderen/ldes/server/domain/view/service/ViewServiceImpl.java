@@ -12,13 +12,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
+@Service
 public class ViewServiceImpl implements ViewService {
 	public static final String DEFAULT_VIEW_NAME = "by-page";
 	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";

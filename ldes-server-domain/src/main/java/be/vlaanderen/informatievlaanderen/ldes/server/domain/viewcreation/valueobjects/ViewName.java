@@ -11,8 +11,8 @@ public class ViewName implements Serializable {
 	private final String collectionName;
 
 	public ViewName(String collectionName, String name) {
-		this.name = name;
 		this.collectionName = collectionName;
+		this.name = name;
 	}
 
 	public ViewName withCollectionName(String collectionName) {

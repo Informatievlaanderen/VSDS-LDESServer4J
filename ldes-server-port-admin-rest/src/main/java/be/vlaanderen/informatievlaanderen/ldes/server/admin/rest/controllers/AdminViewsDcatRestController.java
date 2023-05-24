@@ -1,43 +1,34 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatViewValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.vocabulary.RDF;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-import static org.apache.jena.riot.WebContent.*;
+import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
+import static org.apache.jena.riot.WebContent.contentTypeNQuads;
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @RestController
 @RequestMapping("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat")
 @Tag(name = "Views DCAT")
 public class AdminViewsDcatRestController {
 
-	// TODO: 23/05/2023 dcat service
-	private final ViewService viewService;
+	private final DcatViewService dcatViewService;
 
 	private final DcatViewValidator dcatViewValidator;
 
-	// TODO: 23/05/2023 check this
-	private final ViewSpecificationConverter viewConverter;
-
-	public AdminViewsDcatRestController(ViewService viewService, DcatViewValidator dcatViewValidator,
-                                        ViewSpecificationConverter viewConverter) {
-		this.viewService = viewService;
+	public AdminViewsDcatRestController(DcatViewService dcatViewService, DcatViewValidator dcatViewValidator) {
+		this.dcatViewService = dcatViewService;
 		this.dcatViewValidator = dcatViewValidator;
-		this.viewConverter = viewConverter;
 	}
 
 	@InitBinder
@@ -62,9 +53,7 @@ public class AdminViewsDcatRestController {
 					  dct:title "My geo-spatial view"@en ;
 					  dct:description "Geospatial fragmentation for my LDES"@en .
 					""") @RequestBody @Validated Model dcat) {
-		// TODO: 23/05/2023 validate some basic stuff
-		// TODO: 23/05/2023 call service to store bla
-//		viewService.addView(viewConverter.viewFromModel(view, collectionName));
+		dcatViewService.create(new ViewName(collectionName, viewName), dcat);
 	}
 
 	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
@@ -94,15 +83,13 @@ public class AdminViewsDcatRestController {
 					    ]
 					  ] .
 					""") @RequestBody @Validated Model dcat) {
-		// TODO: 23/05/2023 validate some basic stuff
-		// TODO: 23/05/2023 call service to store bla
-//		viewService.addView(viewConverter.viewFromModel(view, collectionName));
+		dcatViewService.update(new ViewName(collectionName, viewName), dcat);
 	}
 
 	@DeleteMapping("/{viewName}")
 	@Operation(summary = "Delete dcat metadata for a view")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
-		// TODO: 23/05/2023 call
+		dcatViewService.remove(new ViewName(collectionName, viewName));
 	}
 
 }
