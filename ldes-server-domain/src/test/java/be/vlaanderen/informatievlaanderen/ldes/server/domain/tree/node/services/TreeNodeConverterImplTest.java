@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -22,8 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TreeNodeConverterImplTest {
 
@@ -39,14 +37,13 @@ class TreeNodeConverterImplTest {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName(HOST_NAME);
 
-		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME,
+		EventStream eventStream = new EventStream(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", false, List.of(), null);
+				"http://purl.org/dc/terms/isVersionOf", "memberType", false);
 
-		EventStreamService eventStreamService = mock(EventStreamService.class);
-		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
-
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig);
+		((TreeNodeConverterImpl) treeNodeConverter)
+				.handleEventStreamInitEvent(new EventStreamChangedEvent(eventStream));
 	}
 
 	@Test

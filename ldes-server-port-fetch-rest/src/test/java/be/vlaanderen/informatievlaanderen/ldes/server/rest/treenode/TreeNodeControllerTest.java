@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -75,8 +76,8 @@ class TreeNodeControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
-	@MockBean
-	private EventStreamService eventStreamService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@BeforeEach
 	void setUp() {
@@ -87,9 +88,8 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue) throws Exception {
-		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME, null, null, null, false, List.of(),
-				ModelFactory.createDefaultModel());
-		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null, false);
+		eventPublisher.publishEvent(new EventStreamChangedEvent(eventStream));
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
@@ -224,10 +224,9 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig,
-				final EventStreamService eventStreamService) {
+		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService);
+			return new TreeNodeConverterImpl(prefixAdder, appConfig);
 		}
 
 		@Bean

@@ -1,11 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -13,10 +17,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -28,25 +34,21 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final AppConfig appConfig;
-	private final EventStreamService eventStreamService;
+	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
+	private final HashMap<String, ShaclShape> shaclShapes = new HashMap<>();
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			AppConfig appConfig, EventStreamService eventStreamService) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, AppConfig appConfig) {
 		this.prefixAdder = prefixAdder;
 		this.appConfig = appConfig;
-		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
 	public Model toModel(final TreeNode treeNode) {
-		Model model = ModelFactory.createDefaultModel();
-
-		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(treeNode.getCollectionName());
-
-		model.add(addTreeNodeStatements(treeNode, eventStream));
+		Model model = ModelFactory.createDefaultModel()
+				.add(addTreeNodeStatements(treeNode, treeNode.getCollectionName()));
 
 		if (!treeNode.getMembers().isEmpty()) {
-			String baseUrl = appConfig.getHostName() + "/" + eventStream.getCollection();
+			String baseUrl = appConfig.getHostName() + "/" + treeNode.getCollectionName();
 			model.add(addEventStreamStatements(treeNode, baseUrl));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
@@ -55,7 +57,9 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addTreeNodeStatements(TreeNode treeNode, EventStreamResponse eventStream) {
+	private List<Statement> addTreeNodeStatements(TreeNode treeNode, String collectionName) {
+		EventStream eventStream = eventStreams.get(collectionName);
+		ShaclShape shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
 						appConfig.getHostName() + treeRelation.treeNode(),
@@ -64,13 +68,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
 				treeRelationResponses);
 		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream);
+		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape);
 
 		return statements;
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
-			EventStreamResponse eventStream) {
+			EventStream eventStream, ShaclShape shaclShape) {
 		String baseUrl = appConfig.getHostName() + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
@@ -82,7 +86,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					null,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			statements.addAll(eventStream.getShacl().listStatements().toList());
+			statements.addAll(shaclShape.getModel().listStatements().toList());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
@@ -111,4 +115,23 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return statements;
 	}
 
+	@EventListener
+	public void handleEventStreamInitEvent(EventStreamChangedEvent event) {
+		eventStreams.put(event.eventStream().getCollection(), event.eventStream());
+	}
+
+	@EventListener
+	public void handleShaclInitEvent(ShaclChangedEvent event) {
+		shaclShapes.put(event.getShacl().getCollection(), event.getShacl());
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		eventStreams.remove(event.collectionName());
+	}
+
+	@EventListener
+	public void handleShaclDeletedEvent(ShaclDeletedEvent event) {
+		shaclShapes.remove(event.collectionName());
+	}
 }

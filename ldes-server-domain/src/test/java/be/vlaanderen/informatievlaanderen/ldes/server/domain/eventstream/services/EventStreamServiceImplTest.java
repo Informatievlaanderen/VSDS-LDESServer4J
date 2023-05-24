@@ -202,4 +202,10 @@ class EventStreamServiceImplTest {
 		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());
 		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
 	}
+
+	@Test
+	void when_init() {
+		((EventStreamServiceImpl) service).initEventStream();
+		verify(eventStreamRepository).retrieveAllEventStreams();
+	}
 }
