@@ -21,6 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.function.ToDoubleBiFunction;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -82,6 +85,44 @@ class AdminViewsDcatRestControllerTest {
                     .create(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
         }
 
+    }
+
+    @Nested
+    class UpdateDcat {
+
+        @Test
+        void should_Return400_when_ValidatorThrowsIllegalArgumentException() throws Exception {
+            doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
+
+            mockMvc.perform(put(BASE_URL)
+                            .content(writeToTurtle(readTurtleFromFile("dcat-view-valid.ttl")))
+                            .contentType(Lang.TURTLE.getHeaderString()))
+                    .andExpect(status().isBadRequest());
+
+            verifyNoInteractions(dcatViewService);
+        }
+
+        @Test
+        void should_Return200_when_UpdatedSuccessfully() throws Exception {
+            Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
+            mockMvc.perform(put(BASE_URL)
+                            .content(writeToTurtle(dcat))
+                            .contentType(Lang.TURTLE.getHeaderString()))
+                    .andExpect(status().isCreated());
+
+            verify(dcatViewService)
+                    .update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
+        }
+
+        @Test
+        void should_Return404_when_ResourceNotFound() {
+            // TODO: 24/05/2023
+        }
+    }
+
+    @Test
+    void DELETE() {
+        // TODO: 24/05/2023
     }
 
     private Model readTurtleFromFile(String path) {
