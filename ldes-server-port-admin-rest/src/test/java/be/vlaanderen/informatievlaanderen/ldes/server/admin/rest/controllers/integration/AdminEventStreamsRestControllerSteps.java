@@ -70,7 +70,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 						List.of(),
 						List.of(fragmentationConfig)));
 
-		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
+		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION)).thenReturn(views);
 		when(viewRepository.retrieveAllViewsOfCollection(collection2)).thenReturn(List.of(singleView));
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
@@ -107,7 +107,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
 		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(eventStreamCollection).retrieveAllEventStreams();
+		verify(eventStreamRepository).retrieveAllEventStreams();
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
@@ -118,41 +118,41 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		Model shape = readModelFromFile("example-shape.ttl");
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
 	}
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
 		Model expectedModel = readModelFromFile("ldes-1.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
 
 	@Given("an empty db")
 	public void anEmptyDb() {
-		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 	}
 
 	@And("I verify the db interaction")
 	public void iVerifyTheDbInteraction() {
-		InOrder inOrder = inOrder(eventStreamCollection, shaclShapeRepository, viewRepository);
-		inOrder.verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeRepository, viewRepository);
+		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@And("I verify the event stream retrieval interaction")
 	public void iVerifyTheEventStreamRetrievalInteraction() {
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 	}
 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
-		assertEquals(Optional.empty(), eventStreamCollection.retrieveEventStream(COLLECTION));
+		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
 		final Model shacl = readModelFromFile("example-shape.ttl");
-		when(eventStreamCollection.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
+		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
@@ -169,7 +169,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
-		verify(eventStreamCollection).saveEventStream(any());
+		verify(eventStreamRepository).saveEventStream(any());
 		verify(shaclShapeRepository).saveShaclShape(any());
 	}
 
@@ -183,7 +183,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("I verify the absent of interactions")
 	public void iVerifyTheAbsentOfInteractions() {
-		verifyNoInteractions(eventStreamCollection);
+		verifyNoInteractions(eventStreamRepository);
 	}
 
 	@When("the client deletes the event stream")
@@ -193,8 +193,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("I verify the db interactions")
 	public void iVerifyTheDbInteractions() {
-		verify(eventStreamCollection).retrieveEventStream(COLLECTION);
-		verify(eventStreamCollection).deleteEventStream(COLLECTION);
+		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+		verify(eventStreamRepository).deleteEventStream(COLLECTION);
 		verify(shaclShapeRepository).deleteShaclShape(COLLECTION);
 	}
 }

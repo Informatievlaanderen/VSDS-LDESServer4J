@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class SpringIntegrationTest {
 
 	@Autowired
-	public EventStreamCollection eventStreamCollection;
+	public EventStreamRepository eventStreamRepository;
 	@Autowired
 	public ViewRepository viewRepository;
 	@Autowired
@@ -46,7 +46,7 @@ public class SpringIntegrationTest {
 	public static class EventStreamControllerTestConfiguration {
 
 		@MockBean
-		public EventStreamCollection eventStreamCollection;
+		public EventStreamRepository eventStreamRepository;
 		@MockBean
 		public ViewRepository viewRepository;
 		@MockBean
