@@ -11,29 +11,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class DcatViewServiceImpl implements DcatViewService {
 
-    private final DcatViewRepository dcatViewRepository;
+	private final DcatViewRepository dcatViewRepository;
 
-    public DcatViewServiceImpl(DcatViewRepository dcatViewRepository) {
-        this.dcatViewRepository = dcatViewRepository;
-    }
+	public DcatViewServiceImpl(DcatViewRepository dcatViewRepository) {
+		this.dcatViewRepository = dcatViewRepository;
+	}
 
-    @Override
-    public void create(ViewName viewName, Model dcat) {
-        dcatViewRepository.create(DcatView.from(viewName, dcat));
-    }
+	@Override
+	public void create(ViewName viewName, Model dcat) {
+		dcatViewRepository.create(DcatView.from(viewName, dcat));
+	}
 
-    @Override
-    public void update(ViewName viewName, Model dcat) {
-        if (dcatViewRepository.findByViewName(viewName).isEmpty()) {
-            throw new MissingViewDcatException();
-        }
+	@Override
+	public void update(ViewName viewName, Model dcat) {
+		if (dcatViewRepository.findByViewName(viewName).isEmpty()) {
+			throw new MissingViewDcatException();
+		}
 
-        dcatViewRepository.update(DcatView.from(viewName, dcat));
-    }
+		dcatViewRepository.update(DcatView.from(viewName, dcat));
+	}
 
-    @Override
-    public void remove(ViewName viewName) {
-        dcatViewRepository.remove(viewName);
-    }
+	@Override
+	public void remove(ViewName viewName) {
+		dcatViewRepository.remove(viewName);
+	}
 
 }

@@ -5,10 +5,10 @@ import org.apache.jena.rdf.model.Model;
 
 public interface DcatViewService {
 
-    void create(ViewName viewName, Model dcat);
+	void create(ViewName viewName, Model dcat);
 
-    void update(ViewName viewName, Model dcat);
+	void update(ViewName viewName, Model dcat);
 
-    void remove(ViewName viewName);
+	void remove(ViewName viewName);
 
 }

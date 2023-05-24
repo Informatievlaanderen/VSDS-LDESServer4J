@@ -7,12 +7,12 @@ import java.util.Optional;
 
 public interface DcatViewRepository {
 
-    void create(DcatView dcatView);
+	void create(DcatView dcatView);
 
-    Optional<DcatView> findByViewName(ViewName viewName);
+	Optional<DcatView> findByViewName(ViewName viewName);
 
-    void update(DcatView dcatView);
+	void update(DcatView dcatView);
 
-    void remove(ViewName viewName);
+	void remove(ViewName viewName);
 
 }
