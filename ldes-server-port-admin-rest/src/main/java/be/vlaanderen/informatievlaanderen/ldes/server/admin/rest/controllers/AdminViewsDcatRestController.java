@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
@@ -8,10 +9,14 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.RDF;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.apache.jena.riot.WebContent.*;
 
@@ -23,22 +28,21 @@ public class AdminViewsDcatRestController {
 	// TODO: 23/05/2023 dcat service
 	private final ViewService viewService;
 
-	// TODO: 23/05/2023 dcat view validator
-	private final ViewValidator viewValidator;
+	private final DcatViewValidator dcatViewValidator;
 
 	// TODO: 23/05/2023 check this
 	private final ViewSpecificationConverter viewConverter;
 
-	public AdminViewsDcatRestController(ViewService viewService, ViewValidator viewValidator,
+	public AdminViewsDcatRestController(ViewService viewService, DcatViewValidator dcatViewValidator,
                                         ViewSpecificationConverter viewConverter) {
 		this.viewService = viewService;
-		this.viewValidator = viewValidator;
+		this.dcatViewValidator = dcatViewValidator;
 		this.viewConverter = viewConverter;
 	}
 
 	@InitBinder
 	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(viewValidator);
+		binder.setValidator(dcatViewValidator);
 	}
 
 	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads,
