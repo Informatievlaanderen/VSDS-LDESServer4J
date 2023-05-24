@@ -36,8 +36,7 @@ public class AdminViewsDcatRestController {
 		binder.setValidator(dcatViewValidator);
 	}
 
-	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads,
-			contentTypeTurtle })
+	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
 	@Operation(summary = "Add DCAT metadata for a view")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void createDcat(@PathVariable String collectionName, @PathVariable String viewName,
