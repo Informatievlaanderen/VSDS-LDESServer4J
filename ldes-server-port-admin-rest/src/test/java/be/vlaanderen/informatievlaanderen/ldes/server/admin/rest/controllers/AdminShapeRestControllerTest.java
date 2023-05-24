@@ -72,7 +72,7 @@ class AdminShapeRestControllerTest {
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.accept(contentTypeTurtle))
 					.andExpect(status().isOk())
-					.andExpect(IsIsomorphic.with(expectedShapeModel));
+					.andExpect(IsIsomorphicResult.with(expectedShapeModel));
 		}
 
 		@Test

@@ -7,15 +7,15 @@ import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-public class IsIsomorphic implements ResultMatcher {
+public class IsIsomorphicResult implements ResultMatcher {
 	private final Model model;
 
-	IsIsomorphic(Model model) {
+	IsIsomorphicResult(Model model) {
 		this.model = model;
 	}
 
-	public static IsIsomorphic with(Model model) {
-		return new IsIsomorphic(model);
+	public static IsIsomorphicResult with(Model model) {
+		return new IsIsomorphicResult(model);
 	}
 
 	@Override
