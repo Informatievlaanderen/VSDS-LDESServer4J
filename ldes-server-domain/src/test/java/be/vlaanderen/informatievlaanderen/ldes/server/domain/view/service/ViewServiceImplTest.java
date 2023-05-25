@@ -24,7 +24,7 @@ class ViewServiceImplTest {
 
 	private final ViewRepository viewRepository = mock(ViewRepository.class);
 	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-	private final ViewServiceImpl viewService = new ViewServiceImpl(viewRepository, eventPublisher);
+	private final ViewServiceImpl viewService = new ViewServiceImpl(dcatViewService, viewRepository, eventPublisher);
 
 	@Nested
 	class AddView {

@@ -18,17 +18,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.apache.jena.riot.WebContent.*;
+import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
+import static org.apache.jena.riot.WebContent.contentTypeNQuads;
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @RestController
 @RequestMapping("/admin/api/v1/eventstreams/{collectionName}/views")
 @Tag(name = "Views")
 public class AdminViewsRestController {
+
 	private final ViewService viewService;
 	private final ViewValidator viewValidator;
 	private final ViewSpecificationConverter viewConverter;
 
-	// TODO TVB: 23/05/2023 inject dcat service
 	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator,
 			ViewSpecificationConverter viewConverter) {
 		this.viewService = viewService;
@@ -58,14 +60,12 @@ public class AdminViewsRestController {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 	}
 
-	// TODO TVB: 23/05/2023 delete dcat
 	@DeleteMapping("/{viewName}")
 	@Operation(summary = "Delete a specific view for a collection")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
-	// TODO TVB: 23/05/2023 add dcat
 	@GetMapping("/{viewName}")
 	@Operation(summary = "Retrieve a specific view config for a collection")
 	public ViewSpecification getView(@PathVariable String collectionName,
