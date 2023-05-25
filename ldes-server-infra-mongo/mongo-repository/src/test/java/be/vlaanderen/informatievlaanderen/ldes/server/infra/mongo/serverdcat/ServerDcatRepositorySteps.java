@@ -45,7 +45,8 @@ public class ServerDcatRepositorySteps extends SpringIntegrationTest {
 
 	@Then("I can update the serverDcat with a new model")
 	public void iCanUpdateTheServerDcatWithANewModel() {
-		model = RDFParser.source("features/serverdcat/serverdcat-with-publisher.ttl").lang(Lang.TURTLE).build().toModel();
+		model = RDFParser.source("features/serverdcat/serverdcat-with-publisher.ttl").lang(Lang.TURTLE).build()
+				.toModel();
 		serverDcat = new ServerDcat(ID, model);
 		serverDcatMongoRepository.save(serverDcat);
 	}

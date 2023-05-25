@@ -22,7 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
-@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class, ServerDcatEntityRepository.class })
+@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class,
+		ServerDcatEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment" })
@@ -53,7 +54,8 @@ public class SpringIntegrationTest {
 		}
 
 		@Bean
-		public ServerDcatMongoRepository serverDcatMongoRepository(final ServerDcatEntityRepository serverDcatEntityRepository) {
+		public ServerDcatMongoRepository serverDcatMongoRepository(
+				final ServerDcatEntityRepository serverDcatEntityRepository) {
 			return new ServerDcatMongoRepository(serverDcatEntityRepository);
 		}
 	}
