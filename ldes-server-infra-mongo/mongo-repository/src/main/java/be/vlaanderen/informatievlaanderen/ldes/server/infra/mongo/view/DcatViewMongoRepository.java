@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.D
 
 import java.util.Optional;
 
-// TODO TVB: 24/05/2023 test
 public class DcatViewMongoRepository implements DcatViewRepository {
 
 	private final DataServiceEntityRepository dataServiceEntityRepository;

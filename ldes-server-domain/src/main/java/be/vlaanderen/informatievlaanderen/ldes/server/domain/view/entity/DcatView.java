@@ -18,7 +18,7 @@ public class DcatView {
 	}
 
 	public static DcatView from(ViewName viewName, Model dcat) {
-		return new DcatView(notNull(viewName), dcat);
+		return new DcatView(notNull(viewName), notNull(dcat));
 	}
 
 	public ViewName getViewName() {

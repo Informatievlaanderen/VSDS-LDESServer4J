@@ -10,7 +10,6 @@ import org.apache.jena.riot.RDFParserBuilder;
 
 import java.io.StringWriter;
 
-// TODO TVB: 25/05/2023 test
 public class DcatServiceEntityConverter {
 
 	public DataServiceEntity fromDcatView(DcatView dcatView) {
