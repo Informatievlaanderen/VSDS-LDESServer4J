@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.reposito
 import org.apache.jena.rdf.model.Model;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,8 +20,9 @@ public class ServerDcatServiceImpl implements ServerDcatService {
 
 	@Override
 	public ServerDcat createServerDcat(Model dcat) {
-		if (!serverDcatRepository.findAll().isEmpty()) {
-			throw new DcatAlreadyConfiguredException();
+		List<ServerDcat> serverDcats = serverDcatRepository.findAll();
+		if (!serverDcats.isEmpty()) {
+			throw new DcatAlreadyConfiguredException(serverDcats.get(0).getId());
 		}
 		final ServerDcat serverDcat = new ServerDcat(UUID.randomUUID().toString(), dcat);
 		return serverDcatRepository.save(serverDcat);

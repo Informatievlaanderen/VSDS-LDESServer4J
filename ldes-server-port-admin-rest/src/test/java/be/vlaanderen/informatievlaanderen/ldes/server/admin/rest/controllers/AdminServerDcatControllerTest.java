@@ -33,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = {AdminServerDcatController.class, ModelConverter.class, PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class})
+@ContextConfiguration(classes = { AdminServerDcatControllerImpl.class, ModelConverter.class, PrefixAdderImpl.class,
+		AdminRestResponseEntityExceptionHandler.class })
 @ExtendWith(MockitoExtension.class)
 class AdminServerDcatControllerTest {
 	private static final String ID = "id";
@@ -49,9 +50,9 @@ class AdminServerDcatControllerTest {
 		when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
 
 		mockMvc.perform(post("/admin/api/v1/dcat")
-						.contentType(Lang.TURTLE.getHeaderString())
-						.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
-				.andExpect(status().isOk())
+				.contentType(Lang.TURTLE.getHeaderString())
+				.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+				.andExpect(status().isCreated())
 				.andExpect(content().string(ID));
 
 		verify(service).createServerDcat(argThat(model::isIsomorphicWith));
@@ -75,10 +76,9 @@ class AdminServerDcatControllerTest {
 		when(service.updateServerDcat(eq(ID), any())).thenReturn(new ServerDcat(ID, model));
 
 		mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-						.contentType(Lang.TURTLE.getHeaderString())
-						.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
-				.andExpect(status().isOk())
-				.andExpect(content().string(ID));
+				.contentType(Lang.TURTLE.getHeaderString())
+				.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+				.andExpect(status().isOk());
 
 		verify(service).updateServerDcat(eq(ID), argThat(model::isIsomorphicWith));
 	}
@@ -90,8 +90,8 @@ class AdminServerDcatControllerTest {
 		when(service.updateServerDcat(eq(id), any())).thenThrow(MissingServerDcatException.class);
 
 		mockMvc.perform(put("/admin/api/v1/dcat/{id}", id)
-						.contentType(Lang.TURTLE.getHeaderString())
-						.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+				.contentType(Lang.TURTLE.getHeaderString())
+				.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
 				.andExpect(status().isNotFound());
 
 		verify(service).updateServerDcat(eq(id), argThat(model::isIsomorphicWith));
