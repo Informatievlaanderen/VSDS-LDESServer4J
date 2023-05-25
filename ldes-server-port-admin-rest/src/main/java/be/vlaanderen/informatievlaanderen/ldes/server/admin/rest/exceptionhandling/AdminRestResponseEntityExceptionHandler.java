@@ -17,7 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = { MissingShaclShapeException.class,
-			MissingEventStreamException.class, MissingViewException.class, MissingViewDcatException.class, MissingServerDcatException.class})
+			MissingEventStreamException.class, MissingViewException.class, MissingViewDcatException.class, MissingServerDcatException.class })
 	protected ResponseEntity<Object> handleMissingResourceException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);

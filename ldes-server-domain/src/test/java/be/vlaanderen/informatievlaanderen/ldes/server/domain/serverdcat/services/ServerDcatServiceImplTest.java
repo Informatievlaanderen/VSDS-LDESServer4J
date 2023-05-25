@@ -52,8 +52,11 @@ class ServerDcatServiceImplTest {
 	@Test
 	void when_ServerAlreadyHasDcatConfigured_then_ThrowException() {
 		when(repository.getServerDcat()).thenReturn(List.of(SERVER_DCAT));
+		final String expectedMessage = "The server can contain only one dcat configuration and there already has been configured one with id " + ID;
 
-		assertThrows(DcatAlreadyConfiguredException.class, () -> service.createServerDcat(DCAT));
+		Exception e = assertThrows(DcatAlreadyConfiguredException.class, () -> service.createServerDcat(DCAT));
+
+		assertEquals(expectedMessage, e.getMessage());
 		verify(repository).getServerDcat();
 		verifyNoMoreInteractions(repository);
 	}
