@@ -19,7 +19,7 @@ public class DcatViewServiceImpl implements DcatViewService {
 
 	@Override
 	public void create(ViewName viewName, Model dcat) {
-		dcatViewRepository.create(DcatView.from(viewName, dcat));
+		dcatViewRepository.save(DcatView.from(viewName, dcat));
 	}
 
 	@Override
@@ -28,12 +28,12 @@ public class DcatViewServiceImpl implements DcatViewService {
 			throw new MissingViewDcatException();
 		}
 
-		dcatViewRepository.update(DcatView.from(viewName, dcat));
+		dcatViewRepository.save(DcatView.from(viewName, dcat));
 	}
 
 	@Override
-	public void remove(ViewName viewName) {
-		dcatViewRepository.remove(viewName);
+	public void delete(ViewName viewName) {
+		dcatViewRepository.delete(viewName);
 	}
 
 }

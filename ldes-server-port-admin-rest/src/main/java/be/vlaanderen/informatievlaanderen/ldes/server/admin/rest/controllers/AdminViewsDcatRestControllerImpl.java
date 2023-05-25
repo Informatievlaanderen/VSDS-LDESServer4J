@@ -47,7 +47,7 @@ public class AdminViewsDcatRestControllerImpl implements AdminViewsDcatRestContr
 
 	@DeleteMapping
 	public void deleteDcat(@PathVariable String collectionName, @PathVariable String viewName) {
-		dcatViewService.remove(new ViewName(collectionName, viewName));
+		dcatViewService.delete(new ViewName(collectionName, viewName));
 	}
 
 }

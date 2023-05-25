@@ -21,6 +21,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.DcatViewM
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.ViewMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.ViewEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.DcatServiceEntityConverter;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -82,7 +83,7 @@ public class MongoAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public DcatViewRepository dcatViewMongoRepository(final DataServiceEntityRepository dataServiceEntityRepository) {
-		return new DcatViewMongoRepository(dataServiceEntityRepository);
+		return new DcatViewMongoRepository(dataServiceEntityRepository, new DcatServiceEntityConverter());
 	}
 
 	@Profile("monitoring") // This config can cause memory overflow issues when running large database
