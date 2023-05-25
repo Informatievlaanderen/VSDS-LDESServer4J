@@ -4,7 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
@@ -12,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class TimeBasedRetentionPolicyTest {
 
-	RetentionPolicy retentionPolicy = new TimeBasedRetentionPolicy("PT1S");
+	RetentionPolicy retentionPolicy = new TimeBasedRetentionPolicy(Duration.of(1, ChronoUnit.SECONDS));
 
 	@Test
 	void when_TimestampOfMemberIsNull_ItDoesNotMatchTheTimebasedRetentionPolicy() {

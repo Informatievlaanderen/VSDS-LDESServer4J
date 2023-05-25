@@ -2,12 +2,12 @@
 @prefix tree: <https://w3id.org/tree#>.
 @prefix example: <http://example.org/> .
 @prefix server: <http://localhost:8080/collection/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
 server:viewName tree:viewDescription [
     ldes:retentionPolicy [
-        a ldes:retentionPolicy ;
-        example:name "retention" ;
-        example:duration "10" ;
+        a ldes:DurationAgoPolicy  ;
+        tree:value "PT2M"^^xsd:duration ;
     ] ;
     example:fragmentationStrategy [
         a example:Fragmentation ;
