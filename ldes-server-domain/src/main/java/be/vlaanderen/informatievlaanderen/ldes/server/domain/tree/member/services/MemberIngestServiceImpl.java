@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,6 +41,13 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 		} else {
 			LOGGER.warn("Duplicate member ingested. Member with id {} already exist", memberId);
 		}
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		memberRepository.getMemberStreamOfCollection(event.collectionName())
+				.map(Member::getLdesMemberId)
+				.forEach(memberRepository::deleteMember);
 	}
 
 	private Member storeLdesMember(Member member) {
