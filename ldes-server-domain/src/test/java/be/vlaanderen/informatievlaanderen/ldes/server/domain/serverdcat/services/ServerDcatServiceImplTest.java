@@ -37,73 +37,73 @@ class ServerDcatServiceImplTest {
 
 	@Test
 	void when_ServerHasNoDcat_and_CreateDcat_then_ReturnIt() {
-		when(repository.getServerDcat()).thenReturn(List.of());
-		when(repository.saveServerDcat(any())).thenReturn(SERVER_DCAT);
+		when(repository.findAll()).thenReturn(List.of());
+		when(repository.save(any())).thenReturn(SERVER_DCAT);
 
 		final ServerDcat createdDcat = assertDoesNotThrow(() -> service.createServerDcat(DCAT));
 
 		assertEquals(SERVER_DCAT, createdDcat);
 		InOrder inOrder = Mockito.inOrder(repository);
-		inOrder.verify(repository).getServerDcat();
-		inOrder.verify(repository).saveServerDcat(any());
+		inOrder.verify(repository).findAll();
+		inOrder.verify(repository).save(any());
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_ServerAlreadyHasDcatConfigured_then_ThrowException() {
-		when(repository.getServerDcat()).thenReturn(List.of(SERVER_DCAT));
+		when(repository.findAll()).thenReturn(List.of(SERVER_DCAT));
 
 		assertThrows(DcatAlreadyConfiguredException.class, () -> service.createServerDcat(DCAT));
-		verify(repository).getServerDcat();
+		verify(repository).findAll();
 		verifyNoMoreInteractions(repository);
 	}
 
 	@Test
 	void when_UpdateExistingDcat_then_ReturnDcat() {
-		when(repository.getServerDcatById(ID)).thenReturn(Optional.of(SERVER_DCAT));
-		when(repository.saveServerDcat(SERVER_DCAT)).thenReturn(SERVER_DCAT);
+		when(repository.findById(ID)).thenReturn(Optional.of(SERVER_DCAT));
+		when(repository.save(SERVER_DCAT)).thenReturn(SERVER_DCAT);
 
 		ServerDcat updatedServerDcat = assertDoesNotThrow(() -> service.updateServerDcat(ID, DCAT));
 
 		assertEquals(SERVER_DCAT, updatedServerDcat);
 		InOrder inOrder = inOrder(repository);
-		inOrder.verify(repository).getServerDcatById(ID);
-		inOrder.verify(repository).saveServerDcat(SERVER_DCAT);
+		inOrder.verify(repository).findById(ID);
+		inOrder.verify(repository).save(SERVER_DCAT);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_UpdateNonExistingDcat_then_ThrowException() {
-		when(repository.getServerDcatById(ID)).thenReturn(Optional.empty());
+		when(repository.findById(ID)).thenReturn(Optional.empty());
 		String expectedMessage = String.format("No dcat is configured on the server with id %s", ID);
 
 		Exception e = assertThrows(MissingServerDcatException.class, () -> service.updateServerDcat(ID, DCAT));
 
 		assertEquals(expectedMessage, e.getMessage());
-		verify(repository).getServerDcatById(ID);
+		verify(repository).findById(ID);
 		verifyNoMoreInteractions(repository);
 	}
 
 	@Test
 	void when_DeleteExistingDcat_then_ReturnVoid() {
-		when(repository.getServerDcatById(ID)).thenReturn(Optional.of(SERVER_DCAT));
+		when(repository.findById(ID)).thenReturn(Optional.of(SERVER_DCAT));
 
 		assertDoesNotThrow(() -> service.deleteServerDcat(ID));
 		InOrder inOrder = inOrder(repository);
-		inOrder.verify(repository).getServerDcatById(ID);
-		inOrder.verify(repository).deleteServerDcat(ID);
+		inOrder.verify(repository).findById(ID);
+		inOrder.verify(repository).deleteById(ID);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_DeleteNonExistingDcat_then_ThrowException() {
-		when(repository.getServerDcatById(ID)).thenReturn(Optional.empty());
+		when(repository.findById(ID)).thenReturn(Optional.empty());
 		String expectedMessage = String.format("No dcat is configured on the server with id %s", ID);
 
 		Exception e = assertThrows(MissingServerDcatException.class, () -> service.deleteServerDcat(ID));
 
 		assertEquals(expectedMessage, e.getMessage());
-		verify(repository).getServerDcatById(ID);
+		verify(repository).findById(ID);
 		verifyNoMoreInteractions(repository);
 	}
 }

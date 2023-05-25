@@ -17,23 +17,23 @@ public class ServerDcatMongoRepository implements ServerDcatRepository {
 	}
 
 	@Override
-	public List<ServerDcat> getServerDcat() {
+	public List<ServerDcat> findAll() {
 		return serverDcatEntityRepository.findAll().stream().map(converter::toServerDcat).toList();
 	}
 
 	@Override
-	public Optional<ServerDcat> getServerDcatById(String id) {
+	public Optional<ServerDcat> findById(String id) {
 		return serverDcatEntityRepository.findById(id).map(converter::toServerDcat);
 	}
 
 	@Override
-	public ServerDcat saveServerDcat(ServerDcat serverDcat) {
+	public ServerDcat save(ServerDcat serverDcat) {
 		serverDcatEntityRepository.save(converter.fromServerDcat(serverDcat));
 		return serverDcat;
 	}
 
 	@Override
-	public void deleteServerDcat(String id) {
+	public void deleteById(String id) {
 		serverDcatEntityRepository.deleteById(id);
 	}
 }

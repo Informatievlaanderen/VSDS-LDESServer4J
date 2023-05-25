@@ -37,7 +37,7 @@ class ServerDcatMongoRepositoryTest {
 	void when_DbContainsElement_then_ReturnListWithOneServerDcat() {
 		when(serverDcatEntityRepository.findAll()).thenReturn(List.of(new ServerDcatEntity(ID, "")));
 
-		List<ServerDcat> retrievedServerDcats = serverDcatRepository.getServerDcat();
+		List<ServerDcat> retrievedServerDcats = serverDcatRepository.findAll();
 
 		assertEquals(1, retrievedServerDcats.size());
 		assertEquals(SERVER_DCAT, retrievedServerDcats.get(0));
@@ -48,7 +48,7 @@ class ServerDcatMongoRepositoryTest {
 	void when_DbIsEmpty_then_ReturnEmptyList() {
 		when(serverDcatEntityRepository.findAll()).thenReturn(List.of());
 
-		List<ServerDcat> retrievedServerDcats = serverDcatRepository.getServerDcat();
+		List<ServerDcat> retrievedServerDcats = serverDcatRepository.findAll();
 
 		assertTrue(retrievedServerDcats.isEmpty());
 		verify(serverDcatEntityRepository).findAll();
@@ -58,7 +58,7 @@ class ServerDcatMongoRepositoryTest {
 	void when_DbContainsElement_then_ReturnServerDcat() {
 		when(serverDcatEntityRepository.findById(ID)).thenReturn(Optional.of(new ServerDcatEntity(ID, "")));
 
-		Optional<ServerDcat> retrievedServerDcat = serverDcatRepository.getServerDcatById(ID);
+		Optional<ServerDcat> retrievedServerDcat = serverDcatRepository.findById(ID);
 
 		assertTrue(retrievedServerDcat.isPresent());
 		assertEquals(SERVER_DCAT, retrievedServerDcat.get());
@@ -69,7 +69,7 @@ class ServerDcatMongoRepositoryTest {
 	void when_DbIsEmpty_then_ReturnEmptyOptional() {
 		when(serverDcatEntityRepository.findById(ID)).thenReturn(Optional.empty());
 
-		Optional<ServerDcat> retrieveServerDcat = serverDcatRepository.getServerDcatById(ID);
+		Optional<ServerDcat> retrieveServerDcat = serverDcatRepository.findById(ID);
 
 		assertTrue(retrieveServerDcat.isEmpty());
 		verify(serverDcatEntityRepository).findById(ID);
@@ -80,7 +80,7 @@ class ServerDcatMongoRepositoryTest {
 		ServerDcatEntity serverDcatEntity = new ServerDcatEntity(ID, "");
 		when(serverDcatEntityRepository.save(any())).thenReturn(serverDcatEntity);
 
-		ServerDcat savedDcat = serverDcatRepository.saveServerDcat(SERVER_DCAT);
+		ServerDcat savedDcat = serverDcatRepository.save(SERVER_DCAT);
 
 		assertEquals(SERVER_DCAT, savedDcat);
 		verify(serverDcatEntityRepository).save(any());
@@ -88,7 +88,7 @@ class ServerDcatMongoRepositoryTest {
 
 	@Test
 	void when_DbContainsElement_then_DeleteIt() {
-		serverDcatRepository.deleteServerDcat(ID);
+		serverDcatRepository.deleteById(ID);
 
 		verify(serverDcatEntityRepository).deleteById(ID);
 	}

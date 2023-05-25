@@ -19,27 +19,27 @@ public class ServerDcatServiceImpl implements ServerDcatService {
 
 	@Override
 	public ServerDcat createServerDcat(Model dcat) {
-		if (!serverDcatRepository.getServerDcat().isEmpty()) {
+		if (!serverDcatRepository.findAll().isEmpty()) {
 			throw new DcatAlreadyConfiguredException();
 		}
 		final ServerDcat serverDcat = new ServerDcat(UUID.randomUUID().toString(), dcat);
-		return serverDcatRepository.saveServerDcat(serverDcat);
+		return serverDcatRepository.save(serverDcat);
 	}
 
 	@Override
 	public ServerDcat updateServerDcat(String id, Model dcat) {
-		if (serverDcatRepository.getServerDcatById(id).isEmpty()) {
+		if (serverDcatRepository.findById(id).isEmpty()) {
 			throw new MissingServerDcatException(id);
 		}
 		final ServerDcat serverDcat = new ServerDcat(id, dcat);
-		return serverDcatRepository.saveServerDcat(serverDcat);
+		return serverDcatRepository.save(serverDcat);
 	}
 
 	@Override
 	public void deleteServerDcat(String id) {
-		if (serverDcatRepository.getServerDcatById(id).isEmpty()) {
+		if (serverDcatRepository.findById(id).isEmpty()) {
 			throw new MissingServerDcatException(id);
 		}
-		serverDcatRepository.deleteServerDcat(id);
+		serverDcatRepository.deleteById(id);
 	}
 }

@@ -4,6 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesF
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.ServerDcatMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.repository.ServerDcatEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -20,14 +22,15 @@ import org.springframework.test.context.ContextConfiguration;
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
-@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class })
+@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class, ServerDcatEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment" })
 @Import(SpringIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class SpringIntegrationTest {
-
+	@Autowired
+	public ServerDcatMongoRepository serverDcatMongoRepository;
 	@Autowired
 	public MemberMongoRepository memberRepository;
 	@Autowired
@@ -47,6 +50,11 @@ public class SpringIntegrationTest {
 		public LdesFragmentMongoRepository ldesFragmentMongoRepository(
 				final LdesFragmentEntityRepository ldesFragmentEntityRepository, final MongoTemplate mongoTemplate) {
 			return new LdesFragmentMongoRepository(ldesFragmentEntityRepository, mongoTemplate);
+		}
+
+		@Bean
+		public ServerDcatMongoRepository serverDcatMongoRepository(final ServerDcatEntityRepository serverDcatEntityRepository) {
+			return new ServerDcatMongoRepository(serverDcatEntityRepository);
 		}
 	}
 }

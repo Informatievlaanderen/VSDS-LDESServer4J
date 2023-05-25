@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ServerDcatRepository {
-	List<ServerDcat> getServerDcat();
+	List<ServerDcat> findAll();
 
-	Optional<ServerDcat> getServerDcatById(String id);
+	Optional<ServerDcat> findById(String id);
 
-	ServerDcat saveServerDcat(ServerDcat serverDcat);
+	ServerDcat save(ServerDcat serverDcat);
 
-	void deleteServerDcat(String id);
+	void deleteById(String id);
 }
