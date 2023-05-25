@@ -11,6 +11,7 @@ public class RdfConstants {
 	public static final String TREE = "https://w3id.org/tree#";
 	public static final Property TREE_VIEW = createProperty(TREE, "view");
 	public static final String TREE_VIEW_DESCRIPTION = TREE + "viewDescription";
+	public static final String TREE_VIEW_DESCRIPTION_RESOURCE = TREE + "ViewDescription";
 	public static final Property TREE_SHAPE = createProperty(TREE, "shape");
 	public static final Property TREE_RELATION = createProperty(TREE, "relation");
 	public static final Property TREE_VALUE = createProperty(TREE, "value");

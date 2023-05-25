@@ -8,7 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -75,6 +77,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		Resource collection = createResource(baseUrl);
 
 		if (isView) {
+			// TODO TVB: 25/05/2023 add dcat
+			DcatViewServiceImpl dcatViewService;
+			dcatViewService.findByViewName(ViewName.fromString(currentFragmentId));
+
 			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
 					baseUrl,
 					eventStream.getTimestampPath(),
