@@ -9,6 +9,6 @@ public interface DcatViewService {
 
 	void update(ViewName viewName, Model dcat);
 
-	void remove(ViewName viewName);
+	void delete(ViewName viewName);
 
 }

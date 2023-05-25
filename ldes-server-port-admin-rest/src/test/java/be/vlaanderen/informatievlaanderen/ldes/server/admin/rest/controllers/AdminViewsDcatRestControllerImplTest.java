@@ -134,7 +134,7 @@ class AdminViewsDcatRestControllerImplTest {
 	void should_Return200_when_DeletedSuccessfully() throws Exception {
 		mockMvc.perform(delete(BASE_URL)).andExpect(status().isOk());
 
-		verify(dcatViewService).remove(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)));
+		verify(dcatViewService).delete(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)));
 	}
 
 	private Model readTurtleFromFile(String path) {
