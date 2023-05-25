@@ -78,8 +78,8 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 		if (isView) {
 			// TODO TVB: 25/05/2023 add dcat
-			DcatViewServiceImpl dcatViewService;
-			dcatViewService.findByViewName(ViewName.fromString(currentFragmentId));
+//			DcatViewServiceImpl dcatViewService;
+//			dcatViewService.findByViewName(ViewName.fromString(currentFragmentId));
 
 			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
 					baseUrl,
