@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.entity.DataServiceEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.DataServiceEntityRepository;
@@ -16,7 +16,7 @@ public class DcatViewMongoRepository implements DcatViewRepository {
 	private final DcatServiceEntityConverter dcatServiceEntityConverter;
 
 	public DcatViewMongoRepository(DataServiceEntityRepository dataServiceEntityRepository,
-								   DcatServiceEntityConverter dcatServiceEntityConverter) {
+			DcatServiceEntityConverter dcatServiceEntityConverter) {
 		this.dataServiceEntityRepository = dataServiceEntityRepository;
 		this.dcatServiceEntityConverter = dcatServiceEntityConverter;
 	}
@@ -30,7 +30,7 @@ public class DcatViewMongoRepository implements DcatViewRepository {
 	@Override
 	public Optional<DcatView> findByViewName(ViewName viewName) {
 		return dataServiceEntityRepository.findById(viewName.asString())
-						.map(dcatServiceEntityConverter::toDcatView);
+				.map(dcatServiceEntityConverter::toDcatView);
 	}
 
 	@Override

@@ -1,11 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 
-import java.io.StringWriter;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notNull;
@@ -32,28 +29,19 @@ public class DcatView {
 		return dcat;
 	}
 
-	public String getViewNameAsString() {
-		return viewName.asString();
-	}
-
-	public String getDcatAsString() {
-		final StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, dcat, Lang.NQUADS);
-		return outputStream.toString();
-	}
-
-	// TODO: 25/05/2023 test
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		DcatView dcatView = (DcatView) o;
-		return viewName.equals(dcatView.viewName) && Objects.equals(dcat, dcatView.dcat);
+		return viewName.equals(dcatView.viewName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(viewName, dcat);
+		return Objects.hash(viewName);
 	}
 
 }

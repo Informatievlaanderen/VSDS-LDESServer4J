@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @Service
 public class ViewServiceImpl implements ViewService {
-	
+
 	public static final String DEFAULT_VIEW_NAME = "by-page";
 	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
@@ -31,7 +31,7 @@ public class ViewServiceImpl implements ViewService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
-						   ApplicationEventPublisher eventPublisher) {
+			ApplicationEventPublisher eventPublisher) {
 		this.dcatViewService = dcatViewService;
 		this.viewRepository = viewRepository;
 		this.eventPublisher = eventPublisher;
@@ -65,12 +65,12 @@ public class ViewServiceImpl implements ViewService {
 		return viewRepository.getViewByViewName(viewName).orElseThrow(() -> new MissingViewException(viewName));
 	}
 
+	// TODO TVB: 25/05/2023 add dcat
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
 		return viewRepository.retrieveAllViewsOfCollection(collectionName);
 	}
 
-	// TODO TVB: 25/05/2023 add test
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
 		viewRepository.deleteViewByViewName(viewName);
