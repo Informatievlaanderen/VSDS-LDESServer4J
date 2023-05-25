@@ -65,7 +65,6 @@ public class ViewServiceImpl implements ViewService {
 		return viewRepository.getViewByViewName(viewName).orElseThrow(() -> new MissingViewException(viewName));
 	}
 
-	// TODO TVB: 25/05/2023 add dcat ? ask ranko
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
 		return viewRepository.retrieveAllViewsOfCollection(collectionName);
