@@ -20,15 +20,19 @@ import java.util.Optional;
 
 @Service
 public class ViewServiceImpl implements ViewService {
+	
 	public static final String DEFAULT_VIEW_NAME = "by-page";
 	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 
+	private final DcatViewService dcatViewService;
 	private final ViewRepository viewRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
-	public ViewServiceImpl(ViewRepository viewRepository, ApplicationEventPublisher eventPublisher) {
+	public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
+						   ApplicationEventPublisher eventPublisher) {
+		this.dcatViewService = dcatViewService;
 		this.viewRepository = viewRepository;
 		this.eventPublisher = eventPublisher;
 	}
@@ -55,19 +59,23 @@ public class ViewServiceImpl implements ViewService {
 		addView(defaultView);
 	}
 
+	// TODO TVB: 25/05/2023 add dcat
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
 		return viewRepository.getViewByViewName(viewName).orElseThrow(() -> new MissingViewException(viewName));
 	}
 
+	// TODO TVB: 25/05/2023 add dcat ? ask ranko
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
 		return viewRepository.retrieveAllViewsOfCollection(collectionName);
 	}
 
+	// TODO TVB: 25/05/2023 add test
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
 		viewRepository.deleteViewByViewName(viewName);
+		dcatViewService.delete(viewName);
 		eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
 	}
 
@@ -78,4 +86,5 @@ public class ViewServiceImpl implements ViewService {
 				.forEach(viewSpecification -> eventPublisher
 						.publishEvent(new ViewInitializationEvent(viewSpecification)));
 	}
+
 }
