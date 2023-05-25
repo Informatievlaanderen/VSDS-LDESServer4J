@@ -37,4 +37,12 @@ class DcatViewServiceImplTest {
 		verifyNoMoreInteractions(dcatViewRepository);
 	}
 
+	@Test
+	void should_CallServiceWithDcatView_when_DeleteIsCalled() {
+		dcatViewService.delete(VIEW_NAME);
+
+		verify(dcatViewRepository).delete(VIEW_NAME);
+		verifyNoMoreInteractions(dcatViewRepository);
+	}
+
 }
