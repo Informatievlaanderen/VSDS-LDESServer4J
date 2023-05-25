@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -8,6 +10,7 @@ public class ViewSpecification {
 	// TODO with the new equals method this is an entity. So it needs to move.
 
 	private ViewName name;
+	private DcatView dcat;
 	private List<RetentionConfig> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
@@ -49,6 +52,10 @@ public class ViewSpecification {
 
 	public void setRetentionPolicies(List<RetentionConfig> retentionPolicies) {
 		this.retentionPolicies = retentionPolicies;
+	}
+
+	public DcatView getDcat() {
+		return dcat;
 	}
 
 	@Override

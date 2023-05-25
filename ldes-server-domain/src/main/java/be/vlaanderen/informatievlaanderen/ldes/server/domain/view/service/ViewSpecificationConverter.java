@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -46,16 +48,32 @@ public class ViewSpecificationConverter {
 		Statement viewDescription = createStatement(
 				getIRIFromViewName(viewName),
 				createProperty(TREE_VIEW_DESCRIPTION),
-				createResource());
+				getIRIDescription(viewName));
 		model.add(viewDescription);
+		model.add(viewDescription.getResource(), RDF.type, TREE_VIEW_DESCRIPTION_RESOURCE);
+		model.add(createDcatStatements(viewDescription.getResource(), view.getDcat()));
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
 	}
 
+	private List<Statement> createDcatStatements(Resource viewDescription, DcatView dcat) {
+		// TODO TVB: 25/05/2023 add view statements
+		// TODO TVB: 25/05/2023 maybe have DcatView modify it's model ?
+		return List.of();
+	}
+
+	private String getIRIString(ViewName viewName) {
+		return hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName();
+	}
+
 	public Resource getIRIFromViewName(ViewName viewName) {
-		return createResource(hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName());
+		return createResource(getIRIString(viewName));
+	}
+
+	private Resource getIRIDescription(ViewName viewName) {
+		return createResource(getIRIString(viewName) + "/description");
 	}
 
 	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {

@@ -7,6 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.apache.jena.rdf.model.Model;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class DcatViewServiceImpl implements DcatViewService {
 
@@ -19,6 +21,12 @@ public class DcatViewServiceImpl implements DcatViewService {
 	@Override
 	public void create(ViewName viewName, Model dcat) {
 		dcatViewRepository.save(DcatView.from(viewName, dcat));
+	}
+
+	// TODO: 25/05/2023 test
+	@Override
+	public Optional<DcatView> findByViewName(ViewName viewName) {
+		return dcatViewRepository.findByViewName(viewName);
 	}
 
 	@Override
