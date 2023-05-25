@@ -7,8 +7,10 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.EscapedErrors;
 
@@ -30,9 +32,16 @@ class DcatDatasetValidatorTest {
     @Test
     void when_ValidModel_Then_Pass() throws URISyntaxException {
         DcatDataset dataset = new DcatDataset(DATASET_ID, readModelFromFile("dcat-dataset/valid.ttl"));
-        Errors errors = new EscapedErrors();
-        assertDoesNotThrow(() -> validator.validate(dataset, Errors));
+        assertDoesNotThrow(() -> validator.validate(dataset.model()));
+    }
 
+    @ParameterizedTest
+    @ArgumentsSource(InvalidArgumentsProvider.class)
+    void when_InvalidModel_Then_throwException(String filePath, String expectedMessage) throws URISyntaxException {
+        DcatDataset dataset = new DcatDataset(DATASET_ID, readModelFromFile(filePath));
+        Model datasetModel = dataset.model();
+        Exception exception = assertThrows(RuntimeException.class, () -> validator.validate(datasetModel));
+        assertEquals(expectedMessage, exception.getMessage());
     }
 
 
