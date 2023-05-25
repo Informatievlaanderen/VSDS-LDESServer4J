@@ -58,6 +58,10 @@ public class ViewSpecification {
 		return dcat;
 	}
 
+	public void setDcat(DcatView dcat) {
+		this.dcat = dcat;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

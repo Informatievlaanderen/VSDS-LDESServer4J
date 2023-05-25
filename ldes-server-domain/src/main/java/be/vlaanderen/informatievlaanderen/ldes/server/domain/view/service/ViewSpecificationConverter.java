@@ -3,10 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +47,7 @@ public class ViewSpecificationConverter {
 				createProperty(TREE_VIEW_DESCRIPTION),
 				getIRIDescription(viewName));
 		model.add(viewDescription);
-		model.add(viewDescription.getResource(), RDF.type, TREE_VIEW_DESCRIPTION_RESOURCE);
+		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
 		model.add(createDcatStatements(viewDescription.getResource(), view.getDcat()));
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
@@ -59,9 +56,18 @@ public class ViewSpecificationConverter {
 	}
 
 	private List<Statement> createDcatStatements(Resource viewDescription, DcatView dcat) {
-		// TODO TVB: 25/05/2023 add view statements
-		// TODO TVB: 25/05/2023 maybe have DcatView modify it's model ?
-		return List.of();
+		// TODO TVB: 25/05/2023 maybe have DcatView modify it's model, would be useful for treenode converter, just pass in subject?
+		// TODO: 25/05/23 cleanup and test
+		Resource dcatServiceId = dcat
+				.getDcat()
+				.listSubjectsWithProperty(RDF.type, createResource("http://www.w3.org/ns/dcat#DataService"))
+				.next().asResource();
+
+		List<Statement> list = dcat.getDcat().listStatements(dcatServiceId, null, (RDFNode) null)
+				.mapWith(foo -> createStatement(viewDescription, foo.getPredicate(), foo.getObject())).toList();
+
+
+		return list;
 	}
 
 	private String getIRIString(ViewName viewName) {
