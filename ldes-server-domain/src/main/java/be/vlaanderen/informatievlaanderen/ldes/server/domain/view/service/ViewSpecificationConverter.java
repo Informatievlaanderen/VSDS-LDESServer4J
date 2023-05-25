@@ -2,17 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
@@ -69,9 +65,9 @@ public class ViewSpecificationConverter {
 
 	private List<RetentionConfig> retentionListFromStatements(List<Statement> statements) {
 		List<RetentionConfig> retentionList = new ArrayList<>();
-		for (Resource retention : statements.stream()
+		for (RDFNode retention : statements.stream()
 				.filter(new ConfigFilterPredicate(RETENTION_TYPE))
-				.map(Statement::getSubject).toList()) {
+				.map(Statement::getObject).toList()) {
 			List<Statement> retentionStatements = retrieveAllStatements(retention, statements);
 			RetentionConfig config = new RetentionConfig();
 			Map<String, String> configMap = extractConfigMap(retentionStatements);
@@ -103,9 +99,9 @@ public class ViewSpecificationConverter {
 
 	private List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {
 		List<FragmentationConfig> fragmentationList = new ArrayList<>();
-		for (Resource fragmentation : statements.stream()
-				.filter(new ConfigFilterPredicate(FRAGMENTATION_TYPE))
-				.map(Statement::getSubject).toList()) {
+		for (RDFNode fragmentation : statements.stream()
+				.filter(new ConfigFilterPredicate(FRAGMENTATION_OBJECT))
+				.map(Statement::getObject).toList()) {
 			List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
 			FragmentationConfig config = new FragmentationConfig();
 			Map<String, String> configMap = extractConfigMap(fragmentationStatements);
@@ -137,7 +133,7 @@ public class ViewSpecificationConverter {
 		return statements;
 	}
 
-	private List<Statement> retrieveAllStatements(Resource resource, List<Statement> statements) {
+	private List<Statement> retrieveAllStatements(RDFNode resource, List<Statement> statements) {
 		List<Statement> statementList = new ArrayList<>();
 		statements.stream()
 				.filter(statement -> statement.getSubject().equals(resource))
@@ -158,20 +154,5 @@ public class ViewSpecificationConverter {
 						statement.getPredicate().getLocalName(),
 						statement.getObject().asLiteral().getString()));
 		return configMap;
-	}
-
-	public static class ConfigFilterPredicate implements Predicate<Statement> {
-
-		private final String type;
-
-		public ConfigFilterPredicate(String type) {
-			this.type = type;
-		}
-
-		@Override
-		public boolean test(Statement statement) {
-			return statement.getPredicate().toString().equals(RDF_SYNTAX_TYPE.toString())
-					&& statement.getObject().toString().equals(type);
-		}
 	}
 }
