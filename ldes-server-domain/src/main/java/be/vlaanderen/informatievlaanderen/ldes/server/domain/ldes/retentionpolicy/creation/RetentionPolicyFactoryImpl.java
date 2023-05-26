@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpoli
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -19,10 +20,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retenti
 @Component
 public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 
-	private final Map<String, RetentionPolicyCreator> retentionPolicyCreatorMap = Map.of(
-			TIME_BASED_RETENTION_POLICY, new TimeBasedRetentionPolicyCreator(),
-			VERSION_BASED_RETENTION_POLICY, new VersionBasedRetentionPolicyCreator(),
-			POINT_IN_TIME_RETENTION_POLICY, new PointInTimeRetentionPolicyCreator());
+	private final MemberRepository memberRepository;
+
+	private final Map<String, RetentionPolicyCreator> retentionPolicyCreatorMap;
+
+	public RetentionPolicyFactoryImpl(MemberRepository memberRepository) {
+		this.memberRepository = memberRepository;
+		this.retentionPolicyCreatorMap = Map.of(
+				TIME_BASED_RETENTION_POLICY, new TimeBasedRetentionPolicyCreator(),
+				VERSION_BASED_RETENTION_POLICY, new VersionBasedRetentionPolicyCreator(memberRepository),
+				POINT_IN_TIME_RETENTION_POLICY, new PointInTimeRetentionPolicyCreator());
+	}
 
 	@Override
 	public List<RetentionPolicy> getRetentionPolicyListForView(ViewSpecification viewSpecification) {

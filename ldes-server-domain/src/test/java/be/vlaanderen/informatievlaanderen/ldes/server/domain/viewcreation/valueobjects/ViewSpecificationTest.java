@@ -57,7 +57,7 @@ class ViewSpecificationTest {
 	}
 
 	private List<Model> getOtherRetentionPolicies() {
-		Model model = readModelFromFile("retentionpolicy/versionbased.ttl");
+		Model model = readModelFromFile("retentionpolicy/versionbased/valid_versionbased.ttl");
 		return List.of(model);
 	}
 
