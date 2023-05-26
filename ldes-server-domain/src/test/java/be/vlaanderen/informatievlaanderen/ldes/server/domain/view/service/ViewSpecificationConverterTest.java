@@ -79,6 +79,7 @@ class ViewSpecificationConverterTest {
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
+		System.out.println(RDFWriter.source(actualModel).lang(Lang.TURTLE).asString());
 		assertTrue(viewModel.isIsomorphicWith(actualModel));
 	}
 

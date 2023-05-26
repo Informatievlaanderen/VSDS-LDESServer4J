@@ -40,8 +40,10 @@ public class DcatView {
 	public List<Statement> getStatementsWithBase(String hostName) {
 		Resource dataServiceId = getDcat().listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).next().asResource();
 
-		return getDcat().listStatements(dataServiceId, null, (RDFNode) null)
-				.mapWith(stmnt -> createStatement(getIRIString(hostName), stmnt.getPredicate(), stmnt.getObject()))
+		return getDcat().listStatements()
+				.mapWith(stmnt -> stmnt.getSubject().equals(dataServiceId)
+						? createStatement(getIRIString(hostName), stmnt.getPredicate(), stmnt.getObject())
+						: stmnt)
 				.toList();
 	}
 

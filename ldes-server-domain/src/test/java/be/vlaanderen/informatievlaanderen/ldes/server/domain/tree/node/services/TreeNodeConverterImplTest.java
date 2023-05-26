@@ -69,7 +69,7 @@ class TreeNodeConverterImplTest {
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(14, getNumberOfStatements(model));
+		assertEquals(18, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
