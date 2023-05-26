@@ -39,6 +39,7 @@ public class ViewSpecificationConverter {
 		return view;
 	}
 
+	// TODO TVB: 26/05/2023 update test
 	public Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
@@ -48,26 +49,11 @@ public class ViewSpecificationConverter {
 				getIRIDescription(viewName));
 		model.add(viewDescription);
 		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
-		model.add(createDcatStatements(viewDescription.getResource(), view.getDcat()));
+		model.add(view.getDcat().getStatementsWithBase(viewDescription.getResource()));
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
-	}
-
-	private List<Statement> createDcatStatements(Resource viewDescription, DcatView dcat) {
-		// TODO TVB: 25/05/2023 maybe have DcatView modify it's model, would be useful for treenode converter, just pass in subject?
-		// TODO: 25/05/23 cleanup and test
-		Resource dcatServiceId = dcat
-				.getDcat()
-				.listSubjectsWithProperty(RDF.type, createResource("http://www.w3.org/ns/dcat#DataService"))
-				.next().asResource();
-
-		List<Statement> list = dcat.getDcat().listStatements(dcatServiceId, null, (RDFNode) null)
-				.mapWith(foo -> createStatement(viewDescription, foo.getPredicate(), foo.getObject())).toList();
-
-
-		return list;
 	}
 
 	private String getIRIString(ViewName viewName) {
