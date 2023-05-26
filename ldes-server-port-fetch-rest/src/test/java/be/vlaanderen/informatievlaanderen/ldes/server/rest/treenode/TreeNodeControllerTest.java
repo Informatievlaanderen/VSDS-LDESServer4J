@@ -227,7 +227,7 @@ class TreeNodeControllerTest {
 		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig,
 				final EventStreamService eventStreamService) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService);
+			return new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService, dcatViewService);
 		}
 
 		@Bean

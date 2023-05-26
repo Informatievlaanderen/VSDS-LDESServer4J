@@ -46,7 +46,7 @@ class TreeNodeConverterImplTest {
 		EventStreamService eventStreamService = mock(EventStreamService.class);
 		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
 
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService, dcatViewService);
 	}
 
 	@Test

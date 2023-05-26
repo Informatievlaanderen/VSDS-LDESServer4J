@@ -62,8 +62,8 @@ public class ViewServiceImpl implements ViewService {
 	// TODO TVB: 25/05/23 update test
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
-		var viewSpecification =
-				viewRepository.getViewByViewName(viewName).orElseThrow(() -> new MissingViewException(viewName));
+		var viewSpecification = viewRepository.getViewByViewName(viewName)
+				.orElseThrow(() -> new MissingViewException(viewName));
 		addDcatToViewSpecification(viewSpecification);
 		return viewSpecification;
 	}
