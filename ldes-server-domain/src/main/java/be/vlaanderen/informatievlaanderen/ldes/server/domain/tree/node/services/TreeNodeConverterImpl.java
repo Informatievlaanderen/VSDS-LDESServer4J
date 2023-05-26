@@ -91,7 +91,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 			statements.addAll(eventStream.getShacl().listStatements().toList());
-			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
+//			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
