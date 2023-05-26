@@ -60,11 +60,15 @@ public class ViewSpecificationConverter {
 				getIRIDescription(viewName));
 		model.add(viewDescription);
 		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
-		model.add(view.getDcat().getStatementsWithBase(hostname));
+		model.add(extractDcatStatements(view));
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
+	}
+
+	private List<Statement> extractDcatStatements(ViewSpecification view) {
+		return view.getDcat() != null ? view.getDcat().getStatementsWithBase(hostname) : List.of();
 	}
 
 	private String getIRIString(ViewName viewName) {

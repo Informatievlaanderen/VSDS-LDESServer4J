@@ -59,7 +59,6 @@ public class ViewServiceImpl implements ViewService {
 		addView(defaultView);
 	}
 
-	// TODO TVB: 25/05/23 update test
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
 		var viewSpecification = viewRepository.getViewByViewName(viewName)
@@ -68,7 +67,6 @@ public class ViewServiceImpl implements ViewService {
 		return viewSpecification;
 	}
 
-	// TODO TVB: 25/05/2023 update test
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
 		var viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);

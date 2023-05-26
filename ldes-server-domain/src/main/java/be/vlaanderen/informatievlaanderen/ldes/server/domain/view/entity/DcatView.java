@@ -37,7 +37,6 @@ public class DcatView {
 		return dcat;
 	}
 
-	// TODO TVB: 26/05/2023 test
 	public List<Statement> getStatementsWithBase(String hostName) {
 		Resource dataServiceId = getDcat().listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).next().asResource();
 

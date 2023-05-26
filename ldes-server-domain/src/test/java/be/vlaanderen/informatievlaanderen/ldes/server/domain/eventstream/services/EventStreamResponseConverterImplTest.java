@@ -8,7 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -64,11 +66,13 @@ class EventStreamResponseConverterImplTest {
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shacl);
 
-			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
+			EventStreamResponse result = eventStreamConverter.fromModel(eventStreamModel);
+
+			assertEquals(expectedEventStreamResponse, result);
 		}
 
 		@Test
-		void when_eventStreamHasVies_then_convertToModel() {
+		void when_eventStreamHasViews_then_convertToModel() {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",

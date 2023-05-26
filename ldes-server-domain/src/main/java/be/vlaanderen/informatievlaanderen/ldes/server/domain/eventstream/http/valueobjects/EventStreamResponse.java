@@ -1,8 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.jena.rdf.model.Model;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,7 +68,21 @@ public class EventStreamResponse {
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& Objects.equals(memberType, that.memberType)
-				&& Objects.equals(views, that.views) && shacl.isIsomorphicWith(that.shacl);
+				&& shacl.isIsomorphicWith(that.shacl)
+				&& viewsAreEqual(views, that.views);
+	}
+
+	private boolean viewsAreEqual(List<ViewSpecification> listA, List<ViewSpecification> listB) {
+		if (listA == null) {
+			return listB == null;
+		}
+
+		if (listB == null) {
+			return false;
+		}
+
+		return new HashSet<>(listA).containsAll(listB)
+				&& new HashSet<>(listB).containsAll(listA);
 	}
 
 	@Override
