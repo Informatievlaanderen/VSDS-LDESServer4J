@@ -7,12 +7,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DcatAlre
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingServerDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.entities.ServerDcat;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.services.ServerDcatService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatCatalogValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,7 +27,6 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -40,22 +42,47 @@ class AdminServerDcatControllerTest {
 	private static final String ID = "id";
 	@MockBean
 	private ServerDcatService service;
-
+	@MockBean
+	private DcatCatalogValidator validator;
 	@Autowired
 	private MockMvc mockMvc;
 
+	@BeforeEach
+	void setUp() {
+		when(validator.supports(any())).thenReturn(true);
+	}
+
 	@Test
 	void when_PostValidDcatModel_then_ReturnStatus200() throws Exception {
-		final Model model = readModelFromFile("dcat/valid-server-dcat.ttl");
+		final Model model = readModelFromFile();
 		when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
 
 		mockMvc.perform(post("/admin/api/v1/dcat")
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+				.content(readDataFromFile()))
 				.andExpect(status().isCreated())
 				.andExpect(content().string(ID));
 
-		verify(service).createServerDcat(argThat(model::isIsomorphicWith));
+		InOrder inOrder = inOrder(service, validator);
+		inOrder.verify(validator).validate(argThat(model::isIsomorphicWith), any());
+		inOrder.verify(service).createServerDcat(argThat(model::isIsomorphicWith));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	void when_PostInvalidDcatModel_then_ReturnStatus400() throws Exception {
+		final String modelString = readDataFromFile().replace("[]",
+				"<http://example.org/svc/1>");
+
+		doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
+
+		mockMvc.perform(post("/admin/api/v1/dcat")
+				.contentType(Lang.TURTLE.getHeaderString())
+				.content(modelString))
+				.andExpect(status().isBadRequest());
+
+		verify(validator).validate(any(), any());
+		verifyNoInteractions(service);
 	}
 
 	@Test
@@ -64,37 +91,62 @@ class AdminServerDcatControllerTest {
 
 		mockMvc.perform(post("/admin/api/v1/dcat")
 						.contentType(Lang.TURTLE.getHeaderString())
-						.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+						.content(readDataFromFile()))
 				.andExpect(status().isBadRequest());
 
-		verify(service).createServerDcat(any());
+		InOrder inOrder = inOrder(service, validator);
+		inOrder.verify(validator).validate(any(), any());
+		inOrder.verify(service).createServerDcat(any());
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_PutValidDcat_then_ReturnStatus200() throws Exception {
-		final Model model = readModelFromFile("dcat/valid-server-dcat.ttl");
+		final Model model = readModelFromFile();
 		when(service.updateServerDcat(eq(ID), any())).thenReturn(new ServerDcat(ID, model));
 
 		mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+				.content(readDataFromFile()))
 				.andExpect(status().isOk());
 
-		verify(service).updateServerDcat(eq(ID), argThat(model::isIsomorphicWith));
+		InOrder inOrder = inOrder(service, validator);
+		inOrder.verify(validator).validate(argThat(model::isIsomorphicWith), any());
+		inOrder.verify(service).updateServerDcat(eq(ID), argThat(model::isIsomorphicWith));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	void when_PutInvalidDcatModel_then_ReturnStatus400() throws Exception {
+		final String modelString = readDataFromFile().replace("[]",
+				"<http://example.org/svc/1>");
+
+		doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
+
+		mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
+				.contentType(Lang.TURTLE.getHeaderString())
+				.content(modelString))
+				.andExpect(status().isBadRequest());
+
+		verify(validator).validate(any(), any());
+		verifyNoInteractions(service);
 	}
 
 	@Test
 	void when_ServerHasNoDcatYet_and_PutServerDcat_then_ReturnStatus404() throws Exception {
 		final String id = "id";
-		final Model model = readModelFromFile("dcat/valid-server-dcat.ttl");
+		final Model model = readModelFromFile();
 		when(service.updateServerDcat(eq(id), any())).thenThrow(MissingServerDcatException.class);
 
 		mockMvc.perform(put("/admin/api/v1/dcat/{id}", id)
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/valid-server-dcat.ttl")))
+				.content(readDataFromFile()))
 				.andExpect(status().isNotFound());
 
-		verify(service).updateServerDcat(eq(id), argThat(model::isIsomorphicWith));
+		InOrder inOrder = inOrder(service, validator);
+		inOrder.verify(validator).validate(argThat(model::isIsomorphicWith), any());
+		inOrder.verify(service).updateServerDcat(eq(id), argThat(model::isIsomorphicWith));
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
@@ -104,6 +156,7 @@ class AdminServerDcatControllerTest {
 		mockMvc.perform(delete("/admin/api/v1/dcat/{id}", id)).andExpect(status().isOk());
 
 		verify(service).deleteServerDcat(id);
+		verifyNoInteractions(validator);
 	}
 
 	@Test
@@ -114,15 +167,15 @@ class AdminServerDcatControllerTest {
 		mockMvc.perform(delete("/admin/api/v1/dcat/{id}", id)).andExpect(status().isNotFound());
 
 		verify(service).deleteServerDcat(id);
+		verifyNoInteractions(validator);
 	}
 
-	private Model readModelFromFile(String fileName) throws IOException {
-		final Path filePath = ResourceUtils.getFile("classpath:" + fileName).toPath();
-		return RDFParser.source(filePath).lang(Lang.TURTLE).toModel();
+	private Model readModelFromFile() {
+		return RDFParser.source("dcat/valid-server-dcat.ttl").lang(Lang.TURTLE).toModel();
 	}
 
-	private String readDataFromFile(String fileName) throws IOException {
-		final File file = ResourceUtils.getFile("classpath:" + fileName);
+	private String readDataFromFile() throws IOException {
+		final File file = ResourceUtils.getFile("classpath:dcat/valid-server-dcat.ttl");
 		return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 	}
 }
