@@ -9,10 +9,12 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 public class DcatView {
 
+	public static final String VIEW_DESCRIPTION_SUFFIX = "/description";
 	public static final Property DCAT_DATA_SERVICE = createProperty("http://www.w3.org/ns/dcat#DataService");
 
 	private final ViewName viewName;
@@ -36,12 +38,17 @@ public class DcatView {
 	}
 
 	// TODO TVB: 26/05/2023 test
-	public List<Statement> getStatementsWithBase(Resource viewDescription) {
+	public List<Statement> getStatementsWithBase(String hostName) {
 		Resource dataServiceId = getDcat().listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).next().asResource();
 
 		return getDcat().listStatements(dataServiceId, null, (RDFNode) null)
-				.mapWith(stmnt -> createStatement(viewDescription, stmnt.getPredicate(), stmnt.getObject()))
+				.mapWith(stmnt -> createStatement(getIRIString(hostName), stmnt.getPredicate(), stmnt.getObject()))
 				.toList();
+	}
+
+	private Resource getIRIString(String hostname) {
+		return createResource(
+				hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName() + VIEW_DESCRIPTION_SUFFIX);
 	}
 
 	@Override
@@ -58,5 +65,4 @@ public class DcatView {
 	public int hashCode() {
 		return Objects.hash(viewName);
 	}
-
 }

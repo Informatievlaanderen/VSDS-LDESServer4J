@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +15,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.CUSTOM;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_OBJECT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION_RESOURCE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.VIEW_DESCRIPTION_SUFFIX;
+import static org.apache.jena.rdf.model.ResourceFactory.createPlainLiteral;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 @Component
 public class ViewSpecificationConverter {
@@ -49,7 +61,7 @@ public class ViewSpecificationConverter {
 				getIRIDescription(viewName));
 		model.add(viewDescription);
 		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
-		model.add(view.getDcat().getStatementsWithBase(viewDescription.getResource()));
+		model.add(view.getDcat().getStatementsWithBase(hostname));
 		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
@@ -65,7 +77,7 @@ public class ViewSpecificationConverter {
 	}
 
 	private Resource getIRIDescription(ViewName viewName) {
-		return createResource(getIRIString(viewName) + "/description");
+		return createResource(getIRIString(viewName) + VIEW_DESCRIPTION_SUFFIX);
 	}
 
 	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {
