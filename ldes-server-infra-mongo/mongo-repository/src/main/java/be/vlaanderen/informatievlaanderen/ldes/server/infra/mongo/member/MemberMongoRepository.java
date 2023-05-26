@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ public class MemberMongoRepository implements MemberRepository {
 
 	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	public static final String COLLECTION_NAME = "collectionName";
+	public static final String VERSION_OF = "versionOf";
 	public static final String SEQUENCE_NR = "sequenceNr";
 	private final LdesMemberEntityRepository repository;
 	private final MongoTemplate mongoTemplate;
@@ -75,6 +77,16 @@ public class MemberMongoRepository implements MemberRepository {
 		query.addCriteria(Criteria.where(COLLECTION_NAME).is(collectionName));
 		query.with(Sort.by(SEQUENCE_NR).ascending());
 		return mongoTemplate.stream(query, LdesMemberEntity.class).map(converter::toLdesMember);
+	}
+
+	@Override
+	public List<Member> getMembersOfVersion(String versionOf) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(VERSION_OF).is(versionOf));
+		return mongoTemplate
+				.stream(query, LdesMemberEntity.class)
+				.map(converter::toLdesMember)
+				.toList();
 	}
 
 	@Override

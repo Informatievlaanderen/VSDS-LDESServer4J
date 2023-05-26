@@ -115,7 +115,16 @@ class MemberMongoRepositoryTest {
 		ldesMemberMongoRepository.getMemberStreamOfCollection("collectionName");
 
 		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
+	}
 
+	@Test
+	void when_GetMembersOfVersion_then_ListOfMembersWithSameVersionOfIsReturned() {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(VERSION_OF).is("versionOf"));
+
+		ldesMemberMongoRepository.getMembersOfVersion("versionOf");
+
+		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
 	}
 
 	private Model getModel() {
