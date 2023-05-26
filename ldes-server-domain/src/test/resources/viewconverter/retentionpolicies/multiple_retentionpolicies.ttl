@@ -1,0 +1,19 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix server: <http://localhost:8080/mobility-hindrances/> .
+
+server:multiple tree:viewDescription [
+    ldes:retentionPolicy [
+        a ldes:PointInTimePolicy ;
+        ldes:pointInTime "2023-04-12T00:00:00"^^xsd:dateTime
+    ],
+    [
+        a ldes:DurationAgoPolicy  ;
+        tree:value "PT2M"^^xsd:duration ;
+    ],
+    [
+        a ldes:LatestVersionSubset;
+        ldes:amount 2 ;
+    ] ;
+] .

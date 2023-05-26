@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
 import java.util.Objects;
@@ -11,10 +12,10 @@ public class ViewSpecification {
 
 	private ViewName name;
 	private DcatView dcat;
-	private List<RetentionConfig> retentionPolicies;
+	private List<Model> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
-	public ViewSpecification(ViewName name, List<RetentionConfig> retentionPolicies,
+	public ViewSpecification(ViewName name, List<Model> retentionPolicies,
 			List<FragmentationConfig> fragmentations) {
 		this.name = name;
 		this.retentionPolicies = retentionPolicies;
@@ -46,11 +47,11 @@ public class ViewSpecification {
 		this.fragmentations = fragmentations;
 	}
 
-	public List<RetentionConfig> getRetentionConfigs() {
+	public List<Model> getRetentionConfigs() {
 		return retentionPolicies == null ? List.of() : retentionPolicies;
 	}
 
-	public void setRetentionPolicies(List<RetentionConfig> retentionPolicies) {
+	public void setRetentionPolicies(List<Model> retentionPolicies) {
 		this.retentionPolicies = retentionPolicies;
 	}
 

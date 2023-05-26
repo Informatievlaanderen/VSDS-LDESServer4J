@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
@@ -17,10 +17,10 @@ import java.util.Map;
 public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection {
 
 	private final Map<ViewName, List<RetentionPolicy>> retentionPolicyMap;
-	private final RetentionPolicyCreator retentionPolicyCreator;
+	private final RetentionPolicyFactory retentionPolicyFactory;
 
-	public RetentionPolicyCollectionImpl(RetentionPolicyCreator retentionPolicyCreator) {
-		this.retentionPolicyCreator = retentionPolicyCreator;
+	public RetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
+		this.retentionPolicyFactory = retentionPolicyFactory;
 		this.retentionPolicyMap = new HashMap<>();
 	}
 
@@ -31,13 +31,13 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		retentionPolicyMap.put(event.getViewName(),
-				retentionPolicyCreator.createRetentionPolicyListForView(event.getViewSpecification()));
+				retentionPolicyFactory.getRetentionPolicyListForView(event.getViewSpecification()));
 	}
 
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
 		retentionPolicyMap.put(event.getViewName(),
-				retentionPolicyCreator.createRetentionPolicyListForView(event.getViewSpecification()));
+				retentionPolicyFactory.getRetentionPolicyListForView(event.getViewSpecification()));
 	}
 
 	@EventListener
