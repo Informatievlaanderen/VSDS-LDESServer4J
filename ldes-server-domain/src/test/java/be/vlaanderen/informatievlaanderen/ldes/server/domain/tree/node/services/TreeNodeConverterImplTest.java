@@ -7,7 +7,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -15,10 +18,10 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -35,6 +38,7 @@ class TreeNodeConverterImplTest {
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
+	private DcatViewService dcatViewService;;
 
 	@BeforeEach
 	void setUp() {
@@ -50,16 +54,22 @@ class TreeNodeConverterImplTest {
 		EventStreamService eventStreamService = mock(EventStreamService.class);
 		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
 
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService, null);
+		dcatViewService = mock(DcatViewService.class);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService, dcatViewService);
 	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
 				COLLECTION_NAME);
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
+		when(dcatViewService.findByViewName(viewName)).thenReturn(Optional.of(dcatView));
+
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(10, getNumberOfStatements(model));
+		assertEquals(14, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -126,7 +136,8 @@ class TreeNodeConverterImplTest {
 	}
 
 	private void verifyDcatStatements(Model model) {
-
+		Resource shapeResource = createResource("http://localhost:8080/mobility-hindrances/view/description");
+		assertEquals(4, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
 	}
 
 	private void verifyRelationStatements(Model model, Resource relationObject) {
