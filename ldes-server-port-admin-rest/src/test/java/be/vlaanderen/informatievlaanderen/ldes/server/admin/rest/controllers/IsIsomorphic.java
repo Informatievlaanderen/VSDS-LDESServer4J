@@ -8,6 +8,8 @@ import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import static org.mockito.ArgumentMatchers.argThat;
+
 public class IsIsomorphic implements ResultMatcher, ArgumentMatcher<Model> {
 	private final Model model;
 
@@ -17,6 +19,10 @@ public class IsIsomorphic implements ResultMatcher, ArgumentMatcher<Model> {
 
 	public static IsIsomorphic with(Model model) {
 		return new IsIsomorphic(model);
+	}
+
+	public static Model isIsomorphicWith(Model model) {
+		return argThat(new IsIsomorphic(model));
 	}
 
 	@Override

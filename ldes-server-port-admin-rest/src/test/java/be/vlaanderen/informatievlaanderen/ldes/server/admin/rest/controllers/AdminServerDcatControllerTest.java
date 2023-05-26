@@ -13,6 +13,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic.isIsomorphicWith;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -35,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = { AdminServerDcatControllerImpl.class, ModelConverter.class, PrefixAdderImpl.class,
-		AdminRestResponseEntityExceptionHandler.class })
+@ContextConfiguration(classes = {AdminServerDcatController.class, ModelConverter.class, PrefixAdderImpl.class,
+		AdminRestResponseEntityExceptionHandler.class})
 @ExtendWith(MockitoExtension.class)
 class AdminServerDcatControllerTest {
 	private static final String ID = "id";
@@ -49,125 +51,135 @@ class AdminServerDcatControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		when(validator.supports(any())).thenReturn(true);
+		when(validator.supports(argThat(Model.class::isAssignableFrom))).thenReturn(true);
 	}
 
-	@Test
-	void when_PostValidDcatModel_then_ReturnStatus200() throws Exception {
-		final Model model = readModelFromFile();
-		when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
+	@Nested
+	class PostRequest {
+		@Test
+		void when_PostValidDcatModel_then_ReturnStatus200() throws Exception {
+			final Model model = readModelFromFile();
 
-		mockMvc.perform(post("/admin/api/v1/dcat")
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile()))
-				.andExpect(status().isCreated())
-				.andExpect(content().string(ID));
+			when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
 
-		InOrder inOrder = inOrder(service, validator);
-		inOrder.verify(validator).validate(argThat(model::isIsomorphicWith), any());
-		inOrder.verify(service).createServerDcat(argThat(model::isIsomorphicWith));
-		inOrder.verifyNoMoreInteractions();
+			mockMvc.perform(post("/admin/api/v1/dcat")
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
+					.andExpect(status().isCreated())
+					.andExpect(content().string(ID));
+
+			InOrder inOrder = inOrder(service, validator);
+			inOrder.verify(validator).validate(isIsomorphicWith(model), any());
+			inOrder.verify(service).createServerDcat(argThat(model::isIsomorphicWith));
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void when_PostInvalidDcatModel_then_ReturnStatus400() throws Exception {
+			final String modelString = readDataFromFile().replace("[]",
+					"<http://example.org/svc/1>");
+
+			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
+
+			mockMvc.perform(post("/admin/api/v1/dcat")
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(modelString))
+					.andExpect(status().isBadRequest());
+
+			verify(validator).validate(any(), any());
+			verifyNoInteractions(service);
+		}
+
+		@Test
+		void when_ServerAlreadyHasDcatConfigured_and_PostDcat_then_Return400() throws Exception {
+			when(service.createServerDcat(any())).thenThrow(DcatAlreadyConfiguredException.class);
+
+			mockMvc.perform(post("/admin/api/v1/dcat")
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
+					.andExpect(status().isBadRequest());
+
+			InOrder inOrder = inOrder(service, validator);
+			inOrder.verify(validator).validate(any(), any());
+			inOrder.verify(service).createServerDcat(any());
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
-	@Test
-	void when_PostInvalidDcatModel_then_ReturnStatus400() throws Exception {
-		final String modelString = readDataFromFile().replace("[]",
-				"<http://example.org/svc/1>");
+	@Nested
+	class PutRequest {
+		@Test
+		void when_PutValidDcat_then_ReturnStatus200() throws Exception {
+			final Model model = readModelFromFile();
 
-		doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
+			when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
 
-		mockMvc.perform(post("/admin/api/v1/dcat")
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(modelString))
-				.andExpect(status().isBadRequest());
+			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
+					.andExpect(status().isOk());
 
-		verify(validator).validate(any(), any());
-		verifyNoInteractions(service);
+			InOrder inOrder = inOrder(service, validator);
+			inOrder.verify(validator).validate(isIsomorphicWith(model), any());
+			inOrder.verify(service).updateServerDcat(eq(ID), argThat(model::isIsomorphicWith));
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void when_PutInvalidDcatModel_then_ReturnStatus400() throws Exception {
+			final String modelString = readDataFromFile().replace("[]",
+					"<http://example.org/svc/1>");
+
+			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
+
+			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(modelString))
+					.andExpect(status().isBadRequest());
+
+			verify(validator).validate(any(), any());
+			verifyNoInteractions(service);
+		}
+
+		@Test
+		void when_ServerHasNoDcatYet_and_PutServerDcat_then_ReturnStatus404() throws Exception {
+			final Model model = readModelFromFile();
+			when(service.updateServerDcat(eq(ID), any())).thenThrow(MissingServerDcatException.class);
+
+			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
+							.contentType(Lang.TURTLE.getHeaderString())
+							.content(readDataFromFile()))
+					.andExpect(status().isNotFound());
+
+			InOrder inOrder = inOrder(service, validator);
+			inOrder.verify(validator).validate(isIsomorphicWith(model), any());
+			inOrder.verify(service).updateServerDcat(eq(ID), isIsomorphicWith(model));
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
-	@Test
-	void when_ServerAlreadyHasDcatConfigured_and_PostDcat_then_Return400() throws Exception {
-		when(service.createServerDcat(any())).thenThrow(DcatAlreadyConfiguredException.class);
 
-		mockMvc.perform(post("/admin/api/v1/dcat")
-						.contentType(Lang.TURTLE.getHeaderString())
-						.content(readDataFromFile()))
-				.andExpect(status().isBadRequest());
+	@Nested
+	class DeleteRequest {
+		@Test
+		void when_DeleteNonExistingDcat_then_ReturnStatus404() throws Exception {
+			doThrow(MissingServerDcatException.class).when(service).deleteServerDcat(ID);
 
-		InOrder inOrder = inOrder(service, validator);
-		inOrder.verify(validator).validate(any(), any());
-		inOrder.verify(service).createServerDcat(any());
-		inOrder.verifyNoMoreInteractions();
-	}
+			mockMvc.perform(delete("/admin/api/v1/dcat/{id}", ID)).andExpect(status().isNotFound());
 
-	@Test
-	void when_PutValidDcat_then_ReturnStatus200() throws Exception {
-		final Model model = readModelFromFile();
-		when(service.updateServerDcat(eq(ID), any())).thenReturn(new ServerDcat(ID, model));
+			verify(service).deleteServerDcat(ID);
+			verifyNoInteractions(validator);
+		}
 
-		mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile()))
-				.andExpect(status().isOk());
+		@Test
+		void when_DeleteExistingDcat_then_ReturnStatus200() throws Exception {
+			final String id = "id";
 
-		InOrder inOrder = inOrder(service, validator);
-		inOrder.verify(validator).validate(argThat(model::isIsomorphicWith), any());
-		inOrder.verify(service).updateServerDcat(eq(ID), argThat(model::isIsomorphicWith));
-		inOrder.verifyNoMoreInteractions();
-	}
+			mockMvc.perform(delete("/admin/api/v1/dcat/{id}", id)).andExpect(status().isOk());
 
-	@Test
-	void when_PutInvalidDcatModel_then_ReturnStatus400() throws Exception {
-		final String modelString = readDataFromFile().replace("[]",
-				"<http://example.org/svc/1>");
-
-		doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
-
-		mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(modelString))
-				.andExpect(status().isBadRequest());
-
-		verify(validator).validate(any(), any());
-		verifyNoInteractions(service);
-	}
-
-	@Test
-	void when_ServerHasNoDcatYet_and_PutServerDcat_then_ReturnStatus404() throws Exception {
-		final String id = "id";
-		final Model model = readModelFromFile();
-		when(service.updateServerDcat(eq(id), any())).thenThrow(MissingServerDcatException.class);
-
-		mockMvc.perform(put("/admin/api/v1/dcat/{id}", id)
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile()))
-				.andExpect(status().isNotFound());
-
-		InOrder inOrder = inOrder(service, validator);
-		inOrder.verify(validator).validate(argThat(model::isIsomorphicWith), any());
-		inOrder.verify(service).updateServerDcat(eq(id), argThat(model::isIsomorphicWith));
-		inOrder.verifyNoMoreInteractions();
-	}
-
-	@Test
-	void when_DeleteExistingDcat_then_ReturnStatus200() throws Exception {
-		final String id = "id";
-
-		mockMvc.perform(delete("/admin/api/v1/dcat/{id}", id)).andExpect(status().isOk());
-
-		verify(service).deleteServerDcat(id);
-		verifyNoInteractions(validator);
-	}
-
-	@Test
-	void when_DeleteNonExistingDcat_then_ReturnStatus404() throws Exception {
-		final String id = "id";
-		doThrow(MissingServerDcatException.class).when(service).deleteServerDcat(id);
-
-		mockMvc.perform(delete("/admin/api/v1/dcat/{id}", id)).andExpect(status().isNotFound());
-
-		verify(service).deleteServerDcat(id);
-		verifyNoInteractions(validator);
+			verify(service).deleteServerDcat(id);
+			verifyNoInteractions(validator);
+		}
 	}
 
 	private Model readModelFromFile() {
