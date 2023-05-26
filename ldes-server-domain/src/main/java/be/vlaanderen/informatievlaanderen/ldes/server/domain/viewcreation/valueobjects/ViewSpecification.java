@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
+import org.apache.jena.rdf.model.Model;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -8,10 +10,10 @@ public class ViewSpecification {
 	// TODO with the new equals method this is an entity. So it needs to move.
 
 	private ViewName name;
-	private List<RetentionConfig> retentionPolicies;
+	private List<Model> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
-	public ViewSpecification(ViewName name, List<RetentionConfig> retentionPolicies,
+	public ViewSpecification(ViewName name, List<Model> retentionPolicies,
 			List<FragmentationConfig> fragmentations) {
 		this.name = name;
 		this.retentionPolicies = retentionPolicies;
@@ -43,11 +45,11 @@ public class ViewSpecification {
 		this.fragmentations = fragmentations;
 	}
 
-	public List<RetentionConfig> getRetentionConfigs() {
+	public List<Model> getRetentionConfigs() {
 		return retentionPolicies == null ? List.of() : retentionPolicies;
 	}
 
-	public void setRetentionPolicies(List<RetentionConfig> retentionPolicies) {
+	public void setRetentionPolicies(List<Model> retentionPolicies) {
 		this.retentionPolicies = retentionPolicies;
 	}
 

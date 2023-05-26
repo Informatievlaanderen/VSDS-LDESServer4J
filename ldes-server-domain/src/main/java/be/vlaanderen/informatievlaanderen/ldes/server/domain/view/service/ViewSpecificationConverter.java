@@ -17,11 +17,12 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 public class ViewSpecificationConverter {
 
 	public static final String FRAGMENTATION_NAME = "name";
-	public static final String RETENTION_NAME = "name";
 	private final String hostname;
+	private final RetentionModelExtractor retentionModelExtractor;
 
-	public ViewSpecificationConverter(AppConfig appConfig) {
+	public ViewSpecificationConverter(AppConfig appConfig, RetentionModelExtractor retentionModelExtractor) {
 		this.hostname = appConfig.getHostName();
+		this.retentionModelExtractor = retentionModelExtractor;
 	}
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
@@ -30,7 +31,7 @@ public class ViewSpecificationConverter {
 
 		view.setName(viewNameFromStatements(statements, collectionName));
 		view.setCollectionName(collectionName);
-		view.setRetentionPolicies(retentionListFromStatements(statements));
+		view.setRetentionPolicies(retentionModelExtractor.extractRetentionStatements(viewModel));
 		view.setFragmentations(fragmentationListFromStatements(statements));
 
 		return view;
@@ -44,10 +45,23 @@ public class ViewSpecificationConverter {
 				createProperty(TREE_VIEW_DESCRIPTION),
 				createResource());
 		model.add(viewDescription);
-		model.add(retentionStatementsFromList(viewDescription.getResource(), view.getRetentionConfigs()));
+
+		addRetentionPoliciesToModel(view.getRetentionConfigs(), model, viewDescription);
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
+	}
+
+	private void addRetentionPoliciesToModel(List<Model> retentionModels, Model model, Statement viewDescription) {
+		retentionModels.forEach(retentionModel -> {
+			Resource retentionResource = createResource();
+			List<Statement> statements = new ArrayList<>();
+			retentionModel.listStatements().forEach(statement -> statements
+					.add(createStatement(retentionResource, statement.getPredicate(), statement.getObject())));
+			statements.add(
+					createStatement(viewDescription.getResource(), createProperty(RETENTION_TYPE), retentionResource));
+			model.add(statements);
+		});
 	}
 
 	public Resource getIRIFromViewName(ViewName viewName) {
@@ -61,40 +75,6 @@ public class ViewSpecificationConverter {
 				.orElseThrow(() -> new ModelToViewConverterException("Missing type: " + TREE_VIEW_DESCRIPTION));
 
 		return new ViewName(collectionName, nameString);
-	}
-
-	private List<RetentionConfig> retentionListFromStatements(List<Statement> statements) {
-		List<RetentionConfig> retentionList = new ArrayList<>();
-		for (RDFNode retention : statements.stream()
-				.filter(new ConfigFilterPredicate(RETENTION_TYPE))
-				.map(Statement::getObject).toList()) {
-			List<Statement> retentionStatements = retrieveAllStatements(retention, statements);
-			RetentionConfig config = new RetentionConfig();
-			Map<String, String> configMap = extractConfigMap(retentionStatements);
-			// TODO verify Retention name corresponds with a valid policy
-			if (!configMap.containsKey(RETENTION_NAME)) {
-				throw new ModelToViewConverterException("Missing retention name");
-			}
-			config.setName(configMap.remove(RETENTION_NAME));
-			config.setConfig(configMap);
-			retentionList.add(config);
-		}
-		return retentionList;
-	}
-
-	private List<Statement> retentionStatementsFromList(Resource viewName, List<RetentionConfig> retentionList) {
-		List<Statement> statements = new ArrayList<>();
-		for (RetentionConfig retention : retentionList) {
-			Resource retentionResource = createResource();
-			statements.add(createStatement(
-					retentionResource, RDF_SYNTAX_TYPE, createResource(RETENTION_TYPE)));
-			retention.getConfig().forEach((key, value) -> statements.add(createStatement(
-					retentionResource, createProperty(CUSTOM + key), createPlainLiteral(value))));
-			statements.add(createStatement(retentionResource, createProperty(CUSTOM + FRAGMENTATION_NAME),
-					createPlainLiteral(retention.getName())));
-			statements.add(createStatement(viewName, createProperty(RETENTION_TYPE), retentionResource));
-		}
-		return statements;
 	}
 
 	private List<FragmentationConfig> fragmentationListFromStatements(List<Statement> statements) {

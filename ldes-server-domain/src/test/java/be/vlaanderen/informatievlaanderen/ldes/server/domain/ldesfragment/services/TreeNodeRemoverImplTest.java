@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ class TreeNodeRemoverImplTest {
 
 	@Test
 	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreDeleted() {
-		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(new ViewName("collectionName", "view"), List.of(new TimeBasedRetentionPolicy("PT0S"))));
+		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(new ViewName("collectionName", "view"), List.of(new TimeBasedRetentionPolicy(Duration.ZERO))));
 		LdesFragment firstLdesFragmentOfView = ldesFragment("1");
 		LdesFragment secondLdesFragmentOfView = ldesFragment("2");
 		when(fragmentRepository.retrieveFragmentsOfView(VIEW_NAME.asString()))

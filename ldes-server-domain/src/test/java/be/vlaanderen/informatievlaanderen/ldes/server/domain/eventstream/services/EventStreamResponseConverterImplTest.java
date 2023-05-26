@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
@@ -29,7 +30,8 @@ class EventStreamResponseConverterImplTest {
 	void setUp() throws URISyntaxException {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName("http://localhost:8080");
-		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig);
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig,
+				new RetentionModelExtractor());
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamResponseConverterImpl(appConfig, viewSpecificationConverter, prefixAdder);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");

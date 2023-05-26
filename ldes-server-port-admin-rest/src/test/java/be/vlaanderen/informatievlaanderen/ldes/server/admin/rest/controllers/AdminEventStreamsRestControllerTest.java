@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class, ModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamValidator.class,
-		AdminRestResponseEntityExceptionHandler.class })
+		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class })
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	@MockBean
