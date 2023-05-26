@@ -17,7 +17,7 @@ public class DcatBlankDataServiceNode implements DcatBlankNodeValidator {
 		}
 
 		if (!resources.get(0).asNode().isBlank()) {
-			throw new IllegalArgumentException("dcat:DataService must be a blank node");
+			throw new IllegalArgumentException("Node of type dcat:DataService must be a blank node");
 		}
 	}
 }

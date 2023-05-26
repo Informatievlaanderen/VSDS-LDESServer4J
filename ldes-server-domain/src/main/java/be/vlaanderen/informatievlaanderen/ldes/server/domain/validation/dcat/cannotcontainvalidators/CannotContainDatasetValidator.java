@@ -12,12 +12,12 @@ public class CannotContainDatasetValidator implements CannotContainValidator {
 			throw new IllegalArgumentException("Model cannot contain a relation to the dataset.");
 		}
 
-		if (dcat.listSubjectsWithProperty(DCAT_DATASET_PREDICATE).hasNext()) {
-			throw new IllegalArgumentException("Model cannot contain a relation to the dataset.");
-		}
-
 		if (dcat.listSubjectsWithProperty(RDF.type, DCAT_DATASET).hasNext()) {
 			throw new IllegalArgumentException("Model cannot contain a dataset.");
+		}
+
+		if (dcat.listSubjectsWithProperty(DCAT_DATASET_PREDICATE).hasNext()) {
+			throw new IllegalArgumentException("Model cannot contain a relation to the dataset.");
 		}
 	}
 }

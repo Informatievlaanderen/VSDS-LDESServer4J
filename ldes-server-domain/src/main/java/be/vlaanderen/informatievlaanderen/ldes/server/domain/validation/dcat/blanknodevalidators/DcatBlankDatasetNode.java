@@ -6,18 +6,18 @@ import org.apache.jena.vocabulary.RDF;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.DCAT_DATASET;
 
 public class DcatBlankDatasetNode implements DcatBlankNodeValidator {
 	@Override
 	public void validateBlankNode(Model dcat) {
-		final List<Resource> resources = dcat.listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).toList();
+		final List<Resource> resources = dcat.listSubjectsWithProperty(RDF.type, DCAT_DATASET).toList();
 		if (resources.size() != 1) {
 			throw new IllegalArgumentException("Model must include exactly one Dataset. Not more, not less.");
 		}
 
 		if (!resources.get(0).asNode().isBlank()) {
-			throw new IllegalArgumentException("dcat:Dataset must be a blank node");
+			throw new IllegalArgumentException("Node of type dcat:Dataset must be a blank node");
 		}
 	}
 }

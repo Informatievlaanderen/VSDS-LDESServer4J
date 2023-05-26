@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DcatDatasetValidator extends DcatValidator {
-
-	protected DcatDatasetValidator() {
+	public DcatDatasetValidator() {
 		super(new DcatBlankDatasetNode(), new CannotContainCatalogValidator(), new CannotContainServiceValidator());
 	}
 }

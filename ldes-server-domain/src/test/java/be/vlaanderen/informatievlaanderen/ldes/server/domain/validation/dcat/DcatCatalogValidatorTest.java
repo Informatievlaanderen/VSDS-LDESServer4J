@@ -19,23 +19,10 @@ class DcatCatalogValidatorTest {
 	private final static String validServerDcat = """
 							@prefix dct:   <http://purl.org/dc/terms/> .
 							@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-							@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
-							@prefix org:   <http://www.w3.org/ns/org#> .
-							@prefix legal: <http://www.w3.org/ns/legal#> .
-							@prefix m8g:   <http://data.europa.eu/m8g/>
-							@prefix locn:  <http://www.w3.org/ns/locn#>
-							@prefix skos:  <http://www.w3.org/2004/02/skos/core#>
 
 							[] a dcat:Catalog ;
 									dct:title "My geo-spatial view"@en ;
-									dct:description "Geospatial fragmentation for my LDES"@en ;
-									dct:license [
-											a dct:LicenseDocument ;
-											dct:type [
-													a skos:Concept;
-													skos:prefLabel "some public license"@en
-											]
-									] .
+									dct:description "Geospatial fragmentation for my LDES"@en .
 			""";
 
 	private DcatCatalogValidator validator;
@@ -52,13 +39,13 @@ class DcatCatalogValidatorTest {
 		assertDoesNotThrow(() -> validator.validate(model, null));
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidModelProvider.class)
-	void should_ThrowIllegalArgumentException_when_Invalid(String name, String turtleDcatString) {
-		assertNotNull(name);
+	void should_ThrowIllegalArgumentException_when_Invalid(String expectedMessage, String turtleDcatString) {
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
 		// noinspection DataFlowIssue
-		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
+		Exception e = assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
+		assertEquals(expectedMessage, e.getMessage());
 	}
 
 	static class InvalidModelProvider implements ArgumentsProvider {
@@ -66,34 +53,28 @@ class DcatCatalogValidatorTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of("should_ThrowException_when_DataServiceHasIdentity", createModelServiceWithIdentity()),
-					Arguments.of("should_ThrowException_when_ModelHasMultipleDataServices",
-							createModelWithMultipleDataServices()),
-					Arguments.of("should_ThrowException_when_ModelHasServesDatasetPredicate",
+					Arguments.of("Node of type dcat:DataCatalog must be a blank node", createModelCatalogWithIdentity()),
+					Arguments.of("Model must include exactly one DataCatalog. Not more, not less.",
+							createModelWithMultipleDcatCatalogs()),
+					Arguments.of("Model cannot contain a relation to the dataset.",
 							createModelWithServesDatasetPredicate()),
-					Arguments.of("should_ThrowException_when_ModelHasDatasetPredicate",
+					Arguments.of("Model cannot contain a relation to the dataset.",
 							createModelWithDatasetPredicate()),
-					Arguments.of("should_ThrowException_when_ModelHasADataset", createModelWithADataset()),
-					Arguments.of("should_ThrowException_when_ModelHasACatalog", createModelWithACatalog()));
+					Arguments.of("Model cannot contain a dataset.", createModelWithADataset()),
+					Arguments.of("Model cannot contain a dataset.", createModelWithADatasetReference()),
+					Arguments.of("Model cannot contain a data service.", createModelWithADataService()));
 		}
 
-		private String createModelServiceWithIdentity() {
+		private String createModelCatalogWithIdentity() {
 			return validServerDcat.replace("[]", "<http://example.org/svc/1>");
 		}
 
-		private String createModelWithMultipleDataServices() {
+		private String createModelWithMultipleDcatCatalogs() {
 			return validServerDcat + "\n\n" +
 					"""
-							    [] a dcat:DataService ;
+							    [] a dcat:Catalog ;
 							      dct:title "My geo-spatial view"@en ;
-							      dct:description "Geospatial fragmentation for my LDES"@en ;
-							      dct:license [
-							        a dct:LicenseDocument ;
-							        dct:type [
-							          a skos:Concept;
-							          skos:prefLabel "some public license"@en
-							        ]
-							      ] .
+							      dct:description "Geospatial fragmentation for my LDES"@en .
 							""";
 		}
 
@@ -109,19 +90,29 @@ class DcatCatalogValidatorTest {
 					+ "\ndct:title");
 		}
 
+		private String createModelWithADatasetReference() {
+			// injects reference before title and dataset after
+			final String dataset = """
+					<http://example.org/ds/1> a dcat:Dataset;
+						dct:title "My dataset"@en .
+					""";
+			return validServerDcat.replace("dct:title", "dcat:dataset <http://example.org/ds/1>;"
+					+ "\ndct:title") + dataset;
+		}
+
 		private String createModelWithADataset() {
 			return validServerDcat + "\n\n" +
 					"""
-							    [] a dcat:Catalog ;
+							    [] a dcat:Dataset ;
 							      dct:title "My dataset"@en ;
 							      dct:description "Geospatial dataset for my LDES"@en .
 							""";
 		}
 
-		private String createModelWithACatalog() {
+		private String createModelWithADataService() {
 			return validServerDcat + "\n\n" +
 					"""
-							    [] a dcat:Catalog ;
+							    [] a dcat:DataService ;
 							      dct:title "My catalog"@en ;
 							      dct:description "Geospatial catalog for my LDES"@en .
 							""";

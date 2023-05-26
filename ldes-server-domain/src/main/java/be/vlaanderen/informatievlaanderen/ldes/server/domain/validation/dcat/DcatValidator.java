@@ -18,6 +18,8 @@ public abstract class DcatValidator implements Validator {
 	public static final Property DCAT_CATALOG = createProperty("http://www.w3.org/ns/dcat#Catalog");
 	public static final Property DCAT_SERVES_DATASET = createProperty("http://www.w3.org/ns/dcat#servesDataset");
 	public static final Property DCAT_DATASET_PREDICATE = createProperty("http://www.w3.org/ns/dcat#dataset");
+	public static final Property DCAT_DATA_SERVICE_PREDICATE = createProperty("http://www.w3.org/ns/dcat#service");
+
 	private final DcatBlankNodeValidator blankNodeValidator;
 	private final List<CannotContainValidator> cannotContainValidators;
 

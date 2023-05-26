@@ -17,7 +17,7 @@ public class DcatBlankCatalogNode implements DcatBlankNodeValidator {
 		}
 
 		if (!resources.get(0).asNode().isBlank()) {
-			throw new IllegalArgumentException("dcat:DataCatalog must be a blank node");
+			throw new IllegalArgumentException("Node of type dcat:DataCatalog must be a blank node");
 		}
 	}
 }
