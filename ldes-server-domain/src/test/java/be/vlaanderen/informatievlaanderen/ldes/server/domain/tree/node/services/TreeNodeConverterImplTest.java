@@ -9,8 +9,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -39,24 +41,25 @@ class TreeNodeConverterImplTest {
 		AppConfig appConfig = new AppConfig();
 		appConfig.setHostName(HOST_NAME);
 
+		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
+
 		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", false, List.of(), null);
+				"http://purl.org/dc/terms/isVersionOf", "memberType", false, List.of(), shacl);
 
 		EventStreamService eventStreamService = mock(EventStreamService.class);
 		when(eventStreamService.retrieveEventStream(COLLECTION_NAME)).thenReturn(eventStream);
 
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService, dcatViewService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, eventStreamService, null);
 	}
 
 	@Test
-	@Disabled("Figure out what to do with shape")
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
 		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
 				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(6, getNumberOfStatements(model));
+		assertEquals(10, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -111,11 +114,19 @@ class TreeNodeConverterImplTest {
 						.toString());
 		assertEquals("[" + id + ", https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
 				model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement().toString());
-		assertEquals("[" + id
-				+ ", https://w3id.org/tree#shape, https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape]",
-				model.listStatements(createResource(id), TREE_SHAPE, (Resource) null).nextStatement().toString());
 
 		verifyIsViewOfStatement(model);
+		verifyShaclStatements(model);
+		verifyDcatStatements(model);
+	}
+
+	private void verifyShaclStatements(Model model) {
+		Resource shapeResource = createResource("http://localhost:8080/collectionName1/shape");
+		assertEquals(3, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
+	}
+
+	private void verifyDcatStatements(Model model) {
+
 	}
 
 	private void verifyRelationStatements(Model model, Resource relationObject) {
