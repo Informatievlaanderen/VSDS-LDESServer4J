@@ -6,11 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-/**
- * @deprecated will be replaced in separate modules such as
- *             ldes-server-port-ingest
- */
-@Deprecated(since = "start of serverV2")
 public interface MemberRepository {
 
 	Member saveLdesMember(Member member);

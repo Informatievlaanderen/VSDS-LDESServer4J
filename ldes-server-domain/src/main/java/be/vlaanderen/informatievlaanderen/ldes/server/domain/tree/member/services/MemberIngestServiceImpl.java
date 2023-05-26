@@ -10,10 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-/**
- * @deprecated will be replaced in ldes-server-port-ingest by MemberIngesterImpl
- */
-@Deprecated(forRemoval = true)
 @Component
 public class MemberIngestServiceImpl implements MemberIngestService {
 
