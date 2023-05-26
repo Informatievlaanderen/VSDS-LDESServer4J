@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
 
@@ -16,12 +15,11 @@ import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @Tag(name = "Views DCAT")
+@SuppressWarnings("java:S2479") // whitespace needed for examples
 public interface AdminViewsDcatRestController {
 
-	@ApiResponses({
-			@ApiResponse(responseCode = "201"),
-			@ApiResponse(responseCode = "400")
-	})
+	@ApiResponse(responseCode = "201")
+	@ApiResponse(responseCode = "400")
 	@Operation(summary = "Add DCAT metadata for a view")
 	void createDcat(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
@@ -50,11 +48,9 @@ public interface AdminViewsDcatRestController {
 																		""") })
 					}) Model dcat);
 
-	@ApiResponses({
-			@ApiResponse(responseCode = "200"),
-			@ApiResponse(responseCode = "400"),
-			@ApiResponse(responseCode = "404")
-	})
+	@ApiResponse(responseCode = "200")
+	@ApiResponse(responseCode = "400")
+	@ApiResponse(responseCode = "404")
 	@Operation(summary = "Update DCAT metadata for a view")
 	void updateDcat(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
@@ -83,9 +79,7 @@ public interface AdminViewsDcatRestController {
 																		""") })
 					}) Model dcat);
 
-	@ApiResponses({
-			@ApiResponse(responseCode = "200")
-	})
+	@ApiResponse(responseCode = "200")
 	@Operation(summary = "Delete DCAT metadata for a view")
 	void deleteDcat(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
