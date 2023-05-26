@@ -15,7 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -40,6 +42,17 @@ class DcatViewServiceImplTest {
 
 		verify(dcatViewRepository).save(DcatView.from(VIEW_NAME, MODEL));
 		verifyNoMoreInteractions(dcatViewRepository);
+	}
+
+	@Test
+	void should_GetDcatViewFromRepository_when_FindByViewIsCalled() {
+		DcatView dcatView = DcatView.from(VIEW_NAME, MODEL);
+		when(dcatViewRepository.findByViewName(VIEW_NAME)).thenReturn(Optional.of(dcatView));
+
+		Optional<DcatView> result = dcatViewService.findByViewName(VIEW_NAME);
+
+		assertTrue(result.isPresent());
+		assertEquals(dcatView, result.get());
 	}
 
 	@Test
