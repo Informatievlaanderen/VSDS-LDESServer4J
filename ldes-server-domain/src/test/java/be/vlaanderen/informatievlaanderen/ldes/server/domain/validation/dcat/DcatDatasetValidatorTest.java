@@ -31,7 +31,7 @@ class DcatDatasetValidatorTest {
 	@Test
 	void when_ValidModel_Then_Pass() throws URISyntaxException {
 		Model dcat = RDFParser.source("dcat-dataset/valid.ttl").lang(Lang.TURTLE).toModel();
-		assertDoesNotThrow(() -> validator.validate(dcat, null));
+		assertDoesNotThrow(() -> validator.validate(dcat));
 	}
 
 	@ParameterizedTest(name = "Expected message: {0}")
@@ -46,7 +46,8 @@ class DcatDatasetValidatorTest {
 		private final String validDcat;
 
 		InvalidArgumentsProvider() throws IOException {
-			validDcat = FileUtils.readFileToString(ResourceUtils.getFile("classpath:dcat-dataset/valid.ttl"), StandardCharsets.UTF_8);
+			validDcat = FileUtils.readFileToString(ResourceUtils.getFile("classpath:dcat-dataset/valid.ttl"),
+					StandardCharsets.UTF_8);
 		}
 
 		@Override
@@ -59,7 +60,6 @@ class DcatDatasetValidatorTest {
 					Arguments.of("Model cannot contain a data service.", createModelWithDataServiceReference()),
 					Arguments.of("Model cannot contain a data service.", createModelWithADataService()));
 		}
-
 
 		private String createDatasetWithIdentity() {
 			return validDcat.replace("[]", "<http://example.org/svc/1>");

@@ -12,18 +12,19 @@ import java.util.List;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public abstract class DcatValidator implements Validator {
-
-	public static final Property DCAT_DATA_SERVICE = createProperty("http://www.w3.org/ns/dcat#DataService");
-	public static final Property DCAT_DATASET = createProperty("http://www.w3.org/ns/dcat#Dataset");
-	public static final Property DCAT_CATALOG = createProperty("http://www.w3.org/ns/dcat#Catalog");
-	public static final Property DCAT_SERVES_DATASET = createProperty("http://www.w3.org/ns/dcat#servesDataset");
-	public static final Property DCAT_DATASET_PREDICATE = createProperty("http://www.w3.org/ns/dcat#dataset");
-	public static final Property DCAT_DATA_SERVICE_PREDICATE = createProperty("http://www.w3.org/ns/dcat#service");
+	public static final String DCAT = "http://www.w3.org/ns/dcat#";
+	public static final Property DCAT_DATA_SERVICE = createProperty(DCAT, "DataService");
+	public static final Property DCAT_DATASET = createProperty(DCAT, "Dataset");
+	public static final Property DCAT_CATALOG = createProperty(DCAT, "Catalog");
+	public static final Property DCAT_SERVES_DATASET = createProperty(DCAT, "servesDataset");
+	public static final Property DCAT_DATASET_PREDICATE = createProperty(DCAT, "dataset");
+	public static final Property DCAT_DATA_SERVICE_PREDICATE = createProperty(DCAT, "service");
 
 	private final DcatBlankNodeValidator blankNodeValidator;
 	private final List<CannotContainValidator> cannotContainValidators;
 
-	protected DcatValidator(DcatBlankNodeValidator blankNodeValidator, CannotContainValidator... cannotContainValidators) {
+	protected DcatValidator(DcatBlankNodeValidator blankNodeValidator,
+			CannotContainValidator... cannotContainValidators) {
 		this.blankNodeValidator = blankNodeValidator;
 		this.cannotContainValidators = List.of(cannotContainValidators);
 	}
@@ -39,7 +40,7 @@ public abstract class DcatValidator implements Validator {
 		return Model.class.isAssignableFrom(clazz);
 	}
 
-	private void validate(Model dcat) {
+	protected void validate(Model dcat) {
 		blankNodeValidator.validateBlankNode(dcat);
 		cannotContainValidators.forEach(validator -> validator.validate(dcat));
 	}

@@ -33,18 +33,16 @@ class DcatCatalogValidatorTest {
 	}
 
 	@Test
-	void should_NotThrowAnything_when_Valid() {
+	void when_Valid_then_ThrowNothing() {
 		final Model model = RDFParser.fromString(validServerDcat).lang(Lang.TURTLE).build().toModel();
-		// noinspection DataFlowIssue
 		assertDoesNotThrow(() -> validator.validate(model, null));
 	}
 
 	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidModelProvider.class)
-	void should_ThrowIllegalArgumentException_when_Invalid(String expectedMessage, String turtleDcatString) {
+	void when_Invalid_then_ThrowIllegalArgumentException(String expectedMessage, String turtleDcatString) {
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
-		// noinspection DataFlowIssue
-		Exception e = assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
+		Exception e = assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat));
 		assertEquals(expectedMessage, e.getMessage());
 	}
 
@@ -53,7 +51,8 @@ class DcatCatalogValidatorTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of("Node of type dcat:DataCatalog must be a blank node", createModelCatalogWithIdentity()),
+					Arguments.of("Node of type dcat:DataCatalog must be a blank node",
+							createModelCatalogWithIdentity()),
 					Arguments.of("Model must include exactly one DataCatalog. Not more, not less.",
 							createModelWithMultipleDcatCatalogs()),
 					Arguments.of("Model cannot contain a relation to the dataset.",
