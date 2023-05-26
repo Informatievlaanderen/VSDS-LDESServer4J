@@ -20,12 +20,9 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retenti
 @Component
 public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 
-	private final MemberRepository memberRepository;
-
 	private final Map<String, RetentionPolicyCreator> retentionPolicyCreatorMap;
 
 	public RetentionPolicyFactoryImpl(MemberRepository memberRepository) {
-		this.memberRepository = memberRepository;
 		this.retentionPolicyCreatorMap = Map.of(
 				TIME_BASED_RETENTION_POLICY, new TimeBasedRetentionPolicyCreator(),
 				VERSION_BASED_RETENTION_POLICY, new VersionBasedRetentionPolicyCreator(memberRepository),
