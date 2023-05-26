@@ -60,13 +60,13 @@ public class AdminViewsRestController {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 	}
 
-	@DeleteMapping("/{viewName}")
+	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
 	@Operation(summary = "Delete a specific view for a collection")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
-	@GetMapping("/{viewName}")
+	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
 	@Operation(summary = "Retrieve a specific view config for a collection")
 	public ViewSpecification getView(@PathVariable String collectionName,
 			@PathVariable String viewName) {

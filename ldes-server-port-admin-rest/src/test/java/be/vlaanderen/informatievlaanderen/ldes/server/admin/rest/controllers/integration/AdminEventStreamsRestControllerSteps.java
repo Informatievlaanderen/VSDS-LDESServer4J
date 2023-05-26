@@ -7,7 +7,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collect
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -47,6 +50,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -68,6 +72,8 @@ public class AdminEventStreamsRestControllerSteps {
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	private static final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 	private ResultActions resultActions;
+	@MockBean
+	private DcatViewService dcatViewService;
 	@MockBean
 	private EventStreamCollection eventStreamRepository;
 	@MockBean
