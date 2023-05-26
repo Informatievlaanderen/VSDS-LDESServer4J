@@ -22,7 +22,8 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
-	@ExceptionHandler(value = { LdesShaclValidationException.class, DcatAlreadyConfiguredException.class })
+	@ExceptionHandler(value = { LdesShaclValidationException.class, DcatAlreadyConfiguredException.class,
+			IllegalArgumentException.class })
 	protected ResponseEntity<Object> handleValidationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
