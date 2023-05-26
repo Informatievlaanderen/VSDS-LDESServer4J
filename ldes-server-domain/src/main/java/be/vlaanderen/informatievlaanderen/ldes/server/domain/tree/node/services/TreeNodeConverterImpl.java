@@ -76,7 +76,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return statements;
 	}
 
-	// TODO TVB: 25/05/2023 update test
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
 			EventStreamResponse eventStream) {
 		String baseUrl = appConfig.getHostName() + "/" + eventStream.getCollection();
@@ -91,7 +90,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 			statements.addAll(eventStream.getShacl().listStatements().toList());
-//			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
+			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
