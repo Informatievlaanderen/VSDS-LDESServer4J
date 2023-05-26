@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -10,34 +11,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DcatDataServiceValidatorTest {
-	private final static String validDcatView = """
-							@prefix dct:   <http://purl.org/dc/terms/> .
-							@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-							@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
-							@prefix org:   <http://www.w3.org/ns/org#> .
-							@prefix legal: <http://www.w3.org/ns/legal#> .
-							@prefix m8g:   <http://data.europa.eu/m8g/>
-							@prefix locn:  <http://www.w3.org/ns/locn#>
-							@prefix skos:  <http://www.w3.org/2004/02/skos/core#>
-
-							[] a dcat:DataService ;
-									dct:title "My geo-spatial view"@en ;
-									dct:description "Geospatial fragmentation for my LDES"@en ;
-									dct:license [
-											a dct:LicenseDocument ;
-											dct:type [
-													a skos:Concept;
-													skos:prefLabel "some public license"@en
-											]
-									] .
-			""";
-
 	private DcatDataServiceValidator validator;
 
 	@BeforeEach
@@ -47,21 +30,24 @@ class DcatDataServiceValidatorTest {
 
 	@Test
 	void should_NotThrowAnything_when_Valid() {
-		final Model model = RDFParser.fromString(validDcatView).lang(Lang.TURTLE).build().toModel();
-		// noinspection DataFlowIssue
-		assertDoesNotThrow(() -> validator.validate(model, null));
+		final Model model = RDFParser.source("validation/valid-dcat-service.ttl").lang(Lang.TURTLE).build().toModel();
+		assertDoesNotThrow(() -> validator.validate(model));
 	}
 
-	@ParameterizedTest
+	@ParameterizedTest(name = "{0}")
 	@ArgumentsSource(InvalidModelProvider.class)
 	void should_ThrowIllegalArgumentException_when_Invalid(String name, String turtleDcatString) {
 		assertNotNull(name);
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
-		// noinspection DataFlowIssue
-		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
+		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat));
 	}
 
 	static class InvalidModelProvider implements ArgumentsProvider {
+		private final String validDcatView;
+
+		InvalidModelProvider() throws IOException {
+			this.validDcatView = readDcatFromFile();
+		}
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
@@ -80,19 +66,7 @@ class DcatDataServiceValidatorTest {
 		}
 
 		private String createModelWithMultipleDataServices() {
-			return validDcatView + "\n\n" +
-					"""
-							    [] a dcat:DataService ;
-							      dct:title "My geo-spatial view"@en ;
-							      dct:description "Geospatial fragmentation for my LDES"@en ;
-							      dct:license [
-							        a dct:LicenseDocument ;
-							        dct:type [
-							          a skos:Concept;
-							          skos:prefLabel "some public license"@en
-							        ]
-							      ] .
-							""";
+			return validDcatView + "\n\n" + validDcatView;
 		}
 
 		private String createModelWithServesDatasetPredicate() {
@@ -102,21 +76,26 @@ class DcatDataServiceValidatorTest {
 		}
 
 		private String createModelWithADataset() {
-			return validDcatView + "\n\n" +
-					"""
-							    [] a dcat:Dataset ;
-							      dct:title "My dataset"@en ;
-							      dct:description "Geospatial dataset for my LDES"@en .
-							""";
+			final String dcatDataset = """
+					[] a dcat:Dataset ;
+					  dct:title "My dataset"@en ;
+					  dct:description "Geospatial dataset for my LDES"@en .
+					""";
+			return validDcatView + "\n\n" + dcatDataset;
 		}
 
 		private String createModelWithACatalog() {
-			return validDcatView + "\n\n" +
-					"""
-							    [] a dcat:Catalog ;
-							      dct:title "My catalog"@en ;
-							      dct:description "Geospatial catalog for my LDES"@en .
-							""";
+			final String dcatCatalog = """
+					[] a dcat:Catalog ;
+					  dct:title "My dataset"@en ;
+					  dct:description "Geospatial dataset for my LDES"@en .
+					""";
+			return validDcatView + "\n\n" + dcatCatalog;
+		}
+
+		private String readDcatFromFile() throws IOException {
+			File file = ResourceUtils.getFile("classpath:validation/valid-dcat-service.ttl");
+			return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 		}
 
 	}
