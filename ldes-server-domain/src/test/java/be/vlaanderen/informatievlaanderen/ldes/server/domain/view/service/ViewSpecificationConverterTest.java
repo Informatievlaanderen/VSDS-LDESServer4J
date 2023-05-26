@@ -1,9 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParser;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ViewSpecificationConverterTest {
 	private static final String COLLECTION_NAME = "collection";
@@ -34,7 +40,11 @@ class ViewSpecificationConverterTest {
 		fragmentationConfig.setConfig(
 				Map.of("pageSize", "100", "property", "example/property"));
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
-		view = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), retentions, fragmentations);
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		view = new ViewSpecification(viewName, retentions, fragmentations);
+		Model dcat = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
+		view.setDcat(dcatView);
 	}
 
 	@Test
@@ -69,6 +79,8 @@ class ViewSpecificationConverterTest {
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
+		System.out.println(RDFWriter.source(viewModel).lang(Lang.TURTLE).build().toString());
+		System.out.println(RDFWriter.source(actualModel).lang(Lang.TURTLE).build().toString());
 		assertTrue(viewModel.isIsomorphicWith(actualModel));
 	}
 
