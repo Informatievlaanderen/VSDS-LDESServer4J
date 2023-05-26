@@ -23,7 +23,6 @@ public class DcatViewServiceImpl implements DcatViewService {
 		dcatViewRepository.save(DcatView.from(viewName, dcat));
 	}
 
-	// TODO: 25/05/2023 test
 	@Override
 	public Optional<DcatView> findByViewName(ViewName viewName) {
 		return dcatViewRepository.findByViewName(viewName);
