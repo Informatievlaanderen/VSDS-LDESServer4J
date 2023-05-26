@@ -51,7 +51,6 @@ public class ViewSpecificationConverter {
 		return view;
 	}
 
-	// TODO TVB: 26/05/2023 update test
 	public Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
