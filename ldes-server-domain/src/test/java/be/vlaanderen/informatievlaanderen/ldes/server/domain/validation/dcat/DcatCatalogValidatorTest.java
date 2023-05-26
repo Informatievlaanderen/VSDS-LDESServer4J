@@ -67,7 +67,8 @@ class DcatCatalogValidatorTest {
 							createModelWithDatasetPredicate()),
 					Arguments.of("Model cannot contain a dataset.", createModelWithADataset()),
 					Arguments.of("Model cannot contain a dataset.", createModelWithADatasetReference()),
-					Arguments.of("Model cannot contain a relation to the data service.", createModelWithDataServicePredicate()),
+					Arguments.of("Model cannot contain a relation to the data service.",
+							createModelWithDataServicePredicate()),
 					Arguments.of("Model cannot contain a data service.", createModelWithADataService()));
 		}
 
@@ -76,12 +77,12 @@ class DcatCatalogValidatorTest {
 		}
 
 		private String createModelWithMultipleDcatCatalogs() {
-			return validServerDcat + "\n\n" +
-					"""
-							    [] a dcat:Catalog ;
-							      dct:title "My geo-spatial view"@en ;
-							      dct:description "Geospatial fragmentation for my LDES"@en .
-							""";
+			final String catalog = """
+					 [] a dcat:Catalog ;
+					  dct:title "My geo-spatial view"@en ;
+					  dct:description "Geospatial fragmentation for my LDES"@en .
+					""";
+			return validServerDcat + "\n\n" + catalog;
 		}
 
 		private String createModelWithServesDatasetPredicate() {
@@ -113,21 +114,21 @@ class DcatCatalogValidatorTest {
 		}
 
 		private String createModelWithADataset() {
-			return validServerDcat + "\n\n" +
-					"""
-							    [] a dcat:Dataset ;
-							      dct:title "My dataset"@en ;
-							      dct:description "Geospatial dataset for my LDES"@en .
-							""";
+			final String dataset = """
+					[] a dcat:Dataset ;
+					  dct:title "My dataset"@en ;
+					  dct:description "Geospatial dataset for my LDES"@en .
+					""";
+			return validServerDcat + "\n\n" + dataset;
 		}
 
 		private String createModelWithADataService() {
-			return validServerDcat + "\n\n" +
-					"""
-							    [] a dcat:DataService ;
-							      dct:title "My catalog"@en ;
-							      dct:description "Geospatial catalog for my LDES"@en .
-							""";
+			final String dataService = """
+					[] a dcat:DataService ;
+					  dct:title "My catalog"@en ;
+					  dct:description "Geospatial catalog for my LDES"@en .
+					""";
+			return validServerDcat + "\n\n" + dataService;
 		}
 
 	}
