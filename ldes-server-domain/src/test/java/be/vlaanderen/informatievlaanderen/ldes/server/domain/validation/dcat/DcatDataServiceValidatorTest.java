@@ -29,6 +29,12 @@ class DcatDataServiceValidatorTest {
 	}
 
 	@Test
+	void test_support() {
+		assertTrue(validator.supports(Model.class));
+		assertFalse(validator.supports(String.class));
+	}
+
+	@Test
 	void should_NotThrowAnything_when_Valid() {
 		final Model model = RDFParser.source("validation/valid-dcat-service.ttl").lang(Lang.TURTLE).build().toModel();
 		assertDoesNotThrow(() -> validator.validate(model));

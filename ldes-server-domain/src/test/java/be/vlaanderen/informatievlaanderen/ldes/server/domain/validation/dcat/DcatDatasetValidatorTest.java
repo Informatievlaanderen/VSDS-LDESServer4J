@@ -29,6 +29,12 @@ class DcatDatasetValidatorTest {
 	}
 
 	@Test
+	void test_support() {
+		assertTrue(validator.supports(Model.class));
+		assertFalse(validator.supports(String.class));
+	}
+
+	@Test
 	void when_ValidModel_Then_Pass() throws URISyntaxException {
 		Model dcat = RDFParser.source("dcat-dataset/valid.ttl").lang(Lang.TURTLE).toModel();
 		assertDoesNotThrow(() -> validator.validate(dcat));

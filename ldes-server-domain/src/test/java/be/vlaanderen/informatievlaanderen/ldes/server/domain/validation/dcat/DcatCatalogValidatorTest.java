@@ -33,6 +33,12 @@ class DcatCatalogValidatorTest {
 	}
 
 	@Test
+	void test_support() {
+		assertTrue(validator.supports(Model.class));
+		assertFalse(validator.supports(String.class));
+	}
+
+	@Test
 	void when_Valid_then_ThrowNothing() {
 		final Model model = RDFParser.fromString(validServerDcat).lang(Lang.TURTLE).build().toModel();
 		assertDoesNotThrow(() -> validator.validate(model, null));
@@ -61,6 +67,7 @@ class DcatCatalogValidatorTest {
 							createModelWithDatasetPredicate()),
 					Arguments.of("Model cannot contain a dataset.", createModelWithADataset()),
 					Arguments.of("Model cannot contain a dataset.", createModelWithADatasetReference()),
+					Arguments.of("Model cannot contain a relation to the data service.", createModelWithDataServicePredicate()),
 					Arguments.of("Model cannot contain a data service.", createModelWithADataService()));
 		}
 
@@ -86,6 +93,12 @@ class DcatCatalogValidatorTest {
 		private String createModelWithDatasetPredicate() {
 			// injects statement before title.
 			return validServerDcat.replace("dct:title", "dcat:dataset <http://example.org/ds/1>;"
+					+ "\ndct:title");
+		}
+
+		private String createModelWithDataServicePredicate() {
+			// injects statement before title.
+			return validServerDcat.replace("dct:title", "dcat:service <http://example.org/ds/1>;"
 					+ "\ndct:title");
 		}
 
