@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class ViewSpecification {
 	// TODO with the new equals method this is an entity. So it needs to move.
 
 	private ViewName name;
+	private DcatView dcat;
 	private List<Model> retentionPolicies;
 	private List<FragmentationConfig> fragmentations;
 
@@ -51,6 +53,14 @@ public class ViewSpecification {
 
 	public void setRetentionPolicies(List<Model> retentionPolicies) {
 		this.retentionPolicies = retentionPolicies;
+	}
+
+	public DcatView getDcat() {
+		return dcat;
+	}
+
+	public void setDcat(DcatView dcat) {
+		this.dcat = dcat;
 	}
 
 	@Override

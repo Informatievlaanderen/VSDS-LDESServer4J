@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.apache.jena.riot.WebContent.*;
+import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
+import static org.apache.jena.riot.WebContent.contentTypeNQuads;
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @RestController
 @RequestMapping("/admin/api/v1")
 @Tag(name = "Views")
 public class AdminViewsRestController {
+
 	private final ViewService viewService;
 	private final ViewValidator viewValidator;
 	private final ViewSpecificationConverter viewConverter;

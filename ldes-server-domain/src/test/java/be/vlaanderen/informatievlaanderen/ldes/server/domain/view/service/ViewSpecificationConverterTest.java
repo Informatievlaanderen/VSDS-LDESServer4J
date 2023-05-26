@@ -1,11 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +38,11 @@ class ViewSpecificationConverterTest {
 		fragmentationConfig.setConfig(
 				Map.of("pageSize", "100", "property", "example/property"));
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
-		view = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(retentionModel), fragmentations);
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		view = new ViewSpecification(viewName, List.of(retentionModel), fragmentations);
+		Model dcat = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
+		view.setDcat(dcatView);
 	}
 
 	@Test

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,8 +11,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.CUSTOM;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_OBJECT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION_RESOURCE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.VIEW_DESCRIPTION_SUFFIX;
+import static org.apache.jena.rdf.model.ResourceFactory.createPlainLiteral;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 @Component
 public class ViewSpecificationConverter {
@@ -43,10 +54,12 @@ public class ViewSpecificationConverter {
 		Statement viewDescription = createStatement(
 				getIRIFromViewName(viewName),
 				createProperty(TREE_VIEW_DESCRIPTION),
-				createResource());
+				getIRIDescription(viewName));
 		model.add(viewDescription);
 
 		addRetentionPoliciesToModel(view.getRetentionConfigs(), model, viewDescription);
+		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
+		model.add(extractDcatStatements(view));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
@@ -64,8 +77,20 @@ public class ViewSpecificationConverter {
 		});
 	}
 
+	private List<Statement> extractDcatStatements(ViewSpecification view) {
+		return view.getDcat() != null ? view.getDcat().getStatementsWithBase(hostname) : List.of();
+	}
+
+	private String getIRIString(ViewName viewName) {
+		return hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName();
+	}
+
 	public Resource getIRIFromViewName(ViewName viewName) {
-		return createResource(hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName());
+		return createResource(getIRIString(viewName));
+	}
+
+	private Resource getIRIDescription(ViewName viewName) {
+		return createResource(getIRIString(viewName) + VIEW_DESCRIPTION_SUFFIX);
 	}
 
 	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {

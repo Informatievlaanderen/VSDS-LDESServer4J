@@ -22,9 +22,10 @@ import static org.mockito.Mockito.*;
 
 class ViewServiceImplTest {
 
+	private final DcatViewService dcatViewService = mock(DcatViewService.class);
 	private final ViewRepository viewRepository = mock(ViewRepository.class);
 	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-	private final ViewServiceImpl viewService = new ViewServiceImpl(viewRepository, eventPublisher);
+	private final ViewServiceImpl viewService = new ViewServiceImpl(dcatViewService, viewRepository, eventPublisher);
 
 	@Nested
 	class AddView {
@@ -96,8 +97,9 @@ class ViewServiceImplTest {
 		void when_ViewDoesNotExist_ViewIsAdded() {
 			viewService.deleteViewByViewName(viewName);
 
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
 			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
+			inOrder.verify(dcatViewService).delete(viewName);
 			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}

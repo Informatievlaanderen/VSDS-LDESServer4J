@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.v
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +26,7 @@ public class EventStreamResponse {
 		this.versionOfPath = versionOfPath;
 		this.memberType = memberType;
 		this.defaultViewEnabled = defaultViewEnabled;
-		this.views = views;
+		this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
 	}
 
@@ -66,7 +68,9 @@ public class EventStreamResponse {
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& Objects.equals(memberType, that.memberType)
-				&& Objects.equals(views, that.views) && shacl.isIsomorphicWith(that.shacl);
+				&& shacl.isIsomorphicWith(that.shacl)
+				&& new HashSet<>(views).containsAll(that.views)
+				&& new HashSet<>(that.views).containsAll(views);
 	}
 
 	@Override
