@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
@@ -10,6 +11,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.Dca
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.DcatServerMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.DcatDatasetMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.EventStreamMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
@@ -81,6 +84,13 @@ public class MongoAutoConfiguration {
 	@ConditionalOnMissingBean
 	public ViewRepository viewMongoRepository(final ViewEntityRepository viewEntityRepository) {
 		return new ViewMongoRepository(viewEntityRepository);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public DcatDatasetRepository dcatDatasetMongoRepository(
+			final DcatDatasetEntityRepository dcatDatasetEntityRepository) {
+		return new DcatDatasetMongoRepository(dcatDatasetEntityRepository);
 	}
 
 	@Bean
