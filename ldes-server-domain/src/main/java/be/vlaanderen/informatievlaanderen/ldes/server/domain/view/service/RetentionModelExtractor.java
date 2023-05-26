@@ -12,7 +12,7 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
 
 @Component
-public class RetentionStatementsExtractor {
+public class RetentionModelExtractor {
 
 	public List<Model> extractRetentionStatements(Model viewDescription) {
 		List<Statement> statements = viewDescription.listStatements().toList();

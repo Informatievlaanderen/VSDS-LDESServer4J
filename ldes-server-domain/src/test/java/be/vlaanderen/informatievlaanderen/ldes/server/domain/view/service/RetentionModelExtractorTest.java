@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,8 +15,8 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RetentionStatementsExtractorTest {
-	private final RetentionStatementsExtractor retentionStatementsExtractor = new RetentionStatementsExtractor();
+class RetentionModelExtractorTest {
+	private final RetentionModelExtractor retentionModelExtractor = new RetentionModelExtractor();
 
 	@ParameterizedTest
 	@ArgumentsSource(EventStreamArgumentProvider.class)
@@ -25,7 +24,7 @@ class RetentionStatementsExtractorTest {
 			throws URISyntaxException {
 		Model viewModel = readModelFromFile(fileName);
 
-		List<Model> retentionPolicyMap = retentionStatementsExtractor.extractRetentionStatements(viewModel);
+		List<Model> retentionPolicyMap = retentionModelExtractor.extractRetentionStatements(viewModel);
 
 		assertEquals(expectedNumberOfPolicies, retentionPolicyMap.size());
 		for (int i = 0; i < expectedNumberOfPolicies; i++) {
