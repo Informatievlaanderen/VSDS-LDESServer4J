@@ -1,16 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.integration;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphicResult;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -144,7 +142,7 @@ public class AdminEventStreamsRestControllerSteps {
 	@And("the client receives a valid list of event streams")
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
 		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
-		resultActions.andExpect(IsIsomorphicResult.with(expectedModel));
+		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveAllEventStreams();
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
@@ -162,7 +160,7 @@ public class AdminEventStreamsRestControllerSteps {
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
 		Model expectedModel = readModelFromFile("ldes-1.ttl");
-		resultActions.andExpect(IsIsomorphicResult.with(expectedModel));
+		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
@@ -205,7 +203,7 @@ public class AdminEventStreamsRestControllerSteps {
 	@And("I verify the event stream in the response body")
 	public void iVerifyTheEventStreamInTheResponseBody() throws Exception {
 		final Model expectedModel = readModelFromFile("ldes-1.ttl");
-		resultActions.andExpect(IsIsomorphicResult.with(expectedModel));
+		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
 		verify(eventStreamRepository).saveEventStream(any());
 		verify(shaclShapeRepository).saveShaclShape(any());

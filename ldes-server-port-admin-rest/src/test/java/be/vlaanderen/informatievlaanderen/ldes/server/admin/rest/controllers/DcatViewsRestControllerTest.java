@@ -36,9 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminViewsDcatRestControllerImpl.class, PrefixAdderImpl.class,
+@ContextConfiguration(classes = { AppConfig.class, DcatViewsRestController.class, PrefixAdderImpl.class,
 		ModelConverter.class, AdminRestResponseEntityExceptionHandler.class })
-class AdminViewsDcatRestControllerImplTest {
+class DcatViewsRestControllerTest {
 
 	private final static String COLLECTION_NAME = "collectionName";
 	private final static String VIEW_NAME = "viewName";
@@ -83,7 +83,7 @@ class AdminViewsDcatRestControllerImplTest {
 					.andExpect(status().isCreated());
 
 			verify(dcatViewService)
-					.create(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
+					.create(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphic.with(dcat)));
 		}
 
 	}
@@ -112,7 +112,7 @@ class AdminViewsDcatRestControllerImplTest {
 					.andExpect(status().isOk());
 
 			verify(dcatViewService)
-					.update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
+					.update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphic.with(dcat)));
 		}
 
 		@Test
@@ -126,7 +126,7 @@ class AdminViewsDcatRestControllerImplTest {
 					.andExpect(status().isNotFound());
 
 			verify(dcatViewService)
-					.update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphicArgument.with(dcat)));
+					.update(eq(new ViewName(COLLECTION_NAME, VIEW_NAME)), argThat(IsIsomorphic.with(dcat)));
 		}
 	}
 

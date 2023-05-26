@@ -8,15 +8,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 import org.apache.jena.rdf.model.Model;
 
 import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
 import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
-@Tag(name = "Views DCAT")
+@Tags({ @Tag(name = "Views"), @Tag(name = "DCAT") })
 @SuppressWarnings("java:S2479") // whitespace needed for examples
-public interface AdminViewsDcatRestController {
+public interface OpenApiDcatViewsController {
 
 	@ApiResponse(responseCode = "201")
 	@ApiResponse(responseCode = "400")

@@ -15,13 +15,13 @@ import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @RestController
 @RequestMapping("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat")
-public class AdminViewsDcatRestControllerImpl implements AdminViewsDcatRestController {
+public class DcatViewsRestController implements OpenApiDcatViewsController {
 
 	private final DcatViewService dcatViewService;
 
 	private final DcatViewValidator dcatViewValidator;
 
-	public AdminViewsDcatRestControllerImpl(DcatViewService dcatViewService, DcatViewValidator dcatViewValidator) {
+	public DcatViewsRestController(DcatViewService dcatViewService, DcatViewValidator dcatViewValidator) {
 		this.dcatViewService = dcatViewService;
 		this.dcatViewValidator = dcatViewValidator;
 	}

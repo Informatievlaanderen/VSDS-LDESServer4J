@@ -10,12 +10,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.springframework.validation.Errors;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 
 class DcatViewValidatorTest {
 
@@ -51,8 +53,7 @@ class DcatViewValidatorTest {
 	@Test
 	void should_NotThrowAnything_when_Valid() {
 		final Model model = RDFParser.fromString(validDcatView).lang(Lang.TURTLE).build().toModel();
-		// noinspection DataFlowIssue
-		assertDoesNotThrow(() -> validator.validate(model, null));
+		assertDoesNotThrow(() -> validator.validate(model, mock(Errors.class)));
 	}
 
 	@ParameterizedTest
@@ -60,8 +61,7 @@ class DcatViewValidatorTest {
 	void should_ThrowIllegalArgumentException_when_Invalid(String name, String turtleDcatString) {
 		assertNotNull(name);
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
-		// noinspection DataFlowIssue
-		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
+		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, mock(Errors.class)));
 	}
 
 	static class InvalidModelProvider implements ArgumentsProvider {
