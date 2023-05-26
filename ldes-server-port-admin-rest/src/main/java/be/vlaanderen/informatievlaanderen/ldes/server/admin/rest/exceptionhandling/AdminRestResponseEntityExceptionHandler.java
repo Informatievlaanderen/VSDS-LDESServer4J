@@ -1,10 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.InvalidModelIdException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions.InvalidConfigOperationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import org.apache.jena.riot.RiotException;
@@ -32,6 +28,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
+	// Todo: remove?
 	@ExceptionHandler(value = { InvalidModelIdException.class })
 	protected ResponseEntity<Object> handleInvalidModelException(
 			RuntimeException ex, WebRequest request) {

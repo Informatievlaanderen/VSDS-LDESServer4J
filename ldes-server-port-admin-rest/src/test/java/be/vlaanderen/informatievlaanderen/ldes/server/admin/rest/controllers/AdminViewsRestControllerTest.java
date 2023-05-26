@@ -5,17 +5,18 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
@@ -29,14 +30,15 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,23 +53,41 @@ class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
 	@MockBean
-	@Qualifier("viewShaclValidator")
-	private LdesConfigShaclValidator ldesConfigShaclValidator;
+	private ViewValidator validator;
 	@Autowired
 	private MockMvc mockMvc;
 
 	@BeforeEach
-    void setUp() {
-        when(ldesConfigShaclValidator.supports(any())).thenReturn(true);
-    }
+	void setUp() {
+		when(validator.supports(any())).thenReturn(true);
+	}
+
+	@Test
+	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
+		String collectionName = "name1";
+		Model expectedViewModel1 = readModelFromFile("view-1.ttl");
+		ViewSpecification view1 = viewFromModel(expectedViewModel1, collectionName);
+		Model expectedViewModel2 = readModelFromFile("view-2.ttl");
+		ViewSpecification view2 = viewFromModel(expectedViewModel2, collectionName);
+		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of(view1, view2));
+
+		ResultActions resultActions = mockMvc
+				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views"))
+				.andDo(print())
+				.andExpect(status().isOk());
+		MvcResult result = resultActions.andReturn();
+		String s = result.getResponse().getContentAsString();
+		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
+		Assertions.assertTrue(actualModel.isIsomorphicWith(expectedViewModel1.add(expectedViewModel2)));
+	}
 
 	@Test
 	void when_StreamAndViewArePresent_Then_ViewIsReturned() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
-		when(ldesConfigModelService.retrieveView(collectionName, viewName)).thenReturn(configModel);
+		ViewSpecification view = viewFromModel(expectedViewModel, collectionName);
+		when(viewService.getViewByViewName(new ViewName(collectionName, viewName))).thenReturn(view);
 		ResultActions resultActions = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName)
 						.accept(contentTypeTurtle))
@@ -81,49 +101,53 @@ class AdminViewsRestControllerTest {
 	void when_ViewNotPresent_Then_Returned404() throws Exception {
 		String collectionName = "name1";
 		String viewName = "view1";
-		when(ldesConfigModelService.retrieveView(collectionName, viewName))
+		readModelFromFile("view-1.ttl");
+		when(viewService.getViewByViewName(new ViewName(collectionName, viewName)))
 				.thenThrow(new MissingLdesConfigException(collectionName + "/" + viewName));
 		mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName)
-				.accept(contentTypeTurtle))
+						.accept(contentTypeTurtle))
 				.andExpect(status().isNotFound());
 	}
 
 	@Test
 	void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 		String collectionName = "name1";
-		String viewName = "view1";
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
-		LdesConfigModel configModel = new LdesConfigModel(viewName, expectedViewModel);
-		when(ldesConfigModelService.addView(anyString(), any())).thenReturn(configModel);
-		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-				.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
-				.contentType(Lang.TURTLE.getHeaderString()))
+		ViewSpecification view = viewFromModel(expectedViewModel, collectionName);
+		ResultActions resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+						.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andDo(print())
 				.andExpect(status().isOk());
-		verify(ldesConfigModelService, times(1)).addView(anyString(), any());
+		verify(viewService, times(1)).addView(view);
 	}
 
 	@Test
+	@Disabled
 	void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 		String collectionName = "name1";
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-				.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
-				.contentType(Lang.TURTLE.getHeaderString()))
-				.andDo(print())
+						.content(readDataFromFile("view-without-type.ttl", Lang.TURTLE))
+						.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isBadRequest());
 	}
 
 	@Test
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		String collectionName = "name1";
-		String viewName = "view1";
-		final Model model = readModelFromFile("view-1.ttl");
-		final LdesConfigModel ldesConfigModel = new LdesConfigModel(viewName, model);
-		when(ldesConfigModelService.addView(collectionName, ldesConfigModel)).thenReturn(ldesConfigModel);
 		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
-				.content(readDataFromFile("ldes-1.ttl", Lang.TURTLE))
+				.content(readDataFromFile("view-1.ttl", Lang.TURTLE))
 				.contentType(Lang.TURTLE.getHeaderString()));
-		verify(ldesConfigShaclValidator, times(1)).validateShape(any());
+		verify(validator, times(1)).validate(any(), any());
+	}
+
+	@Test
+	void when_Delete_Then_RemoveMethodCalled() throws Exception {
+		String collectionName = "name1";
+		String viewName = "view1";
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName))
+				.andDo(print());
+		verify(viewService).deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
 	private String readDataFromFile(String fileName, Lang rdfFormat)

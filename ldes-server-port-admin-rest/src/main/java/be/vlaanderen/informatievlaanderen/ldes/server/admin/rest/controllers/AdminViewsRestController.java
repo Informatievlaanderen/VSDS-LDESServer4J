@@ -1,40 +1,39 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.LdesConfigModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.services.LdesConfigModelService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewSpecificationConverter.viewFromModel;
 import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping("/admin/api/v1")
 @Tag(name = "Views")
 public class AdminViewsRestController {
-	private final LdesConfigModelService service;
-	// TODO use viewService instead of LdesConfigModelService
 	private final ViewService viewService;
-	private final LdesConfigShaclValidator viewValidator;
+	private final ViewValidator viewValidator;
 
-	@Autowired
-	public AdminViewsRestController(LdesConfigModelService service, ViewService viewService,
-			@Qualifier("viewShaclValidator") LdesConfigShaclValidator viewValidator) {
-		this.service = service;
+	public AdminViewsRestController(ViewService viewService, ViewValidator viewValidator) {
 		this.viewService = viewService;
 		this.viewValidator = viewValidator;
+	}
+
+	@InitBinder
+	private void initBinder(WebDataBinder binder) {
+		binder.setValidator(viewValidator);
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/views")
@@ -43,33 +42,30 @@ public class AdminViewsRestController {
 			@Content(mediaType = "application/json")
 	})
 	public ResponseEntity<List<ViewSpecification>> getViews(@PathVariable String collectionName) {
-		return ResponseEntity.ok(List.of());
+		return ResponseEntity.ok(viewService.getViewsByCollectionName(collectionName));
 	}
 
 	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { contentTypeJSONLD, contentTypeNQuads,
 			contentTypeTurtle })
 	@Operation(summary = "Add a view to a collection")
-	public ResponseEntity<String> putViews(@PathVariable String collectionName,
-			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining a view of the collection") @RequestBody String view,
-			@Parameter(hidden = true) @RequestHeader("Content-Type") String contentType) {
-		LdesConfigModel viewModel = LdesConfigModelConverter.toModel(view, contentType);
-		viewValidator.validateShape(viewModel.getModel());
-		service.addView(collectionName, viewModel);
-		return ResponseEntity.ok(view);
+	public ResponseEntity<Object> putViews(@PathVariable String collectionName,
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "A valid RDF model defining a view of the collection") @RequestBody @Validated Model view) {
+		viewService.addView(viewFromModel(view, collectionName));
+		return ResponseEntity.ok().build();
 	}
 
 	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
 	@Operation(summary = "Delete a specific view for a collection")
-	public ResponseEntity<Void> deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
-		service.deleteView(collectionName, viewName);
+	public ResponseEntity<Object> deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
+		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
 		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
 	@Operation(summary = "Retrieve a specific view config for a collection")
-	public ResponseEntity<String> getView(@PathVariable String collectionName, @PathVariable String viewName,
-			@Parameter(hidden = true) @RequestHeader("Accept") String contentType) {
-		LdesConfigModel configModel = service.retrieveView(collectionName, viewName);
-		return ResponseEntity.ok(LdesConfigModelConverter.toString(configModel, contentType));
+	public ResponseEntity<ViewSpecification> getView(@PathVariable String collectionName,
+			@PathVariable String viewName) {
+		ViewSpecification view = viewService.getViewByViewName(new ViewName(collectionName, viewName));
+		return ResponseEntity.ok(view);
 	}
 }
