@@ -57,9 +57,9 @@ class DcatCatalogValidatorTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of("Node of type dcat:DataCatalog must be a blank node",
+					Arguments.of("Node of type dcat:Catalog must be a blank node",
 							createModelCatalogWithIdentity()),
-					Arguments.of("Model must include exactly one DataCatalog. Not more, not less.",
+					Arguments.of("Model must include exactly one dcat:Catalog. Not more, not less.",
 							createModelWithMultipleDcatCatalogs()),
 					Arguments.of("Model cannot contain a relation to the dataset.",
 							createModelWithServesDatasetPredicate()),

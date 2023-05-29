@@ -60,7 +60,7 @@ class DcatDatasetValidatorTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of("Node of type dcat:Dataset must be a blank node", createDatasetWithIdentity()),
-					Arguments.of("Model must include exactly one Dataset. Not more, not less.",
+					Arguments.of("Model must include exactly one dcat:Dataset. Not more, not less.",
 							createModelWithMultipleDatasets()),
 					Arguments.of("Model cannot contain a data catalog.", createModelWithADataCatalog()),
 					Arguments.of("Model cannot contain a data service.", createModelWithDataServiceReference()),
