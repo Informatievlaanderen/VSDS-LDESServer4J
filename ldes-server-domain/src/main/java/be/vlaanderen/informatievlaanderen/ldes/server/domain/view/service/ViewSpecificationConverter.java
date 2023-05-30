@@ -110,7 +110,6 @@ public class ViewSpecificationConverter {
 			List<Statement> fragmentationStatements = retrieveAllStatements(fragmentation, statements);
 			FragmentationConfig config = new FragmentationConfig();
 			Map<String, String> configMap = extractConfigMap(fragmentationStatements);
-			// TODO verify Fragmentation name corresponds with a valid strategy
 			if (!configMap.containsKey(FRAGMENTATION_NAME)) {
 				throw new ModelToViewConverterException("Missing fragmentation name");
 			}
