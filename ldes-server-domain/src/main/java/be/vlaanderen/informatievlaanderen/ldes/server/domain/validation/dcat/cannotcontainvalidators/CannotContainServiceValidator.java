@@ -21,8 +21,7 @@ public class CannotContainServiceValidator implements DcatNodeValidator {
 	@Override
 	public void validate(Model dcat) {
 		boolean isValid = rules.stream()
-				.map(rule -> rule.evaluate(dcat))
-				.reduce(true, (prevResult, result) -> prevResult && result);
+				.allMatch(rule -> rule.evaluate(dcat));
 
 		if (!isValid) {
 			throw new IllegalArgumentException("Model cannot contain any kind of relation to dcat:DataService.");
