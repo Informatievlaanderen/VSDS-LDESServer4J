@@ -4,21 +4,28 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.Dca
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.vocabulary.RDF;
 
+import java.util.List;
+
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.*;
 
 public class CannotContainDatasetValidator implements DcatNodeValidator {
+	private final List<CannotContainRule> rules;
+
+	public CannotContainDatasetValidator() {
+		rules = List.of(
+				dcat -> !dcat.listSubjectsWithProperty(DCAT_SERVES_DATASET).hasNext(),
+				dcat -> !dcat.listSubjectsWithProperty(RDF.type, DCAT_DATASET).hasNext(),
+				dcat -> !dcat.listSubjectsWithProperty(DCAT_DATASET_PREDICATE).hasNext());
+	}
+
 	@Override
 	public void validate(Model dcat) {
-		if (dcat.listSubjectsWithProperty(DCAT_SERVES_DATASET).hasNext()) {
-			throw new IllegalArgumentException("Model cannot contain a relation to the dataset.");
-		}
+		boolean isValid = rules.stream()
+				.map(rule -> rule.evaluate(dcat))
+				.reduce(true, (prevResult, result) -> prevResult && result);
 
-		if (dcat.listSubjectsWithProperty(RDF.type, DCAT_DATASET).hasNext()) {
-			throw new IllegalArgumentException("Model cannot contain a dataset.");
-		}
-
-		if (dcat.listSubjectsWithProperty(DCAT_DATASET_PREDICATE).hasNext()) {
-			throw new IllegalArgumentException("Model cannot contain a relation to the dataset.");
+		if (!isValid) {
+			throw new IllegalArgumentException("Model cannot contain any kind of relation to dcat:Dataset.");
 		}
 	}
 }

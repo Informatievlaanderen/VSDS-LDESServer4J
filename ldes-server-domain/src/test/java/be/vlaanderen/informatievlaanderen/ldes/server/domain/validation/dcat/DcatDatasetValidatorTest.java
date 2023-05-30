@@ -42,7 +42,7 @@ class DcatDatasetValidatorTest {
 
 	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidArgumentsProvider.class)
-	void when_InvalidModel_Then_throwException(String expectedMessage, String dcatString) throws URISyntaxException {
+	void when_InvalidModel_Then_throwException(String expectedMessage, String dcatString) {
 		Model dcat = RDFParser.fromString(dcatString).lang(Lang.TURTLE).toModel();
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
 		assertEquals(expectedMessage, exception.getMessage());
@@ -63,8 +63,10 @@ class DcatDatasetValidatorTest {
 					Arguments.of("Model must include exactly one dcat:Dataset. Not more, not less.",
 							createModelWithMultipleDatasets()),
 					Arguments.of("Model cannot contain a data catalog.", createModelWithADataCatalog()),
-					Arguments.of("Model cannot contain a data service.", createModelWithDataServiceReference()),
-					Arguments.of("Model cannot contain a data service.", createModelWithADataService()));
+					Arguments.of("Model cannot contain any kind of relation to dcat:DataService.",
+							createModelWithDataServiceReference()),
+					Arguments.of("Model cannot contain any kind of relation to dcat:DataService.",
+							createModelWithADataService()));
 		}
 
 		private String createDatasetWithIdentity() {

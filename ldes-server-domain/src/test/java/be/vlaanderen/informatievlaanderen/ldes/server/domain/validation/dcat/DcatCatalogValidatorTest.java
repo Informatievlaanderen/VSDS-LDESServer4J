@@ -61,15 +61,18 @@ class DcatCatalogValidatorTest {
 							createModelCatalogWithIdentity()),
 					Arguments.of("Model must include exactly one dcat:Catalog. Not more, not less.",
 							createModelWithMultipleDcatCatalogs()),
-					Arguments.of("Model cannot contain a relation to the dataset.",
+					Arguments.of("Model cannot contain any kind of relation to dcat:Dataset.",
 							createModelWithServesDatasetPredicate()),
-					Arguments.of("Model cannot contain a relation to the dataset.",
+					Arguments.of("Model cannot contain any kind of relation to dcat:Dataset.",
 							createModelWithDatasetPredicate()),
-					Arguments.of("Model cannot contain a dataset.", createModelWithADataset()),
-					Arguments.of("Model cannot contain a dataset.", createModelWithADatasetReference()),
-					Arguments.of("Model cannot contain a relation to the data service.",
+					Arguments.of("Model cannot contain any kind of relation to dcat:Dataset.",
+							createModelWithADataset()),
+					Arguments.of("Model cannot contain any kind of relation to dcat:Dataset.",
+							createModelWithADatasetReference()),
+					Arguments.of("Model cannot contain any kind of relation to dcat:DataService.",
 							createModelWithDataServicePredicate()),
-					Arguments.of("Model cannot contain a data service.", createModelWithADataService()));
+					Arguments.of("Model cannot contain any kind of relation to dcat:DataService.",
+							createModelWithADataService()));
 		}
 
 		private String createModelCatalogWithIdentity() {

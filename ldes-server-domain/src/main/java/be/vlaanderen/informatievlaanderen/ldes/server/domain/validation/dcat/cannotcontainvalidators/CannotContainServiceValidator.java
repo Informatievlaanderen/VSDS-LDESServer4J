@@ -4,18 +4,28 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.Dca
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.vocabulary.RDF;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.*;
+import java.util.List;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE_PREDICATE;
 
 public class CannotContainServiceValidator implements DcatNodeValidator {
+	private final List<CannotContainRule> rules;
+
+	public CannotContainServiceValidator() {
+		rules = List.of(
+				dcat -> !dcat.listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).hasNext(),
+				dcat -> !dcat.listSubjectsWithProperty(DCAT_DATA_SERVICE_PREDICATE).hasNext());
+	}
+
 	@Override
 	public void validate(Model dcat) {
-		if (dcat.listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).hasNext()) {
-			throw new IllegalArgumentException("Model cannot contain a data service.");
-		}
+		boolean isValid = rules.stream()
+				.map(rule -> rule.evaluate(dcat))
+				.reduce(true, (prevResult, result) -> prevResult && result);
 
-		if (dcat.listSubjectsWithProperty(DCAT_DATA_SERVICE_PREDICATE).hasNext()) {
-			throw new IllegalArgumentException("Model cannot contain a relation to the data service.");
+		if (!isValid) {
+			throw new IllegalArgumentException("Model cannot contain any kind of relation to dcat:DataService.");
 		}
-
 	}
 }
