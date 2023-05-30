@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV3;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LocalDateTimeConverter;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;

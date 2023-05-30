@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.creation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.pointintime.PointInTimeRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.versionbased.VersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -62,7 +63,9 @@ class RetentionPolicyFactoryImplTest {
 			return Stream.of(
 					Arguments.of("retentionpolicy/timebased/valid_timebased.ttl", TimeBasedRetentionPolicy.class),
 					Arguments.of("retentionpolicy/versionbased/valid_versionbased.ttl",
-							VersionBasedRetentionPolicy.class));
+							VersionBasedRetentionPolicy.class),
+					Arguments.of("retentionpolicy/pointintime/valid_pointintime.ttl",
+							PointInTimeRetentionPolicy.class));
 		}
 	}
 

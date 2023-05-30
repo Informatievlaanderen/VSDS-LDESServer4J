@@ -1,22 +1,22 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.pointintime;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class TimeBasedRetentionPolicy implements RetentionPolicy {
-	private final Duration duration;
+public class PointInTimeRetentionPolicy implements RetentionPolicy {
 
-	public TimeBasedRetentionPolicy(Duration duration) {
-		this.duration = duration;
+	private final LocalDateTime pointInTime;
+
+	public PointInTimeRetentionPolicy(LocalDateTime pointInTime) {
+		this.pointInTime = pointInTime;
 	}
 
 	@Override
 	public boolean matchesPolicy(Member member) {
 		LocalDateTime timestamp = member.getTimestamp();
 		return timestamp != null
-				&& LocalDateTime.now().isAfter(timestamp.plus(duration));
+				&& timestamp.isBefore(pointInTime);
 	}
 }

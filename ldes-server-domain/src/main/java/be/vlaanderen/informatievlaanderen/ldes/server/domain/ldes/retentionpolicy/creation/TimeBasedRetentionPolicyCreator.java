@@ -21,14 +21,14 @@ public class TimeBasedRetentionPolicyCreator implements RetentionPolicyCreator {
 
 	@Override
 	public RetentionPolicy createRetentionPolicy(Model model) {
-		List<Statement> treeValueStatements = model.listStatements(null, TREE_VALUE, (RDFNode) null).toList();
+		List<RDFNode> treeValueStatements = model.listObjectsOfProperty(TREE_VALUE).toList();
 		if (treeValueStatements.size() != 1) {
 			throw new IllegalArgumentException(
 					"Cannot Create Time Based Retention Policy in which there is not exactly 1 " + TREE_VALUE.toString()
 							+ " statement.\n Found " + treeValueStatements.size() + " statements in :\n"
 							+ RdfModelConverter.toString(model, Lang.TURTLE));
 		}
-		LiteralImpl object = (LiteralImpl) treeValueStatements.get(0).getObject();
+		LiteralImpl object = (LiteralImpl) treeValueStatements.get(0);
 		Duration localDateTime = getDurations(object);
 		return new TimeBasedRetentionPolicy(localDateTime);
 	}

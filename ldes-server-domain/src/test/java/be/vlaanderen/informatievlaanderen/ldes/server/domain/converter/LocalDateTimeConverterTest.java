@@ -1,12 +1,12 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.junit.jupiter.api.Test;
 
-import java.time.*;
+import java.time.LocalDateTime;
 
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createTypedLiteral;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LocalDateTimeConverterTest {
