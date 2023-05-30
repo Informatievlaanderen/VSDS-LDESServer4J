@@ -91,6 +91,6 @@ class DcatServerServiceImplTest {
 	void when_DeleteExistingDcat_then_ReturnVoid() {
 		assertDoesNotThrow(() -> service.deleteDcatServer(ID));
 		verify(repository).deleteServerDcat(ID);
-		verifyNoMoreInteractions();
+		verifyNoMoreInteractions(repository);
 	}
 }
