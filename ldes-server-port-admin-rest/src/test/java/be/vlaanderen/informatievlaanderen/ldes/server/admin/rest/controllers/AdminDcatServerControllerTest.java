@@ -3,10 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DcatAlreadyConfiguredException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingServerDcatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.entities.ServerDcat;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.services.ServerDcatService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatCatalogValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic.isIsomorphicWith;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,10 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { AdminServerDcatController.class, ModelConverter.class, PrefixAdderImpl.class,
 		AdminRestResponseEntityExceptionHandler.class })
 @ExtendWith(MockitoExtension.class)
-class AdminServerDcatControllerTest {
+class AdminDcatServerControllerTest {
 	private static final String ID = "id";
 	@MockBean
-	private ServerDcatService service;
+	private DcatServerService service;
 	@MockBean
 	private DcatCatalogValidator validator;
 	@Autowired
@@ -60,7 +59,7 @@ class AdminServerDcatControllerTest {
 		void when_PostValidDcatModel_then_ReturnStatus200() throws Exception {
 			final Model model = readModelFromFile();
 
-			when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
+			when(service.createDcatServer(any())).thenReturn(new DcatServer(ID, model));
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
 					.contentType(Lang.TURTLE.getHeaderString())
@@ -69,8 +68,8 @@ class AdminServerDcatControllerTest {
 					.andExpect(content().string(ID));
 
 			InOrder inOrder = inOrder(service, validator);
-			inOrder.verify(validator).validate(isIsomorphicWith(model), any());
-			inOrder.verify(service).createServerDcat(argThat(model::isIsomorphicWith));
+			inOrder.verify(validator).validate(argThat(IsIsomorphic.with(model)), any());
+			inOrder.verify(service).createDcatServer(argThat(model::isIsomorphicWith));
 			inOrder.verifyNoMoreInteractions();
 		}
 
@@ -92,7 +91,7 @@ class AdminServerDcatControllerTest {
 
 		@Test
 		void when_ServerAlreadyHasDcatConfigured_and_PostDcat_then_Return400() throws Exception {
-			when(service.createServerDcat(any())).thenThrow(DcatAlreadyConfiguredException.class);
+			when(service.createDcatServer(any())).thenThrow(DcatAlreadyConfiguredException.class);
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
 							.contentType(Lang.TURTLE.getHeaderString())
@@ -101,7 +100,7 @@ class AdminServerDcatControllerTest {
 
 			InOrder inOrder = inOrder(service, validator);
 			inOrder.verify(validator).validate(any(), any());
-			inOrder.verify(service).createServerDcat(any());
+			inOrder.verify(service).createDcatServer(any());
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -112,7 +111,7 @@ class AdminServerDcatControllerTest {
 		void when_PutValidDcat_then_ReturnStatus200() throws Exception {
 			final Model model = readModelFromFile();
 
-			when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
+			when(service.createDcatServer(any())).thenReturn(new DcatServer(ID, model));
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
 					.contentType(Lang.TURTLE.getHeaderString())
@@ -120,8 +119,8 @@ class AdminServerDcatControllerTest {
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(service, validator);
-			inOrder.verify(validator).validate(isIsomorphicWith(model), any());
-			inOrder.verify(service).updateServerDcat(eq(ID), argThat(model::isIsomorphicWith));
+			inOrder.verify(validator).validate(argThat(IsIsomorphic.with(model)), any());
+			inOrder.verify(service).updateDcatServer(eq(ID), argThat(model::isIsomorphicWith));
 			inOrder.verifyNoMoreInteractions();
 		}
 
@@ -144,7 +143,7 @@ class AdminServerDcatControllerTest {
 		@Test
 		void when_ServerHasNoDcatYet_and_PutServerDcat_then_ReturnStatus404() throws Exception {
 			final Model model = readModelFromFile();
-			when(service.updateServerDcat(eq(ID), any())).thenThrow(MissingServerDcatException.class);
+			when(service.updateDcatServer(eq(ID), any())).thenThrow(MissingDcatServerException.class);
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
 					.contentType(Lang.TURTLE.getHeaderString())
@@ -152,8 +151,8 @@ class AdminServerDcatControllerTest {
 					.andExpect(status().isNotFound());
 
 			InOrder inOrder = inOrder(service, validator);
-			inOrder.verify(validator).validate(isIsomorphicWith(model), any());
-			inOrder.verify(service).updateServerDcat(eq(ID), isIsomorphicWith(model));
+			inOrder.verify(validator).validate(argThat(IsIsomorphic.with(model)), any());
+			inOrder.verify(service).updateDcatServer(eq(ID), argThat(IsIsomorphic.with(model)));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -162,11 +161,11 @@ class AdminServerDcatControllerTest {
 	class DeleteRequest {
 		@Test
 		void when_DeleteNonExistingDcat_then_ReturnStatus404() throws Exception {
-			doThrow(MissingServerDcatException.class).when(service).deleteServerDcat(ID);
+			doThrow(MissingDcatServerException.class).when(service).deleteDcatServer(ID);
 
 			mockMvc.perform(delete("/admin/api/v1/dcat/{id}", ID)).andExpect(status().isNotFound());
 
-			verify(service).deleteServerDcat(ID);
+			verify(service).deleteDcatServer(ID);
 			verifyNoInteractions(validator);
 		}
 
@@ -176,7 +175,7 @@ class AdminServerDcatControllerTest {
 
 			mockMvc.perform(delete("/admin/api/v1/dcat/{id}", id)).andExpect(status().isOk());
 
-			verify(service).deleteServerDcat(id);
+			verify(service).deleteDcatServer(id);
 			verifyNoInteractions(validator);
 		}
 	}

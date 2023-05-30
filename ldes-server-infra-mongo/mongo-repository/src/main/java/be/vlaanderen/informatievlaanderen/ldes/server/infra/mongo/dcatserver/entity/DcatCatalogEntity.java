@@ -1,15 +1,15 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("server-dcat")
-public class ServerDcatEntity {
+@Document("dcat_catalog")
+public class DcatCatalogEntity {
 	@Id
 	private final String id;
 	private final String dcat;
 
-	public ServerDcatEntity(String id, String dcat) {
+	public DcatCatalogEntity(String id, String dcat) {
 		this.id = id;
 		this.dcat = dcat;
 	}

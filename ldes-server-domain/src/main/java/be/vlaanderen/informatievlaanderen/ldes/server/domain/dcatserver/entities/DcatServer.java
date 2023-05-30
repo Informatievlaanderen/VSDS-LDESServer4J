@@ -1,14 +1,14 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities;
 
 import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 
-public class ServerDcat {
+public class DcatServer {
 	private final String id;
 	private final Model dcat;
 
-	public ServerDcat(String id, Model dcat) {
+	public DcatServer(String id, Model dcat) {
 		this.id = id;
 		this.dcat = dcat;
 	}
@@ -27,7 +27,7 @@ public class ServerDcat {
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		ServerDcat that = (ServerDcat) o;
+		DcatServer that = (DcatServer) o;
 		return Objects.equals(id, that.id);
 	}
 

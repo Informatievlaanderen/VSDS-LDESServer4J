@@ -1,8 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.service;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.entities.ServerDcat;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.serverdcat.entity.ServerDcatEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.entity.DcatCatalogEntity;
 import org.apache.jena.rdf.model.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ServerDcatEntityConverterTest {
+class DcatCatalogEntityConverterTest {
 	private static final String ID = "id";
-	private static ServerDcat serverDcat;
-	private final ServerDcatEntityConverter converter = new ServerDcatEntityConverter();
+	private static DcatServer dcatServer;
+	private final DcatCatalogEntityConverter converter = new DcatCatalogEntityConverter();
 
 	@BeforeAll
 	static void beforeAll() {
@@ -21,16 +21,16 @@ class ServerDcatEntityConverterTest {
 		Resource object = ResourceFactory.createProperty("http://www.w3.org/ns/dcat#", "Catalog");
 		Statement statement = ResourceFactory.createStatement(subject, RdfConstants.RDF_SYNTAX_TYPE, object);
 		Model dcat = ModelFactory.createDefaultModel().add(statement);
-		serverDcat = new ServerDcat(ID, dcat);
+		dcatServer = new DcatServer(ID, dcat);
 	}
 
 	@Test
 	void test_conversionFromAndToDomain() {
-		final ServerDcatEntity entity = converter.fromServerDcat(serverDcat);
-		final ServerDcat converted = converter.toServerDcat(entity);
+		final DcatCatalogEntity entity = converter.fromDcatServer(dcatServer);
+		final DcatServer converted = converter.toDcatServer(entity);
 
-		assertEquals(serverDcat, converted);
-		assertEquals(serverDcat.getId(), entity.getId());
+		assertEquals(dcatServer, converted);
+		assertEquals(dcatServer.getId(), entity.getId());
 		assertTrue(entity.getDcat().contains("<http://localhost:8080/dcat/id>"));
 	}
 }

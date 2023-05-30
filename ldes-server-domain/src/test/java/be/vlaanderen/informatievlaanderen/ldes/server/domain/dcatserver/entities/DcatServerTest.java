@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.serverdcat.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import org.apache.jena.rdf.model.*;
@@ -14,15 +14,15 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-class ServerDcatTest {
+class DcatServerTest {
 	private static final String ID = "id";
 	private static final Model DCAT = initDcat();
-	private static final ServerDcat SERVER_DCAT = new ServerDcat(ID, DCAT);
+	private static final DcatServer SERVER_DCAT = new DcatServer(ID, DCAT);
 
 	@Test
 	void test_equality() {
-		ServerDcat other = new ServerDcat(ID, DCAT);
-		ServerDcat other2 = new ServerDcat(ID, ModelFactory.createDefaultModel());
+		DcatServer other = new DcatServer(ID, DCAT);
+		DcatServer other2 = new DcatServer(ID, ModelFactory.createDefaultModel());
 
 		assertEquals(SERVER_DCAT, SERVER_DCAT);
 		assertEquals(other, other);
@@ -55,8 +55,8 @@ class ServerDcatTest {
 		@Override
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
-					new ServerDcat("other", DCAT),
-					new ServerDcat("fake", ModelFactory.createDefaultModel()),
+					new DcatServer("other", DCAT),
+					new DcatServer("fake", ModelFactory.createDefaultModel()),
 					null, "Not a dcat").map(Arguments::of);
 		}
 	}
