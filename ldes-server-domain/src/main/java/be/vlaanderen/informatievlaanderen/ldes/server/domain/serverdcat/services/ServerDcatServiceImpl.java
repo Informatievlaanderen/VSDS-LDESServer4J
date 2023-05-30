@@ -39,9 +39,6 @@ public class ServerDcatServiceImpl implements ServerDcatService {
 
 	@Override
 	public void deleteServerDcat(String id) {
-		if (serverDcatRepository.getServerDcatById(id).isEmpty()) {
-			throw new MissingServerDcatException(id);
-		}
 		serverDcatRepository.deleteServerDcat(id);
 	}
 }

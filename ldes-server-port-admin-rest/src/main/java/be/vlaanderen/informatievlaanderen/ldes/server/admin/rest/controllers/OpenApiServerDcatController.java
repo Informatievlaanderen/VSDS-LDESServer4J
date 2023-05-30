@@ -84,7 +84,6 @@ public interface OpenApiServerDcatController {
 					}) Model dcat);
 
 	@ApiResponse(responseCode = "200")
-	@ApiResponse(responseCode = "404")
 	@Operation(summary = "Delete DCAT configuration for the server")
 	void deleteServerDcat(
 			@Parameter(name = "catalogId", content = @Content(schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966"))) String catalogId);
