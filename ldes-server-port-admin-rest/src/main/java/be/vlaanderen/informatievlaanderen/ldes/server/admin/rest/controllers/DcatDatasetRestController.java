@@ -33,4 +33,10 @@ public class DcatDatasetRestController {
 	public void postDataset(@PathVariable String collectionName, @RequestBody @Validated Model datasetModel) {
 		datasetService.saveDataset(new DcatDataset(collectionName, datasetModel));
 	}
+
+	@PutMapping
+	@ResponseStatus(HttpStatus.OK)
+	public void putDataset(@PathVariable String collectionName, @RequestBody Model datasetModel) {
+		datasetService.saveDataset(new DcatDataset(collectionName, datasetModel));
+	}
 }

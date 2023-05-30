@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,5 +27,19 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 			throw new ExistingResourceException("dcat-dataset", dataset.getCollectionName());
 		});
 		repository.saveDataset(dataset);
+	}
+
+	@Override
+	public void updateDataset(DcatDataset dataset) {
+		validator.validate(dataset);
+		if (repository.retrieveDataset(dataset.id()).isEmpty()) {
+			throw new MissingResourceException("dcat-dataset", dataset.id());
+		}
+		repository.saveDataset(dataset);
+	}
+
+	@Override
+	public void deleteDataset(String id) {
+		repository.deleteDataset(id);
 	}
 }

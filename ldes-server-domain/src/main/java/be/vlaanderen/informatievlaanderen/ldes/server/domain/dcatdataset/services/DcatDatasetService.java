@@ -8,4 +8,8 @@ public interface DcatDatasetService {
 	Optional<DcatDataset> retrieveDataset(String collectionName);
 
 	void saveDataset(DcatDataset dataset);
+
+	void updateDataset(DcatDataset dataset);
+
+	void deleteDataset(String id);
 }
