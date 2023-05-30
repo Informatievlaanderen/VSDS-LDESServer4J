@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
-import org.apache.jena.rdf.model.Model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,9 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class DcatDatasetEntity {
 	@Id
 	private final String id;
-	private final Model model;
+	private final String model;
 
-	public DcatDatasetEntity(String id, Model model) {
+	public DcatDatasetEntity(String id, String model) {
 		this.id = id;
 		this.model = model;
 	}
@@ -20,15 +18,8 @@ public class DcatDatasetEntity {
 		return id;
 	}
 
-	public Model getModel() {
+	public String getModel() {
 		return model;
 	}
 
-	public DcatDataset toDataset() {
-		return new DcatDataset(getId(), getModel());
-	}
-
-	public static DcatDatasetEntity fromDataset(DcatDataset dataset) {
-		return new DcatDatasetEntity(dataset.id(), dataset.model());
-	}
 }

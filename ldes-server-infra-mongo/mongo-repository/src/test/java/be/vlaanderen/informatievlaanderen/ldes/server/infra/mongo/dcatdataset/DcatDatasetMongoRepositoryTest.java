@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.entity.DcatDatasetEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.service.DcatDatasetEntityConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,7 @@ class DcatDatasetMongoRepositoryTest {
 	private DcatDatasetEntity entity;
 	private DcatDataset dataset;
 	private DcatDatasetMongoRepository mongoRepository;
+	private DcatDatasetEntityConverter converter = new DcatDatasetEntityConverter();
 	@Mock
 	private DcatDatasetEntityRepository entityRepository;
 
@@ -36,7 +38,7 @@ class DcatDatasetMongoRepositoryTest {
 		mongoRepository = new DcatDatasetMongoRepository(entityRepository);
 		Model model = readModelFromFile(MODEL_FILE_PATH);
 		dataset = new DcatDataset(DATASET_ID, model);
-		entity = new DcatDatasetEntity(DATASET_ID, model);
+		entity = new DcatDatasetEntity(DATASET_ID, converter.modelToString(model));
 	}
 
 	@Test
@@ -47,7 +49,8 @@ class DcatDatasetMongoRepositoryTest {
 
         verify(entityRepository).findById(DATASET_ID);
         assertTrue(actualDataset.isPresent());
-        assertEquals(dataset, actualDataset.get());
+        assertEquals(dataset.id(), actualDataset.get().id());
+		assertTrue(dataset.model().isIsomorphicWith(actualDataset.get().model()));
     }
 
 	@Test
