@@ -35,6 +35,20 @@ class ViewNameTest {
 		assertEquals("colA", base.getCollectionName());
 	}
 
+	@Test
+	void getCollectionIri() {
+		ViewName base = new ViewName("colA", "viewA");
+
+		assertEquals("http://localhost.dev/colA", base.getCollectionIri("http://localhost.dev"));
+	}
+
+	@Test
+	void getViewNameIri() {
+		ViewName base = new ViewName("colA", "viewA");
+
+		assertEquals("http://localhost.dev/colA/viewA", base.getViewNameIri("http://localhost.dev"));
+	}
+
 	@ParameterizedTest
 	@ArgumentsSource(EqualityTestProvider.class)
 	void testEqualsAndHashCode(BiConsumer<Object, Object> assertion, ViewName a, ViewName b) {

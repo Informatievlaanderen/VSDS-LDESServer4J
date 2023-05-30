@@ -2,6 +2,7 @@
 @prefix tree: <https://w3id.org/tree#>.
 @prefix example: <http://example.org/> .
 @prefix dc: <http://purl.org/dc/terms/> .
+@prefix host: <http://localhost:8080/> .
 @prefix server: <http://localhost:8080/collection/> .
 @prefix viewName: <http://localhost:8080/collection/viewName/> .
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
@@ -31,3 +32,5 @@ viewName:description
             a ldes:DurationAgoPolicy  ;
             tree:value "PT2M"^^xsd:duration ;
         ] ;
+        dcat:endpointURL server:viewName ;
+        dcat:servesDataset host:collection ;

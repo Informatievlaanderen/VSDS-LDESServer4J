@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.DCAT_DATA_SERVICE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,11 +48,12 @@ class DcatViewTest {
 
 		List<Statement> result = dcatView.getStatementsWithBase(host);
 
-		assertEquals(anon.listStatements().toList().size(), result.size());
+		int nrOfAdditionalDcatStatements = 2; // servesDataset and endpointURL
+		assertEquals(anon.listStatements().toList().size() + nrOfAdditionalDcatStatements, result.size());
 		Model resultModel = ModelFactory.createDefaultModel();
 		resultModel.add(result);
 		Resource iri = ResourceFactory.createResource(host + "/" + COLLECTION_NAME + "/" + VIEW + "/description");
-		assertEquals(4, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
+		assertEquals(6, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
 		assertEquals(DCAT_DATA_SERVICE, resultModel.listObjectsOfProperty(iri, RDF.type).next());
 		assertTrue(resultModel.listObjectsOfProperty(createProperty("http://purl.org/dc/terms/license")).hasNext());
 		assertEquals("Geospatial fragmentation for my LDES",
@@ -61,6 +62,10 @@ class DcatViewTest {
 		assertEquals("My geo-spatial view",
 				resultModel.listObjectsOfProperty(iri, createProperty("http://purl.org/dc/terms/title")).next()
 						.asLiteral().getString());
+		assertEquals("http://localhost.dev/collectionName/view",
+				resultModel.listObjectsOfProperty(iri, DCAT_ENDPOINT_URL).next().asResource().getURI());
+		assertEquals("http://localhost.dev/collectionName",
+				resultModel.listObjectsOfProperty(iri, DCAT_SERVES_DATASET).next().asResource().getURI());
 	}
 
 	@ParameterizedTest
