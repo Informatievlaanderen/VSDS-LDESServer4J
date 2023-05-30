@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.blanknodevalidators.DcatBlankNodeValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.cannotcontainvalidators.CannotContainValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.springframework.validation.Errors;
@@ -21,10 +20,10 @@ public abstract class DcatValidator implements Validator {
 	public static final Property DCAT_DATA_SERVICE_PREDICATE = createProperty(DCAT, "service");
 
 	private final DcatBlankNodeValidator blankNodeValidator;
-	private final List<CannotContainValidator> cannotContainValidators;
+	private final List<DcatNodeValidator> cannotContainValidators;
 
 	protected DcatValidator(DcatBlankNodeValidator blankNodeValidator,
-			CannotContainValidator... cannotContainValidators) {
+			DcatNodeValidator... cannotContainValidators) {
 		this.blankNodeValidator = blankNodeValidator;
 		this.cannotContainValidators = List.of(cannotContainValidators);
 	}
@@ -41,7 +40,7 @@ public abstract class DcatValidator implements Validator {
 	}
 
 	protected void validate(Model dcat) {
-		blankNodeValidator.validateBlankNode(dcat);
+		blankNodeValidator.validate(dcat);
 		cannotContainValidators.forEach(validator -> validator.validate(dcat));
 	}
 
