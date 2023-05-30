@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class EventStreamResponseConverterImplTest {
 	private EventStreamResponseConverter eventStreamConverter;
 	private Model shacl;
+	private Model dataSet;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
@@ -35,6 +36,7 @@ class EventStreamResponseConverterImplTest {
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamResponseConverterImpl(appConfig, viewSpecificationConverter, prefixAdder);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
+		dataSet = readModelFromFile("dcat-dataset/valid.ttl");
 	}
 
 	@Nested
@@ -107,6 +109,40 @@ class EventStreamResponseConverterImplTest {
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					true, List.of(), shacl);
+			final Model convertedModel = eventStreamConverter.toModel(eventStream);
+			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
+		}
+	}
+
+	@Nested
+	class EventStreamWithViewsAndDataset {
+		private List<ViewSpecification> views;
+		private Model eventStreamModel;
+
+		@BeforeEach
+		void setUp() throws URISyntaxException {
+			FragmentationConfig fragmentationConfig = new FragmentationConfig();
+			fragmentationConfig.setName("fragmentationStrategy");
+			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
+			views = List.of(
+					new ViewSpecification(
+							new ViewName("collectionName1", "view2"),
+							List.of(),
+							List.of(fragmentationConfig)),
+					new ViewSpecification(
+							new ViewName("collectionName1", "view1"),
+							List.of(),
+							List.of(fragmentationConfig)));
+
+			eventStreamModel = readModelFromFile("eventstream/streams/ldes-and-dataset-with-named-views.ttl");
+		}
+
+		@Test
+		void when_eventStreamHasViewsAndDataset_Then_ConvertToModel() {
+			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
+					false, views, shacl, dataSet);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}

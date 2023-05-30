@@ -25,6 +25,10 @@ class EventStreamResponseTest {
 	private static final boolean HAS_DEFAULT_VIEW = false;
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, MEMBER_TYPE_PATH, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
+	private static final EventStreamResponse EVENT_STREAM_RESPONSE_WITH_DATASET = new EventStreamResponse(COLLECTION,
+			TIMESTAMP_PATH,
+			VERSION_OF_PATH, MEMBER_TYPE_PATH, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel(),
+			ModelFactory.createDefaultModel());
 
 	@Test
 	void test_equality() {
@@ -34,6 +38,16 @@ class EventStreamResponseTest {
 
 		assertEquals(EVENT_STREAM_RESPONSE, other);
 		assertEquals(EVENT_STREAM_RESPONSE, EVENT_STREAM_RESPONSE);
+	}
+
+	@Test
+	void test_equality_with_dataset() {
+		EventStreamResponse other = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+				MEMBER_TYPE_PATH, HAS_DEFAULT_VIEW, List.of(),
+				ModelFactory.createDefaultModel(), ModelFactory.createDefaultModel());
+
+		assertEquals(EVENT_STREAM_RESPONSE_WITH_DATASET, other);
+		assertEquals(EVENT_STREAM_RESPONSE_WITH_DATASET, EVENT_STREAM_RESPONSE_WITH_DATASET);
 	}
 
 	@ParameterizedTest
@@ -70,6 +84,7 @@ class EventStreamResponseTest {
 					new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, "other", false, List.of(),
 							ModelFactory.createDefaultModel()),
 					null,
+					EVENT_STREAM_RESPONSE_WITH_DATASET,
 					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE_PATH, HAS_DEFAULT_VIEW))
 					.map(Arguments::of);
 		}
