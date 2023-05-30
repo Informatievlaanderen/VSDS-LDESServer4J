@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 
 import java.util.List;
@@ -25,15 +24,15 @@ public class VersionBasedRetentionPolicyCreator implements RetentionPolicyCreato
 
 	@Override
 	public RetentionPolicy createRetentionPolicy(Model model) {
-		List<Statement> ldesAmountStatements = model.listStatements(null, LDES_AMOUNT, (RDFNode) null).toList();
-		if (ldesAmountStatements.size() != 1) {
+		List<RDFNode> ldesAmounts = model.listObjectsOfProperty(LDES_AMOUNT).toList();
+		if (ldesAmounts.size() != 1) {
 			throw new IllegalArgumentException(
 					"Cannot Create Version Based Retention Policy in which there is not exactly 1 "
 							+ LDES_AMOUNT.toString()
-							+ " statement.\n Found " + ldesAmountStatements.size() + " statements in :\n"
+							+ " statement.\n Found " + ldesAmounts.size() + " statements in :\n"
 							+ RdfModelConverter.toString(model, Lang.TURTLE));
 		}
-		return new VersionBasedRetentionPolicy(ldesAmountStatements.get(0).getObject().asLiteral().getInt(),
+		return new VersionBasedRetentionPolicy(ldesAmounts.get(0).asLiteral().getInt(),
 				memberRepository);
 	}
 }

@@ -40,8 +40,8 @@ class RetentionPolicyFactoryImplTest {
 	}
 
 	@ParameterizedTest
-	@ArgumentsSource(CoordinateZoomLevelArgumentsProvider.class)
-	void when_RetentionPolicyDescriptionIsAValidTimeBasedRetentionPolicy_then_ATimeBasedRetentionPolicyIsReturned(
+	@ArgumentsSource(FileNameRetentionPolicyArgumentsProvider.class)
+	void when_RetentionPolicyDescriptionIsAValidRetentionPolicy_then_ACorrectRetentionPolicyImplementationIsReturned(
 			String fileName, Class<? extends RetentionPolicy> expectedRetentionPolicyClass)
 			throws URISyntaxException {
 		ViewSpecification viewSpecification = new ViewSpecification();
@@ -55,7 +55,7 @@ class RetentionPolicyFactoryImplTest {
 		assertEquals(retentionPolicyListForView.get(0).getClass(), expectedRetentionPolicyClass);
 	}
 
-	static class CoordinateZoomLevelArgumentsProvider implements ArgumentsProvider {
+	static class FileNameRetentionPolicyArgumentsProvider implements ArgumentsProvider {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
