@@ -12,7 +12,8 @@ import org.apache.jena.rdf.model.Model;
 
 import static org.apache.jena.riot.WebContent.*;
 
-@Tag(name = "Server DCAT")
+@Tag(name = "Server")
+@Tag(name = "DCAT")
 public interface OpenApiServerDcatController {
 	@ApiResponse(responseCode = "201", content = @Content(mediaType = contentTypeTextPlain, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966")))
 	@ApiResponse(responseCode = "400", content = @Content)
