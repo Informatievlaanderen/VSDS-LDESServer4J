@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = {AdminServerDcatController.class, ModelConverter.class, PrefixAdderImpl.class,
-		AdminRestResponseEntityExceptionHandler.class})
+@ContextConfiguration(classes = { AdminServerDcatController.class, ModelConverter.class, PrefixAdderImpl.class,
+		AdminRestResponseEntityExceptionHandler.class })
 @ExtendWith(MockitoExtension.class)
 class AdminServerDcatControllerTest {
 	private static final String ID = "id";
@@ -63,8 +63,8 @@ class AdminServerDcatControllerTest {
 			when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
-							.contentType(Lang.TURTLE.getHeaderString())
-							.content(readDataFromFile()))
+					.contentType(Lang.TURTLE.getHeaderString())
+					.content(readDataFromFile()))
 					.andExpect(status().isCreated())
 					.andExpect(content().string(ID));
 
@@ -82,8 +82,8 @@ class AdminServerDcatControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
-							.contentType(Lang.TURTLE.getHeaderString())
-							.content(modelString))
+					.contentType(Lang.TURTLE.getHeaderString())
+					.content(modelString))
 					.andExpect(status().isBadRequest());
 
 			verify(validator).validate(any(), any());
@@ -115,8 +115,8 @@ class AdminServerDcatControllerTest {
 			when(service.createServerDcat(any())).thenReturn(new ServerDcat(ID, model));
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-							.contentType(Lang.TURTLE.getHeaderString())
-							.content(readDataFromFile()))
+					.contentType(Lang.TURTLE.getHeaderString())
+					.content(readDataFromFile()))
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(service, validator);
@@ -133,8 +133,8 @@ class AdminServerDcatControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-							.contentType(Lang.TURTLE.getHeaderString())
-							.content(modelString))
+					.contentType(Lang.TURTLE.getHeaderString())
+					.content(modelString))
 					.andExpect(status().isBadRequest());
 
 			verify(validator).validate(any(), any());
@@ -147,8 +147,8 @@ class AdminServerDcatControllerTest {
 			when(service.updateServerDcat(eq(ID), any())).thenThrow(MissingServerDcatException.class);
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
-							.contentType(Lang.TURTLE.getHeaderString())
-							.content(readDataFromFile()))
+					.contentType(Lang.TURTLE.getHeaderString())
+					.content(readDataFromFile()))
 					.andExpect(status().isNotFound());
 
 			InOrder inOrder = inOrder(service, validator);
@@ -157,7 +157,6 @@ class AdminServerDcatControllerTest {
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
-
 
 	@Nested
 	class DeleteRequest {
