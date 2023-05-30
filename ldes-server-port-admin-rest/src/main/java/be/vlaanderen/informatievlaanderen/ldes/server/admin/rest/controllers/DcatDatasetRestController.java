@@ -13,7 +13,7 @@ import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping(value = "/admin/api/v1/eventstreams/{collectionName}/dcat")
-public class DcatDatasetRestController {
+public class DcatDatasetRestController implements OpenApiDcatDatasetController {
 
 	private final DcatDatasetService datasetService;
 	private final DcatDatasetValidator validator;
@@ -38,5 +38,11 @@ public class DcatDatasetRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public void putDataset(@PathVariable String collectionName, @RequestBody Model datasetModel) {
 		datasetService.saveDataset(new DcatDataset(collectionName, datasetModel));
+	}
+
+	@DeleteMapping
+	@ResponseStatus(HttpStatus.OK)
+	public void deleteDataset(@PathVariable String collectionName) {
+		datasetService.deleteDataset(collectionName);
 	}
 }

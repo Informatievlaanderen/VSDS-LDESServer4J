@@ -89,6 +89,8 @@ class DcatDatasetServiceImplTest {
 	class RemoveDataset {
 		@Test
 		void removeDataset() {
+			when(datasetService.retrieveDataset(DATASET_ID)).thenReturn(Optional.of(dataset));
+
 			datasetService.deleteDataset(DATASET_ID);
 
 			verify(repository).deleteDataset(DATASET_ID);

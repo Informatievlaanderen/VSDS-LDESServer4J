@@ -4,12 +4,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class DcatDatasetServiceImpl implements DcatDatasetService {
+	private static final Logger LOGGER = LoggerFactory.getLogger(DcatDatasetServiceImpl.class);
 	private final DcatDatasetRepository repository;
 
 	public DcatDatasetServiceImpl(DcatDatasetRepository repository) {
@@ -40,6 +43,10 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 
 	@Override
 	public void deleteDataset(String id) {
-		repository.deleteDataset(id);
+		if (repository.retrieveDataset(id).isEmpty()) {
+			LOGGER.warn("No metadata found for collection: {}", id);
+		} else {
+			repository.deleteDataset(id);
+		}
 	}
 }
