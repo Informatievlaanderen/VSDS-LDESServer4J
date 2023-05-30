@@ -2,6 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandl
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
@@ -36,6 +40,12 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	protected ResponseEntity<Object> handleSnapshotCreationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
+	}
+
+	@ExceptionHandler(value = { ExistingResourceException.class })
+	protected ResponseEntity<Object> handleExistingResourceException(
+			RuntimeException ex, WebRequest request) {
+		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
 	private ResponseEntity<Object> handleException(
