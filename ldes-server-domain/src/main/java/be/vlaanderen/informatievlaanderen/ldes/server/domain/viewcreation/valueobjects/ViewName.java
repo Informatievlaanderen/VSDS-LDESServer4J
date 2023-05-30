@@ -33,6 +33,14 @@ public class ViewName implements Serializable {
 		return collectionName;
 	}
 
+	public String getCollectionIri(String hostName) {
+		return hostName + "/" + getCollectionName();
+	}
+
+	public String getViewNameIri(String hostName) {
+		return getCollectionIri(hostName) + "/" + getViewName();
+	}
+
 	public String getViewName() {
 		return name;
 	}
