@@ -10,7 +10,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/admin/api/v1/eventstreams/{collectionName}/dcat")
 public class DcatDatasetRestController {
 
-	private DcatDatasetService datasetService;
+	private final DcatDatasetService datasetService;
+
+	public DcatDatasetRestController(DcatDatasetService datasetService) {
+		this.datasetService = datasetService;
+	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
