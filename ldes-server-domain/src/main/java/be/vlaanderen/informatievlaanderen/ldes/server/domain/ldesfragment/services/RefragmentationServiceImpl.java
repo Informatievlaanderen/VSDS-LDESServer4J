@@ -19,10 +19,6 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 		this.observationRegistry = observationRegistry;
 	}
 
-	// TODO refragmentation of old members might take a while. During this period
-	// new arrived members will not be fragmented.
-	// In the server v2 (horizontal scaling) we should solve this. For example by
-	// working with events to a queue and/or organizing the traffic to this queue.
 	@Override
 	public void refragmentMembersForView(LdesFragment rootFragmentForView,
 			FragmentationStrategy fragmentationStrategyForView) {

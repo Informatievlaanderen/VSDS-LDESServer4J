@@ -5,7 +5,7 @@ import org.apache.jena.shacl.Shapes;
 import org.springframework.validation.Errors;
 
 public class ViewValidator extends AbstractShaclValidator {
-	// Todo: add shape
+
 	private static final String FILE_NAME = "";
 
 	@Override
@@ -22,4 +22,5 @@ public class ViewValidator extends AbstractShaclValidator {
 	public void validate(Object target, Errors errors) {
 		// Waiting for shape to validate view
 	}
+
 }

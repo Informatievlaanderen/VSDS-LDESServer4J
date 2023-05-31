@@ -8,8 +8,6 @@ import java.util.Objects;
 
 public class ViewSpecification {
 
-	// TODO with the new equals method this is an entity. So it needs to move.
-
 	private ViewName name;
 	private DcatView dcat;
 	private List<Model> retentionPolicies;
@@ -23,8 +21,6 @@ public class ViewSpecification {
 	}
 
 	public ViewSpecification() {
-		// TODO remove empty constructor so that ViewSpecification always has an
-		// identity. And remove (unused) setters.
 	}
 
 	public ViewName getName() {
