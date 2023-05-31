@@ -1,15 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.integration;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -17,21 +13,12 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.io.IOException;
@@ -50,35 +37,18 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@CucumberContextConfiguration
-@EnableAutoConfiguration
-@ActiveProfiles("test")
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AppConfig.class, PrefixAdderImpl.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.validation",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling" })
-public class AdminEventStreamsRestControllerSteps {
+public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest {
 	private static final String COLLECTION = "name1";
 	private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	private static final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 	private ResultActions resultActions;
-	@MockBean
-	private DcatViewService dcatViewService;
-	@MockBean
-	private EventStreamCollection eventStreamRepository;
-	@MockBean
-	private ViewRepository viewRepository;
-	@MockBean
-	private ShaclShapeRepository shaclShapeRepository;
 	@Autowired
-	private MockMvc mockMvc;
+	private EventStreamCollection eventStreamRepository;
+	@Autowired
+	private ViewRepository viewRepository;
+	@Autowired
+	private ShaclShapeRepository shaclShapeRepository;
 
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {

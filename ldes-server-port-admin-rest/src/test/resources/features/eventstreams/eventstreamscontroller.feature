@@ -39,7 +39,7 @@ Feature: event streams can be configured at runtime
       Then the client receives HTTP status 200
       And I verify the db interactions
 
-  Scenario: delete an existing event stream
+  Scenario: delete an non-existing event stream
     Given an empty db
     When the client deletes the event stream
     Then the client receives HTTP status 404
