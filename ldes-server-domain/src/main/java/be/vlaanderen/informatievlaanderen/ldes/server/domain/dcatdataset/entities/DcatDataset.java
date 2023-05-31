@@ -2,5 +2,5 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entiti
 
 import org.apache.jena.rdf.model.Model;
 
-public record DcatDataset(String id, Model model) {
+public record DcatDataset(String collectionName, Model model) {
 }

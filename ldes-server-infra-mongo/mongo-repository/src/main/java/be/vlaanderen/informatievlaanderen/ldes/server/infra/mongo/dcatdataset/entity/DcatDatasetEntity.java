@@ -6,16 +6,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "dcat_dataset")
 public class DcatDatasetEntity {
 	@Id
-	private final String id;
+	private final String collectionName;
 	private final String model;
 
-	public DcatDatasetEntity(String id, String model) {
-		this.id = id;
+	public DcatDatasetEntity(String collectionName, String model) {
+		this.collectionName = collectionName;
 		this.model = model;
 	}
 
-	public String getId() {
-		return id;
+	public String getCollectionName() {
+		return collectionName;
 	}
 
 	public String getModel() {

@@ -17,8 +17,8 @@ public class DcatDatasetMongoRepository implements DcatDatasetRepository {
 	}
 
 	@Override
-	public Optional<DcatDataset> retrieveDataset(String id) {
-		return repository.findById(id).map(converter::entitytoDataset);
+	public Optional<DcatDataset> retrieveDataset(String collectionName) {
+		return repository.findById(collectionName).map(converter::entitytoDataset);
 	}
 
 	@Override

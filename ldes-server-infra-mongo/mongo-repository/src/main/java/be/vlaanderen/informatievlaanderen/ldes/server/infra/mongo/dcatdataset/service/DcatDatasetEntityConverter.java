@@ -10,14 +10,14 @@ import org.apache.jena.riot.RDFWriter;
 public class DcatDatasetEntityConverter {
 
 	public DcatDataset entitytoDataset(DcatDatasetEntity entity) {
-		return new DcatDataset(entity.getId(), stringToModel(entity.getModel()));
+		return new DcatDataset(entity.getCollectionName(), stringToModel(entity.getModel()));
 	}
 
 	public DcatDatasetEntity datasetToEntity(DcatDataset dataset) {
-		return new DcatDatasetEntity(dataset.id(), modelToString(dataset.model()));
+		return new DcatDatasetEntity(dataset.collectionName(), modelToString(dataset.model()));
 	}
 
-	public String modelToString(Model model) {
+	private String modelToString(Model model) {
 		return RDFWriter.source(model).lang(Lang.TURTLE).asString();
 	}
 

@@ -12,9 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,16 +34,15 @@ class DcatDatasetMongoRepositoryTest {
 	private DcatDatasetEntity entity;
 	private DcatDataset dataset;
 	private DcatDatasetMongoRepository mongoRepository;
-	private DcatDatasetEntityConverter converter = new DcatDatasetEntityConverter();
 	@Mock
 	private DcatDatasetEntityRepository entityRepository;
 
 	@BeforeEach
-	void setUp() throws URISyntaxException {
+	void setUp() throws URISyntaxException, IOException {
 		mongoRepository = new DcatDatasetMongoRepository(entityRepository);
 		Model model = readModelFromFile(MODEL_FILE_PATH);
 		dataset = new DcatDataset(DATASET_ID, model);
-		entity = new DcatDatasetEntity(DATASET_ID, converter.modelToString(model));
+		entity = new DcatDatasetEntity(DATASET_ID, readDataFromFile(MODEL_FILE_PATH));
 	}
 
 	@Test
@@ -49,7 +53,7 @@ class DcatDatasetMongoRepositoryTest {
 
         verify(entityRepository).findById(DATASET_ID);
         assertTrue(actualDataset.isPresent());
-        assertEquals(dataset.id(), actualDataset.get().id());
+        assertEquals(dataset.collectionName(), actualDataset.get().collectionName());
 		assertTrue(dataset.model().isIsomorphicWith(actualDataset.get().model()));
     }
 
@@ -83,5 +87,12 @@ class DcatDatasetMongoRepositoryTest {
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
 				.toString();
 		return RDFDataMgr.loadModel(uri);
+	}
+
+	private String readDataFromFile(String fileName)
+			throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		return Files.lines(path).collect(Collectors.joining());
 	}
 }
