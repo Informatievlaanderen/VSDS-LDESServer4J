@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
@@ -17,11 +18,11 @@ public class EventStreamResponse {
 	private final boolean defaultViewEnabled;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
-	private final Model dcatDataset;
+	private final DcatDataset dcatDataset;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
 			String memberType, boolean defaultViewEnabled, List<ViewSpecification> views,
-			Model shacl, Model dcatDataset) {
+			Model shacl, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
@@ -29,7 +30,7 @@ public class EventStreamResponse {
 		this.defaultViewEnabled = defaultViewEnabled;
 		this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
-		this.dcatDataset = dcatDataset;
+		this.dcatDataset = dcatDataset != null ? dcatDataset : new DcatDataset(collection);
 	}
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
@@ -66,7 +67,7 @@ public class EventStreamResponse {
 		return shacl;
 	}
 
-	public Model getDcatDataset() {
+	public DcatDataset getDcatDataset() {
 		return dcatDataset;
 	}
 
@@ -77,20 +78,13 @@ public class EventStreamResponse {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		EventStreamResponse that = (EventStreamResponse) o;
-		boolean equalDataset;
-		if (dcatDataset == null) {
-			equalDataset = (that.dcatDataset == null);
-		} else {
-			equalDataset = dcatDataset.isIsomorphicWith(that.dcatDataset);
-		}
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& Objects.equals(memberType, that.memberType)
 				&& shacl.isIsomorphicWith(that.shacl)
 				&& new HashSet<>(views).containsAll(that.views)
 				&& new HashSet<>(that.views).containsAll(views)
-				&& Objects.equals(views, that.views) && shacl.isIsomorphicWith(that.shacl)
-				&& equalDataset;
+				&& Objects.equals(dcatDataset, that.dcatDataset);
 	}
 
 	@Override

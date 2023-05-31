@@ -66,7 +66,7 @@ class EventStreamServiceImplTest {
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
 		EVENT_STREAM_RESPONSEWITH_DATASET = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 				VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel(),
-				dataset.model());
+				dataset);
 	}
 
 	@Test
@@ -79,7 +79,7 @@ class EventStreamServiceImplTest {
 
 		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
 				"memberType",
-				HAS_DEFAULT_VIEW, views, ModelFactory.createDefaultModel(), dataset.model());
+				HAS_DEFAULT_VIEW, views, ModelFactory.createDefaultModel(), dataset);
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);

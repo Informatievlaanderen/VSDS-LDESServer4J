@@ -16,14 +16,14 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 	}
 
 	@Override
-	public Optional<DcatDataset> retrieveDataset(String id) {
-		return repository.retrieveDataset(id);
+	public Optional<DcatDataset> retrieveDataset(String collectionName) {
+		return repository.retrieveDataset(collectionName);
 	}
 
 	@Override
 	public void saveDataset(DcatDataset dataset) {
-		repository.retrieveDataset(dataset.collectionName()).ifPresent(d -> {
-			throw new ExistingResourceException("dcat-dataset", dataset.collectionName());
+		repository.retrieveDataset(dataset.getCollectionName()).ifPresent(d -> {
+			throw new ExistingResourceException("dcat-dataset", dataset.getCollectionName());
 		});
 		repository.saveDataset(dataset);
 	}

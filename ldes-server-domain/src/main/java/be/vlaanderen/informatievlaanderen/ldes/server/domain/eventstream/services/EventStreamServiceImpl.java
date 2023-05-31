@@ -43,7 +43,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 			Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
 					eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(),
-					views, shaclShape.getModel(), dataset.map(DcatDataset::model).orElse(null));
+					views, shaclShape.getModel(), dataset.orElse(null));
 		}).toList();
 	}
 
@@ -57,7 +57,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
 				eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(), views,
-				shaclShape.getModel(), dataset.map(DcatDataset::model).orElse(null));
+				shaclShape.getModel(), dataset.orElse(null));
 	}
 
 	@Override

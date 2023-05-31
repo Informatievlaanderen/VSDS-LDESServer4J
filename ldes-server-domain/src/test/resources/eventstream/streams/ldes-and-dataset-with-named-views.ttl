@@ -15,6 +15,8 @@
 @prefix legal: <http://www.w3.org/ns/legal#> .
 @prefix m8g:   <http://data.europa.eu/m8g/> .
 @prefix locn:  <http://www.w3.org/ns/locn#> .
+@prefix view1:           <http://localhost:8080/collectionName1/view1/> .
+@prefix view2:           <http://localhost:8080/collectionName1/view2/> .
 
 server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    ldes:timestampPath dcterms:created ;
@@ -37,21 +39,23 @@ col:shape a sh:NodeShape ;
      ] ;
    sh:deactivated true .
 
-col:view1 tree:viewDescription [
-   example:fragmentationStrategy [
-       a example:Fragmentation ;
-       example:name "fragmentationStrategy" ;
-       example:property "ldes:propertyPath"
-   ]
-] .
+col:view1 tree:viewDescription view1:description .
 
-col:view2 tree:viewDescription [
-    example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "fragmentationStrategy" ;
-        example:property "ldes:propertyPath"
-    ]
-] .
+col:view2 tree:viewDescription view2:description .
+
+view1:description  a  tree:ViewDescription ;
+        example:fragmentationStrategy
+                [ a                 example:Fragmentation ;
+                  example:name      "fragmentationStrategy" ;
+                  example:property  "ldes:propertyPath"
+                ] .
+
+view2:description  a  tree:ViewDescription ;
+        example:fragmentationStrategy
+                [ a                 example:Fragmentation ;
+                  example:name      "fragmentationStrategy" ;
+                  example:property  "ldes:propertyPath"
+                ] .
 
 <http://sample.org/company/MyDataOwner> a legal:LegalEntity ;
   foaf:name "Data Company" ;

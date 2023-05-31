@@ -15,7 +15,6 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
-import static org.apache.jena.util.ResourceUtils.renameResource;
 
 @Component
 public class EventStreamResponseConverterImpl implements EventStreamResponseConverter {
@@ -63,11 +62,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				createProperty(eventStreamResponse.getMemberType()));
 		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
 				createTypedLiteral(eventStreamResponse.isDefaultViewEnabled()));
-		final Model dataset = eventStreamResponse.getDcatDataset();
-		renameResource(
-				dataset.listStatements(null, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE)).nextStatement()
-						.getSubject(),
-				subject.toString());
+		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(subject.getNameSpace());
 
 		Model eventStreamModel = createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, hasDefaultStmt))
