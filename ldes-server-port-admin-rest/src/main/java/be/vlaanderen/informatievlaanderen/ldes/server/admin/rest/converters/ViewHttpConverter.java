@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -16,7 +17,8 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import static org.apache.jena.riot.RDFFormat.TURTLE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification> {
 
@@ -50,10 +52,11 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	@Override
 	public void write(ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
+		Lang rdfFormat = getLang(contentType, FETCH);
 		StringWriter outputStream = new StringWriter();
 		Model model = viewSpecificationConverter.modelFromView(view);
 
-		RDFDataMgr.write(outputStream, model, TURTLE);
+		RDFDataMgr.write(outputStream, model, rdfFormat);
 
 		OutputStream body = outputMessage.getBody();
 		body.write(outputStream.toString().getBytes());

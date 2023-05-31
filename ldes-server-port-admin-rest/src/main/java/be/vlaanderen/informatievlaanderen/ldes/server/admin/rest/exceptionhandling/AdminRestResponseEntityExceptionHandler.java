@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import org.apache.jena.riot.RiotException;
@@ -30,7 +31,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	}
 
 	@ExceptionHandler(value = { LdesShaclValidationException.class, RiotException.class,
-			DcatAlreadyConfiguredException.class, IllegalArgumentException.class })
+			DcatAlreadyConfiguredException.class, IllegalArgumentException.class, DuplicateViewException.class })
 	protected ResponseEntity<Object> handleBadRequest(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);

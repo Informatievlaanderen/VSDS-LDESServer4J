@@ -44,9 +44,7 @@ import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -79,7 +77,8 @@ class AdminViewsRestControllerTest {
 		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of(view1, view2));
 
 		ResultActions resultActions = mockMvc
-				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views"))
+				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views")
+						.accept(contentTypeTurtle))
 				.andExpect(status().isOk());
 		MvcResult result = resultActions.andReturn();
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
@@ -122,7 +121,7 @@ class AdminViewsRestControllerTest {
 		Model expectedViewModel = readModelFromFile("view-1.ttl");
 		ViewSpecification view = converter.viewFromModel(expectedViewModel, collectionName);
 
-		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+		mockMvc.perform(post("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
 				.andExpect(status().isOk());
@@ -132,7 +131,7 @@ class AdminViewsRestControllerTest {
 	@Test
 	void when_StreamEndpointCalledAndModelInRequestBody_Then_ModelIsValidated() throws Exception {
 		String collectionName = "name1";
-		mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/views")
+		mockMvc.perform(post("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()));
 		verify(validator, times(1)).validate(any(), any());

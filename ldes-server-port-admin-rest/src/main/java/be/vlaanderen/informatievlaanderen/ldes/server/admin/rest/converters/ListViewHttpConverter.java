@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
+
 public class ListViewHttpConverter implements GenericHttpMessageConverter<List<ViewSpecification>> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final ViewSpecificationConverter viewSpecificationConverter;
@@ -74,9 +77,10 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 	@Override
 	public void write(List<ViewSpecification> views, MediaType contentType,
 			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+		Lang rdfFormat = getLang(contentType, FETCH);
 		Model model = ModelFactory.createDefaultModel();
 		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
 
-		RDFDataMgr.write(outputMessage.getBody(), model, Lang.TURTLE);
+		RDFDataMgr.write(outputMessage.getBody(), model, rdfFormat);
 	}
 }

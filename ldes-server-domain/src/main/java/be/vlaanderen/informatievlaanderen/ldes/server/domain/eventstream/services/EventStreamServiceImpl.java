@@ -97,6 +97,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 				eventStreamResponse.getShacl());
 		eventStreamRepository.saveEventStream(eventStream);
 		shaclShapeService.updateShaclShape(shaclShape);
+		eventPublisher.publishEvent(new EventStreamChangedEvent(eventStream));
+		eventStreamResponse.getViews().forEach(viewService::addView);
 		if (eventStreamResponse.isDefaultViewEnabled()) {
 			viewService.addDefaultView(eventStream.getCollection());
 		}
