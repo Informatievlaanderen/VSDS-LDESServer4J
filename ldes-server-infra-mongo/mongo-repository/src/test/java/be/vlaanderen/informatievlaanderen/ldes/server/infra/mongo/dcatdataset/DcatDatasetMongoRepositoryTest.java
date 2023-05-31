@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.entity.DcatDatasetEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.service.DcatDatasetEntityConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;

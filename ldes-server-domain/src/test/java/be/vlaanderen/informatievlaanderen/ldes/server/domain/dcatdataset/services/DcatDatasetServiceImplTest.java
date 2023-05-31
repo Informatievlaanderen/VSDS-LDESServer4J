@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatDatasetValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ class DcatDatasetServiceImplTest {
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
-		datasetService = new DcatDatasetServiceImpl(repository, validator);
+		datasetService = new DcatDatasetServiceImpl(repository);
 		dataset = new DcatDataset(DATASET_ID, readModelFromFile(MODEL_FILE_PATH));
 	}
 
