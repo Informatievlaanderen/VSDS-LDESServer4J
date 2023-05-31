@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -20,24 +19,20 @@ public class EtagCachingStrategy implements CachingStrategy {
 	}
 
 	@Override
-	public String generateCacheIdentifier(EventStream eventStream) {
-		return DigestUtils.sha256Hex(appConfig.getHostName() + "/" + eventStream.collection());
+	public String generateCacheIdentifier(String collectionName, String language) {
+		return DigestUtils.sha256Hex(appConfig.getHostName() + "/" + collectionName + "?lang=" + language);
 	}
 
 	@Override
-	public String generateCacheIdentifier(String collectionName) {
-		return DigestUtils.sha256Hex(appConfig.getHostName() + "/" + collectionName);
-	}
-
-	@Override
-	public String generateCacheIdentifier(TreeNode treeNode) {
+	public String generateCacheIdentifier(TreeNode treeNode, String language) {
 		return DigestUtils.sha256Hex(
 				treeNode.getFragmentId()
 						+ treeNode.getRelations().stream()
-								.map(TreeRelation::treeNode)
-								.collect(Collectors.joining(""))
+						.map(TreeRelation::treeNode)
+						.collect(Collectors.joining(""))
 						+ treeNode.getMembers().stream()
-								.map(Member::getLdesMemberId)
-								.collect(Collectors.joining("")));
+						.map(Member::getLdesMemberId)
+						.collect(Collectors.joining(""))
+						+ language);
 	}
 }

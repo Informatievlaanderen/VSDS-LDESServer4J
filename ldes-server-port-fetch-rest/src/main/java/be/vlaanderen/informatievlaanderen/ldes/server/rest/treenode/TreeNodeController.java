@@ -47,7 +47,7 @@ public class TreeNodeController {
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
 		return ResponseEntity
 				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(treeNode))
+				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(treeNode);
 	}
 
