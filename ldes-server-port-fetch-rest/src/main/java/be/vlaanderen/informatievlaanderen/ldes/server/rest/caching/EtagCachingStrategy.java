@@ -28,11 +28,11 @@ public class EtagCachingStrategy implements CachingStrategy {
 	public String generateCacheIdentifier(TreeNode treeNode, String language) {
 		return sha256Hex(treeNode.getFragmentId()
 				+ treeNode.getRelations().stream()
-				.map(TreeRelation::treeNode)
-				.collect(Collectors.joining(""))
+						.map(TreeRelation::treeNode)
+						.collect(Collectors.joining(""))
 				+ treeNode.getMembers().stream()
-				.map(Member::getLdesMemberId)
-				.collect(Collectors.joining(""))
+						.map(Member::getLdesMemberId)
+						.collect(Collectors.joining(""))
 				+ language);
 	}
 }
