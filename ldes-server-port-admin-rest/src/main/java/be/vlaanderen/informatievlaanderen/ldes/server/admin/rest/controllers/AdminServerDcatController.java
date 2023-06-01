@@ -35,7 +35,8 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 
 	@Override
 	@GetMapping
-	public ResponseEntity<Model> getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+	public ResponseEntity<Model> getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language,
+			HttpServletResponse response) {
 		setContentTypeHeader(language, response);
 		try {
 			return ResponseEntity.ok(service.getComposedDcat());

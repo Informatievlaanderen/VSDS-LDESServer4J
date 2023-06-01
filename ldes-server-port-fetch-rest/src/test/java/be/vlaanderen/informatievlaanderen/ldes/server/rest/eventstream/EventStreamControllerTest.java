@@ -198,7 +198,8 @@ class EventStreamControllerTest {
 
 		@Test
 		void should_ReturnValidationReport_when_Invalid() throws Exception {
-			doThrow(new LdesShaclValidationException("validation-report", null)).when(eventStreamService).getComposedDcat();
+			doThrow(new LdesShaclValidationException("validation-report", null)).when(eventStreamService)
+					.getComposedDcat();
 
 			mockMvc.perform(get("/")
 					.accept(MediaType.ALL))
