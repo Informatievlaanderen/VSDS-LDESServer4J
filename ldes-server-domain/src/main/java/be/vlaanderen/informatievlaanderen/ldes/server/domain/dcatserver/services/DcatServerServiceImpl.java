@@ -41,7 +41,6 @@ public class DcatServerServiceImpl implements DcatServerService {
 		this.dcatShaclValidator = dcatShaclValidator;
 	}
 
-	// TODO TVB: 31/05/2023 test
 	@Override
 	public Model getComposedDcat() {
 		final Model composedDcat = ModelFactory.createDefaultModel();
