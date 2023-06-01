@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 public class IsIsomorphic implements ResultMatcher, ArgumentMatcher<Model> {
 	private final Model model;
 
-	IsIsomorphic(Model model) {
+	private IsIsomorphic(Model model) {
 		this.model = model;
 	}
 

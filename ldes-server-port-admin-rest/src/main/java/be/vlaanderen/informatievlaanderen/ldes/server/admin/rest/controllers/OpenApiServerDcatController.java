@@ -17,6 +17,7 @@ import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTextPlain;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
+@SuppressWarnings("java:S2479") // whitespace needed for examples
 @Tag(name = "DCAT")
 public interface OpenApiServerDcatController {
 

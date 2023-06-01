@@ -30,8 +30,6 @@ public class EventStreamController {
 		this.eventStreamService = eventStreamService;
 	}
 
-	// TODO TVB: 31/05/2023 docs
-	// TODO TVB: 31/05/2023 testing
 	@GetMapping("/")
 	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
 		setContentTypeHeader(language, response);
@@ -56,9 +54,10 @@ public class EventStreamController {
 	}
 
 	private void setContentTypeHeader(String language, HttpServletResponse response) {
-		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE))
+		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE)) {
 			response.setHeader(CONTENT_TYPE, RestConfig.TEXT_TURTLE);
-		else
+		} else {
 			response.setHeader(CONTENT_TYPE, language.split(",")[0]);
+		}
 	}
 }
