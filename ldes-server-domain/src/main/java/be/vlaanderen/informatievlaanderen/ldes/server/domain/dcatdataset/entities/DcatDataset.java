@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities;
 
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
 
 import java.util.Objects;
 
@@ -12,8 +11,9 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatDataset {
-	private String collectionName;
-	private Model model;
+
+	private final String collectionName;
+	private final Model model;
 
 	public DcatDataset(String collectionName, Model model) {
 		this.collectionName = collectionName;
@@ -38,7 +38,6 @@ public class DcatDataset {
 		return model;
 	}
 
-	// TODO TVB: 1/06/2023 test
 	public String getDatasetIriString(String hostName) {
 		return hostName + "/" + getCollectionName();
 	}
@@ -50,12 +49,12 @@ public class DcatDataset {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		DcatDataset that = (DcatDataset) o;
-		return Objects.equals(collectionName, that.getCollectionName())
-				&& model.isIsomorphicWith(that.getModel());
+		return Objects.equals(collectionName, that.getCollectionName());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collectionName, model);
+		return Objects.hash(collectionName);
 	}
+
 }
