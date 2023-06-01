@@ -67,7 +67,8 @@ class EventStreamServiceImplTest {
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
-		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService, dcatDatasetService, dcatServerService,
+		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService, dcatDatasetService,
+				dcatServerService,
 				eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));

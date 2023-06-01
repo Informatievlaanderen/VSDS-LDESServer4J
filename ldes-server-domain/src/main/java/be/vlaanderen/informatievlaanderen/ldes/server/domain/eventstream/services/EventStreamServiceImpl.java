@@ -29,7 +29,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 	private final ApplicationEventPublisher eventPublisher;
 
 	public EventStreamServiceImpl(EventStreamCollection eventStreamCollection, ViewService viewService,
-			ShaclShapeService shaclShapeService, DcatDatasetService dcatDatasetService, DcatServerService dcatServerService, ApplicationEventPublisher eventPublisher) {
+			ShaclShapeService shaclShapeService, DcatDatasetService dcatDatasetService,
+			DcatServerService dcatServerService, ApplicationEventPublisher eventPublisher) {
 		this.eventStreamCollection = eventStreamCollection;
 		this.viewService = viewService;
 		this.shaclShapeService = shaclShapeService;
