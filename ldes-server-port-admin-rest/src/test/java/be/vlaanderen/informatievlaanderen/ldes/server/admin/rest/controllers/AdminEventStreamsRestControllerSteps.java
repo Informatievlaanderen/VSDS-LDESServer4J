@@ -1,11 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.SpringIntegrationTest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -17,7 +15,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.mockito.InOrder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -32,7 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,12 +40,6 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	private static final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 	private ResultActions resultActions;
-	@Autowired
-	private EventStreamCollection eventStreamRepository;
-	@Autowired
-	private ViewRepository viewRepository;
-	@Autowired
-	private ShaclShapeRepository shaclShapeRepository;
 
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {
@@ -87,20 +78,6 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@When("the client calls {string}")
 	public void theClientCallsAdminApiVEventStreams(String url) throws Exception {
 		resultActions = mockMvc.perform(get(url).accept(MediaType.valueOf("text/turtle")));
-	}
-
-	private Model readModelFromFile(String fileName) throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-				.toString();
-		return RDFDataMgr.loadModel(uri);
-	}
-
-	private String readDataFromFile(String fileName)
-			throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
-		return Files.lines(path).collect(Collectors.joining());
 	}
 
 	@Then("the client receives HTTP status {int}")
@@ -201,5 +178,19 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(eventStreamRepository).deleteEventStream(COLLECTION);
 		verify(shaclShapeRepository).deleteShaclShape(COLLECTION);
+	}
+
+	private Model readModelFromFile(String fileName) throws URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
+				.toString();
+		return RDFDataMgr.loadModel(uri);
+	}
+
+	private String readDataFromFile(String fileName)
+			throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
+		return Files.lines(path).collect(Collectors.joining());
 	}
 }

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminServerDcatController;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
@@ -24,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {AdminEventStreamsRestController.class, AppConfig.class, PrefixAdderImpl.class})
+@ContextConfiguration(classes = {AdminEventStreamsRestController.class, AdminServerDcatController.class, AppConfig.class, PrefixAdderImpl.class})
 @ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
@@ -38,14 +39,19 @@ public class SpringIntegrationTest {
 	@MockBean
 	public DcatViewRepository dcatViewRepository;
 	@MockBean
+	@Autowired
 	public DcatServerRepository dcatServerRepository;
 	@MockBean
-	private EventStreamCollection eventStreamRepository;
+	@Autowired
+	public EventStreamCollection eventStreamRepository;
 	@MockBean
-	private ViewRepository viewRepository;
+	@Autowired
+	public ViewRepository viewRepository;
 	@MockBean
-	private ShaclShapeRepository shaclShapeRepository;
+	@Autowired
+	public ShaclShapeRepository shaclShapeRepository;
 	@Autowired
 	public MockMvc mockMvc;
+
 
 }
