@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -213,7 +212,7 @@ class AdminDcatServerControllerTest {
 
 		@Test
 		void should_ReturnValidationReport_when_Invalid() throws Exception {
-			doThrow(new LdesShaclValidationException("validation-report")).when(service).getComposedDcat();
+			doThrow(new LdesShaclValidationException("validation-report", null)).when(service).getComposedDcat();
 
 			mockMvc.perform(get("/admin/api/v1/dcat")
 					.accept(MediaType.ALL))

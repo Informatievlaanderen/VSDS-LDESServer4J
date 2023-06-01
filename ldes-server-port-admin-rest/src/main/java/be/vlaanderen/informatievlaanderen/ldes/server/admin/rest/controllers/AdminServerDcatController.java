@@ -9,6 +9,7 @@ import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -34,12 +35,12 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 
 	@Override
 	@GetMapping
-	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+	public ResponseEntity<Model> getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+		setContentTypeHeader(language, response);
 		try {
-			setContentTypeHeader(language, response);
-			return service.getComposedDcat();
+			return ResponseEntity.ok(service.getComposedDcat());
 		} catch (LdesShaclValidationException e) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return ResponseEntity.internalServerError().body(e.getValidationReportModel());
 		}
 	}
 

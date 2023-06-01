@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
@@ -109,22 +110,53 @@ public interface OpenApiServerDcatController {
 							""")
 			})
 	})
-	@ApiResponse(responseCode = "500", description = "The validation DCAT of the server is returned", content = {
-			@Content(mediaType = "application/json", examples = {
+	@ApiResponse(responseCode = "500", description = "The validation report of the invalid dcat.", content = {
+			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = Model.class), examples = {
 					@ExampleObject(value = """
-							{
-							  "type": "about:blank",
-							  "title": "Internal Server Error",
-							  "status": 500,
-							  "detail": "Shacl validation failed: validation-report",
-							  "instance": "/admin/api/v1/dcat"
-							}
-							""")
+							@prefix company: <http://sample.org/company/> .
+							@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+							@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+							@prefix sh:      <http://www.w3.org/ns/shacl#> .
+							@prefix terms:   <http://purl.org/dc/terms/> .
+							 
+							[ rdf:type     sh:ValidationReport ;
+							  sh:conforms  false ;
+							  sh:result    [ rdf:type                      sh:ValidationResult ;
+							                 sh:focusNode                  <http://localhost:8080> ;
+							                 sh:resultMessage              "ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>" ;
+							                 sh:resultPath                 terms:publisher ;
+							                 sh:resultSeverity             sh:Violation ;
+							                 sh:sourceConstraintComponent  sh:ClassConstraintComponent ;
+							                 sh:sourceShape                []  ;
+							                 sh:value                      company:PublisherX
+							               ]
+							] .
+									""")
+			}),
+			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = {
+					@ExampleObject(value = """
+						_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationReport> .
+						_:genid1 <http://www.w3.org/ns/shacl#conforms> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+						_:genid1 <http://www.w3.org/ns/shacl#result> _:genid2 .
+						_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationResult> .
+						_:genid2 <http://www.w3.org/ns/shacl#focusNode> <http://localhost:8080> .
+						_:genid2 <http://www.w3.org/ns/shacl#resultMessage> "ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>" .
+						_:genid2 <http://www.w3.org/ns/shacl#resultPath> <http://purl.org/dc/terms/publisher> .
+						_:genid2 <http://www.w3.org/ns/shacl#resultSeverity> <http://www.w3.org/ns/shacl#Violation> .
+						_:genid2 <http://www.w3.org/ns/shacl#sourceConstraintComponent> <http://www.w3.org/ns/shacl#ClassConstraintComponent> .
+						_:genid2 <http://www.w3.org/ns/shacl#sourceShape> _:genid3 .
+						_:genid2 <http://www.w3.org/ns/shacl#value> <http://sample.org/company/PublisherX> .
+									""")
+			}),
+			@Content(mediaType = contentTypeJSONLD, examples = {
+					@ExampleObject(value = """
+													[{"@type":["http://www.w3.org/ns/shacl#ValidationReport"],"http://www.w3.org/ns/shacl#conforms":[{"@value":false}],"http://www.w3.org/ns/shacl#result":[{"@id":"_:b1"}]},{"@id":"_:b1","@type":["http://www.w3.org/ns/shacl#ValidationResult"],"http://www.w3.org/ns/shacl#focusNode":[{"@id":"http://localhost:8080"}],"http://www.w3.org/ns/shacl#resultMessage":[{"@value":"ClassConstraint[<http://xmlns.com/foaf/0.1/Agent>]: Expected class :<http://xmlns.com/foaf/0.1/Agent> for <http://sample.org/company/PublisherX>"}],"http://www.w3.org/ns/shacl#resultPath":[{"@id":"http://purl.org/dc/terms/publisher"}],"http://www.w3.org/ns/shacl#resultSeverity":[{"@id":"http://www.w3.org/ns/shacl#Violation"}],"http://www.w3.org/ns/shacl#sourceConstraintComponent":[{"@id":"http://www.w3.org/ns/shacl#ClassConstraintComponent"}],"http://www.w3.org/ns/shacl#sourceShape":[{"@id":"_:b2"}],"http://www.w3.org/ns/shacl#value":[{"@id":"http://sample.org/company/PublisherX"}]},{"@id":"_:b2"},{"@id":"http://localhost:8080"},{"@id":"http://purl.org/dc/terms/publisher"},{"@id":"http://sample.org/company/PublisherX"},{"@id":"http://www.w3.org/ns/shacl#ClassConstraintComponent"},{"@id":"http://www.w3.org/ns/shacl#ValidationReport"},{"@id":"http://www.w3.org/ns/shacl#ValidationResult"},{"@id":"http://www.w3.org/ns/shacl#Violation"}]
+								""")
 			})
 	})
 	@Operation(summary = "The combined metadata for the server is retrieved")
 	@GetMapping
-	Model getDcat(@Parameter(hidden = true) String language, HttpServletResponse response);
+	ResponseEntity<Model> getDcat(@Parameter(hidden = true) String language, HttpServletResponse response);
 
 	@ApiResponse(responseCode = "201", content = @Content(mediaType = contentTypeTextPlain, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966")))
 	@ApiResponse(responseCode = "400", content = @Content)
