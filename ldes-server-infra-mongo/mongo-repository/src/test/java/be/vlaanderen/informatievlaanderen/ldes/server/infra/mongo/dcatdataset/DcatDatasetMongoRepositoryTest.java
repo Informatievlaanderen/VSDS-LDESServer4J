@@ -52,8 +52,8 @@ class DcatDatasetMongoRepositoryTest {
 
         verify(entityRepository).findById(DATASET_ID);
         assertTrue(actualDataset.isPresent());
-        assertEquals(dataset.collectionName(), actualDataset.get().collectionName());
-		assertTrue(dataset.model().isIsomorphicWith(actualDataset.get().model()));
+        assertEquals(dataset.getCollectionName(), actualDataset.get().getCollectionName());
+		assertTrue(dataset.getModel().isIsomorphicWith(actualDataset.get().getModel()));
     }
 
 	@Test

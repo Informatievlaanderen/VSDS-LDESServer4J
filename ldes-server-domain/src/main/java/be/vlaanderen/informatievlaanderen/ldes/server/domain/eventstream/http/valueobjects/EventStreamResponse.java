@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
@@ -17,10 +18,11 @@ public class EventStreamResponse {
 	private final boolean defaultViewEnabled;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
+	private final DcatDataset dcatDataset;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
 			String memberType, boolean defaultViewEnabled, List<ViewSpecification> views,
-			Model shacl) {
+			Model shacl, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
@@ -28,6 +30,13 @@ public class EventStreamResponse {
 		this.defaultViewEnabled = defaultViewEnabled;
 		this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
+		this.dcatDataset = dcatDataset != null ? dcatDataset : new DcatDataset(collection);
+	}
+
+	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
+			String memberType, boolean defaultViewEnabled, List<ViewSpecification> views,
+			Model shacl) {
+		this(collection, timestampPath, versionOfPath, memberType, defaultViewEnabled, views, shacl, null);
 	}
 
 	public String getCollection() {
@@ -58,6 +67,10 @@ public class EventStreamResponse {
 		return shacl;
 	}
 
+	public DcatDataset getDcatDataset() {
+		return dcatDataset;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -70,11 +83,12 @@ public class EventStreamResponse {
 				&& Objects.equals(memberType, that.memberType)
 				&& shacl.isIsomorphicWith(that.shacl)
 				&& new HashSet<>(views).containsAll(that.views)
-				&& new HashSet<>(that.views).containsAll(views);
+				&& new HashSet<>(that.views).containsAll(views)
+				&& Objects.equals(dcatDataset, that.dcatDataset);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, memberType, views, shacl);
+		return Objects.hash(collection, timestampPath, versionOfPath, memberType, views, shacl, dcatDataset);
 	}
 }
