@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.in
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
@@ -71,6 +73,10 @@ public class AdminEventStreamsRestControllerSteps {
 	private ResultActions resultActions;
 	@MockBean
 	private DcatViewService dcatViewService;
+	@MockBean
+	private DcatDatasetService dcatDatasetService;
+	@MockBean
+	private DcatServerService dcatServerService;
 	@MockBean
 	private EventStreamCollection eventStreamRepository;
 	@MockBean
