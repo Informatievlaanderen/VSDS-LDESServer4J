@@ -106,16 +106,16 @@ class EventStreamControllerTest {
 
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
-	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang) throws Exception {
+	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang,
+			String expectedEtagHeaderValue) throws Exception {
 		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
-				COLLECTION)
-				.accept(mediaType))
+						COLLECTION)
+						.accept(mediaType))
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
 
 		String etagHeaderValue = result.getResponse().getHeader(HttpHeaders.ETAG).replace("\"", "");
-		String expectedEtagHeaderValue = "d8cd93fb6df91f6d19a6a87c3e645ebe32982a36cee85a75aa084a8ed90f789b";
 
 		assertNotNull(etagHeaderValue);
 		assertEquals(expectedEtagHeaderValue, etagHeaderValue);
@@ -164,11 +164,16 @@ class EventStreamControllerTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of("application/n-quads", Lang.NQUADS),
-					Arguments.of("application/turtle", Lang.TURTLE),
-					Arguments.of("*/*", Lang.TURTLE),
-					Arguments.of("", Lang.TURTLE),
-					Arguments.of("text/html", Lang.TURTLE));
+					Arguments.of("application/n-quads", Lang.NQUADS,
+							"33a964ecee072d6e4c97a3522d3b5fc58d752c1d69276a36eddcb640ba90a509"),
+					Arguments.of("application/turtle", Lang.TURTLE,
+							"f922774bd3fe66a59686e17f1bc1e000f591670d7ee70c0c3e1d66377ca08610"),
+					Arguments.of("*/*", Lang.TURTLE,
+							"adb0e3a84b4ef0dd5356de5961f62a58b1f8a1541dffc62dc7c62644aaed7357"),
+					Arguments.of("", Lang.TURTLE,
+							"6e14b6fc44f9de48d1f07dd401c81ac5d0116fd26035627eeb2346dda94f60c2"),
+					Arguments.of("text/html", Lang.TURTLE,
+							"251bb000c5883ec25ff35cb340b9fae08b90ed94d4de89c585df4bf421a501f0"));
 		}
 	}
 
