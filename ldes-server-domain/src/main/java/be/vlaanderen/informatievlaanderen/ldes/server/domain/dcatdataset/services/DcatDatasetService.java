@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entitie
 import java.util.Optional;
 
 public interface DcatDatasetService {
-	Optional<DcatDataset> retrieveDataset(String id);
+	Optional<DcatDataset> retrieveDataset(String collectionName);
 
 	void saveDataset(DcatDataset dataset);
 }
