@@ -14,6 +14,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -143,8 +144,9 @@ class DcatServerServiceImplTest {
 
 			Model result = service.getComposedDcat();
 
-			// TODO: 1/06/2023 create result
-			assertTrue(result.isIsomorphicWith(result));
+			String path = "dcat/dcat-combined-without-views.ttl";
+			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
+			assertTrue(expectedResult.isIsomorphicWith(result));
 		}
 
 		@Test
@@ -155,8 +157,9 @@ class DcatServerServiceImplTest {
 
 			Model result = service.getComposedDcat();
 
-			// TODO: 1/06/2023 create result
-			assertTrue(result.isIsomorphicWith(result));
+			String path = "dcat/dcat-combined-all.ttl";
+			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
+			assertTrue(expectedResult.isIsomorphicWith(result));
 		}
 
 		private Optional<DcatServer> createServer() {
@@ -181,17 +184,16 @@ class DcatServerServiceImplTest {
 		}
 
 		private List<DcatView> createDcatParcelViews() {
-			Model byPage = RDFParser.source("dcat/parcels-by-page.ttl").lang(Lang.TURTLE).build().toModel();
-			Model byTime = RDFParser.source("dcat/parcels-by-time.ttl").lang(Lang.TURTLE).build().toModel();
+			Model byPage = RDFParser.source("dcat/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
+			Model byTime = RDFParser.source("dcat/view-by-geospatial.ttl").lang(Lang.TURTLE).build().toModel();
 			return List.of(
 					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_PAGE), byPage),
-					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_TIME), byTime)
-			);
+					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_TIME), byTime));
 		}
 
 		private List<DcatView> createDcatBuildingViews() {
-			Model byPage = RDFParser.source("dcat/buildings-by-page.ttl").lang(Lang.TURTLE).build().toModel();
-			return List.of(DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_PAGE), byPage));
+			Model byPage = RDFParser.source("dcat/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
+			return List.of(DcatView.from(new ViewName(COLLECTION_BUILDINGS, VIEW_BY_PAGE), byPage));
 		}
 
 	}

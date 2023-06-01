@@ -1,0 +1,36 @@
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ns0: <http://data.europa.eu/m8g/> .
+@prefix ns1: <http://www.w3.org/ns/locn#> .
+@prefix ns2: <http://www.w3.org/ns/legal#> .
+
+<http://localhost.dev/buildings>
+  dc:title "My LDES"@en ;
+  dc:description "LDES for my buildings data collection"@en ;
+  a dcat:Dataset .
+
+<http://localhost.dev>
+  dcat:dataset <http://localhost.dev/buildings>, <http://localhost.dev/parcels> ;
+  a dcat:Catalog ;
+  dc:description "All LDES'es from publiser X"@en ;
+  dc:publisher <http://sample.org/company/PublisherX> ;
+  dc:title "My LDES'es"@en .
+
+<http://sample.org/company/PublisherX>
+  a foaf:Agent ;
+  ns0:contactPoint [
+    a ns0:ContactPoint ;
+    ns0:hasEmail "info@data-publishing-company.com"
+  ] ;
+  ns0:registeredAddress [
+    a <http://www.w3.org/ns/locn#Address> ;
+    ns1:fullAddress "Some full address here"
+  ] ;
+  ns2:legalName "Data Publishing Company BV" ;
+  foaf:name "Data Publishing Company" .
+
+<http://localhost.dev/parcels>
+  dc:title "My LDES"@en ;
+  dc:description "LDES for my parcels data collection"@en ;
+  a dcat:Dataset .

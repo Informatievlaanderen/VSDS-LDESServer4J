@@ -1,0 +1,58 @@
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix ns0: <http://data.europa.eu/m8g/> .
+@prefix ns1: <http://www.w3.org/ns/locn#> .
+@prefix ns2: <http://www.w3.org/ns/legal#> .
+
+<http://localhost.dev>
+  dcat:dataset <http://localhost.dev/buildings>, <http://localhost.dev/parcels> ;
+  dcat:service <http://localhost.dev/parcels/by-time/description>, <http://localhost.dev/parcels/by-page/description>, <http://localhost.dev/buildings/by-page/description> ;
+  a dcat:Catalog ;
+  dc:description "All LDES'es from publiser X"@en ;
+  dc:publisher <http://sample.org/company/PublisherX> ;
+  dc:title "My LDES'es"@en .
+
+<http://sample.org/company/PublisherX>
+  a foaf:Agent ;
+  ns0:contactPoint [
+    a ns0:ContactPoint ;
+    ns0:hasEmail "info@data-publishing-company.com"
+  ] ;
+  ns0:registeredAddress [
+    a <http://www.w3.org/ns/locn#Address> ;
+    ns1:fullAddress "Some full address here"
+  ] ;
+  ns2:legalName "Data Publishing Company BV" ;
+  foaf:name "Data Publishing Company" .
+
+<http://localhost.dev/parcels>
+  dc:title "My LDES"@en ;
+  dc:description "LDES for my parcels data collection"@en ;
+  a dcat:Dataset .
+
+<http://localhost.dev/parcels/by-page/description>
+  dcat:servesDataset <http://localhost.dev/parcels> ;
+  dcat:endpointURL <http://localhost.dev/parcels/by-page> ;
+  a dcat:DataService ;
+  dc:title "My view by page"@en ;
+  dc:description "By page fragmentation for my LDES"@en .
+
+<http://localhost.dev/parcels/by-time/description>
+  dcat:servesDataset <http://localhost.dev/parcels> ;
+  dcat:endpointURL <http://localhost.dev/parcels/by-time> ;
+  a dcat:DataService ;
+  dc:title "My geo-spatial view"@en ;
+  dc:description "Geospatial fragmentation for my LDES"@en .
+
+<http://localhost.dev/buildings>
+  dc:title "My LDES"@en ;
+  dc:description "LDES for my buildings data collection"@en ;
+  a dcat:Dataset .
+
+<http://localhost.dev/buildings/by-page/description>
+  dcat:servesDataset <http://localhost.dev/buildings> ;
+  dcat:endpointURL <http://localhost.dev/buildings/by-page> ;
+  a dcat:DataService ;
+  dc:title "My view by page"@en ;
+  dc:description "By page fragmentation for my LDES"@en .
