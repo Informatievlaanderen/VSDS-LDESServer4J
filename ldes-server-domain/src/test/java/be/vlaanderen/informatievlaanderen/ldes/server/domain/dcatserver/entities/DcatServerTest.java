@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.*;
@@ -20,7 +21,9 @@ import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer.DCAT_CATALOG;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DcatServerTest {
 	private static final String ID = "id";
@@ -87,26 +90,37 @@ class DcatServerTest {
 		DcatView dcatView1 = DcatView.from(new ViewName("col1", "view1"), view1);
 		DcatView dcatView2 = DcatView.from(new ViewName("col1", "view2"), view2);
 		DcatServer dcatServer = new DcatServer(ID, DCAT);
+		DcatDataset dcatDataset = new DcatDataset("col1");
 
-		List<Statement> result = dcatServer.getStatementsWithBase(host, List.of(dcatView1, dcatView2), datasets);
+		List<Statement> result = dcatServer.getStatementsWithBase(host, List.of(dcatView1, dcatView2),
+				List.of(dcatDataset));
 
-		assertEquals(3, result.size()); // 1 from catalog + 2 from views
+		assertEquals(4, result.size()); // 1 from catalog + 2 from views
 		Model resultModel = ModelFactory.createDefaultModel();
 		resultModel.add(result);
 		Resource iri = ResourceFactory.createResource(host);
-		assertEquals(3, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
+		assertEquals(4, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
 		System.out.println(RDFWriter.source(resultModel).lang(Lang.TURTLE).asString());
 		assertEquals(DCAT_CATALOG, resultModel.listObjectsOfProperty(iri, RDF.type).next());
-		// assertDatasetStatements(resultModel, iri); TODO TVPJ
+		assertDataserviceStatements(resultModel, iri);
+		assertDatasetStatements(resultModel, iri);
 	}
 
-	private static void assertDataserviceStatements(Model resultModel, Resource iri) {
+	private void assertDataserviceStatements(Model resultModel, Resource iri) {
 		List<String> dataServiceUris = resultModel
 				.listObjectsOfProperty(iri, createProperty("http://www.w3.org/ns/dcat#service"))
 				.mapWith(RDFNode::asResource).mapWith(Resource::getURI).toList();
 		assertEquals(2, dataServiceUris.size());
 		assertTrue(dataServiceUris.contains("http://localhost.dev/col1/view1/description"));
 		assertTrue(dataServiceUris.contains("http://localhost.dev/col1/view2/description"));
+	}
+
+	private void assertDatasetStatements(Model resultModel, Resource iri) {
+		List<String> dataServiceUris = resultModel
+				.listObjectsOfProperty(iri, createProperty("http://www.w3.org/ns/dcat#dataset"))
+				.mapWith(RDFNode::asResource).mapWith(Resource::getURI).toList();
+		assertEquals(1, dataServiceUris.size());
+		assertTrue(dataServiceUris.contains("http://localhost.dev/col1"));
 	}
 
 }

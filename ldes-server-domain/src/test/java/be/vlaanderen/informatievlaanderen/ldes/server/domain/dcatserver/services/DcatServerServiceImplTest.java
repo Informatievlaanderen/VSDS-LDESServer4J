@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
@@ -35,6 +36,8 @@ class DcatServerServiceImplTest {
 	private DcatViewService dcatViewService;
 	@Mock
 	private DcatShaclValidator dcatShaclValidator;
+	@Mock
+	private DcatDatasetService dcatDatasetService;
 
 	@BeforeEach
 	void setUp() {
