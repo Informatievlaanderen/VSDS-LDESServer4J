@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
@@ -9,9 +11,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatVie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,15 +24,19 @@ public class DcatServerServiceImpl implements DcatServerService {
 
 	private final DcatServerRepository dcatServerRepository;
 	private final DcatViewService dcatViewService;
+	private final DcatDatasetService dcatDatasetService;
 	private final String hostName;
 
 	private final DcatShaclValidator dcatShaclValidator;
 
 	public DcatServerServiceImpl(DcatServerRepository dcatServerRepository,
 			DcatViewService dcatViewService,
-			@Value("${ldes-server.host-name}") String hostName, DcatShaclValidator dcatShaclValidator) {
+			DcatDatasetService dcatDatasetService,
+			@Value("${ldes-server.host-name}") String hostName,
+			DcatShaclValidator dcatShaclValidator) {
 		this.dcatServerRepository = dcatServerRepository;
 		this.dcatViewService = dcatViewService;
+		this.dcatDatasetService = dcatDatasetService;
 		this.hostName = hostName;
 		this.dcatShaclValidator = dcatShaclValidator;
 	}
@@ -36,20 +44,31 @@ public class DcatServerServiceImpl implements DcatServerService {
 	// TODO TVB: 31/05/2023 test
 	@Override
 	public Model getComposedDcat() {
-		Model composedDcat = ModelFactory.createDefaultModel();
+		final Model composedDcat = ModelFactory.createDefaultModel();
 
-		dcatServerRepository.findSingleDcatServer().ifPresent(dcatServer -> {
-			List<DcatView> views = dcatViewService.findAll();
-			composedDcat.add(
-					views.stream().flatMap(dcatView -> dcatView.getStatementsWithBase(hostName).stream()).toList());
-
-			// TODO TVPJ: 31/05/2023 add PJ datasets in line with views
-
-			composedDcat.add(dcatServer.getStatementsWithBase(hostName, views));
-		});
+		dcatServerRepository
+				.findSingleDcatServer()
+				.ifPresent(dcatServer -> composedDcat.add(getStatementsForComposedDcat(dcatServer)));
 
 		dcatShaclValidator.validate(composedDcat, null);
 		return composedDcat;
+	}
+
+	private List<Statement> getStatementsForComposedDcat(DcatServer dcatServer) {
+		final List<Statement> statements = new ArrayList<>();
+
+		final List<DcatView> views = dcatViewService.findAll();
+		statements.addAll(
+				views.stream().flatMap(dcatView -> dcatView.getStatementsWithBase(hostName).stream()).toList());
+
+		final List<DcatDataset> datasets = dcatDatasetService.findAll();
+		statements.addAll(
+				datasets.stream().map(dataset -> dataset.getModelWithIdentity(hostName))
+						.flatMap(model -> model.listStatements().toList().stream()).toList());
+
+		statements.addAll(dcatServer.getStatementsWithBase(hostName, views, datasets));
+
+		return statements;
 	}
 
 	@Override

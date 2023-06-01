@@ -88,7 +88,7 @@ class DcatServerTest {
 		DcatView dcatView2 = DcatView.from(new ViewName("col1", "view2"), view2);
 		DcatServer dcatServer = new DcatServer(ID, DCAT);
 
-		List<Statement> result = dcatServer.getStatementsWithBase(host, List.of(dcatView1, dcatView2));
+		List<Statement> result = dcatServer.getStatementsWithBase(host, List.of(dcatView1, dcatView2), datasets);
 
 		assertEquals(3, result.size()); // 1 from catalog + 2 from views
 		Model resultModel = ModelFactory.createDefaultModel();

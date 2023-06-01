@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 
 import java.util.Objects;
 
@@ -33,8 +34,13 @@ public class DcatDataset {
 
 	public Model getModelWithIdentity(String hostname) {
 		model.listStatements(null, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE)).nextOptional()
-				.ifPresent(statement -> renameResource(statement.getSubject(), hostname + collectionName));
+				.ifPresent(statement -> renameResource(statement.getSubject(), getDatasetIriString(hostname)));
 		return model;
+	}
+
+	// TODO TVB: 1/06/2023 test
+	public String getDatasetIriString(String hostName) {
+		return hostName + "/" + getCollectionName();
 	}
 
 	@Override
