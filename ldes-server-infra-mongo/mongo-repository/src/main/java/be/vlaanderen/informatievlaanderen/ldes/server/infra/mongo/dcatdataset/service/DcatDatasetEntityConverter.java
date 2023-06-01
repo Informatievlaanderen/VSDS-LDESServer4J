@@ -14,7 +14,7 @@ public class DcatDatasetEntityConverter {
 	}
 
 	public DcatDatasetEntity datasetToEntity(DcatDataset dataset) {
-		return new DcatDatasetEntity(dataset.collectionName(), modelToString(dataset.model()));
+		return new DcatDatasetEntity(dataset.getCollectionName(), modelToString(dataset.getModel()));
 	}
 
 	private String modelToString(Model model) {

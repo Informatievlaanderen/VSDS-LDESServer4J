@@ -2,6 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 
+import java.util.Optional;
+
 public interface DcatDatasetService {
-	public void saveDataset(DcatDataset dataset);
+	Optional<DcatDataset> retrieveDataset(String collectionName);
+
+	void saveDataset(DcatDataset dataset);
 }

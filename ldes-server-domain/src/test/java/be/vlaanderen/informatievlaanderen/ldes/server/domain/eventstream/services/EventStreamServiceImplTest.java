@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.collection.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
@@ -10,7 +12,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +22,9 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +41,8 @@ class EventStreamServiceImplTest {
 			MEMBER_TYPE, HAS_DEFAULT_VIEW);
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
+	private DcatDataset dataset;
+	private EventStreamResponse EVENT_STREAM_RESPONSEWITH_DATASET;
 	@Mock
 	private EventStreamCollection eventStreamCollection;
 	@Mock
@@ -45,12 +53,20 @@ class EventStreamServiceImplTest {
 	private ViewService viewService;
 	@Mock
 	private ShaclShapeService shaclShapeService;
+	@Mock
+	private DcatDatasetService dcatDatasetService;
 
 	private EventStreamService service;
 
 	@BeforeEach
-	void setUp() {
-		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService, eventPublisher);
+	void setUp() throws URISyntaxException {
+		service = new EventStreamServiceImpl(eventStreamCollection, viewService, shaclShapeService, dcatDatasetService,
+				eventPublisher);
+
+		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
+		EVENT_STREAM_RESPONSEWITH_DATASET = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
+				VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel(),
+				dataset);
 	}
 
 	@Test
@@ -63,7 +79,7 @@ class EventStreamServiceImplTest {
 
 		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
 				"memberType",
-				HAS_DEFAULT_VIEW, views, ModelFactory.createDefaultModel());
+				HAS_DEFAULT_VIEW, views, ModelFactory.createDefaultModel(), dataset);
 
 		when(eventStreamCollection.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
@@ -74,16 +90,21 @@ class EventStreamServiceImplTest {
 		when(shaclShapeService.retrieveShaclShape(otherCollection))
 				.thenReturn(new ShaclShape(otherCollection, ModelFactory.createDefaultModel()));
 
+		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
+		when(dcatDatasetService.retrieveDataset(otherCollection)).thenReturn(Optional.of(dataset));
+
 		List<EventStreamResponse> eventStreams = service.retrieveAllEventStreams();
 		List<EventStreamResponse> expectedEventStreams = List.of(EVENT_STREAM_RESPONSE, otherEventStreamResponse);
 		assertEquals(expectedEventStreams, eventStreams);
 
-		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService);
+		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamCollection).retrieveAllEventStreams();
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
+		inOrder.verify(dcatDatasetService).retrieveDataset(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(otherCollection);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(otherCollection);
+		inOrder.verify(dcatDatasetService).retrieveDataset(otherCollection);
 
 	}
 
@@ -92,13 +113,31 @@ class EventStreamServiceImplTest {
 		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
 		when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
 		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
+		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
 
 		assertEquals(EVENT_STREAM_RESPONSE, service.retrieveEventStream(COLLECTION));
 
-		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService);
+		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamCollection).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
 		inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
+		inOrder.verify(dcatDatasetService).retrieveDataset(COLLECTION);
+	}
+
+	@Test
+	void when_collectionAndDatasetExists_then_retrieveEventStreamWithDataset() {
+		when(eventStreamCollection.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+		when(viewService.getViewsByCollectionName(COLLECTION)).thenReturn(List.of());
+		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
+		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.of(dataset));
+
+		assertEquals(EVENT_STREAM_RESPONSEWITH_DATASET, service.retrieveEventStream(COLLECTION));
+
+		InOrder inOrder = inOrder(eventStreamCollection, viewService, shaclShapeService, dcatDatasetService);
+		inOrder.verify(eventStreamCollection).retrieveEventStream(COLLECTION);
+		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
+		inOrder.verify(shaclShapeService).retrieveShaclShape(COLLECTION);
+		inOrder.verify(dcatDatasetService).retrieveDataset(COLLECTION);
 	}
 
 	@Test
@@ -198,5 +237,12 @@ class EventStreamServiceImplTest {
 		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
 		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());
 		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
+	}
+
+	private Model readModelFromFile(String fileName) throws URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
+				.toString();
+		return RDFDataMgr.loadModel(uri);
 	}
 }
