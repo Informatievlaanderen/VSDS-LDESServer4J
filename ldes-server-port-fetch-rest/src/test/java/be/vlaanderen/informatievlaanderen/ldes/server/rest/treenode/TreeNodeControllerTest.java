@@ -168,7 +168,7 @@ class TreeNodeControllerTest {
 				List.of(), COLLECTION_NAME);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
-						.accept("application/json"))
+				.accept("application/json"))
 				.andExpect(status().isUnsupportedMediaType());
 	}
 
@@ -194,9 +194,9 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting using another collection name returns 404")
 	void when_GETRequestIsPerformedOnOtherCollectionName_ResponseIs404() throws Exception {
 		mockMvc.perform(get("/")
-						.param("generatedAtTime",
-								FRAGMENTATION_VALUE_1)
-						.accept("application/n-quads"))
+				.param("generatedAtTime",
+						FRAGMENTATION_VALUE_1)
+				.accept("application/n-quads"))
 				.andExpect(status().isNotFound());
 	}
 
