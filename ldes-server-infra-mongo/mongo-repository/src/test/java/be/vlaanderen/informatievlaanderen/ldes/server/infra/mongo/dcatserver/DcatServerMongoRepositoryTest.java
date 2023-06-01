@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.ent
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,8 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -91,5 +91,41 @@ class DcatServerMongoRepositoryTest {
 		dcatServerRepository.deleteServerDcat(ID);
 
 		verify(dcatCatalogEntityRepository).deleteById(ID);
+	}
+
+	@Nested
+	class FindSingleDcatServer {
+
+		@Test
+		void should_ThrowException_when_MoreThanOneResultFound() {
+			List<DcatCatalogEntity> entities = List.of(
+					new DcatCatalogEntity("id1", ""),
+					new DcatCatalogEntity("id2", ""));
+			when(dcatCatalogEntityRepository.findAll()).thenReturn(entities);
+
+			assertThrows(IllegalStateException.class, () -> dcatServerRepository.findSingleDcatServer());
+		}
+
+		@Test
+		void should_ReturnEmpty_when_NoResultsFound() {
+			List<DcatCatalogEntity> entities = List.of();
+			when(dcatCatalogEntityRepository.findAll()).thenReturn(entities);
+
+			Optional<DcatServer> result = dcatServerRepository.findSingleDcatServer();
+
+			assertTrue(result.isEmpty());
+		}
+
+		@Test
+		void should_ReturnResult_when_ResultFound() {
+			List<DcatCatalogEntity> entities = List.of(new DcatCatalogEntity("id", ""));
+			when(dcatCatalogEntityRepository.findAll()).thenReturn(entities);
+
+			Optional<DcatServer> result = dcatServerRepository.findSingleDcatServer();
+
+			assertTrue(result.isPresent());
+			assertEquals(new DcatServer("id", null), result.get());
+		}
+
 	}
 }

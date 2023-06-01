@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.entity.Da
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.DcatServiceEntityConverter;
 
+import java.util.List;
 import java.util.Optional;
 
 public class DcatViewMongoRepository implements DcatViewRepository {
@@ -35,6 +36,11 @@ public class DcatViewMongoRepository implements DcatViewRepository {
 	@Override
 	public void delete(ViewName viewName) {
 		dataServiceEntityRepository.deleteById(viewName.asString());
+	}
+
+	@Override
+	public List<DcatView> findAll() {
+		return dataServiceEntityRepository.findAll().stream().map(dcatServiceEntityConverter::toDcatView).toList();
 	}
 
 }

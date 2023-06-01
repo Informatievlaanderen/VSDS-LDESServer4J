@@ -63,7 +63,7 @@ public class DcatView {
 		return ResourceFactory.createStatement(dataServiceId, DCAT_SERVES_DATASET, collection);
 	}
 
-	private Resource getViewDescriptionResource(String hostName) {
+	public Resource getViewDescriptionResource(String hostName) {
 		return createResource(viewName.getViewNameIri(hostName) + VIEW_DESCRIPTION_SUFFIX);
 	}
 

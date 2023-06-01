@@ -1,12 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatCatalogValidator;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @RestController
 @RequestMapping("/admin/api/v1/dcat")
@@ -22,6 +30,17 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.setValidator(validator);
+	}
+
+	@Override
+	@GetMapping
+	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+		try {
+			setContentTypeHeader(language, response);
+			return service.getComposedDcat();
+		} catch (LdesShaclValidationException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 	}
 
 	@Override
@@ -42,4 +61,13 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 	public void deleteServerDcat(@PathVariable String catalogId) {
 		service.deleteDcatServer(catalogId);
 	}
+
+	private void setContentTypeHeader(String language, HttpServletResponse response) {
+		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE)) {
+			response.setHeader(CONTENT_TYPE, Lang.TURTLE.getHeaderString());
+		} else {
+			response.setHeader(CONTENT_TYPE, language.split(",")[0]);
+		}
+	}
+
 }

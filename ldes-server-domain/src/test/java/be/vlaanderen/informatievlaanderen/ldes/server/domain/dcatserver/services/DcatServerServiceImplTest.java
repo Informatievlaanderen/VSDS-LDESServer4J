@@ -4,6 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DcatAlreadyConfiguredException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,10 +31,14 @@ class DcatServerServiceImplTest {
 	private DcatServerService service;
 	@Mock
 	private DcatServerRepository repository;
+	@Mock
+	private DcatViewService dcatViewService;
+	@Mock
+	private DcatShaclValidator dcatShaclValidator;
 
 	@BeforeEach
 	void setUp() {
-		service = new DcatServerServiceImpl(repository);
+		service = new DcatServerServiceImpl(repository, dcatViewService, "http://localhost.dev", dcatShaclValidator);
 	}
 
 	@Test

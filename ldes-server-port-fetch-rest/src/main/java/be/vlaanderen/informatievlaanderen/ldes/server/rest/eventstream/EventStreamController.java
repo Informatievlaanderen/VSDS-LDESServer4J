@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,14 @@ public class EventStreamController {
 		this.restConfig = restConfig;
 		this.cachingStrategy = cachingStrategy;
 		this.eventStreamService = eventStreamService;
+	}
+
+	// TODO TVPJ: 31/05/2023 docs
+	// TODO TVB: 31/05/2023 testing
+	@GetMapping("/")
+	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+		setContentTypeHeader(language, response);
+		return eventStreamService.getComposedDcat();
 	}
 
 	@CrossOrigin(origins = "*", allowedHeaders = "")
