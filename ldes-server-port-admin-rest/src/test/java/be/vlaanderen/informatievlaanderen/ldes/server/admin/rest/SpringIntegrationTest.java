@@ -25,15 +25,16 @@ import org.springframework.test.web.servlet.MockMvc;
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = {AdminEventStreamsRestController.class, AdminServerDcatController.class, AppConfig.class, PrefixAdderImpl.class})
-@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminServerDcatController.class,
+		AppConfig.class, PrefixAdderImpl.class })
+@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.validation",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling"})
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling" })
 @SuppressWarnings("java:S2187")
 public class SpringIntegrationTest {
 	@MockBean
@@ -52,6 +53,5 @@ public class SpringIntegrationTest {
 	public ShaclShapeRepository shaclShapeRepository;
 	@Autowired
 	public MockMvc mockMvc;
-
 
 }
