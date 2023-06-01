@@ -116,7 +116,7 @@ public interface OpenApiServerDcatController {
 							  "type": "about:blank",
 							  "title": "Internal Server Error",
 							  "status": 500,
-							  "detail": "Shacl validation failed: \\n\\nvalidation-report",
+							  "detail": "Shacl validation failed: validation-report",
 							  "instance": "/admin/api/v1/dcat"
 							}
 							""")
