@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.sparql.engine.http.HttpContentType;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
@@ -23,7 +20,6 @@ import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 @Tag(name = "DCAT")
 public interface OpenApiServerDcatController {
 
-	// TODO TVB: 1/06/2023 clean turtle errors
 	@ApiResponse(responseCode = "200", description = "The combined DCAT of the server is returned", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = Model.class), examples = {
 					@ExampleObject(value = """

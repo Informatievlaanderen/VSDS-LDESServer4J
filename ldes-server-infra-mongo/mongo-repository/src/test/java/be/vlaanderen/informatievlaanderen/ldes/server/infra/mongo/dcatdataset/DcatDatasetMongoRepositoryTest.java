@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.re
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,6 +17,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -79,6 +82,35 @@ class DcatDatasetMongoRepositoryTest {
 		mongoRepository.deleteDataset(DATASET_ID);
 
 		verify(entityRepository).deleteById(DATASET_ID);
+	}
+
+	@Nested
+	class FindAll {
+		@Test
+		void when_NoEntitiesAreFound_then_AnEmptyListIsReturned() {
+			when(entityRepository.findAll()).thenReturn(new ArrayList<>());
+
+			List<DcatDataset> result = mongoRepository.findAll();
+
+			assertTrue(result.isEmpty());
+		}
+
+		@Test
+		void when_EntitiesAreFound_then_AListOfDcatDatasetIsReturned() throws Exception {
+			String modelString = readDataFromFile(MODEL_FILE_PATH);
+			DcatDatasetEntity dataset1 = new DcatDatasetEntity("col1", modelString);
+			DcatDatasetEntity dataset2 = new DcatDatasetEntity("col2", modelString);
+			when(entityRepository.findAll()).thenReturn(List.of(dataset1, dataset2));
+
+			List<DcatDataset> result = mongoRepository.findAll();
+
+			assertEquals(2, result.size());
+			assertTrue(result.get(0).getModel().isIsomorphicWith(readModelFromFile(MODEL_FILE_PATH)));
+			List<String> collections = result.stream().map(DcatDataset::getCollectionName).toList();
+			assertTrue(collections.contains("col1"));
+			assertTrue(collections.contains("col2"));
+		}
+
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

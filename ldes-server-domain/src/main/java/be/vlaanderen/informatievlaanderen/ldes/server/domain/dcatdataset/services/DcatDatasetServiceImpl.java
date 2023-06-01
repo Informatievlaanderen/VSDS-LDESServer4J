@@ -16,7 +16,6 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 		this.repository = repository;
 	}
 
-	// TODO TVB: 1/06/2023 test
 	@Override
 	public List<DcatDataset> findAll() {
 		return repository.findAll();

@@ -32,7 +32,6 @@ public class DcatDatasetMongoRepository implements DcatDatasetRepository {
 		repository.deleteById(id);
 	}
 
-	// TODO TVB: 1/06/2023 test
 	@Override
 	public List<DcatDataset> findAll() {
 		return repository.findAll().stream().map(converter::entitytoDataset).toList();

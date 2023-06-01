@@ -30,7 +30,7 @@ public class EventStreamController {
 		this.eventStreamService = eventStreamService;
 	}
 
-	// TODO TVPJ: 31/05/2023 docs
+	// TODO TVB: 31/05/2023 docs
 	// TODO TVB: 31/05/2023 testing
 	@GetMapping("/")
 	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
