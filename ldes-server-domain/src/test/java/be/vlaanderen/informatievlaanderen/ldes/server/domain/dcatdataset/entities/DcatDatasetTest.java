@@ -6,11 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DcatDatasetTest {
 
-    @Test
-    void when_CallingGetDatasetIriString_should_ReturnTheCorrectIriString() {
-        String result = new DcatDataset("collectionName").getDatasetIriString("http://localhost.dev");
+	@Test
+	void when_CallingGetDatasetIriString_should_ReturnTheCorrectIriString() {
+		String result = new DcatDataset("collectionName").getDatasetIriString("http://localhost.dev");
 
-        assertEquals("http://localhost.dev/collectionName", result);
-    }
+		assertEquals("http://localhost.dev/collectionName", result);
+	}
 
 }
