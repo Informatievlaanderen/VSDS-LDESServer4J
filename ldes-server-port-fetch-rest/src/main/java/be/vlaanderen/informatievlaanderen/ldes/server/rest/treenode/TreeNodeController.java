@@ -8,6 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static org.apache.jena.riot.WebContent.*;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
@@ -37,9 +41,15 @@ public class TreeNodeController {
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}/{view}")
 	@Operation(summary = "Retrieve an LDES Fragment")
+	@ApiResponse(responseCode = "200", content = {
+			@Content(mediaType = contentTypeNQuads),
+			@Content(mediaType = contentTypeJSONLD),
+			@Content(mediaType = contentTypeTurtle)
+	})
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String view,
-			@RequestParam Map<String, String> requestParameters, @RequestHeader(HttpHeaders.ACCEPT) String language,
+			@RequestParam Map<String, String> requestParameters,
+			@Parameter(hidden = true) @RequestHeader(HttpHeaders.ACCEPT) String language,
 			@PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
@@ -47,7 +57,7 @@ public class TreeNodeController {
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
 		return ResponseEntity
 				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(treeNode))
+				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(treeNode);
 	}
 
