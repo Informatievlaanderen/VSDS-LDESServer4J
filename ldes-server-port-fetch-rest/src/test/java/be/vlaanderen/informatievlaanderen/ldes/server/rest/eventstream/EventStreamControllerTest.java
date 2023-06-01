@@ -108,9 +108,8 @@ class EventStreamControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GetRequestOnCollectionName_EventStreamIsReturned(String mediaType, Lang lang,
 			String expectedEtagHeaderValue) throws Exception {
-		ResultActions resultActions = mockMvc.perform(get("/{viewName}",
-						COLLECTION)
-						.accept(mediaType))
+		ResultActions resultActions = mockMvc.perform(get("/{viewName}", COLLECTION)
+				.accept(mediaType))
 				.andExpect(status().isOk());
 
 		MvcResult result = resultActions.andReturn();
