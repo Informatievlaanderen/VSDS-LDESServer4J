@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
@@ -35,7 +35,10 @@ import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

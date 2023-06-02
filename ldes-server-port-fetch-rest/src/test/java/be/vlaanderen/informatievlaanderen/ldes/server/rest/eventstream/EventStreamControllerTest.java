@@ -19,7 +19,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrate
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.FetchModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
@@ -69,7 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { EventStreamController.class, AppConfig.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
-		RetentionModelExtractor.class, ModelConverter.class
+		RetentionModelExtractor.class, FetchModelConverter.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";

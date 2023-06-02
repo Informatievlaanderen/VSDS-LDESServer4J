@@ -1,7 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -11,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -21,7 +18,6 @@ import java.util.Objects;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
-@Component
 public class ModelConverter implements HttpMessageConverter<Model> {
 
 	private final PrefixAdder prefixAdder;
