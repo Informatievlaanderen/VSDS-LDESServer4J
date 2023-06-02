@@ -100,26 +100,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>http-ingest-v2</id>
-            <dependencies>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-port-ingest-rest</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-port-ingest</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-ingest-repository</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>http-fetch</id>
             <dependencies>
                 <dependency>
