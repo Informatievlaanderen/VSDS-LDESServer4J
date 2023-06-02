@@ -15,7 +15,7 @@ import static org.apache.jena.riot.WebContent.*;
 @Tag(name = "Server")
 @Tag(name = "DCAT")
 public interface OpenApiServerDcatController {
-	@ApiResponse(responseCode = "201", content = @Content(mediaType = contentTypeTextPlain, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966")))
+	@ApiResponse(responseCode = "201", description = "The generated UUID that is linked to the created DCAT", content = @Content(mediaType = contentTypeTextPlain, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966")))
 	@ApiResponse(responseCode = "400", content = @Content, description = "Provided DCAT configuration is not valid")
 	@Operation(summary = "Add DCAT configuration for the server")
 	String postServerDcat(
@@ -39,7 +39,7 @@ public interface OpenApiServerDcatController {
 											_:genid1 <http://purl.org/dc/terms/description> "All LDES'es from publiser X"@en .
 											""")
 							}),
-							@Content(mediaType = contentTypeJSONLD, examples = {
+							@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = {
 									@ExampleObject(value = """
 											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],
 											"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],
@@ -74,11 +74,9 @@ public interface OpenApiServerDcatController {
 											_:genid1 <http://purl.org/dc/terms/description> "All LDES'es from publiser X"@en .
 											""")
 							}),
-							@Content(mediaType = contentTypeJSONLD, examples = {
+							@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = {
 									@ExampleObject(value = """
-											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],
-											"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],
-											"http://purl.org/dc/terms/description":[{"@value":"All LDES'es from publiser X","@language":"en"}]},{"@id":"http://www.w3.org/ns/dcat#Catalog"}]
+											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"All LDES'es from publiser X","@language":"en"}]},{"@id":"http://www.w3.org/ns/dcat#Catalog"}]
 											""")
 							})
 					}) Model dcat);

@@ -54,7 +54,7 @@ public interface OpenApiShapeController {
 							] ;
 						sh:deactivated true .
 					""")),
-			@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
+			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#nodeShape> _:genid1 .
 					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#deactivated> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
