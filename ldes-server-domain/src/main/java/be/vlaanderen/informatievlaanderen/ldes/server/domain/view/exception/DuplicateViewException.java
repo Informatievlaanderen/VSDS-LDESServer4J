@@ -3,7 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
 public class DuplicateViewException extends RuntimeException {
-	private final ViewName viewName;
+
+	private transient final ViewName viewName;
 
 	public DuplicateViewException(ViewName viewName) {
 		this.viewName = viewName;
