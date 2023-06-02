@@ -53,7 +53,7 @@ public class ViewServiceImpl implements ViewService {
 		if (view.isPresent()) {
 			throw new DuplicateViewException(viewSpecification.getName());
 		}
-		addDcatToViewSpecification(viewSpecification);
+
 		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
 		viewRepository.saveView(viewSpecification);
 	}
