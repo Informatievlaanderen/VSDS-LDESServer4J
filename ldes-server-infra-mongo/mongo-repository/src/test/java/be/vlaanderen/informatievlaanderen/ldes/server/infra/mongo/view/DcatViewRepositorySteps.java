@@ -10,6 +10,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,4 +68,21 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
 		assertTrue(dcatViewOpt.isEmpty());
 	}
 
+	@Given("the database contains multiple dcatViews")
+	public void theDatabaseContainsMultipleDcatViews() {
+		Model model1 = RDFParser.source("features/view/dataservice.ttl").lang(Lang.TURTLE).build().toModel();
+		Model model2 = RDFParser.source("features/view/dataservice2.ttl").lang(Lang.TURTLE).build().toModel();
+		dcatViewMongoRepository.save(DcatView.from(new ViewName("col1", "view1"), model1));
+		dcatViewMongoRepository.save(DcatView.from(new ViewName("col1", "view2"), model2));
+	}
+
+	@Then("I can find all dcatViews")
+	public void iCanFindAllDcatViews() {
+		List<DcatView> dcatViews = dcatViewMongoRepository.findAll();
+		assertEquals(2, dcatViews.size());
+
+		List<String> views = dcatViews.stream().map(DcatView::getViewName).map(ViewName::getViewName).toList();
+		assertTrue(views.contains("view1"));
+		assertTrue(views.contains("view2"));
+	}
 }

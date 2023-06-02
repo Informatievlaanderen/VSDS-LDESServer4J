@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -13,7 +13,6 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -24,6 +23,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,16 +57,21 @@ class MemberIngestControllerTest {
 	@MockBean
 	private MemberIngester memberIngester;
 
-	@MockBean
-	private EventStreamService eventStreamService;
+	@Autowired
+	private ApplicationEventPublisher eventPublisher;
 
 	@Autowired
 	private AppConfig appConfig;
 
 	@BeforeEach
 	void setUp() {
-		when(eventStreamService.retrieveMemberType("mobility-hindrances")).thenReturn("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
-		when(eventStreamService.retrieveMemberType("restaurant")).thenReturn("http://example.com/restaurant#MenuItem");
+		Stream.of(
+				new EventStream("mobility-hindrances", "timestampPath", "versionOfPath",
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false),
+				new EventStream("restaurant", "timestampPath", "versionOfPath",
+						"http://example.com/restaurant#MenuItem", false))
+				.map(EventStreamChangedEvent::new)
+				.forEach(eventPublisher::publishEvent);
 	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
@@ -103,12 +108,9 @@ class MemberIngestControllerTest {
 
 	@Test
 	@DisplayName("Requesting using another collection name returns 404")
-	@Disabled("to be enabled once AppConfig:getLdesConfig returns exception again")
 	void when_POSTRequestIsPerformedUsingAnotherCollectionName_ResponseIs404()
 			throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-
-		when(eventStreamService.retrieveEventStream(anyString())).thenThrow(MissingEventStreamException.class);
 
 		mockMvc.perform(post("/another-collection-name")
 				.contentType("application/n-quads")

@@ -1,12 +1,22 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DcatAlreadyConfiguredException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -14,12 +24,19 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DcatServerServiceImplTest {
@@ -29,10 +46,17 @@ class DcatServerServiceImplTest {
 	private DcatServerService service;
 	@Mock
 	private DcatServerRepository repository;
+	@Mock
+	private DcatViewService dcatViewService;
+	@Mock
+	private DcatShaclValidator dcatShaclValidator;
+	@Mock
+	private DcatDatasetService dcatDatasetService;
 
 	@BeforeEach
 	void setUp() {
-		service = new DcatServerServiceImpl(repository);
+		service = new DcatServerServiceImpl(repository, dcatViewService, dcatDatasetService, "http://localhost.dev",
+				dcatShaclValidator);
 	}
 
 	@Test
@@ -93,4 +117,85 @@ class DcatServerServiceImplTest {
 		verify(repository).deleteServerDcat(ID);
 		verifyNoMoreInteractions(repository);
 	}
+
+	@Nested
+	class GetComposedDcat {
+
+		private final static String COLLECTION_PARCELS = "parcels";
+		private final static String COLLECTION_BUILDINGS = "buildings";
+		private final static String VIEW_BY_PAGE = "by-page";
+		private final static String VIEW_BY_TIME = "by-time";
+
+		@Test
+		void should_ReturnEmptyModel_when_NoServerDcatPresent() {
+			when(repository.findSingleDcatServer()).thenReturn(Optional.empty());
+
+			Model result = service.getComposedDcat();
+
+			assertTrue(result.isEmpty());
+			verify(dcatShaclValidator).validate(any(), any());
+		}
+
+		@Test
+		void should_CombineServerAndDataset_when_TheseArePresent_and_ViewsAreNot() {
+			when(repository.findSingleDcatServer()).thenReturn(createServer());
+			when(dcatDatasetService.findAll()).thenReturn(createDatasets());
+			when(dcatViewService.findAll()).thenReturn(List.of());
+
+			Model result = service.getComposedDcat();
+
+			String path = "dcat/dcat-combined-without-views.ttl";
+			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
+			assertTrue(expectedResult.isIsomorphicWith(result));
+		}
+
+		@Test
+		void should_CombineServerDatasetAndViews_when_AllArePresent() {
+			when(repository.findSingleDcatServer()).thenReturn(createServer());
+			when(dcatDatasetService.findAll()).thenReturn(createDatasets());
+			when(dcatViewService.findAll()).thenReturn(createViews());
+
+			Model result = service.getComposedDcat();
+
+			String path = "dcat/dcat-combined-all.ttl";
+			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
+			assertTrue(expectedResult.isIsomorphicWith(result));
+		}
+
+		private Optional<DcatServer> createServer() {
+			Model server = RDFParser.source("dcat/server.ttl").lang(Lang.TURTLE).build().toModel();
+			return Optional.of(new DcatServer("id1", server));
+		}
+
+		private List<DcatView> createViews() {
+			final List<DcatView> views = new ArrayList<>();
+			views.addAll(createDcatBuildingViews());
+			views.addAll(createDcatParcelViews());
+			return views;
+		}
+
+		private List<DcatDataset> createDatasets() {
+			Model parcels = RDFParser.source("dcat/parcels.ttl").lang(Lang.TURTLE).build().toModel();
+			DcatDataset parcelDataset = new DcatDataset(COLLECTION_PARCELS, parcels);
+
+			Model buildings = RDFParser.source("dcat/buildings.ttl").lang(Lang.TURTLE).build().toModel();
+			DcatDataset buildingDataset = new DcatDataset(COLLECTION_BUILDINGS, buildings);
+			return List.of(parcelDataset, buildingDataset);
+		}
+
+		private List<DcatView> createDcatParcelViews() {
+			Model byPage = RDFParser.source("dcat/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
+			Model byTime = RDFParser.source("dcat/view-by-geospatial.ttl").lang(Lang.TURTLE).build().toModel();
+			return List.of(
+					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_PAGE), byPage),
+					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_TIME), byTime));
+		}
+
+		private List<DcatView> createDcatBuildingViews() {
+			Model byPage = RDFParser.source("dcat/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
+			return List.of(DcatView.from(new ViewName(COLLECTION_BUILDINGS, VIEW_BY_PAGE), byPage));
+		}
+
+	}
+
 }

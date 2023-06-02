@@ -105,4 +105,13 @@ class DcatViewTest {
 
 	}
 
+	@Test
+	void when_GetViewDescriptionResourceIsCalled_should_ReturnValidResource() {
+		DcatView dcatView = from(VIEW_NAME, MODEL);
+		String host = "http://localhost.dev";
+
+		Resource result = dcatView.getViewDescriptionResource(host);
+
+		assertEquals("http://localhost.dev/collectionName/view/description", result.getURI());
+	}
 }

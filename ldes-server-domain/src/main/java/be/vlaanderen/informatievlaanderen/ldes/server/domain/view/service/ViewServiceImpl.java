@@ -1,5 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
@@ -14,6 +18,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +35,8 @@ public class ViewServiceImpl implements ViewService {
 	private final ViewRepository viewRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
+	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
+
 	public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
 			ApplicationEventPublisher eventPublisher) {
 		this.dcatViewService = dcatViewService;
@@ -39,29 +46,40 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void addView(ViewSpecification viewSpecification) {
+		if (!eventStreamIsPresent(viewSpecification.getName().getCollectionName())) {
+			throw new MissingEventStreamException(viewSpecification.getName().getCollectionName());
+		}
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
 		if (view.isPresent()) {
 			throw new DuplicateViewException(viewSpecification.getName());
 		}
-
-		viewRepository.saveView(viewSpecification);
 		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
+		viewRepository.saveView(viewSpecification);
+	}
+
+	private boolean eventStreamIsPresent(String collectionName) {
+		return eventStreams.containsKey(collectionName);
 	}
 
 	@Override
 	public void addDefaultView(String collectionName) {
 		ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
-		FragmentationConfig fragmentation = new FragmentationConfig();
-		fragmentation.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
-		fragmentation.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
+		if (viewRepository.getViewByViewName(defaultViewName).isEmpty()) {
+			FragmentationConfig fragmentation = new FragmentationConfig();
+			fragmentation.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
+			fragmentation.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
 
-		ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(fragmentation));
-		addView(defaultView);
+			ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(fragmentation));
+			addView(defaultView);
+		}
 	}
 
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
-		var viewSpecification = viewRepository.getViewByViewName(viewName)
+		if (!eventStreamIsPresent(viewName.getCollectionName())) {
+			throw new MissingEventStreamException(viewName.getCollectionName());
+		}
+		ViewSpecification viewSpecification = viewRepository.getViewByViewName(viewName)
 				.orElseThrow(() -> new MissingViewException(viewName));
 		addDcatToViewSpecification(viewSpecification);
 		return viewSpecification;
@@ -69,7 +87,10 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		var viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
+		if (!eventStreamIsPresent(collectionName)) {
+			throw new MissingEventStreamException(collectionName);
+		}
+		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
 		viewSpecifications.forEach(this::addDcatToViewSpecification);
 		return viewSpecifications;
 	}
@@ -80,6 +101,13 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
+		if (!eventStreamIsPresent(viewName.getCollectionName())) {
+			throw new MissingEventStreamException(viewName.getCollectionName());
+		}
+		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewName);
+		if (view.isEmpty()) {
+			throw new MissingViewException(viewName);
+		}
 		viewRepository.deleteViewByViewName(viewName);
 		dcatViewService.delete(viewName);
 		eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
@@ -91,6 +119,16 @@ public class ViewServiceImpl implements ViewService {
 				.retrieveAllViews()
 				.forEach(viewSpecification -> eventPublisher
 						.publishEvent(new ViewInitializationEvent(viewSpecification)));
+	}
+
+	@EventListener
+	public void handleEventStreamInitEvent(EventStreamChangedEvent event) {
+		eventStreams.put(event.eventStream().getCollection(), event.eventStream());
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		eventStreams.remove(event.collectionName());
 	}
 
 }

@@ -23,6 +23,14 @@ class DcatShaclValidatorTest {
 	}
 
 	@Test
+	void when_ValidatorHasNoDcatConfigured_then_ThrowNothing() {
+		DcatShaclValidator emptyValidator = new DcatShaclValidator("");
+
+		Model dcat = RDFParser.source("dcat/invalid-to-provided-shape.ttl").lang(Lang.TURTLE).toModel();
+		assertDoesNotThrow(() -> emptyValidator.validateShape(dcat));
+	}
+
+	@Test
 	void when_ValidDcatProvided_then_ThrowNothing() {
 		Model dcat = RDFParser.source("dcat/valid-to-provided-shape.ttl").lang(Lang.TURTLE).toModel();
 		assertDoesNotThrow(() -> dcatShaclValidator.validateShape(dcat));

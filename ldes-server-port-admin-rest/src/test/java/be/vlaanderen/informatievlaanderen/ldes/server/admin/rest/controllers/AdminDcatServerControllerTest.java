@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DcatAlreadyConfiguredException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatCatalogValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
@@ -22,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.ResourceUtils;
@@ -33,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -189,4 +192,36 @@ class AdminDcatServerControllerTest {
 		final File file = ResourceUtils.getFile("classpath:dcat/valid-server-dcat.ttl");
 		return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 	}
+
+	@Nested
+	class GetDcat {
+
+		@Test
+		void should_ReturnDcat_when_Valid() throws Exception {
+			final Model model = readModelFromFile();
+
+			when(service.getComposedDcat()).thenReturn(model);
+
+			mockMvc.perform(get("/admin/api/v1/dcat")
+					.accept(MediaType.ALL))
+					.andExpect(status().isOk())
+					.andExpect(IsIsomorphic.with(model));
+
+			verify(service).getComposedDcat();
+			verifyNoInteractions(validator);
+		}
+
+		@Test
+		void should_ReturnValidationReport_when_Invalid() throws Exception {
+			doThrow(new LdesShaclValidationException("validation-report", null)).when(service).getComposedDcat();
+
+			mockMvc.perform(get("/admin/api/v1/dcat")
+					.accept(MediaType.ALL))
+					.andExpect(status().isInternalServerError());
+
+			verify(service).getComposedDcat();
+			verifyNoInteractions(validator);
+		}
+	}
+
 }

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.service.DcatDatasetEntityConverter;
 
+import java.util.List;
 import java.util.Optional;
 
 public class DcatDatasetMongoRepository implements DcatDatasetRepository {
@@ -30,4 +31,10 @@ public class DcatDatasetMongoRepository implements DcatDatasetRepository {
 	public void deleteDataset(String id) {
 		repository.deleteById(id);
 	}
+
+	@Override
+	public List<DcatDataset> findAll() {
+		return repository.findAll().stream().map(converter::entitytoDataset).toList();
+	}
+
 }

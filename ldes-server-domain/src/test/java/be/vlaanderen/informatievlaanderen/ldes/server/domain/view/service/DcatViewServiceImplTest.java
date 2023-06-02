@@ -85,4 +85,12 @@ class DcatViewServiceImplTest {
 
 	}
 
+	@Test
+	void should_CallRepositoryToFindAllViews_when_FindAllIsCalled() {
+		dcatViewService.findAll();
+
+		verify(dcatViewRepository).findAll();
+		verifyNoMoreInteractions(dcatViewRepository);
+	}
+
 }

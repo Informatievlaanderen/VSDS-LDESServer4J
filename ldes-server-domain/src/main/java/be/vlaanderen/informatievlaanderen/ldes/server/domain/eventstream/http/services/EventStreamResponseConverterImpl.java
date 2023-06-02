@@ -20,6 +20,8 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 public class EventStreamResponseConverterImpl implements EventStreamResponseConverter {
 
 	public static final String CUSTOM = "http://example.org/";
+	public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
+	public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
 	public static final Property HAS_DEFAULT_VIEW = createProperty(CUSTOM, "hasDefaultView");
 	private final String hostname;
@@ -60,12 +62,14 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				createProperty(eventStreamResponse.getMemberType()));
 		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
 				createTypedLiteral(eventStreamResponse.isDefaultViewEnabled()));
+		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, hasDefaultStmt))
 				.add(eventStreamResponse.getShacl())
 				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
-				.add(getViewStatements(eventStreamResponse.getViews()));
+				.add(getViewStatements(eventStreamResponse.getViews()))
+				.add(dataset);
 
 		getShaclReferenceStatement(eventStreamResponse.getShacl(), subject).ifPresent(eventStreamModel::add);
 
