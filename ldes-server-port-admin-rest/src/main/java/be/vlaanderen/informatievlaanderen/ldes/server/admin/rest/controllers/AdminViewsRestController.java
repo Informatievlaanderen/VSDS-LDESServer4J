@@ -5,12 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSe
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,14 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
-import static org.apache.jena.riot.WebContent.contentTypeNQuads;
-import static org.apache.jena.riot.WebContent.contentTypeTurtle;
+import static org.apache.jena.riot.WebContent.*;
 
 @RestController
 @RequestMapping("/admin/api/v1")
-@Tag(name = "Views")
-public class AdminViewsRestController {
+public class AdminViewsRestController implements OpenApiAdminViewsRestController {
 
 	private final ViewService viewService;
 	private final ViewValidator viewValidator;
@@ -43,32 +34,28 @@ public class AdminViewsRestController {
 		binder.setValidator(viewValidator);
 	}
 
-	@GetMapping("/eventstreams/{collectionName}/views")
-	@Operation(summary = "Retrieve a list of configured views for a collection")
-	@ApiResponse(responseCode = "200", content = {
-			@Content(mediaType = "application/json")
-	})
+	@GetMapping(value = "/eventstreams/{collectionName}/views", produces = { contentTypeJSONLD, contentTypeNQuads,
+			contentTypeTurtle })
 	public List<ViewSpecification> getViews(@PathVariable String collectionName) {
 		return viewService.getViewsByCollectionName(collectionName);
 	}
 
-	@PutMapping(value = "/eventstreams/{collectionName}/views", consumes = { contentTypeJSONLD, contentTypeNQuads,
+	@PostMapping(value = "/eventstreams/{collectionName}/views", consumes = { contentTypeJSONLD, contentTypeNQuads,
 			contentTypeTurtle })
-	@Operation(summary = "Add a view to a collection")
-	public void putViews(@PathVariable String collectionName,
-			@Parameter(schema = @Schema(implementation = String.class), description = "A valid RDF model defining a view for a collection") @RequestBody @Validated Model view) {
+	public void createView(@PathVariable String collectionName,
+			@RequestBody @Validated Model view) {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 	}
 
 	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
-	@Operation(summary = "Delete a specific view for a collection")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
 		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
 	}
 
-	@GetMapping("/eventstreams/{collectionName}/views/{viewName}")
-	@Operation(summary = "Retrieve a specific view config for a collection")
-	public ViewSpecification getView(@PathVariable String collectionName,
+	@GetMapping(value = "/eventstreams/{collectionName}/views/{viewName}", produces = { contentTypeJSONLD,
+			contentTypeNQuads,
+			contentTypeTurtle })
+	public ViewSpecification getViewOfCollection(@PathVariable String collectionName,
 			@PathVariable String viewName) {
 		return viewService.getViewByViewName(new ViewName(collectionName, viewName));
 	}
