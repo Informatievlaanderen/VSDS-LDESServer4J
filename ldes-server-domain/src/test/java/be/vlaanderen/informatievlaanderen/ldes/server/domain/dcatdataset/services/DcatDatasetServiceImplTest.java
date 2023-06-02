@@ -95,6 +95,15 @@ class DcatDatasetServiceImplTest {
 
 			verify(repository).deleteDataset(DATASET_ID);
 		}
+
+		@Test
+		void when_DatasetNotFound_Then_DatasetNotDeleted() {
+			when(datasetService.retrieveDataset(DATASET_ID)).thenReturn(Optional.empty());
+
+			datasetService.deleteDataset(DATASET_ID);
+
+			verify(repository, never()).deleteDataset(DATASET_ID);
+		}
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

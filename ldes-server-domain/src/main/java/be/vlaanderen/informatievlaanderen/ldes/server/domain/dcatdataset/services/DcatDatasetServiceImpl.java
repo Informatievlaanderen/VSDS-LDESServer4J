@@ -41,11 +41,11 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 	}
 
 	@Override
-	public void deleteDataset(String id) {
-		if (repository.retrieveDataset(id).isEmpty()) {
-			LOGGER.warn("No metadata found for collection: {}", id);
+	public void deleteDataset(String collectionName) {
+		if (repository.retrieveDataset(collectionName).isEmpty()) {
+			LOGGER.warn("No metadata found for collection: {}", collectionName);
 		} else {
-			repository.deleteDataset(id);
+			repository.deleteDataset(collectionName);
 		}
 	}
 }

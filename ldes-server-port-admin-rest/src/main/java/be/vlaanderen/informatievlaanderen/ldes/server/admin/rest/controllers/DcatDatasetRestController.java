@@ -34,10 +34,10 @@ public class DcatDatasetRestController implements OpenApiDcatDatasetController {
 		datasetService.saveDataset(new DcatDataset(collectionName, datasetModel));
 	}
 
-	@PutMapping
+	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
 	@ResponseStatus(HttpStatus.OK)
-	public void putDataset(@PathVariable String collectionName, @RequestBody Model datasetModel) {
-		datasetService.saveDataset(new DcatDataset(collectionName, datasetModel));
+	public void putDataset(@PathVariable String collectionName, @RequestBody @Validated Model datasetModel) {
+		datasetService.updateDataset(new DcatDataset(collectionName, datasetModel));
 	}
 
 	@DeleteMapping

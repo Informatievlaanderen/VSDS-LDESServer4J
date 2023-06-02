@@ -11,5 +11,5 @@ public interface DcatDatasetService {
 
 	void updateDataset(DcatDataset dataset);
 
-	void deleteDataset(String id);
+	void deleteDataset(String collectionName);
 }
