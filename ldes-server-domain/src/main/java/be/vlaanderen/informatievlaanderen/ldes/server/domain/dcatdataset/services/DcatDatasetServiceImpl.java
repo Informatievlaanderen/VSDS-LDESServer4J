@@ -34,9 +34,8 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 
 	@Override
 	public void updateDataset(DcatDataset dataset) {
-		validator.validate(dataset);
-		if (repository.retrieveDataset(dataset.id()).isEmpty()) {
-			throw new MissingResourceException("dcat-dataset", dataset.id());
+		if (repository.retrieveDataset(dataset.getCollectionName()).isEmpty()) {
+			throw new MissingResourceException("dcat-dataset", dataset.getCollectionName());
 		}
 		repository.saveDataset(dataset);
 	}
