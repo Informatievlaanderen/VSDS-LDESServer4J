@@ -77,7 +77,7 @@
         </sonar.projectKey>
 
         <!-- CODE FORMATTER -->
-        <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
+        <formatter-maven-plugin.version>2.23.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
         <!--suppress UnresolvedMavenProperty -->
         <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
