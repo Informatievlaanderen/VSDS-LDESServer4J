@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class LdesConfig {
-
-	private String hostName;
 	private String collectionName;
 	private String memberType;
 	private String timestampPath;
@@ -16,14 +14,6 @@ public class LdesConfig {
 	private Validation validation = new Validation();
 	private Model dcat = ModelFactory.createDefaultModel();
 	private ViewConfig viewConfig = ViewConfig.empty();
-
-	public String getHostName() {
-		return hostName;
-	}
-
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
-	}
 
 	public String getCollectionName() {
 		return collectionName;
@@ -112,9 +102,4 @@ public class LdesConfig {
 	public Optional<ViewSpecification> getDefaultView() {
 		return viewConfig.getDefaultPaginationView(collectionName);
 	}
-
-	public String getBaseUrl() {
-		return hostName + "/" + collectionName;
-	}
-
 }

@@ -1,30 +1,36 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
 public class SnapshotServiceImpl implements SnapshotService {
-
+	private final Map<String, Boolean> collectionHasDefaultViewMap = new HashMap<>();
 	private final SnapShotCreator snapShotCreator;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final SnapshotRepository snapshotRepository;
 	private final SnapshotRelationLinker snapshotRelationLinker;
 
 	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, LdesFragmentRepository ldesFragmentRepository,
-			SnapshotRepository snapshotRepository,
-			SnapshotRelationLinker snapshotRelationLinker) {
+			SnapshotRepository snapshotRepository, SnapshotRelationLinker snapshotRelationLinker) {
 		this.snapShotCreator = snapShotCreator;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.snapshotRepository = snapshotRepository;
@@ -32,27 +38,55 @@ public class SnapshotServiceImpl implements SnapshotService {
 	}
 
 	@Override
-	public void createSnapshot(LdesConfig ldesConfig) {
+	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
-		ViewName viewName = ldesConfig.getDefaultView().orElseThrow(() -> new SnapshotCreationException(
-				"No default pagination view configured for collection " + ldesConfig.getCollectionName()))
-				.getName();
+
+		Boolean hasDefaultView = collectionHasDefaultViewMap.get(collectionName);
+
+		if (hasDefaultView == null) {
+			throw new MissingEventStreamException(collectionName);
+		}
+
+		if (Boolean.FALSE.equals(collectionHasDefaultViewMap.get(collectionName))) {
+			throw new SnapshotCreationException(
+					"No default pagination view configured for collection " + collectionName);
+		}
+		ViewName viewName = new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME);
+
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {
 			treeNodesForSnapshot = getTreeNodesForSnapshotFromPreviousSnapshot(viewName, lastSnapshot.get());
 		} else {
-			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
+			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString()).toList();
 		}
 
 		if (treeNodesForSnapshot.isEmpty()) {
 			throw new SnapshotCreationException(
 					"No TreeNodes available in view " + viewName.asString() + " which is used for snapshotting");
 		}
-		createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
+		createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 	}
 
-	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot, LdesConfig ldesConfig) {
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, ldesConfig);
+	@Override
+	public void deleteSnapshot(String collectionName) {
+		snapshotRepository.deleteSnapshotsByCollectionName(collectionName);
+	}
+
+	@EventListener
+	public void handleEventStreamChangedEvent(EventStreamChangedEvent event) {
+		EventStream eventStream = event.eventStream();
+		collectionHasDefaultViewMap.put(eventStream.getCollection(), eventStream.isDefaultViewEnabled());
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		collectionHasDefaultViewMap.remove(event.collectionName());
+		deleteSnapshot(event.collectionName());
+	}
+
+	private void createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
+			String collectionName) {
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 		LdesFragment lastTreeNodeOfSnapshot = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
 		ldesFragmentRepository.saveFragment(lastTreeNodeOfSnapshot);
@@ -74,14 +108,15 @@ public class SnapshotServiceImpl implements SnapshotService {
 
 	private List<LdesFragment> getTreeNodesForSnapshotFromPreviousSnapshot(ViewName viewName, Snapshot lastSnapshot) {
 		List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository
-				.retrieveFragmentsOfView(lastSnapshot.getSnapshotId()).stream()
+				.retrieveFragmentsOfView(lastSnapshot.getSnapshotId())
 				.filter(ldesFragment -> !ldesFragment.isRoot()).toList();
-		List<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
+		Stream<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository
+				.retrieveFragmentsOfView(viewName.asString());
 		String lastFragment = getNextFragmentFromSnapshot(treeNodesOfSnapshot)
 				.orElseThrow(() -> new SnapshotCreationException(
 						"First fragment of " + viewName.asString() + " after previous snapshot "
 								+ lastSnapshot.getSnapshotId() + " could not be found"));
-		List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView.stream()
+		List<LdesFragment> relevantTreeNodesOfDefaultView = treeNodesOfDefaultView
 				.filter(ldesFragment -> !ldesFragment.isRoot()).filter(new GreaterOrEqualsPageFilter(lastFragment))
 				.toList();
 		return Stream.of(treeNodesOfSnapshot, relevantTreeNodesOfDefaultView).flatMap(List::stream)

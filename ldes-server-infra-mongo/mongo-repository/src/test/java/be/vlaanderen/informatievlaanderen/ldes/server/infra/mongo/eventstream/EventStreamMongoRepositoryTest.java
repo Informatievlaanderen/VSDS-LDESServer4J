@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.repository.EventStreamEntityRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +23,9 @@ import static org.mockito.Mockito.when;
 class EventStreamMongoRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
 	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
-			"isVersionOf");
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf");
+			"isVersionOf", "memberType", false);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf",
+			"memberType", false);
 	private EventStreamMongoRepository mongoRepository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
@@ -39,12 +40,12 @@ class EventStreamMongoRepositoryTest {
 	void when_dbHasEntities_then_returnAll() {
 		when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
 				EVENT_STREAM_ENTITY,
-				new EventStreamEntity("other_collection", "created", "version")));
+				new EventStreamEntity("other_collection", "created", "version", "memberType", false)));
 
 		List<EventStream> eventStreams = mongoRepository.retrieveAllEventStreams();
 		List<EventStream> expectedEventStreams = List.of(
 				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version")
+				new EventStream("other_collection", "created", "version", "memberType", false)
 		);
 		verify(eventStreamEntityRepository).findAll();
 		assertEquals(expectedEventStreams, eventStreams);

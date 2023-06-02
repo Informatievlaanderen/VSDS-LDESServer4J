@@ -11,6 +11,6 @@ public class DuplicateViewException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "Collection " + viewName.getCollectionName() + " already has a view: " + viewName.asString();
+		return "Collection " + viewName.getCollectionName() + " already has a view: " + viewName.getViewName();
 	}
 }

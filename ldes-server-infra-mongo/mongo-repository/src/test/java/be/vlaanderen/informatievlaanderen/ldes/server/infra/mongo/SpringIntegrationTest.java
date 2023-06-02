@@ -1,9 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.DcatServerMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.DcatViewMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.DataServiceEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.DcatServiceEntityConverter;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -20,14 +27,18 @@ import org.springframework.test.context.ContextConfiguration;
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
-@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class })
+@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class,
+		DataServiceEntityRepository.class, DcatCatalogEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment" })
 @Import(SpringIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class SpringIntegrationTest {
-
+	@Autowired
+	public DcatServerMongoRepository serverDcatMongoRepository;
+	@Autowired
+	public DcatViewMongoRepository dcatViewMongoRepository;
 	@Autowired
 	public MemberMongoRepository memberRepository;
 	@Autowired
@@ -35,6 +46,18 @@ public class SpringIntegrationTest {
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
+
+		@Bean
+		public DcatViewRepository dcatViewMongoRepository(
+				final DataServiceEntityRepository dataServiceEntityRepository) {
+			return new DcatViewMongoRepository(dataServiceEntityRepository, new DcatServiceEntityConverter());
+		}
+
+		@Bean
+		public DcatServerRepository serverDcatRepository(
+				final DcatCatalogEntityRepository dcatCatalogEntityRepository) {
+			return new DcatServerMongoRepository(dcatCatalogEntityRepository);
+		}
 
 		@Bean
 		public MemberMongoRepository ldesMemberMongoRepository(

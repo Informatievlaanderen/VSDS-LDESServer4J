@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.RetentionConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,10 +11,10 @@ public class ViewEntity {
 
 	@Id
 	private final String viewName;
-	private final List<RetentionConfig> retentionPolicies;
+	private final List<String> retentionPolicies;
 	private final List<FragmentationConfig> fragmentations;
 
-	public ViewEntity(String viewName, List<RetentionConfig> retentionPolicies,
+	public ViewEntity(String viewName, List<String> retentionPolicies,
 			List<FragmentationConfig> fragmentations) {
 		this.viewName = viewName;
 		this.retentionPolicies = retentionPolicies;
@@ -26,7 +25,7 @@ public class ViewEntity {
 		return viewName;
 	}
 
-	public List<RetentionConfig> getRetentionPolicies() {
+	public List<String> getRetentionPolicies() {
 		return retentionPolicies;
 	}
 

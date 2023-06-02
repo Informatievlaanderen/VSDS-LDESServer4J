@@ -1,26 +1,33 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.repository.LdesConfigRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.DcatDatasetMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.DcatServerMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.EventStreamMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.LdesConfigMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.ldesconfig.repository.LdesConfigEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.ShaclShapeMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.repository.ShaclShapeEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.SnapshotMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.repository.SnapshotEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.DcatViewMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.ViewMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.ViewEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.DcatServiceEntityConverter;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -56,13 +63,6 @@ public class MongoAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public LdesConfigRepository ldesConfigMongoRepository(
-			final LdesConfigEntityRepository ldesConfigEntityRepository) {
-		return new LdesConfigMongoRepository(ldesConfigEntityRepository);
-	}
-
-	@Bean
-	@ConditionalOnMissingBean
 	public SnapshotRepository snapshotMongoRepository(
 			final SnapshotEntityRepository snapshotEntityRepository) {
 		return new SnapshotMongoRepository(snapshotEntityRepository);
@@ -84,6 +84,25 @@ public class MongoAutoConfiguration {
 	@ConditionalOnMissingBean
 	public ViewRepository viewMongoRepository(final ViewEntityRepository viewEntityRepository) {
 		return new ViewMongoRepository(viewEntityRepository);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public DcatDatasetRepository dcatDatasetMongoRepository(
+			final DcatDatasetEntityRepository dcatDatasetEntityRepository) {
+		return new DcatDatasetMongoRepository(dcatDatasetEntityRepository);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public DcatServerRepository serverDcatRepository(final DcatCatalogEntityRepository dcatCatalogEntityRepository) {
+		return new DcatServerMongoRepository(dcatCatalogEntityRepository);
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	public DcatViewRepository dcatViewMongoRepository(final DataServiceEntityRepository dataServiceEntityRepository) {
+		return new DcatViewMongoRepository(dataServiceEntityRepository, new DcatServiceEntityConverter());
 	}
 
 	@Profile("monitoring") // This config can cause memory overflow issues when running large database

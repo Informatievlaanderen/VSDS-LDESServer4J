@@ -10,6 +10,8 @@ public class RdfConstants {
 
 	public static final String TREE = "https://w3id.org/tree#";
 	public static final Property TREE_VIEW = createProperty(TREE, "view");
+	public static final String TREE_VIEW_DESCRIPTION = TREE + "viewDescription";
+	public static final String TREE_VIEW_DESCRIPTION_RESOURCE = TREE + "ViewDescription";
 	public static final Property TREE_SHAPE = createProperty(TREE, "shape");
 	public static final Property TREE_RELATION = createProperty(TREE, "relation");
 	public static final Property TREE_VALUE = createProperty(TREE, "value");
@@ -39,4 +41,10 @@ public class RdfConstants {
 	public static final String SHAPE = TREE + "shape";
 	public static final String NODE_SHAPE_TYPE = SHACL + "NodeShape";
 	public static final String EVENT_STREAM_TYPE = LDES + "EventStream";
+	public static final String RETENTION_TYPE = LDES + "retentionPolicy";
+
+	public static final String CUSTOM = "http://example.org/";
+	public static final String FRAGMENTATION_TYPE = CUSTOM + "Fragmentation";
+	public static final String FRAGMENTATION_OBJECT = CUSTOM + "fragmentationStrategy";
+
 }
