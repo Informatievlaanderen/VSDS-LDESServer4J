@@ -8,7 +8,7 @@
 
 [] a sh:NodeShape;
   sh:targetClass <https://w3id.org/ldes#EventStream> ;
-  sh:closed true;
+  sh:closed false;
   sh:ignoredProperties (rdf:type) ;
   sh:property [
     sh:class sh:NodeShape;
