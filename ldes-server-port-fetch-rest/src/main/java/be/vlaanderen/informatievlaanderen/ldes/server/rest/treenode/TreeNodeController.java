@@ -7,11 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,13 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static org.apache.jena.riot.WebContent.*;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @RestController
-@Tag(name = "Fetch")
-public class TreeNodeController {
+public class TreeNodeController implements OpenApiTreeNodeController {
 
 	private final RestConfig restConfig;
 	private final TreeNodeFetcher treeNodeFetcher;
@@ -38,18 +31,13 @@ public class TreeNodeController {
 		this.cachingStrategy = cachingStrategy;
 	}
 
+	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}/{view}")
-	@Operation(summary = "Retrieve an LDES Fragment")
-	@ApiResponse(responseCode = "200", content = {
-			@Content(mediaType = contentTypeNQuads),
-			@Content(mediaType = contentTypeJSONLD),
-			@Content(mediaType = contentTypeTurtle)
-	})
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String view,
 			@RequestParam Map<String, String> requestParameters,
-			@Parameter(hidden = true) @RequestHeader(HttpHeaders.ACCEPT) String language,
+			@RequestHeader(HttpHeaders.ACCEPT) String language,
 			@PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
