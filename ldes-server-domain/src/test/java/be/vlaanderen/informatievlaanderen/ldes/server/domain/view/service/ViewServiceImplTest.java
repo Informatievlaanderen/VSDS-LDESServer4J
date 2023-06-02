@@ -95,7 +95,7 @@ class ViewServiceImplTest {
             viewService.addDefaultView(COLLECTION);
 
             InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).getViewByViewName(VIEW_NAME);
+            inOrder.verify(viewRepository, times(2)).getViewByViewName(VIEW_NAME);
             inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
             inOrder.verify(viewRepository).saveView(any(ViewSpecification.class));
             inOrder.verifyNoMoreInteractions();
@@ -106,11 +106,9 @@ class ViewServiceImplTest {
 			final ViewSpecification view = new ViewSpecification(VIEW_NAME, List.of(), List.of());
 			when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.of(view));
 
-			Exception e = assertThrows(DuplicateViewException.class, () -> viewService.addDefaultView(COLLECTION));
-			assertEquals("Collection collection already has a view: by-page", e.getMessage());
+			viewService.addDefaultView(COLLECTION);
 			verify(viewRepository).getViewByViewName(VIEW_NAME);
-			verifyNoMoreInteractions(viewRepository);
-			verifyNoInteractions(eventPublisher);
+			verifyNoMoreInteractions(viewRepository, eventPublisher);
 		}
 	}
 

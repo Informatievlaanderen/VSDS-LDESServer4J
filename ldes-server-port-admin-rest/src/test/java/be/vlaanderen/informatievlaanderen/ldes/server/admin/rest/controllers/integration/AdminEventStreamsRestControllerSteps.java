@@ -18,7 +18,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.plugin.event.EventPublisher;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;

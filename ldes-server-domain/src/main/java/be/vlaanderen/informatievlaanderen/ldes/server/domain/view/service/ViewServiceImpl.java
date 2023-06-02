@@ -64,12 +64,14 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public void addDefaultView(String collectionName) {
 		ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
-		FragmentationConfig fragmentation = new FragmentationConfig();
-		fragmentation.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
-		fragmentation.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
+		if (viewRepository.getViewByViewName(defaultViewName).isEmpty()) {
+			FragmentationConfig fragmentation = new FragmentationConfig();
+			fragmentation.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
+			fragmentation.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
 
-		ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(fragmentation));
-		addView(defaultView);
+			ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(fragmentation));
+			addView(defaultView);
+		}
 	}
 
 	@Override
