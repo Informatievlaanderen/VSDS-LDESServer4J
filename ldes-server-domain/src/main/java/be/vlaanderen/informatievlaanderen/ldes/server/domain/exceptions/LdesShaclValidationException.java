@@ -5,7 +5,7 @@ import org.apache.jena.rdf.model.Model;
 public class LdesShaclValidationException extends RuntimeException {
 
 	private final String validationReport;
-	private final Model validationReportModel;
+	private final transient Model validationReportModel;
 
 	public LdesShaclValidationException(String validationReport, Model validationReportModel) {
 		super();
