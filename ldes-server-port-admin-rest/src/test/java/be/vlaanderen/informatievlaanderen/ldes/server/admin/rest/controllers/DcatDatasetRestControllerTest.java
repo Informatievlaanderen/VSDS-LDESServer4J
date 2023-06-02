@@ -5,10 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatDatasetValidator;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,10 +28,11 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -66,13 +67,63 @@ class DcatDatasetRestControllerTest {
 
 			verify(dcatDatasetService).saveDataset(any(DcatDataset.class));
 		}
+
+		@Test
+		void when_DatasetExists_Then_StatusIs400() throws Exception {
+			final String dataset = readDataFromFile("dataset/valid.ttl");
+			doThrow(new ExistingResourceException("dcat-dataset", COLLECTION_NAME)).when(dcatDatasetService)
+					.saveDataset(any(DcatDataset.class));
+
+			mockMvc.perform(post("/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/dcat")
+					.accept(contentTypeTurtle)
+					.content(dataset)
+					.contentType(Lang.TURTLE.getHeaderString()))
+					.andExpect(status().isBadRequest());
+
+			verify(dcatDatasetService).saveDataset(any(DcatDataset.class));
+		}
 	}
 
-	private Model readModelFromFile(String fileName) throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-				.toString();
-		return RDFDataMgr.loadModel(uri);
+	@Nested
+	class PutDataset {
+		@Test
+		void when_DatasetExists_Then_DatasetIsSaved_And_StatusIs200() throws Exception {
+			final String dataset = readDataFromFile("dataset/valid.ttl");
+
+			mockMvc.perform(put("/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/dcat")
+					.accept(contentTypeTurtle)
+					.content(dataset)
+					.contentType(Lang.TURTLE.getHeaderString()))
+					.andExpect(status().isOk());
+
+			verify(dcatDatasetService).updateDataset(any(DcatDataset.class));
+		}
+
+		@Test
+		void when_DatasetDoesNotExist_Then_StatusIs404() throws Exception {
+			final String dataset = readDataFromFile("dataset/valid.ttl");
+			doThrow(new MissingResourceException("dcat-dataset", COLLECTION_NAME)).when(dcatDatasetService)
+					.updateDataset(any(DcatDataset.class));
+
+			mockMvc.perform(put("/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/dcat")
+					.accept(contentTypeTurtle)
+					.content(dataset)
+					.contentType(Lang.TURTLE.getHeaderString()))
+					.andExpect(status().isNotFound());
+
+			verify(dcatDatasetService).updateDataset(any(DcatDataset.class));
+		}
+	}
+
+	@Nested
+	class DeleteDataset {
+		@Test
+		void when_Delete_Then_StatusIs200() throws Exception {
+			mockMvc.perform(delete("/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/dcat"))
+					.andExpect(status().isOk());
+
+			verify(dcatDatasetService).deleteDataset(COLLECTION_NAME);
+		}
 	}
 
 	private String readDataFromFile(String fileName)

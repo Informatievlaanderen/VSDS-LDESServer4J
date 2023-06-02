@@ -24,7 +24,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	@ExceptionHandler(value = { MissingShaclShapeException.class,
 			MissingEventStreamException.class, MissingViewException.class, MissingViewDcatException.class,
-			MissingDcatServerException.class })
+			MissingDcatServerException.class, MissingResourceException.class })
 	protected ResponseEntity<Object> handleMissingResourceException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
