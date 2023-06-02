@@ -100,7 +100,6 @@ class DcatServerTest {
 		resultModel.add(result);
 		Resource iri = ResourceFactory.createResource(host);
 		assertEquals(4, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
-		System.out.println(RDFWriter.source(resultModel).lang(Lang.TURTLE).asString());
 		assertEquals(DCAT_CATALOG, resultModel.listObjectsOfProperty(iri, RDF.type).next());
 		assertDataserviceStatements(resultModel, iri);
 		assertDatasetStatements(resultModel, iri);

@@ -2,20 +2,17 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entitie
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Property;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
+import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatServer {
 
@@ -49,14 +46,11 @@ public class DcatServer {
 	}
 
 	private List<Statement> createCatalogStatements(String hostName) {
-		Resource dataServiceId = getDcat().listSubjectsWithProperty(RDF.type, DCAT_CATALOG).next().asResource();
-		Resource serverResource = getServerResource(hostName);
-
-		return getDcat().listStatements()
-				.mapWith(stmnt -> stmnt.getSubject().equals(dataServiceId)
-						? createStatement(serverResource, stmnt.getPredicate(), stmnt.getObject())
-						: stmnt)
-				.toList();
+		final Model dcatWithIdentity = ModelFactory.createDefaultModel();
+		dcatWithIdentity.add(getDcat());
+		dcatWithIdentity.listStatements(null, RDF.type, DCAT_CATALOG).nextOptional()
+				.ifPresent(statement -> renameResource(statement.getSubject(), getServerResource(hostName).getURI()));
+		return dcatWithIdentity.listStatements().toList();
 	}
 
 	private List<Statement> createDcatServiceStatements(String hostName, List<DcatView> dcatViews) {
