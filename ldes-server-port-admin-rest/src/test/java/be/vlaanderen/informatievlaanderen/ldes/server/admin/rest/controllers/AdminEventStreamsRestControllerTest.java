@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ModelConverter;
