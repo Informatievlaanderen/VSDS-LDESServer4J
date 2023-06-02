@@ -11,8 +11,9 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatDataset {
-	private String collectionName;
-	private Model model;
+
+	private final String collectionName;
+	private final Model model;
 
 	public DcatDataset(String collectionName, Model model) {
 		this.collectionName = collectionName;
@@ -33,8 +34,12 @@ public class DcatDataset {
 
 	public Model getModelWithIdentity(String hostname) {
 		model.listStatements(null, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE)).nextOptional()
-				.ifPresent(statement -> renameResource(statement.getSubject(), hostname + collectionName));
+				.ifPresent(statement -> renameResource(statement.getSubject(), getDatasetIriString(hostname)));
 		return model;
+	}
+
+	public String getDatasetIriString(String hostName) {
+		return hostName + "/" + getCollectionName();
 	}
 
 	@Override
@@ -44,12 +49,12 @@ public class DcatDataset {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		DcatDataset that = (DcatDataset) o;
-		return Objects.equals(collectionName, that.getCollectionName())
-				&& model.isIsomorphicWith(that.getModel());
+		return Objects.equals(collectionName, that.getCollectionName());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collectionName, model);
+		return Objects.hash(collectionName);
 	}
+
 }

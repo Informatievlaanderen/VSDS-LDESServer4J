@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
@@ -12,6 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -25,15 +27,17 @@ public class EventStreamServiceImpl implements EventStreamService {
 	private final EventStreamRepository eventStreamRepository;
 	private final ViewService viewService;
 	private final ShaclShapeService shaclShapeService;
+	private final DcatServerService dcatServerService;
 	private final DcatDatasetService dcatDatasetService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository, ViewService viewService,
 			ShaclShapeService shaclShapeService, DcatDatasetService dcatDatasetService,
-			ApplicationEventPublisher eventPublisher) {
+			DcatServerService dcatServerService, ApplicationEventPublisher eventPublisher) {
 		this.eventStreamRepository = eventStreamRepository;
 		this.viewService = viewService;
 		this.shaclShapeService = shaclShapeService;
+		this.dcatServerService = dcatServerService;
 		this.dcatDatasetService = dcatDatasetService;
 		this.eventPublisher = eventPublisher;
 	}
@@ -105,10 +109,16 @@ public class EventStreamServiceImpl implements EventStreamService {
 		return eventStreamResponse;
 	}
 
+	@Override
+	public Model getComposedDcat() {
+		return dcatServerService.getComposedDcat();
+	}
+
 	@EventListener(ApplicationStartedEvent.class)
 	public void initEventStream() {
 		eventStreamRepository.retrieveAllEventStreams().stream()
 				.map(EventStreamChangedEvent::new)
 				.forEach(eventPublisher::publishEvent);
 	}
+
 }

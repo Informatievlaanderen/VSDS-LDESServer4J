@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatVie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DcatViewService {
@@ -16,4 +17,5 @@ public interface DcatViewService {
 
 	void delete(ViewName viewName);
 
+	List<DcatView> findAll();
 }

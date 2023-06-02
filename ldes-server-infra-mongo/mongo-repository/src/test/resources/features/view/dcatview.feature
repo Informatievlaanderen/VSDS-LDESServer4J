@@ -13,3 +13,7 @@ Feature: DcatViewRepository
     Then I can delete the dcatView
     And I can not retrieve the dcatView from the repository
 
+  Scenario: I can find all views
+    Given the database contains multiple dcatViews
+    Then I can find all dcatViews
+

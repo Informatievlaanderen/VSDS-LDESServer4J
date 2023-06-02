@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -55,6 +57,17 @@ class DcatDatasetServiceImplTest {
 		assertEquals("Resource of type: dcat-dataset with id: " + DATASET_ID + " already exists.", e.getMessage());
 		verify(repository).retrieveDataset(DATASET_ID);
 		verifyNoMoreInteractions(repository);
+	}
+
+	@Test
+	void should_CallDcatServiceToGetDcat_when_GetComposedDcatIsCalled() {
+		List<DcatDataset> datasets = new ArrayList<>();
+		datasets.add(dataset);
+		when(repository.findAll()).thenReturn(datasets);
+
+		List<DcatDataset> result = repository.findAll();
+
+		assertEquals(datasets, result);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

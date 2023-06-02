@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,6 +14,11 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 
 	public DcatDatasetServiceImpl(DcatDatasetRepository repository) {
 		this.repository = repository;
+	}
+
+	@Override
+	public List<DcatDataset> findAll() {
+		return repository.findAll();
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.services.DcatDatasetService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
@@ -30,8 +31,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EventStreamServiceImplTest {
@@ -59,11 +66,15 @@ class EventStreamServiceImplTest {
 	@Mock
 	private DcatDatasetService dcatDatasetService;
 
+	@Mock
+	private DcatServerService dcatServerService;
+
 	private EventStreamService service;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		service = new EventStreamServiceImpl(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService,
+				dcatServerService,
 				eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
@@ -248,10 +259,19 @@ class EventStreamServiceImplTest {
 		verify(eventStreamRepository).retrieveAllEventStreams();
 	}
 
+	@Test
+	void should_CallDcatServiceToGetDcat_when_GetComposedDcatIsCalled() {
+		service.getComposedDcat();
+
+		verify(dcatServerService).getComposedDcat();
+		verifyNoMoreInteractions(dcatServerService);
+	}
+
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
 				.toString();
 		return RDFDataMgr.loadModel(uri);
 	}
+
 }

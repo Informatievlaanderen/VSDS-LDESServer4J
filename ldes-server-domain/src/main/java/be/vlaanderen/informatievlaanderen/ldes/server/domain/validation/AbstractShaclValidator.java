@@ -24,7 +24,8 @@ public abstract class AbstractShaclValidator implements Validator {
 			ValidationReport report = ShaclValidator.get().validate(shapes, model.getGraph());
 
 			if (!report.conforms()) {
-				throw new LdesShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE));
+				throw new LdesShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE),
+						report.getModel());
 			}
 		}
 	}

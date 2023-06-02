@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
@@ -18,14 +19,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrate
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.apache.jena.riot.RDFParser;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -37,6 +37,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,6 +57,8 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -66,7 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { EventStreamController.class, AppConfig.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
-		RetentionModelExtractor.class
+		RetentionModelExtractor.class, ModelConverter.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
@@ -173,6 +176,40 @@ class EventStreamControllerTest {
 							"6e14b6fc44f9de48d1f07dd401c81ac5d0116fd26035627eeb2346dda94f60c2"),
 					Arguments.of("text/html", Lang.TURTLE,
 							"251bb000c5883ec25ff35cb340b9fae08b90ed94d4de89c585df4bf421a501f0"));
+		}
+	}
+
+	@Nested
+	class GetDcat {
+
+		@Test
+		void should_ReturnDcat_when_Valid() throws Exception {
+			final Model model = RDFParser.source("dcat/valid-server-dcat.ttl").lang(Lang.TURTLE).toModel();
+
+			when(eventStreamService.getComposedDcat()).thenReturn(model);
+
+			mockMvc.perform(get("/")
+					.accept(MediaType.ALL))
+					.andExpect(status().isOk())
+					.andExpect(result -> {
+						String contentAsString = result.getResponse().getContentAsString();
+						Model actualModel = RdfModelConverter.fromString(contentAsString, Lang.TURTLE);
+						actualModel.isIsomorphicWith(model);
+					});
+
+			verify(eventStreamService).getComposedDcat();
+		}
+
+		@Test
+		void should_ReturnValidationReport_when_Invalid() throws Exception {
+			doThrow(new LdesShaclValidationException("validation-report", null)).when(eventStreamService)
+					.getComposedDcat();
+
+			mockMvc.perform(get("/")
+					.accept(MediaType.ALL))
+					.andExpect(status().isInternalServerError());
+
+			verify(eventStreamService).getComposedDcat();
 		}
 	}
 

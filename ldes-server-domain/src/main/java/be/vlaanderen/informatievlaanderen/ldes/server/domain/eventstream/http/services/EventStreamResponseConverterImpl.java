@@ -62,7 +62,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				createProperty(eventStreamResponse.getMemberType()));
 		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
 				createTypedLiteral(eventStreamResponse.isDefaultViewEnabled()));
-		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(subject.getNameSpace());
+		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
 				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, hasDefaultStmt))

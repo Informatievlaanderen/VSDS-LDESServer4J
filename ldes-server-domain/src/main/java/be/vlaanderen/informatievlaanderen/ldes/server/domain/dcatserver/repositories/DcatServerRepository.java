@@ -13,4 +13,6 @@ public interface DcatServerRepository {
 	DcatServer saveServerDcat(DcatServer dcatServer);
 
 	void deleteServerDcat(String id);
+
+	Optional<DcatServer> findSingleDcatServer();
 }

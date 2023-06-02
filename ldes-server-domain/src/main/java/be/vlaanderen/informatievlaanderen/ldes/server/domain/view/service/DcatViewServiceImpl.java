@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.apache.jena.rdf.model.Model;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +41,11 @@ public class DcatViewServiceImpl implements DcatViewService {
 	@Override
 	public void delete(ViewName viewName) {
 		dcatViewRepository.delete(viewName);
+	}
+
+	@Override
+	public List<DcatView> findAll() {
+		return dcatViewRepository.findAll();
 	}
 
 }
