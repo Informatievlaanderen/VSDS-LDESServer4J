@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 
 public class DuplicateViewException extends RuntimeException {
 
-	private transient final ViewName viewName;
+	private final transient ViewName viewName;
 
 	public DuplicateViewException(ViewName viewName) {
 		this.viewName = viewName;
