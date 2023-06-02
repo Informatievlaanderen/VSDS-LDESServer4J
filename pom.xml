@@ -56,8 +56,8 @@
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.9.3</jupiter.version>
         <mockito.version>5.3.1</mockito.version>
-        <byte-buddy.version>1.14.4</byte-buddy.version>
-        <de.flapdoodle.embed.mongo.version>4.6.2</de.flapdoodle.embed.mongo.version>
+        <byte-buddy.version>1.14.5</byte-buddy.version>
+        <de.flapdoodle.embed.mongo.version>4.7.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.12.0</cucumber.version>
@@ -78,7 +78,7 @@
         </sonar.projectKey>
 
         <!-- CODE FORMATTER -->
-        <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
+        <formatter-maven-plugin.version>2.23.0</formatter-maven-plugin.version>
         <skipFormatCode>false</skipFormatCode>
         <!--suppress UnresolvedMavenProperty -->
         <relative-formatter-path>${maven.multiModuleProjectDirectory}</relative-formatter-path>
