@@ -1,13 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 
 public interface CachingStrategy {
 
-	String generateCacheIdentifier(EventStream eventStream);
+	String generateCacheIdentifier(String collectionName, String language);
 
-	String generateCacheIdentifier(String collectionName);
-
-	String generateCacheIdentifier(TreeNode treeNode);
+	String generateCacheIdentifier(TreeNode treeNode, String language);
 }

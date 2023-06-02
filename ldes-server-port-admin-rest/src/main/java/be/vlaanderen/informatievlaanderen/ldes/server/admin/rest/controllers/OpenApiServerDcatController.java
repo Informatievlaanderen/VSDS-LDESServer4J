@@ -158,8 +158,8 @@ public interface OpenApiServerDcatController {
 	@GetMapping
 	ResponseEntity<Model> getDcat(@Parameter(hidden = true) String language, HttpServletResponse response);
 
-	@ApiResponse(responseCode = "201", content = @Content(mediaType = contentTypeTextPlain, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966")))
-	@ApiResponse(responseCode = "400", content = @Content)
+	@ApiResponse(responseCode = "201", description = "The generated UUID that is linked to the created DCAT", content = @Content(mediaType = contentTypeTextPlain, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966")))
+	@ApiResponse(responseCode = "400", content = @Content, description = "Provided DCAT configuration is not valid")
 	@Operation(summary = "Add DCAT configuration for the server")
 	String postServerDcat(
 			@RequestBody(description = "A blank node of type dcat:Catalog with only dcat:Catalog properties " +
@@ -192,8 +192,8 @@ public interface OpenApiServerDcatController {
 					}) Model dcat);
 
 	@ApiResponse(responseCode = "200")
-	@ApiResponse(responseCode = "400")
-	@ApiResponse(responseCode = "404")
+	@ApiResponse(responseCode = "400", description = "Provided DCAT configuration is not valid")
+	@ApiResponse(responseCode = "404", description = "No DCAT configuration found with provided id")
 	@Operation(summary = "Update DCAT configuration for the server")
 	void putServerDcat(
 			@Parameter(name = "catalogId", content = @Content(schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "e1c9443a-ab9f-407f-a65b-09d69f481966"))) String catalogId,
@@ -219,9 +219,7 @@ public interface OpenApiServerDcatController {
 							}),
 							@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = {
 									@ExampleObject(value = """
-											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],
-											"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],
-											"http://purl.org/dc/terms/description":[{"@value":"All LDES'es from publiser X","@language":"en"}]},{"@id":"http://www.w3.org/ns/dcat#Catalog"}]
+											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"All LDES'es from publiser X","@language":"en"}]},{"@id":"http://www.w3.org/ns/dcat#Catalog"}]
 											""")
 							})
 					}) Model dcat);
