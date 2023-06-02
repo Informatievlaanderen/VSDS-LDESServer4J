@@ -1,11 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.entities.DcatServer;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.service.DcatCatalogEntityConverter;
-import org.apache.jena.rdf.model.ModelFactory;
 
 import java.util.List;
 import java.util.Optional;
