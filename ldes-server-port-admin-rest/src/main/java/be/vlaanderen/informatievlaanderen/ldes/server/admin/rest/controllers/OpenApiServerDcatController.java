@@ -39,7 +39,7 @@ public interface OpenApiServerDcatController {
 											_:genid1 <http://purl.org/dc/terms/description> "All LDES'es from publiser X"@en .
 											""")
 							}),
-							@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = {
+							@Content(mediaType = contentTypeJSONLD, examples = {
 									@ExampleObject(value = """
 											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],
 											"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],
@@ -74,7 +74,7 @@ public interface OpenApiServerDcatController {
 											_:genid1 <http://purl.org/dc/terms/description> "All LDES'es from publiser X"@en .
 											""")
 							}),
-							@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = {
+							@Content(mediaType = contentTypeJSONLD, examples = {
 									@ExampleObject(value = """
 											[{"@type":["http://www.w3.org/ns/dcat#Catalog"],
 											"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],

@@ -3,8 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -39,8 +37,7 @@ public class AdminShapeRestController implements OpenApiShapeController {
 
 	@Override
 	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
-	public Model putShape(@PathVariable String collectionName,
-			@Parameter(schema = @Schema(implementation = String.class), description = "A valid RDF model defining the Shape of the collection") @RequestBody @Validated Model shape) {
+	public Model putShape(@PathVariable String collectionName, @RequestBody @Validated Model shape) {
 		shaclShapeService.updateShaclShape(new ShaclShape(collectionName, shape));
 		return shape;
 	}
