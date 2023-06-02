@@ -15,8 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberRepositorySteps extends SpringIntegrationTest {
 
@@ -60,4 +59,20 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 		assertThat(member.getTimestamp()).isEqualToIgnoringNanos(retrievedMemberPresent.getTimestamp());
 		assertEquals(member.getTreeNodeReferences(), retrievedMemberPresent.getTreeNodeReferences());
 	}
+
+	@Then("The member with id {string} will exist")
+	public void theMemberWithIdWillExist(String id) {
+		assertTrue(memberRepository.memberExists(id));
+	}
+
+	@And("The member with id {string} will not exist")
+	public void theMemberWithIdWillNotExist(String id) {
+		assertFalse(memberRepository.memberExists(id));
+	}
+
+	@When("I delete all the members of collection {string}")
+	public void iDeleteAllTheMembersOfCollection(String collectionName) {
+		memberRepository.deleteMembersByCollection(collectionName);
+	}
+
 }

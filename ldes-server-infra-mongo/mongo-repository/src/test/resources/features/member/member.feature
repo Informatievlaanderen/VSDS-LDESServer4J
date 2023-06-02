@@ -29,3 +29,19 @@ Feature: MemberRepository
     And The retrieved member has the same properties as the 3 member in the table and has sequenceNr 1
     Then The member with id "http://test-data/gipod/1/2" can be retrieved from the database
     And The retrieved member has the same properties as the 5 member in the table and has sequenceNr 2
+
+
+  Scenario: The repository can delete all members of a certain collection
+    Given The following members
+      | id                                      | collectionName      | sequenceNr | versionOf                             |
+      | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
+      | http://test-data/mobility-hindrance/1/2 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
+      | http://test-data/gipod/1/1              | gipod               | [blank]    | http://test-data/gipod/1              |
+      | http://test-data/mobility-hindrance/1/3 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
+      | http://test-data/gipod/1/2              | gipod               | [blank]    | http://test-data/gipod/1              |
+    When I save the members using the MemberRepository
+    Then The member with id "http://test-data/gipod/1/1" will exist
+    When I delete all the members of collection "gipod"
+    Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
+    And The member with id "http://test-data/gipod/1/1" will not exist
+    And The member with id "http://test-data/gipod/1/2" will not exist
