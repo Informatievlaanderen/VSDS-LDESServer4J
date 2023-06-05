@@ -17,7 +17,7 @@ import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 @RequestMapping(DcatViewsRestController.BASE_URL)
 public class DcatViewsRestController implements OpenApiDcatViewsController {
 
-	public final static String BASE_URL = "/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat";
+	public static final String BASE_URL = "/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat";
 
 	private final DcatViewService dcatViewService;
 
