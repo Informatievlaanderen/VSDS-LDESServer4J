@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminServerDcatController;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatDatasetRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatViewsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
@@ -29,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminServerDcatController.class,
-		DcatViewsRestController.class, AppConfig.class, PrefixAdderImpl.class })
+		DcatViewsRestController.class, DcatDatasetRestController.class, AppConfig.class, PrefixAdderImpl.class })
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
