@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatViewsRestController.BASE_URL;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,21 +50,21 @@ public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
 	@When("I POST this dataservice")
 	public void iCanPOSTThisDataservice() throws Exception {
-		resultActions = mockMvc.perform(post(DcatViewsRestController.BASE_URL, COLLECTION_NAME, VIEW)
+		resultActions = mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW)
 				.contentType(Lang.TURTLE.getHeaderString())
 				.content(turtleDataservice));
 	}
 
 	@When("I PUT this dataservice")
 	public void iPUTThisDataservice() throws Exception {
-		resultActions = mockMvc.perform(put(DcatViewsRestController.BASE_URL, COLLECTION_NAME, VIEW)
+		resultActions = mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW)
 				.contentType(Lang.TURTLE.getHeaderString())
 				.content(turtleDataservice));
 	}
 
 	@When("I DELETE this dataservice")
 	public void iDELETEThisDataservice() throws Exception {
-		resultActions = mockMvc.perform(delete(DcatViewsRestController.BASE_URL, COLLECTION_NAME, VIEW));
+		resultActions = mockMvc.perform(delete(BASE_URL, COLLECTION_NAME, VIEW));
 	}
 
 	private String readDataFromFile(String filename) throws IOException {
