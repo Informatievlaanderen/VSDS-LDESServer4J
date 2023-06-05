@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -23,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatViewsRestController.BASE_URL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,8 +44,6 @@ class DcatViewsRestControllerTest {
 
 	private final static String COLLECTION_NAME = "collectionName";
 	private final static String VIEW_NAME = "viewName";
-	private final static String BASE_URL = "/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/views/" + VIEW_NAME
-			+ "/dcat";
 
 	@MockBean
 	private DcatViewService dcatViewService;
@@ -67,7 +66,7 @@ class DcatViewsRestControllerTest {
 		void should_Return400_when_ValidatorThrowsIllegalArgumentException() throws Exception {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
-			mockMvc.perform(post(BASE_URL)
+			mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(readTurtleFromFile("dcat-view-valid.ttl")))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
@@ -78,7 +77,7 @@ class DcatViewsRestControllerTest {
 		@Test
 		void should_Return201_when_CreatedSuccessfully() throws Exception {
 			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
-			mockMvc.perform(post(BASE_URL)
+			mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(dcat))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isCreated());
@@ -96,7 +95,7 @@ class DcatViewsRestControllerTest {
 		void should_Return400_when_ValidatorThrowsIllegalArgumentException() throws Exception {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
-			mockMvc.perform(put(BASE_URL)
+			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(readTurtleFromFile("dcat-view-valid.ttl")))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
@@ -107,7 +106,7 @@ class DcatViewsRestControllerTest {
 		@Test
 		void should_Return200_when_UpdatedSuccessfully() throws Exception {
 			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
-			mockMvc.perform(put(BASE_URL)
+			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(dcat))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isOk());
@@ -121,7 +120,7 @@ class DcatViewsRestControllerTest {
 			doThrow(MissingViewDcatException.class).when(dcatViewService).update(any(), any());
 
 			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
-			mockMvc.perform(put(BASE_URL)
+			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(dcat))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isNotFound());
@@ -133,7 +132,8 @@ class DcatViewsRestControllerTest {
 
 	@Test
 	void should_Return200_when_DeletedSuccessfully() throws Exception {
-		mockMvc.perform(delete(BASE_URL)).andExpect(status().isOk());
+		mockMvc.perform(delete(BASE_URL, COLLECTION_NAME, VIEW_NAME))
+				.andExpect(status().isOk());
 
 		verify(dcatViewService).delete(new ViewName(COLLECTION_NAME, VIEW_NAME));
 	}

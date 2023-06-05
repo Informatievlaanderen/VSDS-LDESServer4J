@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
@@ -14,8 +14,10 @@ import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @RestController
-@RequestMapping("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat")
+@RequestMapping(DcatViewsRestController.BASE_URL)
 public class DcatViewsRestController implements OpenApiDcatViewsController {
+
+	public static final String BASE_URL = "/admin/api/v1/eventstreams/{collectionName}/views/{viewName}/dcat";
 
 	private final DcatViewService dcatViewService;
 
