@@ -20,12 +20,12 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DcatDataServiceValidatorTest {
-	private DcatDataServiceValidator validator;
+class DcatViewValidatorTest {
+	private DcatViewValidator validator;
 
 	@BeforeEach
 	void setUp() {
-		validator = new DcatDataServiceValidator();
+		validator = new DcatViewValidator();
 	}
 
 	@Test

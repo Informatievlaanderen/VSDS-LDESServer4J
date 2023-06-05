@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatDataServiceValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
@@ -48,7 +48,7 @@ class DcatViewsRestControllerTest {
 	private DcatViewService dcatViewService;
 
 	@MockBean
-	private DcatDataServiceValidator validator;
+	private DcatViewValidator validator;
 
 	@Autowired
 	private MockMvc mockMvc;

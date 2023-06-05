@@ -6,8 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.can
 import org.springframework.stereotype.Component;
 
 @Component
-public class DcatDataServiceValidator extends DcatValidator {
-	public DcatDataServiceValidator() {
+public class DcatViewValidator extends DcatValidator {
+	public DcatViewValidator() {
 		super(new DcatBlankNodeValidator(DCAT_DATA_SERVICE), new CannotContainDatasetValidator(),
 				new CannotContainCatalogValidator());
 	}
