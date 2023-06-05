@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
@@ -49,7 +49,7 @@ class SnapshotServiceImplTest {
 			EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOf", "memberType",
 					true);
 			((SnapshotServiceImpl) snapshotService)
-					.handleEventStreamChangedEvent(new EventStreamChangedEvent(eventStream));
+					.handleEventStreamChangedEvent(new EventStreamCreatedEvent(eventStream));
 		}
 
 		@Test
@@ -155,7 +155,7 @@ class SnapshotServiceImplTest {
 	@Test
 	void when_NoDefaultViewIsProvided_then_ThrowExceptionWithCreation() {
 		EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOf", "memberType", false);
-		((SnapshotServiceImpl) snapshotService).handleEventStreamChangedEvent(new EventStreamChangedEvent(eventStream));
+		((SnapshotServiceImpl) snapshotService).handleEventStreamChangedEvent(new EventStreamCreatedEvent(eventStream));
 
 		String expectedErrorMessage = String.format(
 				"Unable to create snapshot.\nCause: No default pagination view configured for collection %s",

@@ -198,7 +198,7 @@ class EventStreamServiceImplTest {
 		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
 				memberType, HAS_DEFAULT_VIEW, List.of(), ModelFactory.createDefaultModel());
 
-		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
+		EventStreamResponse updatedEventStream = service.createEventStream(eventStreamResponse);
 
 		assertEquals(eventStreamResponse, updatedEventStream);
 		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
@@ -221,7 +221,7 @@ class EventStreamServiceImplTest {
 		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
 				memberType, true, List.of(), ModelFactory.createDefaultModel());
 
-		EventStreamResponse updatedEventStream = service.saveEventStream(eventStreamResponse);
+		EventStreamResponse updatedEventStream = service.createEventStream(eventStreamResponse);
 
 		assertEquals(eventStreamResponse, updatedEventStream);
 		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);

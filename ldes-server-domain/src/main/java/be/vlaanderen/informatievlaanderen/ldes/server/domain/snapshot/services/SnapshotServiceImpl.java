@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
@@ -73,7 +73,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 	}
 
 	@EventListener
-	public void handleEventStreamChangedEvent(EventStreamChangedEvent event) {
+	public void handleEventStreamChangedEvent(EventStreamCreatedEvent event) {
 		EventStream eventStream = event.eventStream();
 		collectionHasDefaultViewMap.put(eventStream.getCollection(), eventStream.isDefaultViewEnabled());
 	}

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
@@ -123,7 +123,7 @@ public class ViewServiceImpl implements ViewService {
 	}
 
 	@EventListener
-	public void handleEventStreamInitEvent(EventStreamChangedEvent event) {
+	public void handleEventStreamInitEvent(EventStreamCreatedEvent event) {
 		eventStreams.put(event.eventStream().getCollection(), event.eventStream());
 	}
 

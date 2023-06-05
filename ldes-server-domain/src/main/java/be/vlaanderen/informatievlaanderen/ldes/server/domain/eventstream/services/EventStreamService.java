@@ -14,7 +14,7 @@ public interface EventStreamService {
 
 	void deleteEventStream(String collectionName);
 
-	EventStreamResponse saveEventStream(EventStreamResponse eventStream);
+	EventStreamResponse createEventStream(EventStreamResponse eventStream);
 
 	Model getComposedDcat();
 
