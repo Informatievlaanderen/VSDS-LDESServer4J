@@ -109,9 +109,9 @@ public class ViewServiceImpl implements ViewService {
 		if (view.isEmpty()) {
 			throw new MissingViewException(viewName);
 		}
+		eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
 		viewRepository.deleteViewByViewName(viewName);
 		dcatViewService.delete(viewName);
-		eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
 	}
 
 	@EventListener(ApplicationStartedEvent.class)

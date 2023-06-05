@@ -11,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.Dca
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import io.cucumber.spring.CucumberContextConfiguration;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
