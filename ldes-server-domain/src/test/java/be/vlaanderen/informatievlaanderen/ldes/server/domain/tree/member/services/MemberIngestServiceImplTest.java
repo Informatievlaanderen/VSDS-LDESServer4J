@@ -87,8 +87,7 @@ class MemberIngestServiceImplTest {
 		when(memberRepository.getMemberStreamOfCollection(collection)).thenReturn(Stream.of(member));
 		((MemberIngestServiceImpl) memberIngestService)
 				.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collection));
-		InOrder inOrder = inOrder(memberRepository);
-		inOrder.verify(memberRepository).getMemberStreamOfCollection(collection);
-		inOrder.verify(memberRepository).deleteMember(memberId);
+		verify(memberRepository).deleteMembersByCollection(collection);
+		verifyNoMoreInteractions(memberRepository);
 	}
 }

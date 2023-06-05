@@ -41,9 +41,7 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		memberRepository.getMemberStreamOfCollection(event.collectionName())
-				.map(Member::getLdesMemberId)
-				.forEach(memberRepository::deleteMember);
+		memberRepository.deleteMembersByCollection(event.collectionName());
 	}
 
 	private Member storeLdesMember(Member member) {

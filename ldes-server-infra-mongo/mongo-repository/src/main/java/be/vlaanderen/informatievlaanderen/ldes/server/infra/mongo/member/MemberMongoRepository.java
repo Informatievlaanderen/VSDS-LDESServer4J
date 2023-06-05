@@ -54,6 +54,11 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
+	public void deleteMembersByCollection(String collection) {
+		repository.deleteAllByCollectionName(collection);
+	}
+
+	@Override
 	public synchronized void addMemberReference(String memberId, String fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(memberId));
