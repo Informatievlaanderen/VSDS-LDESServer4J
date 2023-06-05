@@ -2,10 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -16,23 +18,29 @@ import java.util.stream.Collectors;
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
 
+	private final AppConfig appConfig;
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
+	private final ShaclShapeService shaclShapeService;
 
-	public SnapshotCreatorImpl(MemberCollector memberCollector,
-			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
+	public SnapshotCreatorImpl(AppConfig appConfig, MemberCollector memberCollector,
+			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter,
+			ShaclShapeService shaclShapeService) {
+		this.appConfig = appConfig;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.snapshotFragmenter = snapshotFragmenter;
+		this.shaclShapeService = shaclShapeService;
 	}
 
 	@Override
-	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot, LdesConfig ldesConfig) {
+	public Snapshot createSnapshotForTreeNodes(List<LdesFragment> treeNodesForSnapshot,
+			String collectionName) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		String collectionName = ldesConfig.getCollectionName();
+		Model shacl = shaclShapeService.retrieveShaclShape(collectionName).getModel();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
-				ldesConfig.validation().getShape(), snapshotTime, ldesConfig.getBaseUrl());
+				shacl, snapshotTime, appConfig.getHostName() + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator
 				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));

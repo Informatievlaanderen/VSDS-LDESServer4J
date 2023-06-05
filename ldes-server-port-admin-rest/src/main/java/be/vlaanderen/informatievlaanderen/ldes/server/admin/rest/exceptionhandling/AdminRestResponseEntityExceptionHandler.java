@@ -1,12 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.InvalidModelIdException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingLdesConfigException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions.InvalidConfigOperationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import org.apache.jena.riot.RiotException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,33 +22,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MissingLdesConfigException.class, MissingShaclShapeException.class,
-			MissingEventStreamException.class })
-	protected ResponseEntity<Object> hanldeMissingLdesConfigException(
+	@ExceptionHandler(value = { MissingShaclShapeException.class,
+			MissingEventStreamException.class, MissingViewException.class, MissingViewDcatException.class,
+			MissingDcatServerException.class, MissingResourceException.class })
+	protected ResponseEntity<Object> handleMissingResourceException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
-	@ExceptionHandler(value = { LdesShaclValidationException.class })
-	protected ResponseEntity<Object> handleLdesShacleValidationException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.BAD_REQUEST, request);
-	}
-
-	@ExceptionHandler(value = { InvalidModelIdException.class })
-	protected ResponseEntity<Object> handleInvalidModelException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.BAD_REQUEST, request);
-	}
-
-	@ExceptionHandler(value = { InvalidConfigOperationException.class })
-	protected ResponseEntity<Object> handleInvalidConfigOperationException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.BAD_REQUEST, request);
-	}
-
-	@ExceptionHandler(value = { RiotException.class })
-	protected ResponseEntity<Object> handleRiotException(
+	@ExceptionHandler(value = { LdesShaclValidationException.class, RiotException.class,
+			DcatAlreadyConfiguredException.class, IllegalArgumentException.class, DuplicateViewException.class,
+			MissingConfigurationException.class })
+	protected ResponseEntity<Object> handleBadRequest(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
@@ -54,6 +42,12 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	protected ResponseEntity<Object> handleSnapshotCreationException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
+	}
+
+	@ExceptionHandler(value = { ExistingResourceException.class })
+	protected ResponseEntity<Object> handleExistingResourceException(
+			RuntimeException ex, WebRequest request) {
+		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
 	private ResponseEntity<Object> handleException(

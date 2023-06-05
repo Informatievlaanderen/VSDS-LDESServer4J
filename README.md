@@ -49,7 +49,7 @@ open data.
 
 ## Set-up of the LDES Server
 
-The current implementation consists of 6 modules:
+The current implementation consists of the following modules:
 
 - `ldes-server-application` which starts the spring boot application
 - `ldes-server-domain` which contains the domain logic of the ldes server
@@ -58,8 +58,8 @@ The current implementation consists of 6 modules:
 - `ldes-server-port-fetch-rest` which allows to retrieve fragments via HTTP
 - `ldes-fragmentisers` which support different types of fragmentations
 
-The modules `ldes-server-infra-mongo`, `ldes-server-port-ingestion-rest` and `ldes-server-port-fetch-rest` are built so
-that they can be replaced by other implementations without the need for code changes in ldes-server-domain.
+The modules `ldes-server-infra-mongo` is built so
+that it can be replaced by other implementations without the need for code changes in ldes-server-domain.
 
 ## How To Run
 
@@ -100,7 +100,7 @@ To enrich the server, certain Maven profiles can be activated:
 
 | Profile Group                           | Profile Name             | Description                                                                     | Parameters                                                                  | Further Info                                                                                                                        |
 |-----------------------------------------|--------------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest              | Enables a HTTP endpoint for to insert LDES members.                             | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest              | Enables a HTTP endpoint to insert LDES members.                                 | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
 | **HTTP Endpoints (Fetch/Ingestion)**    | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments                              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
 | **Storage**                             | storage-mongo            | Allows the LDES server to read and write from a mongo database.                 | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
 | **Timebased Fragmentation[DEPRECATED]** | fragmentation-timebased  | Supports timebased fragmentation.                                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
@@ -292,7 +292,7 @@ use [config.local.env](docker-compose/config.local.env).
 
 #### The docker compose File
 
-Change the `env_file` to `config.env` or `config.local.env` in [compose.yml](compose.yml) according to
+Change the `env_file` to `config.env` or `config.local.env` in [compose.yml](docker-compose.yml) according to
 your needs.
 
 #### Starting the Dockerized Application

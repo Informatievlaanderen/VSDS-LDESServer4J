@@ -1,14 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.services.EventStreamFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,44 +14,48 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpHeaders.*;
 
 @RestController
-@Tag(name = "Fetch")
-public class EventStreamController {
+public class EventStreamController implements OpenApiEventStreamController {
 
 	private final RestConfig restConfig;
-	private final EventStreamFactory eventStreamFactory;
 	private final CachingStrategy cachingStrategy;
-	private final AppConfig appConfig;
+	private final EventStreamService eventStreamService;
 
-	public EventStreamController(RestConfig restConfig, EventStreamFactory eventStreamFactory,
-			CachingStrategy cachingStrategy, AppConfig appConfig) {
+	public EventStreamController(RestConfig restConfig, CachingStrategy cachingStrategy,
+			EventStreamService eventStreamService) {
 		this.restConfig = restConfig;
-		this.eventStreamFactory = eventStreamFactory;
 		this.cachingStrategy = cachingStrategy;
-		this.appConfig = appConfig;
+		this.eventStreamService = eventStreamService;
 	}
 
+	@GetMapping("/")
+	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+		setContentTypeHeader(language, response);
+		return eventStreamService.getComposedDcat();
+	}
+
+	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}")
-	@Operation(summary = "Retrieve an Linked Data Event Stream")
-	public ResponseEntity<EventStream> retrieveLdes(@RequestHeader(HttpHeaders.ACCEPT) String language,
+	public ResponseEntity<EventStreamResponse> retrieveLdesFragment(
+			@RequestHeader(HttpHeaders.ACCEPT) String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
+		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
 
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
-		EventStream eventStream = eventStreamFactory.getEventStream(ldesConfig);
 		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
 		setContentTypeHeader(language, response);
 
 		return ResponseEntity
 				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(eventStream))
+				.eTag(cachingStrategy.generateCacheIdentifier(eventStream.getCollection(), language))
 				.body(eventStream);
 	}
 
 	private void setContentTypeHeader(String language, HttpServletResponse response) {
-		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE))
+		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE)) {
 			response.setHeader(CONTENT_TYPE, RestConfig.TEXT_TURTLE);
-		else
+		} else {
 			response.setHeader(CONTENT_TYPE, language.split(",")[0]);
+		}
 	}
 }

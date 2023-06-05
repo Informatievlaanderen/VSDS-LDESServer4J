@@ -5,7 +5,7 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ldes-server-infra-mongo</artifactId>
@@ -18,7 +18,8 @@
         <module>mongock-changeset-2</module>
         <module>mongock-changeset-3</module>
         <module>mongock-changeset-4</module>
-        <module>mongo-ingest-repository</module>
+        <module>mongock-changeset-5</module>
+        <module>mongock-changeset-6</module>
     </modules>
 
     <properties>

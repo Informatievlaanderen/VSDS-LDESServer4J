@@ -1,0 +1,4 @@
+[ a                               <https://w3id.org/ldes#LatestVersionSubset> ;
+  <https://w3id.org/ldes#amount>  2 ;
+  <https://w3id.org/ldes#amount>  3
+] .

@@ -25,4 +25,9 @@ public class SnapshotMongoRepository implements SnapshotRepository {
 		return snapshotEntityRepository.findAll().stream().map(SnapshotEntity::toSnapshot)
 				.max(Comparator.comparing(Snapshot::getSnapshotUntil));
 	}
+
+	@Override
+	public void deleteSnapshotsByCollectionName(String collectionName) {
+		snapshotEntityRepository.deleteByCollectionName(collectionName);
+	}
 }

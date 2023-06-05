@@ -9,11 +9,16 @@ public class EventStreamEntity {
 	private final String id;
 	private final String timestampPath;
 	private final String versionOfPath;
+	private final String memberType;
+	private final boolean defaultViewEnabled;
 
-	public EventStreamEntity(String id, String timestampPath, String versionOfPath) {
+	public EventStreamEntity(String id, String timestampPath, String versionOfPath, String memberType,
+			boolean defaultViewEnabled) {
 		this.id = id;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
+		this.memberType = memberType;
+		this.defaultViewEnabled = defaultViewEnabled;
 	}
 
 	public String getId() {
@@ -26,5 +31,13 @@ public class EventStreamEntity {
 
 	public String getVersionOfPath() {
 		return versionOfPath;
+	}
+
+	public String getMemberType() {
+		return memberType;
+	}
+
+	public boolean isDefaultViewEnabled() {
+		return defaultViewEnabled;
 	}
 }

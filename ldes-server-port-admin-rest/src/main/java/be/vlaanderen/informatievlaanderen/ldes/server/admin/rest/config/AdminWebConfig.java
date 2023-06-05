@@ -1,27 +1,45 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.LdesConfigShaclValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ListViewHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AdminWebConfig {
 
-	@Bean(name = "viewShaclValidator")
-	public LdesConfigShaclValidator ldesViewShaclValidator() {
-		// shaclShape for view still needs to be added
-		return new LdesConfigShaclValidator("viewShaclShape.ttl");
+	@ConditionalOnMissingBean
+	@Bean
+	public ModelConverter modelConverter(final PrefixAdder prefixAdder) {
+		return new ModelConverter(prefixAdder);
 	}
 
 	@Bean
-	public ShaclShapeValidator shaclShapeValidator() {
-		return new ShaclShapeValidator();
+	public EventStreamHttpConverter eventStreamHttpConverter(
+			final EventStreamResponseConverter eventStreamResponseConverter) {
+		return new EventStreamHttpConverter(eventStreamResponseConverter);
 	}
 
 	@Bean
-	public EventStreamValidator eventStreamValidator() {
-		return new EventStreamValidator();
+	public EventStreamListHttpConverter eventStreamListHttpConverter(
+			final EventStreamResponseConverter eventStreamResponseConverter) {
+		return new EventStreamListHttpConverter(eventStreamResponseConverter);
+	}
+
+	@Bean
+	public ViewHttpConverter viewHttpConverter(final ViewSpecificationConverter viewSpecificationConverter) {
+		return new ViewHttpConverter(viewSpecificationConverter);
+	}
+
+	@Bean
+	public ListViewHttpConverter listViewHttpConverter(final ViewSpecificationConverter viewSpecificationConverter) {
+		return new ListViewHttpConverter(viewSpecificationConverter);
 	}
 }
