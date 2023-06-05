@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class FragmentationStrategyCollectionImplTest {
@@ -18,9 +19,9 @@ class FragmentationStrategyCollectionImplTest {
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
 	private final RefragmentationService refragmentationService = mock(RefragmentationService.class);
-	private final LdesFragmentRemover ldesFragmentRemover = mock(LdesFragmentRemover.class);
+	private final TreeNodeRemover treeNodeRemover = mock(TreeNodeRemover.class);
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			rootFragmentCreator, fragmentationStrategyCreator, refragmentationService, ldesFragmentRemover);
+			rootFragmentCreator, fragmentationStrategyCreator, refragmentationService, treeNodeRemover);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -56,7 +57,7 @@ class FragmentationStrategyCollectionImplTest {
 
 		assertFalse(
 				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-		verify(ldesFragmentRemover).removeLdesFragmentsOfView(viewSpecification.getName());
+		verify(treeNodeRemover).removeLdesFragmentsOfView(viewSpecification.getName());
 	}
 
 	@Test

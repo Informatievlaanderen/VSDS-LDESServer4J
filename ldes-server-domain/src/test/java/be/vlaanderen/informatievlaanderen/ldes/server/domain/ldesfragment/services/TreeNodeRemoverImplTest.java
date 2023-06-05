@@ -51,7 +51,7 @@ class TreeNodeRemoverImplTest {
 		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentId()))
 				.thenReturn(Stream.of(thirdMember));
 
-		treeNodeRemover.removeTreeNodes();
+		treeNodeRemover.removeTreeNodeMembers();
 
 		InOrder inOrder = inOrder(fragmentRepository, memberRepository, treeMemberRemover);
 		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(VIEW_NAME.asString());
@@ -67,6 +67,42 @@ class TreeNodeRemoverImplTest {
 				secondLdesFragmentOfView.getFragmentId());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(thirdMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	void when_LdesFragmentOfViewAreRemoved_TheyAreRemovedFromRepository() {
+		ViewName viewName = new ViewName("collection", "view");
+		when(fragmentRepository.retrieveFragmentsOfView(viewName.asString())).thenReturn(ldesFragmentStream());
+		when(memberRepository.getMembersByReference(getLdesFragment("1").getFragmentId()))
+				.thenReturn(Stream.of(getMember("1"), getMember("2")));
+		when(memberRepository.getMembersByReference(getLdesFragment("2").getFragmentId()))
+				.thenReturn(Stream.of(getMember("2")));
+
+		treeNodeRemover.removeLdesFragmentsOfView(viewName);
+
+		InOrder inOrder = inOrder(memberRepository, fragmentRepository);
+		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(viewName.asString());
+		inOrder.verify(memberRepository).getMembersByReference(getLdesFragment("1").getFragmentId());
+		inOrder.verify(memberRepository).removeMemberReference(getMember("1").getLdesMemberId(),
+				getLdesFragment("1").getFragmentId());
+		inOrder.verify(memberRepository).removeMemberReference(getMember("2").getLdesMemberId(),
+				getLdesFragment("1").getFragmentId());
+		inOrder.verify(memberRepository).getMembersByReference(getLdesFragment("2").getFragmentId());
+		inOrder.verify(memberRepository).removeMemberReference(getMember("2").getLdesMemberId(),
+				getLdesFragment("2").getFragmentId());
+		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(viewName.asString());
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	private Stream<LdesFragment> ldesFragmentStream() {
+		LdesFragment firstLdesFragment = getLdesFragment("1");
+		LdesFragment secondLdesFragment = getLdesFragment("2");
+		return Stream.of(firstLdesFragment, secondLdesFragment);
+	}
+
+	private LdesFragment getLdesFragment(String fragmentValue) {
+		return new LdesFragment(new ViewName("collectionName", "view"),
+				List.of(new FragmentPair("page", fragmentValue)));
 	}
 
 	private Member getMember(String memberId) {
