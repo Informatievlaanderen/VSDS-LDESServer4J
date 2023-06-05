@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -40,6 +41,17 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 				.filter(this::viewHasRetentionPolicies)
 				.forEach(viewWithRetentionPolicies -> removeMembersFromViewThatMatchRetentionPolicies(
 						viewWithRetentionPolicies.getKey(), viewWithRetentionPolicies.getValue()));
+	}
+
+	@Override
+	public void removeLdesFragmentsOfView(ViewName viewName) {
+		Stream<LdesFragment> ldesFragments = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString());
+		ldesFragments.forEach(ldesFragment -> {
+			Stream<Member> membersByReference = memberRepository.getMembersByReference(ldesFragment.getFragmentId());
+			membersByReference.forEach(member -> memberRepository.removeMemberReference(member.getLdesMemberId(),
+					ldesFragment.getFragmentId()));
+		});
+		ldesFragmentRepository.removeLdesFragmentsOfView(viewName.asString());
 	}
 
 	private boolean viewHasRetentionPolicies(Map.Entry<ViewName, List<RetentionPolicy>> entry) {

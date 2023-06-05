@@ -19,16 +19,16 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	private final RootFragmentCreator rootFragmentCreator;
 	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 	private final RefragmentationService refragmentationService;
-	private final LdesFragmentRemover ldesFragmentRemover;
+	private final TreeNodeRemover treeNodeRemover;
 
 	public FragmentationStrategyCollectionImpl(
 			RootFragmentCreator rootFragmentCreator, FragmentationStrategyCreator fragmentationStrategyCreator,
-			RefragmentationService refragmentationService, LdesFragmentRemover ldesFragmentRemover) {
+			RefragmentationService refragmentationService, TreeNodeRemover treeNodeRemover) {
 		this.fragmentationStrategyMap = new HashMap<>();
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.refragmentationService = refragmentationService;
-		this.ldesFragmentRemover = ldesFragmentRemover;
+		this.treeNodeRemover = treeNodeRemover;
 	}
 
 	public Map<ViewName, FragmentationStrategy> getFragmentationStrategyMap() {
@@ -55,7 +55,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
-		ldesFragmentRemover.removeLdesFragmentsOfView(event.getViewName());
+		treeNodeRemover.removeLdesFragmentsOfView(event.getViewName());
 		fragmentationStrategyMap.remove(event.getViewName());
 	}
 }
