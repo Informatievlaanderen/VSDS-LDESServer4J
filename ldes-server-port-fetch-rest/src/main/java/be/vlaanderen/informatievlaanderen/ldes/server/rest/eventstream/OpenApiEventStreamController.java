@@ -11,9 +11,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 
-import static org.apache.jena.riot.WebContent.*;
+import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
+import static org.apache.jena.riot.WebContent.contentTypeNQuads;
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 
 @Tag(name = "Event Streams")
 @SuppressWarnings("java:S2479") // whitespace needed for examples
@@ -108,7 +109,6 @@ public interface OpenApiEventStreamController {
 			})
 	})
 	@Operation(summary = "The combined metadata for the server is retrieved")
-	@GetMapping
 	Model getDcat(@Parameter(hidden = true) String language, HttpServletResponse response);
 
 	@Operation(summary = "Retrieve an Linked Data Event Stream")
