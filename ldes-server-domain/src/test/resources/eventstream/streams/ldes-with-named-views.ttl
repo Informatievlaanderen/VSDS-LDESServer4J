@@ -11,9 +11,11 @@
 @prefix server:          <http://localhost:8080/> .
 @prefix xsd:             <http://www.w3.org/2001/XMLSchema#> .
 
-col:view2 tree:viewDescription  view2:description .
+col:view2 a tree:Node ;
+  tree:viewDescription  view2:description .
 
-col:view1 tree:viewDescription  view1:description .
+col:view1 a tree:Node ;
+  tree:viewDescription  view1:description .
 
 server:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dc:created ;

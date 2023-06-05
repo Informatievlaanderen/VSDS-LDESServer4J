@@ -12,6 +12,5 @@ viewName:description
         example:duration "10" ;
     ] .
 
-server:view1
-        <https://w3id.org/tree#viewDescription>
-                <http://localhost:8080/name1/view1/description> .
+server:view1 a tree:Node ;
+        <https://w3id.org/tree#viewDescription> <http://localhost:8080/name1/view1/description> .

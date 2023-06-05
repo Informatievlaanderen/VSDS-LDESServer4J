@@ -9,7 +9,8 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
-server:viewName tree:viewDescription viewName:description .
+server:viewName a tree:Node ;
+  tree:viewDescription viewName:description .
 
 viewName:description
         a       dcat:DataService , tree:ViewDescription ;
