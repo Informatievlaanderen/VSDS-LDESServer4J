@@ -4,5 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 
 public interface TreeNodeRemover {
 	void removeTreeNodes();
+
 	void removeLdesFragmentsOfView(ViewName viewName);
 }
