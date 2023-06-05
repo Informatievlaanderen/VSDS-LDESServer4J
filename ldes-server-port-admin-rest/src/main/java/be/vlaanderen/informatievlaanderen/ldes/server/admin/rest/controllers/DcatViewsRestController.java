@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.DcatViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatDataServiceValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
@@ -21,16 +21,16 @@ public class DcatViewsRestController implements OpenApiDcatViewsController {
 
 	private final DcatViewService dcatViewService;
 
-	private final DcatViewValidator dcatViewValidator;
+	private final DcatDataServiceValidator dcatDataServiceValidator;
 
-	public DcatViewsRestController(DcatViewService dcatViewService, DcatViewValidator dcatViewValidator) {
+	public DcatViewsRestController(DcatViewService dcatViewService, DcatDataServiceValidator dcatDataServiceValidator) {
 		this.dcatViewService = dcatViewService;
-		this.dcatViewValidator = dcatViewValidator;
+		this.dcatDataServiceValidator = dcatDataServiceValidator;
 	}
 
 	@InitBinder
 	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(dcatViewValidator);
+		binder.setValidator(dcatDataServiceValidator);
 	}
 
 	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
