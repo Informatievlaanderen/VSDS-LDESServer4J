@@ -33,6 +33,6 @@ Feature: DcatView
       And Response with http 200 will be returned
 
       Examples:
-        | isValid |  |  |
-        | valid   |  |  |
-        | invalid |  |  |
+        | isValid |
+        | valid   |
+        | invalid |
