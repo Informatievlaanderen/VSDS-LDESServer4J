@@ -9,12 +9,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatDatasetRestController.BASE_URL;
 import static org.apache.jena.riot.WebContent.*;
 
 @RestController
-@RequestMapping(value = "/admin/api/v1/eventstreams/{collectionName}/dcat")
+@RequestMapping(value = BASE_URL)
 public class DcatDatasetRestController implements OpenApiDcatDatasetController {
-
+	public static final String BASE_URL = "/admin/api/v1/eventstreams/{collectionName}/dcat";
 	private final DcatDatasetService datasetService;
 	private final DcatDatasetValidator validator;
 
