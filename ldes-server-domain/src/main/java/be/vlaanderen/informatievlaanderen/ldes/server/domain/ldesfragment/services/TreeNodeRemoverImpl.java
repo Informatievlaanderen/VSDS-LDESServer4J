@@ -33,7 +33,7 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	}
 
 	@Scheduled(fixedDelay = 10000)
-	public void removeTreeNodes() {
+	public void removeTreeNodeMembers() {
 		retentionPolicyCollection
 				.getRetentionPolicyMap()
 				.entrySet()

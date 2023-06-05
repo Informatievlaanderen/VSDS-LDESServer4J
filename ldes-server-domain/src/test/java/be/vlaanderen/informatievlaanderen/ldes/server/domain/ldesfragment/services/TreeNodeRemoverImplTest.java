@@ -51,7 +51,7 @@ class TreeNodeRemoverImplTest {
 		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentId()))
 				.thenReturn(Stream.of(thirdMember));
 
-		treeNodeRemover.removeTreeNodes();
+		treeNodeRemover.removeTreeNodeMembers();
 
 		InOrder inOrder = inOrder(fragmentRepository, memberRepository, treeMemberRemover);
 		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(VIEW_NAME.asString());
