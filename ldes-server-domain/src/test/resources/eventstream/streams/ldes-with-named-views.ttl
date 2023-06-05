@@ -21,8 +21,8 @@ server:collectionName1 a ldes:EventStream ;
    example:memberType mobiliteit:Mobiliteitshinder ;
    example:hasDefaultView "false"^^xsd:boolean ;
    tree:shape col:shape ;
-   ldes:view col:view1 ;
-   ldes:view col:view2 .
+   tree:view col:view1 ;
+   tree:view col:view2 .
 
 col:shape a sh:NodeShape ;
    sh:nodeShape [

@@ -36,7 +36,7 @@ public class RdfConstants {
 
 	public static final String GENERIC_TREE_RELATION = TREE + "Relation";
 
-	public static final String VIEW = LDES + "view";
+	public static final String VIEW = TREE + "view";
 	public static final String VIEW_TYPE = LDES + "View";
 	public static final String SHAPE = TREE + "shape";
 	public static final String NODE_SHAPE_TYPE = SHACL + "NodeShape";
