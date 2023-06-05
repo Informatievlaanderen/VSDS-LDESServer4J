@@ -43,9 +43,11 @@ view2:description  rdf:type  tree:ViewDescription ;
                   <http://example.org/property>  "ldes:propertyPath"
                 ] .
 
-name2:view1  tree:viewDescription  view1:description .
+name2:view1 a tree:Node ;
+  tree:viewDescription  view1:description .
 
-name1:view2  tree:viewDescription  view2:description .
+name1:view2 a tree:Node ;
+  tree:viewDescription  view2:description .
 
 server:shape  rdf:type  sh:NodeShape ;
         sh:deactivated  true ;
@@ -63,4 +65,5 @@ server:name1  rdf:type      ldes:EventStream ;
         tree:view           name1:view2 , name1:view3 ;
         tree:shape          server:shape .
 
-name1:view3  tree:viewDescription  view3:description .
+name1:view3 a tree:Node ;
+  tree:viewDescription  view3:description .

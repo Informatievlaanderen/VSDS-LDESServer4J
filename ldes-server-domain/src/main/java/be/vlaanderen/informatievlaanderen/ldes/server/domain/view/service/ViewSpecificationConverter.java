@@ -1,7 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Component;
@@ -16,6 +19,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION_RESOURCE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.VIEW_DESCRIPTION_SUFFIX;
@@ -51,11 +55,13 @@ public class ViewSpecificationConverter {
 	public Model modelFromView(ViewSpecification view) {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
+		Resource viewResource = getIRIFromViewName(viewName);
 		Statement viewDescription = createStatement(
-				getIRIFromViewName(viewName),
+				viewResource,
 				createProperty(TREE_VIEW_DESCRIPTION),
 				getIRIDescription(viewName));
 		model.add(viewDescription);
+		model.add(createStatement(viewResource, RDF.type, createResource(TREE_NODE_RESOURCE)));
 
 		addRetentionPoliciesToModel(view.getRetentionConfigs(), model, viewDescription);
 		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
