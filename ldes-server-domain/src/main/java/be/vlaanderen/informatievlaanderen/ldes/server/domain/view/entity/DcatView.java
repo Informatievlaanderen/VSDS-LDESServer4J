@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatView {
 
@@ -38,19 +40,17 @@ public class DcatView {
 	}
 
 	public List<Statement> getStatementsWithBase(String hostName) {
-		Resource dataServiceId = getDcat().listSubjectsWithProperty(RDF.type, DCAT_DATA_SERVICE).next().asResource();
 		Resource viewDescriptionResource = getViewDescriptionResource(hostName);
 
-		List<Statement> statements = getDcat().listStatements()
-				.mapWith(stmnt -> stmnt.getSubject().equals(dataServiceId)
-						? createStatement(viewDescriptionResource, stmnt.getPredicate(), stmnt.getObject())
-						: stmnt)
-				.toList();
+		final Model dcatWithIdentity = ModelFactory.createDefaultModel();
+		dcatWithIdentity.add(getDcat());
+		dcatWithIdentity.listStatements(null, RDF.type, DCAT_DATA_SERVICE).nextOptional()
+				.ifPresent(statement -> renameResource(statement.getSubject(), viewDescriptionResource.getURI()));
 
-		statements.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
-		statements.add(createServesDatasetStatement(viewDescriptionResource, hostName));
+		dcatWithIdentity.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
+		dcatWithIdentity.add(createServesDatasetStatement(viewDescriptionResource, hostName));
 
-		return statements;
+		return dcatWithIdentity.listStatements().toList();
 	}
 
 	private Statement createEndpointUrlStatement(Resource dataServiceId, String hostName) {
