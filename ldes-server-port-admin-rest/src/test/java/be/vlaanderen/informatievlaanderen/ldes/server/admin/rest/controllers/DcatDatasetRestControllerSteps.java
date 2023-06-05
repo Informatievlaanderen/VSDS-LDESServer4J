@@ -37,7 +37,7 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
 
 	@Given("I have a invalid dcat dataset")
 	public void iHaveAnInvalidDcatDataset() throws Exception {
-		datasetString = readDataFromFile(".ttl");
+		datasetString = readDataFromFile("not-valid.ttl");
 	}
 
 	@When("I POST this dataset")
@@ -81,6 +81,11 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
 	@Then("The dataset will be deleted")
 	public void theDataserviceMetadataWillBeDeleted() {
 		verify(dcatDatasetRepository, times(1)).deleteDataset(COLLECTION_NAME);
+	}
+
+	@Then("The dataset will not be deleted")
+	public void theDataserviceMetadataWillNotBeDeleted() {
+		verify(dcatDatasetRepository, never()).deleteDataset(COLLECTION_NAME);
 	}
 
 	@And("Response with http {int} will be returned for dataset")
