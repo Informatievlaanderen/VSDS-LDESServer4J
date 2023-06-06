@@ -28,11 +28,12 @@ Feature: DcatDataset
 
   Scenario Outline: Delete DCAT dataset
     Given I have a <isValid> dcat dataset
+    And The dataset <isExisting>
     When I DELETE this dataset
-    Then The dataset will be deleted
+    Then The dataset <isDeleted> be deleted
     And Response with http 200 will be returned for dataset
 
     Examples:
-      | isValid |
-      | valid   |
-      | invalid |
+      | isValid | isExisting         | isDeleted |
+      | valid   | already exists     |will       |
+      | valid   | does not yet exist |will not   |
