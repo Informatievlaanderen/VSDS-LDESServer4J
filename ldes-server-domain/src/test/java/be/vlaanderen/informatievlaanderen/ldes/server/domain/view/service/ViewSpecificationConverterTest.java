@@ -76,7 +76,6 @@ class ViewSpecificationConverterTest {
 		System.out.println(RdfModelConverter.toString(viewModel, Lang.TURTLE));
 		System.out.println(RdfModelConverter.toString(actualModel, Lang.TURTLE));
 
-
 		assertTrue(viewModel.isIsomorphicWith(actualModel));
 	}
 
@@ -85,7 +84,8 @@ class ViewSpecificationConverterTest {
 		Model expectedModel = readModelFromFile("viewconverter/view_multiple_fragmentations.ttl");
 		ViewSpecification expectedViewSpecification = getExpectedViewSpecification();
 
-		ViewSpecification actualViewSpecification = viewSpecificationConverter.viewFromModel(expectedModel, "mobility-hindrances");
+		ViewSpecification actualViewSpecification = viewSpecificationConverter.viewFromModel(expectedModel,
+				"mobility-hindrances");
 		Model actualModel = viewSpecificationConverter.modelFromView(actualViewSpecification);
 
 		System.out.println(RdfModelConverter.toString(expectedModel, Lang.TURTLE));
