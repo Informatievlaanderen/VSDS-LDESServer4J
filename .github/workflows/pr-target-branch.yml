@@ -13,7 +13,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           target: main
-          exclude: "develop /hotfix\/+/" # Don't prevent develop and hotfixes from going to main
+          exclude: develop # Don't prevent develop from going to main
           change-to: develop
           comment: |
             Your PR was set to target `main`, PRs should be target `develop`
