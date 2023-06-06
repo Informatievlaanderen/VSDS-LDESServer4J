@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -56,7 +56,7 @@ class TreeNodeConverterImplTest {
 		dcatViewService = mock(DcatViewService.class);
 		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, dcatViewService);
 		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleEventStreamInitEvent(new EventStreamChangedEvent(eventStream));
+				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleShaclInitEvent(new ShaclChangedEvent(new ShaclShape(COLLECTION_NAME, shacl)));
 	}

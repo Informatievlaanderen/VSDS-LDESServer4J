@@ -2,6 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueo
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 
-public record EventStreamChangedEvent(EventStream eventStream) {
+public record EventStreamCreatedEvent(EventStream eventStream) {
 
 }

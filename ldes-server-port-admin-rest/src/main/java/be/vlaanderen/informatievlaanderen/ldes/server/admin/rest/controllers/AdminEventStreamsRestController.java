@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import org.apache.jena.rdf.model.Model;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -39,11 +40,12 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 		return eventStreamService.retrieveAllEventStreams();
 	}
 
+	@ResponseStatus(value = HttpStatus.CREATED)
 	@Override
-	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
-	public EventStreamResponse putEventStream(@RequestBody @Validated Model eventStreamModel) {
+	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
+	public EventStreamResponse createEventStream(@RequestBody @Validated Model eventStreamModel) {
 		EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
-		return eventStreamService.saveEventStream(eventStreamResponse);
+		return eventStreamService.createEventStream(eventStreamResponse);
 	}
 
 	@Override
