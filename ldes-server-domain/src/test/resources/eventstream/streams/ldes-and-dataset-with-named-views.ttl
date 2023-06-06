@@ -47,17 +47,17 @@ col:view2 a tree:Node ;
 
 view1:description  a  tree:ViewDescription ;
         example:fragmentationStrategy
-                [ a                 example:Fragmentation ;
+                ([ a                 example:Fragmentation ;
                   example:name      "fragmentationStrategy" ;
                   example:property  "ldes:propertyPath"
-                ] .
+                ]) .
 
 view2:description  a  tree:ViewDescription ;
         example:fragmentationStrategy
-                [ a                 example:Fragmentation ;
+                ([ a                 example:Fragmentation ;
                   example:name      "fragmentationStrategy" ;
                   example:property  "ldes:propertyPath"
-                ] .
+                ]) .
 
 <http://sample.org/company/MyDataOwner> a legal:LegalEntity ;
   foaf:name "Data Company" ;
