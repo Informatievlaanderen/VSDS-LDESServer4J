@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
@@ -36,7 +36,7 @@ class ViewServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		viewService.handleEventStreamInitEvent(
-				new EventStreamChangedEvent(new EventStream(COLLECTION, null, null, null, false)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, null, false)));
 	}
 
 	@Nested

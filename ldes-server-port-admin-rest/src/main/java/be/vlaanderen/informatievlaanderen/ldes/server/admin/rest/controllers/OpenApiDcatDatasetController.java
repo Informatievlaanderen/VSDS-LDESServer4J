@@ -12,7 +12,6 @@ import org.apache.jena.rdf.model.Model;
 
 import static org.apache.jena.riot.WebContent.*;
 
-@Tag(name = "Event Streams")
 @Tag(name = "DCAT")
 public interface OpenApiDcatDatasetController {
 

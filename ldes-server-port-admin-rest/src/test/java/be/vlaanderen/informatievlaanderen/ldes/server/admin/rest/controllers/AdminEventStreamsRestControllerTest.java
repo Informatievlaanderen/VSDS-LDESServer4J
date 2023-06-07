@@ -143,7 +143,7 @@ class AdminEventStreamsRestControllerTest {
 	}
 
 	@Nested
-	class PutEventStream {
+	class CreateEventStream {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
 			final Model expectedModel = readModelFromFile("ldes-1.ttl");
@@ -156,21 +156,21 @@ class AdminEventStreamsRestControllerTest {
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					true, List.of(), shape);
 
-			when(eventStreamService.saveEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
+			when(eventStreamService.createEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 
-			mockMvc.perform(put("/admin/api/v1/eventstreams")
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
 					.accept(contentTypeTurtle)
 					.content(readDataFromFile("ldes-1.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
-					.andExpect(status().isOk())
+					.andExpect(status().isCreated())
 					.andExpect(IsIsomorphic.with(expectedModel));
 
-			verify(eventStreamService).saveEventStream(any(EventStreamResponse.class));
+			verify(eventStreamService).createEventStream(any(EventStreamResponse.class));
 		}
 
 		@Test
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
-			mockMvc.perform(put("/admin/api/v1/eventstreams")
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
 					.content(readDataFromFile("ldes-without-type.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
@@ -180,7 +180,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
-			mockMvc.perform(put("/admin/api/v1/eventstreams")
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
 					.content(readDataFromFile("malformed-ldes.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());

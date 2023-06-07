@@ -105,8 +105,8 @@ public interface OpenApiEventStreamsController {
 	})
 	List<EventStreamResponse> getEventStreams();
 
-	@Operation(summary = "Create or update an Event Stream based on the provided config")
-	@ApiResponse(responseCode = "200", content = {
+	@Operation(summary = "Create an Event Stream based on the provided config")
+	@ApiResponse(responseCode = "201", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ldes: <https://w3id.org/ldes#> .
 					@prefix custom: <http://example.org/> .
@@ -150,7 +150,7 @@ public interface OpenApiEventStreamsController {
 												"""))
 	})
 	@ApiResponse(responseCode = "400", description = "The provided config is not valid")
-	EventStreamResponse putEventStream(
+	EventStreamResponse createEventStream(
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							@prefix ldes: <https://w3id.org/ldes#> .
