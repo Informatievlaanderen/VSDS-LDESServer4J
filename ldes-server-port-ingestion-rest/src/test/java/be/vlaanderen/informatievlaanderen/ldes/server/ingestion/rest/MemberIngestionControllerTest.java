@@ -47,7 +47,6 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -87,7 +86,7 @@ class MemberIngestionControllerTest {
 				.thenReturn(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngestService, times(1)).addMember(any(Member.class));
 	}
 
@@ -111,7 +110,7 @@ class MemberIngestionControllerTest {
 				.thenReturn(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngestService, times(1)).addMember(any(Member.class));
 	}
 
@@ -155,7 +154,6 @@ class MemberIngestionControllerTest {
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isOk());
 
 		verify(memberIngestService).addMember(any(Member.class));
@@ -171,7 +169,6 @@ class MemberIngestionControllerTest {
 		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isBadRequest());
 
 		verifyNoInteractions(memberIngestService);

@@ -9,9 +9,9 @@ server:viewName tree:viewDescription [
         example:name "retention" ;
         example:duration "10" ;
     ] ;
-    example:fragmentationStrategy [
+    example:fragmentationStrategy ([
         a example:Fragmentation ;
         example:pageSize "100" ;
         example:property "example/property" ;
-    ] ;
+    ]) ;
 ] .

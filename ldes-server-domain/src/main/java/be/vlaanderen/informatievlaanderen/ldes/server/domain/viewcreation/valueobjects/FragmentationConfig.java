@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class FragmentationConfig {
 
@@ -27,4 +28,17 @@ public class FragmentationConfig {
 		return new ConfigProperties(config);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof FragmentationConfig that))
+			return false;
+		return Objects.equals(name, that.name) && Objects.equals(config, that.config);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, config);
+	}
 }

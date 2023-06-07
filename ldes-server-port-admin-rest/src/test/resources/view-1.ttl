@@ -10,7 +10,12 @@ viewName:description
         a ldes:retentionPolicy ;
         example:name "timebased";
         example:duration "10" ;
-    ] .
+    ] ;
+    example:fragmentationStrategy ([
+      a                 example:Fragmentation ;
+      example:name      "fragmentationStrategy" ;
+      example:property  "ldes:propertyPath"
+    ]) .
 
 server:view1 a tree:Node ;
         <https://w3id.org/tree#viewDescription> <http://localhost:8080/name1/view1/description> .
