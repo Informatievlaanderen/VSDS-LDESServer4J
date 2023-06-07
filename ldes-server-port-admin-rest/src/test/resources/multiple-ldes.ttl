@@ -14,17 +14,17 @@
 
 view3:description  rdf:type  tree:ViewDescription ;
         <http://example.org/fragmentationStrategy>
-                [ rdf:type                       <http://example.org/Fragmentation> ;
+                ([ rdf:type                       <http://example.org/Fragmentation> ;
                   <http://example.org/name>      "fragmentationStrategy" ;
                   <http://example.org/property>  "ldes:propertyPath"
-                ] .
+                ]) .
 
 view1:description  rdf:type  tree:ViewDescription ;
         <http://example.org/fragmentationStrategy>
-                [ rdf:type                       <http://example.org/Fragmentation> ;
+                ([ rdf:type                       <http://example.org/Fragmentation> ;
                   <http://example.org/name>      "fragmentationStrategy" ;
                   <http://example.org/property>  "ldes:propertyPath"
-                ] .
+                ]) .
 
 server:name2  rdf:type      ldes:EventStream ;
         <http://example.org/hasDefaultView>
@@ -38,10 +38,10 @@ server:name2  rdf:type      ldes:EventStream ;
 
 view2:description  rdf:type  tree:ViewDescription ;
         <http://example.org/fragmentationStrategy>
-                [ rdf:type                       <http://example.org/Fragmentation> ;
+                ([ rdf:type                       <http://example.org/Fragmentation> ;
                   <http://example.org/name>      "fragmentationStrategy" ;
                   <http://example.org/property>  "ldes:propertyPath"
-                ] .
+                ]) .
 
 name2:view1 a tree:Node ;
   tree:viewDescription  view1:description .

@@ -1,9 +1,11 @@
 @prefix example: <http://example.org/> .
 @prefix server: <http://localhost:8080/mobility-hindrances/> .
 @prefix tree: <https://w3id.org/tree#> .
-@prefix viewName: <http://localhost:8080/mobility-hindrances/viewName/> .
+@prefix viewName: <http://localhost:8080/mobility-hindrances/geospatial/> .
 
-server:geospatial tree:viewDescription viewName:description .
+server:geospatial
+        a tree:Node ;
+        tree:viewDescription viewName:description .
 
 viewName:description
         a       tree:ViewDescription ;
@@ -17,5 +19,5 @@ viewName:description
             a example:Fragmentation ;
             example:name "pagination" ;
             example:memberLimit "100"
-        ])
+        ]) .
 
