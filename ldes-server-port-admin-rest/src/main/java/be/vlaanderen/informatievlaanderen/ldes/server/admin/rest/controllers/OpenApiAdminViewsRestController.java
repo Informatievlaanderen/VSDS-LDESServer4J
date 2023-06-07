@@ -24,7 +24,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeTurtle),
 			@Content(mediaType = contentTypeJSONLD),
 			@Content(mediaType = contentTypeNQuads) })
-	@ApiResponse(responseCode = "404", description = "Missing EventStream")
+	@ApiResponse(responseCode = "404", description = "Missing EventStream", content = @Content)
 	List<ViewSpecification> getViews(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName);
 
@@ -33,7 +33,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeTurtle),
 			@Content(mediaType = contentTypeJSONLD),
 			@Content(mediaType = contentTypeNQuads) })
-	@ApiResponse(responseCode = "404", description = "Missing EventStream or Missing View")
+	@ApiResponse(responseCode = "404", description = "Missing EventStream or Missing View", content = @Content)
 	ViewSpecification getViewOfCollection(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
 			@Parameter(description = "The name of requested view", example = "time-based-retention") String viewName);
