@@ -15,11 +15,11 @@ server:viewName a tree:Node ;
 viewName:description
         a       dcat:DataService , tree:ViewDescription ;
         example:fragmentationStrategy
-                [ a  example:Fragmentation ;
+                ([ a  example:Fragmentation ;
                   example:name      "fragmentation" ;
                   example:pageSize  "100" ;
                   example:property  "example/property"
-                ] ;
+                ]) ;
         dc:description "Geospatial fragmentation for my LDES"@en ;
         dc:title "My geo-spatial view"@en ;
         dc:license
