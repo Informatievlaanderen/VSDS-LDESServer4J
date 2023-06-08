@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service.LdesMemberEntityConverter;
-import com.mongodb.MongoException;
-import com.mongodb.client.result.DeleteResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -18,8 +16,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import static com.mongodb.client.model.Filters.lt;
 
 public class MemberMongoRepository implements MemberRepository {
 
@@ -63,12 +59,8 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	public void deleteMembersByCollection(String collection) {
-		try {
-			Long deleteCount = repository.deleteAllByCollectionName(collection);
-			log.info("Deleted member count: " + deleteCount);
-		} catch (MongoException ex) {
-			log.error("Unable to delete due to an error: " + ex);
-		}
+		Long deleteCount = repository.deleteAllByCollectionName(collection);
+		log.info("Deleted member count: {}", deleteCount);
 	}
 
 	@Override

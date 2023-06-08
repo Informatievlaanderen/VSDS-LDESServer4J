@@ -94,6 +94,15 @@ class TreeNodeRemoverImplTest {
 		inOrder.verifyNoMoreInteractions();
 	}
 
+	@Test
+	void should_DeleteTreeNodesByCollection_when_DeleteTreeNodesByCollectionIsCalled() {
+		String collectionName = "collectionName";
+
+		treeNodeRemover.deleteTreeNodesByCollection(collectionName);
+
+		verify(fragmentRepository).deleteTreeNodesByCollection(collectionName);
+	}
+
 	private Stream<LdesFragment> ldesFragmentStream() {
 		LdesFragment firstLdesFragment = getLdesFragment("1");
 		LdesFragment secondLdesFragment = getLdesFragment("2");

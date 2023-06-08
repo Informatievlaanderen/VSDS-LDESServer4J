@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
@@ -124,6 +125,15 @@ class ShaclShapeServiceImplTest {
 			inOrder.verify(eventPublisher, times(2)).publishEvent((ShaclChangedEvent) any());
 			inOrder.verifyNoMoreInteractions();
 		}
+	}
+
+	@Test
+	void should_DeleteShaclShape_when_EventStreamDeletedEventIsReceived() {
+		String collectionName = "collectionName";
+
+		service.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+
+		verify(shaclShapeRepository).deleteShaclShape(collectionName);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
