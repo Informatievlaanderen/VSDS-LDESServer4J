@@ -54,6 +54,11 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 		ldesFragmentRepository.removeLdesFragmentsOfView(viewName.asString());
 	}
 
+	@Override
+	public void deleteTreeNodesByCollection(String collectionName) {
+		ldesFragmentRepository.deleteTreeNodesByCollection(collectionName);
+	}
+
 	private boolean viewHasRetentionPolicies(Map.Entry<ViewName, List<RetentionPolicy>> entry) {
 		return !entry.getValue().isEmpty();
 	}

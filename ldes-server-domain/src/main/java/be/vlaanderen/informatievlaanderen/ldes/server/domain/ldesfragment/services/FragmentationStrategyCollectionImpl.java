@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
@@ -58,4 +59,10 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		treeNodeRemover.removeLdesFragmentsOfView(event.getViewName());
 		fragmentationStrategyMap.remove(event.getViewName());
 	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		treeNodeRemover.deleteTreeNodesByCollection(event.collectionName());
+	}
+
 }

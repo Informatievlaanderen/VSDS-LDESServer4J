@@ -24,4 +24,6 @@ public interface LdesFragmentRepository {
 	Stream<LdesFragment> retrieveFragmentsOfView(String defaultViewName);
 
 	void removeLdesFragmentsOfView(String viewName);
+
+	void deleteTreeNodesByCollection(String collectionName);
 }

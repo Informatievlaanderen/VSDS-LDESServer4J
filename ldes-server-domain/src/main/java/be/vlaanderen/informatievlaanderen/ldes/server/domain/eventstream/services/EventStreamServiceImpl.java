@@ -81,11 +81,6 @@ public class EventStreamServiceImpl implements EventStreamService {
 		}
 
 		eventStreamRepository.deleteEventStream(collectionName);
-		viewService.getViewsByCollectionName(collectionName).stream()
-				.map(ViewSpecification::getName)
-				.forEach(viewService::deleteViewByViewName);
-		shaclShapeService.deleteShaclShape(collectionName);
-		dcatDatasetService.deleteDataset(collectionName);
 		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 

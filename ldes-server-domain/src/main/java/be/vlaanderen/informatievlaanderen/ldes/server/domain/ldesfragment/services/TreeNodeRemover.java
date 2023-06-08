@@ -6,4 +6,6 @@ public interface TreeNodeRemover {
 	void removeTreeNodeMembers();
 
 	void removeLdesFragmentsOfView(ViewName viewName);
+
+	void deleteTreeNodesByCollection(String collectionName);
 }

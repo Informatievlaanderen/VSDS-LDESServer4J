@@ -19,3 +19,21 @@ Feature: LdesFragmentRepository
     When I delete the ldesFragments of viewName "mobility-hindrance/by-name-and-page"
     Then the repository contains 0 ldesFragments with viewname "mobility-hindrance/by-name-and-page"
 
+  Scenario: Deleting a collection
+    Given The following ldesFragments
+      | viewName                             | fragmentPairs         | immutable | softdeleted | numberOfMembers |
+      | mobility-hindrances/by-name-and-page | [blank]               | false     | false       | 23              |
+      | mobility-hindrances/by-name-and-page | substring,gent,page,1 | false     | false       | 23              |
+      | mobility-hindrances/by-name-and-page | substring,gent,page,2 | false     | false       | 23              |
+      | parcels/by-page                      | page,1                | false     | false       | 23              |
+      | parcels/by-page                      | page,2                | false     | false       | 21              |
+    And I save the ldesFragments using the LdesFragmentRepository
+    Then the repository contains 3 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
+    And the repository contains 2 ldesFragments with viewname "parcels/by-page"
+    When I delete the collection "mobility-hindrances"
+    Then the repository contains 0 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
+    And the repository contains 2 ldesFragments with viewname "parcels/by-page"
+    When I delete the collection "parcels"
+    Then the repository contains 0 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
+    Then the repository contains 0 ldesFragments with viewname "parcels/by-page"
+

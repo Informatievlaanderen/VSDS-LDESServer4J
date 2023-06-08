@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatDatasetValidator;
@@ -20,7 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,7 +31,7 @@ class DcatDatasetServiceImplTest {
 	private static final String MODEL_FILE_PATH = "dcat-dataset/valid.ttl";
 	private DcatDataset dataset;
 
-	private DcatDatasetService datasetService;
+	private DcatDatasetServiceImpl datasetService;
 	@Mock
 	private DcatDatasetRepository repository;
 	@Mock
@@ -117,6 +119,16 @@ class DcatDatasetServiceImplTest {
 		List<DcatDataset> result = repository.findAll();
 
 		assertEquals(datasets, result);
+	}
+
+	@Test
+	void should_DeleteDataset_when_EventStreamDeletedEventIsReceived() {
+		String collectionName = "collectionName";
+		when(repository.retrieveDataset(collectionName)).thenReturn(Optional.of(new DcatDataset(collectionName)));
+
+		datasetService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+
+		verify(repository).deleteDataset(collectionName);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
