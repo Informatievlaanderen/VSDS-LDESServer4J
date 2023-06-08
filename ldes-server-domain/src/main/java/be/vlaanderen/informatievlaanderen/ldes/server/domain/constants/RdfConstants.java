@@ -45,6 +45,6 @@ public class RdfConstants {
 
 	public static final String CUSTOM = "http://example.org/";
 	public static final String FRAGMENTATION_TYPE = CUSTOM + "Fragmentation";
-	public static final String FRAGMENTATION_OBJECT = CUSTOM + "fragmentationStrategy";
+	public static final String FRAGMENTATION_OBJECT = TREE + "fragmentationStrategy";
 
 }
