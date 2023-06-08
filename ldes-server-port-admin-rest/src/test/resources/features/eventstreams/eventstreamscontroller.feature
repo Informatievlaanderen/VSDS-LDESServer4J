@@ -19,13 +19,13 @@ Feature: event streams can be configured at runtime
 
   Scenario: put a valid event stream
     Given a db which does not contain specified event stream
-    When the client puts a valid model
-    Then the client receives HTTP status 200
+    When the client posts a valid model
+    Then the client receives HTTP status 201
     And I verify the event stream in the response body
 
 
   Scenario Outline: put a invalid event stream
-    When the client puts invalid model from file <fileName>
+    When the client posts invalid model from file <fileName>
     Then the client receives HTTP status 400
     And I verify the absent of interactions
     Examples:
