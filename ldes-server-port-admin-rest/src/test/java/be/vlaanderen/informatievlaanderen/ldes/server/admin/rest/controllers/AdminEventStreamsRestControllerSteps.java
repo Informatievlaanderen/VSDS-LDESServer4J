@@ -36,9 +36,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest {
@@ -146,9 +144,9 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
-	@When("the client puts a valid model")
-	public void theClientPutsAValidModel() throws Exception {
-		resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
+	@When("the client posts a valid model")
+	public void theClientPostsAValidModel() throws Exception {
+		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.accept(Lang.TURTLE.getHeaderString())
 				.contentType(Lang.TURTLE.getHeaderString())
 				.content(readDataFromFile("ldes-1.ttl")));
@@ -163,9 +161,9 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		verify(shaclShapeRepository).saveShaclShape(any());
 	}
 
-	@When("^the client puts invalid model from file (.*)$")
-	public void theClientPutsInvalidModelFromFileFileName(String fileName) throws Exception {
-		resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
+	@When("^the client posts invalid model from file (.*)$")
+	public void theClientPostsInvalidModelFromFileFileName(String fileName) throws Exception {
+		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.accept(Lang.TURTLE.getHeaderString())
 				.contentType(Lang.TURTLE.getHeaderString())
 				.content(readDataFromFile(fileName)));
