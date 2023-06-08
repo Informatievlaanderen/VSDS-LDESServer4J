@@ -60,7 +60,7 @@ public class MemberMongoRepository implements MemberRepository {
 	@Override
 	public void deleteMembersByCollection(String collection) {
 		Long deleteCount = repository.deleteAllByCollectionName(collection);
-		log.info("Deleted member count: {}", deleteCount);
+		log.info("Deleted {} members", deleteCount);
 	}
 
 	@Override

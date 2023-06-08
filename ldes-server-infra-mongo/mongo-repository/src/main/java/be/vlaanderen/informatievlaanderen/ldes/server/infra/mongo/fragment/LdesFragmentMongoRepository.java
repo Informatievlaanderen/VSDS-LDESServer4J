@@ -94,7 +94,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	@Override
 	public void deleteTreeNodesByCollection(String collectionName) {
 		Long deleteCount = repository.deleteAllByCollectionName(collectionName);
-		log.info("Deleted treeNode count: {}", deleteCount);
+		log.info("Deleted {} treeNodes", deleteCount);
 	}
 
 }
