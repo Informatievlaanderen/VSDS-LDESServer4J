@@ -28,9 +28,12 @@ Feature: LdesFragmentRepository
       | parcels/by-page                      | page,1                | false     | false       | 23              |
       | parcels/by-page                      | page,2                | false     | false       | 21              |
     And I save the ldesFragments using the LdesFragmentRepository
+    Then the repository contains 3 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
+    And the repository contains 2 ldesFragments with viewname "parcels/by-page"
     When I delete the collection "mobility-hindrances"
     Then the repository contains 0 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
     And the repository contains 2 ldesFragments with viewname "parcels/by-page"
     When I delete the collection "parcels"
+    Then the repository contains 0 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
     Then the repository contains 0 ldesFragments with viewname "parcels/by-page"
 
