@@ -1,0 +1,29 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix tree: <https://w3id.org/tree#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+[] a sh:NodeShape;
+    sh:targetClass tree:ViewDescription ;
+    sh:property [
+        sh:path tree:fragmentationStrategy ;
+        sh:targetClass tree:ViewDescription ;
+        sh:node [
+            sh:targetNode tree:GeospatialFragmentation, tree:SubstringFragmentation, tree:TimebasedFragmentation, tree:PaginationFragmentation ;
+            sh:property [
+                sh:path tree:maxZoom ;
+                sh:datatype xsd:integer ;
+                sh:minInclusive 1 ;
+                sh:maxInclusive 20 ;
+            ] ;
+            sh:property [
+                sh:path tree:fragmentationPath ;
+            ] ;
+            sh:property [
+                sh:path tree:memberLimit ;
+                sh:datatype xsd:integer ;
+                sh:minInclusive 1 ;
+            ] ;
+        ] ;
+
+
+    ] .
