@@ -5,6 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service.LdesMemberEntityConverter;
+import com.mongodb.MongoException;
+import com.mongodb.client.result.DeleteResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,7 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.mongodb.client.model.Filters.lt;
+
 public class MemberMongoRepository implements MemberRepository {
+
+	private static final Logger log = LoggerFactory.getLogger(MemberMongoRepository.class);
 
 	public static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	public static final String COLLECTION_NAME = "collectionName";
@@ -55,7 +63,12 @@ public class MemberMongoRepository implements MemberRepository {
 
 	@Override
 	public void deleteMembersByCollection(String collection) {
-		repository.deleteAllByCollectionName(collection);
+		try {
+			Long deleteCount = repository.deleteAllByCollectionName(collection);
+			log.info("Deleted member count: " + deleteCount);
+		} catch (MongoException ex) {
+			log.error("Unable to delete due to an error: " + ex);
+		}
 	}
 
 	@Override

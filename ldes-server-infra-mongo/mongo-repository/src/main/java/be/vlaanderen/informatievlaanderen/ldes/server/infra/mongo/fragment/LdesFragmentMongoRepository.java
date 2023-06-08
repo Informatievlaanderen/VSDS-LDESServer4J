@@ -5,6 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
+import com.mongodb.MongoException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,6 +20,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
+
+	private static final Logger log = LoggerFactory.getLogger(LdesFragmentMongoRepository.class);
 
 	private final LdesFragmentEntityRepository repository;
 	private final MongoTemplate mongoTemplate;
@@ -85,6 +91,16 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	@Override
 	public void removeLdesFragmentsOfView(String viewName) {
 		repository.removeByViewName(viewName);
+	}
+
+	@Override
+	public void deleteTreeNodesByCollection(String collectionName) {
+		try {
+			Long deleteCount = repository.deleteAllByCollectionName(collectionName);
+			log.info("Deleted treeNode count: " + deleteCount);
+		} catch (MongoException ex) {
+			log.error("Unable to delete due to an error: " + ex);
+		}
 	}
 
 }
