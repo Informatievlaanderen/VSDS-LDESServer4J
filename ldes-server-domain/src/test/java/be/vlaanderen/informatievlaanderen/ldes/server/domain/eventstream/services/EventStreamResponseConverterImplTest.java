@@ -14,6 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -115,6 +117,23 @@ class EventStreamResponseConverterImplTest {
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					true, List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
+			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
+		}
+
+		@Test
+		void when_eventStreamResponseHasTimestampAndVersionOf_then_convertToModel() {
+			EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
+					null, null,
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(),
+					shacl);
+
+			eventStreamModel.remove(eventStreamModel.listStatements(null,
+					createProperty("https://w3id.org/ldes#versionOfPath"), (RDFNode) null));
+			eventStreamModel.remove(eventStreamModel.listStatements(null,
+					createProperty("https://w3id.org/ldes#timestampPath"), (RDFNode) null));
+
+			final Model convertedModel = eventStreamConverter.toModel(eventStream);
+
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
 	}
