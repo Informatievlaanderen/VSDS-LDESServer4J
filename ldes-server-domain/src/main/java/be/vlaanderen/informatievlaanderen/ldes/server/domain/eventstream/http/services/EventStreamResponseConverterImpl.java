@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -54,10 +55,6 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection());
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
 				createResource(EVENT_STREAM_TYPE));
-		final Statement timestampPathStmt = createStatement(subject, LDES_TIMESTAMP_PATH,
-				createProperty(eventStreamResponse.getTimestampPath()));
-		final Statement versionOfStmt = createStatement(subject, LDES_VERSION_OF,
-				createProperty(eventStreamResponse.getVersionOfPath()));
 		final Statement memberType = createStatement(subject, MEMBER_TYPE,
 				createProperty(eventStreamResponse.getMemberType()));
 		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
@@ -65,7 +62,9 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
-				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, hasDefaultStmt))
+				.add(List.of(collectionNameStmt, memberType, hasDefaultStmt))
+				.add(getVersionOfStatements(subject, eventStreamResponse))
+				.add(getTimestampPathStatements(subject, eventStreamResponse))
 				.add(eventStreamResponse.getShacl())
 				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
 				.add(getViewStatements(eventStreamResponse.getViews()))
@@ -74,6 +73,24 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		getShaclReferenceStatement(eventStreamResponse.getShacl(), subject).ifPresent(eventStreamModel::add);
 
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
+	}
+
+	private List<Statement> getTimestampPathStatements(Resource subject, EventStreamResponse eventStreamResponse) {
+		if (isNotBlank(eventStreamResponse.getVersionOfPath())) {
+			return List.of(createStatement(subject, LDES_TIMESTAMP_PATH,
+					createProperty(eventStreamResponse.getTimestampPath())));
+		} else {
+			return List.of();
+		}
+	}
+
+	private List<Statement> getVersionOfStatements(Resource subject, EventStreamResponse eventStreamResponse) {
+		if (isNotBlank(eventStreamResponse.getVersionOfPath())) {
+			return List.of(createStatement(subject, LDES_VERSION_OF,
+					createProperty(eventStreamResponse.getVersionOfPath())));
+		} else {
+			return List.of();
+		}
 	}
 
 	private boolean getHasDefaultViewResource(Model model) {
