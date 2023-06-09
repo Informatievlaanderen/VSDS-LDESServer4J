@@ -8,7 +8,7 @@ public class SubstringConfig {
 	private String fragmenterProperty;
 	private Integer memberLimit;
 
-	public String getFragmenterProperty() {
+	public String getFragmenterPath() {
 		return fragmenterProperty;
 	}
 
@@ -20,7 +20,7 @@ public class SubstringConfig {
 		this.fragmenterSubjectFilter = fragmenterSubjectFilter;
 	}
 
-	public void setFragmenterProperty(String fragmenterProperty) {
+	public void setFragmenterPath(String fragmenterProperty) {
 		this.fragmenterProperty = fragmenterProperty;
 	}
 

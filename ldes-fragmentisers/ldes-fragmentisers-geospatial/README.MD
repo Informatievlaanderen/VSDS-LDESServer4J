@@ -9,11 +9,9 @@ This allows you to fragment the data on geolocations.
   @prefix example: <http://example.org/> .
   
   example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "geospatial";
-        example:maxZoomLevel { Mandatory: Required zoom level } ;
-        example:fragmenterProperty { Mandatory: defines which property will be used for bucketizing } ;
-        example:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmenterProperty } ;
+        a example:GeospatialFragmentation ;
+        tree:maxZoom { Mandatory: Required zoom level } ;
+        tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ;
     ] .
   ```
 
@@ -41,10 +39,9 @@ Example properties:
   @prefix example: <http://example.org/> .
   
   example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "geospatial";
-        example:maxZoomLevel "15" ;
-        example:fragmenterProperty "http://www.opengis.net/ont/geosparql#asWKT" ;
+        a example:GeospatialFragmentation ;
+        tree:maxZoom "15" ;
+        tree:fragmentationPath "http://www.opengis.net/ont/geosparql#asWKT" ;
     ] .
   ```
 

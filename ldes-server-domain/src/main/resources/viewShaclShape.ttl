@@ -1,29 +1,77 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
 @prefix tree: <https://w3id.org/tree#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 
-[] a sh:NodeShape;
-    sh:targetClass tree:ViewDescription ;
+tree:ViewDescription
+	sh:order 1;
+  	a sh:NodeShape ;
+	sh:property [
+      	sh:path tree:fragmentationStrategy ;
+		sh:name "List of fragmentations";
+        sh:description "Ordered list of fragmentations how a member for this view should be processed";
+    	sh:or (tree:GeospatialFragmentation tree:PaginationFragmentation tree:SubstringFragmentation tree:TimebasedFragmentation) ;
+        sh:minCount 1;
+    ].
+
+tree:GeospatialFragmentation
+	sh:order 2;
+    a sh:NodeShape;
+	sh:class tree:GeospatialFragmentation ;
+	sh:targetClass tree:GeospatialFragmentation ;
     sh:property [
-        sh:path tree:fragmentationStrategy ;
-        sh:targetClass tree:ViewDescription ;
-        sh:node [
-            sh:targetNode tree:GeospatialFragmentation, tree:SubstringFragmentation, tree:TimebasedFragmentation, tree:PaginationFragmentation ;
-            sh:property [
-                sh:path tree:maxZoom ;
-                sh:datatype xsd:integer ;
-                sh:minInclusive 1 ;
-                sh:maxInclusive 20 ;
-            ] ;
-            sh:property [
-                sh:path tree:fragmentationPath ;
-            ] ;
-            sh:property [
-                sh:path tree:memberLimit ;
-                sh:datatype xsd:integer ;
-                sh:minInclusive 1 ;
-            ] ;
-        ] ;
+      	sh:name "Max Zoom";
+      	sh:description "Maximal zoom level the fragmentation should go";
+        sh:path tree:maxZoom ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 21;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property tree:FragmentationPath  .
+
+tree:SubstringFragmentation
+	sh:order 2;
+    a sh:NodeShape ;
+	sh:class tree:SubstringFragmentation ;
+	sh:targetClass tree:SubstringFragmentation ;
+    sh:property tree:FragmentationPath, tree:MemberLimit .
+
+tree:TimebasedFragmentation
+	sh:order 2;
+    a sh:NodeShape ;
+	sh:class tree:TimebasedFragmentation ;
+	sh:targetClass tree:TimebasedFragmentation ;
+	sh:zeroOrOnePath true;
+    sh:property tree:FragmentationPath, tree:MemberLimit .
+
+tree:PaginationFragmentation
+	sh:order 3;
+    a sh:NodeShape ;
+	sh:class tree:PaginationFragmentation ;
+	sh:targetClass tree:PaginationFragmentation ;
+    sh:property tree:MemberLimit .
+
+tree:MemberLimit
+	a sh:PropertyShape;
+    sh:name "Member Limit";
+    sh:description "The amount of members allowed in one fragment";
+    sh:path tree:memberLimit ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:minCount 1 ;
+    sh:maxCount 1 .
+
+tree:FragmentationPath
+	a sh:PropertyShape;
+	sh:name "Fragmentation Path";
+    sh:description "Path the fragmentation should use to find the ";
+    sh:path tree:fragmentationPath ;
+    sh:nodeKind sh:IRI ;
+    sh:minCount 1 ;
+    sh:maxCount 1 .
 
 
-    ] .

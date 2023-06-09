@@ -38,7 +38,7 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 				.collect(Collectors.toMap(statement -> statement.getPredicate().getLocalName(),
 						statement -> {
 							if (statement.getObject().isLiteral()) {
-								return statement.getObject().asLiteral().toString();
+								return statement.getObject().asLiteral().getValue().toString();
 							}
 							else {
 								return statement.getObject().asNode().toString();

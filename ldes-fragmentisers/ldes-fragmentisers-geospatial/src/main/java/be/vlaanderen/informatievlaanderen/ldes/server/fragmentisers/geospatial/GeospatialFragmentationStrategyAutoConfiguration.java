@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class GeospatialFragmentationStrategyAutoConfiguration {
 
-	@Bean("geospatial")
+	@Bean("GeospatialFragmentation")
 	public GeospatialFragmentationStrategyWrapper geospatialFragmentationStrategyWrapper() {
 		return new GeospatialFragmentationStrategyWrapper();
 	}

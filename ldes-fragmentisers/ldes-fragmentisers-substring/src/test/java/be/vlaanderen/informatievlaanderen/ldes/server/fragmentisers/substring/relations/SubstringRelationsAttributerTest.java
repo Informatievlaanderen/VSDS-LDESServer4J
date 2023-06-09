@@ -15,10 +15,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.subst
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.TREE_SUBSTRING_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.*;
 
 class SubstringRelationsAttributerTest {
 	private SubstringRelationsAttributer substringRelationsAttributer;
@@ -34,7 +31,7 @@ class SubstringRelationsAttributerTest {
 
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		SubstringConfig substringConfig = new SubstringConfig();
-		substringConfig.setFragmenterProperty("somefilter");
+		substringConfig.setFragmenterPath("somefilter");
 		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository,
 				substringConfig);
 	}
