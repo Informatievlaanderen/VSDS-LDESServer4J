@@ -5,12 +5,16 @@ This allows you to fragment the data on geolocations.
 
 ## Properties
 
-  ```yaml
-  name: "geospatial"
-  config:
-    maxZoomLevel: { Mandatory: Required zoom level }
-    fragmenterProperty: { Mandatory: defines which property will be used for bucketizing }
-    fragmenterSubjectFilter: { Optional: regex to filter the subjects matching the fragmenterProperty }
+  ```ttl
+  @prefix example: <http://example.org/> .
+  
+  example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "geospatial";
+        example:maxZoomLevel { Mandatory: Required zoom level } ;
+        example:fragmenterProperty { Mandatory: defines which property will be used for bucketizing } ;
+        example:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmenterProperty } ;
+    ] .
   ```
 
 ## Algorithm
@@ -33,11 +37,15 @@ This allows you to fragment the data on geolocations.
 
 Example properties:
 
-  ```yaml
-  name: "geospatial"
-  config:
-    maxZoomLevel: 15
-    fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+  ```ttl
+  @prefix example: <http://example.org/> .
+  
+  example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "geospatial";
+        example:maxZoomLevel "15" ;
+        example:fragmenterProperty "http://www.opengis.net/ont/geosparql#asWKT" ;
+    ] .
   ```
 
 With following example input:

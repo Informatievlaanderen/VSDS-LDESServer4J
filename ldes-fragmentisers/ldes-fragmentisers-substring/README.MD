@@ -5,12 +5,16 @@ This allows you to efficiently implement autocompletion.
 
 ## Properties
 
-  ```yaml
-  name: "substring"
-  config:
-    fragmenterProperty: { Mandatory: defines which property will be used for bucketizing }
-    fragmenterSubjectFilter: { Optional: regex to filter the subjects matching the fragmenterProperty }
-    memberLimit: { Mandatory: member limit > 0 }
+  ```ttl
+  @prefix example: <http://example.org/> .
+  
+  example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "substring";
+        example:memberLimit { Mandatory:member limit > 0 } ;
+        example:fragmenterProperty { Mandatory: defines which property will be used for bucketizing } ;
+        example:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmenterProperty } ;
+    ] .
   ```
 
 ## Algorithm
@@ -37,25 +41,29 @@ This allows you to efficiently implement autocompletion.
 
 Example properties:
 
-  ```yaml
-  name: "substring"
-  config:
-    fragmenterProperty: "https://data.vlaanderen.be/ns/adres#volledigAdres"
-    memberLimit: 10
+  ```ttl
+  @prefix example: <http://example.org/> .
+  
+  example:fragmentationStrategy [
+    a example:Fragmentation ;
+    example:name "substring";
+    example:memberLimit "10" ;
+    example:fragmenterProperty "https://data.vlaanderen.be/ns/adres#volledigAdres" ;
+  ] .
   ```
 
 With following example input:
 
-```ttl
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+  ```ttl
+  @prefix prov: <http://www.w3.org/ns/prov#> .
+  @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<https://data.vlaanderen.be/id/adres/1781020/2023-02-15T10:14:36.002Z>
-  <https://data.vlaanderen.be/ns/adres#isVerrijktMet> [ 
+  <https://data.vlaanderen.be/id/adres/1781020/2023-02-15T10:14:36.002Z>
+    <https://data.vlaanderen.be/ns/adres#isVerrijktMet> [ 
       <https://data.vlaanderen.be/ns/adres#volledigAdres> "Kazernestraat 15, 9160 Lokeren"@nl 
-   ] ;
-  prov:generatedAtTime "2023-02-15T10:14:36.002Z"^^xsd:dateTime ;
-  a <https://data.vlaanderen.be/ns/adres#Adres> .
+    ] ;
+    prov:generatedAtTime "2023-02-15T10:14:36.002Z"^^xsd:dateTime ;
+    a <https://data.vlaanderen.be/ns/adres#Adres> .
 ```
 
 The selected object would be "Kazernestraat 15, 9160 Lokeren".

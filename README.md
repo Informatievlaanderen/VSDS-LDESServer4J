@@ -127,25 +127,24 @@ The server allows configurable fragment refresh times with the max-age and max-a
 
 ##### Example HTTP Ingest-Fetch Configuration
 
-The server can host one or more collections.
 
   ```yaml
   server.port: { http-port }
-  collections:
-      - collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
-        host-name: { hostname of LDES Server }
-        member-type: { Defines which syntax type is used to define the member id e.g. "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder" }
-        timestamp-path: { SHACL property path to the timestamp when the version object entered the event stream. }
-        version-of: { SHACL property path to the non-versioned identifier of the entity. }
-        validation:
-          shape: { URI to defined shape }
-          enabled: { Enables/Disables shacl validation on ingested members }
+  host-name: { hostname of LDES Server }
   rest:
     max-age: { time in seconds that a mutable fragment can be considered up-to-date, default when omitted: 60 }
     max-age-immutable: { time in seconds that an immutable fragment should not be refreshed, default when omitted: 604800 }
   ```
 
-An example of a configuration containing multiple collections can be found [here](ldes-server-application/examples/multi-ldes-config-example.yml)
+The server can host one or more collections.
+These collection are to be added one by one on the following PUT endpoint.
+  ```
+  {server_url}/admin/api/v1/eventstreams  
+  ```
+The collection must be passed in RDF in either turtle, n-quads or json-ld format.
+An example can be found [here](ldes-server-port-admin-rest/README.md#ldes-event-stream)
+
+A detailed explanation on how to add or remove a collection can be found [here](ldes-server-port-admin-rest/README.md)
 
 ##### Example Mongo Configuration
 
@@ -157,100 +156,174 @@ An example of a configuration containing multiple collections can be found [here
 
 Note that the database schema may evolve between releases. To update the schema Mongock changesets have been created and can be applied. For more info: [mongock-changeset-1](ldes-server-infra-mongo/mongock-changeset-1/README.md)
 
+##### Example Swagger Configuration
+
+By configuring swagger, an overview of all available endpoints can be viewed.
+The path for this overview when using the following example is ```{host-name}/v1/swagger```
+  ```yaml
+  springdoc:
+    swagger-ui:
+      path: /v1/swagger
+  ```
+
 ##### Example Views Configuration
 
-By using the property `defaultView`, one can enable or disable a default paginated (100 members per page) view on the collection. By defining the `views` property on a collection, more custom views can be configured.
-
-  ```yaml
-  collections:
-    - collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
-      defaultView: {"true" or "false"}
-      views:
-        - name: {name of the view}
-          fragmentations:
-            - name: {type of fragmentation}
-              config:
-                {Map of fragmentation properties}
+A collection can have a default view configured (paginated with 100 members per page).
+This can be added by adding the following statement to the collection rdf.
+  ```
+  custom:hasDefaultView "true"^^xsd:boolean ;
   ```
 
-An example of a view configuration with two view is shown below
-
-  ```yaml
-  collections:
-    - collection-name: "myCollection"
-      defaultView: "true"
-      views:
-        - name: "firstView"
-          fragmentations:
-            - name: "geospatial"
-              config:
-                maxZoomLevel: 15
-                fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
-            - name: "pagination"
-              config:
-                memberLimit: 5
-        - name: "secondView"
-          fragmentations:
-            - name: "pagination"
-              config:
-                memberLimit: 3
+Additional views can be added one by one on the following POST endpoint.
   ```
+  {server_url}/admin/api/v1/eventstreams/{collection_name}/views
+  ```
+The view must be passed in RDF in either turtle, n-quads or json-ld format.
+An example can be found [here](ldes-server-port-admin-rest/README.md#ldes-view)
+
+A detailed explanation on how to add or remove a view can be found [here](ldes-server-port-admin-rest/README.md)
+
+
 
 ##### Example Retention
 
 To reduce storage fill up, it is possible to set a retention policy per view.
-As of now, there is only a timebased retention possible which can be configured with a [ISO 8601 duration](https://tc39.es/proposal-temporal/docs/duration.html)
+A retention policy has to be added together with its view.
+Currently, there are 3 possible retention policies each with a different type and parameter.
 
-  ```yaml
-  views:
-    - name: "firstView"
-      retentionPolicies:
-        - name: "timebased"
-          config:
-            duration: "PT5M"
+| Retention         | RDF syntax type                           | Description                                                 | Parameters                  |
+|-------------------|-------------------------------------------|-------------------------------------------------------------|-----------------------------|
+| **Timebased**     | https://w3id.org/ldes#DurationAgoPolicy   | Removes members older than a given period                   | tree:value (duration)       |
+| **versionbased**  | https://w3id.org/ldes#LatestVersionSubset | Only retains the x most recent members of each state object | tree:amount (integer > 0)   |
+| **point in time** | https://w3id.org/ldes#PointInTimePolicy   | Only retains the members made after a given point in time   | ldes:pointInTime (dateTime) |
+
+##### Timebased retention
+
+  ```ttl
+  @prefix ldes: <https://w3id.org/ldes#> .
+  @prefix tree: <https://w3id.org/tree#>.
+  @prefix example: <http://example.org/> .
+
+  <view1> a tree:Node ;
+    <https://w3id.org/tree#viewDescription> [
+      a tree:ViewDescription ;
+      ldes:retentionPolicy [
+        a ldes:DurationAgoPolicy ;
+        tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+      ] ;
+    ] .
   ```
+
+##### Example versionbased retention
+
+  ```ttl
+  @prefix ldes: <https://w3id.org/ldes#> .
+  @prefix tree: <https://w3id.org/tree#>.
+  @prefix example: <http://example.org/> .
+
+  <view1> a tree:Node ;
+    <https://w3id.org/tree#viewDescription> [
+      a tree:ViewDescription ;
+      ldes:retentionPolicy [
+        a ldes:LatestVersionSubset ;
+        tree:amount 2 ;
+      ] ;
+    ] .
+  ```
+
+##### Example point in time retention
+
+  ```ttl
+  @prefix ldes: <https://w3id.org/ldes#> .
+  @prefix tree: <https://w3id.org/tree#>.
+  @prefix example: <http://example.org/> .
+
+  <view1> a tree:Node ;
+    <https://w3id.org/tree#viewDescription> [
+      a tree:ViewDescription ;
+      ldes:retentionPolicy [
+        a ldes:PointInTimePolicy ;
+        <https://w3id.org/ldes#pointInTime>
+          "2023-04-12T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+      ] ;
+    ] .
+  ```
+
+##### Fragmentation
+
+To configure a view with a certain fragmentation,
+a fragmentation strategy has to be added when creating the view.
+
 
 ##### Example Timebased Fragmentation
 
 This fragmentation is DEPRECATED, more information can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD)
 
-  ```yaml
-  name: "timebased"
-  config:
-    memberLimit: { member limit > 0 }
-  ```
-
 ##### Example Geospatial Fragmentation
 
 Full documentation for geospatial fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-geospatial/README.MD)
 
-  ```yaml
-  name: "geospatial"
-  config:
-    maxZoomLevel: { Required zoom level }
-    fragmenterProperty: { Defines which property will be used for bucketizing }
+  ```ttl
+  @prefix ldes: <https://w3id.org/ldes#> .
+  @prefix tree: <https://w3id.org/tree#>.
+  @prefix example: <http://example.org/> .
+
+  <view1> a tree:Node ;
+    <https://w3id.org/tree#viewDescription> [
+      a tree:ViewDescription ;
+      example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "geospatial";
+        example:maxZoomLevel "15" ;
+        example:fragmenterProperty "http://www.opengis.net/ont/geosparql#asWKT" ;
+      ] ;
+    ] .
+  
+  
+  
   ```
 
 ##### Example Substring Fragmentation
 
 Full documentation for substring fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-substring/README.MD)
 
-  ```yaml
-  name: "substring"
-  config:
-    fragmenterProperty: { Defines which property will be used for bucketizing }
-    memberLimit: { member limit > 0 }
+  ```ttl
+  @prefix prov: <http://www.w3.org/ns/prov#> .
+  @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+  @prefix ldes: <https://w3id.org/ldes#> .
+  @prefix tree: <https://w3id.org/tree#>.
+  @prefix example: <http://example.org/> .
+
+  <view1> a tree:Node ;
+    <https://w3id.org/tree#viewDescription> [
+      a tree:ViewDescription ;
+      example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "substring";
+        example:memberLimit "10" ;
+        example:fragmenterProperty "https://data.vlaanderen.be/ns/adres#volledigAdres" ;
+      ] ;
+    ] .
   ```
 
 ##### Example Pagination
 
 Full documentation for pagination fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-pagination/README.MD)
 
-  ```yaml
-  name: "pagination"
-  config:
-    memberLimit: { Mandatory: member limit > 0 }
-    bidirectionalRelations: { Optional: true or false (true is default) }
+  ```ttl
+  @prefix ldes: <https://w3id.org/ldes#> .
+  @prefix tree: <https://w3id.org/tree#>.
+  @prefix example: <http://example.org/> .
+
+  <view1> a tree:Node ;
+    <https://w3id.org/tree#viewDescription> [
+      a tree:ViewDescription ;
+    example:fragmentationStrategy [
+      a example:Fragmentation ;
+      example:name "pagination";
+      example:memberLimit "10" ;
+    ] ;
+  ] .
   ```
 
 ##### Example Serving Static Content
@@ -268,12 +341,8 @@ spring:
 
 Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
-
-  ```yaml
-collections:
-  - collection-name: { short name of the collection, cannot contain characters that are used for url interpretation, e.g. '$', '=' or '&' }
-    dcat: { path of file or url containing DCAT metadata, e.g. "dcat/metadata.ttl"  }
-  ```
+A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-port-admin-rest/README.md#dcat-endpoints)
+or on the [swagger endpoint](#example-swagger-configuration) if it is configured.
 
 ### Docker Setup
 
