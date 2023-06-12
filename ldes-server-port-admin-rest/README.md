@@ -10,27 +10,28 @@ The given description details the eventual purpose of the endpoint.
 | Endpoint                | url                                                                       | Method | Description                                                                               |
 |-------------------------|---------------------------------------------------------------------------|--------|-------------------------------------------------------------------------------------------|
 | **Get eventstreams**    | {server_url}/admin/api/v1/eventstreams                                    | GET    | Get the configuration of all eventstreams with their metadata if present                  |
-| **Put eventstream**     | {server_url}/admin/api/v1/eventstreams                                    | PUT    | Add a new eventstream to the server or update an existing one                             |
+| **Post eventstream**    | {server_url}/admin/api/v1/eventstreams                                    | POST   | Add a new eventstream to the server                                                       |
 | **Get eventstream**     | {server_url}/admin/api/v1/eventstreams/{collection_name}                  | GET    | Get the configuration of an eventstream with the given name  with its metadata if present |
 | **Delete eventstreams** | {server_url}/admin/api/v1/eventstreams/{collection_name}                  | DELETE | Remove an eventstream with the given name                                                 |
 | **Get shape**           | {server_url}/admin/api/v1/eventstreams/{collection_name}/shape            | GET    | Get the SHACL shape the eventstream                                                       |
 | **Put shape**           | {server_url}/admin/api/v1/eventstreams/{collection_name}/shape            | PUT    | Add a SHACL shape to an eventstream or change it if one is already present                |
 | **Get views**           | {server_url}/admin/api/v1/eventstreams/{collection_name}/views            | GET    | Get all the views of the eventstream with their metadata if present                       |
-| **Put view**            | {server_url}/admin/api/v1/eventstreams/{collection_name}/views            | PUT    | Add a new view to the eventstream or update an existing one                               |
+| **Post view**           | {server_url}/admin/api/v1/eventstreams/{collection_name}/views            | POST   | Add a new view to the eventstream                                                         |
 | **Get view**            | {server_url}/admin/api/v1/eventstreams/{collection_name}/views/{viewName} | GET    | Get the view with the given name of the chosen eventstream with its metadata if present   |
 | **Delete view**         | {server_url}/admin/api/v1/eventstreams/{collection_name}/views/{viewName} | DELETE | Remove a view with the given name from the chosen eventstream                             |
 
 
 ## Input data
 
-The body of any ``put`` request must contain a rdf model in the turtle format. Otherwise a BAD REQUEST status is returned.
-Every resource describing a stream, shape or view must be a uri with the prefix ``https://w3id.org/ldes#``.
-In the future, this will not be a requirement but instead a preconfigured prefix will be amended to any local resource.
+The body of any ``post`` or ``put`` request must contain a rdf model in the turtle format. Otherwise, a BAD REQUEST status is returned.
+Every resource describing a stream, shape or view can exist solely of a name. The server will add its own prefix based on the hostname.
+
+Ex. ``` <collectionName> a ldes:EventStream ; ``` with ``` "https://myldes" ``` as hostname will have the name: ``` http://myldes/collectionName ```
 
 
 ## LDES config SHACL shape validation
 
-When a ``PUT`` request is sent to update the config of the event streams, the SHACL shape of this config in the request
+When a ``POST`` request is sent to add the config of the event streams, the SHACL shape of this config in the request
 body will be validated by ``LdesConfigShaclValidator.validate``. Nothing will be returned if this input is valid,
 otherwise a ``LdesShaclValidationException`` will be thrown with the validation report within.
 

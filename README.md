@@ -137,7 +137,7 @@ The server allows configurable fragment refresh times with the max-age and max-a
   ```
 
 The server can host one or more collections.
-These collection are to be added one by one on the following PUT endpoint.
+These collection are to be added one by one on the following POST endpoint.
   ```
   {server_url}/admin/api/v1/eventstreams  
   ```
@@ -205,7 +205,7 @@ Currently, there are 3 possible retention policies each with a different type an
   @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
-    <https://w3id.org/tree#viewDescription> [
+    tree:viewDescription [
       a tree:ViewDescription ;
       ldes:retentionPolicy [
         a ldes:DurationAgoPolicy ;
@@ -222,7 +222,7 @@ Currently, there are 3 possible retention policies each with a different type an
   @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
-    <https://w3id.org/tree#viewDescription> [
+    tree:viewDescription [
       a tree:ViewDescription ;
       ldes:retentionPolicy [
         a ldes:LatestVersionSubset ;
@@ -239,7 +239,7 @@ Currently, there are 3 possible retention policies each with a different type an
   @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
-    <https://w3id.org/tree#viewDescription> [
+    tree:viewDescription [
       a tree:ViewDescription ;
       ldes:retentionPolicy [
         a ldes:PointInTimePolicy ;
@@ -269,7 +269,7 @@ Full documentation for geospatial fragmentation can be found [here](ldes-fragmen
   @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
-    <https://w3id.org/tree#viewDescription> [
+    tree:viewDescription [
       a tree:ViewDescription ;
       example:fragmentationStrategy [
         a example:Fragmentation ;
@@ -295,7 +295,7 @@ Full documentation for substring fragmentation can be found [here](ldes-fragment
   @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
-    <https://w3id.org/tree#viewDescription> [
+    tree:viewDescription [
       a tree:ViewDescription ;
       example:fragmentationStrategy [
         a example:Fragmentation ;
@@ -316,7 +316,7 @@ Full documentation for pagination fragmentation can be found [here](ldes-fragmen
   @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
-    <https://w3id.org/tree#viewDescription> [
+    tree:viewDescription [
       a tree:ViewDescription ;
     example:fragmentationStrategy [
       a example:Fragmentation ;
