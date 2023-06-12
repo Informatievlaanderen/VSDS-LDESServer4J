@@ -73,9 +73,11 @@ class MemberIngestionControllerTest {
 	@BeforeEach
 	void setUp() {
 		when(eventStreamService.retrieveEventStream(MOBILITY_HINDRANCES_COLLECTION))
-				.thenReturn(new EventStreamResponse(MOBILITY_HINDRANCES_COLLECTION, null, null, "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, List.of(), null));
+				.thenReturn(new EventStreamResponse(MOBILITY_HINDRANCES_COLLECTION, null, null, "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
+						List.of(), null));
 		when(eventStreamService.retrieveEventStream(RESTAURANT_COLLECTION))
-				.thenReturn(new EventStreamResponse(RESTAURANT_COLLECTION, null, null, "http://example.com/restaurant#MenuItem", false, List.of(), null));
+				.thenReturn(new EventStreamResponse(RESTAURANT_COLLECTION, null, null, "http://example.com/restaurant#MenuItem",
+						List.of(), null));
 	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class SubstringFragmentCreator {
 
-	public static final String SUBSTRING = "SubstringFragmentation";
+	public static final String SUBSTRING = "substring";
 
 	private final LdesFragmentRepository ldesFragmentRepository;
 

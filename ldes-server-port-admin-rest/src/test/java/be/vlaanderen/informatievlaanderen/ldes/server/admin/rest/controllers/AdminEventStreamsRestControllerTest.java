@@ -70,7 +70,7 @@ class AdminEventStreamsRestControllerTest {
 		void initEventStreams() throws URISyntaxException {
 			Model shape = readModelFromFile("example-shape.ttl");
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName("fragmentationStrategy");
+			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 			ViewSpecification singleView = new ViewSpecification(
 					new ViewName("name2", "view1"),
@@ -89,10 +89,10 @@ class AdminEventStreamsRestControllerTest {
 			eventStreams = List.of(
 					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shape),
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shape),
 					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(singleView),
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(singleView),
 							shape));
 		}
 
@@ -119,7 +119,7 @@ class AdminEventStreamsRestControllerTest {
 			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					true, List.of(), shape);
+					List.of(), shape);
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 
@@ -154,7 +154,7 @@ class AdminEventStreamsRestControllerTest {
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					true, List.of(), shape);
+					List.of(), shape);
 
 			when(eventStreamService.createEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 

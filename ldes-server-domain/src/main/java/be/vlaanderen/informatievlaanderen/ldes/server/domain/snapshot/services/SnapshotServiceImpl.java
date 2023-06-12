@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
@@ -15,15 +12,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
 public class SnapshotServiceImpl implements SnapshotService {
-	private final Map<String, Boolean> collectionHasDefaultViewMap = new HashMap<>();
 	private final SnapShotCreator snapShotCreator;
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final SnapshotRepository snapshotRepository;
@@ -41,16 +35,6 @@ public class SnapshotServiceImpl implements SnapshotService {
 	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
 
-		Boolean hasDefaultView = collectionHasDefaultViewMap.get(collectionName);
-
-		if (hasDefaultView == null) {
-			throw new MissingEventStreamException(collectionName);
-		}
-
-		if (Boolean.FALSE.equals(collectionHasDefaultViewMap.get(collectionName))) {
-			throw new SnapshotCreationException(
-					"No default pagination view configured for collection " + collectionName);
-		}
 		ViewName viewName = new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME);
 
 		List<LdesFragment> treeNodesForSnapshot;
@@ -73,14 +57,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 	}
 
 	@EventListener
-	public void handleEventStreamChangedEvent(EventStreamCreatedEvent event) {
-		EventStream eventStream = event.eventStream();
-		collectionHasDefaultViewMap.put(eventStream.getCollection(), eventStream.isDefaultViewEnabled());
-	}
-
-	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		collectionHasDefaultViewMap.remove(event.collectionName());
 		deleteSnapshot(event.collectionName());
 	}
 

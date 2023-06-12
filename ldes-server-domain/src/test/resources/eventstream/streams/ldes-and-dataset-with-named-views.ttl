@@ -1,7 +1,6 @@
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix example: <http://example.org/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix custom: <http://example.org/> .
 @prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
@@ -22,7 +21,6 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    custom:memberType mobiliteit:Mobiliteitshinder ;
-   custom:hasDefaultView "false"^^xsd:boolean ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 ;
@@ -46,17 +44,15 @@ col:view2 a tree:Node ;
   tree:viewDescription view2:description .
 
 view1:description  a  tree:ViewDescription ;
-        example:fragmentationStrategy
-                ([ a                 example:Fragmentation ;
-                  example:name      "fragmentationStrategy" ;
-                  example:property  "ldes:propertyPath"
+        tree:fragmentationStrategy
+                ([ a    tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
                 ]) .
 
 view2:description  a  tree:ViewDescription ;
-        example:fragmentationStrategy
-                ([ a                 example:Fragmentation ;
-                  example:name      "fragmentationStrategy" ;
-                  example:property  "ldes:propertyPath"
+        tree:fragmentationStrategy
+                ([ a    tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
                 ]) .
 
 <http://sample.org/company/MyDataOwner> a legal:LegalEntity ;

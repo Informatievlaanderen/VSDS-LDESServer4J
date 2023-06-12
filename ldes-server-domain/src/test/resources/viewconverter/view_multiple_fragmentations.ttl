@@ -7,13 +7,13 @@ server:geospatial
         tree:viewDescription viewName:description .
 
 viewName:description
-        a       tree:ViewDescription ;
+        a   tree:ViewDescription ;
         tree:fragmentationStrategy ([
-        		a tree:GeospatialFragmentation ;
-        		tree:maxZoom 15;
-        		tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
+            a tree:GeospatialFragmentation ;
+            tree:maxZoom "15";
+            tree:fragmentationPath "http://www.opengis.net/ont/geosparql#asWKT"
         ][
             a tree:PaginationFragmentation ;
-            tree:memberLimit 100
+            tree:memberLimit "100"
         ]) .
 

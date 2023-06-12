@@ -35,11 +35,11 @@ col:shape a sh:NodeShape ;
 view1:description  rdf:type  tree:ViewDescription ;
         tree:fragmentationStrategy
                 ([ a  tree:ExampleFragmentation ;
-                  example:property  "ldes:propertyPath"
+                  tree:property  "ldes:propertyPath"
                 ]) .
 
 view2:description  rdf:type  tree:ViewDescription ;
         tree:fragmentationStrategy
                 ([ a  tree:ExampleFragmentation ;
-                  example:property  "ldes:propertyPath"
+                  tree:property  "ldes:propertyPath"
                 ]) .

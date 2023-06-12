@@ -1,6 +1,5 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix tree: <https://w3id.org/tree#>.
-@prefix example: <http://example.org/> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix host: <http://localhost:8080/> .
 @prefix server: <http://localhost:8080/collection/> .
@@ -14,7 +13,7 @@ server:viewName a tree:Node ;
 
 viewName:description
         a       dcat:DataService , tree:ViewDescription ;
-        example:fragmentationStrategy
+        tree:fragmentationStrategy
                 ([ a  tree:ExampleFragmentation ;
                   tree:pageSize  "100" ;
                   tree:property  "example/property"

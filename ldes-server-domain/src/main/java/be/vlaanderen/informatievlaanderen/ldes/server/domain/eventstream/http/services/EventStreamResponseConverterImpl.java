@@ -43,11 +43,10 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
-		final boolean hasDefaultView = getHasDefaultViewResource(model);
 		final List<ViewSpecification> views = getViews(model, collection);
 		final String memberType = getResource(model, MEMBER_TYPE);
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, hasDefaultView, views,
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views,
 				shacl);
 	}
 
@@ -58,12 +57,10 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				createResource(EVENT_STREAM_TYPE));
 		final Statement memberType = createStatement(subject, MEMBER_TYPE,
 				createProperty(eventStreamResponse.getMemberType()));
-		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
-				createTypedLiteral(eventStreamResponse.isDefaultViewEnabled()));
 		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
-				.add(List.of(collectionNameStmt, memberType, hasDefaultStmt))
+				.add(List.of(collectionNameStmt, memberType))
 				.add(getVersionOfStatements(subject, eventStreamResponse))
 				.add(getTimestampPathStatements(subject, eventStreamResponse))
 				.add(eventStreamResponse.getShacl())

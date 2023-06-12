@@ -5,17 +5,15 @@
 @prefix viewName: <http://localhost:8080/name1/view2/> .
 
 viewName:description
-    a <https://w3id.org/tree#ViewDescription> ;
+    a tree:ViewDescription ;
     ldes:retentionPolicy [
-        a ldes:retentionPolicy ;
-        example:name "timebased";
-        example:duration "20" ;
-    ] ;
-    example:fragmentationStrategy ([
-      a                 example:Fragmentation ;
-      example:name      "fragmentationStrategy" ;
-      example:property  "ldes:propertyPath"
+        a ldes:DurationAgoPolicy ;
+        tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+      ] ;
+    tree:fragmentationStrategy ([
+      a                 tree:ExampleFragmentation ;
+      tree:property  "ldes:propertyPath"
     ]) .
 
 <http://localhost:8080/name1/view2>  a tree:Node ;
-        <https://w3id.org/tree#viewDescription> <http://localhost:8080/name1/view2/description> .
+        tree:viewDescription <http://localhost:8080/name1/view2/description> .
