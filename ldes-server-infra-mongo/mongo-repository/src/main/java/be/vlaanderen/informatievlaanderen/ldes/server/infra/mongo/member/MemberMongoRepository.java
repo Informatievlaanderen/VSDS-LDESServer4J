@@ -2,9 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service.LdesMemberEntityConverter;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
@@ -79,6 +81,15 @@ public class MemberMongoRepository implements MemberRepository {
 		Update update = new Update();
 		update.pull(TREE_NODE_REFERENCES, fragmentId);
 		mongoTemplate.upsert(query, update, LdesMemberEntity.class);
+	}
+
+	@Override
+	public void removeViewReferences(ViewName viewName) {
+		final String regexMatchQueryParameters = "\\?.*";
+		final String regex = viewName.asString() + regexMatchQueryParameters;
+		final Query query = new Query(Criteria.where(TREE_NODE_REFERENCES).regex(regex));
+		final Update update = new Update().pull(TREE_NODE_REFERENCES, new Document("$regex", regex));
+		mongoTemplate.updateMulti(query, update, LdesMemberEntity.class);
 	}
 
 	@Override
