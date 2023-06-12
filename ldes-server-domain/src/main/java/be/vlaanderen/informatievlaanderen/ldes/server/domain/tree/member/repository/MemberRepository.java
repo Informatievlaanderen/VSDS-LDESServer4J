@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,8 @@ public interface MemberRepository {
 	Stream<Member> getMembersByReference(String treeNodeId);
 
 	void removeMemberReference(String memberId, String fragmentId);
+
+	void removeViewReferences(ViewName viewName);
 
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 

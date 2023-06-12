@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.SpringIntegrationTest;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
@@ -10,6 +11,7 @@ import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ModelFactory;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,12 +31,13 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public Member memberEntryTransformer(Map<String, String> row) {
+		String treeNodeReferences = row.get("treeNodeReferences");
 		return new Member(
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("sequenceNr").equals("") ? null : Long.parseLong(row.get("sequenceNr")),
 				row.get("versionOf"), LocalDateTime.now(),
-				ModelFactory.createDefaultModel(), List.of());
+				ModelFactory.createDefaultModel(), new ArrayList<>());
 	}
 
 	@Given("The following members")
@@ -75,4 +78,23 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 		memberRepository.deleteMembersByCollection(collectionName);
 	}
 
+	@And("The following treeNodeReferences on the members")
+	public void theFollowingTreeNodeReferencesOnTheMembers(List<String> treeNodeReferences) {
+		members.forEach(member -> member.getTreeNodeReferences().addAll(treeNodeReferences));
+	}
+
+	@When("I remove the view references of view {string}")
+	public void iRemoveTheViewReferencesOfViewByPage(String viewName) {
+		memberRepository.removeViewReferences(ViewName.fromString(viewName));
+	}
+
+	@And("The members of collection {string} will only have treeNodeReference {string}")
+	public void theMembersWillOnlyHaveTreeNodeReference(String collectionName, String treeNodeReference) {
+		List<Member> membersInDb = memberRepository.getMemberStreamOfCollection(collectionName).toList();
+		assertEquals(3, membersInDb.size());
+		membersInDb.forEach(member -> {
+			assertEquals(1, member.getTreeNodeReferences().size());
+			assertEquals(treeNodeReference, member.getTreeNodeReferences().get(0));
+		});
+	}
 }

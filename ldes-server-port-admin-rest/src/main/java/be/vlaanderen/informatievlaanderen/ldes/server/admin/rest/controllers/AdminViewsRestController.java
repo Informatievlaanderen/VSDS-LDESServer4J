@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSp
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ import static org.apache.jena.riot.WebContent.*;
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminViewsRestController implements OpenApiAdminViewsRestController {
+
+	private static final Logger log = LoggerFactory.getLogger(AdminViewsRestController.class);
 
 	private final ViewService viewService;
 	private final ViewValidator viewValidator;
@@ -47,9 +51,12 @@ public class AdminViewsRestController implements OpenApiAdminViewsRestController
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
 	}
 
-	@DeleteMapping("/eventstreams/{collectionName}/views/{viewName}")
-	public void deleteView(@PathVariable String collectionName, @PathVariable String viewName) {
-		viewService.deleteViewByViewName(new ViewName(collectionName, viewName));
+	@DeleteMapping("/eventstreams/{collectionName}/views/{view}")
+	public void deleteView(@PathVariable String collectionName, @PathVariable String view) {
+		ViewName viewName = new ViewName(collectionName, view);
+		log.atInfo().log("START deleting " + viewName.asString());
+		viewService.deleteViewByViewName(viewName);
+		log.atInfo().log("DONE deleting " + viewName.asString());
 	}
 
 	@GetMapping(value = "/eventstreams/{collectionName}/views/{viewName}", produces = { contentTypeJSONLD,
