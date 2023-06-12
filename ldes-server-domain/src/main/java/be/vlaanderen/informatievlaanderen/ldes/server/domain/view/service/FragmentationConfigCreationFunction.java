@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
@@ -30,10 +31,20 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 					"Cannot Create Fragmentation Config. Expected exactly 1 " + FRAGMENTATION_TYPE
 							+ " statement.\n Found no or multiple statements in :\n"
 							+ RdfModelConverter.toString(ModelFactory.createDefaultModel().add(fragmentationStatements),
-									Lang.TURTLE));
+							Lang.TURTLE));
 		}
-		Map<String, String> fragmentationPropertiesMap = statements
-				.stream()
+		Map<String, String> fragmentationPropertiesMap = extractFragmentationProperties(statements,
+				fragmentationStatements);
+		String fragmentationName = computeFragmentationName(statements);
+
+		fragmentationConfig.setName(fragmentationName);
+		fragmentationConfig.setConfig(fragmentationPropertiesMap);
+		return fragmentationConfig;
+	}
+
+	private Map<String, String> extractFragmentationProperties(List<Statement> statements,
+			List<Statement> fragmentationStatements) {
+		return statements.stream()
 				.filter(statement -> !fragmentationStatements.contains(statement))
 				.collect(Collectors.toMap(statement -> statement.getPredicate().getLocalName(),
 						statement -> {
@@ -43,15 +54,14 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 								return statement.getObject().asNode().toString();
 							}
 						}));
-		String fragmentationName = statements.stream()
+	}
+
+	private String computeFragmentationName(List<Statement> statements) {
+		return statements.stream()
 				.filter(statement -> statement.getPredicate().equals(RDF_SYNTAX_TYPE))
 				.findFirst()
-				.orElseThrow()
+				.orElseThrow(() -> new ModelToViewConverterException("Unable to find fragmentation type"))
 				.getResource()
 				.getLocalName();
-
-		fragmentationConfig.setName(fragmentationName);
-		fragmentationConfig.setConfig(fragmentationPropertiesMap);
-		return fragmentationConfig;
 	}
 }

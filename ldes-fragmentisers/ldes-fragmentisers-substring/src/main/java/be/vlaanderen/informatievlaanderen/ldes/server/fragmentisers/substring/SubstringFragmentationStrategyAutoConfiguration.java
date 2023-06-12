@@ -5,12 +5,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.SUBSTRING_FRAGMENTATION;
+
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class SubstringFragmentationStrategyAutoConfiguration {
 
-	@Bean("SubstringFragmentation")
+	@Bean(SUBSTRING_FRAGMENTATION)
 	public SubstringFragmentationStrategyWrapper substringFragmentationStrategyWrapper() {
 		return new SubstringFragmentationStrategyWrapper();
 	}

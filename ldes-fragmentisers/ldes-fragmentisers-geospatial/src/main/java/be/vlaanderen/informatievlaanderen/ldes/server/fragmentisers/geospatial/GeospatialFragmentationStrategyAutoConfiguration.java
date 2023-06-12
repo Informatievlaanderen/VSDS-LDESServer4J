@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.GeospatialFragmentationStrategy.GEOSPATIAL_FRAGMENTATION;
+
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class GeospatialFragmentationStrategyAutoConfiguration {
 
-	@Bean("GeospatialFragmentation")
+	@Bean(GEOSPATIAL_FRAGMENTATION)
 	public GeospatialFragmentationStrategyWrapper geospatialFragmentationStrategyWrapper() {
 		return new GeospatialFragmentationStrategyWrapper();
 	}

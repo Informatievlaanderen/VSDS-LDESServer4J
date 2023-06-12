@@ -12,6 +12,7 @@ This allows you to fragment the data on geolocations.
         a example:GeospatialFragmentation ;
         tree:maxZoom { Mandatory: Required zoom level } ;
         tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ;
+        example:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmenterProperty } ;
     ] .
   ```
 

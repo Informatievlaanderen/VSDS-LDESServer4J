@@ -13,7 +13,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import static java.lang.Boolean.TRUE;
 
 public class PaginationStrategy extends FragmentationStrategyDecorator {
-	public static final String PAGINATION = "PaginationFragmentation";
+	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 
 	private final OpenPageProvider openPageProvider;
 
@@ -29,7 +29,7 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 
 	@Override
 	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
-		Observation paginationObservation = Observation.createNotStarted(PAGINATION,
+		Observation paginationObservation = Observation.createNotStarted(PAGINATION_FRAGMENTATION,
 				observationRegistry)
 				.parentObservation(parentObservation)
 				.start();

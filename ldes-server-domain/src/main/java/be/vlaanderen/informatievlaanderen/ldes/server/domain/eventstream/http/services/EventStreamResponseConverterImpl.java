@@ -25,7 +25,6 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
 	public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
-	public static final Property HAS_DEFAULT_VIEW = createProperty(CUSTOM, "hasDefaultView");
 	private final String hostname;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
@@ -89,11 +88,6 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		} else {
 			return List.of();
 		}
-	}
-
-	private boolean getHasDefaultViewResource(Model model) {
-		return model.listStatements(null, HAS_DEFAULT_VIEW, (Resource) null).nextOptional()
-				.map(statement -> statement.getObject().asLiteral().getBoolean()).orElse(false);
 	}
 
 	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject) {

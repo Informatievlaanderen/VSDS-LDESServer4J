@@ -4,6 +4,7 @@
 @prefix schema: <http://schema.org/> .
 @prefix tree: <https://w3id.org/tree#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ldes: <https://w3id.org/ldes#> .
 
 tree:ViewDescription
 	sh:order 1;
@@ -13,7 +14,14 @@ tree:ViewDescription
 		sh:name "List of fragmentations";
         sh:description "Ordered list of fragmentations how a member for this view should be processed";
     	sh:or (tree:GeospatialFragmentation tree:PaginationFragmentation tree:SubstringFragmentation tree:TimebasedFragmentation) ;
-        sh:minCount 1;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+    ];
+	sh:property [
+      	sh:path ldes:retentionPolicy;
+        sh:targetClass ldes:RetentionPolicy  ;
+        sh:name "List of retention policies";
+        sh:description "Unordered list of retention policies that declare when a member should be removed from the collection";
     ].
 
 tree:GeospatialFragmentation
@@ -27,7 +35,7 @@ tree:GeospatialFragmentation
         sh:path tree:maxZoom ;
         sh:datatype xsd:integer ;
         sh:minInclusive 0 ;
-        sh:maxInclusive 21;
+        sh:maxInclusive 23;
         sh:minCount 1 ;
         sh:maxCount 1 ;
     ] ;

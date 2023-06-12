@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 public class SubstringFragmentationStrategy extends FragmentationStrategyDecorator {
 
+	public static final String SUBSTRING_FRAGMENTATION = "SubstringFragmentation";
+
 	public static final String ROOT_SUBSTRING = "";
 
 	private final ObservationRegistry observationRegistry;

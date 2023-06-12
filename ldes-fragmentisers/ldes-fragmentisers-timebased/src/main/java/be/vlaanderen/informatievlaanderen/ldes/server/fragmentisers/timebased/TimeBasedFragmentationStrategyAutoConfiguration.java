@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.TimebasedFragmentationStrategy.TIMEBASED_FRAGMENTATION;
+
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
@@ -14,7 +16,7 @@ public class TimeBasedFragmentationStrategyAutoConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentationStrategyAutoConfiguration.class);
 
-	@Bean("TimebasedFragmentation")
+	@Bean(TIMEBASED_FRAGMENTATION)
 	public TimebasedFragmentationStrategyWrapper timebasedFragmentationStrategyWrapper() {
 		LOGGER.warn("Using deprecated timebased fragmentation. For more information, refer to " +
 				"https://github.com/Informatievlaanderen/VSDS-LDESServer4J/blob/main/ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD");
