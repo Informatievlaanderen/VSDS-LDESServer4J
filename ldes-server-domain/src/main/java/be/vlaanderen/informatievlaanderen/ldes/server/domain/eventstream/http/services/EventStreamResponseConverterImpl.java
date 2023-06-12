@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -39,7 +40,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	@Override
 	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).map(Resource::getLocalName)
-				.orElseThrow();
+				.orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final boolean hasDefaultView = getHasDefaultViewResource(model);
