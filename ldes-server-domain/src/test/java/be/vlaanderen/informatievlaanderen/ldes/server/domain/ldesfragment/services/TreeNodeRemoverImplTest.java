@@ -90,17 +90,6 @@ class TreeNodeRemoverImplTest {
 		verify(fragmentRepository).deleteTreeNodesByCollection(collectionName);
 	}
 
-	private Stream<LdesFragment> ldesFragmentStream() {
-		LdesFragment firstLdesFragment = getLdesFragment("1");
-		LdesFragment secondLdesFragment = getLdesFragment("2");
-		return Stream.of(firstLdesFragment, secondLdesFragment);
-	}
-
-	private LdesFragment getLdesFragment(String fragmentValue) {
-		return new LdesFragment(new ViewName("collectionName", "view"),
-				List.of(new FragmentPair("page", fragmentValue)));
-	}
-
 	private Member getMember(String memberId) {
 		return new Member(memberId, null, null, null, LocalDateTime.now(), null, null);
 	}
