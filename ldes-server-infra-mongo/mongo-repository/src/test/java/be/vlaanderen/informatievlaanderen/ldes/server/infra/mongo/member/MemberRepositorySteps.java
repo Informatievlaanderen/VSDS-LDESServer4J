@@ -31,7 +31,6 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public Member memberEntryTransformer(Map<String, String> row) {
-		String treeNodeReferences = row.get("treeNodeReferences");
 		return new Member(
 				row.get("id"),
 				row.get("collectionName"),
