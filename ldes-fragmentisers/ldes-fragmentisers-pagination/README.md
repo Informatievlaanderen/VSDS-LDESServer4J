@@ -5,11 +5,15 @@ This is meant to be a standard way of fragmentation.
 
 ## Properties
 
-  ```yaml
-  name: "pagination"
-  config:
-    memberLimit: { Mandatory: member limit > 0 }
-    bidirectionalRelations: { Optional: true or false (true is default) }
+  ```ttl
+  @prefix example: <http://example.org/> .
+  
+  example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "pagination";
+        example:memberLimit { Mandatory:member limit > 0 } ;
+        example:bidirectionalRelations { Optional: true or false (true is default) } ;
+    ] .
   ```
 
 ## Algorithm
@@ -33,8 +37,12 @@ from the previous fragment to the new fragment.
 
 ## Example properties
 
-  ```yaml
-  name: "pagination"
-  config:
-    memberLimit: 10
+  ```ttl
+  @prefix example: <http://example.org/> .
+  
+  example:fragmentationStrategy [
+        a example:Fragmentation ;
+        example:name "pagination";
+        example:memberLimit "10" ;
+    ] .
   ```
