@@ -18,14 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.CUSTOM;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_OBJECT;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_NODE_RESOURCE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VIEW_DESCRIPTION_RESOURCE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -117,9 +109,7 @@ public class ViewSpecificationConverter {
 		List<ResourceImpl> fragmentationResources = fragmentationList.stream().map(fragmentation -> {
 			Node blankNode = NodeFactory.createBlankNode();
 			ResourceImpl resource = new ResourceImpl(blankNode, new ModelCom(Factory.createGraphMem()));
-			resource.addProperty(RDF_SYNTAX_TYPE, createResource(FRAGMENTATION_TYPE));
-			resource.addLiteral(createProperty(CUSTOM + FRAGMENTATION_NAME),
-					createPlainLiteral(fragmentation.getName()));
+			resource.addProperty(RDF_SYNTAX_TYPE, createResource(TREE + fragmentation.getName()));
 			fragmentation.getConfig().forEach(
 					(key, value) -> resource.addProperty(createProperty(CUSTOM + key), createPlainLiteral(value)));
 			return resource;

@@ -54,7 +54,7 @@ class EventStreamResponseConverterImplTest {
 		@BeforeEach
 		void setUp() throws URISyntaxException {
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName("fragmentationStrategy");
+			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 			views = List.of(
 					new ViewSpecification(

@@ -51,7 +51,7 @@ class ViewSpecificationTest {
 
 	private List<FragmentationConfig> getOtherFragmentations() {
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName("TimeBased");
+		fragmentationConfig.setName("TimebasedFragmentation");
 		fragmentationConfig.setConfig(Map.of("maxMembers", "1"));
 		return List.of(fragmentationConfig);
 	}
@@ -73,7 +73,7 @@ class ViewSpecificationTest {
 
 		public static List<FragmentationConfig> getFragmentations() {
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName("GeoSpatial");
+			fragmentationConfig.setName("GeospatialFragmentation");
 			fragmentationConfig.setConfig(Map.of("ZoomLevel", "15"));
 			return List.of(fragmentationConfig);
 		}

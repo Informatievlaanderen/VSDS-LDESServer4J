@@ -20,18 +20,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class FragmentationStrategyCreatorImplTest {
 	private static final Map<String, String> TIMEBASED_PROPERTIES = Map.of("timebasedProperty", "time");
 	private static final Map<String, String> GEOSPATIAL_PROPERTIES = Map.of("geospatialProperty", "geo");
-	private static final String GEOSPATIAL = "geospatial";
-	private static final String TIMEBASED = "timebased";
+	private static final String GEOSPATIAL = "GeospatialFragmentation";
+	private static final String TIMEBASED = "TimebasedFragmentation";
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "viewName");
 
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);

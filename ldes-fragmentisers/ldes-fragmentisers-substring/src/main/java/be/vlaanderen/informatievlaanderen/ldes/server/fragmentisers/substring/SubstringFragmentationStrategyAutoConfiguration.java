@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class SubstringFragmentationStrategyAutoConfiguration {
 
-	@Bean("substring")
+	@Bean("SubstringFragmentation")
 	public SubstringFragmentationStrategyWrapper substringFragmentationStrategyWrapper() {
 		return new SubstringFragmentationStrategyWrapper();
 	}

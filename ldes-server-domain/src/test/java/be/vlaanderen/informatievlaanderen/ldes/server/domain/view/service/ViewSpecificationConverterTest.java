@@ -35,7 +35,7 @@ class ViewSpecificationConverterTest {
 				new FragmentationConfigExtractor());
 		Model retentionModel = readModelFromFile("retentionpolicy/timebased/valid_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName("fragmentation");
+		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(
 				Map.of("pageSize", "100", "property", "example/property"));
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
@@ -99,11 +99,11 @@ class ViewSpecificationConverterTest {
 
 	private ViewSpecification getExpectedViewSpecification() {
 		FragmentationConfig geospatialConfig = new FragmentationConfig();
-		geospatialConfig.setName("geospatial");
+		geospatialConfig.setName("GeospatialFragmentation");
 		geospatialConfig.setConfig(
 				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
 		FragmentationConfig paginationConfig = new FragmentationConfig();
-		paginationConfig.setName("pagination");
+		paginationConfig.setName("PaginationFragmentation");
 		paginationConfig.setConfig(
 				Map.of("memberLimit", "100"));
 		List<FragmentationConfig> fragmentations = List.of(geospatialConfig, paginationConfig);

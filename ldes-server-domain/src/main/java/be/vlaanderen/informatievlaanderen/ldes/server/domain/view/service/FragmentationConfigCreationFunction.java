@@ -30,7 +30,7 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 					"Cannot Create Fragmentation Config. Expected exactly 1 " + FRAGMENTATION_TYPE
 							+ " statement.\n Found no or multiple statements in :\n"
 							+ RdfModelConverter.toString(ModelFactory.createDefaultModel().add(fragmentationStatements),
-							Lang.TURTLE));
+									Lang.TURTLE));
 		}
 		Map<String, String> fragmentationPropertiesMap = statements
 				.stream()
@@ -39,8 +39,7 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 						statement -> {
 							if (statement.getObject().isLiteral()) {
 								return statement.getObject().asLiteral().getValue().toString();
-							}
-							else {
+							} else {
 								return statement.getObject().asNode().toString();
 							}
 						}));

@@ -96,15 +96,13 @@ public interface OpenApiAdminViewsRestController {
 									] .
 									"""),
 							@ExampleObject(name = "Pagination Fragmentation Strategy", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
-									@prefix example: <http://example.org/> .
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:pagination tree:viewDescription [
-										example:fragmentationStrategy [
-											a example:Fragmentation ;
-									        example:name "pagination" ;
-									        example:memberLimit "100"
+										tree:fragmentationStrategy [
+											a tree:PaginationFragmentation ;
+									  		tree:memberLimit 100
 									    ];
 									 ] .
 									"""),
@@ -122,21 +120,18 @@ public interface OpenApiAdminViewsRestController {
 									 ] .
 									"""),
 							@ExampleObject(name = "Geospatial-Pagination Fragmentation Strategy", description = "A combined geospatial-pagination fragmentation strategy which is configured to first partition the data on zoom level 15 and within this zoom level create pages with at most 100 members.", value = """
-									@prefix example: <http://example.org/> .
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:geospatial tree:viewDescription [
 										example:fragmentationStrategy ([
-											a example:Fragmentation ;
-											example:name "geospatial" ;
-											example:maxZoomLevel "15" ;
-											example:fragmenterProperty "http://www.opengis.net/ont/geosparql#asWKT"
+											a tree:GeospatialFragmentation ;
+											tree:maxZoom "15" ;
+											tree:fragmentationPath "http://www.opengis.net/ont/geosparql#asWKT"
 										]
 										[
-											a example:Fragmentation ;
-											example:name "pagination" ;
-											example:memberLimit "100"
+											a tree:PaginationFragmentation ;
+											tree:memberLimit "100"
 										])
 									] .
 									""")

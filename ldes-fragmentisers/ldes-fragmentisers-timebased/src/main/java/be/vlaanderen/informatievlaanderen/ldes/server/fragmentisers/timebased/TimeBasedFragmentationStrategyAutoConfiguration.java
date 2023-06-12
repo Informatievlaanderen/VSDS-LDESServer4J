@@ -14,7 +14,7 @@ public class TimeBasedFragmentationStrategyAutoConfiguration {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentationStrategyAutoConfiguration.class);
 
-	@Bean("timebased")
+	@Bean("TimebasedFragmentation")
 	public TimebasedFragmentationStrategyWrapper timebasedFragmentationStrategyWrapper() {
 		LOGGER.warn("Using deprecated timebased fragmentation. For more information, refer to " +
 				"https://github.com/Informatievlaanderen/VSDS-LDESServer4J/blob/main/ldes-fragmentisers/ldes-fragmentisers-timebased/README.MD");
