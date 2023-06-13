@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -56,9 +55,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private EtagCachingStrategy cachingStrategy(String hostname) {
-		AppConfig appConfig = new AppConfig();
-		appConfig.setHostName(hostname);
-		return new EtagCachingStrategy(appConfig);
+		return new EtagCachingStrategy(hostname);
 	}
 
 	static class ETagEventStreamArgumentsProvider implements ArgumentsProvider {

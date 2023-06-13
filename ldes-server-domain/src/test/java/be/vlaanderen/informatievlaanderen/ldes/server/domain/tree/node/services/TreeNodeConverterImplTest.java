@@ -11,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -44,9 +43,6 @@ class TreeNodeConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
-		AppConfig appConfig = new AppConfig();
-		appConfig.setHostName(HOST_NAME);
-
 		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
 
 		EventStream eventStream = new EventStream(COLLECTION_NAME,
@@ -54,7 +50,7 @@ class TreeNodeConverterImplTest {
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
 		dcatViewService = mock(DcatViewService.class);
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, dcatViewService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 		((TreeNodeConverterImpl) treeNodeConverter)

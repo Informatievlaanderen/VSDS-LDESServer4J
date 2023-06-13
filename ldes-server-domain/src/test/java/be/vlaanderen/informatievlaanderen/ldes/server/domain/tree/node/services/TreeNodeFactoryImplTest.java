@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,24 +30,20 @@ class TreeNodeFactoryImplTest {
 	private TreeNodeFactory treeNodeFactory;
 	private LdesFragmentRepository ldesFragmentRepository;
 	private MemberRepository memberRepository;
-	private AppConfig appConfig;
 
 	@BeforeEach
 	void setUp() {
 		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		memberRepository = mock(MemberRepository.class);
-		appConfig = new AppConfig();
-		appConfig.setHostName(HOSTNAME);
 		treeNodeFactory = new TreeNodeFactoryImpl(ldesFragmentRepository, memberRepository);
 	}
 
 	@Test
 	void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
-		String hostName = appConfig.getHostName();
 
 		MissingFragmentException treeNodeId = assertThrows(MissingFragmentException.class,
-				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, hostName, COLLECTION_NAME));
+				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME));
 
 		assertEquals("No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
 				treeNodeId.getMessage());
@@ -62,8 +57,7 @@ class TreeNodeFactoryImplTest {
 		List<Member> members = List.of(new Member("member", COLLECTION_NAME, 0L, null, null, null, List.of()));
 		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
 
-		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, appConfig.getHostName(),
-				COLLECTION_NAME);
+		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 
 		assertEquals(HOSTNAME + ldesFragment.getFragmentId(), treeNode.getFragmentId());
 		assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());

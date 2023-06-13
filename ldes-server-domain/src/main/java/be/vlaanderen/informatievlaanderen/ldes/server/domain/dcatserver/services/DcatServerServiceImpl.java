@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+
 @Service
 public class DcatServerServiceImpl implements DcatServerService {
 
@@ -32,7 +34,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 	public DcatServerServiceImpl(DcatServerRepository dcatServerRepository,
 			DcatViewService dcatViewService,
 			DcatDatasetService dcatDatasetService,
-			@Value("${ldes-server.host-name}") String hostName,
+			@Value(HOST_NAME_KEY) String hostName,
 			DcatShaclValidator dcatShaclValidator) {
 		this.dcatServerRepository = dcatServerRepository;
 		this.dcatViewService = dcatViewService;
