@@ -8,8 +8,7 @@ import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-// Not active yet, preparation for new architecture
-//@ChangeUnit(id = "member-ingest-changeset-5", order = "5", author = "VSDS")
+@ChangeUnit(id = "multimodule-architecture-changeset-1", order = "5", author = "VSDS")
 public class MemberIngestChange {
 
 	private final MongoTemplate mongoTemplate;
