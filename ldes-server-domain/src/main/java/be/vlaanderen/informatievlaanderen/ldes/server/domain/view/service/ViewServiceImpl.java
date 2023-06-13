@@ -23,11 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
+
 @Service
 public class ViewServiceImpl implements ViewService {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
-	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 

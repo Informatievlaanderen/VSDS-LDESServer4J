@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.FRAGMENTATION_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter.FRAGMENTATION_NAME;
 
 public class FragmentationConfigCreationFunction implements Function<RDFNode, FragmentationConfig> {
 	@Override
@@ -34,16 +33,35 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 							+ RdfModelConverter.toString(ModelFactory.createDefaultModel().add(fragmentationStatements),
 									Lang.TURTLE));
 		}
-		Map<String, String> fragmentationPropertiesMap = statements
-				.stream()
-				.filter(statement -> !fragmentationStatements.contains(statement))
-				.collect(Collectors.toMap(statement -> statement.getPredicate().getLocalName(),
-						statement -> statement.getObject().asLiteral().getString()));
-		if (!fragmentationPropertiesMap.containsKey(FRAGMENTATION_NAME)) {
-			throw new ModelToViewConverterException("Missing fragmentation name");
-		}
-		fragmentationConfig.setName(fragmentationPropertiesMap.remove(FRAGMENTATION_NAME));
+		Map<String, String> fragmentationPropertiesMap = extractFragmentationProperties(statements,
+				fragmentationStatements);
+		String fragmentationName = computeFragmentationName(statements);
+
+		fragmentationConfig.setName(fragmentationName);
 		fragmentationConfig.setConfig(fragmentationPropertiesMap);
 		return fragmentationConfig;
+	}
+
+	private Map<String, String> extractFragmentationProperties(List<Statement> statements,
+			List<Statement> fragmentationStatements) {
+		return statements.stream()
+				.filter(statement -> !fragmentationStatements.contains(statement))
+				.collect(Collectors.toMap(statement -> statement.getPredicate().getLocalName(),
+						statement -> {
+							if (statement.getObject().isLiteral()) {
+								return statement.getObject().asLiteral().getValue().toString();
+							} else {
+								return statement.getObject().asNode().toString();
+							}
+						}));
+	}
+
+	private String computeFragmentationName(List<Statement> statements) {
+		return statements.stream()
+				.filter(statement -> statement.getPredicate().equals(RDF_SYNTAX_TYPE))
+				.findFirst()
+				.orElseThrow(() -> new ModelToViewConverterException("Unable to find fragmentation type"))
+				.getResource()
+				.getLocalName();
 	}
 }

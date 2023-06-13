@@ -88,7 +88,7 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue, String expectedEtag) throws Exception {
-		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null, false);
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),

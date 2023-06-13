@@ -31,11 +31,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,10 +45,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {
 		final String collection2 = "name2";
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
-				false);
-		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
-				true);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
+		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
 		Model shape = readModelFromFile("example-shape.ttl");
@@ -102,7 +96,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@Given("a db containing one event stream")
 	public void aDbContainingOneEventStream() throws URISyntaxException {
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 		Model shape = readModelFromFile("example-shape.ttl");
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
@@ -138,7 +132,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 		final Model shacl = readModelFromFile("example-shape.ttl");
 		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));

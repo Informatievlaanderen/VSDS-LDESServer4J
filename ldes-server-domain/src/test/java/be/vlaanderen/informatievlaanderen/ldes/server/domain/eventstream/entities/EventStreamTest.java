@@ -17,15 +17,13 @@ class EventStreamTest {
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final String MEMBER_TYPE = "memberType";
-	private static final boolean HAS_DEFAULT_VIEW = false;
 
 	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-			MEMBER_TYPE, HAS_DEFAULT_VIEW);
+			MEMBER_TYPE);
 
 	@Test
 	void test_inequality() {
-		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
-				HAS_DEFAULT_VIEW);
+		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 
 		assertNotEquals(EVENT_STREAM, other);
 		assertNotEquals(null, EVENT_STREAM);
@@ -45,11 +43,11 @@ class EventStreamTest {
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
 					EVENT_STREAM,
-					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", MEMBER_TYPE, HAS_DEFAULT_VIEW),
-					new EventStream(COLLECTION, "other", VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW),
-					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, HAS_DEFAULT_VIEW),
-					new EventStream(COLLECTION, "other", "other", MEMBER_TYPE, HAS_DEFAULT_VIEW),
-					new EventStream(COLLECTION, "other", "other", "other", false))
+					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", MEMBER_TYPE),
+					new EventStream(COLLECTION, "other", VERSION_OF_PATH, MEMBER_TYPE),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE),
+					new EventStream(COLLECTION, "other", "other", MEMBER_TYPE),
+					new EventStream(COLLECTION, "other", "other", "other"))
 					.map(Arguments::of);
 		}
 	}

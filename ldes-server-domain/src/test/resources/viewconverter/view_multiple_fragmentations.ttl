@@ -1,4 +1,3 @@
-@prefix example: <http://example.org/> .
 @prefix server: <http://localhost:8080/mobility-hindrances/> .
 @prefix tree: <https://w3id.org/tree#> .
 @prefix viewName: <http://localhost:8080/mobility-hindrances/geospatial/> .
@@ -8,16 +7,13 @@ server:geospatial
         tree:viewDescription viewName:description .
 
 viewName:description
-        a       tree:ViewDescription ;
-        example:fragmentationStrategy ([
-            a example:Fragmentation ;
-            example:name "geospatial" ;
-            example:maxZoomLevel "15" ;
-            example:fragmenterProperty "http://www.opengis.net/ont/geosparql#asWKT"
-        ]
-        [
-            a example:Fragmentation ;
-            example:name "pagination" ;
-            example:memberLimit "100"
+        a   tree:ViewDescription ;
+        tree:fragmentationStrategy ([
+            a tree:GeospatialFragmentation ;
+            tree:maxZoom "15";
+            tree:fragmentationPath "http://www.opengis.net/ont/geosparql#asWKT"
+        ][
+            a tree:PaginationFragmentation ;
+            tree:memberLimit "100"
         ]) .
 

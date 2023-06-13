@@ -25,7 +25,7 @@ public class GeospatialBucketiser {
 		List<Coordinate> coordinates = new ArrayList<>();
 
 		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
-				geospatialConfig.fragmenterProperty())
+				geospatialConfig.fragmentationPath())
 				.stream()
 				.map(GeometryWrapper.class::cast)
 				.map(geometryWrapper -> {
@@ -39,7 +39,7 @@ public class GeospatialBucketiser {
 						List.of(geometryWrapper.getXYGeometry().getCoordinates())));
 		return coordinates.stream()
 				.map(coordinate -> CoordinateToTileStringConverter.convertCoordinate(coordinate,
-						geospatialConfig.maxZoomLevel()))
+						geospatialConfig.maxZoom()))
 				.collect(Collectors.toSet());
 	}
 }

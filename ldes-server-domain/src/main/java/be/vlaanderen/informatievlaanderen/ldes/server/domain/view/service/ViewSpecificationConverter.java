@@ -109,11 +109,9 @@ public class ViewSpecificationConverter {
 		List<ResourceImpl> fragmentationResources = fragmentationList.stream().map(fragmentation -> {
 			Node blankNode = NodeFactory.createBlankNode();
 			ResourceImpl resource = new ResourceImpl(blankNode, new ModelCom(Factory.createGraphMem()));
-			resource.addProperty(RDF_SYNTAX_TYPE, createResource(FRAGMENTATION_TYPE));
-			resource.addLiteral(createProperty(CUSTOM + FRAGMENTATION_NAME),
-					createPlainLiteral(fragmentation.getName()));
+			resource.addProperty(RDF_SYNTAX_TYPE, createResource(TREE + fragmentation.getName()));
 			fragmentation.getConfig().forEach(
-					(key, value) -> resource.addProperty(createProperty(CUSTOM + key), createPlainLiteral(value)));
+					(key, value) -> resource.addProperty(createProperty(TREE + key), createPlainLiteral(value)));
 			return resource;
 		}).toList();
 		RDFList list = ModelFactory.createDefaultModel().createList(fragmentationResources.listIterator());

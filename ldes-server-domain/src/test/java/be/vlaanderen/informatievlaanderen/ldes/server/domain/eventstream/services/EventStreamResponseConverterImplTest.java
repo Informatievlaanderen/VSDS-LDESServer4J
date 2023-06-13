@@ -54,7 +54,7 @@ class EventStreamResponseConverterImplTest {
 		@BeforeEach
 		void setUp() throws URISyntaxException {
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName("fragmentationStrategy");
+			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 			views = List.of(
 					new ViewSpecification(
@@ -73,7 +73,7 @@ class EventStreamResponseConverterImplTest {
 		void when_modelHasViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shacl);
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shacl);
 
 			EventStreamResponse result = eventStreamConverter.fromModel(eventStreamModel);
 
@@ -85,7 +85,7 @@ class EventStreamResponseConverterImplTest {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					false, views, shacl);
+					views, shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
@@ -104,7 +104,7 @@ class EventStreamResponseConverterImplTest {
 		void when_modelHasNoViews_then_convertToEventStreamResponse() {
 			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(),
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(),
 					shacl);
 
 			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
@@ -115,7 +115,7 @@ class EventStreamResponseConverterImplTest {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					true, List.of(), shacl);
+					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
 		}
@@ -124,7 +124,7 @@ class EventStreamResponseConverterImplTest {
 		void when_eventStreamResponseHasTimestampAndVersionOf_then_convertToModel() {
 			EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					null, null,
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(),
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(),
 					shacl);
 
 			eventStreamModel.remove(eventStreamModel.listStatements(null,
@@ -146,7 +146,7 @@ class EventStreamResponseConverterImplTest {
 		@BeforeEach
 		void setUp() throws URISyntaxException {
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName("fragmentationStrategy");
+			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 			views = List.of(
 					new ViewSpecification(
@@ -165,8 +165,8 @@ class EventStreamResponseConverterImplTest {
 		void when_eventStreamHasViewsAndDataset_Then_ConvertToModel() {
 			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					false, views, shacl, new DcatDataset("collectionName1", dataSetModel));
+					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shacl,
+					new DcatDataset("collectionName1", dataSetModel));
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
 			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));

@@ -11,7 +11,6 @@ server:name1 a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
     custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
-    custom:hasDefaultView "true"^^xsd:boolean ;
     tree:shape server:shape .
 
 server:shape a sh:NodeShape ;

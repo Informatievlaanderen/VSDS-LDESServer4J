@@ -75,11 +75,12 @@ class AdminViewsRestControllerTest {
 		ViewSpecification view2 = converter.viewFromModel(expectedViewModel2, collectionName);
 		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of(view1, view2));
 
-		ResultActions resultActions = mockMvc
+		MvcResult result = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views")
 						.accept(contentTypeTurtle))
-				.andExpect(status().isOk());
-		MvcResult result = resultActions.andReturn();
+				.andExpect(status().isOk())
+				.andReturn();
+
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
 		Assertions.assertTrue(actualModel.isIsomorphicWith(expectedViewModel1.add(expectedViewModel2)));
 	}

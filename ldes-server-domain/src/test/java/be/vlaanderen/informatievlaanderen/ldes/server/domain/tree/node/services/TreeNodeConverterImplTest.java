@@ -51,7 +51,7 @@ class TreeNodeConverterImplTest {
 
 		EventStream eventStream = new EventStream(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", false);
+				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
 		dcatViewService = mock(DcatViewService.class);
 		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, dcatViewService);

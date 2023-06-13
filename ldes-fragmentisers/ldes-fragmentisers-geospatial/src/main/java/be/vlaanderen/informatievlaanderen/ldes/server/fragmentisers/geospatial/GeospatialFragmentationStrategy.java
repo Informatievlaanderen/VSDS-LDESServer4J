@@ -16,7 +16,7 @@ import java.util.Set;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 
 public class GeospatialFragmentationStrategy extends FragmentationStrategyDecorator {
-
+	public static final String GEOSPATIAL_FRAGMENTATION = "GeospatialFragmentation";
 	private final GeospatialBucketiser geospatialBucketiser;
 	private final GeospatialFragmentCreator fragmentCreator;
 	private final ObservationRegistry observationRegistry;

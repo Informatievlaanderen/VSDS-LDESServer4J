@@ -49,7 +49,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(),
+					eventStream.getVersionOfPath(), eventStream.getMemberType(),
 					views, shaclShape.getModel(), dataset.orElse(null));
 		}).toList();
 	}
@@ -63,7 +63,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(collectionName);
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(), views,
+				eventStream.getVersionOfPath(), eventStream.getMemberType(), views,
 				shaclShape.getModel(), dataset.orElse(null));
 	}
 
@@ -95,9 +95,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		shaclShapeService.updateShaclShape(shaclShape);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 		eventStreamResponse.getViews().forEach(viewService::addView);
-		if (eventStreamResponse.isDefaultViewEnabled()) {
-			viewService.addDefaultView(eventStream.getCollection());
-		}
+		viewService.addDefaultView(eventStream.getCollection());
 		return eventStreamResponse;
 	}
 
@@ -113,8 +111,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getTimestampPath(),
 				eventStreamResponse.getVersionOfPath(),
-				eventStreamResponse.getMemberType(),
-				eventStreamResponse.isDefaultViewEnabled());
+				eventStreamResponse.getMemberType());
 	}
 
 	@Override

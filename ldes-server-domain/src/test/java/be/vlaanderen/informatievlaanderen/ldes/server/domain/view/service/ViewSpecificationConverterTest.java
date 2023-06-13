@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -19,7 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ViewSpecificationConverterTest {
 	private static final String COLLECTION_NAME = "collection";
@@ -35,7 +34,7 @@ class ViewSpecificationConverterTest {
 				new FragmentationConfigExtractor());
 		Model retentionModel = readModelFromFile("retentionpolicy/timebased/valid_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName("fragmentation");
+		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(
 				Map.of("pageSize", "100", "property", "example/property"));
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
@@ -60,21 +59,9 @@ class ViewSpecificationConverterTest {
 	}
 
 	@Test
-	void when_MissingFragmentationName_Then_ThrowException() throws URISyntaxException {
-		Model viewModel = readModelFromFile("viewconverter/view_missing_fragmentation_name.ttl");
-		Exception exception = assertThrows(ModelToViewConverterException.class,
-				() -> viewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME));
-		assertEquals("Could not convert model to ViewSpecification:\nMissing fragmentation name",
-				exception.getMessage());
-	}
-
-	@Test
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
 		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
-
-		System.out.println(RdfModelConverter.toString(viewModel, Lang.TURTLE));
-		System.out.println(RdfModelConverter.toString(actualModel, Lang.TURTLE));
 
 		assertTrue(viewModel.isIsomorphicWith(actualModel));
 	}
@@ -88,9 +75,6 @@ class ViewSpecificationConverterTest {
 				"mobility-hindrances");
 		Model actualModel = viewSpecificationConverter.modelFromView(actualViewSpecification);
 
-		System.out.println(RdfModelConverter.toString(expectedModel, Lang.TURTLE));
-		System.out.println(RdfModelConverter.toString(actualModel, Lang.TURTLE));
-
 		assertEquals(expectedViewSpecification.getFragmentations(), actualViewSpecification.getFragmentations());
 		assertEquals(expectedViewSpecification.getRetentionConfigs(), actualViewSpecification.getRetentionConfigs());
 		assertTrue(expectedModel.isIsomorphicWith(actualModel));
@@ -99,11 +83,11 @@ class ViewSpecificationConverterTest {
 
 	private ViewSpecification getExpectedViewSpecification() {
 		FragmentationConfig geospatialConfig = new FragmentationConfig();
-		geospatialConfig.setName("geospatial");
+		geospatialConfig.setName("GeospatialFragmentation");
 		geospatialConfig.setConfig(
-				Map.of("maxZoomLevel", "15", "fragmenterProperty", "http://www.opengis.net/ont/geosparql#asWKT"));
+				Map.of("maxZoom", "15", "fragmentationPath", "http://www.opengis.net/ont/geosparql#asWKT"));
 		FragmentationConfig paginationConfig = new FragmentationConfig();
-		paginationConfig.setName("pagination");
+		paginationConfig.setName("PaginationFragmentation");
 		paginationConfig.setConfig(
 				Map.of("memberLimit", "100"));
 		List<FragmentationConfig> fragmentations = List.of(geospatialConfig, paginationConfig);
