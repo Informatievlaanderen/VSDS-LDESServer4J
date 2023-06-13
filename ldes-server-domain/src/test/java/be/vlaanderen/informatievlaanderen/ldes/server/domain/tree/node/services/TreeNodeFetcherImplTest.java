@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,14 +24,12 @@ class TreeNodeFetcherImplTest {
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
 	private TreeNodeFactory treeNodeFactory;
 	private TreeNodeFetcherImpl treeNodeFetcher;
-	private AppConfig appConfig;
+	private String hostName = "http://localhost:8089";
 
 	@BeforeEach
 	void setUp() {
 		treeNodeFactory = mock(TreeNodeFactory.class);
-		appConfig = new AppConfig();
-		appConfig.setHostName("http://localhost:8089");
-		treeNodeFetcher = new TreeNodeFetcherImpl(appConfig, treeNodeFactory);
+		treeNodeFetcher = new TreeNodeFetcherImpl(hostName, treeNodeFactory);
 	}
 
 	@Test
@@ -41,7 +38,7 @@ class TreeNodeFetcherImplTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs());
-		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), appConfig.getHostName(),
+		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), hostName,
 				COLLECTION))
 				.thenThrow(new MissingFragmentException(ldesFragment.getFragmentId()));
 
@@ -61,7 +58,7 @@ class TreeNodeFetcherImplTest {
 				ldesFragmentRequest.fragmentPairs());
 		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, false, List.of(),
 				List.of(), "collectionName");
-		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), appConfig.getHostName(),
+		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), hostName,
 				COLLECTION))
 				.thenReturn(treeNode);
 

@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.IngestionRestResponseEntityExceptionHandler;
 import org.apache.jena.rdf.model.Model;
@@ -53,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
+		IngestionWebConfig.class, IngestionRestResponseEntityExceptionHandler.class })
 @Import(MemberIngestionControllerTest.MemberIngestionControllerTestConfiguration.class)
 class MemberIngestionControllerTest {
 	private final static String RESTAURANT_COLLECTION = "restaurant";
@@ -62,8 +61,6 @@ class MemberIngestionControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private MemberIngestService memberIngestService;
-	@Autowired
-	private AppConfig appConfig;
 	@Autowired
 	private ShaclShapeService shapeService;
 
@@ -134,7 +131,7 @@ class MemberIngestionControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = appConfig.getCollections().get(0).getMemberType();
+		String ldesMemberType = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 

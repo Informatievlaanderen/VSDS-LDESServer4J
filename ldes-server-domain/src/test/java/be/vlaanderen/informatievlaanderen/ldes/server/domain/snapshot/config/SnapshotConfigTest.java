@@ -9,8 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig.DEFAULT_VIEW_FRAGMENTATION_PROPERTIES;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.config.SnapshotConfig.DEFAULT_VIEW_FRAGMENTATION_PROPERTIES;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.config.SnapshotConfig.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
 import static org.mockito.Mockito.*;
 
 class SnapshotConfigTest {

@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.ModelToViewConverterException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -12,6 +11,7 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.ModelCom;
 import org.apache.jena.rdf.model.impl.ResourceImpl;
 import org.apache.jena.vocabulary.RDF;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,14 +24,14 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 @Component
 public class ViewSpecificationConverter {
 
-	public static final String FRAGMENTATION_NAME = "name";
 	private final String hostname;
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
 
-	public ViewSpecificationConverter(AppConfig appConfig, RetentionModelExtractor retentionModelExtractor,
+	public ViewSpecificationConverter(@Value("${ldes-server.host-name}") String hostName,
+			RetentionModelExtractor retentionModelExtractor,
 			FragmentationConfigExtractor fragmentationConfigExtractor) {
-		this.hostname = appConfig.getHostName();
+		this.hostname = hostName;
 		this.retentionModelExtractor = retentionModelExtractor;
 		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
 	}

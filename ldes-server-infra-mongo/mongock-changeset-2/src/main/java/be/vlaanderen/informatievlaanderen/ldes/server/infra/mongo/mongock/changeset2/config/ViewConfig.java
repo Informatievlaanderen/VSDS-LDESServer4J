@@ -1,4 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +13,9 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 public class ViewConfig {
 
-	public static final String DEFAULT_VIEW_NAME = "by-page";
-	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
-	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
+	private static final String DEFAULT_VIEW_NAME = "by-page";
+	private static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
+	private static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 	private final List<ViewSpecification> views;
 	private final boolean hasDefaultView;

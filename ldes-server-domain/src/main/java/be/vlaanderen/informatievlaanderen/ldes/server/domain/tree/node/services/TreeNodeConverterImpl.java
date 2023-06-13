@@ -13,12 +13,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -27,10 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.IS_PART_OF_PROPERTY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -38,15 +35,16 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final AppConfig appConfig;
+	private String hostName;
+
 	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 	private final HashMap<String, ShaclShape> shaclShapes = new HashMap<>();
 	private final DcatViewService dcatViewService;
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, AppConfig appConfig,
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value("${ldes-server.host-name}") String hostName,
 			DcatViewService dcatViewService) {
 		this.prefixAdder = prefixAdder;
-		this.appConfig = appConfig;
+		this.hostName = hostName;
 		this.dcatViewService = dcatViewService;
 	}
 
@@ -56,7 +54,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 				.add(addTreeNodeStatements(treeNode, treeNode.getCollectionName()));
 
 		if (!treeNode.getMembers().isEmpty()) {
-			String baseUrl = appConfig.getHostName() + "/" + treeNode.getCollectionName();
+			String baseUrl = hostName + "/" + treeNode.getCollectionName();
 			model.add(addEventStreamStatements(treeNode, baseUrl));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
@@ -70,7 +68,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		ShaclShape shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						appConfig.getHostName() + treeRelation.treeNode(),
+						hostName + treeRelation.treeNode(),
 						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
 				.toList();
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
@@ -83,7 +81,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
 			EventStream eventStream, ShaclShape shaclShape) {
-		String baseUrl = appConfig.getHostName() + "/" + eventStream.getCollection();
+		String baseUrl = hostName + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
 		if (isView) {
@@ -104,7 +102,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
 		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
 		dcatViewService.findByViewName(viewName)
-				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(appConfig.getHostName())));
+				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
 
 	}
 

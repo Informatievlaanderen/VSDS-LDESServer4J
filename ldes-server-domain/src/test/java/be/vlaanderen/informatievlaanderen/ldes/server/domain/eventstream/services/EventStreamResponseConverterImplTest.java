@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -36,12 +35,11 @@ class EventStreamResponseConverterImplTest {
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
-		AppConfig appConfig = new AppConfig();
-		appConfig.setHostName("http://localhost:8080");
-		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(appConfig,
+		String hostName = "http://localhost:8080";
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName,
 				new RetentionModelExtractor(), new FragmentationConfigExtractor());
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
-		eventStreamConverter = new EventStreamResponseConverterImpl(appConfig, viewSpecificationConverter, prefixAdder);
+		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
 	}

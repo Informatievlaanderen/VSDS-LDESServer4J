@@ -5,9 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -18,16 +18,16 @@ import java.util.stream.Collectors;
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
 
-	private final AppConfig appConfig;
+	private final String hostName;
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
 	private final ShaclShapeService shaclShapeService;
 
-	public SnapshotCreatorImpl(AppConfig appConfig, MemberCollector memberCollector,
+	public SnapshotCreatorImpl(@Value("${ldes-server.host-name}") String hostName, MemberCollector memberCollector,
 			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter,
 			ShaclShapeService shaclShapeService) {
-		this.appConfig = appConfig;
+		this.hostName = hostName;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.snapshotFragmenter = snapshotFragmenter;
@@ -40,7 +40,7 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 		LocalDateTime snapshotTime = LocalDateTime.now();
 		Model shacl = shaclShapeService.retrieveShaclShape(collectionName).getModel();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
-				shacl, snapshotTime, appConfig.getHostName() + "/" + collectionName);
+				shacl, snapshotTime, hostName + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		LdesFragment rootTreeNodeOfSnapshot = rootFragmentCreator
 				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

@@ -4,10 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueob
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.config.SnapshotConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 	public void createSnapshot(String collectionName) {
 		Optional<Snapshot> lastSnapshot = retrieveLastSnapshot();
 
-		ViewName viewName = new ViewName(collectionName, ViewConfig.DEFAULT_VIEW_NAME);
+		ViewName viewName = new ViewName(collectionName, SnapshotConfig.DEFAULT_VIEW_NAME);
 
 		List<LdesFragment> treeNodesForSnapshot;
 		if (lastSnapshot.isPresent()) {

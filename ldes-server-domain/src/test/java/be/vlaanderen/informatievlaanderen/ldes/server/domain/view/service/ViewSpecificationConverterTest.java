@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -28,9 +27,8 @@ class ViewSpecificationConverterTest {
 
 	@BeforeEach
 	void setup() throws URISyntaxException {
-		AppConfig appConfig = new AppConfig();
-		appConfig.setHostName("http://localhost:8080");
-		viewSpecificationConverter = new ViewSpecificationConverter(appConfig, new RetentionModelExtractor(),
+		viewSpecificationConverter = new ViewSpecificationConverter("http://localhost:8080",
+				new RetentionModelExtractor(),
 				new FragmentationConfigExtractor());
 		Model retentionModel = readModelFromFile("retentionpolicy/timebased/valid_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();

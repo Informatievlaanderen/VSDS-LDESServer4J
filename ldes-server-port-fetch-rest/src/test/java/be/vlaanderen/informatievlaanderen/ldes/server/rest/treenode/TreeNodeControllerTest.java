@@ -13,7 +13,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
@@ -33,6 +32,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -62,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = { TreeNodeController.class,
-		AppConfig.class, RestConfig.class, TreeViewWebConfig.class,
+		RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class })
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
@@ -227,14 +227,14 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(final AppConfig appConfig) {
+		public TreeNodeConverter ldesFragmentConverter(@Value("${ldes-server.host-name}") String hostName) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, appConfig, mock(DcatViewService.class));
+			return new TreeNodeConverterImpl(prefixAdder, hostName, mock(DcatViewService.class));
 		}
 
 		@Bean
-		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
-			return new EtagCachingStrategy(appConfig);
+		public CachingStrategy cachingStrategy(@Value("${ldes-server.host-name}") String hostName) {
+			return new EtagCachingStrategy(hostName);
 		}
 	}
 }

@@ -4,9 +4,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -29,10 +29,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
 
-	public EventStreamResponseConverterImpl(AppConfig appConfig, ViewSpecificationConverter viewSpecificationConverter,
+	public EventStreamResponseConverterImpl(@Value("${ldes-server.host-name}") String hostName,
+			ViewSpecificationConverter viewSpecificationConverter,
 			PrefixAdder prefixAdder) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
-		hostname = appConfig.getHostName();
+		this.hostname = hostName;
 		this.prefixAdder = prefixAdder;
 	}
 

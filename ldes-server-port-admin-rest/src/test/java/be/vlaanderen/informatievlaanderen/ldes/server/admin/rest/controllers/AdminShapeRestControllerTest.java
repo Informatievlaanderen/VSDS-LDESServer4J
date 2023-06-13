@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ShaclShapeValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -35,17 +34,14 @@ import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminShapeRestController.class, ModelConverter.class,
+@ContextConfiguration(classes = { AdminShapeRestController.class, ModelConverter.class,
 		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class })
 class AdminShapeRestControllerTest {
 	@MockBean
