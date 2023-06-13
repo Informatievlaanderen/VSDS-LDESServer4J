@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -28,7 +29,7 @@ public class ViewSpecificationConverter {
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
 
-	public ViewSpecificationConverter(@Value("${ldes-server.host-name}") String hostName,
+	public ViewSpecificationConverter(@Value(HOST_NAME_KEY) String hostName,
 			RetentionModelExtractor retentionModelExtractor,
 			FragmentationConfigExtractor fragmentationConfigExtractor) {
 		this.hostname = hostName;

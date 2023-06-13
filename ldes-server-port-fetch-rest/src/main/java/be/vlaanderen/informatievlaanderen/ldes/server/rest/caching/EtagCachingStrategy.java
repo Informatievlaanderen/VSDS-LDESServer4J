@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Component
@@ -15,7 +16,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 
 	private final String hostName;
 
-	public EtagCachingStrategy(@Value("${ldes-server.host-name}") String hostName) {
+	public EtagCachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
 		this.hostName = hostName;
 	}
 

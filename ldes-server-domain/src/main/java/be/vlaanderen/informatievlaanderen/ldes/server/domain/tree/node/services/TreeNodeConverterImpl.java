@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -41,7 +42,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private final HashMap<String, ShaclShape> shaclShapes = new HashMap<>();
 	private final DcatViewService dcatViewService;
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value("${ldes-server.host-name}") String hostName,
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
 			DcatViewService dcatViewService) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;

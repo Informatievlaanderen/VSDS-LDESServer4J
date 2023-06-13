@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
 
@@ -24,7 +26,7 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	private final SnapshotFragmenter snapshotFragmenter;
 	private final ShaclShapeService shaclShapeService;
 
-	public SnapshotCreatorImpl(@Value("${ldes-server.host-name}") String hostName, MemberCollector memberCollector,
+	public SnapshotCreatorImpl(@Value(HOST_NAME_KEY) String hostName, MemberCollector memberCollector,
 			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter,
 			ShaclShapeService shaclShapeService) {
 		this.hostName = hostName;

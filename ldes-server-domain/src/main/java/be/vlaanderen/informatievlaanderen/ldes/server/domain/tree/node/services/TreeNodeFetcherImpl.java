@@ -7,12 +7,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+
 @Component
 public class TreeNodeFetcherImpl implements TreeNodeFetcher {
-	private String hostName;
+	private final String hostName;
 	private final TreeNodeFactory treeNodeFactory;
 
-	public TreeNodeFetcherImpl(@Value("${ldes-server.host-name}") String hostName, TreeNodeFactory treeNodeFactory) {
+	public TreeNodeFetcherImpl(@Value(HOST_NAME_KEY) String hostName, TreeNodeFactory treeNodeFactory) {
 		this.hostName = hostName;
 		this.treeNodeFactory = treeNodeFactory;
 	}

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
@@ -29,7 +30,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
 
-	public EventStreamResponseConverterImpl(@Value("${ldes-server.host-name}") String hostName,
+	public EventStreamResponseConverterImpl(@Value(HOST_NAME_KEY) String hostName,
 			ViewSpecificationConverter viewSpecificationConverter,
 			PrefixAdder prefixAdder) {
 		this.viewSpecificationConverter = viewSpecificationConverter;

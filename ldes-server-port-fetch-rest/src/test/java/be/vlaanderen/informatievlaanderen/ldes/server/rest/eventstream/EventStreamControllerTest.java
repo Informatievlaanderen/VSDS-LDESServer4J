@@ -53,6 +53,7 @@ import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -213,7 +214,7 @@ class EventStreamControllerTest {
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
 		@Bean
-		public CachingStrategy cachingStrategy(@Value("${ldes-server.host-name}") String hostName) {
+		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
 			return new EtagCachingStrategy(hostName);
 		}
 	}
