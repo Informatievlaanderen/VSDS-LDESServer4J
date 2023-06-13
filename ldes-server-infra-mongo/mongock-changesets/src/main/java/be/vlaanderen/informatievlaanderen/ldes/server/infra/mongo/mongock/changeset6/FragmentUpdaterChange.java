@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDateTime;
 
-@ChangeUnit(id = "fragment-updater-changeset-3", order = "6", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-6", order = "6", author = "VSDS")
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 

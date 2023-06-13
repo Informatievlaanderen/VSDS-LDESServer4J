@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config.AppConfigChangeset2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.entities.LdesMemberEntityV3;
@@ -28,11 +28,11 @@ public class MemberUpdaterChange {
 	private final String versionOfPath;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfig appConfig) {
+	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset2 appConfigChangeset2) {
 		this.mongoTemplate = mongoTemplate;
 
-		if (appConfig.getCollections().size() == 1) {
-			LdesConfig ldesConfig = appConfig.getCollections().get(0);
+		if (appConfigChangeset2.getCollections().size() == 1) {
+			LdesConfig ldesConfig = appConfigChangeset2.getCollections().get(0);
 			timeStampPath = ldesConfig.getTimestampPath();
 			versionOfPath = ldesConfig.getVersionOfPath();
 		} else {

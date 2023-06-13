@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.config.AppConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.config.AppConfigChangeset3;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.entities.LdesFragmentEntityV2;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.entities.LdesFragmentEntityV3;
@@ -23,11 +23,11 @@ public class FragmentUpdaterChange {
 	private final String collection;
 	private final List<String> viewNames;
 
-	public FragmentUpdaterChange(MongoTemplate mongoTemplate, AppConfig appConfig) {
+	public FragmentUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset3 appConfigChangeset3) {
 		this.mongoTemplate = mongoTemplate;
 
-		if (appConfig.getCollections().size() == 1) {
-			LdesConfig ldesConfig = appConfig.getCollections().get(0);
+		if (appConfigChangeset3.getCollections().size() == 1) {
+			LdesConfig ldesConfig = appConfigChangeset3.getCollections().get(0);
 			collection = ldesConfig.getCollectionName();
 			viewNames = ldesConfig.getViews().stream().map(ViewSpecification::getName).map(s -> "/" + s.asString())
 					.toList();
