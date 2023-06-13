@@ -14,12 +14,7 @@
     <modules>
         <module>mongo-repository</module>
         <module>mongock-config</module>
-        <module>mongock-changeset-1</module>
-        <module>mongock-changeset-2</module>
-        <module>mongock-changeset-3</module>
-        <module>mongock-changeset-4</module>
-        <module>mongock-changeset-5</module>
-        <module>mongock-changeset-6</module>
+        <module>mongock-changesets</module>
     </modules>
 
     <properties>
