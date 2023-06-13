@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.Dupl
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import org.apache.jena.riot.RiotException;
+import org.apache.jena.shared.PropertyNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,13 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
+	@ExceptionHandler(value = {PropertyNotFoundException.class})
+	protected ResponseEntity<Object> handlePropertyNotFoundException(
+			RuntimeException ex, WebRequest request) {
+		String message = "Could not find property of type: " + ex.getMessage();
+		return handleExceptionWithCustomMessage(ex, message, HttpStatus.BAD_REQUEST, request);
+	}
+
 	@ExceptionHandler(value = { SnapshotCreationException.class })
 	protected ResponseEntity<Object> handleSnapshotCreationException(
 			RuntimeException ex, WebRequest request) {
@@ -51,6 +59,13 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
+				new HttpHeaders(), status, request);
+	}
+
+	private ResponseEntity<Object> handleExceptionWithCustomMessage(
+			RuntimeException ex, String body, HttpStatus status, WebRequest request) {
+		logger.error(body);
+		return handleExceptionInternal(ex, body,
 				new HttpHeaders(), status, request);
 	}
 }

@@ -123,7 +123,7 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(post("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 		verify(viewService, times(1)).addView(view);
 	}
 
