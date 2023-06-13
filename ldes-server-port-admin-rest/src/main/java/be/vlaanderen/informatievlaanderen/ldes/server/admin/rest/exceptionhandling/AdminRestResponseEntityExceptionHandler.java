@@ -35,7 +35,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = {PropertyNotFoundException.class})
+	@ExceptionHandler(value = { PropertyNotFoundException.class })
 	protected ResponseEntity<Object> handlePropertyNotFoundException(
 			RuntimeException ex, WebRequest request) {
 		String message = "Could not find property of type: " + ex.getMessage();
