@@ -48,7 +48,7 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void addView(ViewSpecification viewSpecification) {
-		if (!eventStreamIsPresent(viewSpecification.getName().getCollectionName())) {
+		if (isEventStreamMissing(viewSpecification.getName().getCollectionName())) {
 			throw new MissingEventStreamException(viewSpecification.getName().getCollectionName());
 		}
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
@@ -60,8 +60,8 @@ public class ViewServiceImpl implements ViewService {
 		viewRepository.saveView(viewSpecification);
 	}
 
-	private boolean eventStreamIsPresent(String collectionName) {
-		return eventStreams.containsKey(collectionName);
+	private boolean isEventStreamMissing(String collectionName) {
+		return !eventStreams.containsKey(collectionName);
 	}
 
 	@Override
@@ -79,9 +79,6 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
-		if (!eventStreamIsPresent(viewName.getCollectionName())) {
-			throw new MissingEventStreamException(viewName.getCollectionName());
-		}
 		ViewSpecification viewSpecification = viewRepository.getViewByViewName(viewName)
 				.orElseThrow(() -> new MissingViewException(viewName));
 		addDcatToViewSpecification(viewSpecification);
@@ -90,7 +87,7 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		if (!eventStreamIsPresent(collectionName)) {
+		if (isEventStreamMissing(collectionName)) {
 			throw new MissingEventStreamException(collectionName);
 		}
 		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
@@ -104,16 +101,21 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
-		if (!eventStreamIsPresent(viewName.getCollectionName())) {
+		if (isEventStreamMissing(viewName.getCollectionName())) {
 			throw new MissingEventStreamException(viewName.getCollectionName());
 		}
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewName);
 		if (view.isEmpty()) {
 			throw new MissingViewException(viewName);
 		}
-		eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
-		viewRepository.deleteViewByViewName(viewName);
-		dcatViewService.delete(viewName);
+		deleteViews(List.of(viewName));
+	}
+
+	private void deleteViews(List<ViewName> viewNames) {
+		viewNames.forEach(viewName -> {
+			eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
+			viewRepository.deleteViewByViewName(viewName);
+		});
 	}
 
 	@EventListener(ApplicationStartedEvent.class)
@@ -131,7 +133,10 @@ public class ViewServiceImpl implements ViewService {
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		eventStreams.remove(event.collectionName());
+		String collectionName = event.collectionName();
+		eventStreams.remove(collectionName);
+		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
+		deleteViews(viewSpecifications.stream().map(ViewSpecification::getName).toList());
 	}
 
 }

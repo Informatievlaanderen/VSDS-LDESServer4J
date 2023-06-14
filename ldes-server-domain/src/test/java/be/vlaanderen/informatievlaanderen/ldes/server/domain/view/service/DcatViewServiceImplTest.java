@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -15,12 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DcatViewServiceImplTest {
@@ -58,6 +55,14 @@ class DcatViewServiceImplTest {
 	@Test
 	void should_CallRepositoryWithDcatView_when_DeleteIsCalled() {
 		dcatViewService.delete(VIEW_NAME);
+
+		verify(dcatViewRepository).delete(VIEW_NAME);
+		verifyNoMoreInteractions(dcatViewRepository);
+	}
+
+	@Test
+	void should_CallRepositoryWithDcatView_when_ViewDeletedEventIsPublished() {
+		dcatViewService.handleEventStreamInitEvent(new ViewDeletedEvent(VIEW_NAME));
 
 		verify(dcatViewRepository).delete(VIEW_NAME);
 		verifyNoMoreInteractions(dcatViewRepository);
