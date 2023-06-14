@@ -119,6 +119,11 @@ public class EventStreamServiceImpl implements EventStreamService {
 		return dcatServerService.getComposedDcat();
 	}
 
+	/**
+	 * Initializes the eventstream config.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
 	@EventListener(ApplicationReadyEvent.class)
 	public void initEventStream() {
 		eventStreamRepository.retrieveAllEventStreams().stream()
