@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.entities.EventStreamEntityV1.COLLECTION_NAME;
+
 @ChangeUnit(id = "eventstream-updater-changeset-7", order = "7", author = "VSDS")
 public class EventStreamUpdaterChange {
 
@@ -21,12 +23,11 @@ public class EventStreamUpdaterChange {
 		this.mongoTemplate = mongoTemplate;
 		this.config = config;
 	}
-	// TODO: 14/06/23 mapping for Jan
 
 	@Execution
 	public void changeSet() {
 		if (collectionAlreadyExists()) {
-			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", EventStreamEntityV1.COLLECTION_NAME);
+			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
 			return;
 		}
 
@@ -37,13 +38,12 @@ public class EventStreamUpdaterChange {
 	}
 
 	private boolean collectionAlreadyExists() {
-		long count = mongoTemplate.getCollection(EventStreamEntityV1.COLLECTION_NAME).countDocuments();
-		return count > 0;
+		return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments() > 0;
 	}
 
 	@RollbackExecution
 	public void rollback() {
-		mongoTemplate.dropCollection("eventstreams");
+		mongoTemplate.dropCollection(COLLECTION_NAME);
 	}
 
 }

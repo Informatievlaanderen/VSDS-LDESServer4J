@@ -6,8 +6,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "view")
+@Document(ViewEntityV1.COLLECTION_NAME)
 public class ViewEntityV1 {
+
+	public static final String COLLECTION_NAME = "view";
 
 	@Id
 	private final String viewName;
