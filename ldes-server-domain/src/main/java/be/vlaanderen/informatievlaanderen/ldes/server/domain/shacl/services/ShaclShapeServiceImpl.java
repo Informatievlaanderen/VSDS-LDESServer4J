@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueob
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -45,7 +45,7 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 		deleteShaclShape(event.collectionName());
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
+	@EventListener(ApplicationReadyEvent.class)
 	public void initShapes() {
 		shaclShapeRepository
 				.retrieveAllShaclShapes()
