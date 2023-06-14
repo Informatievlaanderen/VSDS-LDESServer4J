@@ -3,8 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -46,6 +48,11 @@ public class DcatViewServiceImpl implements DcatViewService {
 	@Override
 	public List<DcatView> findAll() {
 		return dcatViewRepository.findAll();
+	}
+
+	@EventListener
+	public void handleEventStreamInitEvent(ViewDeletedEvent event) {
+		delete(event.getViewName());
 	}
 
 }
