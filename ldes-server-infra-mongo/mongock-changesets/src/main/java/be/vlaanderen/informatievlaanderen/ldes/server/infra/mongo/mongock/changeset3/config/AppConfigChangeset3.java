@@ -1,24 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.config;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.config.LdesConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "ldes-server")
+@ConfigurationProperties
 @Configuration
 public class AppConfigChangeset3 {
-	private String hostName;
-	private List<LdesConfig> collections = new ArrayList<>();
+	private List<LdesConfig> collections;
 
-	public String getHostName() {
-		return hostName;
-	}
-
-	public AppConfigChangeset3 setHostName(String hostName) {
-		this.hostName = hostName;
-		return this;
+	public AppConfigChangeset3(List<LdesConfig> collections) {
+		this.collections = collections != null ? collections : new ArrayList<>();
 	}
 
 	public List<LdesConfig> getCollections() {
