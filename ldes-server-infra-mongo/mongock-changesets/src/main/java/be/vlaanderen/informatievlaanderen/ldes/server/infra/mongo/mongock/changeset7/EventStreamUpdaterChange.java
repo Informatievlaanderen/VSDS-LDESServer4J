@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.config.AppConfigChangeset7;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.entities.EventStreamEntityV1;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.eventstream.EventStreamEntityV1;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;
@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.entities.EventStreamEntityV1.COLLECTION_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.eventstream.EventStreamEntityV1.COLLECTION_NAME;
 
 @ChangeUnit(id = "eventstream-updater-changeset-7", order = "7", author = "VSDS")
 public class EventStreamUpdaterChange {

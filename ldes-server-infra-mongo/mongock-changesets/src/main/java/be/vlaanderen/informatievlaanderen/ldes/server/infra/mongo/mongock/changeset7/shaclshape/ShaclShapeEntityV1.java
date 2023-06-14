@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.shaclshape;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

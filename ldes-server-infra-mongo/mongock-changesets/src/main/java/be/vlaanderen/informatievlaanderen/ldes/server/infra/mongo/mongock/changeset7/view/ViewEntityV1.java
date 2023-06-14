@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import org.springframework.data.annotation.Id;

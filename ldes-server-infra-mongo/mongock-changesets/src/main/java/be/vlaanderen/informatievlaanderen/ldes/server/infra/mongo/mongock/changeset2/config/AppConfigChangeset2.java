@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.config.LdesConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
