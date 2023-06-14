@@ -35,6 +35,9 @@ public class VersionBasedRetentionPolicy implements RetentionPolicy {
 		LocalDateTime timestamp = member.getTimestamp();
 		if (versionOf != null && timestamp != null) {
 			List<Member> membersOfVersion = memberRepository.getMembersOfVersion(versionOf);
+			if (numberOfMembersToKeep >= membersOfVersion.size()) {
+				return false;
+			}
 			List<Member> sortedMembersByTimestampDescending = membersOfVersion.stream()
 					.sorted(new ReverseTimeStampComparator())
 					.toList();

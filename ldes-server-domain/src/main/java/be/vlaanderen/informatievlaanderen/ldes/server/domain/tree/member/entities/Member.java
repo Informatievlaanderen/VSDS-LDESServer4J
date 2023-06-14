@@ -4,6 +4,7 @@ import org.apache.jena.rdf.model.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
@@ -93,5 +94,20 @@ public class Member {
 
 	public Long getSequenceNr() {
 		return sequenceNr;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Member member = (Member) o;
+		return memberId.equals(member.memberId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(memberId);
 	}
 }
