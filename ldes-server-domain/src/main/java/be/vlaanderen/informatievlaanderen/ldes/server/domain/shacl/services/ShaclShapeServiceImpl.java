@@ -47,7 +47,7 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 
 
 	/**
-	 * Initializes the eventstream config.
+	 * Initializes the shapes config.
 	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
 	 * to give db migrations such as mongock time before this init.
 	 */
