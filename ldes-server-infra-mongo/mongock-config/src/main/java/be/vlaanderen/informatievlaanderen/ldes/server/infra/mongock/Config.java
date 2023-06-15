@@ -4,7 +4,6 @@ import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
 import io.mongock.runner.springboot.EnableMongock;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +18,6 @@ public class Config {
 	@Bean
 	public ConnectionDriver mongockConnection(MongoTemplate mongoTemplate) {
 		return SpringDataMongoV4Driver.withDefaultLock(mongoTemplate);
-	}
-
-	@Bean
-	public ApplicationEventPublisher applicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
-		return applicationEventPublisher;
 	}
 
 }
