@@ -6,17 +6,16 @@ import java.util.Map;
 
 public class FragmentationRenamer {
 
-    private static final Map<String, String> newFragmentationNameMap = Map.of(
-            "pagination", "PaginationFragmentation",
-            "geospatial", "GeospatialFragmentation",
-            "substring", "SubstringFragmentation",
-            "timebased", "TimebasedFragmentation"
-    );
+	private static final Map<String, String> newFragmentationNameMap = Map.of(
+			"pagination", "PaginationFragmentation",
+			"geospatial", "GeospatialFragmentation",
+			"substring", "SubstringFragmentation",
+			"timebased", "TimebasedFragmentation");
 
-    public static FragmentationConfig rename(FragmentationConfig fragmentationConfig) {
-        String fragmentationName = fragmentationConfig.getName();
-        fragmentationConfig.setName(newFragmentationNameMap.getOrDefault(fragmentationName, fragmentationName));
-        return fragmentationConfig;
-    }
+	public static FragmentationConfig rename(FragmentationConfig fragmentationConfig) {
+		String fragmentationName = fragmentationConfig.getName();
+		fragmentationConfig.setName(newFragmentationNameMap.getOrDefault(fragmentationName, fragmentationName));
+		return fragmentationConfig;
+	}
 
 }

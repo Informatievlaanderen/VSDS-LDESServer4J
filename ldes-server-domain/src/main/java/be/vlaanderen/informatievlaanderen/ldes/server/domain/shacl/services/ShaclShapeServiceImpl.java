@@ -45,7 +45,6 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 		deleteShaclShape(event.collectionName());
 	}
 
-
 	/**
 	 * Initializes the shapes config.
 	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events

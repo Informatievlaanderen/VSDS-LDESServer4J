@@ -43,7 +43,6 @@ public class ShaclShapeUpdaterChange {
 			return new ShaclShapeEntityV1(collection.getCollectionName(), graphString);
 		}).toList();
 
-
 		mongoTemplate.insertAll(shapes);
 	}
 
@@ -53,7 +52,7 @@ public class ShaclShapeUpdaterChange {
 			return RDFWriter.source(graph).lang(Lang.TURTLE).asString();
 		} else {
 			// We use an empty shape when no shape is defined.
-			return  "[ a <http://www.w3.org/ns/shacl#NodeShape> ] .";
+			return "[ a <http://www.w3.org/ns/shacl#NodeShape> ] .";
 		}
 	}
 
