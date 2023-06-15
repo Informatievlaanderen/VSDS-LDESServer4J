@@ -23,8 +23,8 @@ public class MongockConfig {
 
 	@Bean
 	public MongockRunner applicationRunner(MongoTemplate mongoTemplate,
-										   ApplicationContext applicationContext,
-										   MigrationScanPackages migrationScanPackages) {
+			ApplicationContext applicationContext,
+			MigrationScanPackages migrationScanPackages) {
 		final List<String> migrationPackages = migrationScanPackages.getMigrationScanPackage();
 		if (CollectionUtils.isNotNullOrEmpty(migrationPackages)) {
 			return MongockSpringboot.builder()
