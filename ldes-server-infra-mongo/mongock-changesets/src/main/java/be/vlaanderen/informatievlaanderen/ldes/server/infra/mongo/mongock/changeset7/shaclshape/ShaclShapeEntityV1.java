@@ -3,8 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.chang
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "shacl_shape")
+@Document(ShaclShapeEntityV1.COLLECTION_NAME)
 public class ShaclShapeEntityV1 {
+
+	public static final String COLLECTION_NAME = "shacl_shape";
 
 	@Id
 	private final String id;
