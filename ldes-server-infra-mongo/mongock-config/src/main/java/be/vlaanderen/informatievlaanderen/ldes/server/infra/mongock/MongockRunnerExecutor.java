@@ -15,7 +15,7 @@ public class MongockRunnerExecutor {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void foo() {
+    public void execute() {
         if (applicationRunner.isEnabled()) {
             applicationRunner.execute();
         }
