@@ -13,7 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -118,7 +118,12 @@ public class ViewServiceImpl implements ViewService {
 		});
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
+	/**
+	 * Initializes the views config.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
 	public void initViews() {
 		viewRepository
 				.retrieveAllViews()

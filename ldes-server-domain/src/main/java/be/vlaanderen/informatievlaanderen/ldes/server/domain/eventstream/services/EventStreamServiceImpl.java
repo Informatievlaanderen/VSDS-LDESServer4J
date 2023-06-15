@@ -14,7 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -119,7 +119,12 @@ public class EventStreamServiceImpl implements EventStreamService {
 		return dcatServerService.getComposedDcat();
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
+	/**
+	 * Initializes the eventstream config.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
 	public void initEventStream() {
 		eventStreamRepository.retrieveAllEventStreams().stream()
 				.map(EventStreamCreatedEvent::new)

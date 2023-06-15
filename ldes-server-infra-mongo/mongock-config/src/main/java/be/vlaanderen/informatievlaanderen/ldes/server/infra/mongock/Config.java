@@ -19,4 +19,5 @@ public class Config {
 	public ConnectionDriver mongockConnection(MongoTemplate mongoTemplate) {
 		return SpringDataMongoV4Driver.withDefaultLock(mongoTemplate);
 	}
+
 }
