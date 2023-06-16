@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongock;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.config;
 
 import io.mongock.driver.api.driver.ConnectionDriver;
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
