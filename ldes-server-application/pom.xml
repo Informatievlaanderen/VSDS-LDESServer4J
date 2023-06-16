@@ -59,11 +59,6 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongock-config</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>mongock-changesets</artifactId>
                     <version>${project.version}</version>
                 </dependency>
