@@ -13,7 +13,6 @@
 
     <modules>
         <module>mongo-repository</module>
-        <module>mongock-config</module>
         <module>mongock-changesets</module>
     </modules>
 
