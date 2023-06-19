@@ -202,7 +202,6 @@ Currently, there are 3 possible retention policies each with a different type an
   ```ttl
   @prefix ldes: <https://w3id.org/ldes#> .
   @prefix tree: <https://w3id.org/tree#>.
-  @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
     tree:viewDescription [
@@ -219,7 +218,6 @@ Currently, there are 3 possible retention policies each with a different type an
   ```ttl
   @prefix ldes: <https://w3id.org/ldes#> .
   @prefix tree: <https://w3id.org/tree#>.
-  @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
     tree:viewDescription [
@@ -236,7 +234,6 @@ Currently, there are 3 possible retention policies each with a different type an
   ```ttl
   @prefix ldes: <https://w3id.org/ldes#> .
   @prefix tree: <https://w3id.org/tree#>.
-  @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
     tree:viewDescription [
@@ -266,16 +263,14 @@ Full documentation for geospatial fragmentation can be found [here](ldes-fragmen
   ```ttl
   @prefix ldes: <https://w3id.org/ldes#> .
   @prefix tree: <https://w3id.org/tree#>.
-  @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
     tree:viewDescription [
       a tree:ViewDescription ;
-      example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "geospatial";
-        example:maxZoomLevel "15" ;
-        example:fragmenterProperty "http://www.opengis.net/ont/geosparql#asWKT" ;
+      tree:fragmentationStrategy [
+        a tree:GeospatialFragmentation ;
+        tree:maxZoom "15" ;
+        tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT> ;
       ] ;
     ] .
   
@@ -292,16 +287,14 @@ Full documentation for substring fragmentation can be found [here](ldes-fragment
   @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
   @prefix ldes: <https://w3id.org/ldes#> .
   @prefix tree: <https://w3id.org/tree#>.
-  @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
     tree:viewDescription [
       a tree:ViewDescription ;
-      example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "substring";
-        example:memberLimit "10" ;
-        example:fragmenterProperty "https://data.vlaanderen.be/ns/adres#volledigAdres" ;
+      tree:fragmentationStrategy [
+        a tree:SubstringFragmentation ;
+        tree:memberLimit "10" ;
+        tree:fragmentationPath <https://data.vlaanderen.be/ns/adres#volledigAdres> ;
       ] ;
     ] .
   ```
@@ -313,16 +306,14 @@ Full documentation for pagination fragmentation can be found [here](ldes-fragmen
   ```ttl
   @prefix ldes: <https://w3id.org/ldes#> .
   @prefix tree: <https://w3id.org/tree#>.
-  @prefix example: <http://example.org/> .
 
   <view1> a tree:Node ;
     tree:viewDescription [
-      a tree:ViewDescription ;
-    example:fragmentationStrategy [
-      a example:Fragmentation ;
-      example:name "pagination";
-      example:memberLimit "10" ;
-    ] ;
+        a tree:ViewDescription ;
+        tree:fragmentationStrategy [
+          a tree:PaginationFragmentation ;
+          tree:memberLimit 10 ;
+        ] ;
   ] .
   ```
 
