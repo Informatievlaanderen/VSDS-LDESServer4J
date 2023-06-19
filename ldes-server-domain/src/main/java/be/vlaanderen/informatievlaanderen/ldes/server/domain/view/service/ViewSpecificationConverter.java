@@ -39,13 +39,10 @@ public class ViewSpecificationConverter {
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
 		List<Statement> statements = viewModel.listStatements().toList();
-		ViewSpecification view = new ViewSpecification();
-
-		view.setName(viewNameFromStatements(statements, collectionName));
-		view.setCollectionName(collectionName);
-		view.setRetentionPolicies(retentionModelExtractor.extractRetentionStatements(viewModel));
-		view.setFragmentations(fragmentationConfigExtractor.extractFragmentationConfigs(statements));
-		return view;
+		ViewName viewName = viewNameFromStatements(statements, collectionName);
+		List<Model> retentionPolicies = retentionModelExtractor.extractRetentionStatements(viewModel);
+		var fragmentationConfigs = fragmentationConfigExtractor.extractFragmentationConfigs(statements);
+		return new ViewSpecification(viewName, retentionPolicies, fragmentationConfigs);
 	}
 
 	public Model modelFromView(ViewSpecification view) {

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.versionbased.VersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -45,9 +46,8 @@ class RetentionPolicyFactoryImplTest {
 	void when_RetentionPolicyDescriptionIsAValidRetentionPolicy_then_ACorrectRetentionPolicyImplementationIsReturned(
 			String fileName, Class<? extends RetentionPolicy> expectedRetentionPolicyClass)
 			throws URISyntaxException {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification
-				.setRetentionPolicies(List.of(readModelFromFile(fileName)));
+		ViewName viewName = ViewName.fromString("col/view");
+		var viewSpecification = new ViewSpecification(viewName, List.of(readModelFromFile(fileName)), List.of());
 
 		List<RetentionPolicy> retentionPolicyListForView = retentionPolicyFactory
 				.getRetentionPolicyListForView(viewSpecification);
@@ -72,9 +72,9 @@ class RetentionPolicyFactoryImplTest {
 	@Test
 	void when_RetentionPolicyDescriptionDoesNotHaveASyntaxTypeStatement_then_AnIllegalArgumentExceptionIsThrown()
 			throws URISyntaxException {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification
-				.setRetentionPolicies(List.of(readModelFromFile("retentionpolicy/retentionpolicy-without-type.ttl")));
+		ViewName viewName = ViewName.fromString("col/view");
+		List<Model> retentionPolicies = List.of(readModelFromFile("retentionpolicy/retentionpolicy-without-type.ttl"));
+		var viewSpecification = new ViewSpecification(viewName, retentionPolicies, List.of());
 
 		IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
 				() -> retentionPolicyFactory
@@ -87,9 +87,10 @@ class RetentionPolicyFactoryImplTest {
 	@Test
 	void when_RetentionPolicyDescriptionHasAnUnknownType_then_AnIllegalArgumentExceptionIsThrown()
 			throws URISyntaxException {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setRetentionPolicies(
-				List.of(readModelFromFile("retentionpolicy/retentionpolicy-with-unknown-type.ttl")));
+		ViewName viewName = ViewName.fromString("col/view");
+		List<Model> retentionPolicies = List
+				.of(readModelFromFile("retentionpolicy/retentionpolicy-with-unknown-type.ttl"));
+		var viewSpecification = new ViewSpecification(viewName, retentionPolicies, List.of());
 
 		IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
 				() -> retentionPolicyFactory

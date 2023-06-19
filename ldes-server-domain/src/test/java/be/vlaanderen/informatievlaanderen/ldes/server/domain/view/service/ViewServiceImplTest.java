@@ -143,16 +143,17 @@ class ViewServiceImplTest {
 		}
 
 		@Test
-        void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
-            when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(new ViewSpecification()));
+		void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
+			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(viewSpecification));
 
-            viewService.deleteViewByViewName(viewName);
+			viewService.deleteViewByViewName(viewName);
 
-            InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
 			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
-            inOrder.verify(viewRepository).deleteViewByViewName(viewName);
-            inOrder.verifyNoMoreInteractions();
-        }
+			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
 	@Nested
