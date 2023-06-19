@@ -1,14 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.MemberConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -19,6 +23,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -34,8 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -54,7 +58,21 @@ class MemberIngestControllerTest {
 	private MemberIngester memberIngester;
 
 	@Autowired
+	private ApplicationEventPublisher eventPublisher;
+
+	@Autowired
 	private AppConfig appConfig;
+
+	@BeforeEach
+	void setUp() {
+		Stream.of(
+				new EventStream("mobility-hindrances", "timestampPath", "versionOfPath",
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false),
+				new EventStream("restaurant", "timestampPath", "versionOfPath",
+						"http://example.com/restaurant#MenuItem", false))
+				.map(EventStreamChangedEvent::new)
+				.forEach(eventPublisher::publishEvent);
+	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
@@ -62,7 +80,7 @@ class MemberIngestControllerTest {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngester, times(1)).ingest(any(Member.class));
 	}
 
@@ -84,7 +102,7 @@ class MemberIngestControllerTest {
 				Lang.NQUADS);
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngester, times(1)).ingest(any(Member.class));
 	}
 
@@ -97,7 +115,7 @@ class MemberIngestControllerTest {
 		mockMvc.perform(post("/another-collection-name")
 				.contentType("application/n-quads")
 				.content(ldesMemberString))
-				.andDo(print()).andExpect(status().isNotFound());
+				.andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -121,10 +139,18 @@ class MemberIngestControllerTest {
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isOk());
 
 		verify(memberIngester).ingest(any(Member.class));
+	}
+
+	@Test
+	void whenIngestValidationExceptionIsThrown_thenStatus400IsReturned() throws Exception {
+		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
+		doThrow(IngestValidationException.class).when(memberIngester).ingest(any(Member.class));
+
+		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
+				.andExpect(status().isBadRequest());
 	}
 
 	private String readLdesMemberDataFromFile(String fileName, Lang rdfFormat)

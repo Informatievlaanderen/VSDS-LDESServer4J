@@ -19,12 +19,11 @@ public interface LdesFragmentRepository {
 
 	Optional<LdesFragment> retrieveRootFragment(String viewName);
 
-	Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName);
-
-	Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
-			List<FragmentPair> fragmentPairList);
-
 	void incrementNumberOfMembers(String fragmentId);
 
-	List<LdesFragment> retrieveFragmentsOfView(String defaultViewName);
+	Stream<LdesFragment> retrieveFragmentsOfView(String defaultViewName);
+
+	void removeLdesFragmentsOfView(String viewName);
+
+	void deleteTreeNodesByCollection(String collectionName);
 }

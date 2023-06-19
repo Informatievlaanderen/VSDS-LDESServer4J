@@ -1,15 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Objects;
 
-public class ViewName {
-
+public class ViewName implements Serializable {
+	@Serial
+	private static final long serialVersionUID = 1848404092753207934L;
 	private final String name;
 	private final String collectionName;
 
 	public ViewName(String collectionName, String name) {
-		this.name = name;
 		this.collectionName = collectionName;
+		this.name = name;
 	}
 
 	public ViewName withCollectionName(String collectionName) {
@@ -28,6 +31,14 @@ public class ViewName {
 
 	public String getCollectionName() {
 		return collectionName;
+	}
+
+	public String getCollectionIri(String hostName) {
+		return hostName + "/" + getCollectionName();
+	}
+
+	public String getViewNameIri(String hostName) {
+		return getCollectionIri(hostName) + "/" + getViewName();
 	}
 
 	public String getViewName() {

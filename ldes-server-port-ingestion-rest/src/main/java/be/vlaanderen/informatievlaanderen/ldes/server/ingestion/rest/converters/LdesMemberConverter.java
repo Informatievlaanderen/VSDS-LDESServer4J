@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptions.MalformedMemberIdException;
-import jakarta.annotation.PostConstruct;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
@@ -37,12 +37,13 @@ import static org.apache.jena.riot.RDFFormat.NQUADS;
 
 public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
-	private final AppConfig appConfig;
+	private final EventStreamService eventStreamService;
+
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public LdesMemberConverter(AppConfig appConfig) {
+	public LdesMemberConverter(EventStreamService eventStreamService) {
 		super(MediaType.ALL);
-		this.appConfig = appConfig;
+		this.eventStreamService = eventStreamService;
 	}
 
 	@Override
@@ -58,11 +59,11 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest().getRequestURI().substring(1);
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
+		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
 
-		String memberId = extractMemberId(memberModel, ldesConfig.getMemberType(), collectionName);
-		String versionOf = extractVersionOf(memberModel, ldesConfig.getVersionOfPath());
-		LocalDateTime timestamp = extractTimestamp(memberModel, ldesConfig.getTimestampPath());
+		String memberId = extractMemberId(memberModel, eventStream.getMemberType(), collectionName);
+		String versionOf = extractVersionOf(memberModel, eventStream.getVersionOfPath());
+		LocalDateTime timestamp = extractTimestamp(memberModel, eventStream.getTimestampPath());
 		return new Member(memberId, collectionName, null, versionOf, timestamp, memberModel, List.of());
 	}
 
@@ -106,12 +107,6 @@ public class LdesMemberConverter extends AbstractHttpMessageConverter<Member> {
 
 		OutputStream body = outputMessage.getBody();
 		body.write(outputStream.toString().getBytes());
-	}
-
-	@PostConstruct
-	public void init() {
-		String example = "<init-server> <http://www.opengis.net/ont/geosparql#asWKT> \"<http://www.opengis.net/def/crs/EPSG/9.9.1/31370> POINT (0,0)\"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .";
-		fromString(example, Lang.NQUADS);
 	}
 
 }

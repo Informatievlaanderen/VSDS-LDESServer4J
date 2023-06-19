@@ -65,4 +65,9 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	public void thenTheMemberWithIdWillNotExist(String id) {
 		assertFalse(memberRepository.memberExists(id));
 	}
+
+	@When("I delete all the members of collection {string}")
+	public void iDeleteAllTheMembersOfCollection(String collectionName) {
+		memberRepository.deleteMembersByCollection(collectionName);
+	}
 }

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.SpringIntegrationTest;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
@@ -10,13 +11,13 @@ import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ModelFactory;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberRepositorySteps extends SpringIntegrationTest {
 
@@ -35,7 +36,7 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 				row.get("collectionName"),
 				row.get("sequenceNr").equals("") ? null : Long.parseLong(row.get("sequenceNr")),
 				row.get("versionOf"), LocalDateTime.now(),
-				ModelFactory.createDefaultModel(), List.of());
+				ModelFactory.createDefaultModel(), new ArrayList<>());
 	}
 
 	@Given("The following members")
@@ -59,5 +60,40 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 		assertEquals(member.getVersionOf(), retrievedMemberPresent.getVersionOf());
 		assertThat(member.getTimestamp()).isEqualToIgnoringNanos(retrievedMemberPresent.getTimestamp());
 		assertEquals(member.getTreeNodeReferences(), retrievedMemberPresent.getTreeNodeReferences());
+	}
+
+	@Then("The member with id {string} will exist")
+	public void theMemberWithIdWillExist(String id) {
+		assertTrue(memberRepository.memberExists(id));
+	}
+
+	@And("The member with id {string} will not exist")
+	public void theMemberWithIdWillNotExist(String id) {
+		assertFalse(memberRepository.memberExists(id));
+	}
+
+	@When("I delete all the members of collection {string}")
+	public void iDeleteAllTheMembersOfCollection(String collectionName) {
+		memberRepository.deleteMembersByCollection(collectionName);
+	}
+
+	@And("The following treeNodeReferences on the members")
+	public void theFollowingTreeNodeReferencesOnTheMembers(List<String> treeNodeReferences) {
+		members.forEach(member -> member.getTreeNodeReferences().addAll(treeNodeReferences));
+	}
+
+	@When("I remove the view references of view {string}")
+	public void iRemoveTheViewReferencesOfViewByPage(String viewName) {
+		memberRepository.removeViewReferences(ViewName.fromString(viewName));
+	}
+
+	@And("The members of collection {string} will only have treeNodeReference {string}")
+	public void theMembersWillOnlyHaveTreeNodeReference(String collectionName, String treeNodeReference) {
+		List<Member> membersInDb = memberRepository.getMemberStreamOfCollection(collectionName).toList();
+		assertEquals(3, membersInDb.size());
+		membersInDb.forEach(member -> {
+			assertEquals(1, member.getTreeNodeReferences().size());
+			assertEquals(treeNodeReference, member.getTreeNodeReferences().get(0));
+		});
 	}
 }

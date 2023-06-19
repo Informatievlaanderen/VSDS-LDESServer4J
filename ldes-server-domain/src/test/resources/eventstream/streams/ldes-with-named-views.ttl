@@ -1,35 +1,45 @@
-@prefix tree: <https://w3id.org/tree#> .
-@prefix ldes: <https://w3id.org/ldes#> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix example: <http://example.org/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree:            <https://w3id.org/tree#> .
+@prefix ldes:            <https://w3id.org/ldes#> .
+@prefix sh:              <http://www.w3.org/ns/shacl#> .
+@prefix example:         <http://example.org/> .
+@prefix dc:              <http://purl.org/dc/terms/> .
+@prefix col:             <http://localhost:8080/collectionName1/> .
+@prefix mobiliteit:      <https://data.vlaanderen.be/ns/mobiliteit#> .
+@prefix rdf:             <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix view1:           <http://localhost:8080/collectionName1/view1/> .
+@prefix view2:           <http://localhost:8080/collectionName1/view2/> .
+@prefix server:          <http://localhost:8080/> .
+@prefix xsd:             <http://www.w3.org/2001/XMLSchema#> .
 
-ldes:collectionName1 a ldes:EventStream ;
-   ldes:timestampPath dcterms:created ;
-   ldes:versionOfPath dcterms:isVersionOf ;
-   tree:shape ldes:shape ;
-   ldes:view ldes:view1 ;
-   ldes:view ldes:view2 .
+col:view2 a tree:Node ;
+  tree:viewDescription  view2:description .
 
-ldes:shape a sh:NodeShape ;
+col:view1 a tree:Node ;
+  tree:viewDescription  view1:description .
+
+server:collectionName1 a ldes:EventStream ;
+   ldes:timestampPath dc:created ;
+   ldes:versionOfPath dc:isVersionOf ;
+   example:memberType mobiliteit:Mobiliteitshinder ;
+   tree:shape col:shape ;
+   tree:view col:view1 ;
+   tree:view col:view2 .
+
+col:shape a sh:NodeShape ;
    sh:nodeShape [
      sh:closed true ;
      sh:propertyShape []
      ] ;
    sh:deactivated true .
 
-ldes:view1 a tree:Node ;
- tree:viewDescription [
-   example:fragmentationStrategy [
-       a example:Fragmentation ;
-       example:property ldes:propertyPath
-   ]
-] .
+view1:description  rdf:type  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a  tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
 
-ldes:view2 a tree:Node ;
-  tree:viewDescription [
-    example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:property ldes:propertyPath
-    ]
-] .
+view2:description  rdf:type  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a  tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .

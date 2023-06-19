@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class IngestionRestResponseEntityExceptionHandler
 		extends ResponseEntityExceptionHandler {
 
-	// TODO: 28/04/2023 VSDSPUB-651 validation exception should be caught.
-	@ExceptionHandler(value = { MalformedMemberIdException.class })
+	@ExceptionHandler(value = { MalformedMemberIdException.class, IngestValidationException.class })
 	protected ResponseEntity<Object> handleGeneralException(
 			RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
@@ -22,7 +23,7 @@ public class IngestionRestResponseEntityExceptionHandler
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { CollectionNotFoundException.class })
+	@ExceptionHandler(value = { CollectionNotFoundException.class, MissingEventStreamException.class })
 	protected ResponseEntity<Object> handleNotFoundException(RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();

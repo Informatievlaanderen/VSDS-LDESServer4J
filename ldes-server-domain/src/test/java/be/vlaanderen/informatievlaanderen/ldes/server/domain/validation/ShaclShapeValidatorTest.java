@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.valueobjects.LdesConfigModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ class ShaclShapeValidatorTest {
 	@Test
 	void test_classSupport() {
 		assertTrue(validator.supports(Model.class));
-		assertFalse(validator.supports(LdesConfigModel.class));
 	}
 
 	@Test

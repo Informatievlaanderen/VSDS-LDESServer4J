@@ -1,23 +1,62 @@
-@prefix ldes: <https://w3id.org/ldes#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix sh:   <http://www.w3.org/ns/shacl#> .
-@prefix tree: <https://w3id.org/tree#> .
+@prefix ldes:       <https://w3id.org/ldes#> .
+@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
+@prefix name1:      <http://localhost:8080/name1/> .
+@prefix name2:      <http://localhost:8080/name2/> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix server:     <http://localhost:8080/> .
+@prefix sh:         <http://www.w3.org/ns/shacl#> .
+@prefix shacl:      <http://www.w3.org/ns/shacl#> .
+@prefix terms:      <http://purl.org/dc/terms/> .
+@prefix tree:       <https://w3id.org/tree#> .
+@prefix view1:      <http://localhost:8080/name2/view1/> .
+@prefix view2:      <http://localhost:8080/name1/view2/> .
+@prefix view3:      <http://localhost:8080/name1/view3/> .
 
-ldes:name1 a ldes:EventStream ;
-    ldes:timestampPath dcterms:created ;
-    ldes:versionOfPath dcterms:isVersionOf ;
-    tree:shape ldes:shape .
+view3:description  rdf:type  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
 
+view1:description  rdf:type  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
 
-ldes:name2 a ldes:EventStream ;
-    ldes:timestampPath dcterms:created ;
-    ldes:versionOfPath dcterms:isVersionOf ;
-    tree:shape ldes:shape .
+server:name2  rdf:type      ldes:EventStream ;
+        <http://example.org/memberType>
+                mobiliteit:Mobiliteitshinder ;
+        ldes:timestampPath  terms:created ;
+        ldes:versionOfPath  terms:isVersionOf ;
+        tree:view           name2:view1 ;
+        tree:shape          server:shape .
 
+view2:description  rdf:type  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a tree:ExampleFragmentation ;
+                  tree:property "ldes:propertyPath"
+                ]) .
 
-ldes:shape a sh:NodeShape ;
-   sh:nodeShape [
-     sh:closed true ;
-     sh:propertyShape []
-     ] ;
-   sh:deactivated true .
+name2:view1 a tree:Node ;
+  tree:viewDescription  view1:description .
+
+name1:view2 a tree:Node ;
+  tree:viewDescription  view2:description .
+
+server:shape  rdf:type  sh:NodeShape ;
+        sh:deactivated  true ;
+        sh:nodeShape    [ sh:closed         true ;
+                          sh:propertyShape  []
+                        ] .
+
+server:name1  rdf:type      ldes:EventStream ;
+        <http://example.org/memberType>
+                mobiliteit:Mobiliteitshinder ;
+        ldes:timestampPath  terms:created ;
+        ldes:versionOfPath  terms:isVersionOf ;
+        tree:view           name1:view2 , name1:view3 ;
+        tree:shape          server:shape .
+
+name1:view3 a tree:Node ;
+  tree:viewDescription  view3:description .

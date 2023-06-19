@@ -1,0 +1,68 @@
+@prefix tree: <https://w3id.org/tree#> .
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix custom: <http://example.org/> .
+@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
+@prefix col: <http://localhost:8080/collectionName1/> .
+@prefix server: <http://localhost:8080/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix org:   <http://www.w3.org/ns/org#> .
+@prefix legal: <http://www.w3.org/ns/legal#> .
+@prefix m8g:   <http://data.europa.eu/m8g/> .
+@prefix locn:  <http://www.w3.org/ns/locn#> .
+@prefix view1:           <http://localhost:8080/collectionName1/view1/> .
+@prefix view2:           <http://localhost:8080/collectionName1/view2/> .
+
+server:collectionName1 a ldes:EventStream, dcat:Dataset ;
+   ldes:timestampPath dcterms:created ;
+   ldes:versionOfPath dcterms:isVersionOf ;
+   custom:memberType mobiliteit:Mobiliteitshinder ;
+   tree:shape col:shape ;
+   tree:view col:view1 ;
+   tree:view col:view2 ;
+   dct:title "My LDES"@en ;
+   dct:title "Mijn LDES"@nl ;
+   dct:description "LDES for my data collection"@en ;
+   dct:description "LDES vir my data-insameling"@af ;
+   dct:creator <http://sample.org/company/MyDataOwner> .
+
+col:shape a sh:NodeShape ;
+   sh:nodeShape [
+     sh:closed true ;
+     sh:propertyShape []
+     ] ;
+   sh:deactivated true .
+
+col:view1 a tree:Node ;
+  tree:viewDescription view1:description .
+
+col:view2 a tree:Node ;
+  tree:viewDescription view2:description .
+
+view1:description  a  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a    tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
+
+view2:description  a  tree:ViewDescription ;
+        tree:fragmentationStrategy
+                ([ a    tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
+
+<http://sample.org/company/MyDataOwner> a legal:LegalEntity ;
+  foaf:name "Data Company" ;
+  legal:legalName "Data Company BV" ;
+  m8g:registeredAddress [
+    a locn:Address ;
+    locn:fullAddress "My full address here"
+  ] ;
+  m8g:contactPoint [
+    a m8g:ContactPoint ;
+    m8g:hasEmail "info@data-company.com"
+  ] .

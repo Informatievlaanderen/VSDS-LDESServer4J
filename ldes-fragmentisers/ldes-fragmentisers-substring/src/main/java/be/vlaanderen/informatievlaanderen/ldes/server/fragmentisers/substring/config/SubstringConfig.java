@@ -5,11 +5,11 @@ public class SubstringConfig {
 	public static final String DEFAULT_FRAGMENTER_SUBJECT_FILTER = ".*";
 
 	private String fragmenterSubjectFilter = DEFAULT_FRAGMENTER_SUBJECT_FILTER;
-	private String fragmenterProperty;
+	private String fragmentationPath;
 	private Integer memberLimit;
 
-	public String getFragmenterProperty() {
-		return fragmenterProperty;
+	public String getFragmentationPath() {
+		return fragmentationPath;
 	}
 
 	public String getFragmenterSubjectFilter() {
@@ -20,8 +20,8 @@ public class SubstringConfig {
 		this.fragmenterSubjectFilter = fragmenterSubjectFilter;
 	}
 
-	public void setFragmenterProperty(String fragmenterProperty) {
-		this.fragmenterProperty = fragmenterProperty;
+	public void setFragmenterPath(String fragmentationPath) {
+		this.fragmentationPath = fragmentationPath;
 	}
 
 	public void setMemberLimit(Integer memberLimit) {

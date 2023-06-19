@@ -2,24 +2,34 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class TreeNodeConverterImplTest {
 
@@ -29,36 +39,43 @@ class TreeNodeConverterImplTest {
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
+	private DcatViewService dcatViewService;;
 
 	@BeforeEach
 	void setUp() {
-		AppConfig appConfig = new AppConfig();
-		LdesConfig ldesConfig = new LdesConfig();
-		appConfig.setCollections(List.of(ldesConfig));
-		ldesConfig.setCollectionName(COLLECTION_NAME);
-		ldesConfig.setHostName(HOST_NAME);
-		ldesConfig.validation()
-				.setShape("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape");
-		ldesConfig.setMemberType("https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder");
-		ldesConfig.setTimestampPath("http://www.w3.org/ns/prov#generatedAtTime");
-		ldesConfig.setVersionOf("http://purl.org/dc/terms/isVersionOf");
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig);
+		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
+
+		EventStream eventStream = new EventStream(COLLECTION_NAME,
+				"http://www.w3.org/ns/prov#generatedAtTime",
+				"http://purl.org/dc/terms/isVersionOf", "memberType");
+
+		dcatViewService = mock(DcatViewService.class);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
+		((TreeNodeConverterImpl) treeNodeConverter)
+				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
+		((TreeNodeConverterImpl) treeNodeConverter)
+				.handleShaclInitEvent(new ShaclChangedEvent(new ShaclShape(COLLECTION_NAME, shacl)));
 	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, true, List.of(), List.of(),
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
 				COLLECTION_NAME);
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
+		when(dcatViewService.findByViewName(viewName)).thenReturn(Optional.of(dcatView));
+
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		assertEquals(6, getNumberOfStatements(model));
+		assertEquals(20, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(), List.of(),
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(), List.of(),
 				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNode);
 
@@ -81,7 +98,7 @@ class TreeNodeConverterImplTest {
 				List.of());
 		TreeRelation treeRelation = new TreeRelation("path", "/mobility-hindrances/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, false, List.of(treeRelation),
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
 				List.of(member), COLLECTION_NAME);
 
 		Model model = treeNodeConverter.toModel(treeNode);
@@ -106,11 +123,20 @@ class TreeNodeConverterImplTest {
 						.toString());
 		assertEquals("[" + id + ", https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
 				model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement().toString());
-		assertEquals("[" + id
-				+ ", https://w3id.org/tree#shape, https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape]",
-				model.listStatements(createResource(id), TREE_SHAPE, (Resource) null).nextStatement().toString());
 
 		verifyIsViewOfStatement(model);
+		verifyShaclStatements(model);
+		verifyDcatStatements(model);
+	}
+
+	private void verifyShaclStatements(Model model) {
+		Resource shapeResource = createResource("http://localhost:8080/collectionName1/shape");
+		assertEquals(3, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
+	}
+
+	private void verifyDcatStatements(Model model) {
+		Resource shapeResource = createResource("http://localhost:8080/mobility-hindrances/view/description");
+		assertEquals(6, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
 	}
 
 	private void verifyRelationStatements(Model model, Resource relationObject) {

@@ -20,18 +20,13 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class FragmentationStrategyCreatorImplTest {
 	private static final Map<String, String> TIMEBASED_PROPERTIES = Map.of("timebasedProperty", "time");
 	private static final Map<String, String> GEOSPATIAL_PROPERTIES = Map.of("geospatialProperty", "geo");
-	private static final String GEOSPATIAL = "geospatial";
-	private static final String TIMEBASED = "timebased";
+	private static final String GEOSPATIAL = "GeospatialFragmentation";
+	private static final String TIMEBASED = "TimebasedFragmentation";
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "viewName");
 
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
@@ -49,8 +44,7 @@ class FragmentationStrategyCreatorImplTest {
 
 	@Test
 	void when_ViewSpecificationFragmentationConfigIsNull_FragmentationStrategyImplIsReturned() {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName(VIEW_NAME);
+		ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of());
 
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
@@ -95,15 +89,9 @@ class FragmentationStrategyCreatorImplTest {
 	}
 
 	private ViewSpecification getViewSpecification() {
-		ViewSpecification viewSpecification = new ViewSpecification();
-		viewSpecification.setName(VIEW_NAME);
-		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL,
-				GEOSPATIAL_PROPERTIES);
-		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED,
-				TIMEBASED_PROPERTIES);
-		viewSpecification.setFragmentations(List.of(geospatialConfig,
-				timebasedConfig));
-		return viewSpecification;
+		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL, GEOSPATIAL_PROPERTIES);
+		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED, TIMEBASED_PROPERTIES);
+		return new ViewSpecification(VIEW_NAME, List.of(), List.of(geospatialConfig, timebasedConfig));
 	}
 
 	private FragmentationConfig getFragmentationConfig(String name, Map<String, String> config) {

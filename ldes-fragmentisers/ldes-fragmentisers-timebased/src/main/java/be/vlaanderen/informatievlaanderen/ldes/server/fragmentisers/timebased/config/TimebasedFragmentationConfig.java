@@ -2,5 +2,5 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.c
 
 import org.apache.jena.rdf.model.Property;
 
-public record TimebasedFragmentationConfig(Long memberLimit, Property fragmentationProperty) {
+public record TimebasedFragmentationConfig(Long memberLimit, Property fragmentationPath ) {
 }

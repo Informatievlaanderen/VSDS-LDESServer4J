@@ -1,9 +1,18 @@
 @prefix ldes: <https://w3id.org/ldes#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix tree: <https://w3id.org/tree#>.
-@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix server: <http://localhost:8080/name1/> .
+@prefix viewName: <http://localhost:8080/name1/view1/> .
 
-ldes:view1 a tree:Node ;
-    tree:viewDescription [
-        ldes:retentionPolicy "none"
-    ] .
+viewName:description
+    a tree:ViewDescription ;
+    ldes:retentionPolicy [
+        a ldes:DurationAgoPolicy ;
+        tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+      ] ;
+    tree:fragmentationStrategy ([
+      a     tree:ExampleFragmentation ;
+      tree:property  "ldes:propertyPath"
+    ]) .
+
+server:view1 a tree:Node ;
+        tree:viewDescription <http://localhost:8080/name1/view1/description> .

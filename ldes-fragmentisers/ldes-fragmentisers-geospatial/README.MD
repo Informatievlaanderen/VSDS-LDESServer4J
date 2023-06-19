@@ -1,22 +1,25 @@
 # Geospatial fragmentation
 
-Geospatial fragmentation will create fragments based on geospatial tiles selected of the `fragmenterProperty`.
+Geospatial fragmentation will create fragments based on geospatial tiles selected of the `fragmentationPath`.
 This allows you to fragment the data on geolocations.
 
 ## Properties
 
-  ```yaml
-  name: "geospatial"
-  config:
-    maxZoomLevel: { Mandatory: Required zoom level }
-    fragmenterProperty: { Mandatory: defines which property will be used for bucketizing }
-    fragmenterSubjectFilter: { Optional: regex to filter the subjects matching the fragmenterProperty }
+  ```ttl
+  @prefix tree: <https://w3id.org/tree#> .
+  
+  tree:fragmentationStrategy [
+        a tree:GeospatialFragmentation ;
+        tree:maxZoom { Mandatory: Required zoom level } ;
+        tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ;
+        tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ;
+    ] .
   ```
 
 ## Algorithm
 
 1. The fragmentationObjects of the member are determined
-   - We filter the RDF statements where the predicate matches the `fragmenterProperty`
+   - We filter the RDF statements where the predicate matches the `fragmentationPath`
    - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
    - We select all the object that pass the above filters.
 2. A bucket of tiles is created using the coordinates and provided zoomLevel. [This is done using the Slippy Map algorithm.](https://wiki.openstreetmap.org/wiki/Slippy_map)  
@@ -33,11 +36,14 @@ This allows you to fragment the data on geolocations.
 
 Example properties:
 
-  ```yaml
-  name: "geospatial"
-  config:
-    maxZoomLevel: 15
-    fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
+  ```ttl
+  @prefix tree: <https://w3id.org/tree#> .
+  
+  tree:fragmentationStrategy [
+        a tree:GeospatialFragmentation ;
+        tree:maxZoom "15" ;
+        tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT> ;
+    ] .
   ```
 
 With following example input:

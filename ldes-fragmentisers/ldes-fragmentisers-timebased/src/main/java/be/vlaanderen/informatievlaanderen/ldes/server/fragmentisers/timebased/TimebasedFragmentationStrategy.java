@@ -11,6 +11,7 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorator {
+	public static final String TIMEBASED_FRAGMENTATION = "TimebasedFragmentation";
 	private final OpenFragmentProvider openFragmentProvider;
 
 	private final ObservationRegistry observationRegistry;

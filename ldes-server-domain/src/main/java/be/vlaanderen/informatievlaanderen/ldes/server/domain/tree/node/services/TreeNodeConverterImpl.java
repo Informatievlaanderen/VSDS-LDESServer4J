@@ -1,27 +1,34 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.IS_PART_OF_PROPERTY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -29,24 +36,27 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private final AppConfig appConfig;
+	private String hostName;
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder,
-			AppConfig appConfig) {
+	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
+	private final HashMap<String, ShaclShape> shaclShapes = new HashMap<>();
+	private final DcatViewService dcatViewService;
+
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
+			DcatViewService dcatViewService) {
 		this.prefixAdder = prefixAdder;
-		this.appConfig = appConfig;
+		this.hostName = hostName;
+		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
 	public Model toModel(final TreeNode treeNode) {
-		Model model = ModelFactory.createDefaultModel();
-
-		LdesConfig ldesConfig = appConfig.getLdesConfig(treeNode.getCollectionName());
-
-		model.add(addTreeNodeStatements(treeNode, ldesConfig));
+		Model model = ModelFactory.createDefaultModel()
+				.add(addTreeNodeStatements(treeNode, treeNode.getCollectionName()));
 
 		if (!treeNode.getMembers().isEmpty()) {
-			model.add(addEventStreamStatements(treeNode, ldesConfig.getBaseUrl()));
+			String baseUrl = hostName + "/" + treeNode.getCollectionName();
+			model.add(addEventStreamStatements(treeNode, baseUrl));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
 		}
@@ -54,34 +64,47 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addTreeNodeStatements(TreeNode treeNode, LdesConfig ldesConfig) {
+	private List<Statement> addTreeNodeStatements(TreeNode treeNode, String collectionName) {
+		EventStream eventStream = eventStreams.get(collectionName);
+		ShaclShape shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						ldesConfig.getHostName() + treeRelation.treeNode(),
+						hostName + treeRelation.treeNode(),
 						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
 				.toList();
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
 				treeRelationResponses);
 		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), ldesConfig);
+		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape);
 
 		return statements;
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
-			LdesConfig ldesConfig) {
-		Resource collection = createResource(ldesConfig.getBaseUrl());
+			EventStream eventStream, ShaclShape shaclShape) {
+		String baseUrl = hostName + "/" + eventStream.getCollection();
+		Resource collection = createResource(baseUrl);
 
 		if (isView) {
 			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
-					ldesConfig.getBaseUrl(),
-					ldesConfig.getTimestampPath(), ldesConfig.getVersionOfPath(),
-					ldesConfig.validation().getShape(),
+					baseUrl,
+					eventStream.getTimestampPath(),
+					eventStream.getVersionOfPath(),
+					null,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
+			statements.addAll(shaclShape.getModel().listStatements().toList());
+			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
+	}
+
+	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
+		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
+		dcatViewService.findByViewName(viewName)
+				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
+
 	}
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
@@ -107,4 +130,23 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		return statements;
 	}
 
+	@EventListener
+	public void handleEventStreamInitEvent(EventStreamCreatedEvent event) {
+		eventStreams.put(event.eventStream().getCollection(), event.eventStream());
+	}
+
+	@EventListener
+	public void handleShaclInitEvent(ShaclChangedEvent event) {
+		shaclShapes.put(event.getShacl().getCollection(), event.getShacl());
+	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		eventStreams.remove(event.collectionName());
+	}
+
+	@EventListener
+	public void handleShaclDeletedEvent(ShaclDeletedEvent event) {
+		shaclShapes.remove(event.collectionName());
+	}
 }

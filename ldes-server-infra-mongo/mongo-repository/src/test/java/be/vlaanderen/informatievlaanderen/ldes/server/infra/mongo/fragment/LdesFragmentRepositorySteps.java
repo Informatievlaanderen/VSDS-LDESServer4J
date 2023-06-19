@@ -20,23 +20,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 
-	private LdesFragment ldesFragment;
+	private List<LdesFragment> ldesFragments;
 	private Optional<LdesFragment> retrievedLdesFragment;
 
-	@DataTableType
+	@DataTableType(replaceWithEmptyString = "[blank]")
 	public LdesFragment ldesFragmentEntryTransformer(Map<String, String> row) {
 		return new LdesFragment(
 				ViewName.fromString(row.get("viewName")),
-				getFragmentPairs(row),
+				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs")),
 				Boolean.parseBoolean(row.get("immutable")),
-				null,
-				Boolean.parseBoolean(row.get("softDeleted")),
 				Integer.parseInt(row.get("numberOfMembers")),
 				List.of());
 	}
 
-	private List<FragmentPair> getFragmentPairs(Map<String, String> row) {
-		String[] fragmentPairs = row.get("fragmentPairs").split(",");
+	private List<FragmentPair> getFragmentPairs(String row) {
+		String[] fragmentPairs = row.split(",");
 		List<FragmentPair> fragmentPairList = new ArrayList<>();
 		for (int i = 0; i < fragmentPairs.length; i += 2) {
 			fragmentPairList.add(new FragmentPair(fragmentPairs[i], fragmentPairs[i + 1]));
@@ -44,14 +42,14 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 		return fragmentPairList;
 	}
 
-	@Given("The following ldesFragment")
-	public void theFollowingLdesFragment(LdesFragment ldesFragment) {
-		this.ldesFragment = ldesFragment;
+	@Given("The following ldesFragments")
+	public void theFollowingLdesFragment(List<LdesFragment> ldesFragments) {
+		this.ldesFragments = ldesFragments;
 	}
 
-	@When("I save the ldesFragment using the LdesFragmentRepository")
+	@When("I save the ldesFragments using the LdesFragmentRepository")
 	public void iSaveTheLdesFragmentUsingTheLdesFragmentRepository() {
-		ldesFragmentMongoRepository.saveFragment(ldesFragment);
+		ldesFragments.forEach(ldesFragment -> ldesFragmentMongoRepository.saveFragment(ldesFragment));
 	}
 
 	@Then("The ldesFragment with id {string} can be retrieved from the database")
@@ -59,18 +57,31 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 		retrievedLdesFragment = ldesFragmentMongoRepository.retrieveFragment(fragmentId);
 	}
 
-	@And("The retrieved ldesFragment has the same properties the orignal ldesFragment")
-	public void theRetrievedLdesFragmentHasTheSamePropertiesTheOrignalLdesFragment() {
-		assertTrue(retrievedLdesFragment.isPresent());
-		LdesFragment obaintedLdesFragment = this.retrievedLdesFragment.get();
-		assertEquals(ldesFragment.getFragmentId(), obaintedLdesFragment.getFragmentId());
-		assertEquals(ldesFragment.getViewName(), obaintedLdesFragment.getViewName());
-		assertEquals(ldesFragment.getFragmentPairs(), obaintedLdesFragment.getFragmentPairs());
-		assertEquals(ldesFragment.isImmutable(), obaintedLdesFragment.isImmutable());
-		assertEquals(ldesFragment.getImmutableTimestamp(), obaintedLdesFragment.getImmutableTimestamp());
-		assertEquals(ldesFragment.isSoftDeleted(), obaintedLdesFragment.isSoftDeleted());
-		assertEquals(ldesFragment.getNumberOfMembers(), obaintedLdesFragment.getNumberOfMembers());
-		assertEquals(ldesFragment.getRelations(), obaintedLdesFragment.getRelations());
+	@Then("the repository contains {int} ldesFragments with viewname {string}")
+	public void theRepositoryContainsLdesFragmentsWithViewname(int expectedNumberOfFragments, String viewName) {
+		assertEquals(expectedNumberOfFragments, ldesFragmentMongoRepository.retrieveFragmentsOfView(viewName).count());
+	}
 
+	@And("The retrieved ldesFragment has the same properties as ldesFragment {int}")
+	public void theRetrievedLdesFragmentHasTheSamePropertiesAsLdesFragment(int index) {
+		assertTrue(retrievedLdesFragment.isPresent());
+		LdesFragment actualLdesFragment = this.retrievedLdesFragment.get();
+		LdesFragment expectedLdesFragment = this.ldesFragments.get(index - 1);
+		assertEquals(expectedLdesFragment.getFragmentId(), actualLdesFragment.getFragmentId());
+		assertEquals(expectedLdesFragment.getViewName(), actualLdesFragment.getViewName());
+		assertEquals(expectedLdesFragment.getFragmentPairs(), actualLdesFragment.getFragmentPairs());
+		assertEquals(expectedLdesFragment.isImmutable(), actualLdesFragment.isImmutable());
+		assertEquals(expectedLdesFragment.getNumberOfMembers(), actualLdesFragment.getNumberOfMembers());
+		assertEquals(expectedLdesFragment.getRelations(), actualLdesFragment.getRelations());
+	}
+
+	@When("I delete the ldesFragments of viewName {string}")
+	public void iDeleteTheLdesFragmentsOfViewName(String viewName) {
+		ldesFragmentMongoRepository.removeLdesFragmentsOfView(viewName);
+	}
+
+	@When("I delete the collection {string}")
+	public void iDeleteTheCollection(String collectionName) {
+		ldesFragmentMongoRepository.deleteTreeNodesByCollection(collectionName);
 	}
 }

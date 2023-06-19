@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -93,7 +92,7 @@ class LdesFragmentMongoRepositoryTest {
 		private static LdesFragmentEntity createLdesFragmentEntity(boolean immutable, ViewName viewName, String value) {
 			LdesFragment ldesFragment = new LdesFragment(viewName,
 					List.of(new FragmentPair("generatedAtTime", value)),
-					immutable, LocalDateTime.now(), false, 0, List.of());
+					immutable, 0, List.of());
 			return LdesFragmentEntity.fromLdesFragment(ldesFragment);
 		}
 

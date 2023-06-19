@@ -5,18 +5,21 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class LdesFragmentMongoRepository implements LdesFragmentRepository {
+
+	private static final Logger log = LoggerFactory.getLogger(LdesFragmentMongoRepository.class);
 
 	private final LdesFragmentEntityRepository repository;
 	private final MongoTemplate mongoTemplate;
@@ -68,28 +71,6 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public Stream<LdesFragment> retrieveNonDeletedImmutableFragmentsOfView(String viewName) {
-		return repository
-				.findAllByImmutableAndSoftDeletedAndViewName(true, false, viewName)
-				.stream()
-				.map(LdesFragmentEntity::toLdesFragment);
-	}
-
-	@Override
-	public Optional<LdesFragment> retrieveNonDeletedChildFragment(String viewName,
-			List<FragmentPair> fragmentPairList) {
-		return repository
-				.findAllBySoftDeletedAndViewName(false,
-						viewName)
-				.stream()
-				.filter(ldesFragmentEntity -> Collections
-						.indexOfSubList(ldesFragmentEntity.getFragmentPairs(), fragmentPairList) != -1
-						&& !fragmentPairList.equals(ldesFragmentEntity.getFragmentPairs()))
-				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentId));
-	}
-
-	@Override
 	public void incrementNumberOfMembers(String fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(fragmentId));
@@ -99,12 +80,21 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 	}
 
 	@Override
-	public List<LdesFragment> retrieveFragmentsOfView(String viewName) {
+	public Stream<LdesFragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)
-				.stream()
-				.map(LdesFragmentEntity::toLdesFragment)
-				.toList();
+				.map(LdesFragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public void removeLdesFragmentsOfView(String viewName) {
+		repository.removeByViewName(viewName);
+	}
+
+	@Override
+	public void deleteTreeNodesByCollection(String collectionName) {
+		Long deleteCount = repository.deleteAllByCollectionName(collectionName);
+		log.info("Deleted {} treeNodes", deleteCount);
 	}
 
 }

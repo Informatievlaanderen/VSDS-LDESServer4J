@@ -21,14 +21,14 @@ public class TimeBasedFragmentCreator {
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-	private final Property fragmentationProperty;
+	private final Property fragmentationPath;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentCreator.class);
 
 	public TimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
-			Property fragmentationProperty) {
+			Property fragmentationPath) {
 
 		this.ldesFragmentRepository = ldesFragmentRepository;
-		this.fragmentationProperty = fragmentationProperty;
+		this.fragmentationPath = fragmentationPath;
 	}
 
 	public LdesFragment createNewFragment(LdesFragment parentFragment) {
@@ -37,7 +37,7 @@ public class TimeBasedFragmentCreator {
 
 	public LdesFragment createNewFragment(LdesFragment ldesFragment,
 			LdesFragment parentFragment) {
-		String fragmentKey = fragmentationProperty.getLocalName();
+		String fragmentKey = fragmentationPath.getLocalName();
 		String fragmentValue = LocalDateTime.now().format(formatter);
 		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(fragmentKey, fragmentValue));
 		LOGGER.debug("Time based fragment created with id: {}", newFragment.getFragmentId());
@@ -50,8 +50,8 @@ public class TimeBasedFragmentCreator {
 	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
 			LdesFragment newFragment) {
 		completeLdesFragment.makeImmutable();
-		String treePath = fragmentationProperty.toString();
-		String fragmentKey = fragmentationProperty.getLocalName();
+		String treePath = fragmentationPath.toString();
+		String fragmentKey = fragmentationPath.getLocalName();
 		completeLdesFragment
 				.addRelation(new TreeRelation(treePath,
 						newFragment.getFragmentId(),

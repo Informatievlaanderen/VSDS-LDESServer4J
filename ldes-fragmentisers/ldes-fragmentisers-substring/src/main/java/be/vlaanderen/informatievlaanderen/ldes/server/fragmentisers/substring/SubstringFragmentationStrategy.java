@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 public class SubstringFragmentationStrategy extends FragmentationStrategyDecorator {
 
+	public static final String SUBSTRING_FRAGMENTATION = "SubstringFragmentation";
+
 	public static final String ROOT_SUBSTRING = "";
 
 	private final ObservationRegistry observationRegistry;
@@ -52,7 +54,7 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 
 	private String getFragmentationString(Member member) {
 		return (String) member.getFragmentationObject(substringConfig.getFragmenterSubjectFilter(),
-				substringConfig.getFragmenterProperty());
+				substringConfig.getFragmentationPath());
 	}
 
 	private LdesFragment prepareRootFragment(LdesFragment parentFragment) {

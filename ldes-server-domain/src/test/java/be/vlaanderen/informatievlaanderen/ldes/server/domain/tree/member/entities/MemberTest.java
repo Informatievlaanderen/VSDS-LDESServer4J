@@ -18,9 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MemberTest {
 
@@ -68,6 +66,20 @@ class MemberTest {
 				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
 		assertEquals(1, member.getFragmentationObjects(".*/member/.*",
 				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
+	}
+
+	@Test
+	void testEquals() {
+		Member expected = new Member(
+				"http://localhost:8080/member/1", "collectionName",
+				0L, null, null, ModelFactory.createDefaultModel(), List.of());
+		Member member = new Member(
+				"http://localhost:8080/member/1", "collectionName",
+				0L, null, null, ModelFactory.createDefaultModel(), List.of());
+		Member nullMember = null;
+
+		assertEquals(expected, member);
+		assertNotEquals(expected, nullMember);
 	}
 
 	private Model createModel(final String ldesMember, final Lang lang) {

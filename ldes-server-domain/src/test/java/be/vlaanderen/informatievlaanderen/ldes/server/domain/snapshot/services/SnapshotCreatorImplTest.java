@@ -3,10 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -19,26 +21,21 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class SnapshotCreatorImplTest {
 
 	private final MemberCollector memberCollector = mock(MemberCollector.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final SnapshotFragmenter snapshotFragmenter = mock(SnapshotFragmenter.class);
+	private final ShaclShapeService shaclShapeService = mock(ShaclShapeService.class);
 	private SnapShotCreator snapShotCreator;
-	private LdesConfig ldesConfig;
 
 	@BeforeEach
 	void setUp() {
-		ldesConfig = new LdesConfig();
-		ldesConfig.setHostName("localhost:8080");
-		ldesConfig.setCollectionName("collection");
-		ldesConfig.validation().setShape("shape");
-		snapShotCreator = new SnapshotCreatorImpl(memberCollector, rootFragmentCreator, snapshotFragmenter);
+		snapShotCreator = new SnapshotCreatorImpl("localhost:8080", memberCollector, rootFragmentCreator,
+				snapshotFragmenter,
+				shaclShapeService);
 	}
 
 	@Test
@@ -49,7 +46,9 @@ class SnapshotCreatorImplTest {
 		LdesFragment rootFragmentOfSnapshot = new LdesFragment(new ViewName("collectionName", "snapshot-"), List.of());
 		when(rootFragmentCreator.createRootFragmentForView(any())).thenReturn(rootFragmentOfSnapshot);
 
-		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, ldesConfig);
+		when(shaclShapeService.retrieveShaclShape("collection"))
+				.thenReturn(new ShaclShape("collection", ModelFactory.createDefaultModel()));
+		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(ldesFragmentsForSnapshot, "collection");
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);
 		inOrder.verify(memberCollector, times(1)).getMembersGroupedByVersionOf(ldesFragmentsForSnapshot);
@@ -60,7 +59,7 @@ class SnapshotCreatorImplTest {
 		assertTrue(snapshot.getSnapshotId().contains("snapshot-"));
 		assertEquals("localhost:8080/collection", snapshot.getSnapshotOf());
 		assertTrue(snapshot.getSnapshotUntil().isBefore(LocalDateTime.now()));
-		assertEquals("shape", snapshot.getShape());
+		assertTrue(snapshot.getShape().isIsomorphicWith(ModelFactory.createDefaultModel()));
 	}
 
 	private Set<Member> getMemberLastVersionsOfSnapshot(Map<String, List<Member>> membersOfSnapshot) {

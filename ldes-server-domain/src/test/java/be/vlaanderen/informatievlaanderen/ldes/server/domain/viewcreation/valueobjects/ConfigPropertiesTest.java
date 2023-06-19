@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingConfigurationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -25,10 +24,10 @@ class ConfigPropertiesTest {
 	}
 
 	@Test
-	void when_ValueOfKeyDoesNotExist_ThenMissingConfigurationExceptionIsThrown() {
-		MissingConfigurationException missingConfigurationException = assertThrows(MissingConfigurationException.class,
+	void when_ValueOfKeyDoesNotExist_ThenIllegalArgumentExceptionIsThrown() {
+		IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
 				() -> configProperties.get("otherKey"));
-		assertEquals("Configuration key otherKey is missing.", missingConfigurationException.getMessage());
+		assertEquals("Configuration key otherKey is missing.", illegalArgumentException.getMessage());
 	}
 
 	@Test

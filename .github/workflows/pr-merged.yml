@@ -71,11 +71,12 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "IMAGE_TAG=${{ env.version }}" >> $GITHUB_ENV
             echo "IMAGES=ldes/${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
+            if [[ "${{ env.version }}" != *"SNAPSHOT"* ]]; then
+              echo "LATEST=latest" >> $GITHUB_ENV
+            fi
           else
             echo "IMAGE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
             echo "IMAGES=${{ env.REGISTRY }}/Informatievlaanderen/${{ env.IMAGE_NAME }}" >> $GITHUB_ENV
-          fi
-          if [[ "${{ env.version }}" != *"SNAPSHOT"* ]]; then
             echo "LATEST=latest" >> $GITHUB_ENV
           fi
       - name: Log in to the DockerHub Container registry

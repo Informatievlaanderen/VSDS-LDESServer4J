@@ -1,0 +1,16 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix server: <http://localhost:8080/collection/> .
+
+server:viewName tree:view [
+    ldes:retentionPolicy [
+        a ldes:retentionPolicy ;
+        ldes:name "retention" ;
+        ldes:duration "10" ;
+    ] ;
+    tree:fragmentationStrategy [
+         a tree:ExampleFragmentation ;
+         tree:pageSize "100" ;
+         tree:property "example/property" ;
+    ] ;
+] .

@@ -4,6 +4,7 @@ import org.apache.jena.rdf.model.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
@@ -42,10 +43,10 @@ public class Member {
 		// @formatter:on
 	}
 
-	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationProperty) {
+	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationPath) {
 		// @formatter:off
 		return memberModel
-				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
@@ -93,5 +94,20 @@ public class Member {
 
 	public Long getSequenceNr() {
 		return sequenceNr;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Member member = (Member) o;
+		return memberId.equals(member.memberId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(memberId);
 	}
 }

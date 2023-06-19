@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services.SnapshotService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.LdesConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,17 +15,13 @@ public class SnapshotController {
 
 	private final SnapshotService snapshotService;
 
-	private final AppConfig appConfig;
-
-	public SnapshotController(SnapshotService snapshotService, AppConfig appConfig) {
+	public SnapshotController(SnapshotService snapshotService) {
 		this.snapshotService = snapshotService;
-		this.appConfig = appConfig;
 	}
 
 	@PostMapping("{collection}/snapshots")
 	@Operation(summary = "Creation of Snapshot")
 	public void createSnapshot(@PathVariable("collection") String collectionName) {
-		LdesConfig ldesConfig = appConfig.getLdesConfig(collectionName);
-		snapshotService.createSnapshot(ldesConfig);
+		snapshotService.createSnapshot(collectionName);
 	}
 }

@@ -1,8 +1,8 @@
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix example: <http://example.org/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix server: <http://localhost:8080/collection1/> .
 
 ldes:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
@@ -17,10 +17,10 @@ ldes:shape a sh:NodeShape ;
      ] ;
    sh:deactivated true .
 
-ldes:view1 a tree:Node ;
+server:view1
  tree:viewDescription [
-   example:fragmentationStrategy [
-       a example:Fragmentation ;
-       example:property ldes:propertyPath
+   tree:fragmentationStrategy [
+       a tree:ExampleFragmentation ;
+       tree:property "ldes:propertyPath"
    ]
 ] .
