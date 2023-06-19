@@ -28,7 +28,6 @@ Every resource describing a stream, shape or view can exist solely of a name. Th
 
 Ex. ``` <collectionName> a ldes:EventStream ; ``` with ``` "https://myldes" ``` as hostname will have the name: ``` http://myldes/collectionName ```
 
-
 ## LDES config SHACL shape validation
 
 When a ``POST`` request is sent to add the config of the event streams, the SHACL shape of this config in the request
