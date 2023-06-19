@@ -2,10 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.servic
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,4 +56,10 @@ public class DcatDatasetServiceImpl implements DcatDatasetService {
 			repository.deleteDataset(collectionName);
 		}
 	}
+
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		deleteDataset(event.collectionName());
+	}
+
 }

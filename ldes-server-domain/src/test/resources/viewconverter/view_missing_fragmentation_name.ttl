@@ -1,17 +1,17 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix tree: <https://w3id.org/tree#>.
-@prefix example: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix server: <http://localhost:8080/collection/> .
 
 server:viewName tree:viewDescription [
     ldes:retentionPolicy [
-        a ldes:retentionPolicy ;
-        example:name "retention" ;
-        example:duration "10" ;
+        a ldes:DurationAgoPolicy  ;
+        tree:value "PT2M"^^xsd:duration ;
     ] ;
-    example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:pageSize "100" ;
-        example:property "example/property" ;
-    ] ;
+    a tree:ViewDescription ;
+    tree:fragmentationStrategy ([
+        a tree:daginationFragmentation ;
+        tree:pageSize "100" ;
+        tree:property "example/property" ;
+    ]) ;
 ] .

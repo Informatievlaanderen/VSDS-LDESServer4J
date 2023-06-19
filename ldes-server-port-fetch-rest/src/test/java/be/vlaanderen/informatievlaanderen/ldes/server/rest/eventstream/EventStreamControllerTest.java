@@ -10,10 +10,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.service
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
@@ -32,6 +32,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -52,24 +53,23 @@ import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
-@ContextConfiguration(classes = { EventStreamController.class, AppConfig.class, RestConfig.class,
+@ContextConfiguration(classes = { EventStreamController.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
-		RetentionModelExtractor.class, ModelConverter.class
+		RetentionModelExtractor.class, ModelConverter.class, FragmentationConfigExtractor.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
@@ -77,8 +77,6 @@ class EventStreamControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
-	@Autowired
-	AppConfig appConfig;
 	@MockBean
 	private EventStreamService eventStreamService;
 	@MockBean
@@ -89,13 +87,13 @@ class EventStreamControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		hostname = appConfig.getHostName();
+		hostname = "http://localhost:8080";
 		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", true, List.of(),
+				"http://purl.org/dc/terms/isVersionOf", "memberType", List.of(),
 				ModelFactory.createDefaultModel());
 
-		Model shacl = createDefaultModel().add(createResource(appConfig.getHostName() + "/" + COLLECTION),
+		Model shacl = createDefaultModel().add(createResource(hostname + "/" + COLLECTION),
 				createProperty(NODE_SHAPE_TYPE),
 				createResource("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"));
 
@@ -216,8 +214,8 @@ class EventStreamControllerTest {
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
 		@Bean
-		public CachingStrategy cachingStrategy(final AppConfig appConfig) {
-			return new EtagCachingStrategy(appConfig);
+		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
+			return new EtagCachingStrategy(hostName);
 		}
 	}
 }

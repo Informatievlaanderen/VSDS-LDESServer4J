@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.MemberIngestService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.config.IngestionWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingestion.rest.exceptionhandling.IngestionRestResponseEntityExceptionHandler;
 import org.apache.jena.rdf.model.Model;
@@ -47,14 +46,13 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { LdesMemberIngestionController.class,
-		IngestionWebConfig.class, AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
+		IngestionWebConfig.class, IngestionRestResponseEntityExceptionHandler.class })
 @Import(MemberIngestionControllerTest.MemberIngestionControllerTestConfiguration.class)
 class MemberIngestionControllerTest {
 	private final static String RESTAURANT_COLLECTION = "restaurant";
@@ -64,8 +62,6 @@ class MemberIngestionControllerTest {
 	@MockBean
 	private MemberIngestService memberIngestService;
 	@Autowired
-	private AppConfig appConfig;
-	@Autowired
 	private ShaclShapeService shapeService;
 
 	@MockBean
@@ -74,9 +70,11 @@ class MemberIngestionControllerTest {
 	@BeforeEach
 	void setUp() {
 		when(eventStreamService.retrieveEventStream(MOBILITY_HINDRANCES_COLLECTION))
-				.thenReturn(new EventStreamResponse(MOBILITY_HINDRANCES_COLLECTION, null, null, "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, List.of(), null));
+				.thenReturn(new EventStreamResponse(MOBILITY_HINDRANCES_COLLECTION, null, null, "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
+						List.of(), null));
 		when(eventStreamService.retrieveEventStream(RESTAURANT_COLLECTION))
-				.thenReturn(new EventStreamResponse(RESTAURANT_COLLECTION, null, null, "http://example.com/restaurant#MenuItem", false, List.of(), null));
+				.thenReturn(new EventStreamResponse(RESTAURANT_COLLECTION, null, null, "http://example.com/restaurant#MenuItem",
+						List.of(), null));
 	}
 
 	@ParameterizedTest(name = "Ingest an LDES member in the REST service usingContentType {0}")
@@ -87,7 +85,7 @@ class MemberIngestionControllerTest {
 				.thenReturn(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngestService, times(1)).addMember(any(Member.class));
 	}
 
@@ -111,7 +109,7 @@ class MemberIngestionControllerTest {
 				.thenReturn(new ShaclShape(MOBILITY_HINDRANCES_COLLECTION, null));
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngestService, times(1)).addMember(any(Member.class));
 	}
 
@@ -133,7 +131,7 @@ class MemberIngestionControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = appConfig.getCollections().get(0).getMemberType();
+		String ldesMemberType = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 
@@ -155,7 +153,6 @@ class MemberIngestionControllerTest {
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isOk());
 
 		verify(memberIngestService).addMember(any(Member.class));
@@ -171,7 +168,6 @@ class MemberIngestionControllerTest {
 		String modelString = readModelStringFromFile("menu-items/example-data-new.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isBadRequest());
 
 		verifyNoInteractions(memberIngestService);

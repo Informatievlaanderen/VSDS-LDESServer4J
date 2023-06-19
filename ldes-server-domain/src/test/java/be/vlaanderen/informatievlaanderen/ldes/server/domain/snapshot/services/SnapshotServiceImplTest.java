@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
@@ -14,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.testServices.ListArgumentMatcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -25,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewConfig.DEFAULT_VIEW_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -44,14 +40,6 @@ class SnapshotServiceImplTest {
 
 	@Nested
 	class CollectionConfiguredWithDefaultView {
-		@BeforeEach
-		void setUp() {
-			EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOf", "memberType",
-					true);
-			((SnapshotServiceImpl) snapshotService)
-					.handleEventStreamChangedEvent(new EventStreamChangedEvent(eventStream));
-		}
-
 		@Test
 		void when_TreeNodesAreAvailable_TheyCanBeUsedToCreateSnapshot() {
 			ViewName viewName = new ViewName(COLLECTION_NAME, DEFAULT_VIEW_NAME);
@@ -150,29 +138,6 @@ class SnapshotServiceImplTest {
 			inOrder.verify(snapshotRepository, times(1)).saveSnapShot(snapshot);
 			inOrder.verifyNoMoreInteractions();
 		}
-	}
-
-	@Test
-	void when_NoDefaultViewIsProvided_then_ThrowExceptionWithCreation() {
-		EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOf", "memberType", false);
-		((SnapshotServiceImpl) snapshotService).handleEventStreamChangedEvent(new EventStreamChangedEvent(eventStream));
-
-		String expectedErrorMessage = String.format(
-				"Unable to create snapshot.\nCause: No default pagination view configured for collection %s",
-				COLLECTION_NAME);
-
-		Exception e = assertThrows(SnapshotCreationException.class,
-				() -> snapshotService.createSnapshot(COLLECTION_NAME));
-		assertEquals(expectedErrorMessage, e.getMessage());
-	}
-
-	@Test
-	void when_NoEventStreamIsConfigured_then_ThrowMissingEventStreamException() {
-		String expectedErrorMessage = String.format("No event stream found for collection %s", COLLECTION_NAME);
-
-		Exception e = assertThrows(MissingEventStreamException.class,
-				() -> snapshotService.createSnapshot(COLLECTION_NAME));
-		assertEquals(expectedErrorMessage, e.getMessage());
 	}
 
 	@Test

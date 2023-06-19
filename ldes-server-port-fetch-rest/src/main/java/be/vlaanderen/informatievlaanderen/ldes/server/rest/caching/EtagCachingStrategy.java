@@ -3,25 +3,26 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Component
 public class EtagCachingStrategy implements CachingStrategy {
 
-	private final AppConfig appConfig;
+	private final String hostName;
 
-	public EtagCachingStrategy(final AppConfig appConfig) {
-		this.appConfig = appConfig;
+	public EtagCachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
+		this.hostName = hostName;
 	}
 
 	@Override
 	public String generateCacheIdentifier(String collectionName, String language) {
-		return sha256Hex(appConfig.getHostName() + "/" + collectionName + "?lang=" + language);
+		return sha256Hex(hostName + "/" + collectionName + "?lang=" + language);
 	}
 
 	@Override

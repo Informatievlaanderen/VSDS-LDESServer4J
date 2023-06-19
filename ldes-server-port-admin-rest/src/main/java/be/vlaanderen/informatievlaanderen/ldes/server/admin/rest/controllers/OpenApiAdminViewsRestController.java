@@ -24,7 +24,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeTurtle),
 			@Content(mediaType = contentTypeJSONLD),
 			@Content(mediaType = contentTypeNQuads) })
-	@ApiResponse(responseCode = "404", description = "Missing EventStream")
+	@ApiResponse(responseCode = "404", description = "Missing EventStream", content = @Content)
 	List<ViewSpecification> getViews(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName);
 
@@ -33,7 +33,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeTurtle),
 			@Content(mediaType = contentTypeJSONLD),
 			@Content(mediaType = contentTypeNQuads) })
-	@ApiResponse(responseCode = "404", description = "Missing EventStream or Missing View")
+	@ApiResponse(responseCode = "404", description = "Missing EventStream or Missing View", content = @Content)
 	ViewSpecification getViewOfCollection(
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
 			@Parameter(description = "The name of requested view", example = "time-based-retention") String viewName);
@@ -58,7 +58,7 @@ public interface OpenApiAdminViewsRestController {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = {
 							@ExampleObject(name = "Time-Based Retention", description = "A time-based retention policy which is configured to only keep members whose ldes:timestamppath is less than 2 minutes ago.", value = """
 									@prefix ldes: <https://w3id.org/ldes#> .
-									@prefix tree: <https://w3id.org/tree#>.
+									@prefix tree: <https://w3id.org/tree#> .
 									@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 
@@ -94,6 +94,45 @@ public interface OpenApiAdminViewsRestController {
 									        ldes:pointInTime "2023-04-12T00:00:00"^^xsd:dateTime
 									    ] ;
 									] .
-									""") })
+									"""),
+							@ExampleObject(name = "Pagination Fragmentation Strategy", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
+									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix tree: <https://w3id.org/tree#> .
+
+									server:pagination tree:viewDescription [
+										tree:fragmentationStrategy [
+											a tree:PaginationFragmentation ;
+									  		tree:memberLimit 100
+									    ];
+									 ] .
+									"""),
+							@ExampleObject(name = "Time-Based Fragmentation Strategy", description = "A time-based fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
+									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix tree: <https://w3id.org/tree#> .
+
+									server:timebased tree:viewDescription [
+										tree:fragmentationStrategy [
+											a tree:TimebasedFragmentation ;
+									        tree:memberLimit "100"
+									    ];
+									 ] .
+									"""),
+							@ExampleObject(name = "Geospatial-Pagination Fragmentation Strategy", description = "A combined geospatial-pagination fragmentation strategy which is configured to first partition the data on zoom level 15 and within this zoom level create pages with at most 100 members.", value = """
+									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix tree: <https://w3id.org/tree#> .
+
+									server:geospatial tree:viewDescription [
+										tree:fragmentationStrategy ([
+											a tree:GeospatialFragmentation ;
+											tree:maxZoom "15" ;
+											tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
+										]
+										[
+											a tree:PaginationFragmentation ;
+											tree:memberLimit "100"
+										])
+									] .
+									""")
+					})
 			}) Model view);
 }

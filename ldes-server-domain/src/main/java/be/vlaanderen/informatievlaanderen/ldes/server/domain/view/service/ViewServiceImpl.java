@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
@@ -13,7 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,9 @@ import java.util.Optional;
 public class ViewServiceImpl implements ViewService {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
-	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "pagination";
+
+	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
+
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 
@@ -46,7 +48,7 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void addView(ViewSpecification viewSpecification) {
-		if (!eventStreamIsPresent(viewSpecification.getName().getCollectionName())) {
+		if (isEventStreamMissing(viewSpecification.getName().getCollectionName())) {
 			throw new MissingEventStreamException(viewSpecification.getName().getCollectionName());
 		}
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
@@ -58,8 +60,8 @@ public class ViewServiceImpl implements ViewService {
 		viewRepository.saveView(viewSpecification);
 	}
 
-	private boolean eventStreamIsPresent(String collectionName) {
-		return eventStreams.containsKey(collectionName);
+	private boolean isEventStreamMissing(String collectionName) {
+		return !eventStreams.containsKey(collectionName);
 	}
 
 	@Override
@@ -77,9 +79,6 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
-		if (!eventStreamIsPresent(viewName.getCollectionName())) {
-			throw new MissingEventStreamException(viewName.getCollectionName());
-		}
 		ViewSpecification viewSpecification = viewRepository.getViewByViewName(viewName)
 				.orElseThrow(() -> new MissingViewException(viewName));
 		addDcatToViewSpecification(viewSpecification);
@@ -88,7 +87,7 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		if (!eventStreamIsPresent(collectionName)) {
+		if (isEventStreamMissing(collectionName)) {
 			throw new MissingEventStreamException(collectionName);
 		}
 		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
@@ -102,19 +101,29 @@ public class ViewServiceImpl implements ViewService {
 
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
-		if (!eventStreamIsPresent(viewName.getCollectionName())) {
+		if (isEventStreamMissing(viewName.getCollectionName())) {
 			throw new MissingEventStreamException(viewName.getCollectionName());
 		}
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewName);
 		if (view.isEmpty()) {
 			throw new MissingViewException(viewName);
 		}
-		eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
-		viewRepository.deleteViewByViewName(viewName);
-		dcatViewService.delete(viewName);
+		deleteViews(List.of(viewName));
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
+	private void deleteViews(List<ViewName> viewNames) {
+		viewNames.forEach(viewName -> {
+			eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
+			viewRepository.deleteViewByViewName(viewName);
+		});
+	}
+
+	/**
+	 * Initializes the views config.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
 	public void initViews() {
 		viewRepository
 				.retrieveAllViews()
@@ -123,13 +132,16 @@ public class ViewServiceImpl implements ViewService {
 	}
 
 	@EventListener
-	public void handleEventStreamInitEvent(EventStreamChangedEvent event) {
+	public void handleEventStreamInitEvent(EventStreamCreatedEvent event) {
 		eventStreams.put(event.eventStream().getCollection(), event.eventStream());
 	}
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		eventStreams.remove(event.collectionName());
+		String collectionName = event.collectionName();
+		eventStreams.remove(collectionName);
+		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
+		deleteViews(viewSpecifications.stream().map(ViewSpecification::getName).toList());
 	}
 
 }

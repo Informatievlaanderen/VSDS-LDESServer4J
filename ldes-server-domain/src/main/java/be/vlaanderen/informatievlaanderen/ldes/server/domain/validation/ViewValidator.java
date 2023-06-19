@@ -8,7 +8,7 @@ import org.springframework.validation.Errors;
 @Component
 public class ViewValidator extends AbstractShaclValidator {
 
-	private static final String FILE_NAME = "";
+	private static final String FILE_NAME = "viewShaclShape.ttl";
 
 	@Override
 	protected void initializeShapes() {
@@ -22,7 +22,8 @@ public class ViewValidator extends AbstractShaclValidator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		// Waiting for shape to validate view
+		Model view = (Model) target;
+		validateShape(view);
 	}
 
 }

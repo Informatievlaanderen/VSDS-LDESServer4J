@@ -13,22 +13,18 @@
 @prefix view3:      <http://localhost:8080/name1/view3/> .
 
 view3:description  rdf:type  tree:ViewDescription ;
-        <http://example.org/fragmentationStrategy>
-                [ rdf:type                       <http://example.org/Fragmentation> ;
-                  <http://example.org/name>      "fragmentationStrategy" ;
-                  <http://example.org/property>  "ldes:propertyPath"
-                ] .
+        tree:fragmentationStrategy
+                ([ a tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
 
 view1:description  rdf:type  tree:ViewDescription ;
-        <http://example.org/fragmentationStrategy>
-                [ rdf:type                       <http://example.org/Fragmentation> ;
-                  <http://example.org/name>      "fragmentationStrategy" ;
-                  <http://example.org/property>  "ldes:propertyPath"
-                ] .
+        tree:fragmentationStrategy
+                ([ a tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
 
 server:name2  rdf:type      ldes:EventStream ;
-        <http://example.org/hasDefaultView>
-                true ;
         <http://example.org/memberType>
                 mobiliteit:Mobiliteitshinder ;
         ldes:timestampPath  terms:created ;
@@ -37,11 +33,10 @@ server:name2  rdf:type      ldes:EventStream ;
         tree:shape          server:shape .
 
 view2:description  rdf:type  tree:ViewDescription ;
-        <http://example.org/fragmentationStrategy>
-                [ rdf:type                       <http://example.org/Fragmentation> ;
-                  <http://example.org/name>      "fragmentationStrategy" ;
-                  <http://example.org/property>  "ldes:propertyPath"
-                ] .
+        tree:fragmentationStrategy
+                ([ a tree:ExampleFragmentation ;
+                  tree:property "ldes:propertyPath"
+                ]) .
 
 name2:view1 a tree:Node ;
   tree:viewDescription  view1:description .
@@ -56,8 +51,6 @@ server:shape  rdf:type  sh:NodeShape ;
                         ] .
 
 server:name1  rdf:type      ldes:EventStream ;
-        <http://example.org/hasDefaultView>
-                false ;
         <http://example.org/memberType>
                 mobiliteit:Mobiliteitshinder ;
         ldes:timestampPath  terms:created ;

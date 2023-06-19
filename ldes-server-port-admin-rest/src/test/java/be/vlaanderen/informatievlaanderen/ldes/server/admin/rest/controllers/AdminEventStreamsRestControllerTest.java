@@ -11,9 +11,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
@@ -48,10 +48,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminEventStreamsRestController.class, ModelConverter.class,
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, ModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamValidator.class,
-		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class })
+		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
+		FragmentationConfigExtractor.class })
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	@MockBean
@@ -68,7 +69,7 @@ class AdminEventStreamsRestControllerTest {
 		void initEventStreams() throws URISyntaxException {
 			Model shape = readModelFromFile("example-shape.ttl");
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName("fragmentationStrategy");
+			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 			ViewSpecification singleView = new ViewSpecification(
 					new ViewName("name2", "view1"),
@@ -87,10 +88,10 @@ class AdminEventStreamsRestControllerTest {
 			eventStreams = List.of(
 					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false, views, shape),
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shape),
 					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", true, List.of(singleView),
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(singleView),
 							shape));
 		}
 
@@ -117,7 +118,7 @@ class AdminEventStreamsRestControllerTest {
 			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					true, List.of(), shape);
+					List.of(), shape);
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 
@@ -141,7 +142,7 @@ class AdminEventStreamsRestControllerTest {
 	}
 
 	@Nested
-	class PutEventStream {
+	class CreateEventStream {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
 			final Model expectedModel = readModelFromFile("ldes-1.ttl");
@@ -152,23 +153,23 @@ class AdminEventStreamsRestControllerTest {
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
-					true, List.of(), shape);
+					List.of(), shape);
 
-			when(eventStreamService.saveEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
+			when(eventStreamService.createEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 
-			mockMvc.perform(put("/admin/api/v1/eventstreams")
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
 					.accept(contentTypeTurtle)
 					.content(readDataFromFile("ldes-1.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
-					.andExpect(status().isOk())
+					.andExpect(status().isCreated())
 					.andExpect(IsIsomorphic.with(expectedModel));
 
-			verify(eventStreamService).saveEventStream(any(EventStreamResponse.class));
+			verify(eventStreamService).createEventStream(any(EventStreamResponse.class));
 		}
 
 		@Test
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
-			mockMvc.perform(put("/admin/api/v1/eventstreams")
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
 					.content(readDataFromFile("ldes-without-type.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
@@ -178,7 +179,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
-			mockMvc.perform(put("/admin/api/v1/eventstreams")
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
 					.content(readDataFromFile("malformed-ldes.ttl"))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());

@@ -6,6 +6,6 @@ public class GeospatialProperties {
 	}
 
 	public static final String FRAGMENTER_SUBJECT_FILTER = "fragmenterSubjectFilter";
-	public static final String FRAGMENTER_PROPERTY = "fragmenterProperty";
-	public static final String MAX_ZOOM_LEVEL = "maxZoomLevel";
+	public static final String FRAGMENTATION_PROPERTY = "fragmentationPath";
+	public static final String MAX_ZOOM = "maxZoom";
 }

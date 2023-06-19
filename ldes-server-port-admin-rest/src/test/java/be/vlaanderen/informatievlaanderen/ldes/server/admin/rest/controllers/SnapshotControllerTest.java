@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services.SnapshotService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,13 +15,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test" })
 @ContextConfiguration(classes = { SnapshotController.class,
-		AdminRestResponseEntityExceptionHandler.class, AppConfig.class })
+		AdminRestResponseEntityExceptionHandler.class })
 class SnapshotControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
 
@@ -35,7 +33,7 @@ class SnapshotControllerTest {
 	@Test
 	void when_SnapshotIsCreated_OKIsReturned() throws Exception {
 		mockMvc.perform(post("/admin/api/v1/{collection}/snapshots", COLLECTION))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 
 		verify(snapshotService, times(1)).createSnapshot(COLLECTION);
 	}
@@ -45,7 +43,7 @@ class SnapshotControllerTest {
 		doThrow(new SnapshotCreationException("cause")).when(snapshotService).createSnapshot(COLLECTION);
 
 		ResultActions resultActions = mockMvc.perform(post("/admin/api/v1/{collection}/snapshots", COLLECTION))
-				.andDo(print()).andExpect(status().is5xxServerError());
+				.andExpect(status().is5xxServerError());
 		String contentAsString = resultActions.andReturn().getResponse().getContentAsString();
 		assertEquals("Unable to create snapshot.\nCause: cause", contentAsString);
 	}

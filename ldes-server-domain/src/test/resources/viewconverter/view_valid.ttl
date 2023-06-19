@@ -1,6 +1,5 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix tree: <https://w3id.org/tree#>.
-@prefix example: <http://example.org/> .
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix host: <http://localhost:8080/> .
 @prefix server: <http://localhost:8080/collection/> .
@@ -14,12 +13,11 @@ server:viewName a tree:Node ;
 
 viewName:description
         a       dcat:DataService , tree:ViewDescription ;
-        example:fragmentationStrategy
-                [ a  example:Fragmentation ;
-                  example:name      "fragmentation" ;
-                  example:pageSize  "100" ;
-                  example:property  "example/property"
-                ] ;
+        tree:fragmentationStrategy
+                ([ a  tree:ExampleFragmentation ;
+                  tree:pageSize  "100" ;
+                  tree:property  "example/property"
+                ]) ;
         dc:description "Geospatial fragmentation for my LDES"@en ;
         dc:title "My geo-spatial view"@en ;
         dc:license

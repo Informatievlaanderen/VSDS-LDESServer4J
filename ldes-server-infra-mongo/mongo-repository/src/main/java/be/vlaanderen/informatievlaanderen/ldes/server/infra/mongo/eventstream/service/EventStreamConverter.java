@@ -6,12 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.eventstream.en
 public class EventStreamConverter {
 	public EventStreamEntity fromEventStream(EventStream eventStream) {
 		return new EventStreamEntity(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled());
+				eventStream.getVersionOfPath(), eventStream.getMemberType());
 	}
 
 	public EventStream toEventStream(EventStreamEntity eventStreamEntity) {
 		return new EventStream(eventStreamEntity.getId(), eventStreamEntity.getTimestampPath(),
-				eventStreamEntity.getVersionOfPath(), eventStreamEntity.getMemberType(),
-				eventStreamEntity.isDefaultViewEnabled());
+				eventStreamEntity.getVersionOfPath(), eventStreamEntity.getMemberType());
 	}
 }

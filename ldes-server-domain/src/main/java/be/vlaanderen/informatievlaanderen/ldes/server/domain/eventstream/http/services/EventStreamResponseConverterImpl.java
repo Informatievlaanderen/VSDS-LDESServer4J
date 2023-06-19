@@ -2,10 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -23,29 +26,28 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
 	public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
 	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
-	public static final Property HAS_DEFAULT_VIEW = createProperty(CUSTOM, "hasDefaultView");
 	private final String hostname;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
 
-	public EventStreamResponseConverterImpl(AppConfig appConfig, ViewSpecificationConverter viewSpecificationConverter,
+	public EventStreamResponseConverterImpl(@Value(HOST_NAME_KEY) String hostName,
+			ViewSpecificationConverter viewSpecificationConverter,
 			PrefixAdder prefixAdder) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
-		hostname = appConfig.getHostName();
+		this.hostname = hostName;
 		this.prefixAdder = prefixAdder;
 	}
 
 	@Override
 	public EventStreamResponse fromModel(Model model) {
 		final String collection = getIdentifier(model, createResource(EVENT_STREAM_TYPE)).map(Resource::getLocalName)
-				.orElseThrow();
+				.orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
-		final boolean hasDefaultView = getHasDefaultViewResource(model);
 		final List<ViewSpecification> views = getViews(model, collection);
 		final String memberType = getResource(model, MEMBER_TYPE);
 		final Model shacl = getShaclFromModel(model);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, hasDefaultView, views,
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views,
 				shacl);
 	}
 
@@ -54,18 +56,14 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection());
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
 				createResource(EVENT_STREAM_TYPE));
-		final Statement timestampPathStmt = createStatement(subject, LDES_TIMESTAMP_PATH,
-				createProperty(eventStreamResponse.getTimestampPath()));
-		final Statement versionOfStmt = createStatement(subject, LDES_VERSION_OF,
-				createProperty(eventStreamResponse.getVersionOfPath()));
 		final Statement memberType = createStatement(subject, MEMBER_TYPE,
 				createProperty(eventStreamResponse.getMemberType()));
-		final Statement hasDefaultStmt = createStatement(subject, HAS_DEFAULT_VIEW,
-				createTypedLiteral(eventStreamResponse.isDefaultViewEnabled()));
 		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
-				.add(List.of(collectionNameStmt, timestampPathStmt, versionOfStmt, memberType, hasDefaultStmt))
+				.add(List.of(collectionNameStmt, memberType))
+				.add(getVersionOfStatements(subject, eventStreamResponse))
+				.add(getTimestampPathStatements(subject, eventStreamResponse))
 				.add(eventStreamResponse.getShacl())
 				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
 				.add(getViewStatements(eventStreamResponse.getViews()))
@@ -76,9 +74,22 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
 	}
 
-	private boolean getHasDefaultViewResource(Model model) {
-		return model.listStatements(null, HAS_DEFAULT_VIEW, (Resource) null).nextOptional()
-				.map(statement -> statement.getObject().asLiteral().getBoolean()).orElse(false);
+	private List<Statement> getTimestampPathStatements(Resource subject, EventStreamResponse eventStreamResponse) {
+		if (isNotBlank(eventStreamResponse.getVersionOfPath())) {
+			return List.of(createStatement(subject, LDES_TIMESTAMP_PATH,
+					createProperty(eventStreamResponse.getTimestampPath())));
+		} else {
+			return List.of();
+		}
+	}
+
+	private List<Statement> getVersionOfStatements(Resource subject, EventStreamResponse eventStreamResponse) {
+		if (isNotBlank(eventStreamResponse.getVersionOfPath())) {
+			return List.of(createStatement(subject, LDES_VERSION_OF,
+					createProperty(eventStreamResponse.getVersionOfPath())));
+		} else {
+			return List.of();
+		}
 	}
 
 	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject) {

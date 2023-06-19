@@ -80,7 +80,7 @@ class MemberIngestControllerTest {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", rdfFormat);
 
 		mockMvc.perform(post("/mobility-hindrances").contentType(contentType).content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngester, times(1)).ingest(any(Member.class));
 	}
 
@@ -102,7 +102,7 @@ class MemberIngestControllerTest {
 				Lang.NQUADS);
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberString))
-				.andDo(print()).andExpect(status().isOk());
+				.andExpect(status().isOk());
 		verify(memberIngester, times(1)).ingest(any(Member.class));
 	}
 
@@ -139,7 +139,6 @@ class MemberIngestControllerTest {
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isOk());
 
 		verify(memberIngester).ingest(any(Member.class));
@@ -151,7 +150,6 @@ class MemberIngestControllerTest {
 		doThrow(IngestValidationException.class).when(memberIngester).ingest(any(Member.class));
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
-				.andDo(print())
 				.andExpect(status().isBadRequest());
 	}
 

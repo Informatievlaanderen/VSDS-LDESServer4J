@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -31,14 +31,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest {
@@ -51,12 +45,10 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {
 		final String collection2 = "name2";
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
-				false);
-		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE,
-				true);
-		eventPublisher.publishEvent(new EventStreamChangedEvent(eventStream));
-		eventPublisher.publishEvent(new EventStreamChangedEvent(eventStream2));
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
+		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
 		Model shape = readModelFromFile("example-shape.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("fragmentationStrategy");
@@ -104,7 +96,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@Given("a db containing one event stream")
 	public void aDbContainingOneEventStream() throws URISyntaxException {
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 		Model shape = readModelFromFile("example-shape.ttl");
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
@@ -140,15 +132,15 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE, true);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 		final Model shacl = readModelFromFile("example-shape.ttl");
 		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
-	@When("the client puts a valid model")
-	public void theClientPutsAValidModel() throws Exception {
-		resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
+	@When("the client posts a valid model")
+	public void theClientPostsAValidModel() throws Exception {
+		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.accept(Lang.TURTLE.getHeaderString())
 				.contentType(Lang.TURTLE.getHeaderString())
 				.content(readDataFromFile("ldes-1.ttl")));
@@ -163,9 +155,9 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		verify(shaclShapeRepository).saveShaclShape(any());
 	}
 
-	@When("^the client puts invalid model from file (.*)$")
-	public void theClientPutsInvalidModelFromFileFileName(String fileName) throws Exception {
-		resultActions = mockMvc.perform(put("/admin/api/v1/eventstreams")
+	@When("^the client posts invalid model from file (.*)$")
+	public void theClientPostsInvalidModelFromFileFileName(String fileName) throws Exception {
+		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.accept(Lang.TURTLE.getHeaderString())
 				.contentType(Lang.TURTLE.getHeaderString())
 				.content(readDataFromFile(fileName)));

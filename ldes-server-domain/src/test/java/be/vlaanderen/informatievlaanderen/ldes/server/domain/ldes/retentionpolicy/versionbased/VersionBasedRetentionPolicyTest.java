@@ -47,6 +47,16 @@ class VersionBasedRetentionPolicyTest {
 	}
 
 	@Test
+	void when_LessMembersThanToKeep_then_VersionBasedRetentionPolicyReturnsFalse() {
+		Member member = getMember("id", "1", LocalDateTime.now());
+		when(memberRepository.getMembersOfVersion("1")).thenReturn(List.of(member));
+
+		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicy(member);
+
+		assertFalse(memberMatchesPolicy);
+	}
+
+	@Test
 	void when_MultipleVersionsOfAResource_then_VersionBasedRetentionPolicyReturnsTrueForNMostRecentMembers() {
 		Member member1 = getMember("1/1", "1", LocalDateTime.now().plusMinutes(1));
 		Member member2 = getMember("1/2", "1", LocalDateTime.now().plusMinutes(2));

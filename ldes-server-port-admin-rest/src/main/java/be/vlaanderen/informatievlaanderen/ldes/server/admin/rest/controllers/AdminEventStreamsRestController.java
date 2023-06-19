@@ -5,6 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.va
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
 import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,8 @@ import static org.apache.jena.riot.WebContent.*;
 @RestController
 @RequestMapping(value = "/admin/api/v1/eventstreams")
 public class AdminEventStreamsRestController implements OpenApiEventStreamsController {
+
+	private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
 
 	private final EventStreamService eventStreamService;
 	private final EventStreamResponseConverter eventStreamResponseConverter;
@@ -39,11 +44,12 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 		return eventStreamService.retrieveAllEventStreams();
 	}
 
+	@ResponseStatus(value = HttpStatus.CREATED)
 	@Override
-	@PutMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
-	public EventStreamResponse putEventStream(@RequestBody @Validated Model eventStreamModel) {
+	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
+	public EventStreamResponse createEventStream(@RequestBody @Validated Model eventStreamModel) {
 		EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
-		return eventStreamService.saveEventStream(eventStreamResponse);
+		return eventStreamService.createEventStream(eventStreamResponse);
 	}
 
 	@Override
@@ -55,7 +61,9 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 	@Override
 	@DeleteMapping("/{collectionName}")
 	public void deleteEventStream(@PathVariable String collectionName) {
+		log.atInfo().log("START deleting " + collectionName);
 		eventStreamService.deleteEventStream(collectionName);
+		log.atInfo().log("FINISHED deleting " + collectionName);
 	}
 
 }

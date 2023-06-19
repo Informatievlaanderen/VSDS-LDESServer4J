@@ -21,7 +21,6 @@ server:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dc:created ;
    ldes:versionOfPath dc:isVersionOf ;
    example:memberType mobiliteit:Mobiliteitshinder ;
-   example:hasDefaultView "false"^^xsd:boolean ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 .
@@ -34,15 +33,13 @@ col:shape a sh:NodeShape ;
    sh:deactivated true .
 
 view1:description  rdf:type  tree:ViewDescription ;
-        example:fragmentationStrategy
-                [ rdf:type                       example:Fragmentation ;
-                  example:name      "fragmentationStrategy" ;
-                  example:property  "ldes:propertyPath"
-                ] .
+        tree:fragmentationStrategy
+                ([ a  tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .
 
 view2:description  rdf:type  tree:ViewDescription ;
-        example:fragmentationStrategy
-                [ rdf:type           example:Fragmentation ;
-                  example:name      "fragmentationStrategy" ;
-                  example:property  "ldes:propertyPath"
-                ] .
+        tree:fragmentationStrategy
+                ([ a  tree:ExampleFragmentation ;
+                  tree:property  "ldes:propertyPath"
+                ]) .

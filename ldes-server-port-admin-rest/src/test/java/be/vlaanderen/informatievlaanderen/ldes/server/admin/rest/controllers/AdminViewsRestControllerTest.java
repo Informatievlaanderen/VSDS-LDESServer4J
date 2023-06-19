@@ -8,10 +8,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -40,18 +40,16 @@ import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AppConfig.class, AdminViewsRestController.class, PrefixAdderImpl.class,
+@ContextConfiguration(classes = { AdminViewsRestController.class, PrefixAdderImpl.class,
 		ModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class, ViewSpecificationConverter.class,
-		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class })
+		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
+		FragmentationConfigExtractor.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
@@ -76,11 +74,12 @@ class AdminViewsRestControllerTest {
 		ViewSpecification view2 = converter.viewFromModel(expectedViewModel2, collectionName);
 		when(viewService.getViewsByCollectionName(collectionName)).thenReturn(List.of(view1, view2));
 
-		ResultActions resultActions = mockMvc
+		MvcResult result = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views")
 						.accept(contentTypeTurtle))
-				.andExpect(status().isOk());
-		MvcResult result = resultActions.andReturn();
+				.andExpect(status().isOk())
+				.andReturn();
+
 		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
 		Assertions.assertTrue(actualModel.isIsomorphicWith(expectedViewModel1.add(expectedViewModel2)));
 	}
@@ -124,7 +123,7 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(post("/admin/api/v1/eventstreams/" + collectionName + "/views")
 				.content(readDataFromFile("view-1.ttl"))
 				.contentType(Lang.TURTLE.getHeaderString()))
-				.andExpect(status().isOk());
+				.andExpect(status().isCreated());
 		verify(viewService, times(1)).addView(view);
 	}
 

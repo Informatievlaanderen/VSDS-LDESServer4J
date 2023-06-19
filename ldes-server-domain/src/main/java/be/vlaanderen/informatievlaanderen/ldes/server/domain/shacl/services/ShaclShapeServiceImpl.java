@@ -2,10 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,17 @@ public class ShaclShapeServiceImpl implements ShaclShapeService {
 		eventPublisher.publishEvent(new ShaclDeletedEvent(collectionName));
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
+	@EventListener
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		deleteShaclShape(event.collectionName());
+	}
+
+	/**
+	 * Initializes the shapes config.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
 	public void initShapes() {
 		shaclShapeRepository
 				.retrieveAllShaclShapes()

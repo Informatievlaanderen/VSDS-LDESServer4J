@@ -43,8 +43,7 @@ public class RdfConstants {
 	public static final String EVENT_STREAM_TYPE = LDES + "EventStream";
 	public static final String RETENTION_TYPE = LDES + "retentionPolicy";
 
-	public static final String CUSTOM = "http://example.org/";
-	public static final String FRAGMENTATION_TYPE = CUSTOM + "Fragmentation";
-	public static final String FRAGMENTATION_OBJECT = CUSTOM + "fragmentationStrategy";
+	public static final String FRAGMENTATION_TYPE = TREE + "Fragmentation";
+	public static final String FRAGMENTATION_OBJECT = TREE + "fragmentationStrategy";
 
 }

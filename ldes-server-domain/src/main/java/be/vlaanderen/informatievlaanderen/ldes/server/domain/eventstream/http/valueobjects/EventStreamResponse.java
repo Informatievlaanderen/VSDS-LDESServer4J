@@ -15,28 +15,26 @@ public class EventStreamResponse {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final String memberType;
-	private final boolean defaultViewEnabled;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
 	private final DcatDataset dcatDataset;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-			String memberType, boolean defaultViewEnabled, List<ViewSpecification> views,
+			String memberType, List<ViewSpecification> views,
 			Model shacl, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
 		this.memberType = memberType;
-		this.defaultViewEnabled = defaultViewEnabled;
 		this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
 		this.dcatDataset = dcatDataset != null ? dcatDataset : new DcatDataset(collection);
 	}
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-			String memberType, boolean defaultViewEnabled, List<ViewSpecification> views,
+			String memberType, List<ViewSpecification> views,
 			Model shacl) {
-		this(collection, timestampPath, versionOfPath, memberType, defaultViewEnabled, views, shacl, null);
+		this(collection, timestampPath, versionOfPath, memberType, views, shacl, null);
 	}
 
 	public String getCollection() {
@@ -53,10 +51,6 @@ public class EventStreamResponse {
 
 	public String getMemberType() {
 		return memberType;
-	}
-
-	public boolean isDefaultViewEnabled() {
-		return defaultViewEnabled;
 	}
 
 	public List<ViewSpecification> getViews() {

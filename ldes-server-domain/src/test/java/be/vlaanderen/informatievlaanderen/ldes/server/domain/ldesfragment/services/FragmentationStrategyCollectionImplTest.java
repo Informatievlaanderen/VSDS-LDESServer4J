@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
@@ -76,4 +77,14 @@ class FragmentationStrategyCollectionImplTest {
 		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
 		verifyNoMoreInteractions(fragmentationStrategyCreator, rootFragmentCreator, refragmentationService);
 	}
+
+	@Test
+	void should_DeleteTreeNodesByCollection_when_EventStreamDeletedEventIsReceived() {
+		String collectionName = "collectionName";
+
+		fragmentationStrategyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+
+		verify(treeNodeRemover).deleteTreeNodesByCollection(collectionName);
+	}
+
 }

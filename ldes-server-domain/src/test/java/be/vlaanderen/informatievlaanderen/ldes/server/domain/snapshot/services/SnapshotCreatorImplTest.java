@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,9 +33,8 @@ class SnapshotCreatorImplTest {
 
 	@BeforeEach
 	void setUp() {
-		AppConfig appConfig = new AppConfig();
-		appConfig.setHostName("localhost:8080");
-		snapShotCreator = new SnapshotCreatorImpl(appConfig, memberCollector, rootFragmentCreator, snapshotFragmenter,
+		snapShotCreator = new SnapshotCreatorImpl("localhost:8080", memberCollector, rootFragmentCreator,
+				snapshotFragmenter,
 				shaclShapeService);
 	}
 

@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingConfigurationException;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +16,7 @@ public class ConfigProperties {
 		String caseInsensitiveKey = removeCasing(key);
 		String value = caseInsensitiveProperties.get(caseInsensitiveKey);
 		if (value == null)
-			throw new MissingConfigurationException(key);
+			throw new IllegalArgumentException("Configuration key " + key + " is missing.");
 		return value;
 	}
 

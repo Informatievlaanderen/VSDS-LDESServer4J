@@ -4,14 +4,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -44,19 +43,16 @@ class TreeNodeConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
-		AppConfig appConfig = new AppConfig();
-		appConfig.setHostName(HOST_NAME);
-
 		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
 
 		EventStream eventStream = new EventStream(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", false);
+				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
 		dcatViewService = mock(DcatViewService.class);
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, appConfig, dcatViewService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
 		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleEventStreamInitEvent(new EventStreamChangedEvent(eventStream));
+				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleShaclInitEvent(new ShaclChangedEvent(new ShaclShape(COLLECTION_NAME, shacl)));
 	}

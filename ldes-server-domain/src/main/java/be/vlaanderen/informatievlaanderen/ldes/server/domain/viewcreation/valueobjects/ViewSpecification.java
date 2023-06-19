@@ -20,9 +20,6 @@ public class ViewSpecification {
 		this.fragmentations = fragmentations;
 	}
 
-	public ViewSpecification() {
-	}
-
 	public ViewName getName() {
 		return name;
 	}

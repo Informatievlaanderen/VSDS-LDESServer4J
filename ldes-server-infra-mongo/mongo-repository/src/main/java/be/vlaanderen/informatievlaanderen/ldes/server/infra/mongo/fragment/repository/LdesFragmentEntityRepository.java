@@ -21,4 +21,6 @@ public interface LdesFragmentEntityRepository extends MongoRepository<LdesFragme
 	Stream<LdesFragmentEntity> findAllByViewName(String viewName);
 
 	List<LdesFragmentEntity> removeByViewName(String viewName);
+
+	Long deleteAllByCollectionName(String collectionName);
 }

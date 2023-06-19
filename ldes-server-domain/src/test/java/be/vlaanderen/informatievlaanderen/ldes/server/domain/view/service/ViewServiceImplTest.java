@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
@@ -36,7 +37,7 @@ class ViewServiceImplTest {
 	@BeforeEach
 	void setUp() {
 		viewService.handleEventStreamInitEvent(
-				new EventStreamChangedEvent(new EventStream(COLLECTION, null, null, null, false)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, null, null, null)));
 	}
 
 	@Nested
@@ -142,34 +143,22 @@ class ViewServiceImplTest {
 		}
 
 		@Test
-        void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
-            when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(new ViewSpecification()));
+		void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
+			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(viewSpecification));
 
-            viewService.deleteViewByViewName(viewName);
+			viewService.deleteViewByViewName(viewName);
 
-            InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
 			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
-            inOrder.verify(viewRepository).deleteViewByViewName(viewName);
-            inOrder.verify(dcatViewService).delete(viewName);
-            inOrder.verifyNoMoreInteractions();
-        }
+			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
 	@Nested
 	class GetView {
 		private final ViewName viewName = new ViewName(COLLECTION, "view");
-
-		@Test
-		void when_GetViewAndEventStreamDoesNotExist_then_then_MissingEventStreamExceptionIsThrown() {
-			ViewName viewNameOfNotExistingCollection = new ViewName(NOT_EXISTING_COLLECTION, "view");
-			MissingEventStreamException missingEventStreamException = assertThrows(MissingEventStreamException.class,
-					() -> viewService.getViewByViewName(viewNameOfNotExistingCollection));
-
-			assertEquals("No event stream found for collection not_existing_collection",
-					missingEventStreamException.getMessage());
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verifyNoMoreInteractions();
-		}
 
 		@Test
 		void when_GetViewAndViewIsPresent_then_ViewIsReturned() {
@@ -245,5 +234,22 @@ class ViewServiceImplTest {
 			inOrder.verify(eventPublisher, times(2)).publishEvent(any(ViewInitializationEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
+	}
+
+	@Test
+	void should_CallRepositoryWithDcatView_when_ViewDeletedEventIsPublished() {
+		ViewName view = new ViewName(COLLECTION, "view");
+		ViewSpecification firstViewSpecification = new ViewSpecification(view, List.of(), List.of());
+		ViewName view2 = new ViewName(COLLECTION, "view2");
+		ViewSpecification secondViewSpecification = new ViewSpecification(view2, List.of(), List.of());
+		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION))
+				.thenReturn(List.of(firstViewSpecification, secondViewSpecification));
+
+		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
+
+		verify(eventPublisher, times(2)).publishEvent(any(ViewDeletedEvent.class));
+		verify(viewRepository).deleteViewByViewName(view);
+		verify(viewRepository).deleteViewByViewName(view2);
+		assertThrows(MissingEventStreamException.class, () -> viewService.getViewsByCollectionName(COLLECTION));
 	}
 }

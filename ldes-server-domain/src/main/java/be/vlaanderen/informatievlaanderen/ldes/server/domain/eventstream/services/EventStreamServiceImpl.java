@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
@@ -14,7 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -49,7 +49,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
 			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(),
+					eventStream.getVersionOfPath(), eventStream.getMemberType(),
 					views, shaclShape.getModel(), dataset.orElse(null));
 		}).toList();
 	}
@@ -63,7 +63,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(collectionName);
 
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.getMemberType(), eventStream.isDefaultViewEnabled(), views,
+				eventStream.getVersionOfPath(), eventStream.getMemberType(), views,
 				shaclShape.getModel(), dataset.orElse(null));
 	}
 
@@ -81,33 +81,37 @@ public class EventStreamServiceImpl implements EventStreamService {
 		}
 
 		eventStreamRepository.deleteEventStream(collectionName);
-		viewService.getViewsByCollectionName(collectionName).stream()
-				.map(ViewSpecification::getName)
-				.forEach(viewService::deleteViewByViewName);
-		shaclShapeService.deleteShaclShape(collectionName);
-		dcatDatasetService.deleteDataset(collectionName);
 		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 
 	@Override
-	public EventStreamResponse saveEventStream(EventStreamResponse eventStreamResponse) {
-		EventStream eventStream = new EventStream(
+	public EventStreamResponse createEventStream(EventStreamResponse eventStreamResponse) {
+		EventStream eventStream = mapToEventStream(eventStreamResponse);
+		ShaclShape shaclShape = new ShaclShape(eventStreamResponse.getCollection(), eventStreamResponse.getShacl());
+
+		checkCollectionDoesNotYetExist(eventStream.getCollection());
+
+		eventStreamRepository.saveEventStream(eventStream);
+		shaclShapeService.updateShaclShape(shaclShape);
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+		eventStreamResponse.getViews().forEach(viewService::addView);
+		viewService.addDefaultView(eventStream.getCollection());
+		return eventStreamResponse;
+	}
+
+	private void checkCollectionDoesNotYetExist(String collectionName) {
+		boolean exists = eventStreamRepository.retrieveEventStream(collectionName).isPresent();
+		if (exists) {
+			throw new IllegalArgumentException("This collection already exists!");
+		}
+	}
+
+	private EventStream mapToEventStream(EventStreamResponse eventStreamResponse) {
+		return new EventStream(
 				eventStreamResponse.getCollection(),
 				eventStreamResponse.getTimestampPath(),
 				eventStreamResponse.getVersionOfPath(),
-				eventStreamResponse.getMemberType(),
-				eventStreamResponse.isDefaultViewEnabled());
-		ShaclShape shaclShape = new ShaclShape(
-				eventStreamResponse.getCollection(),
-				eventStreamResponse.getShacl());
-		eventStreamRepository.saveEventStream(eventStream);
-		shaclShapeService.updateShaclShape(shaclShape);
-		eventPublisher.publishEvent(new EventStreamChangedEvent(eventStream));
-		eventStreamResponse.getViews().forEach(viewService::addView);
-		if (eventStreamResponse.isDefaultViewEnabled()) {
-			viewService.addDefaultView(eventStream.getCollection());
-		}
-		return eventStreamResponse;
+				eventStreamResponse.getMemberType());
 	}
 
 	@Override
@@ -115,10 +119,15 @@ public class EventStreamServiceImpl implements EventStreamService {
 		return dcatServerService.getComposedDcat();
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
+	/**
+	 * Initializes the eventstream config.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
 	public void initEventStream() {
 		eventStreamRepository.retrieveAllEventStreams().stream()
-				.map(EventStreamChangedEvent::new)
+				.map(EventStreamCreatedEvent::new)
 				.forEach(eventPublisher::publishEvent);
 	}
 

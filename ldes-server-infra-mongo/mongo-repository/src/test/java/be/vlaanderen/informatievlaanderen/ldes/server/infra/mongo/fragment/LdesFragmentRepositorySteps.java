@@ -79,4 +79,9 @@ public class LdesFragmentRepositorySteps extends SpringIntegrationTest {
 	public void iDeleteTheLdesFragmentsOfViewName(String viewName) {
 		ldesFragmentMongoRepository.removeLdesFragmentsOfView(viewName);
 	}
+
+	@When("I delete the collection {string}")
+	public void iDeleteTheCollection(String collectionName) {
+		ldesFragmentMongoRepository.deleteTreeNodesByCollection(collectionName);
+	}
 }

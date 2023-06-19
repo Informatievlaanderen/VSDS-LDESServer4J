@@ -4,5 +4,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface LdesMemberEntityRepository extends MongoRepository<LdesMemberEntity, String> {
-	void deleteAllByCollectionName(String collectionName);
+	Long deleteAllByCollectionName(String collectionName);
 }

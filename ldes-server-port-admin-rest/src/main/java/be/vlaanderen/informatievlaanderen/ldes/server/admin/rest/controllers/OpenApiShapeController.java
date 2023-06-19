@@ -38,7 +38,7 @@ public interface OpenApiShapeController {
 					[{"@id":"_:b0","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b1"}]},{"@id":"_:b1"},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b0"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://www.w3.org/ns/shacl#NodeShape"}]
 					"""))
 	})
-	@ApiResponse(responseCode = "404", description = "No event stream with provided id could be found")
+	@ApiResponse(responseCode = "404", description = "No event stream with provided id could be found", content = @Content)
 	Model getShape(String collectionName);
 
 	@Operation(summary = "Adds a shape to a collection")
@@ -65,8 +65,8 @@ public interface OpenApiShapeController {
 					[{"@id":"_:b0","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b1"}]},{"@id":"_:b1"},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b0"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://www.w3.org/ns/shacl#NodeShape"}]
 					"""))
 	})
-	@ApiResponse(responseCode = "400", description = "The provided shacl shape is not valid")
-	@ApiResponse(responseCode = "404", description = "No event stream with provided id could be found")
+	@ApiResponse(responseCode = "400", description = "The provided shacl shape is not valid", content = @Content)
+	@ApiResponse(responseCode = "404", description = "No event stream with provided id could be found", content = @Content)
 	Model putShape(String collectionName,
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """

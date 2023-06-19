@@ -72,37 +72,22 @@ class TreeNodeRemoverImplTest {
 	@Test
 	void when_LdesFragmentOfViewAreRemoved_TheyAreRemovedFromRepository() {
 		ViewName viewName = new ViewName("collection", "view");
-		when(fragmentRepository.retrieveFragmentsOfView(viewName.asString())).thenReturn(ldesFragmentStream());
-		when(memberRepository.getMembersByReference(getLdesFragment("1").getFragmentId()))
-				.thenReturn(Stream.of(getMember("1"), getMember("2")));
-		when(memberRepository.getMembersByReference(getLdesFragment("2").getFragmentId()))
-				.thenReturn(Stream.of(getMember("2")));
 
 		treeNodeRemover.removeLdesFragmentsOfView(viewName);
 
 		InOrder inOrder = inOrder(memberRepository, fragmentRepository);
-		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(viewName.asString());
-		inOrder.verify(memberRepository).getMembersByReference(getLdesFragment("1").getFragmentId());
-		inOrder.verify(memberRepository).removeMemberReference(getMember("1").getLdesMemberId(),
-				getLdesFragment("1").getFragmentId());
-		inOrder.verify(memberRepository).removeMemberReference(getMember("2").getLdesMemberId(),
-				getLdesFragment("1").getFragmentId());
-		inOrder.verify(memberRepository).getMembersByReference(getLdesFragment("2").getFragmentId());
-		inOrder.verify(memberRepository).removeMemberReference(getMember("2").getLdesMemberId(),
-				getLdesFragment("2").getFragmentId());
+		inOrder.verify(memberRepository).removeViewReferences(viewName);
 		inOrder.verify(fragmentRepository).removeLdesFragmentsOfView(viewName.asString());
 		inOrder.verifyNoMoreInteractions();
 	}
 
-	private Stream<LdesFragment> ldesFragmentStream() {
-		LdesFragment firstLdesFragment = getLdesFragment("1");
-		LdesFragment secondLdesFragment = getLdesFragment("2");
-		return Stream.of(firstLdesFragment, secondLdesFragment);
-	}
+	@Test
+	void should_DeleteTreeNodesByCollection_when_DeleteTreeNodesByCollectionIsCalled() {
+		String collectionName = "collectionName";
 
-	private LdesFragment getLdesFragment(String fragmentValue) {
-		return new LdesFragment(new ViewName("collectionName", "view"),
-				List.of(new FragmentPair("page", fragmentValue)));
+		treeNodeRemover.deleteTreeNodesByCollection(collectionName);
+
+		verify(fragmentRepository).deleteTreeNodesByCollection(collectionName);
 	}
 
 	private Member getMember(String memberId) {
