@@ -1,4 +1,0 @@
-geospatial:
-  maxZoomLevel: 15
-  fragmenterProperty: "http://www.opengis.net/ont/geosparql#asWKT"
-  projection: "lambert72"

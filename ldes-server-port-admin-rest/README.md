@@ -107,14 +107,12 @@ There is no SHACL shape for the LDES view provided yet. But the following exampl
 ```
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
-@prefix example: <http://example.org/> .
 
 <view1> a ldes:View ;
   tree:viewDescription [
-    example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "pagination";
-        example:memberLimit "10" ;
+    tree:fragmentationStrategy [
+        a tree:PaginationFragmentation ;
+        tree:memberLimit "10" ;
     ]
 ] .
 ```

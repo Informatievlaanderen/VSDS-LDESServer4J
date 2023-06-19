@@ -119,19 +119,17 @@ public interface OpenApiEventStreamController {
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
 					@prefix server: <http://localhost:8080/> .
 					@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-					@prefix example: <http://example.org/> .
 					@prefix parcels: <http://localhost:8080/parcels/> .
 
 					server:parcels a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
 						custom:memberType <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> ;
-						custom:hasDefaultView "true"^^xsd:boolean ;
 						tree:shape parcels:shape .
 						ldes:view parcels:by-page .
 
 					parcels:by-page tree:viewDescription [
-						example:fragmentationStrategy ([
+						tree:fragmentationStrategy ([
 							a tree:PaginationFragmentation ;
 							tree:memberLimit "100"
 						]) ;

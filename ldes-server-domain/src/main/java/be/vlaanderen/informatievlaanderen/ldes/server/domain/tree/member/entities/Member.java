@@ -43,10 +43,10 @@ public class Member {
 		// @formatter:on
 	}
 
-	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationProperty) {
+	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationPath) {
 		// @formatter:off
 		return memberModel
-				.listStatements(null, ResourceFactory.createProperty(fragmentationProperty), (Resource) null)
+				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))

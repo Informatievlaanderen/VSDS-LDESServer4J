@@ -1,26 +1,25 @@
 # Substring fragmentation
 
-Substring fragmentation will create fragments based on substrings of the `fragmenterProperty`.
+Substring fragmentation will create fragments based on substrings of the `fragmentationPath`.
 This allows you to efficiently implement autocompletion.
 
 ## Properties
 
   ```ttl
-  @prefix example: <http://example.org/> .
+  @prefix tree: <https://w3id.org/tree#> .
   
-  example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "substring";
-        example:memberLimit { Mandatory:member limit > 0 } ;
-        example:fragmenterProperty { Mandatory: defines which property will be used for bucketizing } ;
-        example:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmenterProperty } ;
+  tree:fragmentationStrategy [
+        a tree:SubstringFragmentation ;
+        tree:memberLimit { Mandatory:member limit > 0 } ;
+        tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ;
+        tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ;
     ] .
   ```
 
 ## Algorithm
 
 1. The fragmentationObject of the member is determined
-   - We filter the RDF statements where the predicate matches the `fragmenterProperty`
+   - We filter the RDF statements where the predicate matches the `fragmentationPath`
    - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
    - We select the object of the first statement that passes the above filters.
 2. Tokens are created
@@ -42,13 +41,12 @@ This allows you to efficiently implement autocompletion.
 Example properties:
 
   ```ttl
-  @prefix example: <http://example.org/> .
+  @prefix tree: <https://w3id.org/tree#> .
   
-  example:fragmentationStrategy [
-    a example:Fragmentation ;
-    example:name "substring";
-    example:memberLimit "10" ;
-    example:fragmenterProperty "https://data.vlaanderen.be/ns/adres#volledigAdres" ;
+  tree:fragmentationStrategy [
+    a tree:SubstringFragmentation ;
+    tree:memberLimit 10 ;
+    tree:fragmentationPath <https://data.vlaanderen.be/ns/adres#volledigAdres> ;
   ] .
   ```
 

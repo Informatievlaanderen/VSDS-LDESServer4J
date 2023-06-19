@@ -6,13 +6,12 @@ This is meant to be a standard way of fragmentation.
 ## Properties
 
   ```ttl
-  @prefix example: <http://example.org/> .
+  @prefix tree: <https://w3id.org/tree#> .
   
-  example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "pagination";
-        example:memberLimit { Mandatory:member limit > 0 } ;
-        example:bidirectionalRelations { Optional: true or false (true is default) } ;
+  tree:fragmentationStrategy [
+        a tree:PaginationFragmentation ;
+        tree:memberLimit { Mandatory:member limit > 0 } ;
+        tree:bidirectionalRelations { Optional: true or false (true is default) } ;
     ] .
   ```
 
@@ -38,11 +37,10 @@ from the previous fragment to the new fragment.
 ## Example properties
 
   ```ttl
-  @prefix example: <http://example.org/> .
+  @prefix tree: <https://w3id.org/tree#> .
   
-  example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:name "pagination";
-        example:memberLimit "10" ;
+  tree:fragmentationStrategy [
+        a tree:PaginationFragmentation ;
+        tree:memberLimit 10 ;
     ] .
   ```

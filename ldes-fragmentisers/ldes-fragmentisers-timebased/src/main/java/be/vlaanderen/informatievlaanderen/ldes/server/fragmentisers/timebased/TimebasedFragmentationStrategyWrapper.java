@@ -35,7 +35,7 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(
 				ldesFragmentRepository,
-				timebasedFragmentationConfig.fragmentationProperty());
+				timebasedFragmentationConfig.fragmentationPath());
 		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository,
 				timebasedFragmentationConfig.memberLimit());
 	}

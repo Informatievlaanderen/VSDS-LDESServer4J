@@ -1,11 +1,10 @@
 @prefix tree: <https://w3id.org/tree#> .
 @prefix ldes: <https://w3id.org/ldes#> .
-@prefix example: <http://example.org/> .
 
 ldes:view1 a tree:Node ;
   tree:viewDescription [
-    example:fragmentationStrategy [
-        a example:Fragmentation ;
-        example:property "ldes:propertyPath"
+    tree:fragmentationStrategy [
+        a tree:ExampleFragmentation ;
+        tree:property "ldes:propertyPath"
     ]
 ] .

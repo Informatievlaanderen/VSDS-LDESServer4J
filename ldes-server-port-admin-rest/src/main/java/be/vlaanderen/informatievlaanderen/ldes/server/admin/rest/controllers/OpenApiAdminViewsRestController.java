@@ -58,7 +58,7 @@ public interface OpenApiAdminViewsRestController {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = {
 							@ExampleObject(name = "Time-Based Retention", description = "A time-based retention policy which is configured to only keep members whose ldes:timestamppath is less than 2 minutes ago.", value = """
 									@prefix ldes: <https://w3id.org/ldes#> .
-									@prefix tree: <https://w3id.org/tree#>.
+									@prefix tree: <https://w3id.org/tree#> .
 									@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 
@@ -107,15 +107,13 @@ public interface OpenApiAdminViewsRestController {
 									 ] .
 									"""),
 							@ExampleObject(name = "Time-Based Fragmentation Strategy", description = "A time-based fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
-									@prefix example: <http://example.org/> .
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:timebased tree:viewDescription [
-										example:fragmentationStrategy [
-											a example:Fragmentation ;
-									        example:name "timebased" ;
-									        example:memberLimit "100"
+										tree:fragmentationStrategy [
+											a tree:TimebasedFragmentation ;
+									        tree:memberLimit "100"
 									    ];
 									 ] .
 									"""),
@@ -124,10 +122,10 @@ public interface OpenApiAdminViewsRestController {
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:geospatial tree:viewDescription [
-										example:fragmentationStrategy ([
+										tree:fragmentationStrategy ([
 											a tree:GeospatialFragmentation ;
 											tree:maxZoom "15" ;
-											tree:fragmentationPath "http://www.opengis.net/ont/geosparql#asWKT"
+											tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
 										]
 										[
 											a tree:PaginationFragmentation ;

@@ -54,7 +54,7 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 
 	private String getFragmentationString(Member member) {
 		return (String) member.getFragmentationObject(substringConfig.getFragmenterSubjectFilter(),
-				substringConfig.getFragmenterPath());
+				substringConfig.getFragmentationPath());
 	}
 
 	private LdesFragment prepareRootFragment(LdesFragment parentFragment) {
