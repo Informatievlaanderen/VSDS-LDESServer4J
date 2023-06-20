@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest {
@@ -51,7 +52,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
 		Model shape = readModelFromFile("example-shape.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName("fragmentationStrategy");
+		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 		ViewSpecification singleView = new ViewSpecification(
 				new ViewName(collection2, "view1"),
@@ -89,7 +90,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@And("the client receives a valid list of event streams")
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
 		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
-		resultActions.andExpect(IsIsomorphic.with(expectedModel));
+		resultActions.andDo(print()).andExpect(IsIsomorphic.with(expectedModel));
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
 	}
