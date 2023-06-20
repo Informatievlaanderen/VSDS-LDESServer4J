@@ -8,5 +8,5 @@ import org.junit.platform.suite.api.Suite;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResource("features/dcatserver")
-public class DcatServerRestControllerItTest extends SpringIntegrationTest {
+public class DcatServerRestControllerIT extends SpringIntegrationTest {
 }
