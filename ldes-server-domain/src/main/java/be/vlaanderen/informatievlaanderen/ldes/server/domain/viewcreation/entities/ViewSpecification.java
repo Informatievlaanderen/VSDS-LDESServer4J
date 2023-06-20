@@ -1,6 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
