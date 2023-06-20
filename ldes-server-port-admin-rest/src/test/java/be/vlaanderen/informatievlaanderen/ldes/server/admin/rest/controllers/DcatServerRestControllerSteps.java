@@ -51,7 +51,7 @@ public class DcatServerRestControllerSteps extends SpringIntegrationTest {
 
 	@Then("the client receives HTTP status {int} for dcatserverrequest")
 	public void theClientReceivesHTTPStatusForDcatserverrequest(int status) throws Exception {
-		resultActions.andExpect(status().is(666));
+		resultActions.andExpect(status().is(status));
 	}
 
 	private byte[] readDataFromFile(String filename) throws IOException {
