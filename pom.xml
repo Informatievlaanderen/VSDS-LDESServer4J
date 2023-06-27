@@ -83,7 +83,7 @@
         <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
         <!-- HASHING -->
-        <commons-codec.version>1.15</commons-codec.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
     </properties>
 
     <dependencyManagement>
