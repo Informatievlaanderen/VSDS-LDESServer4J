@@ -85,6 +85,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		String baseUrl = hostName + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
+		statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		if (isView) {
 			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
 					baseUrl,
@@ -95,8 +96,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 			statements.addAll(shaclShape.getModel().listStatements().toList());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
-		} else {
-			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
 	}
 
