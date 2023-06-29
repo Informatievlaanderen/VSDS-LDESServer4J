@@ -66,15 +66,43 @@ With following example input:
 
 The selected object would be "Kazernestraat 15, 9160 Lokeren".
 
-The bucket of substrings would be:
-- K
-- Ka
-- Kaz
-- ...
-- Kazernestraat 15, 9160 Lokeren
+The tokens would be:
+- Kazernestraat
+  - With substrings:
+    - k
+    - ka
+    - kaz
+    - ...
+    - kazernestraat
+- 15
+  - With substrings
+    - 1
+    - 15
+- 9160
+  - With substrings
+    - 9
+    - 91
+    - 916
+    - 9160
+- Lokeren
+  - With substrings
+    - l
+    - lo
+    - ...
+    - lokeren
 
-If this is the first member of the collection it would be added to fragment 'k' and available at http://localhost:8080/addresses/by-name?substring=k and not in ka or any other substring fragment.
+If this is the first member of the collection it would only be added to the root fragment ' ' 
+and available at http://localhost:8080/addresses/by-name?substring= and not in any other substring fragment. 
 
-In a scenario where there are already 10 addresses starting with 'k' and only 2 with 'ka', it would be added to http://localhost:8080/addresses/by-name?substring=ka
+When the root fragment is full, with the above config, after 10 members.
+If the above member is the 11th member it would be added to fragments k, 1, 9 and l and available at:
+- http://localhost:8080/addresses/by-name?substring=k
+- http://localhost:8080/addresses/by-name?substring=1
+- http://localhost:8080/addresses/by-name?substring=9
+- http://localhost:8080/addresses/by-name?substring=l
+
+These are the first available (not full) fragments of the different tokens. The members will not be added to ka or 15, etc.
+
+In a scenario where the root is full and there are already 10 addresses starting with 'k' and only 2 with 'ka', it would be added to http://localhost:8080/addresses/by-name?substring=ka
 
 Note that this is all lowercase.
