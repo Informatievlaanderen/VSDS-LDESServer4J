@@ -1,6 +1,6 @@
 # Mongock Changeset 8
 
-In changeset 6 we deleted
+In changeset 6 we deleted the indexed field softDeleted but the index was never cleaned up.
 
 Following configuration is needed to apply this changeset.
 
