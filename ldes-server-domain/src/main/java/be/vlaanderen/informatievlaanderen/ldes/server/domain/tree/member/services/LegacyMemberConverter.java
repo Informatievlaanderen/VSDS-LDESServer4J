@@ -16,7 +16,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
-// TODO: 30/06/23 add tests
 @Component
 public class LegacyMemberConverter {
 
