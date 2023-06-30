@@ -57,7 +57,7 @@ class TreeNodeFactoryImplTest {
 				"valueType", "relation"));
 		when(ldesFragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
 		List<Member> members = List.of(new Member("member", COLLECTION_NAME, 0L, null, null, null, List.of()));
-		when(memberRepository.getMembersByReference(TREE_NODE_ID)).thenReturn(members.stream());
+		when(memberRepository.getMembersByReference(TREE_NODE_ID.asString())).thenReturn(members.stream());
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

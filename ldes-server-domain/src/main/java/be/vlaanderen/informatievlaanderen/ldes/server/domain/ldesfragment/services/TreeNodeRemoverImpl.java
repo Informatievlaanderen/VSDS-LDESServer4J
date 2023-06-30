@@ -69,7 +69,7 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private void removeMembersFromFragmentOfViewThatMatchRetentionPolicies(
 			List<RetentionPolicy> retentionPoliciesOfView, LdesFragmentIdentifier ldesFragmentId) {
 		Stream<Member> membersOfFragment = memberRepository
-				.getMembersByReference(ldesFragmentId);
+				.getMembersByReference(ldesFragmentId.asString());
 		membersOfFragment
 				.filter(member -> memberMatchesAllRetentionPoliciesOfView(retentionPoliciesOfView, member))
 				.forEach(member -> removeMemberFromFragmentOfViewAndTryDeletingMember(ldesFragmentId, member));
@@ -78,7 +78,7 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	private void removeMemberFromFragmentOfViewAndTryDeletingMember(LdesFragmentIdentifier ldesFragmentId,
 			Member member) {
 		memberRepository.removeMemberReference(member.getLdesMemberId(),
-				ldesFragmentId);
+				ldesFragmentId.asString());
 		treeMemberRemover.deletingMemberFromCollection(member.getLdesMemberId());
 	}
 

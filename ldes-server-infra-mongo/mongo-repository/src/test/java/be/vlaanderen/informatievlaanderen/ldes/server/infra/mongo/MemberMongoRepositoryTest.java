@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
@@ -81,7 +80,7 @@ class MemberMongoRepositoryTest {
 		Update update = new Update();
 		update.push(TREE_NODE_REFERENCES, FRAGMENT_ID);
 
-		ldesMemberMongoRepository.addMemberReference(MEMBER_ID, LdesFragmentIdentifier.fromFragmentId(FRAGMENT_ID));
+		ldesMemberMongoRepository.addMemberReference(MEMBER_ID, FRAGMENT_ID);
 
 		verify(mongoTemplate, times(1)).upsert(query, update, LdesMemberEntity.class);
 	}
@@ -93,7 +92,7 @@ class MemberMongoRepositoryTest {
 		Update update = new Update();
 		update.pull(TREE_NODE_REFERENCES, FRAGMENT_ID);
 
-		ldesMemberMongoRepository.removeMemberReference(MEMBER_ID, LdesFragmentIdentifier.fromFragmentId(FRAGMENT_ID));
+		ldesMemberMongoRepository.removeMemberReference(MEMBER_ID, FRAGMENT_ID);
 
 		verify(mongoTemplate, times(1)).upsert(query, update, LdesMemberEntity.class);
 	}
@@ -104,7 +103,7 @@ class MemberMongoRepositoryTest {
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(FRAGMENT_ID));
 
 		List<Member> members = ldesMemberMongoRepository
-				.getMembersByReference(LdesFragmentIdentifier.fromFragmentId(FRAGMENT_ID)).toList();
+				.getMembersByReference(FRAGMENT_ID).toList();
 
 		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
 
