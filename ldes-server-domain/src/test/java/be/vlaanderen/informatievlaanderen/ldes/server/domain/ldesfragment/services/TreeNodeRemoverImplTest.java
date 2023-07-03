@@ -46,26 +46,26 @@ class TreeNodeRemoverImplTest {
 				.thenReturn(Stream.of(firstLdesFragmentOfView, secondLdesFragmentOfView));
 		Member firstMember = getMember("1");
 		Member secondMember = getMember("2");
-		when(memberRepository.getMembersByReference(firstLdesFragmentOfView.getFragmentId().asString()))
+		when(memberRepository.getMembersByReference(firstLdesFragmentOfView.getFragmentIdString()))
 				.thenReturn(Stream.of(firstMember, secondMember));
 		Member thirdMember = getMember("3");
-		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentId().asString()))
+		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentIdString()))
 				.thenReturn(Stream.of(thirdMember));
 
 		treeNodeRemover.removeTreeNodeMembers();
 
 		InOrder inOrder = inOrder(fragmentRepository, memberRepository, treeMemberRemover);
 		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(VIEW_NAME.asString());
-		inOrder.verify(memberRepository).getMembersByReference(firstLdesFragmentOfView.getFragmentId().asString());
+		inOrder.verify(memberRepository).getMembersByReference(firstLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(memberRepository).removeMemberReference(firstMember.getLdesMemberId(),
-				firstLdesFragmentOfView.getFragmentId().asString());
+				firstLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(firstMember.getLdesMemberId());
 		inOrder.verify(memberRepository).removeMemberReference(secondMember.getLdesMemberId(),
-				firstLdesFragmentOfView.getFragmentId().asString());
+				firstLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(secondMember.getLdesMemberId());
-		inOrder.verify(memberRepository).getMembersByReference(secondLdesFragmentOfView.getFragmentId().asString());
+		inOrder.verify(memberRepository).getMembersByReference(secondLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(memberRepository).removeMemberReference(thirdMember.getLdesMemberId(),
-				secondLdesFragmentOfView.getFragmentId().asString());
+				secondLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(thirdMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 	}

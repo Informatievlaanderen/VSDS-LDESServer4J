@@ -42,14 +42,14 @@ class LdesFragmentTest {
 						new FragmentPair(TILE, FRAGMENTATION_VALUE_2))));
 
 		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z&tile=0/0/0",
-				ldesFragment.getFragmentId().asString());
+				ldesFragment.getFragmentIdString());
 		assertEquals("/collectionName/mobility-hindrances?generatedAtTime=2020-12-28T09:36:09.72Z",
 				ldesFragment.getParentIdAsString());
 
 		ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of()));
 		assertEquals("/collectionName/mobility-hindrances",
-				ldesFragment.getFragmentId().asString());
+				ldesFragment.getFragmentIdString());
 		assertEquals(ROOT, ldesFragment.getParentIdAsString());
 
 	}
@@ -89,7 +89,7 @@ class LdesFragmentTest {
 		LdesFragment parent = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(PARENT_FRAGMENT_PAIR)));
 		LdesFragment child = parent.createChild(CHILD_FRAGMENT_PAIR);
 		assertEquals(parent.getFragmentId(), child.getParentId().get());
-		assertEquals(parent.getFragmentId().asString(), child.getParentIdAsString());
+		assertEquals(parent.getFragmentIdString(), child.getParentIdAsString());
 	}
 
 	@Test

@@ -55,7 +55,7 @@ class LdesFragmentMongoRepositoryTest {
 				List.of());
 
 		assertTrue(ldesFragment.isPresent());
-		assertEquals(expectedFragmentId, ldesFragment.get().getFragmentId().asString());
+		assertEquals(expectedFragmentId, ldesFragment.get().getFragmentIdString());
 	}
 
 	static class LdesFragmentEntityListProvider implements ArgumentsProvider {

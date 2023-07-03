@@ -51,7 +51,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 						viewName)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(fragment -> fragment.getFragmentId().asString()));
+				.min(Comparator.comparing(LdesFragment::getFragmentIdString));
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class LdesFragmentMongoRepository implements LdesFragmentRepository {
 						parentId)
 				.stream()
 				.map(LdesFragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(fragment -> fragment.getFragmentId().asString()));
+				.min(Comparator.comparing(LdesFragment::getFragmentIdString));
 	}
 
 	@Override

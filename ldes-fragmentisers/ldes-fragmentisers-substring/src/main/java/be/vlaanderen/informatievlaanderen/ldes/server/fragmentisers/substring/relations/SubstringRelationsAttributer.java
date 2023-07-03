@@ -37,7 +37,7 @@ public class SubstringRelationsAttributer {
 	private String getSubstringValue(LdesFragment childFragment) {
 		return childFragment.getValueOfKey(SUBSTRING).map(substring -> substring.replace("\"", ""))
 				.orElseThrow(
-						() -> new MissingFragmentValueException(childFragment.getFragmentId().asString(), SUBSTRING));
+						() -> new MissingFragmentValueException(childFragment.getFragmentIdString(), SUBSTRING));
 
 	}
 }

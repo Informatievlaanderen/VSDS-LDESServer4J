@@ -34,6 +34,10 @@ public class LdesFragment {
 		return identifier;
 	}
 
+	public String getFragmentIdString() {
+		return identifier.asString();
+	}
+
 	public List<FragmentPair> getFragmentPairs() {
 		return this.identifier.getFragmentPairs();
 	}

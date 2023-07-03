@@ -21,8 +21,8 @@ import static org.mockito.Mockito.when;
 class SubstringFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private final FragmentPair timePair = new FragmentPair("time", "b");
-	private final FragmentPair substringPair = new FragmentPair("substring", "a");
+	private static final FragmentPair timePair = new FragmentPair("time", "b");
+	private static final FragmentPair substringPair = new FragmentPair("substring", "a");
 
 	private LdesFragmentRepository ldesFragmentRepository;
 	private SubstringFragmentCreator substringFragmentCreator;

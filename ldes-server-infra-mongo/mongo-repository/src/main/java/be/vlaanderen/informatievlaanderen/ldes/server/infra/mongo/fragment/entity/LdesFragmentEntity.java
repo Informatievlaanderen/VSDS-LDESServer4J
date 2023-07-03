@@ -29,18 +29,18 @@ public class LdesFragmentEntity {
 	@Indexed
 	private final String collectionName;
 
-	public LdesFragmentEntity(LdesFragmentIdentifier id, Boolean root,
+	public LdesFragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable, String parentId, Integer numberOfMembers,
-			List<TreeRelation> relations) {
-		this.id = id.asString();
+			List<TreeRelation> relations, String collectionName) {
+		this.id = id;
 		this.root = root;
-		this.viewName = id.getViewName().asString();
-		this.fragmentPairs = id.getFragmentPairs();
+		this.viewName = viewName;
+		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.parentId = parentId;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
-		this.collectionName = id.getViewName().getCollectionName();
+		this.collectionName = collectionName;
 	}
 
 	public String getId() {
@@ -67,12 +67,15 @@ public class LdesFragmentEntity {
 	}
 
 	public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
-		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
+		return new LdesFragmentEntity(ldesFragment.getFragmentIdString(),
 				ldesFragment.isRoot(),
+				ldesFragment.getFragmentId().getViewName().asString(),
+				ldesFragment.getFragmentPairs(),
 				ldesFragment.isImmutable(),
 				ldesFragment.getParentIdAsString(),
 				ldesFragment.getNumberOfMembers(),
-				ldesFragment.getRelations());
+				ldesFragment.getRelations(),
+				ldesFragment.getFragmentId().getViewName().getCollectionName());
 	}
 
 	public Boolean getRoot() {

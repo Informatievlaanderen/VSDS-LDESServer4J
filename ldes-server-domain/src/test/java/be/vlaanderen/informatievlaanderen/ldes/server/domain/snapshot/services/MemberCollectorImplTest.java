@@ -28,11 +28,11 @@ class MemberCollectorImplTest {
 		LdesFragment ldesFragment = getLdesFragment("1");
 		LdesFragment ldesFragment2 = getLdesFragment("2");
 		LdesFragment ldesFragment3 = getLdesFragment("3");
-		when(memberRepository.getMembersByReference(ldesFragment.getFragmentId().asString()))
+		when(memberRepository.getMembersByReference(ldesFragment.getFragmentIdString()))
 				.thenReturn(getMemberStream());
-		when(memberRepository.getMembersByReference(ldesFragment2.getFragmentId().asString()))
+		when(memberRepository.getMembersByReference(ldesFragment2.getFragmentIdString()))
 				.thenReturn(getMemberStream());
-		when(memberRepository.getMembersByReference(ldesFragment3.getFragmentId().asString()))
+		when(memberRepository.getMembersByReference(ldesFragment3.getFragmentIdString()))
 				.thenReturn(getMemberStream());
 
 		Map<String, List<Member>> membersGroupedByVersionOf = memberCollector

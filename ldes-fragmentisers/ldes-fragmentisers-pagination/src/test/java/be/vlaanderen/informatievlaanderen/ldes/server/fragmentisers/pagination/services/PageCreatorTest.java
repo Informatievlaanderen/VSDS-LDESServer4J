@@ -66,7 +66,7 @@ class PageCreatorTest {
 
 	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
 		assertEquals("/collectionName/view?pageNumber",
-				ldesFragment.getFragmentId().asString().split("=")[0]);
+				ldesFragment.getFragmentIdString().split("=")[0]);
 		assertEquals(VIEW_NAME, ldesFragment.getViewName());
 		assertTrue(ldesFragment.getValueOfKey(PAGE_NUMBER).isPresent());
 	}

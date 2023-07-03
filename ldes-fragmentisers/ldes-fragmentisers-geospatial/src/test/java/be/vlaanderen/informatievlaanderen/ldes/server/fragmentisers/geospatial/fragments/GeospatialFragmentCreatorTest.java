@@ -24,9 +24,9 @@ import static org.mockito.Mockito.when;
 class GeospatialFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private final FragmentPair substringPair = new FragmentPair("substring", "a");
-	private final FragmentPair geoRootPair = new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT);
-	private final FragmentPair geoPair = new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202");
+	private static final FragmentPair substringPair = new FragmentPair("substring", "a");
+	private static final FragmentPair geoRootPair = new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT);
+	private static final FragmentPair geoPair = new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202");
 
 	private LdesFragmentRepository ldesFragmentRepository;
 	private GeospatialFragmentCreator geospatialFragmentCreator;
