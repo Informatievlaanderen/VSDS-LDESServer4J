@@ -87,6 +87,7 @@ class MemberIngesterImplTest {
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
 		when(memberRepository.memberExists(member.getId())).thenReturn(false);
+		when(memberRepository.saveMember(member)).thenReturn(member);
 
 		memberIngestService.ingest(member);
 
