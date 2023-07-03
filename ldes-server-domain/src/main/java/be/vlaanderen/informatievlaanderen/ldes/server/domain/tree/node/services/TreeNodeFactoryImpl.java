@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.UrlCharachterCodesConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
@@ -24,8 +25,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 	@Override
 	public TreeNode getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
-		String treeNodeIdString = treeNodeId.asString();
-		String extendedTreeNodeId = hostName + treeNodeIdString;
+		String extendedTreeNodeId = UrlCharachterCodesConverter.encode(hostName, treeNodeId);
 		LdesFragment ldesFragment = ldesFragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));
