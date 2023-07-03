@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesFragmentIdentifierParseException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.springframework.data.annotation.PersistenceCreator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class LdesFragmentIdentifier {
 	private final ViewName viewName;
 	private final List<FragmentPair> fragmentPairs;
 
+	@PersistenceCreator
 	public LdesFragmentIdentifier(ViewName viewName, List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
