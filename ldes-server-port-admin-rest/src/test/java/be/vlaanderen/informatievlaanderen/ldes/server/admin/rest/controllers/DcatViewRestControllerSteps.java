@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ContextConfiguration(classes = {DcatViewsRestController.class })
+@ContextConfiguration(classes = { DcatViewsRestController.class })
 public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
 	private final static String COLLECTION_NAME = "collectionName";

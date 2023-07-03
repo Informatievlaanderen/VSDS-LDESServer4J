@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@Order(Ordered.LOWEST_PRECEDENCE)
-@ControllerAdvice
+//@Order(Ordered.LOWEST_PRECEDENCE)
+//@ControllerAdvice
 public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(value = { Exception.class })
