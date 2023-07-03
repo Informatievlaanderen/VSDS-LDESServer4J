@@ -152,9 +152,14 @@ A detailed explanation on how to add or remove a collection can be found [here](
   spring.data.mongodb:
     uri: mongodb://{docker-hostname}:{port}
     database: { database name }
+    auto-index-creation: true
   ```
 
-Note that the database schema may evolve between releases. To update the schema Mongock changesets have been created and can be applied. For more info: [mongock-changeset-1](ldes-server-infra-mongo/mongock-changeset-1/README.md)
+The `auto-index-creation` enables the server to automatically create indices in mongodb.
+If this property is not enabled, you have to manage the indices manually. This can have a significant impact on performance.
+
+Note that the database schema may evolve between releases. To update the schema Mongock changesets have been created and can be applied. 
+For more see the individual readme files of the changesets: [mongock-changeset](ldes-server-infra-mongo/mongock-changesets/src/main/java/be/vlaanderen/informatievlaanderen/ldes/server/infra/mongo/mongock/)
 
 ##### Example Swagger Configuration
 

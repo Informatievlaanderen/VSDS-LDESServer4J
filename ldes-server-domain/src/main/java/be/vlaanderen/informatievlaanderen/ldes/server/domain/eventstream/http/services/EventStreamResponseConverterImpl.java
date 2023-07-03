@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
