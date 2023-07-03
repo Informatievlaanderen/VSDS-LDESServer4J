@@ -29,9 +29,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 @CucumberContextConfiguration
 @EnableAutoConfiguration
-@ActiveProfiles({ "test", "rest" })
+@ActiveProfiles("test")
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminServerDcatController.class,
-		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class })
+		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class })
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",

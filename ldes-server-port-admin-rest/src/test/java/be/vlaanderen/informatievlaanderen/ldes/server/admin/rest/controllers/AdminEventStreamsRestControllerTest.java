@@ -50,9 +50,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@EnableAutoConfiguration
+@WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, ModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
