@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -27,9 +28,12 @@ class MemberCollectorImplTest {
 		LdesFragment ldesFragment = getLdesFragment("1");
 		LdesFragment ldesFragment2 = getLdesFragment("2");
 		LdesFragment ldesFragment3 = getLdesFragment("3");
-		when(memberRepository.getMembersByReference(ldesFragment.getFragmentId())).thenReturn(getMemberStream());
-		when(memberRepository.getMembersByReference(ldesFragment2.getFragmentId())).thenReturn(getMemberStream());
-		when(memberRepository.getMembersByReference(ldesFragment3.getFragmentId())).thenReturn(getMemberStream());
+		when(memberRepository.getMembersByReference(ldesFragment.getFragmentIdString()))
+				.thenReturn(getMemberStream());
+		when(memberRepository.getMembersByReference(ldesFragment2.getFragmentIdString()))
+				.thenReturn(getMemberStream());
+		when(memberRepository.getMembersByReference(ldesFragment3.getFragmentIdString()))
+				.thenReturn(getMemberStream());
 
 		Map<String, List<Member>> membersGroupedByVersionOf = memberCollector
 				.getMembersGroupedByVersionOf(List.of(ldesFragment, ldesFragment2, ldesFragment3));
@@ -43,8 +47,8 @@ class MemberCollectorImplTest {
 	}
 
 	private LdesFragment getLdesFragment(String pageNumber) {
-		return new LdesFragment(new ViewName("collectionName", "mobility-hindrances"),
-				List.of(new FragmentPair("page", pageNumber)));
+		return new LdesFragment(new LdesFragmentIdentifier(new ViewName("collectionName", "mobility-hindrances"),
+				List.of(new FragmentPair("page", pageNumber))));
 	}
 
 	private Stream<Member> getMemberStream() {

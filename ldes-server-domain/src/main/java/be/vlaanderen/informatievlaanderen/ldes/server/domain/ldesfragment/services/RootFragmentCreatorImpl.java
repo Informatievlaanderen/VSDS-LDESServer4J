@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class RootFragmentCreatorImpl implements RootFragmentCreator {
 	}
 
 	private LdesFragment createRoot(ViewName viewName) {
-		LdesFragment ldesFragment = new LdesFragment(viewName, List.of());
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(viewName, List.of()));
 		return ldesFragmentRepository.saveFragment(ldesFragment);
 	}
 }

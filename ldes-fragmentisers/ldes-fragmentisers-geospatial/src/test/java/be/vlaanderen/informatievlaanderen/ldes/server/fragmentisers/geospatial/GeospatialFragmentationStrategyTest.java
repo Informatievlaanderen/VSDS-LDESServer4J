@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -29,7 +30,8 @@ import static org.mockito.Mockito.when;
 class GeospatialFragmentationStrategyTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment(VIEW_NAME, List.of());
+	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment(
+			new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 	private static final LdesFragment ROOT_TILE_FRAGMENT = PARENT_FRAGMENT
 			.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 

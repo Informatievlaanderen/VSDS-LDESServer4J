@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -52,7 +53,7 @@ public class LdesFragmentEntity {
 
 	public LdesFragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(ViewName.fromString(viewName), fragmentPairs, immutable,
+		return new LdesFragment(new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs), immutable,
 				effectiveNumberOfMembers,
 				relations);
 	}
@@ -66,13 +67,15 @@ public class LdesFragmentEntity {
 	}
 
 	public static LdesFragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
-		ViewName localViewName = ldesFragment.getViewName();
-		return new LdesFragmentEntity(ldesFragment.getFragmentId(),
-				ldesFragment.getFragmentPairs().isEmpty(),
-				localViewName.asString(),
-				ldesFragment.getFragmentPairs(), ldesFragment.isImmutable(),
-				ldesFragment.getParentId(),
-				ldesFragment.getNumberOfMembers(), ldesFragment.getRelations(), localViewName.getCollectionName());
+		return new LdesFragmentEntity(ldesFragment.getFragmentIdString(),
+				ldesFragment.isRoot(),
+				ldesFragment.getFragmentId().getViewName().asString(),
+				ldesFragment.getFragmentPairs(),
+				ldesFragment.isImmutable(),
+				ldesFragment.getParentIdAsString(),
+				ldesFragment.getNumberOfMembers(),
+				ldesFragment.getRelations(),
+				ldesFragment.getFragmentId().getViewName().getCollectionName());
 	}
 
 	public Boolean getRoot() {
