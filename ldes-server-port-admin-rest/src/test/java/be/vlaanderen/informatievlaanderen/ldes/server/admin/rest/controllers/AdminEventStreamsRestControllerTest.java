@@ -52,7 +52,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@CucumberContextConfiguration
 @EnableAutoConfiguration
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, ModelConverter.class,
