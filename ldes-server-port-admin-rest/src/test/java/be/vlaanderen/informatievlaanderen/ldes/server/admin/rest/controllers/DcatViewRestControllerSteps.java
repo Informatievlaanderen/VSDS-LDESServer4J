@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.util.ResourceUtils;
 
@@ -21,14 +22,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatViewsRestController.BASE_URL;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ContextConfiguration(classes = {DcatViewsRestController.class })
 public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
 	private final static String COLLECTION_NAME = "collectionName";
