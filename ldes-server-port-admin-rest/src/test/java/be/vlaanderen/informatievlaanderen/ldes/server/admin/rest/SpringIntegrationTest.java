@@ -24,7 +24,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest
 @SpringBootTest
 @AutoConfigureMockMvc
 @CucumberContextConfiguration
