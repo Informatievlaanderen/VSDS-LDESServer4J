@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,7 @@ public class MemberCollectorImpl implements MemberCollector {
 	public Map<String, List<Member>> getMembersGroupedByVersionOf(List<LdesFragment> ldesFragments) {
 		return ldesFragments.stream()
 				.map(LdesFragment::getFragmentId)
+				.map(LdesFragmentIdentifier::asString)
 				.flatMap(memberRepository::getMembersByReference)
 				.filter(new SnapshotValidPredicate())
 				.collect(Collectors.groupingBy(Member::getVersionOf));

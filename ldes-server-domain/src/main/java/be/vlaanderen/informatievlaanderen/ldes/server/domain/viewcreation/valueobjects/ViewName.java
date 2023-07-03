@@ -26,6 +26,10 @@ public class ViewName implements Serializable {
 		}
 
 		final String[] splitViewName = viewName.split("/");
+		if (splitViewName.length != 2) {
+			throw new IllegalArgumentException(
+					"Invalid full view name: %s. Exactly one '/' char expected.".formatted(viewName));
+		}
 		return new ViewName(splitViewName[0], splitViewName[1]);
 	}
 

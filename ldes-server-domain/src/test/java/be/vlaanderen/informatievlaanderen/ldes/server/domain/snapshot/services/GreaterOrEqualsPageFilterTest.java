@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.exception.GreaterOrEqualsPageFilterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -22,7 +23,7 @@ class GreaterOrEqualsPageFilterTest {
 
 	@BeforeEach
 	void setUp() {
-		fragmentRoot = new LdesFragment(new ViewName("collection", "view"), List.of());
+		fragmentRoot = new LdesFragment(new LdesFragmentIdentifier(new ViewName("collection", "view"), List.of()));
 		fragment1 = fragmentRoot.createChild(new FragmentPair(PAGE_NUMBER_KEY, "1"));
 		fragment2 = fragmentRoot.createChild(new FragmentPair(PAGE_NUMBER_KEY, "2"));
 		fragment3 = fragmentRoot.createChild(new FragmentPair(PAGE_NUMBER_KEY, "3"));
@@ -48,7 +49,7 @@ class GreaterOrEqualsPageFilterTest {
 
 	@Test
 	void when_MissingPageNumberKey_Then_Throws() {
-		String fragmentId = fragmentRoot.getFragmentId();
+		LdesFragmentIdentifier fragmentId = fragmentRoot.getFragmentId();
 		assertThrows(GreaterOrEqualsPageFilterException.class,
 				() -> new GreaterOrEqualsPageFilter(fragmentId),
 				"Could not create filter starting from fragment: " + fragmentRoot.getFragmentId() + " No value for key "

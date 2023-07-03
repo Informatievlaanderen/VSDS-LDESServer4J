@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
@@ -45,26 +46,26 @@ class TreeNodeRemoverImplTest {
 				.thenReturn(Stream.of(firstLdesFragmentOfView, secondLdesFragmentOfView));
 		Member firstMember = getMember("1");
 		Member secondMember = getMember("2");
-		when(memberRepository.getMembersByReference(firstLdesFragmentOfView.getFragmentId()))
+		when(memberRepository.getMembersByReference(firstLdesFragmentOfView.getFragmentIdString()))
 				.thenReturn(Stream.of(firstMember, secondMember));
 		Member thirdMember = getMember("3");
-		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentId()))
+		when(memberRepository.getMembersByReference(secondLdesFragmentOfView.getFragmentIdString()))
 				.thenReturn(Stream.of(thirdMember));
 
 		treeNodeRemover.removeTreeNodeMembers();
 
 		InOrder inOrder = inOrder(fragmentRepository, memberRepository, treeMemberRemover);
 		inOrder.verify(fragmentRepository).retrieveFragmentsOfView(VIEW_NAME.asString());
-		inOrder.verify(memberRepository).getMembersByReference(firstLdesFragmentOfView.getFragmentId());
+		inOrder.verify(memberRepository).getMembersByReference(firstLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(memberRepository).removeMemberReference(firstMember.getLdesMemberId(),
-				firstLdesFragmentOfView.getFragmentId());
+				firstLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(firstMember.getLdesMemberId());
 		inOrder.verify(memberRepository).removeMemberReference(secondMember.getLdesMemberId(),
-				firstLdesFragmentOfView.getFragmentId());
+				firstLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(secondMember.getLdesMemberId());
-		inOrder.verify(memberRepository).getMembersByReference(secondLdesFragmentOfView.getFragmentId());
+		inOrder.verify(memberRepository).getMembersByReference(secondLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(memberRepository).removeMemberReference(thirdMember.getLdesMemberId(),
-				secondLdesFragmentOfView.getFragmentId());
+				secondLdesFragmentOfView.getFragmentIdString());
 		inOrder.verify(treeMemberRemover).deletingMemberFromCollection(thirdMember.getLdesMemberId());
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -95,7 +96,7 @@ class TreeNodeRemoverImplTest {
 	}
 
 	private LdesFragment ldesFragment(String page) {
-		return new LdesFragment(VIEW_NAME, List.of(new FragmentPair("page", page)));
+		return new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(new FragmentPair("page", page))));
 	}
 
 }

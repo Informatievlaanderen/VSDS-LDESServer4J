@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -30,6 +31,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 		return sha256Hex(treeNode.getFragmentId()
 				+ treeNode.getRelations().stream()
 						.map(TreeRelation::treeNode)
+						.map(LdesFragmentIdentifier::asString)
 						.collect(Collectors.joining(""))
 				+ treeNode.getMembers().stream()
 						.map(Member::getLdesMemberId)
