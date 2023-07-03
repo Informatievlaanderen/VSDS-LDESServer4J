@@ -54,7 +54,9 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 			Map<String, String> fragmentationMap) {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
-						.stream().map(entry -> new FragmentPair(entry.getKey(), UrlCharachterCodesConverter.decode(entry.getValue()))).toList());
+						.stream().map(entry -> new FragmentPair(entry.getKey(),
+								UrlCharachterCodesConverter.decode(entry.getValue())))
+						.toList());
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, treeNode);

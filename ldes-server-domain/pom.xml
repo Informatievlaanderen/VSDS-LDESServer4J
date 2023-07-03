@@ -81,6 +81,7 @@
 			<artifactId>commons-codec</artifactId>
 		</dependency>
 
+        <!-- PERSISTENCE FOR LDESFRAGMENTIDENTIFIER -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
