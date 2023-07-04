@@ -23,7 +23,7 @@ public class AppConfigChangeset3 {
 	}
 
 	public void setCollections(List<LdesConfig> collections) {
-		this.collections = collections;
+		this.collections = collections != null ? collections : new ArrayList<>();
 	}
 
 	public LdesConfig getLdesConfig(String collectionName) {
