@@ -58,7 +58,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
 				.findAllByImmutableAndParentId(false,
-						parentId)
+						parentId.asString())
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(Fragment::getFragmentIdString));

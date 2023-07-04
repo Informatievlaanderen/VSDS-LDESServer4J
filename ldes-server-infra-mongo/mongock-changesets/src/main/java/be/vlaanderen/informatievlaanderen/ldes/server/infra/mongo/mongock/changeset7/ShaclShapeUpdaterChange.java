@@ -20,49 +20,50 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock
 @ChangeUnit(id = "shacl_shape-updater-changeset-7", order = "7", author = "VSDS")
 public class ShaclShapeUpdaterChange {
 
-	private static final Logger log = LoggerFactory.getLogger(ShaclShapeUpdaterChange.class);
+    private static final Logger log = LoggerFactory.getLogger(ShaclShapeUpdaterChange.class);
 
-	private final MongoTemplate mongoTemplate;
-	private final AppConfigChangeset7 config;
+    private final MongoTemplate mongoTemplate;
+    private final AppConfigChangeset7 config;
 
-	public ShaclShapeUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset7 config) {
-		this.mongoTemplate = mongoTemplate;
-		this.config = config;
-	}
+    public ShaclShapeUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset7 config) {
+        this.mongoTemplate = mongoTemplate;
+        this.config = config;
+    }
 
-	@Execution
-	public void changeSet() {
-		if (collectionAlreadyExists()) {
-			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
-			return;
-		}
+    @Execution
+    public void changeSet() {
+        if (collectionAlreadyExists()) {
+            log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
+            return;
+        }
+        if (config.getCollections() != null) {
+            List<ShaclShapeEntityV1> shapes = config.getCollections().stream().map(collection -> {
+                String shapePath = collection.validation().getShape();
+                final String graphString = determineShape(shapePath);
+                return new ShaclShapeEntityV1(collection.getCollectionName(), graphString);
+            }).toList();
 
-		List<ShaclShapeEntityV1> shapes = config.getCollections().stream().map(collection -> {
-			String shapePath = collection.validation().getShape();
-			final String graphString = determineShape(shapePath);
-			return new ShaclShapeEntityV1(collection.getCollectionName(), graphString);
-		}).toList();
+            mongoTemplate.insertAll(shapes);
+        }
+    }
 
-		mongoTemplate.insertAll(shapes);
-	}
+    private String determineShape(String shapePath) {
+        if (shapePath != null) {
+            final Graph graph = RDFDataMgr.loadGraph(shapePath);
+            return RDFWriter.source(graph).lang(Lang.TURTLE).asString();
+        } else {
+            // We use an empty shape when no shape is defined.
+            return "[ a <http://www.w3.org/ns/shacl#NodeShape> ] .";
+        }
+    }
 
-	private String determineShape(String shapePath) {
-		if (shapePath != null) {
-			final Graph graph = RDFDataMgr.loadGraph(shapePath);
-			return RDFWriter.source(graph).lang(Lang.TURTLE).asString();
-		} else {
-			// We use an empty shape when no shape is defined.
-			return "[ a <http://www.w3.org/ns/shacl#NodeShape> ] .";
-		}
-	}
+    private boolean collectionAlreadyExists() {
+        return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments() > 0;
+    }
 
-	private boolean collectionAlreadyExists() {
-		return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments() > 0;
-	}
-
-	@RollbackExecution
-	public void rollback() {
-		mongoTemplate.dropCollection(COLLECTION_NAME);
-	}
+    @RollbackExecution
+    public void rollback() {
+        mongoTemplate.dropCollection(COLLECTION_NAME);
+    }
 
 }
