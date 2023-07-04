@@ -15,12 +15,15 @@ public class AppConfigChangeset3 {
 		this.collections = collections != null ? collections : new ArrayList<>();
 	}
 
+	public AppConfigChangeset3() {
+	}
+
 	public List<LdesConfig> getCollections() {
 		return collections;
 	}
 
 	public void setCollections(List<LdesConfig> collections) {
-		this.collections = collections;
+		this.collections = collections != null ? collections : new ArrayList<>();
 	}
 
 	public LdesConfig getLdesConfig(String collectionName) {
