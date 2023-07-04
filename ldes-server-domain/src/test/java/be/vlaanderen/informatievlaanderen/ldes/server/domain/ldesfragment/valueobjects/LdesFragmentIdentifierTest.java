@@ -24,6 +24,9 @@ class LdesFragmentIdentifierTest {
 	final String fragmentIdString = "/" + fullViewName
 			+ "?" + fragmentPairKey1 + "=" + fragmentPairValue1
 			+ "&" + fragmentPairKey2 + "=" + fragmentPairValue2;
+	final String fragmentIdStringWithEmpty = "/" + fullViewName
+			+ "?" + fragmentPairKey1 + "="
+			+ "&" + fragmentPairKey2 + "=" + fragmentPairValue2;
 	final String rootIdString = "/" + fullViewName;
 	final String malformedIdString = "/" + fullViewName
 			+ "?faultyString"
@@ -44,6 +47,14 @@ class LdesFragmentIdentifierTest {
 	@Test
 	void when_NonRootFragmentIdString_Then_CreateFragmentIdentifier() {
 		assertEquals(fragmentId, LdesFragmentIdentifier.fromFragmentId(fragmentIdString));
+	}
+
+	@Test
+	void when_NonRootFragmentIdStringWithEmptyPairValue_Then_CreateFragmentIdentifier() {
+		fragmentPairs = List.of(new FragmentPair(fragmentPairKey1, ""),
+				new FragmentPair(fragmentPairKey2, fragmentPairValue2));
+		fragmentId = new LdesFragmentIdentifier(fullViewName, fragmentPairs);
+		assertEquals(fragmentId, LdesFragmentIdentifier.fromFragmentId(fragmentIdStringWithEmpty));
 	}
 
 	@Test
