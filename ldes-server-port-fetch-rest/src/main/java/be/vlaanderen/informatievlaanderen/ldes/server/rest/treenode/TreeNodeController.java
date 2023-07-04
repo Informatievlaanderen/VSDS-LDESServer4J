@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreenodeUrlCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -53,7 +54,9 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 			Map<String, String> fragmentationMap) {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
-						.stream().map(entry -> new FragmentPair(entry.getKey(), entry.getValue())).toList());
+						.stream().map(entry -> new FragmentPair(entry.getKey(),
+								TreenodeUrlCreator.decode(entry.getValue())))
+						.toList());
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
 		setCacheControlHeader(response, treeNode);
