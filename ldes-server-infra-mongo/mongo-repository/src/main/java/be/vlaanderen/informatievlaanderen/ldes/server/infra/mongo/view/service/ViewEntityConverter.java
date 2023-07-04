@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.entity.ViewEntity;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;

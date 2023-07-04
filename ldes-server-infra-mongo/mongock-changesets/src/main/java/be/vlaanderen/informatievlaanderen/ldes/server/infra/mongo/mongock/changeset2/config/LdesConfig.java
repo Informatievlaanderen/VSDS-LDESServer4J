@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset2.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 

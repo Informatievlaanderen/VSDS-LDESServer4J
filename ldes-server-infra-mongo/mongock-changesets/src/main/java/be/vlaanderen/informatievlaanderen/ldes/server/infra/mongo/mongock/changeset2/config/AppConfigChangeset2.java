@@ -15,9 +15,6 @@ public class AppConfigChangeset2 {
 		this.collections = collections != null ? collections : new ArrayList<>();
 	}
 
-	public AppConfigChangeset2() {
-	}
-
 	public List<LdesConfig> getCollections() {
 		return collections;
 	}

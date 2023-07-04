@@ -1,7 +1,3 @@
-spring:
-  data:
-    mongodb:
-      auto-index-creation: true
 mongock:
   migration-scan-package: VSDS
 springdoc:

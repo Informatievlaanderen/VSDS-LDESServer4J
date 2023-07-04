@@ -54,12 +54,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { Exception.class })
-	protected ResponseEntity<Object> fallbackHandleException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
-	}
-
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
 		logger.error(ex.getMessage());

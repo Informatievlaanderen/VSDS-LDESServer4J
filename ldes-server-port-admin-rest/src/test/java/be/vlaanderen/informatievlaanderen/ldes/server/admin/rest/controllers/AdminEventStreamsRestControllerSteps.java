@@ -5,9 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.SpringIntegrati
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewSpecification;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -51,7 +51,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
 		Model shape = readModelFromFile("example-shape.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName("ExampleFragmentation");
+		fragmentationConfig.setName("fragmentationStrategy");
 		fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
 		ViewSpecification singleView = new ViewSpecification(
 				new ViewName(collection2, "view1"),

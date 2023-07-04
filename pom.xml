@@ -2,13 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>Java implementation of a Linked Data Event Stream</description>
-    <url>https://semiceu.github.io/LinkedDataEventStreams/</url>
-
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -21,22 +17,6 @@
         <module>ldes-queues</module>
         <module>ldes-server-port-admin-rest</module>
     </modules>
-
-    <developers>
-        <developer>
-            <name>Yalz</name>
-            <email>Yalz@users.noreply.github.com </email>
-            <organization>Cegeka</organization>
-            <organizationUrl>http://www.sonatype.com</organizationUrl>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>EUPL</name>
-            <url>https://eupl.eu/1.2/en</url>
-        </license>
-    </licenses>
 
     <properties>
         <!-- MAVEN -->
@@ -51,10 +31,9 @@
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
-        <swagger-annotations.version>2.2.14</swagger-annotations.version>
+        <swagger-annotations.version>2.2.12</swagger-annotations.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -63,7 +42,7 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>3.1.1</spring-boot.version>
+        <spring-boot.version>3.1.0</spring-boot.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.8.0</apache-jena.version>
@@ -74,7 +53,7 @@
         <junit-platform-suite.version>1.9.3</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.9.3</jupiter.version>
-        <mockito.version>5.4.0</mockito.version>
+        <mockito.version>5.3.1</mockito.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.7.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
@@ -104,7 +83,7 @@
         <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
 
         <!-- HASHING -->
-        <commons-codec.version>1.16.0</commons-codec.version>
+        <commons-codec.version>1.15</commons-codec.version>
     </properties>
 
     <dependencyManagement>
@@ -276,11 +255,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>${maven-gpg-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>${maven-assembly-plugin.version}</version>
                     <configuration>
@@ -415,7 +389,6 @@
                     <execution>
                         <goals>
                             <goal>integration-test</goal>
-                            <goal>verify</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -449,25 +422,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>sign</goal>
-                        </goals>
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <!-- RELEASE -->
             <plugin>
@@ -482,7 +436,7 @@
                 <configuration>
                     <skipNexusStagingDeployMojo>${skipdeploy}</skipNexusStagingDeployMojo>
                     <serverId>ossrh</serverId>
-                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
