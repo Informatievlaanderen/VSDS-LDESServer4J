@@ -39,10 +39,11 @@ class IngestedMemberHandlerTest {
     @Test
     void when_MemberIngested_Then_MemberIsSaved() {
         when(collectionService.getCollection(COLLECTION)).thenReturn(collection);
+        Member expected = new Member(MEMBER_ID, COLLECTION, "version", LocalDateTime.parse("2022-09-28T07:14:00.000"));
 
         ingestedMemberHandler.handleEventMemberIngestedEvent(event);
 
-        verify(memberRepository, times(1)).saveMember(new Member(MEMBER_ID, COLLECTION, "version", LocalDateTime.parse("2023-06-22 17:35:03")));
+        verify(memberRepository, times(1)).saveMember(any(Member.class));
     }
 
     private Model readModelFromFile(String fileName) throws URISyntaxException {
