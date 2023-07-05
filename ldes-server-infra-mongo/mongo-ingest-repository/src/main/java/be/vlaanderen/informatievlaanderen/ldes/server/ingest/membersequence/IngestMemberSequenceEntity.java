@@ -3,15 +3,15 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "member_sequence")
-public class MemberSequenceEntity {
+@Document(collection = "ingest_member_sequence")
+public class IngestMemberSequenceEntity {
 
 	@Id
 	private String id;
 
 	private long seq;
 
-	public MemberSequenceEntity() {
+	public IngestMemberSequenceEntity() {
 		// empty constructor
 	}
 

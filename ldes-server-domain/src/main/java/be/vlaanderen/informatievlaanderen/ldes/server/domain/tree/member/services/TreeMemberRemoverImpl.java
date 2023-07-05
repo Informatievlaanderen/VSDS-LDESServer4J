@@ -19,6 +19,7 @@ public class TreeMemberRemoverImpl implements TreeMemberRemover {
 				.filter(member -> member.getTreeNodeReferences().isEmpty())
 				.ifPresent(member -> {
 					memberRepository.deleteMember(memberId);
+					// TODO: 30/06/23 fire deleted event
 					Metrics.counter("ldes_server_deleted_members_count").increment();
 				});
 	}

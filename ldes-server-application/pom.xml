@@ -69,7 +69,17 @@
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-port-ingestion-rest</artifactId>
+                    <artifactId>ldes-server-port-ingest</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-server-port-ingest-rest</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongo-ingest-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

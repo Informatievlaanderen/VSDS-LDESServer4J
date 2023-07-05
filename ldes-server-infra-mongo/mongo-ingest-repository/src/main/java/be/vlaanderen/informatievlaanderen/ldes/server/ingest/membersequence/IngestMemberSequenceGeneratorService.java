@@ -11,20 +11,20 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Component
-public class SequenceGeneratorService {
+public class IngestMemberSequenceGeneratorService {
 
 	private final MongoOperations mongoOperations;
 
-	public SequenceGeneratorService(MongoOperations mongoOperations) {
+	public IngestMemberSequenceGeneratorService(MongoOperations mongoOperations) {
 		this.mongoOperations = mongoOperations;
 	}
 
 	public long generateSequence(String collectionName) {
-		MemberSequenceEntity counter = mongoOperations.findAndModify(
+		IngestMemberSequenceEntity counter = mongoOperations.findAndModify(
 				query(where("_id").is(collectionName)),
 				new Update().inc("seq", 1),
 				options().returnNew(true).upsert(true),
-				MemberSequenceEntity.class);
+				IngestMemberSequenceEntity.class);
 		return !Objects.isNull(counter) ? counter.getSeq() : 1;
 	}
 }

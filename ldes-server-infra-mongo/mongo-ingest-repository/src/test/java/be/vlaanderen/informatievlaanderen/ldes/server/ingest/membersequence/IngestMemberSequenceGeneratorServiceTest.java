@@ -12,28 +12,29 @@ import static org.mockito.Mockito.when;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-class SequenceGeneratorServiceTest {
+class IngestMemberSequenceGeneratorServiceTest {
 
 	private final MongoOperations mongoOperations = mock(MongoOperations.class);
-	private final SequenceGeneratorService sequenceGeneratorService = new SequenceGeneratorService(mongoOperations);
+	private final IngestMemberSequenceGeneratorService ingestMemberSequenceGeneratorService = new IngestMemberSequenceGeneratorService(
+			mongoOperations);
 
 	@Test
 	void test_memberSequenceEntityIsNotNull() {
-		MemberSequenceEntity memberSequenceEntity = new MemberSequenceEntity();
-		memberSequenceEntity.setId("collectionName");
-		memberSequenceEntity.setSeq(100);
+		IngestMemberSequenceEntity ingestMemberSequenceEntity = new IngestMemberSequenceEntity();
+		ingestMemberSequenceEntity.setId("collectionName");
+		ingestMemberSequenceEntity.setSeq(100);
 		when(mongoOperations.findAndModify(eq(query(where("_id").is("collectionName"))),
 				eq(new Update().inc("seq", 1)),
 				any(),
-				eq(MemberSequenceEntity.class))).thenReturn(memberSequenceEntity);
-		long sequence = sequenceGeneratorService.generateSequence("collectionName");
+				eq(IngestMemberSequenceEntity.class))).thenReturn(ingestMemberSequenceEntity);
+		long sequence = ingestMemberSequenceGeneratorService.generateSequence("collectionName");
 
 		assertEquals(100, sequence);
 	}
 
 	@Test
 	void test_memberSequenceEntityIsNull() {
-		long sequence = sequenceGeneratorService.generateSequence("collectionName");
+		long sequence = ingestMemberSequenceGeneratorService.generateSequence("collectionName");
 
 		assertEquals(1, sequence);
 	}
