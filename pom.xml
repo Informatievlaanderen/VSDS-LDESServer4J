@@ -21,6 +21,7 @@
         <module>ldes-server-port-admin-rest</module>
         <module>ldes-server-port-ingest</module>
         <module>ldes-server-port-ingest-rest</module>
+        <module>ldes-server-retention</module>
     </modules>
 
     <developers>
