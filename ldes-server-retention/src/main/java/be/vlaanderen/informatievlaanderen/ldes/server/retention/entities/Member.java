@@ -1,15 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.entities;
 
-public class Member {
-	private final String id;
-	private final String collectionName;
-	private final String versionOf;
-	private final String timestamp;
+import java.time.LocalDateTime;
 
-	public Member(String id, String collectionName, String versionOf, String timestamp) {
-		this.id = id;
-		this.collectionName = collectionName;
-		this.versionOf = versionOf;
-		this.timestamp = timestamp;
-	}
+public class Member {
+    private final String id;
+    private final String collectionName;
+    private final String versionOf;
+    private final LocalDateTime timestamp;
+
+    public Member(String id, String collectionName, String versionOf, LocalDateTime timestamp) {
+        this.id = id;
+        this.collectionName = collectionName;
+        this.versionOf = versionOf;
+        this.timestamp = timestamp;
+    }
 }
