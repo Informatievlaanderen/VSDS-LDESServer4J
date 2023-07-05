@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -8,45 +9,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class LdesFragment {
 
-	private final ViewName viewName;
-	private final List<FragmentPair> fragmentPairs;
+	public static final String ROOT = "root";
+	private final LdesFragmentIdentifier identifier;
 	private Boolean immutable;
 	private final int numberOfMembers;
 	private final List<TreeRelation> relations;
 
-	public LdesFragment(ViewName viewName, final List<FragmentPair> fragmentPairs) {
-		this(viewName, fragmentPairs, false, 0, new ArrayList<>());
+	public LdesFragment(LdesFragmentIdentifier identifier) {
+		this(identifier, false, 0, new ArrayList<>());
 	}
 
-	public LdesFragment(ViewName viewName, List<FragmentPair> fragmentPairs, Boolean immutable, int numberOfMembers,
+	public LdesFragment(LdesFragmentIdentifier identifier, Boolean immutable, int numberOfMembers,
 			List<TreeRelation> relations) {
-		this.viewName = viewName;
-		this.fragmentPairs = fragmentPairs;
+		this.identifier = identifier;
 		this.immutable = immutable;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
 	}
 
-	public String getFragmentId() {
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("/").append(viewName.asString());
+	public LdesFragmentIdentifier getFragmentId() {
+		return identifier;
+	}
 
-		if (!fragmentPairs.isEmpty()) {
-			stringBuilder.append("?");
-			stringBuilder.append(fragmentPairs.stream()
-					.map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
-					.collect(Collectors.joining("&")));
-		}
-
-		return stringBuilder.toString();
+	public String getFragmentIdString() {
+		return identifier.asString();
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
-		return this.fragmentPairs;
+		return this.identifier.getFragmentPairs();
 	}
 
 	public void makeImmutable() {
@@ -58,44 +51,30 @@ public class LdesFragment {
 	}
 
 	public LdesFragment createChild(FragmentPair fragmentPair) {
-		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.fragmentPairs.stream().toList());
+		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(
+				this.identifier.getFragmentPairs().stream().toList());
 		childFragmentPairs.add(fragmentPair);
-		return new LdesFragment(getViewName(), childFragmentPairs);
+		return new LdesFragment(new LdesFragmentIdentifier(getViewName(), childFragmentPairs));
 	}
 
 	public Optional<String> getValueOfKey(String key) {
-		return this.fragmentPairs.stream()
-				.filter(fragmentPair -> fragmentPair.fragmentKey().equals(key))
-				.map(FragmentPair::fragmentValue).findFirst();
+		return this.identifier.getValueOfFragmentPairKey(key);
 	}
 
 	public ViewName getViewName() {
-		return this.viewName;
+		return this.identifier.getViewName();
 	}
 
 	public int getNumberOfMembers() {
 		return this.numberOfMembers;
 	}
 
-	public String getParentId() {
+	public Optional<LdesFragmentIdentifier> getParentId() {
+		return identifier.getParentId();
+	}
 
-		if (!this.fragmentPairs.isEmpty()) {
-			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
-			parentPairs.remove(parentPairs.size() - 1);
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder
-					.append("/").append(viewName.asString());
-			if (!parentPairs.isEmpty()) {
-
-				stringBuilder.append("?");
-				stringBuilder
-						.append(parentPairs.stream().map(fragmentPair -> fragmentPair.fragmentKey() +
-								"=" + fragmentPair.fragmentValue()).collect(Collectors.joining("&")));
-			}
-			return stringBuilder.toString();
-		}
-
-		return "root";
+	public String getParentIdAsString() {
+		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> ROOT);
 	}
 
 	@Override
@@ -126,7 +105,7 @@ public class LdesFragment {
 	}
 
 	public boolean isRoot() {
-		return this.fragmentPairs.isEmpty();
+		return this.identifier.getFragmentPairs().isEmpty();
 	}
 
 }

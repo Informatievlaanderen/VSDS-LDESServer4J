@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.servi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingRootFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.micrometer.observation.ObservationRegistry;
@@ -37,8 +38,8 @@ class FragmentationExecutorImplTest {
 	@Test
 	void when_FragmentExecutionOnMemberIsCalled_RootNodeIsRetrievedAndFragmentationStrategyIsCalled() {
 		when(fragmentationStrategyCollection.getFragmentationStrategyMap()).thenReturn(Map.of(VIEW_NAME,fragmentationStrategy));
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
-				List.of());
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
+				List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.asString()))
 				.thenReturn(Optional.of(ldesFragment));
 		Member member = mock(Member.class);
@@ -55,7 +56,7 @@ class FragmentationExecutorImplTest {
 	@Test
 	void whenMemberIsFromDifferentCollection_thenItIsNotFragmented() {
 		final ViewName alternativeViewName = new ViewName("otherCollection", "otherView");
-		LdesFragment ldesFragment = new LdesFragment(alternativeViewName, List.of());
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(alternativeViewName, List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(alternativeViewName.asString()))
 				.thenReturn(Optional.of(ldesFragment));
 		Member member = mock(Member.class);
@@ -73,8 +74,8 @@ class FragmentationExecutorImplTest {
 	void when_RootFragmentDoesNotExist_MissingRootFragmentExceptionIsThrown() {
 		when(fragmentationStrategyCollection.getFragmentationStrategyMap()).thenReturn(Map.of(VIEW_NAME,fragmentationStrategy));
 		when(ldesFragmentRepository
-				.retrieveFragment(new LdesFragment(VIEW_NAME,
-						List.of()).getFragmentId()))
+				.retrieveFragment(new LdesFragmentIdentifier(VIEW_NAME,
+						List.of())))
 				.thenReturn(Optional.empty());
 		Member member = mock(Member.class);
 		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
@@ -91,8 +92,8 @@ class FragmentationExecutorImplTest {
 	@Test
 	void when_FragmentationExecutorIsCalledInParallel_FragmentationHappensByOneThreadAtATime() {
 		when(fragmentationStrategyCollection.getFragmentationStrategyMap()).thenReturn(Map.of(VIEW_NAME,fragmentationStrategy));
-		LdesFragment ldesFragment = new LdesFragment(VIEW_NAME,
-				List.of());
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
+				List.of()));
 		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.asString()))
 				.thenReturn(Optional.of(ldesFragment));
 		IntStream.range(0, 100).parallel()

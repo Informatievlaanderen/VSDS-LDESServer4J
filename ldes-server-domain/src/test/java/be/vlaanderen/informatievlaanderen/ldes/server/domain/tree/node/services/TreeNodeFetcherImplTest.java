@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -36,11 +37,11 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenNoFragmentExists_ThenMissingFragmentExceptionIsThrown() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
-				ldesFragmentRequest.fragmentPairs());
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
+				ldesFragmentRequest.fragmentPairs()));
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), hostName,
 				COLLECTION))
-				.thenThrow(new MissingFragmentException(ldesFragment.getFragmentId()));
+				.thenThrow(new MissingFragmentException(ldesFragment.getFragmentIdString()));
 
 		MissingFragmentException missingFragmentException = assertThrows(MissingFragmentException.class,
 				() -> treeNodeFetcher.getFragment(ldesFragmentRequest));
@@ -54,9 +55,9 @@ class TreeNodeFetcherImplTest {
 	void when_getFragment_WhenExactFragmentExists_ThenReturnThatFragment() {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(VIEW_NAME,
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
-		LdesFragment ldesFragment = new LdesFragment(ldesFragmentRequest.viewName(),
-				ldesFragmentRequest.fragmentPairs());
-		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentId(), true, false, List.of(),
+		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
+				ldesFragmentRequest.fragmentPairs()));
+		TreeNode treeNode = new TreeNode(ldesFragment.getFragmentIdString(), true, false, List.of(),
 				List.of(), "collectionName");
 		when(treeNodeFactory.getTreeNode(ldesFragment.getFragmentId(), hostName,
 				COLLECTION))

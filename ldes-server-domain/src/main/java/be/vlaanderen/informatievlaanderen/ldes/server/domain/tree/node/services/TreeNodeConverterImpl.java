@@ -69,7 +69,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		ShaclShape shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						hostName + treeRelation.treeNode(),
+						hostName + treeRelation.treeNode().asString(),
 						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
 				.toList();
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),

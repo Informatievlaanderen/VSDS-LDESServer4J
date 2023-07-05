@@ -22,7 +22,8 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	@Override
 	public void addMemberToFragment(LdesFragment ldesFragment, Member member, Observation parentObservation) {
 		nonCriticalTasksExecutor.submit(
-				() -> memberRepository.addMemberReference(member.getLdesMemberId(), ldesFragment.getFragmentId()));
+				() -> memberRepository.addMemberReference(member.getLdesMemberId(),
+						ldesFragment.getFragmentIdString()));
 		ldesFragmentRepository.incrementNumberOfMembers(ldesFragment.getFragmentId());
 	}
 
