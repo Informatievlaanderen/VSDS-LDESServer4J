@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationMediator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -11,7 +12,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemberIngestServiceImpl implements MemberIngestService {
+public class MemberIngestServiceImpl {
+
+	private final LegacyMemberConverter legacyMemberConverter;
 
 	private final MemberRepository memberRepository;
 
@@ -19,14 +22,17 @@ public class MemberIngestServiceImpl implements MemberIngestService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(MemberIngestServiceImpl.class);
 
-	public MemberIngestServiceImpl(MemberRepository memberRepository,
+	public MemberIngestServiceImpl(LegacyMemberConverter legacyMemberConverter, MemberRepository memberRepository,
 			FragmentationMediator fragmentationMediator) {
+		this.legacyMemberConverter = legacyMemberConverter;
 		this.memberRepository = memberRepository;
 		this.fragmentationMediator = fragmentationMediator;
 	}
 
-	@Override
-	public void addMember(Member member) {
+	@EventListener
+	public void addMember(MemberIngestedEvent memberIngestedEvent) {
+		Member member = legacyMemberConverter.toMember(memberIngestedEvent.collectionName(),
+				memberIngestedEvent.model());
 		boolean memberExists = memberRepository.memberExists(member.getLdesMemberId());
 		String memberId = member.getLdesMemberId().replaceAll("[\n\r\t]", "_");
 		if (!memberExists) {

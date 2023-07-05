@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
@@ -69,7 +69,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	}
 
 	@EventListener
-	public void handleEventStreamChangedEvent(EventStreamChangedEvent event) {
+	public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
 		EventStream eventStream = event.eventStream();
 		memberTypes.put(eventStream.getCollection(), eventStream.getMemberType());
 	}
