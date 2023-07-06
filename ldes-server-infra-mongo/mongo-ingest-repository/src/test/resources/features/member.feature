@@ -52,3 +52,15 @@ Feature: MemberRepository
       When I save the members using the MemberRepository
       Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
       And The member with id "http://test-data/mobility-hindrance/fantasy-id" will not exist
+
+    Scenario: The repository can provide a stream of the eventsource
+      Given The following members
+        | id                                      | collectionName      | sequenceNr | versionOf                             |
+        | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | 0          | http://test-data/mobility-hindrance/1 |
+        | http://test-data/mobility-hindrance/1/2 | mobility-hindrances | 1          | http://test-data/mobility-hindrance/1 |
+        | http://test-data/gipod/1/1              | gipod               | 0          | http://test-data/gipod/1              |
+        | http://test-data/mobility-hindrance/1/3 | mobility-hindrances | 2          | http://test-data/mobility-hindrance/1 |
+        | http://test-data/gipod/1/2              | gipod               | 1          | http://test-data/gipod/1              |
+      When I save the members using the MemberRepository
+      Then I can get an ordered stream from all the members of the "mobility-hindrances" collection containing 3 members
+      And I can get an ordered stream from all the members of the "gipod" collection containing 2 members
