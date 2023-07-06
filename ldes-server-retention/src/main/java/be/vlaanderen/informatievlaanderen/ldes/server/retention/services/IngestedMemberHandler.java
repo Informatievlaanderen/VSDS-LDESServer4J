@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.springframework.context.event.EventListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
@@ -34,7 +35,8 @@ public class IngestedMemberHandler {
 		LocalDateTime timestamp = localDateTimeConverter
 				.getLocalDateTime(extractPropertyFromModel(event.model(), eventStreamProperties.getTimestampPath()));
 		String versionOf = extractPropertyFromModel(event.model(), eventStreamProperties.getVersionOfPath()).toString();
-		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf, timestamp);
+		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), List.of(), versionOf,
+				timestamp);
 		memberPropertiesRepository.save(member);
 	}
 

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
@@ -28,6 +29,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		return new MemberProperties(
 				row.get("id"),
 				row.get("collectionName"),
+				List.of(),
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp")));
 	}
@@ -40,6 +42,11 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 	@When("I save the MemberProperties using the MemberPropertiesRepository")
 	public void iSaveTheMemberPropertiesUsingTheMemberPropertiesRepository() {
 		memberProperties.forEach(memberPropertiesRepository::save);
+	}
+
+	@And("I add the view with name {string} to the MemberProperties with id {string}")
+	public void addViewToMember(String viewName, String memberId) {
+		memberPropertiesRepository.allocateMember(memberId, ViewName.fromString(viewName));
 	}
 
 	@Then("The MemberProperties with id {string} can be retrieved from the database")
@@ -57,5 +64,10 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 				retrievedMemberPropertiesPresent.getCollectionName());
 		assertEquals(expectedMemberProperties.getVersionOf(), retrievedMemberPropertiesPresent.getVersionOf());
 		assertEquals(expectedMemberProperties.getTimestamp(), retrievedMemberPropertiesPresent.getTimestamp());
+	}
+
+	@And("The retrieved MemberProperties has the view {string} as a property")
+	public void theMemberPropertyContainsTheView(String view) {
+		assertTrue(retrievedMemberProperties.get().getViews().contains(view));
 	}
 }
