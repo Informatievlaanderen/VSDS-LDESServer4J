@@ -9,11 +9,12 @@ public class MemberPropertiesEntityMapper {
 
 	public MemberPropertiesEntity toMemberEntity(MemberProperties memberProperties) {
 		return new MemberPropertiesEntity(memberProperties.getId(), memberProperties.getCollectionName(),
-				memberProperties.getVersionOf(), memberProperties.getTimestamp());
+				memberProperties.getViews(), memberProperties.getVersionOf(), memberProperties.getTimestamp());
 	}
 
 	public MemberProperties toMember(MemberPropertiesEntity memberPropertiesEntity) {
 		return new MemberProperties(memberPropertiesEntity.getId(), memberPropertiesEntity.getCollectionName(),
-				memberPropertiesEntity.getVersionOf(), memberPropertiesEntity.getTimestamp());
+				memberPropertiesEntity.getViews(), memberPropertiesEntity.getVersionOf(),
+				memberPropertiesEntity.getTimestamp());
 	}
 }
