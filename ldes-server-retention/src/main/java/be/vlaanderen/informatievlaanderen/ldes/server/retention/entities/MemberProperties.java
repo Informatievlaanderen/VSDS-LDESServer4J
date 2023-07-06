@@ -51,4 +51,8 @@ public class MemberProperties {
 	public void deleteViewReference(String viewName) {
 		viewReferences.remove(viewName);
 	}
+
+	public boolean hasNoViewReferences() {
+		return viewReferences.isEmpty();
+	}
 }
