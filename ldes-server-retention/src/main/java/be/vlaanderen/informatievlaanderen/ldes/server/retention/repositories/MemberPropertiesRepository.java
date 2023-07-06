@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberP
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
@@ -14,4 +15,10 @@ public interface MemberPropertiesRepository {
 	void addViewReference(String id, String viewName);
 
 	List<MemberProperties> getMemberPropertiesOfVersion(String versionOf);
+
+	Stream<MemberProperties> getMemberPropertiesWithViewReference(String viewName);
+
+	void removeViewReference(String id, String viewName);
+
+	void deleteById(String id);
 }
