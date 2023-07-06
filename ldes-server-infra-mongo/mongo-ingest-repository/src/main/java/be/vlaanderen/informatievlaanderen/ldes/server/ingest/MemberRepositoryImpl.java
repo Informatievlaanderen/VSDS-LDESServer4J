@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.Member
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
@@ -15,7 +16,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	private final MemberEntityMapper memberEntityMapper;
 
 	public MemberRepositoryImpl(MemberEntityRepository memberEntityRepository,
-			MemberEntityMapper memberEntityMapper) {
+								MemberEntityMapper memberEntityMapper) {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
 	}
@@ -39,4 +40,12 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public void deleteMembersByCollection(String collectionName) {
 		memberEntityRepository.deleteAllByCollectionName(collectionName);
 	}
+
+    @Override
+    public Stream<Member> getMemberStreamOfCollection(String collectionName) {
+		return memberEntityRepository
+				.getAllByCollectionNameOrderBySequenceNrAsc(collectionName)
+				.map(memberEntityMapper::toMember);
+    }
+
 }
