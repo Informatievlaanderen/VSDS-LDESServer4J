@@ -9,12 +9,15 @@ public class MemberPropertiesEntityMapper {
 
 	public MemberPropertiesEntity toMemberEntity(MemberProperties memberProperties) {
 		return new MemberPropertiesEntity(memberProperties.getId(), memberProperties.getCollectionName(),
-				memberProperties.getViews(), memberProperties.getVersionOf(), memberProperties.getTimestamp());
+				memberProperties.getViewReferences(), memberProperties.getVersionOf(), memberProperties.getTimestamp());
 	}
 
 	public MemberProperties toMember(MemberPropertiesEntity memberPropertiesEntity) {
-		return new MemberProperties(memberPropertiesEntity.getId(), memberPropertiesEntity.getCollectionName(),
-				memberPropertiesEntity.getViews(), memberPropertiesEntity.getVersionOf(),
+		MemberProperties memberProperties = new MemberProperties(memberPropertiesEntity.getId(),
+				memberPropertiesEntity.getCollectionName(),
+				memberPropertiesEntity.getVersionOf(),
 				memberPropertiesEntity.getTimestamp());
+		memberPropertiesEntity.getViews().forEach(memberProperties::addViewReference);
+		return memberProperties;
 	}
 }
