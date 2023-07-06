@@ -48,7 +48,7 @@ class IngestedMemberHandlerTest {
     void when_MemberIngested_Then_MemberIsSaved() {
         when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(eventStreamProperties);
 
-        ingestedMemberHandler.handleEventMemberIngestedEvent(event);
+        ingestedMemberHandler.handleMemberIngestedEvent(event);
 
         verify(memberPropertiesRepository, times(1)).save(captor.capture());
         assertEquals("version", captor.getValue().getVersionOf());
@@ -61,7 +61,7 @@ class IngestedMemberHandlerTest {
 		when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(differentProperties);
 
 		Exception e = assertThrows(MissingStatementException.class,
-				() -> ingestedMemberHandler.handleEventMemberIngestedEvent(event));
+				() -> ingestedMemberHandler.handleMemberIngestedEvent(event));
 
 		assertEquals("Statement could not be found. Requires: property differentPath", e.getMessage());
 	}

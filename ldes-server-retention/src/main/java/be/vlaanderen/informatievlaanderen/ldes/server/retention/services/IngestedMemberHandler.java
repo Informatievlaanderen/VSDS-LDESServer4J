@@ -29,7 +29,7 @@ public class IngestedMemberHandler {
 	}
 
 	@EventListener
-	public void handleEventMemberIngestedEvent(MemberIngestedEvent event) {
+	public void handleMemberIngestedEvent(MemberIngestedEvent event) {
 		EventStreamProperties eventStreamProperties = eventStreamCollection
 				.getEventStreamProperties(event.collectionName());
 		LocalDateTime timestamp = localDateTimeConverter
