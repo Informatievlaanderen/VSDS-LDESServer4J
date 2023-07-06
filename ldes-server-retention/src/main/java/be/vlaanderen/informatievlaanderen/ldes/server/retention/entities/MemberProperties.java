@@ -11,13 +11,13 @@ public class MemberProperties {
 	private final LocalDateTime timestamp;
 	private final List<String> viewReferences;
 
-	public MemberProperties(String id, String collectionName, List<String> views, String versionOf,
+	public MemberProperties(String id, String collectionName, String versionOf,
 			LocalDateTime timestamp) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
-		this.viewReferences=new ArrayList<>();
+		this.viewReferences = new ArrayList<>();
 	}
 
 	public String getId() {
@@ -36,11 +36,19 @@ public class MemberProperties {
 		return timestamp;
 	}
 
-	public void addViewReference(String viewName){
+	public List<String> getViewReferences() {
+		return viewReferences;
+	}
+
+	public boolean containsViewReference(String viewName) {
+		return viewReferences.contains(viewName);
+	}
+
+	public void addViewReference(String viewName) {
 		viewReferences.add(viewName);
 	}
 
-	public void deleteViewReference(String viewName){
+	public void deleteViewReference(String viewName) {
 		viewReferences.remove(viewName);
 	}
 }

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberPropertiesRepository {
@@ -11,4 +12,6 @@ public interface MemberPropertiesRepository {
 	Optional<MemberProperties> retrieve(String id);
 
 	void addViewReference(String id, String viewName);
+
+	List<MemberProperties> getMemberPropertiesOfVersion(String versionOf);
 }

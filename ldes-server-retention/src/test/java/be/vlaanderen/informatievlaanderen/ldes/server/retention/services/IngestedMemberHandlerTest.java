@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;

@@ -24,9 +24,9 @@ class AllocatedMemberHandlerTest {
 
 	@Test
 	void allocateMember() {
-		handler.handleEventMemberIngestedEvent(event);
+		handler.handleMemberAllocatedEvent(event);
 
-		verify(repo).allocateMember(ID, VIEW);
+		verify(repo).addViewReference(ID, VIEW.asString());
 	}
 
 }
