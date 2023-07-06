@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepository {
@@ -51,5 +52,21 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	public List<MemberProperties> getMemberPropertiesOfVersion(String versionOf) {
 		// TODO Implement
 		return null;
+	}
+
+	@Override
+	public Stream<MemberProperties> getMemberPropertiesWithViewReference(String viewName) {
+		// TODO Implement
+		return null;
+	}
+
+	@Override
+	public void removeViewReference(String id, String viewName) {
+		// TODO Implement
+	}
+
+	@Override
+	public void deleteById(String id) {
+		// TODO Implement
 	}
 }
