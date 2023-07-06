@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_FRAGMENTATION_PROPERTIES;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +28,7 @@ class SnapshotConfigTest {
 				ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor);
 
 		verify(fragmentationStrategyWrapper).wrapFragmentationStrategy(eq(applicationContext),
-				any(FragmentationStrategy.class), eq(new ConfigProperties(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES)));
+				any(FragmentationStrategy.class), eq(new ConfigProperties(DEFAULT_VIEW_<FRAGMENTATION_PROPERTIES)));
 
 	}
 
