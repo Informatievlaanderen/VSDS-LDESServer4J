@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberPropertiesEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.mapper.MemberPropertiesEntityMapper;
@@ -11,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -39,11 +39,17 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	}
 
 	@Override
-	public synchronized void allocateMember(String memberId, ViewName viewName) {
+	public synchronized void addViewReference(String id, String viewName) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(memberId));
+		query.addCriteria(Criteria.where("_id").is(id));
 		Update update = new Update();
-		update.push(VIEWS, viewName.asString());
+		update.push(VIEWS, viewName);
 		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
+	}
+
+	@Override
+	public List<MemberProperties> getMemberPropertiesOfVersion(String versionOf) {
+		// TODO Implement
+		return null;
 	}
 }

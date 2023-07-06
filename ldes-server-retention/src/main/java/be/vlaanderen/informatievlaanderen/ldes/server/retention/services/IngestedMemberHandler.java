@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDate
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
@@ -12,7 +13,6 @@ import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.springframework.context.event.EventListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
@@ -29,13 +29,13 @@ public class IngestedMemberHandler {
 	}
 
 	@EventListener
-	public void handleEventMemberIngestedEvent(MemberIngestedEvent event) {
+	public void handleMemberIngestedEvent(MemberIngestedEvent event) {
 		EventStreamProperties eventStreamProperties = eventStreamCollection
 				.getEventStreamProperties(event.collectionName());
 		LocalDateTime timestamp = localDateTimeConverter
 				.getLocalDateTime(extractPropertyFromModel(event.model(), eventStreamProperties.getTimestampPath()));
 		String versionOf = extractPropertyFromModel(event.model(), eventStreamProperties.getVersionOfPath()).toString();
-		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), List.of(), versionOf,
+		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf,
 				timestamp);
 		memberPropertiesRepository.save(member);
 	}

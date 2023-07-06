@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
@@ -48,7 +49,7 @@ class IngestedMemberHandlerTest {
     void when_MemberIngested_Then_MemberIsSaved() {
         when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(eventStreamProperties);
 
-        ingestedMemberHandler.handleEventMemberIngestedEvent(event);
+        ingestedMemberHandler.handleMemberIngestedEvent(event);
 
         verify(memberPropertiesRepository, times(1)).save(captor.capture());
         assertEquals("version", captor.getValue().getVersionOf());
@@ -61,7 +62,7 @@ class IngestedMemberHandlerTest {
 		when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(differentProperties);
 
 		Exception e = assertThrows(MissingStatementException.class,
-				() -> ingestedMemberHandler.handleEventMemberIngestedEvent(event));
+				() -> ingestedMemberHandler.handleMemberIngestedEvent(event));
 
 		assertEquals("Statement could not be found. Requires: property differentPath", e.getMessage());
 	}
