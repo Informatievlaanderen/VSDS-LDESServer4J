@@ -2,13 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
+import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
 import java.util.Set;
@@ -32,20 +32,20 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 		this.observationRegistry = observationRegistry;
 	}
 
-	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
+	@Override public void addMemberToFragment(LdesFragment parentFragment, String memberId, Model memberModel,
+			Observation parentObservation) {
 		Observation geospatialFragmentationObservation = Observation.createNotStarted("geospatial fragmentation",
-				observationRegistry)
+						observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
 		getRootTileFragment(parentFragment);
-		Set<String> tiles = geospatialBucketiser.bucketise(member);
+		Set<String> tiles = geospatialBucketiser.bucketise(memberModel);
 		List<LdesFragment> ldesFragments = tiles
 				.stream()
 				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment)).toList();
 		ldesFragments
 				.parallelStream()
-				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, member,
+				.forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, memberId, memberModel,
 						geospatialFragmentationObservation));
 		geospatialFragmentationObservation.stop();
 	}

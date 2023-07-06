@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.exceptions.RdfGeometryException;
 import org.apache.jena.geosparql.implementation.GeometryWrapper;
 import org.apache.jena.geosparql.implementation.vocabulary.SRS_URI;
+import org.apache.jena.rdf.model.Model;
 import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -21,10 +22,10 @@ public class GeospatialBucketiser {
 		this.geospatialConfig = geospatialConfig;
 	}
 
-	public Set<String> bucketise(Member member) {
+	public Set<String> bucketise(Model memberModel) {
 		List<Coordinate> coordinates = new ArrayList<>();
 
-		member.getFragmentationObjects(geospatialConfig.fragmenterSubjectFilter(),
+		ModelParser.getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(),
 				geospatialConfig.fragmentationPath())
 				.stream()
 				.map(GeometryWrapper.class::cast)

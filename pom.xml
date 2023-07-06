@@ -17,7 +17,6 @@
         <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-application</module>
         <module>ldes-fragmentisers</module>
-        <module>ldes-queues</module>
         <module>ldes-server-port-admin-rest</module>
         <module>ldes-server-port-ingest</module>
         <module>ldes-server-port-ingest-rest</module>

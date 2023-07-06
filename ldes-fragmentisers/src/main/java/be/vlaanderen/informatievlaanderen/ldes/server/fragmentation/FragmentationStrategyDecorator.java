@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import io.micrometer.observation.Observation;
+import org.apache.jena.rdf.model.Model;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
@@ -21,8 +21,9 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
-		fragmentationStrategy.addMemberToFragment(parentFragment, member, parentObservation);
+	public void addMemberToFragment(LdesFragment rootFragmentOfView, String memberId, Model memberModel,
+			Observation parentObservation) {
+		fragmentationStrategy.addMemberToFragment(rootFragmentOfView, memberId, memberModel, parentObservation);
 	}
 
 	protected void addRelationFromParentToChild(LdesFragment parentFragment, LdesFragment childFragment) {

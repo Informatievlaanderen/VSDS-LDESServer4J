@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
@@ -15,17 +16,13 @@ import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.SubstringFragmentationStrategy.ROOT_SUBSTRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class SubstringFragmentationStrategyTest {
 
@@ -52,7 +49,8 @@ class SubstringFragmentationStrategyTest {
 	@Test
 	void when_SubstringFragmentationStrategyIsCalled_SubstringFragmentationIsAppliedAndDecoratedServiceIsCalled() {
 		Member member = mock(Member.class);
-		when(member.getFragmentationObject(any(), any())).thenReturn("abc");
+		var modelParserMock = Mockito.mockStatic(ModelParser.class);
+		modelParserMock.when(() -> ModelParser.getFragmentationObject(eq(member.getModel()), any(), any())).thenReturn("abc");
 		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"")).thenReturn(rootFragment);
@@ -61,7 +59,7 @@ class SubstringFragmentationStrategyTest {
 				rootFragment,
 				List.of(ROOT_SUBSTRING, "a", "ab", "abc"))).thenReturn(childFragment);
 
-		substringFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member,
+		substringFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.getLdesMemberId(), member.getModel(),
 				mock(Observation.class));
 
 		InOrder inOrder = inOrder(ldesFragmentRepository,
@@ -73,8 +71,8 @@ class SubstringFragmentationStrategyTest {
 				times(1)).getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 						rootFragment, List.of(ROOT_SUBSTRING, "a", "ab", "abc"));
 		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToFragment(eq(childFragment), eq(member),
-						any(Observation.class));
+				times(1)).addMemberToFragment(eq(childFragment), any(),
+				any(), any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

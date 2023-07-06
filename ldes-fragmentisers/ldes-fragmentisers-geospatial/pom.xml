@@ -29,6 +29,12 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-fragmentisers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Jena -->
         <dependency>
             <groupId>org.apache.jena</groupId>

@@ -2,13 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.jena.rdf.model.Model;
 
 import static java.lang.Boolean.TRUE;
 
@@ -27,10 +27,10 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 		this.observationRegistry = observationRegistry;
 	}
 
-	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, Member member, Observation parentObservation) {
+	@Override public void addMemberToFragment(LdesFragment parentFragment, String memberId, Model memberModel,
+			Observation parentObservation) {
 		Observation paginationObservation = Observation.createNotStarted(PAGINATION_FRAGMENTATION,
-				observationRegistry)
+						observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
 		ImmutablePair<LdesFragment, Boolean> ldesFragment = openPageProvider
@@ -38,8 +38,7 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 		if (TRUE.equals(ldesFragment.getRight())) {
 			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());
 		}
-		super.addMemberToFragment(ldesFragment.getLeft(), member, paginationObservation);
+		super.addMemberToFragment(ldesFragment.getLeft(), memberId, memberModel, paginationObservation);
 		paginationObservation.stop();
 	}
-
 }

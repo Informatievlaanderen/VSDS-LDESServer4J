@@ -32,7 +32,8 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 			Member member) {
 		Observation parentObservation = Observation.createNotStarted("execute refragmentation",
 				observationRegistry).start();
-		fragmentationStrategyForView.addMemberToFragment(rootFragmentForView, member, parentObservation);
+		fragmentationStrategyForView.addMemberToFragment(rootFragmentForView, member.getLdesMemberId(),
+				member.getModel(), parentObservation);
 		parentObservation.stop();
 	}
 }
