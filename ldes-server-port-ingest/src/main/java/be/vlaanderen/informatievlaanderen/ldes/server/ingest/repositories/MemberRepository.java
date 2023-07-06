@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 
