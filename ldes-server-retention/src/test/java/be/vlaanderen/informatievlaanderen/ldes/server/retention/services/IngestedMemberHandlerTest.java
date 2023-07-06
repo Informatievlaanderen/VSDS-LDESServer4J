@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -30,17 +30,17 @@ class IngestedMemberHandlerTest {
 	private MemberIngestedEvent event;
 
 	private IngestedMemberHandler ingestedMemberHandler;
-	private MemberRepository memberRepository;
+	private MemberPropertiesRepository memberPropertiesRepository;
 	private EventStreamCollection eventStreamCollection;
 	@Captor
-	ArgumentCaptor<Member> captor;
+	ArgumentCaptor<MemberProperties> captor;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
-		captor = ArgumentCaptor.forClass(Member.class);
-		memberRepository = mock(MemberRepository.class);
+		captor = ArgumentCaptor.forClass(MemberProperties.class);
+		memberPropertiesRepository = mock(MemberPropertiesRepository.class);
 		eventStreamCollection = mock(EventStreamCollection.class);
-		ingestedMemberHandler = new IngestedMemberHandler(memberRepository, eventStreamCollection);
+		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, eventStreamCollection);
 		event = new MemberIngestedEvent(readModelFromFile("member.ttl"), MEMBER_ID, COLLECTION);
 	}
 
@@ -50,7 +50,7 @@ class IngestedMemberHandlerTest {
 
         ingestedMemberHandler.handleEventMemberIngestedEvent(event);
 
-        verify(memberRepository, times(1)).saveMember(captor.capture());
+        verify(memberPropertiesRepository, times(1)).save(captor.capture());
         assertEquals("version", captor.getValue().getVersionOf());
         assertEquals(LocalDateTime.parse("2022-09-28T07:14:00.000"), captor.getValue().getTimestamp());
     }
