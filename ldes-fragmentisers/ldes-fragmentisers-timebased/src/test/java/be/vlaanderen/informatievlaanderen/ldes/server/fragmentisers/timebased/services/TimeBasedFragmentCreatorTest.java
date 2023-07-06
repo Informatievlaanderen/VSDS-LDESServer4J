@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,22 +17,19 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private TimeBasedFragmentCreator fragmentCreator;
-	private LdesFragmentRepository ldesFragmentRepository;
+	private FragmentRepository fragmentRepository;
 
 	@BeforeEach
 	void setUp() {
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		fragmentRepository = mock(FragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(
-				ldesFragmentRepository,
+				fragmentRepository,
 				createProperty(PROV_GENERATED_AT_TIME));
 	}
 
@@ -44,7 +41,7 @@ class TimeBasedFragmentCreatorTest {
 		LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		verifyNoInteractions(ldesFragmentRepository);
+		verifyNoInteractions(fragmentRepository);
 	}
 
 	@Test
@@ -59,9 +56,9 @@ class TimeBasedFragmentCreatorTest {
 		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
+		InOrder inOrder = inOrder(fragmentRepository);
+		inOrder.verify(fragmentRepository, times(1)).saveFragment(existingLdesFragment);
+		inOrder.verify(fragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
 	}
 

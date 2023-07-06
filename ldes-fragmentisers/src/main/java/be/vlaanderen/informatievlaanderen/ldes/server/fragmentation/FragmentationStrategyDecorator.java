@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.Observation;
 import org.apache.jena.rdf.model.Model;
 
@@ -12,10 +12,10 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 
 	private final FragmentationStrategy fragmentationStrategy;
 
-	private final LdesFragmentRepository fragmentRepository;
+	private final FragmentRepository fragmentRepository;
 
 	protected FragmentationStrategyDecorator(FragmentationStrategy fragmentationStrategy,
-			LdesFragmentRepository fragmentRepository) {
+			FragmentRepository fragmentRepository) {
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.fragmentRepository = fragmentRepository;
 	}

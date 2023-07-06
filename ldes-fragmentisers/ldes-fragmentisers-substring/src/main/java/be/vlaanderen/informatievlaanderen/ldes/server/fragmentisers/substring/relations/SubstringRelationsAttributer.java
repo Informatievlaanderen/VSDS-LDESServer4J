@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.r
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.STRING_TYPE;
@@ -12,13 +12,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.subst
 
 public class SubstringRelationsAttributer {
 
-	private final LdesFragmentRepository ldesFragmentRepository;
+	private final FragmentRepository fragmentRepository;
 
 	private final SubstringConfig substringConfig;
 
-	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
+	public SubstringRelationsAttributer(FragmentRepository fragmentRepository,
 			SubstringConfig substringConfig) {
-		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.fragmentRepository = fragmentRepository;
 		this.substringConfig = substringConfig;
 	}
 
@@ -30,7 +30,7 @@ public class SubstringRelationsAttributer {
 				TREE_SUBSTRING_RELATION);
 		if (!parentFragment.containsRelation(parentChildRelation)) {
 			parentFragment.addRelation(parentChildRelation);
-			ldesFragmentRepository.saveFragment(parentFragment);
+			fragmentRepository.saveFragment(parentFragment);
 		}
 	}
 

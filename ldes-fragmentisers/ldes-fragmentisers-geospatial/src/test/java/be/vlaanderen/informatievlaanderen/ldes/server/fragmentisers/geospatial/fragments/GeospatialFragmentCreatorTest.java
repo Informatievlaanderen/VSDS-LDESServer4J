@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +15,7 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class GeospatialFragmentCreatorTest {
 
@@ -28,14 +24,14 @@ class GeospatialFragmentCreatorTest {
 	private static final FragmentPair geoRootPair = new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT);
 	private static final FragmentPair geoPair = new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202");
 
-	private LdesFragmentRepository ldesFragmentRepository;
+	private FragmentRepository fragmentRepository;
 	private GeospatialFragmentCreator geospatialFragmentCreator;
 
 	@BeforeEach
 	void setUp() {
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		fragmentRepository = mock(FragmentRepository.class);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = mock(TileFragmentRelationsAttributer.class);
-		geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
+		geospatialFragmentCreator = new GeospatialFragmentCreator(fragmentRepository,
 				tileFragmentRelationsAttributer);
 	}
 
@@ -49,16 +45,16 @@ class GeospatialFragmentCreatorTest {
 				.createChild(geoPair)
 				.getFragmentId();
 
-		when(ldesFragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
+		when(fragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
 
 		LdesFragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
 				"15/101/202", rootFragment);
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoPair)),
 				childFragment.getFragmentId());
-		verify(ldesFragmentRepository,
+		verify(fragmentRepository,
 				times(1)).retrieveFragment(tileFragmentId);
-		verify(ldesFragmentRepository,
+		verify(fragmentRepository,
 				times(1)).saveFragment(childFragment);
 	}
 
@@ -70,7 +66,7 @@ class GeospatialFragmentCreatorTest {
 				.createChild(geoRootPair);
 		LdesFragment tileFragment = ldesFragment.createChild(geoPair);
 
-		when(ldesFragmentRepository.retrieveFragment(tileFragment.getFragmentId()))
+		when(fragmentRepository.retrieveFragment(tileFragment.getFragmentId()))
 				.thenReturn(Optional.of(tileFragment));
 
 		LdesFragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
@@ -78,9 +74,9 @@ class GeospatialFragmentCreatorTest {
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoPair)),
 				childFragment.getFragmentId());
-		verify(ldesFragmentRepository,
+		verify(fragmentRepository,
 				times(1)).retrieveFragment(tileFragment.getFragmentId());
-		verifyNoMoreInteractions(ldesFragmentRepository);
+		verifyNoMoreInteractions(fragmentRepository);
 	}
 
 	@Test
@@ -90,15 +86,15 @@ class GeospatialFragmentCreatorTest {
 		LdesFragment rootFragment = ldesFragment
 				.createChild(geoRootPair);
 
-		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId())).thenReturn(Optional.empty());
+		when(fragmentRepository.retrieveFragment(rootFragment.getFragmentId())).thenReturn(Optional.empty());
 
 		LdesFragment returnedFragment = geospatialFragmentCreator.getOrCreateRootFragment(ldesFragment,
 				FRAGMENT_KEY_TILE_ROOT);
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoRootPair)),
 				returnedFragment.getFragmentId());
-		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
-		verify(ldesFragmentRepository, times(1)).saveFragment(returnedFragment);
+		verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
+		verify(fragmentRepository, times(1)).saveFragment(returnedFragment);
 	}
 
 	@Test
@@ -107,7 +103,7 @@ class GeospatialFragmentCreatorTest {
 				VIEW_NAME, List.of(substringPair)));
 		LdesFragment rootFragment = ldesFragment
 				.createChild(geoRootPair);
-		when(ldesFragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
+		when(fragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
 				.thenReturn(Optional.of(rootFragment));
 
 		LdesFragment returnedFragment = geospatialFragmentCreator.getOrCreateTileFragment(ldesFragment,
@@ -115,7 +111,7 @@ class GeospatialFragmentCreatorTest {
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoRootPair)),
 				returnedFragment.getFragmentId());
-		verify(ldesFragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
-		verifyNoMoreInteractions(ldesFragmentRepository);
+		verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
+		verifyNoMoreInteractions(fragmentRepository);
 	}
 }

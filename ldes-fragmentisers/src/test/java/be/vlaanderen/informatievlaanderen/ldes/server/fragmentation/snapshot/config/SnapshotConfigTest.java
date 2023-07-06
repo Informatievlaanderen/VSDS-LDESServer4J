@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.NonCriticalTasksExecutor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
@@ -15,8 +15,8 @@ import static org.mockito.Mockito.*;
 
 class SnapshotConfigTest {
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
-	private final MemberRepository memberRepository = mock(MemberRepository.class);
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
+	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 
 	@Test
@@ -26,7 +26,7 @@ class SnapshotConfigTest {
 
 		SnapshotConfig snapshotConfig = new SnapshotConfig();
 		FragmentationStrategy fragmentationStrategy = snapshotConfig.snapshotFragmentationStrategy(applicationContext,
-				ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor);
+				fragmentRepository, allocationRepository, nonCriticalTasksExecutor);
 
 		verify(fragmentationStrategyWrapper).wrapFragmentationStrategy(eq(applicationContext),
 				any(FragmentationStrategy.class), eq(new ConfigProperties(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES)));

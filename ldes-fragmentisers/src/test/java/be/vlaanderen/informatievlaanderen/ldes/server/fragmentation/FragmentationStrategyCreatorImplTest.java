@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -27,16 +27,16 @@ class FragmentationStrategyCreatorImplTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "viewName");
 
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final RootFragmentCreator rootFragmentCreator = Mockito.mock(RootFragmentCreator.class);
-	private final MemberRepository memberRepository = mock(MemberRepository.class);
+	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach
 	void setUp() {
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, ldesFragmentRepository, rootFragmentCreator,
-				memberRepository);
+				applicationContext, fragmentRepository, rootFragmentCreator,
+				allocationRepository);
 	}
 
 	@Test

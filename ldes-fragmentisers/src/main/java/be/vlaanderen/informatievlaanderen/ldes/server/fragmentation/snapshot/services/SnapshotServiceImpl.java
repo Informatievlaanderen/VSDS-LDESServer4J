@@ -2,12 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.se
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.exception.SnapshotCreationException;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -21,14 +21,14 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service
 @Component
 public class SnapshotServiceImpl implements SnapshotService {
 	private final SnapShotCreator snapShotCreator;
-	private final LdesFragmentRepository ldesFragmentRepository;
+	private final FragmentRepository fragmentRepository;
 	private final SnapshotRepository snapshotRepository;
 	private final SnapshotRelationLinker snapshotRelationLinker;
 
-	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, LdesFragmentRepository ldesFragmentRepository,
+	public SnapshotServiceImpl(SnapShotCreator snapShotCreator, FragmentRepository fragmentRepository,
 			SnapshotRepository snapshotRepository, SnapshotRelationLinker snapshotRelationLinker) {
 		this.snapShotCreator = snapShotCreator;
-		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.fragmentRepository = fragmentRepository;
 		this.snapshotRepository = snapshotRepository;
 		this.snapshotRelationLinker = snapshotRelationLinker;
 	}
@@ -43,7 +43,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 		if (lastSnapshot.isPresent()) {
 			treeNodesForSnapshot = getTreeNodesForSnapshotFromPreviousSnapshot(viewName, lastSnapshot.get());
 		} else {
-			treeNodesForSnapshot = ldesFragmentRepository.retrieveFragmentsOfView(viewName.asString()).toList();
+			treeNodesForSnapshot = fragmentRepository.retrieveFragmentsOfView(viewName.asString()).toList();
 		}
 
 		if (treeNodesForSnapshot.isEmpty()) {
@@ -68,7 +68,7 @@ public class SnapshotServiceImpl implements SnapshotService {
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(treeNodesForSnapshot, collectionName);
 		LdesFragment lastTreeNodeOfSnapshot = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
 				treeNodesForSnapshot);
-		ldesFragmentRepository.saveFragment(lastTreeNodeOfSnapshot);
+		fragmentRepository.saveFragment(lastTreeNodeOfSnapshot);
 		snapshotRepository.saveSnapShot(snapshot);
 	}
 
@@ -86,10 +86,10 @@ public class SnapshotServiceImpl implements SnapshotService {
 	}
 
 	private List<LdesFragment> getTreeNodesForSnapshotFromPreviousSnapshot(ViewName viewName, Snapshot lastSnapshot) {
-		List<LdesFragment> treeNodesOfSnapshot = ldesFragmentRepository
+		List<LdesFragment> treeNodesOfSnapshot = fragmentRepository
 				.retrieveFragmentsOfView(lastSnapshot.getSnapshotId())
 				.filter(ldesFragment -> !ldesFragment.isRoot()).toList();
-		Stream<LdesFragment> treeNodesOfDefaultView = ldesFragmentRepository
+		Stream<LdesFragment> treeNodesOfDefaultView = fragmentRepository
 				.retrieveFragmentsOfView(viewName.asString());
 		LdesFragmentIdentifier lastFragment = getNextFragmentFromSnapshot(treeNodesOfSnapshot)
 				.orElseThrow(() -> new SnapshotCreationException(

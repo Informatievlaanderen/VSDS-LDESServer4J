@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
@@ -25,8 +25,8 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 	public GeospatialFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			GeospatialBucketiser geospatialBucketiser, GeospatialFragmentCreator fragmentCreator,
-			ObservationRegistry observationRegistry, LdesFragmentRepository ldesFragmentRepository) {
-		super(fragmentationStrategy, ldesFragmentRepository);
+			ObservationRegistry observationRegistry, FragmentRepository fragmentRepository) {
+		super(fragmentationStrategy, fragmentRepository);
 		this.geospatialBucketiser = geospatialBucketiser;
 		this.fragmentCreator = fragmentCreator;
 		this.observationRegistry = observationRegistry;

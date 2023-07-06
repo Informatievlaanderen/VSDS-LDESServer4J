@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -15,31 +15,31 @@ class RootFragmentCreatorImplTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "mobility-hindrances");
 
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private RootFragmentCreator rootFragmentCreator;
 
 	@BeforeEach
 	void setUp() {
-		rootFragmentCreator = new RootFragmentCreatorImpl(ldesFragmentRepository);
+		rootFragmentCreator = new RootFragmentCreatorImpl(fragmentRepository);
 	}
 
 	@Test
 	void when_RootFragmentDoesNotExist_ItIsCreatedAndSaved() {
 		rootFragmentCreator.createRootFragmentForView(VIEW_NAME);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.asString());
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(any());
+		InOrder inOrder = inOrder(fragmentRepository);
+		inOrder.verify(fragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.asString());
+		inOrder.verify(fragmentRepository, times(1)).saveFragment(any());
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_RootFragmentExists_NothingHappens() {
-		when(ldesFragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.of(mock(LdesFragment.class)));
+		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.of(mock(LdesFragment.class)));
 		rootFragmentCreator.createRootFragmentForView(VIEW_NAME);
 
-		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.asString());
+		InOrder inOrder = inOrder(fragmentRepository);
+		inOrder.verify(fragmentRepository, times(1)).retrieveRootFragment(VIEW_NAME.asString());
 		inOrder.verifyNoMoreInteractions();
 	}
 }

@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.exception.SnapshotCreationException;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +19,10 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 @Component
 public class SnapshotRelationLinkerImpl implements SnapshotRelationLinker {
 
-	private final LdesFragmentRepository ldesFragmentRepository;
+	private final FragmentRepository fragmentRepository;
 
-	public SnapshotRelationLinkerImpl(LdesFragmentRepository ldesFragmentRepository) {
-		this.ldesFragmentRepository = ldesFragmentRepository;
+	public SnapshotRelationLinkerImpl(FragmentRepository fragmentRepository) {
+		this.fragmentRepository = fragmentRepository;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class SnapshotRelationLinkerImpl implements SnapshotRelationLinker {
 	}
 
 	private LdesFragment getLastTreeNodeOfSnapshot(Snapshot snapshot) {
-		return ldesFragmentRepository.retrieveFragmentsOfView(snapshot.getSnapshotId())
+		return fragmentRepository.retrieveFragmentsOfView(snapshot.getSnapshotId())
 				.filter(ldesFragment -> !ldesFragment.isImmutable())
 				.filter(ldesFragment -> !ldesFragment.isRoot()).findFirst()
 				.orElseThrow(() -> new SnapshotCreationException(

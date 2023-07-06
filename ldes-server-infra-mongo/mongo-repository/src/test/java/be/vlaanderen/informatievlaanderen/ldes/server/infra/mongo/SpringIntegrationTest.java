@@ -4,8 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.DcatServerMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.LdesFragmentMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.repository.LdesFragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.DcatViewMongoRepository;
@@ -27,11 +25,11 @@ import org.springframework.test.context.ContextConfiguration;
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
-@ContextConfiguration(classes = { LdesMemberEntityRepository.class, LdesFragmentEntityRepository.class,
+@ContextConfiguration(classes = { LdesMemberEntityRepository.class,
 		DataServiceEntityRepository.class, DcatCatalogEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence",
-		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment" })
+		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation" })
 @Import(SpringIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class SpringIntegrationTest {
@@ -41,8 +39,6 @@ public class SpringIntegrationTest {
 	public DcatViewMongoRepository dcatViewMongoRepository;
 	@Autowired
 	public MemberMongoRepository memberRepository;
-	@Autowired
-	public LdesFragmentMongoRepository ldesFragmentMongoRepository;
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
@@ -64,12 +60,6 @@ public class SpringIntegrationTest {
 				final LdesMemberEntityRepository ldesMemberEntityRepository,
 				final MongoTemplate mongoTemplate) {
 			return new MemberMongoRepository(ldesMemberEntityRepository, mongoTemplate);
-		}
-
-		@Bean
-		public LdesFragmentMongoRepository ldesFragmentMongoRepository(
-				final LdesFragmentEntityRepository ldesFragmentEntityRepository, final MongoTemplate mongoTemplate) {
-			return new LdesFragmentMongoRepository(ldesFragmentEntityRepository, mongoTemplate);
 		}
 	}
 }

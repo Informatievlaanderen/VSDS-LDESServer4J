@@ -11,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;

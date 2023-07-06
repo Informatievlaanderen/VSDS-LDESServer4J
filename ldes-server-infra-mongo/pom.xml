@@ -15,6 +15,7 @@
         <module>mongo-repository</module>
         <module>mongock-changesets</module>
         <module>mongo-ingest-repository</module>
+        <module>mongo-fragmentation-repository</module>
     </modules>
 
     <properties>

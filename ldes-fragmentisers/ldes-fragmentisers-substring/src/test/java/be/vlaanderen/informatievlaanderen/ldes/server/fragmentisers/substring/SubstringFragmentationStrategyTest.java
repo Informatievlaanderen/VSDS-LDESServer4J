@@ -2,12 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
@@ -33,7 +33,7 @@ class SubstringFragmentationStrategyTest {
 	private SubstringFragmentationStrategy substringFragmentationStrategy;
 	private SubstringConfig substringConfig;
 	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 
 	@BeforeEach
 	void setUp() {
@@ -43,7 +43,7 @@ class SubstringFragmentationStrategyTest {
 		substringConfig = new SubstringConfig();
 		substringFragmentationStrategy = new SubstringFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), substringFragmentFinder,
-				substringFragmentCreator, ldesFragmentRepository, substringConfig);
+				substringFragmentCreator, fragmentRepository, substringConfig);
 	}
 
 	@Test
@@ -62,7 +62,7 @@ class SubstringFragmentationStrategyTest {
 		substringFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.getLdesMemberId(), member.getModel(),
 				mock(Observation.class));
 
-		InOrder inOrder = inOrder(ldesFragmentRepository,
+		InOrder inOrder = inOrder(fragmentRepository,
 				substringFragmentCreator,
 				substringFragmentFinder, decoratedFragmentationStrategy);
 		inOrder.verify(substringFragmentCreator,

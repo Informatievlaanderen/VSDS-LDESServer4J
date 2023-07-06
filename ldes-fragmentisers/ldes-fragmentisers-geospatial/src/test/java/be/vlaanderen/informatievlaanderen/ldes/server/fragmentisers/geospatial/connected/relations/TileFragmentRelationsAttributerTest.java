@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +13,7 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class TileFragmentRelationsAttributerTest {
 
@@ -23,13 +21,13 @@ class TileFragmentRelationsAttributerTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 
-	private LdesFragmentRepository ldesFragmentRepository;
+	private FragmentRepository fragmentRepository;
 
 	@BeforeEach
 	void setUp() {
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		fragmentRepository = mock(FragmentRepository.class);
 		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(ldesFragmentRepository);
+		tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(fragmentRepository);
 	}
 
 	@Test
@@ -46,7 +44,7 @@ class TileFragmentRelationsAttributerTest {
 				rootFragment, tileFragment);
 
 		assertTrue(rootFragment.containsRelation(expectedRelation));
-		verify(ldesFragmentRepository,
+		verify(fragmentRepository,
 				times(1)).saveFragment(rootFragment);
 	}
 

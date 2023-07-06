@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.snapshot.exception.SnapshotCreationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +23,9 @@ import static org.mockito.Mockito.when;
 class SnapshotRelationLinkerImplTest {
 
 	private LdesFragmentIdentifier lastPageId;
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final SnapshotRelationLinker snapshotRelationLinker = new SnapshotRelationLinkerImpl(
-			ldesFragmentRepository);
+			fragmentRepository);
 
 	@BeforeEach
 	void setUp() {
@@ -37,7 +37,7 @@ class SnapshotRelationLinkerImplTest {
 	void test_ConnectLastFragmentOfSnapshotToUncoveredFragments() {
 		Snapshot snapshot = new Snapshot("id", "collectionName", null, null, null);
 		Stream<LdesFragment> treeNodesOfSnapshot = getTreeNodesOfSnapshot();
-		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(treeNodesOfSnapshot);
+		when(fragmentRepository.retrieveFragmentsOfView("id")).thenReturn(treeNodesOfSnapshot);
 		List<LdesFragment> treeNodes = getTreeNodes();
 
 		LdesFragment ldesFragment = snapshotRelationLinker.addRelationsToUncoveredTreeNodes(snapshot,
@@ -57,7 +57,7 @@ class SnapshotRelationLinkerImplTest {
 	@Test
 	void when_NoMutableNonRootTreeNodeOfSnapshotIsAvailable_IllegalStateExceptionIsThrown() {
 		Snapshot snapshot = new Snapshot("id", "collectionName", null, null, null);
-		when(ldesFragmentRepository.retrieveFragmentsOfView("id")).thenReturn(Stream.of());
+		when(fragmentRepository.retrieveFragmentsOfView("id")).thenReturn(Stream.of());
 		List<LdesFragment> treeNodes = List.of();
 
 		SnapshotCreationException snapshotCreationException = assertThrows(SnapshotCreationException.class,

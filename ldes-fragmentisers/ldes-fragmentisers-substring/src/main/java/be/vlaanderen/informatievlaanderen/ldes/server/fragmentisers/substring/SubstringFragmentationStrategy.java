@@ -2,9 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentFinder;
@@ -31,9 +31,9 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 			ObservationRegistry observationRegistry,
 			SubstringFragmentFinder substringFragmentFinder,
 			SubstringFragmentCreator substringFragmentCreator,
-			LdesFragmentRepository ldesFragmentRepository,
+			FragmentRepository fragmentRepository,
 			SubstringConfig substringConfig) {
-		super(fragmentationStrategy, ldesFragmentRepository);
+		super(fragmentationStrategy, fragmentRepository);
 		this.observationRegistry = observationRegistry;
 		this.substringFragmentFinder = substringFragmentFinder;
 		this.substringFragmentCreator = substringFragmentCreator;

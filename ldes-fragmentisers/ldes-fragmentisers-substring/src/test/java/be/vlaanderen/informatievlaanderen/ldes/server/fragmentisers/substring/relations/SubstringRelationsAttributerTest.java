@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,17 +23,17 @@ class SubstringRelationsAttributerTest {
 	private static LdesFragment PARENT_FRAGMENT;
 	private static LdesFragment CHILD_FRAGMENT;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private LdesFragmentRepository ldesFragmentRepository;
+	private FragmentRepository fragmentRepository;
 
 	@BeforeEach
 	void setUp() {
 		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		CHILD_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		fragmentRepository = mock(FragmentRepository.class);
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setFragmenterPath("somefilter");
-		substringRelationsAttributer = new SubstringRelationsAttributer(ldesFragmentRepository,
+		substringRelationsAttributer = new SubstringRelationsAttributer(fragmentRepository,
 				substringConfig);
 	}
 
@@ -46,7 +46,7 @@ class SubstringRelationsAttributerTest {
 				CHILD_FRAGMENT.getFragmentId(),
 				"ab", STRING_TYPE,
 				TREE_SUBSTRING_RELATION)));
-		verify(ldesFragmentRepository, times(1)).saveFragment(PARENT_FRAGMENT);
-		verifyNoMoreInteractions(ldesFragmentRepository);
+		verify(fragmentRepository, times(1)).saveFragment(PARENT_FRAGMENT);
+		verifyNoMoreInteractions(fragmentRepository);
 	}
 }

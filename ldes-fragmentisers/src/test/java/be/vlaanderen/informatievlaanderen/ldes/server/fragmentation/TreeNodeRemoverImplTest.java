@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.retentionpolicy.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -10,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services.TreeMemberRemover;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -26,7 +26,7 @@ class TreeNodeRemoverImplTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 
-	private final LdesFragmentRepository fragmentRepository = mock(LdesFragmentRepository.class);
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final TreeMemberRemover treeMemberRemover = mock(TreeMemberRemover.class);
 	private final RetentionPolicyCollection retentionPolicyCollection = mock(RetentionPolicyCollection.class);

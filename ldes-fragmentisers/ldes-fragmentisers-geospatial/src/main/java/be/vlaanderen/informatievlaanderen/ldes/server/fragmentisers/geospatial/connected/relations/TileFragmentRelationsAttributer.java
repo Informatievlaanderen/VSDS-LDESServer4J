@@ -1,16 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 
 public class TileFragmentRelationsAttributer {
 
 	private final GeospatialRelationsAttributer relationsAttributer = new GeospatialRelationsAttributer();
-	private final LdesFragmentRepository ldesFragmentRepository;
+	private final FragmentRepository fragmentRepository;
 
-	public TileFragmentRelationsAttributer(LdesFragmentRepository ldesFragmentRepository) {
-		this.ldesFragmentRepository = ldesFragmentRepository;
+	public TileFragmentRelationsAttributer(FragmentRepository fragmentRepository) {
+		this.fragmentRepository = fragmentRepository;
 	}
 
 	public void addRelationsFromRootToBottom(LdesFragment rootFragment,
@@ -19,7 +19,7 @@ public class TileFragmentRelationsAttributer {
 				tileFragments);
 		if (!rootFragment.containsRelation(relationToParentFragment)) {
 			rootFragment.addRelation(relationToParentFragment);
-			ldesFragmentRepository.saveFragment(rootFragment);
+			fragmentRepository.saveFragment(rootFragment);
 		}
 	}
 }
