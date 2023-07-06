@@ -15,7 +15,6 @@ public class EventSourceServiceImpl implements EventSourceService {
 		this.memberRepository = memberRepository;
 	}
 
-	// TODO: 06/07/23 test
 	@Override
 	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
 		return memberRepository.getMemberStreamOfCollection(collectionName);
