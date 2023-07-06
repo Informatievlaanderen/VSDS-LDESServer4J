@@ -1,0 +1,6 @@
+[ a       <https://w3id.org/ldes#PointInTimePolicy> ;
+  <https://w3id.org/ldes#pointInTime>
+          "2023-04-12T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
+  <https://w3id.org/ldes#pointInTime>
+          "2023-04-13T00:00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+] .

@@ -5,16 +5,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.Mem
 import org.springframework.context.event.EventListener;
 
 public class AllocatedMemberHandler {
+	private final MemberPropertiesRepository memberPropertiesRepository;
 
-	private final MemberPropertiesRepository repository;
-
-	public AllocatedMemberHandler(MemberPropertiesRepository repository) {
-		this.repository = repository;
+	public AllocatedMemberHandler(MemberPropertiesRepository memberPropertiesRepository) {
+		this.memberPropertiesRepository = memberPropertiesRepository;
 	}
 
 	@EventListener
-	public void handleEventMemberIngestedEvent(MemberAllocatedEvent event) {
-		repository.allocateMember(event.memberId(), event.viewName());
+	public void handleMemberAllocatedEvent(MemberAllocatedEvent event) {
+		memberPropertiesRepository.addViewReference(event.memberId(), event.viewName().asString());
 	}
 
 }

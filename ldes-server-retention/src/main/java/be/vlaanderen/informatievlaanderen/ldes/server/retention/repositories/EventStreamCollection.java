@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 
