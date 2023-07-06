@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -17,12 +17,13 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class IngestedMemberHandler {
 
-	private final MemberRepository memberRepository;
+	private final MemberPropertiesRepository memberPropertiesRepository;
 	private final EventStreamCollection eventStreamCollection;
 	private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
-	public IngestedMemberHandler(MemberRepository memberRepository, EventStreamCollection eventStreamCollection) {
-		this.memberRepository = memberRepository;
+	public IngestedMemberHandler(MemberPropertiesRepository memberPropertiesRepository,
+			EventStreamCollection eventStreamCollection) {
+		this.memberPropertiesRepository = memberPropertiesRepository;
 		this.eventStreamCollection = eventStreamCollection;
 	}
 
@@ -33,8 +34,8 @@ public class IngestedMemberHandler {
 		LocalDateTime timestamp = localDateTimeConverter
 				.getLocalDateTime(extractPropertyFromModel(event.model(), eventStreamProperties.getTimestampPath()));
 		String versionOf = extractPropertyFromModel(event.model(), eventStreamProperties.getVersionOfPath()).toString();
-		Member member = new Member(event.id(), event.collectionName(), versionOf, timestamp);
-		memberRepository.saveMember(member);
+		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf, timestamp);
+		memberPropertiesRepository.save(member);
 	}
 
 	private LiteralImpl extractPropertyFromModel(Model model, String propertyPath) {

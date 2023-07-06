@@ -1,14 +1,22 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.entities;
 
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 
-public class Member {
+@Document("member_properties")
+public class MemberPropertiesEntity {
+	@Indexed
 	private final String id;
+	@Indexed
 	private final String collectionName;
+	@Indexed
 	private final String versionOf;
+	@Indexed
 	private final LocalDateTime timestamp;
 
-	public Member(String id, String collectionName, String versionOf, LocalDateTime timestamp) {
+	public MemberPropertiesEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;

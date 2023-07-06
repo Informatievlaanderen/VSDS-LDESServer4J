@@ -21,6 +21,7 @@ COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar
 COPY --from=app-stage ldes-server-infra-mongo/mongo-repository/target/mongo-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongock-changesets/target/mongock-changesets-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongo-ingest-repository/target/mongo-ingest-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-mongo/mongo-retention-repository/target/mongo-retention-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongo-fragmentation-repository/target/mongo-fragmentation-repository-jar-with-dependencies.jar ./lib/
 
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
@@ -32,6 +33,7 @@ COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-geospatial/target/ld
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-timebased/target/ldes-fragmentisers-timebased-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-substring/target/ldes-fragmentisers-substring-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-pagination/target/ldes-fragmentisers-pagination-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-retention/target/ldes-server-retention-jar-with-dependencies.jar ./lib/
 
 RUN useradd -u 2000 ldes
 USER ldes
