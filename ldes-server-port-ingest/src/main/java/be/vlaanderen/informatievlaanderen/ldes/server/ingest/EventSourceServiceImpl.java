@@ -9,16 +9,16 @@ import java.util.stream.Stream;
 @Service
 public class EventSourceServiceImpl implements EventSourceService {
 
-    private final MemberRepository memberRepository;
+	private final MemberRepository memberRepository;
 
-    public EventSourceServiceImpl(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
+	public EventSourceServiceImpl(MemberRepository memberRepository) {
+		this.memberRepository = memberRepository;
+	}
 
-    // TODO: 06/07/23 test
-    @Override
-    public Stream<Member> getMemberStreamOfCollection(String collectionName) {
-        return memberRepository.getMemberStreamOfCollection(collectionName);
-    }
+	// TODO: 06/07/23 test
+	@Override
+	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
+		return memberRepository.getMemberStreamOfCollection(collectionName);
+	}
 
 }

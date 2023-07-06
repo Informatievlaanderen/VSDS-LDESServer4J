@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.ModelFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -69,5 +70,15 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	@When("I delete all the members of collection {string}")
 	public void iDeleteAllTheMembersOfCollection(String collectionName) {
 		memberRepository.deleteMembersByCollection(collectionName);
+	}
+
+	@Then("I can get an ordered stream from all the members of the {string} collection containing {int} members")
+	public void iCanGetAnOrderedStreamFromAllTheMembersOfTheCollection(String collectionName, int memberCount) {
+		List<Member> result = memberRepository.getMemberStreamOfCollection(collectionName).toList();
+		for (int i = 0; i < result.size(); i++) {
+			assertEquals(i, result.get(i).getSequenceNr().intValue());
+		}
+
+		assertEquals(memberCount, result.size());
 	}
 }
