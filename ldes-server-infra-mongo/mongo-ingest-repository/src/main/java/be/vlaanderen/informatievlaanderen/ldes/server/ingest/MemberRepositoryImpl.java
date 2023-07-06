@@ -3,9 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
@@ -38,4 +40,12 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public void deleteMembersByCollection(String collectionName) {
 		memberEntityRepository.deleteAllByCollectionName(collectionName);
 	}
+
+	@Override
+	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
+		return memberEntityRepository
+				.getAllByCollectionNameOrderBySequenceNrAsc(collectionName)
+				.map(memberEntityMapper::toMember);
+	}
+
 }
