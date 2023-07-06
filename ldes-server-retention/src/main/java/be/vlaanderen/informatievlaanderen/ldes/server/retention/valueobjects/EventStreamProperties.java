@@ -12,6 +12,14 @@ public class EventStreamProperties {
 		this.timestampPath = timestampPath;
 	}
 
+	public String getVersionOfPath() {
+		return versionOfPath;
+	}
+
+	public String getTimestampPath() {
+		return timestampPath;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
