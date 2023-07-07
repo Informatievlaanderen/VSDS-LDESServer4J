@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberPropertiesEntityMapper {
 
-	public MemberPropertiesEntity toMemberEntity(MemberProperties memberProperties) {
+	public MemberPropertiesEntity toMemberPropertiesEntity(MemberProperties memberProperties) {
 		return new MemberPropertiesEntity(memberProperties.getId(), memberProperties.getCollectionName(),
 				memberProperties.getViewReferences(), memberProperties.getVersionOf(), memberProperties.getTimestamp());
 	}
 
-	public MemberProperties toMember(MemberPropertiesEntity memberPropertiesEntity) {
+	public MemberProperties toMemberProperties(MemberPropertiesEntity memberPropertiesEntity) {
 		MemberProperties memberProperties = new MemberProperties(memberPropertiesEntity.getId(),
 				memberPropertiesEntity.getCollectionName(),
 				memberPropertiesEntity.getVersionOf(),
