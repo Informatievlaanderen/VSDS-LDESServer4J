@@ -10,16 +10,13 @@ import io.cucumber.java.en.When;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTest {
 
 	private List<MemberProperties> memberProperties;
-	private Optional<MemberProperties> retrievedMemberProperties;
+	private List<MemberProperties> retrievedMemberProperties;
 
 	@DataTableType
 	public MemberProperties memberPropertiesEntryTransformer(Map<String, String> row) {
@@ -47,25 +44,51 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		memberPropertiesRepository.addViewReference(memberId, viewName);
 	}
 
-	@Then("The MemberProperties with id {string} can be retrieved from the database")
-	public void theMemberPropertiesWithIdCanBeRetrievedFromTheDatabase(String id) {
-		retrievedMemberProperties = memberPropertiesRepository.retrieve(id);
-	}
-
-	@And("The retrieved MemberProperties has the same properties as the {int} MemberProperties in the table")
-	public void theRetrievedMemberPropertiesHasTheSamePropertiesAsTheMemberPropertiesInTheTable(int index) {
-		assertTrue(retrievedMemberProperties.isPresent());
-		MemberProperties retrievedMemberPropertiesPresent = retrievedMemberProperties.get();
-		MemberProperties expectedMemberProperties = memberProperties.get(index - 1);
-		assertEquals(expectedMemberProperties.getId(), retrievedMemberPropertiesPresent.getId());
-		assertEquals(expectedMemberProperties.getCollectionName(),
-				retrievedMemberPropertiesPresent.getCollectionName());
-		assertEquals(expectedMemberProperties.getVersionOf(), retrievedMemberPropertiesPresent.getVersionOf());
-		assertEquals(expectedMemberProperties.getTimestamp(), retrievedMemberPropertiesPresent.getTimestamp());
+	@And("I retrieve the MemberProperties with id {string}")
+	public void iRetrieveTheMemberPropertiesWithId(String id) {
+		retrievedMemberProperties = memberPropertiesRepository.retrieve(id).stream().toList();
 	}
 
 	@And("The retrieved MemberProperties has the view {string} as a property")
 	public void theMemberPropertyContainsTheView(String view) {
-		assertTrue(retrievedMemberProperties.get().containsViewReference(view));
+		assertTrue(retrievedMemberProperties.get(0).containsViewReference(view));
+	}
+
+	@And("I retrieve all MemberProperties with versionOf {string}")
+	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf) {
+		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersion(versionOf);
+	}
+
+	@Then("I have retrieved {int} MemberProperties")
+	public void iHaveRetrievedMemberProperties(int numberOfRetrievedProperties) {
+		assertEquals(numberOfRetrievedProperties, retrievedMemberProperties.size());
+	}
+
+	@And("The retrieved MemberProperties contains MemberProperties {int} of the table")
+	public void theRetrievedMemberPropertiesContainsMemberPropertiesOfTheTable(int index) {
+		assertTrue(retrievedMemberProperties
+				.stream()
+				.map(MemberProperties::getId)
+				.anyMatch(id -> id.equals(memberProperties.get(index - 1).getId())));
+	}
+
+	@And("I retrieve all MemberProperties with view {string}")
+	public void iRetrieveAllMemberPropertiesWithView(String viewName) {
+		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName).toList();
+	}
+
+	@And("I remove the view with name {string} of the MemberProperties with id {string}")
+	public void iRemoveTheViewWithNameOfTheMemberPropertiesWithId(String viewName, String id) {
+		memberPropertiesRepository.removeViewReference(id, viewName);
+	}
+
+	@And("The retrieved MemberProperties does not have the view {string} as a property")
+	public void theRetrievedMemberPropertiesDoesNotHaveTheViewAsAProperty(String viewName) {
+		assertFalse(retrievedMemberProperties.get(0).containsViewReference(viewName));
+	}
+
+	@And("I delete the MemberProperties with id {string}")
+	public void iDeleteTheMemberPropertiesWithId(String id) {
+		memberPropertiesRepository.deleteById(id);
 	}
 }

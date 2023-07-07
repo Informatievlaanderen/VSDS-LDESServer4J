@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepository {
 
 	public static final String VIEWS = "views";
+	private static final String VERSION_OF = "versionOf";
 	private final MemberPropertiesEntityRepository memberPropertiesEntityRepository;
 	private final MemberPropertiesEntityMapper memberPropertiesEntityMapper;
 	private final MongoTemplate mongoTemplate;
@@ -31,12 +32,12 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 
 	@Override
 	public void save(MemberProperties memberProperties) {
-		memberPropertiesEntityRepository.save(memberPropertiesEntityMapper.toMemberEntity(memberProperties));
+		memberPropertiesEntityRepository.save(memberPropertiesEntityMapper.toMemberPropertiesEntity(memberProperties));
 	}
 
 	@Override
 	public Optional<MemberProperties> retrieve(String id) {
-		return memberPropertiesEntityRepository.findById(id).map(memberPropertiesEntityMapper::toMember);
+		return memberPropertiesEntityRepository.findById(id).map(memberPropertiesEntityMapper::toMemberProperties);
 	}
 
 	@Override
@@ -50,23 +51,33 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 
 	@Override
 	public List<MemberProperties> getMemberPropertiesOfVersion(String versionOf) {
-		// TODO Implement
-		return null;
+		Query query = new Query();
+		query.addCriteria(Criteria.where(VERSION_OF).is(versionOf));
+		return mongoTemplate
+				.stream(query, MemberPropertiesEntity.class)
+				.map(memberPropertiesEntityMapper::toMemberProperties)
+				.toList();
 	}
 
 	@Override
 	public Stream<MemberProperties> getMemberPropertiesWithViewReference(String viewName) {
-		// TODO Implement
-		return null;
+		Query query = new Query();
+		query.addCriteria(Criteria.where(VIEWS).is(viewName));
+		return mongoTemplate.stream(query, MemberPropertiesEntity.class)
+				.map(memberPropertiesEntityMapper::toMemberProperties);
 	}
 
 	@Override
 	public void removeViewReference(String id, String viewName) {
-		// TODO Implement
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(id));
+		Update update = new Update();
+		update.pull(VIEWS, viewName);
+		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
 	}
 
 	@Override
 	public void deleteById(String id) {
-		// TODO Implement
+		memberPropertiesEntityRepository.deleteById(id);
 	}
 }
