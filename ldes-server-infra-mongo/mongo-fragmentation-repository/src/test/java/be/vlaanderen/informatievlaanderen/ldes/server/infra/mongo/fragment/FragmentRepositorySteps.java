@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.MongoFragmentationIntegrationTest;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 
-	private List<LdesFragment> ldesFragments;
-	private Optional<LdesFragment> retrievedLdesFragment;
+	private List<Fragment> fragments;
+	private Optional<Fragment> retrievedLdesFragment;
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
-	public LdesFragment ldesFragmentEntryTransformer(Map<String, String> row) {
-		return new LdesFragment(new LdesFragmentIdentifier(
+	public Fragment ldesFragmentEntryTransformer(Map<String, String> row) {
+		return new Fragment(new LdesFragmentIdentifier(
 				ViewName.fromString(row.get("viewName")),
 				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				Boolean.parseBoolean(row.get("immutable")),
@@ -44,13 +44,13 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	}
 
 	@Given("The following ldesFragments")
-	public void theFollowingLdesFragment(List<LdesFragment> ldesFragments) {
-		this.ldesFragments = ldesFragments;
+	public void theFollowingLdesFragment(List<Fragment> fragments) {
+		this.fragments = fragments;
 	}
 
 	@When("I save the ldesFragments using the LdesFragmentRepository")
 	public void iSaveTheLdesFragmentUsingTheLdesFragmentRepository() {
-		ldesFragments.forEach(ldesFragment -> fragmentRepository.saveFragment(ldesFragment));
+		fragments.forEach(ldesFragment -> fragmentRepository.saveFragment(ldesFragment));
 	}
 
 	@Then("The ldesFragment with id {string} can be retrieved from the database")
@@ -66,14 +66,14 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	@And("The retrieved ldesFragment has the same properties as ldesFragment {int}")
 	public void theRetrievedLdesFragmentHasTheSamePropertiesAsLdesFragment(int index) {
 		assertTrue(retrievedLdesFragment.isPresent());
-		LdesFragment actualLdesFragment = this.retrievedLdesFragment.get();
-		LdesFragment expectedLdesFragment = this.ldesFragments.get(index - 1);
-		assertEquals(expectedLdesFragment.getFragmentId(), actualLdesFragment.getFragmentId());
-		assertEquals(expectedLdesFragment.getViewName(), actualLdesFragment.getViewName());
-		assertEquals(expectedLdesFragment.getFragmentPairs(), actualLdesFragment.getFragmentPairs());
-		assertEquals(expectedLdesFragment.isImmutable(), actualLdesFragment.isImmutable());
-		assertEquals(expectedLdesFragment.getNumberOfMembers(), actualLdesFragment.getNumberOfMembers());
-		assertEquals(expectedLdesFragment.getRelations(), actualLdesFragment.getRelations());
+		Fragment actualFragment = this.retrievedLdesFragment.get();
+		Fragment expectedFragment = this.fragments.get(index - 1);
+		assertEquals(expectedFragment.getFragmentId(), actualFragment.getFragmentId());
+		assertEquals(expectedFragment.getViewName(), actualFragment.getViewName());
+		assertEquals(expectedFragment.getFragmentPairs(), actualFragment.getFragmentPairs());
+		assertEquals(expectedFragment.isImmutable(), actualFragment.isImmutable());
+		assertEquals(expectedFragment.getNumberOfMembers(), actualFragment.getNumberOfMembers());
+		assertEquals(expectedFragment.getRelations(), actualFragment.getRelations());
 	}
 
 	@When("I delete the ldesFragments of viewName {string}")

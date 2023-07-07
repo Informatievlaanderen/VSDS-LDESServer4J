@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
@@ -27,13 +27,14 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 		this.observationRegistry = observationRegistry;
 	}
 
-	@Override public void addMemberToFragment(LdesFragment parentFragment, String memberId, Model memberModel,
+	@Override
+	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
 			Observation parentObservation) {
 		Observation paginationObservation = Observation.createNotStarted(PAGINATION_FRAGMENTATION,
-						observationRegistry)
+				observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
-		ImmutablePair<LdesFragment, Boolean> ldesFragment = openPageProvider
+		ImmutablePair<Fragment, Boolean> ldesFragment = openPageProvider
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		if (TRUE.equals(ldesFragment.getRight())) {
 			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());

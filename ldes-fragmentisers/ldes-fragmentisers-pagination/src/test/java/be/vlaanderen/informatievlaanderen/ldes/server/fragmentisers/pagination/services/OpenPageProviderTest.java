@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,12 +23,12 @@ class OpenPageProviderTest {
 	private final PageCreator pageCreator = mock(PageCreator.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private OpenPageProvider openPageProvider;
-	private static LdesFragment PARENT_FRAGMENT;
+	private static Fragment PARENT_FRAGMENT;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		openPageProvider = new OpenPageProvider(pageCreator,
 				fragmentRepository, 3L);
 	}
@@ -36,14 +36,14 @@ class OpenPageProviderTest {
 	@Test
 	@DisplayName("No existing fragment")
 	void when_NoFragmentExists_thenFirstFragmentIsCreated() {
-		LdesFragment createdFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
+		Fragment createdFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"1"));
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
 				.thenReturn(Optional.empty());
 		when(pageCreator.createFirstFragment(PARENT_FRAGMENT))
 				.thenReturn(createdFragment);
 
-		Pair<LdesFragment, Boolean> ldesFragment = openPageProvider
+		Pair<Fragment, Boolean> ldesFragment = openPageProvider
 				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 
 		assertTrue(ldesFragment.getRight());
@@ -59,16 +59,16 @@ class OpenPageProviderTest {
 	@Test
 	@DisplayName("Incomplete Open Fragment")
 	void when_AnIncompleteOpenFragmentExists_thenFragmentIsReturned() {
-		LdesFragment existingLdesFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
+		Fragment existingFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"2"));
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
-				.thenReturn(Optional.of(existingLdesFragment));
+				.thenReturn(Optional.of(existingFragment));
 
-		Pair<LdesFragment, Boolean> ldesFragment = openPageProvider
+		Pair<Fragment, Boolean> ldesFragment = openPageProvider
 				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 
 		assertFalse(ldesFragment.getRight());
-		assertEquals(existingLdesFragment, ldesFragment.getKey());
+		assertEquals(existingFragment, ldesFragment.getKey());
 		InOrder inOrder = inOrder(fragmentRepository, pageCreator);
 		inOrder.verify(fragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
@@ -78,17 +78,17 @@ class OpenPageProviderTest {
 	@Test
 	@DisplayName("Complete Fragment")
 	void when_AFullFragmentExists_thenANewFragmentIsCreatedAndReturned() {
-		LdesFragment completeFragment = new LdesFragment(new LdesFragmentIdentifier(
+		Fragment completeFragment = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
 						"2"))),
 				false, 3, List.of());
-		LdesFragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
+		Fragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"3"));
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
 				.thenReturn(Optional.of(completeFragment));
 		when(pageCreator.createNewFragment(completeFragment, PARENT_FRAGMENT)).thenReturn(newFragment);
 
-		Pair<LdesFragment, Boolean> ldesFragment = openPageProvider
+		Pair<Fragment, Boolean> ldesFragment = openPageProvider
 				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 
 		assertFalse(ldesFragment.getRight());

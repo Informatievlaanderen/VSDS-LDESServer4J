@@ -6,7 +6,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.AllocationEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AllocationMongoRepository implements AllocationRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(AllocationMongoRepository.class);
@@ -17,13 +19,19 @@ public class AllocationMongoRepository implements AllocationRepository {
 		this.repository = repository;
 	}
 
-	@Override
 	public void allocateMemberToFragment(String memberId, ViewName viewName, String fragmentId) {
 		repository.save(new AllocationEntity(new AllocationEntity.AllocationKey(memberId, viewName), fragmentId));
 	}
 
-	@Override
 	public void unallocateMemberFromView(String memberId, ViewName viewName) {
 		repository.deleteById(new AllocationEntity.AllocationKey(memberId, viewName));
+	}
+
+	public void unallocateAllMembersFromView(ViewName viewName) {
+		repository.deleteAllByAllocationKey_ViewName(viewName);
+	}
+
+	public void unallocateMembersFromCollection(String collectionName) {
+		repository.deleteAllByAllocationKey_ViewName_CollectionName(collectionName);
 	}
 }

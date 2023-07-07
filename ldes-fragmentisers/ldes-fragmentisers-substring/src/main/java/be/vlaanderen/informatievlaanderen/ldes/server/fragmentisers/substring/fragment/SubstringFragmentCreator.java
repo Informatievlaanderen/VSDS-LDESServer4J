@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.slf4j.Logger;
@@ -18,8 +18,8 @@ public class SubstringFragmentCreator {
 		this.fragmentRepository = fragmentRepository;
 	}
 
-	public LdesFragment getOrCreateSubstringFragment(LdesFragment parentFragment, String substring) {
-		LdesFragment child = parentFragment.createChild(new FragmentPair(SUBSTRING, substring));
+	public Fragment getOrCreateSubstringFragment(Fragment parentFragment, String substring) {
+		Fragment child = parentFragment.createChild(new FragmentPair(SUBSTRING, substring));
 		return fragmentRepository
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {

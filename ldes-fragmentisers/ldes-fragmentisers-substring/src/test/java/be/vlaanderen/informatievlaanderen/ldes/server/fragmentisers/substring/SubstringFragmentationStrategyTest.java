@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class SubstringFragmentationStrategyTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static LdesFragment PARENT_FRAGMENT;
+	private static Fragment PARENT_FRAGMENT;
 	private SubstringFragmentFinder substringFragmentFinder;
 	private SubstringFragmentCreator substringFragmentCreator;
 	private SubstringFragmentationStrategy substringFragmentationStrategy;
@@ -37,7 +37,7 @@ class SubstringFragmentationStrategyTest {
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		substringFragmentFinder = mock(SubstringFragmentFinder.class);
 		substringFragmentCreator = mock(SubstringFragmentCreator.class);
 		substringConfig = new SubstringConfig();
@@ -50,11 +50,12 @@ class SubstringFragmentationStrategyTest {
 	void when_SubstringFragmentationStrategyIsCalled_SubstringFragmentationIsAppliedAndDecoratedServiceIsCalled() {
 		Member member = mock(Member.class);
 		var modelParserMock = Mockito.mockStatic(ModelParser.class);
-		modelParserMock.when(() -> ModelParser.getFragmentationObject(eq(member.getModel()), any(), any())).thenReturn("abc");
-		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
+		modelParserMock.when(() -> ModelParser.getFragmentationObject(eq(member.getModel()), any(), any()))
+				.thenReturn("abc");
+		Fragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"")).thenReturn(rootFragment);
-		LdesFragment childFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
+		Fragment childFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment,
 				List.of(ROOT_SUBSTRING, "a", "ab", "abc"))).thenReturn(childFragment);
@@ -72,7 +73,7 @@ class SubstringFragmentationStrategyTest {
 						rootFragment, List.of(ROOT_SUBSTRING, "a", "ab", "abc"));
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(childFragment), any(),
-				any(), any(Observation.class));
+						any(), any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

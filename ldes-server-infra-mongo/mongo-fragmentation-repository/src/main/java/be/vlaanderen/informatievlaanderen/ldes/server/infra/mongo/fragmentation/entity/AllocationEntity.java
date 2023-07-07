@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
-@Document("allocation")
+@Document("fragmentation_allocation")
 public class AllocationEntity {
 	@Id
 	private final AllocationKey allocationKey;
@@ -30,10 +30,12 @@ public class AllocationEntity {
 				that.fragmentId);
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Objects.hash(allocationKey, fragmentId);
 	}
 
-	public record AllocationKey (String memberId, ViewName viewName){}
+	public record AllocationKey(String memberId, ViewName viewName) {
+	}
 
 }

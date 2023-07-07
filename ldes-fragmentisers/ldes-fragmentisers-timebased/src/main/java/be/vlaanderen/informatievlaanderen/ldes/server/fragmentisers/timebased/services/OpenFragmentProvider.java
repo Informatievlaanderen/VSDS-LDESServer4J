@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,12 +18,12 @@ public class OpenFragmentProvider {
 		this.memberLimit = memberLimit;
 	}
 
-	public Pair<LdesFragment, Boolean> retrieveOpenFragmentOrCreateNewFragment(LdesFragment parentFragment) {
+	public Pair<Fragment, Boolean> retrieveOpenFragmentOrCreateNewFragment(Fragment parentFragment) {
 		return fragmentRepository
 				.retrieveOpenChildFragment(parentFragment.getFragmentId())
 				.map(fragment -> {
 					if (needsToCreateNewFragment(fragment)) {
-						LdesFragment newFragment = fragmentCreator.createNewFragment(fragment, parentFragment);
+						Fragment newFragment = fragmentCreator.createNewFragment(fragment, parentFragment);
 						fragmentRepository.saveFragment(newFragment);
 						return new ImmutablePair<>(newFragment, false);
 					} else {
@@ -31,13 +31,13 @@ public class OpenFragmentProvider {
 					}
 				})
 				.orElseGet(() -> {
-					LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
+					Fragment newFragment = fragmentCreator.createNewFragment(parentFragment);
 					fragmentRepository.saveFragment(newFragment);
 					return new ImmutablePair<>(newFragment, true);
 				});
 	}
 
-	public boolean needsToCreateNewFragment(LdesFragment fragment) {
+	public boolean needsToCreateNewFragment(Fragment fragment) {
 		return fragment.getNumberOfMembers() >= memberLimit;
 	}
 }

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
@@ -24,7 +24,7 @@ public class TreeNodeFetcherImpl implements TreeNodeFetcher {
 	public TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest) {
 		final ViewName viewName = ldesFragmentRequest.viewName();
 		return treeNodeFactory
-				.getTreeNode(new LdesFragment(
+				.getTreeNode(new Fragment(
 						new LdesFragmentIdentifier(viewName, ldesFragmentRequest.fragmentPairs())).getFragmentId(),
 						hostName, viewName.getCollectionName());
 	}

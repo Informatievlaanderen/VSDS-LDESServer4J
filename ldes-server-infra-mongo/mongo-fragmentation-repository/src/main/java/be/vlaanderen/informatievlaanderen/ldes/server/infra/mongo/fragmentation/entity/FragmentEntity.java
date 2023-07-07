@@ -1,17 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document("fragment")
+@Document("fragmentation_fragment")
 public class FragmentEntity {
 	@Id
 	private final String id;
@@ -51,9 +51,9 @@ public class FragmentEntity {
 		return immutable;
 	}
 
-	public LdesFragment toLdesFragment() {
+	public Fragment toLdesFragment() {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
-		return new LdesFragment(new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs), immutable,
+		return new Fragment(new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs), immutable,
 				effectiveNumberOfMembers,
 				relations);
 	}
@@ -66,16 +66,16 @@ public class FragmentEntity {
 		return fragmentPairs;
 	}
 
-	public static FragmentEntity fromLdesFragment(LdesFragment ldesFragment) {
-		return new FragmentEntity(ldesFragment.getFragmentIdString(),
-				ldesFragment.isRoot(),
-				ldesFragment.getFragmentId().getViewName().asString(),
-				ldesFragment.getFragmentPairs(),
-				ldesFragment.isImmutable(),
-				ldesFragment.getParentIdAsString(),
-				ldesFragment.getNumberOfMembers(),
-				ldesFragment.getRelations(),
-				ldesFragment.getFragmentId().getViewName().getCollectionName());
+	public static FragmentEntity fromLdesFragment(Fragment fragment) {
+		return new FragmentEntity(fragment.getFragmentIdString(),
+				fragment.isRoot(),
+				fragment.getFragmentId().getViewName().asString(),
+				fragment.getFragmentPairs(),
+				fragment.isImmutable(),
+				fragment.getParentIdAsString(),
+				fragment.getNumberOfMembers(),
+				fragment.getRelations(),
+				fragment.getFragmentId().getViewName().getCollectionName());
 	}
 
 	public Boolean getRoot() {

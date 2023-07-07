@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -22,14 +22,14 @@ import static org.mockito.Mockito.when;
 class SubstringFragmentFinderTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static LdesFragment PARENT_FRAGMENT;
+	private static Fragment PARENT_FRAGMENT;
 	private SubstringFragmentCreator substringFragmentCreator;
 	private SubstringRelationsAttributer substringRelationsAttributer;
 	private SubstringFragmentFinder substringFragmentFinder;
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(
+		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of()));
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setMemberLimit(1);
@@ -41,9 +41,9 @@ class SubstringFragmentFinderTest {
 
 	@Test
 	void when_RootFragmentHasNotReachedLimitAndIsInBucket_RootFragmentIsReturned() {
-		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
+		Fragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
 
-		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
+		Fragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("", "a", "ab"));
 
 		assertEquals(rootFragment, actualFragment);
@@ -54,19 +54,19 @@ class SubstringFragmentFinderTest {
 
 	@Test
 	void when_RootFragmentHasReachedItsLimit_FirstOpenFragmentIsReturned() {
-		LdesFragment rootFragment = new LdesFragment(new LdesFragmentIdentifier(
+		Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\""))), false, 1,
 				List.of());
-		LdesFragment aFragment = new LdesFragment(new LdesFragmentIdentifier(
+		Fragment aFragment = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a"))), false, 1,
 				List.of());
-		LdesFragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
+		Fragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"a")).thenReturn(aFragment);
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"ab")).thenReturn(abFragment);
 
-		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
+		Fragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab"));
 
 		assertEquals(abFragment, actualFragment);

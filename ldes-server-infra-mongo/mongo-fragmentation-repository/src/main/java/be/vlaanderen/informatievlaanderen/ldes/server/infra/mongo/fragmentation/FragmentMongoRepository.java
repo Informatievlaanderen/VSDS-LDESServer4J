@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
@@ -12,12 +12,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+@Component
 public class FragmentMongoRepository implements FragmentRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(FragmentMongoRepository.class);
@@ -31,41 +33,41 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public LdesFragment saveFragment(LdesFragment ldesFragment) {
-		repository.save(FragmentEntity.fromLdesFragment(ldesFragment));
-		return ldesFragment;
+	public Fragment saveFragment(Fragment fragment) {
+		repository.save(FragmentEntity.fromLdesFragment(fragment));
+		return fragment;
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveFragment(LdesFragmentIdentifier fragmentId) {
+	public Optional<Fragment> retrieveFragment(LdesFragmentIdentifier fragmentId) {
 		return repository
 				.findById(fragmentId.asString())
 				.map(FragmentEntity::toLdesFragment);
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveMutableFragment(String viewName,
+	public Optional<Fragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
 				.findAllByImmutableAndViewName(false,
 						viewName)
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentIdString));
+				.min(Comparator.comparing(Fragment::getFragmentIdString));
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
+	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
 				.findAllByImmutableAndParentId(false,
 						parentId)
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(LdesFragment::getFragmentIdString));
+				.min(Comparator.comparing(Fragment::getFragmentIdString));
 	}
 
 	@Override
-	public Optional<LdesFragment> retrieveRootFragment(String viewName) {
+	public Optional<Fragment> retrieveRootFragment(String viewName) {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
 				.map(FragmentEntity::toLdesFragment);
@@ -81,7 +83,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public Stream<LdesFragment> retrieveFragmentsOfView(String viewName) {
+	public Stream<Fragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)
 				.map(FragmentEntity::toLdesFragment);

@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers</artifactId>
+            <artifactId>ldes-fragmentisers-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

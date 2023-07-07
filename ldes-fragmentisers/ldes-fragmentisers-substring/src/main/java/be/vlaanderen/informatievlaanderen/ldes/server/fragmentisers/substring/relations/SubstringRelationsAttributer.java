@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
@@ -22,7 +22,7 @@ public class SubstringRelationsAttributer {
 		this.substringConfig = substringConfig;
 	}
 
-	public void addSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
+	public void addSubstringRelation(Fragment parentFragment, Fragment childFragment) {
 		String substringValue = getSubstringValue(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(substringConfig.getFragmentationPath(),
 				childFragment.getFragmentId(),
@@ -34,7 +34,7 @@ public class SubstringRelationsAttributer {
 		}
 	}
 
-	private String getSubstringValue(LdesFragment childFragment) {
+	private String getSubstringValue(Fragment childFragment) {
 		return childFragment.getValueOfKey(SUBSTRING).map(substring -> substring.replace("\"", ""))
 				.orElseThrow(
 						() -> new MissingFragmentValueException(childFragment.getFragmentIdString(), SUBSTRING));

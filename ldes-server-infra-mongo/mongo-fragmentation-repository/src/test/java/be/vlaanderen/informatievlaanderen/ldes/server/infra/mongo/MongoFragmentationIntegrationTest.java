@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.AllocationMongoRepository;
@@ -19,13 +20,17 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.concurrent.ExecutorService;
+
+import static org.mockito.Mockito.mock;
+
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
 @ContextConfiguration(classes = { FragmentEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.fragmentation",
-		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo"})
+		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo" })
 @Import(MongoFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class MongoFragmentationIntegrationTest {
@@ -37,7 +42,7 @@ public class MongoFragmentationIntegrationTest {
 	public static class EventStreamControllerTestConfiguration {
 
 		@Bean
-		public ObservationRegistry observationRegistry(){
+		public ObservationRegistry observationRegistry() {
 			return ObservationRegistry.NOOP;
 		}
 
@@ -52,6 +57,16 @@ public class MongoFragmentationIntegrationTest {
 		public AllocationRepository allocationRepository(
 				final AllocationEntityRepository allocationEntityRepository) {
 			return new AllocationMongoRepository(allocationEntityRepository);
+		}
+
+		@Bean
+		public MemberRepository memberRepository() {
+			return mock(MemberRepository.class);
+		}
+
+		@Bean
+		ExecutorService executorService() {
+			return mock(ExecutorService.class);
 		}
 	}
 

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -31,13 +31,13 @@ class SubstringFragmentCreatorTest {
 
 	@Test
 	void when_FragmentDoesNotExist_NewSubstringFragmentIsCreated() {
-		LdesFragment ldesFragment = new LdesFragment(
+		Fragment fragment = new Fragment(
 				new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair)));
-		LdesFragmentIdentifier exptectedFragmentId = ldesFragment.createChild(new FragmentPair("substring", "a"))
+		LdesFragmentIdentifier exptectedFragmentId = fragment.createChild(new FragmentPair("substring", "a"))
 				.getFragmentId();
 		when(fragmentRepository.retrieveFragment(exptectedFragmentId)).thenReturn(Optional.empty());
 
-		LdesFragment childFragment = substringFragmentCreator.getOrCreateSubstringFragment(ldesFragment,
+		Fragment childFragment = substringFragmentCreator.getOrCreateSubstringFragment(fragment,
 				"a");
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair, substringPair)),
@@ -50,14 +50,14 @@ class SubstringFragmentCreatorTest {
 
 	@Test
 	void when_FragmentExists_RetrievedFragmentIsReturned() {
-		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(
+		Fragment fragment = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(timePair)));
-		LdesFragment substringFragment = ldesFragment.createChild(substringPair);
+		Fragment substringFragment = fragment.createChild(substringPair);
 
 		when(fragmentRepository.retrieveFragment(substringFragment.getFragmentId()))
 				.thenReturn(Optional.of(substringFragment));
 
-		LdesFragment childFragment = substringFragmentCreator.getOrCreateSubstringFragment(ldesFragment,
+		Fragment childFragment = substringFragmentCreator.getOrCreateSubstringFragment(fragment,
 				"a");
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair, substringPair)),

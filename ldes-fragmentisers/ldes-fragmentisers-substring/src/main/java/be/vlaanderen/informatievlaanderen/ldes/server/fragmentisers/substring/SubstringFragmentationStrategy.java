@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -41,13 +41,14 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 	}
 
 	@Override
-	public void addMemberToFragment(LdesFragment parentFragment, String memberId, Model memberModel, Observation parentObservation) {
+	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
+			Observation parentObservation) {
 
 		final Observation substringFragmentationObservation = startFragmentationObservation(parentObservation);
 		FragmentationString fragmentationString = new FragmentationString(getFragmentationString(memberModel));
-		final LdesFragment rootFragment = prepareRootFragment(parentFragment);
-		Set<LdesFragment> ldesFragments = getSubstringFragments(parentFragment, fragmentationString, rootFragment);
-		ldesFragments.parallelStream()
+		final Fragment rootFragment = prepareRootFragment(parentFragment);
+		Set<Fragment> fragments = getSubstringFragments(parentFragment, fragmentationString, rootFragment);
+		fragments.parallelStream()
 				.forEach(substringFragment -> super.addMemberToFragment(substringFragment, memberId, memberModel,
 						substringFragmentationObservation));
 		substringFragmentationObservation.stop();
@@ -59,16 +60,16 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 				substringConfig.getFragmentationPath());
 	}
 
-	private LdesFragment prepareRootFragment(LdesFragment parentFragment) {
-		final LdesFragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment,
+	private Fragment prepareRootFragment(Fragment parentFragment) {
+		final Fragment rootFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment,
 				ROOT_SUBSTRING);
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 		return rootFragment;
 	}
 
-	private Set<LdesFragment> getSubstringFragments(LdesFragment parentFragment,
+	private Set<Fragment> getSubstringFragments(Fragment parentFragment,
 			FragmentationString fragmentationString,
-			LdesFragment rootFragment) {
+			Fragment rootFragment) {
 		return fragmentationString
 				.getTokens()
 				.stream()

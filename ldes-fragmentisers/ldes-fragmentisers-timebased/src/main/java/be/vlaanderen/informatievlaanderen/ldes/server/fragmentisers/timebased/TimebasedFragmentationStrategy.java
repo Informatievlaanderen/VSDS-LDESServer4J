@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -24,13 +24,14 @@ public class TimebasedFragmentationStrategy extends FragmentationStrategyDecorat
 		this.observationRegistry = observationRegistry;
 	}
 
-	@Override public void addMemberToFragment(LdesFragment parentFragment, String memberId, Model memberModel,
+	@Override
+	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
 			Observation parentObservation) {
 		Observation timebasedFragmentationObservation = Observation.createNotStarted("timebased fragmentation",
-						observationRegistry)
+				observationRegistry)
 				.parentObservation(parentObservation)
 				.start();
-		Pair<LdesFragment, Boolean> ldesFragment = openFragmentProvider
+		Pair<Fragment, Boolean> ldesFragment = openFragmentProvider
 				.retrieveOpenFragmentOrCreateNewFragment(parentFragment);
 		if (Boolean.TRUE.equals(ldesFragment.getRight())) {
 			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());

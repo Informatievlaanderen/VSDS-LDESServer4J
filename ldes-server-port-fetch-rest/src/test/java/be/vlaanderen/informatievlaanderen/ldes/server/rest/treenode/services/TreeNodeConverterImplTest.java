@@ -120,12 +120,15 @@ class TreeNodeConverterImplTest {
 	private void verifyLdesStatements(Model model) {
 		String id = HOST_NAME + "/" + COLLECTION_NAME;
 
-		Assertions.assertEquals("[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
+		Assertions.assertEquals(
+				"[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
 				model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
-		Assertions.assertEquals("[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
+		Assertions.assertEquals(
+				"[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
 				model.listStatements(createResource(id), LDES_TIMESTAMP_PATH, (Resource) null).nextStatement()
 						.toString());
-		Assertions.assertEquals("[" + id + ", https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
+		Assertions.assertEquals(
+				"[" + id + ", https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
 				model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement().toString());
 
 		verifyIsViewOfStatement(model);
@@ -152,7 +155,8 @@ class TreeNodeConverterImplTest {
 				model.listStatements(createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME), TREE_RELATION,
 						(Resource) null)
 						.nextStatement().toString());
-		Assertions.assertEquals(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject),
+		Assertions.assertEquals(
+				String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject),
 				model.listStatements(relationObject, RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
 		Assertions.assertEquals(String.format("[%s, https://w3id.org/tree#path, path]", relationObject),
 				model.listStatements(relationObject, TREE_PATH, (Resource) null).nextStatement().toString());

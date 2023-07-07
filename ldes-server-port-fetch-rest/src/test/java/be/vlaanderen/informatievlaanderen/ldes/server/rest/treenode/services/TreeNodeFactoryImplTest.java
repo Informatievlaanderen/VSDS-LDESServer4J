@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
@@ -52,17 +52,17 @@ class TreeNodeFactoryImplTest {
 
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {
-		LdesFragment ldesFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		ldesFragment.addRelation(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
+		Fragment fragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		fragment.addRelation(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
 				"valueType", "relation"));
-		Mockito.when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(ldesFragment));
+		Mockito.when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
 		List<Member> members = List.of(new Member("member", COLLECTION_NAME, 0L, null, null, null, List.of()));
 		Mockito.when(memberRepository.getMembersByReference(TREE_NODE_ID.asString())).thenReturn(members.stream());
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 
-		Assertions.assertEquals(HOSTNAME + ldesFragment.getFragmentIdString(), treeNode.getFragmentId());
-		Assertions.assertEquals(ldesFragment.isImmutable(), treeNode.isImmutable());
+		Assertions.assertEquals(HOSTNAME + fragment.getFragmentIdString(), treeNode.getFragmentId());
+		Assertions.assertEquals(fragment.isImmutable(), treeNode.isImmutable());
 		Assertions.assertEquals(members, treeNode.getMembers());
 		Assertions.assertEquals(
 				List.of(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
