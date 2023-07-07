@@ -48,7 +48,7 @@ public interface OpenApiAdminViewsRestController {
 			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
 			@Parameter(description = "The name of deleted view", example = "time-based-retention") String viewName);
 
-	@ApiResponse(responseCode = "200")
+	@ApiResponse(responseCode = "201")
 	@ApiResponse(responseCode = "400", description = "Duplicate View or Wrongly Configured View")
 	@ApiResponse(responseCode = "404", description = "Missing EventStream")
 	@Operation(summary = "Add view to a collection")
