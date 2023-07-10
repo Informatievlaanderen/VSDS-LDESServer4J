@@ -6,18 +6,19 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 import org.springframework.context.event.EventListener;
 
 public class ViewDeletedEventHandler {
-    private final MemberPropertiesRepository memberPropertiesRepository;
-    private final MemberRemover memberRemover;
+	private final MemberPropertiesRepository memberPropertiesRepository;
+	private final MemberRemover memberRemover;
 
-    public ViewDeletedEventHandler(MemberPropertiesRepository memberPropertiesRepository, MemberRemover memberRemover) {
-        this.memberPropertiesRepository = memberPropertiesRepository;
-        this.memberRemover = memberRemover;
-    }
+	public ViewDeletedEventHandler(MemberPropertiesRepository memberPropertiesRepository, MemberRemover memberRemover) {
+		this.memberPropertiesRepository = memberPropertiesRepository;
+		this.memberRemover = memberRemover;
+	}
 
-    @EventListener
-    public void handleViewDeletedEvent(ViewDeletedEvent event) {
-        String viewName = event.getViewName().asString();
-        memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
-                .forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName));
-    }
+	// call from retentionPolicyCollectionImpl.handleViewDeletedEvent?
+	@EventListener
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		String viewName = event.getViewName().asString();
+		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
+				.forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName));
+	}
 }
