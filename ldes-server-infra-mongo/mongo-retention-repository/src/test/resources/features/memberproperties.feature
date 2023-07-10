@@ -83,3 +83,15 @@ Feature: MemberRepository
     And I delete the MemberProperties with id "http://test-data/mobility-hindrance/1/1"
     And I retrieve the MemberProperties with id "http://test-data/mobility-hindrance/1/1"
     Then I have retrieved 0 MemberProperties
+
+  Scenario: Removing a eventStream to MemberProperties
+    Given The following MemberProperties
+      | id                                      | collectionName      | versionOf                             | timestamp               |
+      | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | http://test-data/mobility-hindrance/1 | 2023-07-05T15:28:49.665 |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I retrieve the MemberProperties with id "http://test-data/mobility-hindrance/1/1"
+    Then I have retrieved 1 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties 1 of the table
+    And I remove the eventStream with name "mobility-hindrance"
+    And I retrieve the MemberProperties with id "http://test-data/mobility-hindrance/1/1"
+    Then I have retrieved 0 MemberProperties
