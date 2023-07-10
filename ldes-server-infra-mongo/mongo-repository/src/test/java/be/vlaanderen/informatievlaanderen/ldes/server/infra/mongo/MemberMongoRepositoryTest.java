@@ -2,11 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.bson.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
@@ -128,6 +130,19 @@ class MemberMongoRepositoryTest {
 		ldesMemberMongoRepository.getMembersOfVersion("versionOf");
 
 		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
+	}
+
+	@Test
+	void when_RemoveMemberReference_MemberReferenceIsDeleted2() {
+		final ViewName viewName = new ViewName("collection", "view");
+		final String regexMatchQueryParameters = "\\?.*";
+		final String regex = viewName.asString() + regexMatchQueryParameters;
+		final Query query = new Query(Criteria.where("_id").is(MEMBER_ID).and(TREE_NODE_REFERENCES).regex(regex));
+		final Update update = new Update().pull(TREE_NODE_REFERENCES, new Document("$regex", regex));
+
+		ldesMemberMongoRepository.removeViewReferenceOfMember(MEMBER_ID, viewName);
+
+		verify(mongoTemplate, times(1)).updateMulti(query, update, LdesMemberEntity.class);
 	}
 
 	private Model getModel() {
