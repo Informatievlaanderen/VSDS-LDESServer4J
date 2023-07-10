@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -25,7 +26,7 @@
     <developers>
         <developer>
             <name>Yalz</name>
-            <email>Yalz@users.noreply.github.com </email>
+            <email>Yalz@users.noreply.github.com</email>
             <organization>Cegeka</organization>
             <organizationUrl>http://www.sonatype.com</organizationUrl>
         </developer>
@@ -253,13 +254,13 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
-			
-			<!-- HASHING -->
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>${commons-codec.version}</version>
-			</dependency>
+
+            <!-- HASHING -->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -370,10 +371,10 @@
 
         <plugins>
             <!-- CODE FORMATTER -->
-<!--            <plugin>-->
-<!--                <groupId>net.revelc.code.formatter</groupId>-->
-<!--                <artifactId>formatter-maven-plugin</artifactId>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+            </plugin>
 
             <plugin>
                 <groupId>net.revelc.code</groupId>
@@ -497,27 +498,29 @@
             <id>central</id>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
-		<repository>
-			<id>spring-snapshots</id>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots><enabled>true</enabled></snapshots>
-		</repository>
-		<repository>
-			<id>spring-milestones</id>
-			<url>https://repo.spring.io/milestone</url>
-		</repository>
+        <repository>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
     </repositories>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<url>https://repo.spring.io/snapshot</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>spring-milestones</id>
-			<url>https://repo.spring.io/milestone</url>
-		</pluginRepository>
-	</pluginRepositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>spring-snapshots</id>
+            <url>https://repo.spring.io/snapshot</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <profiles>
         <profile>
