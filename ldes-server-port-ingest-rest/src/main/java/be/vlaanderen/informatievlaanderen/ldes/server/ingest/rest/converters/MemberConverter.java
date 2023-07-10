@@ -29,6 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	private final Map<String, String> memberTypes = new HashMap<>();
@@ -58,7 +61,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 			throw new MissingEventStreamException(collectionName);
 		}
 
-		String memberId = extractMemberId(memberModel, memberType);
+		String memberId = extractMemberId(memberModel, memberType, collectionName);
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 
@@ -79,12 +82,12 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 		memberTypes.remove(event.collectionName());
 	}
 
-	private String extractMemberId(Model model, String memberType) {
+	private String extractMemberId(Model model, String memberType, String collectionName) {
 		return model
-				.listStatements(null, RdfConstants.RDF_SYNTAX_TYPE, ResourceFactory.createResource(memberType))
+				.listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
 				.nextOptional()
-				.map(statement -> statement.getSubject().toString())
-				.orElseThrow(() -> new MalformedMemberIdException(memberType));
+				.map(statement -> collectionName + "/" + statement.getSubject().toString())
+				.orElseThrow(() ->  new MalformedMemberIdException(memberType));
 	}
 
 }

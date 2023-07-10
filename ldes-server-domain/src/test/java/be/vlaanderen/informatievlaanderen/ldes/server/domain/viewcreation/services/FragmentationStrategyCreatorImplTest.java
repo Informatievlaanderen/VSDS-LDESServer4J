@@ -39,7 +39,7 @@ class FragmentationStrategyCreatorImplTest {
 	void setUp() {
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
 				applicationContext, ldesFragmentRepository, rootFragmentCreator,
-				memberRepository);
+				memberRepository, applicationEventPublisher);
 	}
 
 	@Test

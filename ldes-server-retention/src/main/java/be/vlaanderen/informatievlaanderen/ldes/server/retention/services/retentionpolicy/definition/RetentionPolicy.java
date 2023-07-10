@@ -9,9 +9,9 @@ public interface RetentionPolicy {
 	 * removal from a
 	 * View and eventually from the Collection
 	 *
-	 * @param memberProperties
-	 *            provided MemberProperties
+	 * @param memberProperties provided MemberProperties
+	 * @param viewName
 	 * @return true when the MemberProperties matches the RetentionPolicy
 	 */
-	boolean matchesPolicy(MemberProperties memberProperties);
+	boolean matchesPolicyOfView(MemberProperties memberProperties, String viewName);
 }

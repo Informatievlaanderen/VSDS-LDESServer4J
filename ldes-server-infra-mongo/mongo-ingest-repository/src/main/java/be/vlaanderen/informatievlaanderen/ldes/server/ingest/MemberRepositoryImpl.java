@@ -38,4 +38,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public void deleteMembersByCollection(String collectionName) {
 		memberEntityRepository.deleteAllByCollectionName(collectionName);
 	}
+
+	@Override
+	public void deleteMember(String memberId) {
+		memberEntityRepository.deleteById(memberId);
+	}
 }

@@ -11,11 +11,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
-
+@Component
 public class IngestedMemberHandler {
 
 	private final MemberPropertiesRepository memberPropertiesRepository;
@@ -33,18 +34,18 @@ public class IngestedMemberHandler {
 		EventStreamProperties eventStreamProperties = eventStreamCollection
 				.getEventStreamProperties(event.collectionName());
 		LocalDateTime timestamp = localDateTimeConverter
-				.getLocalDateTime(extractPropertyFromModel(event.model(), eventStreamProperties.getTimestampPath()));
+				.getLocalDateTime((LiteralImpl) extractPropertyFromModel(event.model(), eventStreamProperties.getTimestampPath()));
 		String versionOf = extractPropertyFromModel(event.model(), eventStreamProperties.getVersionOfPath()).toString();
 		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf,
 				timestamp);
-		memberPropertiesRepository.save(member);
+		memberPropertiesRepository.saveMemberPropertiesWithoutViews(member);
 	}
 
-	private LiteralImpl extractPropertyFromModel(Model model, String propertyPath) {
+	private RDFNode extractPropertyFromModel(Model model, String propertyPath) {
 		return model
 				.listStatements(null, createProperty(propertyPath), (RDFNode) null)
 				.nextOptional()
-				.map(statement -> (LiteralImpl) statement.getObject())
+				.map(statement -> statement.getObject())
 				.orElseThrow(() -> new MissingStatementException("property " + propertyPath));
 	}
 

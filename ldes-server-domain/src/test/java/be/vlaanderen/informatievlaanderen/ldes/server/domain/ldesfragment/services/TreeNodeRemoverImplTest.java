@@ -60,7 +60,7 @@ class TreeNodeRemoverImplTest {
 
 	@Test
 	void when_MemberIsDeletedEvent_then_MemberIsDeleted() {
-		MemberDeletedEvent memberDeletedEvent = new MemberDeletedEvent("id", "collection");
+		MemberDeletedEvent memberDeletedEvent = new MemberDeletedEvent("id");
 
 		treeNodeRemover.handleMemberDeletedEvent(memberDeletedEvent);
 

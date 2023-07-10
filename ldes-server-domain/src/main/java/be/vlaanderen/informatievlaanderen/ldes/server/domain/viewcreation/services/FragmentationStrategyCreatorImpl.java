@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,22 +20,24 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	private final LdesFragmentRepository ldesFragmentRepository;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final MemberRepository memberRepository;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-			LdesFragmentRepository ldesFragmentRepository,
-			RootFragmentCreator rootFragmentCreator,
-			MemberRepository memberRepository) {
+											LdesFragmentRepository ldesFragmentRepository,
+											RootFragmentCreator rootFragmentCreator,
+											MemberRepository memberRepository, ApplicationEventPublisher applicationEventPublisher) {
 		this.applicationContext = applicationContext;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.memberRepository = memberRepository;
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(ldesFragmentRepository,
-				memberRepository, nonCriticalTasksExecutor);
+				memberRepository, nonCriticalTasksExecutor, applicationEventPublisher);
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);

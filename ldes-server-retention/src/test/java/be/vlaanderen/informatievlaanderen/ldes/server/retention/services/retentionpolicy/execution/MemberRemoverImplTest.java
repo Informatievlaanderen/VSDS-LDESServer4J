@@ -63,7 +63,7 @@ class MemberRemoverImplTest {
 				.publishEvent(new MemberUnallocatedEvent(memberProperties.getId(), ViewName.fromString(VIEW_NAME)));
 		inOrder.verify(memberPropertiesRepository).deleteById(memberProperties.getId());
 		inOrder.verify(applicationEventPublisher)
-				.publishEvent(new MemberDeletedEvent(memberProperties.getId(), memberProperties.getCollectionName()));
+				.publishEvent(new MemberDeletedEvent(memberProperties.getId()));
 		inOrder.verifyNoMoreInteractions();
 	}
 

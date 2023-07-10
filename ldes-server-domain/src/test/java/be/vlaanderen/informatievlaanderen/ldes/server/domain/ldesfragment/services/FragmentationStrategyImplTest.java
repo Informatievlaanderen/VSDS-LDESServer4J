@@ -19,7 +19,7 @@ class FragmentationStrategyImplTest {
 
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			ldesFragmentRepository,
-			memberRepository, nonCriticalTasksExecutor);
+			memberRepository, nonCriticalTasksExecutor, applicationEventPublisher);
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {

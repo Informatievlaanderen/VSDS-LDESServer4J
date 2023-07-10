@@ -42,16 +42,16 @@ public class RetentionService {
 	private void removeMembersFromViewThatMatchRetentionPolicies(String viewName,
 			List<RetentionPolicy> retentionPoliciesOfView) {
 		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
-				.filter(memberProperties -> memberMatchesAllRetentionPoliciesOfView(retentionPoliciesOfView,
+				.filter(memberProperties -> memberMatchesAllRetentionPoliciesOfView(retentionPoliciesOfView, viewName,
 						memberProperties))
 				.forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName));
 	}
 
 	private boolean memberMatchesAllRetentionPoliciesOfView(List<RetentionPolicy> retentionPolicies,
-			MemberProperties memberProperties) {
+															String viewName, MemberProperties memberProperties) {
 		return retentionPolicies
 				.stream()
-				.allMatch(retentionPolicy -> retentionPolicy.matchesPolicy(memberProperties));
+				.allMatch(retentionPolicy -> retentionPolicy.matchesPolicyOfView(memberProperties, viewName));
 	}
 
 }

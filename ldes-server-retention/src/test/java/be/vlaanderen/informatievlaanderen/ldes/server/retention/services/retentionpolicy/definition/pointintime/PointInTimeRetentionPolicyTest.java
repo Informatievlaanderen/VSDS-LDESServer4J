@@ -17,7 +17,7 @@ class PointInTimeRetentionPolicyTest {
 	void when_TimestampOfMemberIsNull_then_ItDoesNotMatchThePointInTimeRetentionPolicy() {
 		MemberProperties memberProperties = new MemberProperties("id", null, null, null);
 
-		assertFalse(retentionPolicy.matchesPolicy(memberProperties));
+		assertFalse(retentionPolicy.matchesPolicyOfView(memberProperties, viewName));
 	}
 
 	@Test
@@ -25,7 +25,7 @@ class PointInTimeRetentionPolicyTest {
 		LocalDateTime beforeTimestamp = LocalDateTime.of(2020, 1, 15, 4, 29);
 		MemberProperties memberProperties = new MemberProperties("id", null, null, beforeTimestamp);
 
-		assertTrue(retentionPolicy.matchesPolicy(memberProperties));
+		assertTrue(retentionPolicy.matchesPolicyOfView(memberProperties, viewName));
 	}
 
 	@Test
@@ -33,6 +33,6 @@ class PointInTimeRetentionPolicyTest {
 		LocalDateTime afterTimestamp = LocalDateTime.of(2020, 1, 15, 4, 31);
 		MemberProperties memberProperties = new MemberProperties("id", null, null, afterTimestamp);
 
-		assertFalse(retentionPolicy.matchesPolicy(memberProperties));
+		assertFalse(retentionPolicy.matchesPolicyOfView(memberProperties, viewName));
 	}
 }

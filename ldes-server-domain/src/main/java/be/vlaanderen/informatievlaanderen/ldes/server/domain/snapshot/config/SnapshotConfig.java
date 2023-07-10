@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,13 +22,13 @@ public class SnapshotConfig {
 	@Bean
 	@Qualifier("snapshot-fragmentation")
 	public FragmentationStrategy snapshotFragmentationStrategy(ApplicationContext applicationContext,
-			LdesFragmentRepository ldesFragmentRepository, MemberRepository memberRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor) {
+															   LdesFragmentRepository ldesFragmentRepository, MemberRepository memberRepository,
+															   NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
 		FragmentationStrategyWrapper fragmentationStrategyWrapper = (FragmentationStrategyWrapper) applicationContext
 				.getBean(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
 		return fragmentationStrategyWrapper.wrapFragmentationStrategy(
 				applicationContext,
-				new FragmentationStrategyImpl(ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor),
+				new FragmentationStrategyImpl(ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor, eventPublisher),
 				new ConfigProperties(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES));
 
 	}

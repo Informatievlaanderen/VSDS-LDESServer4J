@@ -56,7 +56,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@And("I retrieve all MemberProperties with versionOf {string}")
 	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf) {
-		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersion(versionOf);
+		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersionAndView(versionOf, viewName);
 	}
 
 	@Then("I have retrieved {int} MemberProperties")

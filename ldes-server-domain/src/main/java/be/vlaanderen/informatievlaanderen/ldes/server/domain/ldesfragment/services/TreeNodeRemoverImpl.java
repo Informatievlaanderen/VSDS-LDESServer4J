@@ -39,12 +39,12 @@ public class TreeNodeRemoverImpl implements TreeNodeRemover {
 	@EventListener
 	public void handleMemberUnallocatedEvent(MemberUnallocatedEvent event) {
 		memberRepository.removeViewReferenceOfMember(event.memberId(), event.viewName());
-		treeMemberRemover.deletingMemberFromCollection(event.memberId(), event.viewName().getCollectionName());
+		treeMemberRemover.deletingMemberFromCollection(event.memberId());
 	}
 
 	@EventListener
 	public void handleMemberDeletedEvent(MemberDeletedEvent event) {
-		treeMemberRemover.deletingMemberFromCollection(event.memberId(), event.collectionName());
+		treeMemberRemover.deletingMemberFromCollection(event.memberId());
 	}
 	// end: migration code retention TODO remove
 }

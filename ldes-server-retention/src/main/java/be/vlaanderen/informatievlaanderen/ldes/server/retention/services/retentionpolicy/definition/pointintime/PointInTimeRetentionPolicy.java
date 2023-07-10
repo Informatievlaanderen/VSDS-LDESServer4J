@@ -14,7 +14,7 @@ public class PointInTimeRetentionPolicy implements RetentionPolicy {
 	}
 
 	@Override
-	public boolean matchesPolicy(MemberProperties memberProperties) {
+	public boolean matchesPolicyOfView(MemberProperties memberProperties, String viewName) {
 		LocalDateTime timestamp = memberProperties.getTimestamp();
 		return timestamp != null
 				&& timestamp.isBefore(pointInTime);
