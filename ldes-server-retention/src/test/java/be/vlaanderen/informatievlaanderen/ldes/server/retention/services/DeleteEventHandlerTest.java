@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ViewDeletedEventHandlerTest {
+class DeleteEventHandlerTest {
 	private static final String COLLECTION = "collection";
 	private static final ViewName VIEW = new ViewName(COLLECTION, "view1");
 	private MemberProperties member1 = new MemberProperties("1", COLLECTION, "version", LocalDateTime.now());
@@ -24,7 +25,7 @@ class ViewDeletedEventHandlerTest {
 	private ViewDeletedEvent event = new ViewDeletedEvent(VIEW);
 	private MemberPropertiesRepository memberPropertiesRepository;
 	private MemberRemover memberRemover;
-	private ViewDeletedEventHandler eventHandler;
+	private DeleteEventHandler eventHandler;
 	@Captor
 	ArgumentCaptor<MemberProperties> captor;
 	@Captor
@@ -39,7 +40,7 @@ class ViewDeletedEventHandlerTest {
 		member2.addViewReference("view2");
 		memberPropertiesRepository = mock(MemberPropertiesRepository.class);
 		memberRemover = mock(MemberRemover.class);
-		eventHandler = new ViewDeletedEventHandler(memberPropertiesRepository, memberRemover);
+		eventHandler = new DeleteEventHandler(memberPropertiesRepository, memberRemover);
 	}
 
 	@Test
@@ -55,4 +56,11 @@ class ViewDeletedEventHandlerTest {
         assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(1));
 
     }
+
+	@Test
+	void when_EventstreamDeleted_Then_CallMethod() {
+		eventHandler.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
+
+		verify(memberPropertiesRepository, times(1)).removeMemberPropertiesOfCollection(COLLECTION);
+	}
 }

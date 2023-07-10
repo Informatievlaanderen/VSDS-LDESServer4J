@@ -82,6 +82,11 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		memberPropertiesRepository.removeViewReference(id, viewName);
 	}
 
+	@And("I remove the eventStream with name {string}")
+	public void iRemoveTheEventStreamWithName(String collectionName) {
+		memberPropertiesRepository.removeMemberPropertiesOfCollection(collectionName);
+	}
+
 	@And("The retrieved MemberProperties does not have the view {string} as a property")
 	public void theRetrievedMemberPropertiesDoesNotHaveTheViewAsAProperty(String viewName) {
 		assertFalse(retrievedMemberProperties.get(0).containsViewReference(viewName));
