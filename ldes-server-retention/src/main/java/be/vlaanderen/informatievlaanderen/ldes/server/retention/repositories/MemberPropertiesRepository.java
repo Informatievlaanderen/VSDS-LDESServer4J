@@ -20,5 +20,7 @@ public interface MemberPropertiesRepository {
 
 	void removeViewReference(String id, String viewName);
 
+	void removeMemberPropertiesOfCollection(String collectionName);
+
 	void deleteById(String id);
 }
