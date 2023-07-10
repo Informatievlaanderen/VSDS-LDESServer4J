@@ -79,7 +79,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public void removeMemberPropertiesOfCollection(String collectionName) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("collection").is(collectionName));
+		query.addCriteria(Criteria.where("collectionName").is(collectionName));
 		mongoTemplate.remove(query, MemberPropertiesEntity.class);
 	}
 
