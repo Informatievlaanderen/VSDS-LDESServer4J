@@ -19,6 +19,14 @@ public class AllocationEntity {
 		this.fragmentId = fragmentId;
 	}
 
+	public AllocationKey getAllocationKey() {
+		return allocationKey;
+	}
+
+	public String getFragmentId() {
+		return fragmentId;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

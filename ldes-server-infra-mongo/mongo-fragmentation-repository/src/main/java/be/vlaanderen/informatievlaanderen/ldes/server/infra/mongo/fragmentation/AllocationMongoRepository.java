@@ -7,6 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 public class AllocationMongoRepository implements AllocationRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(AllocationMongoRepository.class);
@@ -31,5 +33,13 @@ public class AllocationMongoRepository implements AllocationRepository {
 
 	public void unallocateMembersFromCollection(String collectionName) {
 		repository.deleteAllByAllocationKey_ViewName_CollectionName(collectionName);
+	}
+
+	public List<String> findMembersForFragment(String fragmentId) {
+		return repository.findAllByFragmentId(fragmentId)
+				.stream()
+				.map(AllocationEntity::getAllocationKey)
+				.map(AllocationEntity.AllocationKey::memberId)
+				.toList();
 	}
 }
