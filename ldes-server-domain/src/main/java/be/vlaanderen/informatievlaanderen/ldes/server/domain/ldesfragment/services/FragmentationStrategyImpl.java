@@ -15,8 +15,8 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public FragmentationStrategyImpl(LdesFragmentRepository ldesFragmentRepository,
-									 MemberRepository memberRepository,
-									 NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher applicationEventPublisher) {
+			MemberRepository memberRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher applicationEventPublisher) {
 		this.memberRepository = memberRepository;
 		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
 		this.ldesFragmentRepository = ldesFragmentRepository;
@@ -29,7 +29,8 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 				() -> memberRepository.addMemberReference(member.getLdesMemberId(),
 						ldesFragment.getFragmentIdString()));
 		ldesFragmentRepository.incrementNumberOfMembers(ldesFragment.getFragmentId());
-		applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member.getLdesMemberId(), ldesFragment.getViewName()));
+		applicationEventPublisher
+				.publishEvent(new MemberAllocatedEvent(member.getLdesMemberId(), ldesFragment.getViewName()));
 	}
 
 }

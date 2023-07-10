@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PointInTimeRetentionPolicyTest {
 
+	private final String viewName = "view";
 	private final RetentionPolicy retentionPolicy = new PointInTimeRetentionPolicy(
 			LocalDateTime.of(2020, 1, 15, 4, 30));
 

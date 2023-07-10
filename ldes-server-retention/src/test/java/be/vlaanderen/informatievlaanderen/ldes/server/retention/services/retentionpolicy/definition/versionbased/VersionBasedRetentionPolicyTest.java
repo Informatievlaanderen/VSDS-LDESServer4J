@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class VersionBasedRetentionPolicyTest {
 
+	private final String viewName = "view";
 	@Mock
 	private MemberPropertiesRepository memberPropertiesRepository;
 
@@ -49,7 +50,8 @@ class VersionBasedRetentionPolicyTest {
 	@Test
 	void when_LessMembersThanToKeep_then_VersionBasedRetentionPolicyReturnsFalse() {
 		MemberProperties memberProperties = getMemberProperties("id", "1", LocalDateTime.now());
-		when(memberPropertiesRepository.getMemberPropertiesOfVersionAndView("1", viewName)).thenReturn(List.of(memberProperties));
+		when(memberPropertiesRepository.getMemberPropertiesOfVersionAndView("1", viewName))
+				.thenReturn(List.of(memberProperties));
 
 		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties, viewName);
 

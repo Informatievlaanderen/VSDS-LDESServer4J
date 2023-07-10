@@ -54,7 +54,7 @@ class TreeNodeRemoverImplTest {
 
 		InOrder inOrder = inOrder(memberRepository, fragmentRepository, treeMemberRemover);
 		inOrder.verify(memberRepository).removeViewReferenceOfMember("id", viewName);
-		inOrder.verify(treeMemberRemover).deletingMemberFromCollection("id", "collection");
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection("id");
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -65,7 +65,7 @@ class TreeNodeRemoverImplTest {
 		treeNodeRemover.handleMemberDeletedEvent(memberDeletedEvent);
 
 		InOrder inOrder = inOrder(treeMemberRemover);
-		inOrder.verify(treeMemberRemover).deletingMemberFromCollection("id", "collection");
+		inOrder.verify(treeMemberRemover).deletingMemberFromCollection("id");
 		inOrder.verifyNoMoreInteractions();
 	}
 

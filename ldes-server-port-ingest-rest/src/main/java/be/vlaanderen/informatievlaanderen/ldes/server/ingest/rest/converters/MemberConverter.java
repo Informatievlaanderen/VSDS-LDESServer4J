@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
@@ -10,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfForma
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpInputMessage;
@@ -87,7 +85,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 				.listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
 				.nextOptional()
 				.map(statement -> collectionName + "/" + statement.getSubject().toString())
-				.orElseThrow(() ->  new MalformedMemberIdException(memberType));
+				.orElseThrow(() -> new MalformedMemberIdException(memberType));
 	}
 
 }

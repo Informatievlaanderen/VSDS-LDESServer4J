@@ -24,13 +24,13 @@ Feature: MemberRepository
 
   Scenario: Retrieving MemberProperties with same VersionOf
     Given The following MemberProperties
-      | id                                      | collectionName      | versionOf                             | timestamp               |
-      | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
-      | http://test-data/mobility-hindrances/1/2 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
-      | http://test-data/mobility-hindrances/2/1 | mobility-hindrances | http://test-data/mobility-hindrances/2 | 2023-07-05T15:28:49.665 |
-      | http://test-data/mobility-hindrances/1/3 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
+      | id                                      | collectionName      | versionOf                             | timestamp               | viewReference |
+      | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 | by-page |
+      | http://test-data/mobility-hindrances/1/2 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 | by-page |
+      | http://test-data/mobility-hindrances/2/1 | mobility-hindrances | http://test-data/mobility-hindrances/2 | 2023-07-05T15:28:49.665 | by-page |
+      | http://test-data/mobility-hindrances/1/3 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 | by-page |
     When I save the MemberProperties using the MemberPropertiesRepository
-    And I retrieve all MemberProperties with versionOf "http://test-data/mobility-hindrances/1"
+    And I retrieve all MemberProperties with versionOf "http://test-data/mobility-hindrances/1" from view "by-page"
     Then I have retrieved 3 MemberProperties
     And The retrieved MemberProperties contains MemberProperties 1 of the table
     And The retrieved MemberProperties contains MemberProperties 2 of the table

@@ -23,9 +23,9 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-											LdesFragmentRepository ldesFragmentRepository,
-											RootFragmentCreator rootFragmentCreator,
-											MemberRepository memberRepository, ApplicationEventPublisher applicationEventPublisher) {
+			LdesFragmentRepository ldesFragmentRepository,
+			RootFragmentCreator rootFragmentCreator,
+			MemberRepository memberRepository, ApplicationEventPublisher applicationEventPublisher) {
 		this.applicationContext = applicationContext;
 		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.rootFragmentCreator = rootFragmentCreator;

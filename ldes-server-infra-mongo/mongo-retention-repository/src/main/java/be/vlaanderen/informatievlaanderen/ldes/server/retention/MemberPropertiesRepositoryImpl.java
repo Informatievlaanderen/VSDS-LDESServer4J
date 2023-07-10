@@ -17,8 +17,11 @@ import java.util.stream.Stream;
 @Component
 public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepository {
 
+	public static final String ID = "_id";
 	public static final String VIEWS = "views";
+	private static final String COLLECTION = "collectionName";
 	private static final String VERSION_OF = "versionOf";
+	private static final String TIMESTAMP = "timestamp";
 	private final MemberPropertiesEntityRepository memberPropertiesEntityRepository;
 	private final MemberPropertiesEntityMapper memberPropertiesEntityMapper;
 	private final MongoTemplate mongoTemplate;
@@ -30,16 +33,16 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		this.mongoTemplate = mongoTemplate;
 	}
 
-    @Override
-    public void saveMemberPropertiesWithoutViews(MemberProperties memberProperties) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(memberProperties.getId()));
-        Update update = new Update();
-        update.set("collectionName", memberProperties.getCollectionName());
-        update.set("versionOf", memberProperties.getVersionOf());
-        update.set("timestamp", memberProperties.getTimestamp());
-        mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
-    }
+	@Override
+	public void saveMemberPropertiesWithoutViews(MemberProperties memberProperties) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(ID).is(memberProperties.getId()));
+		Update update = new Update();
+		update.set(COLLECTION, memberProperties.getCollectionName());
+		update.set(VERSION_OF, memberProperties.getVersionOf());
+		update.set(TIMESTAMP, memberProperties.getTimestamp());
+		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
+	}
 
 	@Override
 	public void save(MemberProperties memberProperties) {
@@ -54,7 +57,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public synchronized void addViewReference(String id, String viewName) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(id));
+		query.addCriteria(Criteria.where(ID).is(id));
 		Update update = new Update();
 		update.push(VIEWS, viewName);
 		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
@@ -81,7 +84,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public void removeViewReference(String id, String viewName) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(id));
+		query.addCriteria(Criteria.where(ID).is(id));
 		Update update = new Update();
 		update.pull(VIEWS, viewName);
 		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
@@ -90,7 +93,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public void removeMemberPropertiesOfCollection(String collectionName) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("collectionName").is(collectionName));
+		query.addCriteria(Criteria.where(COLLECTION).is(collectionName));
 		mongoTemplate.remove(query, MemberPropertiesEntity.class);
 	}
 

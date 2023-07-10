@@ -22,13 +22,14 @@ public class SnapshotConfig {
 	@Bean
 	@Qualifier("snapshot-fragmentation")
 	public FragmentationStrategy snapshotFragmentationStrategy(ApplicationContext applicationContext,
-															   LdesFragmentRepository ldesFragmentRepository, MemberRepository memberRepository,
-															   NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
+			LdesFragmentRepository ldesFragmentRepository, MemberRepository memberRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
 		FragmentationStrategyWrapper fragmentationStrategyWrapper = (FragmentationStrategyWrapper) applicationContext
 				.getBean(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
 		return fragmentationStrategyWrapper.wrapFragmentationStrategy(
 				applicationContext,
-				new FragmentationStrategyImpl(ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor, eventPublisher),
+				new FragmentationStrategyImpl(ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor,
+						eventPublisher),
 				new ConfigProperties(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES));
 
 	}

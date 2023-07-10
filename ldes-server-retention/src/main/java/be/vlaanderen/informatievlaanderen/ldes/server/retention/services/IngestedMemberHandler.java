@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+
 @Component
 public class IngestedMemberHandler {
 
@@ -34,7 +36,8 @@ public class IngestedMemberHandler {
 		EventStreamProperties eventStreamProperties = eventStreamCollection
 				.getEventStreamProperties(event.collectionName());
 		LocalDateTime timestamp = localDateTimeConverter
-				.getLocalDateTime((LiteralImpl) extractPropertyFromModel(event.model(), eventStreamProperties.getTimestampPath()));
+				.getLocalDateTime((LiteralImpl) extractPropertyFromModel(event.model(),
+						eventStreamProperties.getTimestampPath()));
 		String versionOf = extractPropertyFromModel(event.model(), eventStreamProperties.getVersionOfPath()).toString();
 		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf,
 				timestamp);
@@ -45,7 +48,7 @@ public class IngestedMemberHandler {
 		return model
 				.listStatements(null, createProperty(propertyPath), (RDFNode) null)
 				.nextOptional()
-				.map(statement -> statement.getObject())
+				.map(Statement::getObject)
 				.orElseThrow(() -> new MissingStatementException("property " + propertyPath));
 	}
 

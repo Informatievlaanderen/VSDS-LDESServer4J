@@ -14,5 +14,5 @@ public interface MemberRepository {
 
 	void deleteMembersByCollection(String collectionName);
 
-    void deleteMember(String memberId);
+	void deleteMember(String memberId);
 }

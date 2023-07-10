@@ -51,7 +51,7 @@ class IngestedMemberHandlerTest {
 
         ingestedMemberHandler.handleMemberIngestedEvent(event);
 
-        verify(memberPropertiesRepository, times(1)).save(captor.capture());
+        verify(memberPropertiesRepository).saveMemberPropertiesWithoutViews(captor.capture());
         assertEquals("version", captor.getValue().getVersionOf());
         assertEquals(LocalDateTime.parse("2022-09-28T07:14:00.000"), captor.getValue().getTimestamp());
     }

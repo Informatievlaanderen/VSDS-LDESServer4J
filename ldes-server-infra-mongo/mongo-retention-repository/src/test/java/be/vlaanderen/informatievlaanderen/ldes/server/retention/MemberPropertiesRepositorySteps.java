@@ -22,11 +22,13 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 	public MemberProperties memberPropertiesEntryTransformer(Map<String, String> row) {
 		String string = LocalDateTime.now().toString();
 		System.out.println(string);
-		return new MemberProperties(
+		MemberProperties properties = new MemberProperties(
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp")));
+		properties.addViewReference(row.get("viewReference"));
+		return properties;
 	}
 
 	@Given("The following MemberProperties")
@@ -54,8 +56,8 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		assertTrue(retrievedMemberProperties.get(0).containsViewReference(view));
 	}
 
-	@And("I retrieve all MemberProperties with versionOf {string}")
-	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf) {
+	@And("I retrieve all MemberProperties with versionOf {string} from view {string}")
+	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf, String viewName) {
 		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersionAndView(versionOf, viewName);
 	}
 

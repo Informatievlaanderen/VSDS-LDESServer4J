@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ class FragmentationStrategyImplTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
-
+	private final ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			ldesFragmentRepository,
 			memberRepository, nonCriticalTasksExecutor, applicationEventPublisher);

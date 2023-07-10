@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ class FragmentationStrategyCreatorImplTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
+	private final ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
 	@BeforeEach

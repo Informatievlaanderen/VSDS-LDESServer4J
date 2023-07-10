@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.servic
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_FRAGMENTATION_PROPERTIES;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
@@ -18,6 +19,7 @@ class SnapshotConfigTest {
 	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
+	private final ApplicationEventPublisher applicationEventPublisher = mock(ApplicationEventPublisher.class);
 
 	@Test
 	void test() {
@@ -26,7 +28,7 @@ class SnapshotConfigTest {
 
 		SnapshotConfig snapshotConfig = new SnapshotConfig();
 		FragmentationStrategy fragmentationStrategy = snapshotConfig.snapshotFragmentationStrategy(applicationContext,
-				ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor);
+				ldesFragmentRepository, memberRepository, nonCriticalTasksExecutor, applicationEventPublisher);
 
 		verify(fragmentationStrategyWrapper).wrapFragmentationStrategy(eq(applicationContext),
 				any(FragmentationStrategy.class), eq(new ConfigProperties(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES)));

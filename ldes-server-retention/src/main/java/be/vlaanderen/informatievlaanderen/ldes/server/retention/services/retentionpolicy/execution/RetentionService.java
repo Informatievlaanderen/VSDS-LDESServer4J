@@ -48,7 +48,7 @@ public class RetentionService {
 	}
 
 	private boolean memberMatchesAllRetentionPoliciesOfView(List<RetentionPolicy> retentionPolicies,
-															String viewName, MemberProperties memberProperties) {
+			String viewName, MemberProperties memberProperties) {
 		return retentionPolicies
 				.stream()
 				.allMatch(retentionPolicy -> retentionPolicy.matchesPolicyOfView(memberProperties, viewName));
