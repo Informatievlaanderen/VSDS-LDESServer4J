@@ -6,9 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.AllocationEntityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
-@Component
 public class AllocationMongoRepository implements AllocationRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(AllocationMongoRepository.class);

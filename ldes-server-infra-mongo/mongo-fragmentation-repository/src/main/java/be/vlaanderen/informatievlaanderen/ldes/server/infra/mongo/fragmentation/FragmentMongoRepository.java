@@ -12,14 +12,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-@Component
 public class FragmentMongoRepository implements FragmentRepository {
 
 	private static final Logger log = LoggerFactory.getLogger(FragmentMongoRepository.class);
