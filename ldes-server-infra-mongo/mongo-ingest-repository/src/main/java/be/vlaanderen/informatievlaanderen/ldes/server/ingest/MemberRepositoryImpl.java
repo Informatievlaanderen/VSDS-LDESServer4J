@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntity
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -34,6 +35,13 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public Optional<Member> findById(String id) {
 		return memberEntityRepository.findById(id).map(memberEntityMapper::toMember);
+	}
+
+	@Override
+	public List<Member> findAllByIds(List<String> memberIds) {
+		return memberEntityRepository.findAllByIdIn(memberIds)
+				.map(memberEntityMapper::toMember)
+				.toList();
 	}
 
 	@Override

@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -63,8 +62,8 @@ class TreeNodeFactoryImplTest {
 				"valueType", "relation"));
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
 		Member member = new Member("member", COLLECTION_NAME, 0L, null);
-		when(allocationRepository.findMembersForFragment(TREE_NODE_ID.asString())).thenReturn(Stream.of("member"));
-		when(memberRepository.findById("member")).thenReturn(Optional.of(member));
+		when(allocationRepository.findMemberIdsForFragment(TREE_NODE_ID.asString())).thenReturn(List.of("member"));
+		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

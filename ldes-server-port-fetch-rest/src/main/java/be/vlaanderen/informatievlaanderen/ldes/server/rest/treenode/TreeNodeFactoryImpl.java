@@ -12,7 +12,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.Tre
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class TreeNodeFactoryImpl implements TreeNodeFactory {
@@ -35,11 +34,8 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));
 
-		List<Member> members = allocationRepository.findMembersForFragment(treeNodeId.asString())
-				.map(memberRepository::findById)
-				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.toList();
+		List<String> memberIds = allocationRepository.findMemberIdsForFragment(treeNodeId.asString());
+		List<Member> members = memberRepository.findAllByIds(memberIds);
 		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
 				members, collectionName);
