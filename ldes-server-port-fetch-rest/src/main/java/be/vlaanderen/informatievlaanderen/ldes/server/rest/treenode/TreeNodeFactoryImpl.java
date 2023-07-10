@@ -36,7 +36,6 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 						() -> new MissingFragmentException(extendedTreeNodeId));
 
 		List<Member> members = allocationRepository.findMembersForFragment(treeNodeId.asString())
-				.stream()
 				.map(memberRepository::findById)
 				.filter(Optional::isPresent)
 				.map(Optional::get)

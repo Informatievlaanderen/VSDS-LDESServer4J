@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 public interface AllocationRepository {
 	void allocateMemberToFragment(String memberId, ViewName viewName, String fragmentId);
@@ -13,5 +13,5 @@ public interface AllocationRepository {
 
 	void unallocateMembersFromCollection(String collectionName);
 
-	List<String> findMembersForFragment(String fragmentId);
+	Stream<String> findMembersForFragment(String fragmentId);
 }

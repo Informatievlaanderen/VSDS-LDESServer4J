@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 public class AllocationMongoRepository implements AllocationRepository {
 
@@ -35,11 +35,9 @@ public class AllocationMongoRepository implements AllocationRepository {
 		repository.deleteAllByAllocationKey_ViewName_CollectionName(collectionName);
 	}
 
-	public List<String> findMembersForFragment(String fragmentId) {
+	public Stream<String> findMembersForFragment(String fragmentId) {
 		return repository.findAllByFragmentId(fragmentId)
-				.stream()
 				.map(AllocationEntity::getAllocationKey)
-				.map(AllocationEntity.AllocationKey::memberId)
-				.toList();
+				.map(AllocationEntity.AllocationKey::memberId);
 	}
 }
