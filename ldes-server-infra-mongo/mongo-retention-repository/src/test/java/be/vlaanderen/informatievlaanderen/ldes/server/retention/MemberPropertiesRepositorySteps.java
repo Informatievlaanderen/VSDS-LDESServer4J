@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -29,6 +30,12 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 				LocalDateTime.parse(row.get("timestamp")));
 		properties.addViewReference(row.get("viewReference"));
 		return properties;
+	}
+
+	@Before
+	public void initialization() {
+		retrievedMemberProperties = List.of();
+		memberPropertiesRepository.removeMemberPropertiesOfCollection("mobility-hindrances");
 	}
 
 	@Given("The following MemberProperties")
