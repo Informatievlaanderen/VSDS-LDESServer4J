@@ -33,7 +33,8 @@ public class AllocationMongoRepositoryIT {
 		allocationMongoRepository.unallocateMemberFromView(memberId, viewName);
 
 		verify(allocationEntityRepository, times(1))
-				.deleteByAllocationKey_MemberIdAndViewName_CollectionName(eq(memberId), eq(viewName.getCollectionName()));
+				.deleteByAllocationKey_MemberIdAndViewName_CollectionName(eq(memberId),
+						eq(viewName.getCollectionName()));
 	}
 
 }

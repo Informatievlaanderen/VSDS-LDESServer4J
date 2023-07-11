@@ -27,7 +27,8 @@ public class AllocationEntity {
 		return viewName;
 	}
 
-	@Override public boolean equals(Object o) {
+	@Override
+	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
@@ -37,7 +38,8 @@ public class AllocationEntity {
 				that.viewName);
 	}
 
-	@Override public int hashCode() {
+	@Override
+	public int hashCode() {
 		return Objects.hash(allocationKey, viewName);
 	}
 
