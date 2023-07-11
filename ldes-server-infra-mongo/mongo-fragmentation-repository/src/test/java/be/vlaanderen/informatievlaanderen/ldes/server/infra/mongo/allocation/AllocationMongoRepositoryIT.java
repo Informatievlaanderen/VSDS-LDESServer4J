@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
 
-public class AllocationMongoRepositoryIT {
+class AllocationMongoRepositoryIT {
 
 	private final AllocationEntityRepository allocationEntityRepository = mock(AllocationEntityRepository.class);
 	private final AllocationMongoRepository allocationMongoRepository = new AllocationMongoRepository(
@@ -23,7 +23,7 @@ public class AllocationMongoRepositoryIT {
 		AllocationEntity allocation = new AllocationEntity(new AllocationKey(memberId, fragmentId), viewName);
 		allocationMongoRepository.allocateMemberToFragment(memberId, viewName, fragmentId);
 
-		verify(allocationEntityRepository, times(1)).save(eq(allocation));
+		verify(allocationEntityRepository, times(1)).save(allocation);
 	}
 
 	@Test
@@ -33,8 +33,7 @@ public class AllocationMongoRepositoryIT {
 		allocationMongoRepository.unallocateMemberFromView(memberId, viewName);
 
 		verify(allocationEntityRepository, times(1))
-				.deleteByAllocationKey_MemberIdAndViewName_CollectionName(eq(memberId),
-						eq(viewName.getCollectionName()));
+				.deleteByAllocationKey_MemberIdAndViewName_CollectionName(memberId, viewName.getCollectionName());
 	}
 
 }

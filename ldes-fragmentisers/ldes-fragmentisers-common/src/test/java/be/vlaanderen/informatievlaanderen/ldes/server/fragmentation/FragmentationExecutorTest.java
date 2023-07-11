@@ -87,9 +87,11 @@ class FragmentationExecutorTest {
 		Member member = mock(Member.class);
 		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
 
+		MemberIngestedEvent memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getLdesMemberId(),
+				member.getCollectionName());
+
 		MissingRootFragmentException missingRootFragmentException = assertThrows(MissingRootFragmentException.class,
-				() -> fragmentationExecutor.executeFragmentation(new MemberIngestedEvent(member.getModel(), member.getLdesMemberId(),
-						member.getCollectionName())));
+				() -> fragmentationExecutor.executeFragmentation(memberIngestedEvent));
 
 		assertEquals("Could not retrieve root fragment for view collectionName/view",
 				missingRootFragmentException.getMessage());
