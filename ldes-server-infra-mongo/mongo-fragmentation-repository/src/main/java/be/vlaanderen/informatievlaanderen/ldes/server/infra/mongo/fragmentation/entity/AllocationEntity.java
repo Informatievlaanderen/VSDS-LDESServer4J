@@ -12,38 +12,36 @@ public class AllocationEntity {
 	@Id
 	private final AllocationKey allocationKey;
 	@Indexed
-	private final String fragmentId;
+	private final ViewName viewName;
 
-	public AllocationEntity(AllocationKey allocationKey, String fragmentId) {
+	public AllocationEntity(AllocationKey allocationKey, ViewName viewName) {
 		this.allocationKey = allocationKey;
-		this.fragmentId = fragmentId;
+		this.viewName = viewName;
 	}
 
 	public AllocationKey getAllocationKey() {
 		return allocationKey;
 	}
 
-	public String getFragmentId() {
-		return fragmentId;
+	public ViewName getViewName() {
+		return viewName;
 	}
 
-	@Override
-	public boolean equals(Object o) {
+	@Override public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
 		AllocationEntity that = (AllocationEntity) o;
-		return Objects.equals(allocationKey, that.allocationKey) && Objects.equals(fragmentId,
-				that.fragmentId);
+		return Objects.equals(allocationKey, that.allocationKey) && Objects.equals(viewName,
+				that.viewName);
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(allocationKey, fragmentId);
+	@Override public int hashCode() {
+		return Objects.hash(allocationKey, viewName);
 	}
 
-	public record AllocationKey(String memberId, ViewName viewName) {
+	public record AllocationKey(String memberId, String fragmentId) {
 	}
 
 }

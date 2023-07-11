@@ -20,7 +20,7 @@ public class AllocationMongoRepositoryIT {
 		String memberId = "memberId";
 		String fragmentId = "fragmentId";
 		ViewName viewName = ViewName.fromString("collection" + "/" + "view");
-		AllocationEntity allocation = new AllocationEntity(new AllocationKey(memberId, viewName), fragmentId);
+		AllocationEntity allocation = new AllocationEntity(new AllocationKey(memberId, fragmentId), viewName);
 		allocationMongoRepository.allocateMemberToFragment(memberId, viewName, fragmentId);
 
 		verify(allocationEntityRepository, times(1)).save(eq(allocation));
@@ -30,10 +30,10 @@ public class AllocationMongoRepositoryIT {
 	void when_UnallocateMemberFromView_AllocationIsSaved() {
 		String memberId = "memberId";
 		ViewName viewName = ViewName.fromString("collection" + "/" + "view");
-		AllocationKey allocation = new AllocationKey(memberId, viewName);
 		allocationMongoRepository.unallocateMemberFromView(memberId, viewName);
 
-		verify(allocationEntityRepository, times(1)).deleteById(eq(allocation));
+		verify(allocationEntityRepository, times(1))
+				.deleteByAllocationKey_MemberIdAndViewName_CollectionName(eq(memberId), eq(viewName.getCollectionName()));
 	}
 
 }
