@@ -95,4 +95,9 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	public void iExpectAListOfMembers(int memberCount) {
 		assertEquals(memberCount, members.size());
 	}
+
+	@When("I delete the member with id {string}")
+	public void iDeleteMemberWithId(String memberId) {
+		memberRepository.deleteMember(memberId);
+	}
 }

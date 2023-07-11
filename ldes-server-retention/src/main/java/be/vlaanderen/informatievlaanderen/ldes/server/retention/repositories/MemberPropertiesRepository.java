@@ -8,13 +8,15 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
+	void saveMemberPropertiesWithoutViews(MemberProperties memberProperties);
+
 	void save(MemberProperties memberProperties);
 
 	Optional<MemberProperties> retrieve(String id);
 
 	void addViewReference(String id, String viewName);
 
-	List<MemberProperties> getMemberPropertiesOfVersion(String versionOf);
+	List<MemberProperties> getMemberPropertiesOfVersionAndView(String versionOf, String viewName);
 
 	Stream<MemberProperties> getMemberPropertiesWithViewReference(String viewName);
 

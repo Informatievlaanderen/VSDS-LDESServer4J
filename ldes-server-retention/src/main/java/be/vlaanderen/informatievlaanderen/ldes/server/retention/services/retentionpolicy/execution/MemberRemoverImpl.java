@@ -29,7 +29,7 @@ public class MemberRemoverImpl implements MemberRemover {
 		if (memberProperties.hasNoViewReferences()) {
 			memberPropertiesRepository.deleteById(memberProperties.getId());
 			applicationEventPublisher.publishEvent(
-					new MemberDeletedEvent(memberProperties.getId(), memberProperties.getCollectionName()));
+					new MemberDeletedEvent(memberProperties.getId()));
 		}
 	}
 }

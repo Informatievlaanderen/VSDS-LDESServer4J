@@ -14,7 +14,7 @@ public class TimeBasedRetentionPolicy implements RetentionPolicy {
 	}
 
 	@Override
-	public boolean matchesPolicy(MemberProperties memberProperties) {
+	public boolean matchesPolicyOfView(MemberProperties memberProperties, String viewName) {
 		LocalDateTime timestamp = memberProperties.getTimestamp();
 		return timestamp != null
 				&& LocalDateTime.now().isAfter(timestamp.plus(duration));

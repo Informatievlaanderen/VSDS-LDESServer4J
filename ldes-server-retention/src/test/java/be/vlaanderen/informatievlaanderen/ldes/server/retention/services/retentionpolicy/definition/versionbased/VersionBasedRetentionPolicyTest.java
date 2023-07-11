@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class VersionBasedRetentionPolicyTest {
 
+	private final String viewName = "view";
 	@Mock
 	private MemberPropertiesRepository memberPropertiesRepository;
 
@@ -32,7 +33,7 @@ class VersionBasedRetentionPolicyTest {
 	void when_TimestampIsNull_then_VersionBasedRetentionPolicyReturnsFalse() {
 		MemberProperties memberProperties = getMemberProperties("id", "1", null);
 
-		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicy(memberProperties);
+		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties, viewName);
 
 		assertFalse(memberMatchesPolicy);
 	}
@@ -41,7 +42,7 @@ class VersionBasedRetentionPolicyTest {
 	void when_VersionOfIsNull_then_VersionBasedRetentionPolicyReturnsFalse() {
 		MemberProperties memberProperties = getMemberProperties("id", null, LocalDateTime.now());
 
-		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicy(memberProperties);
+		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties, viewName);
 
 		assertFalse(memberMatchesPolicy);
 	}
@@ -49,9 +50,10 @@ class VersionBasedRetentionPolicyTest {
 	@Test
 	void when_LessMembersThanToKeep_then_VersionBasedRetentionPolicyReturnsFalse() {
 		MemberProperties memberProperties = getMemberProperties("id", "1", LocalDateTime.now());
-		when(memberPropertiesRepository.getMemberPropertiesOfVersion("1")).thenReturn(List.of(memberProperties));
+		when(memberPropertiesRepository.getMemberPropertiesOfVersionAndView("1", viewName))
+				.thenReturn(List.of(memberProperties));
 
-		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicy(memberProperties);
+		boolean memberMatchesPolicy = versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties, viewName);
 
 		assertFalse(memberMatchesPolicy);
 	}
@@ -63,13 +65,13 @@ class VersionBasedRetentionPolicyTest {
 		MemberProperties memberProperties3 = getMemberProperties("1/3", "1", LocalDateTime.now().plusMinutes(3));
 		MemberProperties memberProperties4 = getMemberProperties("1/4", "1", LocalDateTime.now().plusMinutes(4));
 
-		when(memberPropertiesRepository.getMemberPropertiesOfVersion("1"))
+		when(memberPropertiesRepository.getMemberPropertiesOfVersionAndView("1", viewName))
 				.thenReturn(List.of(memberProperties2, memberProperties3, memberProperties1, memberProperties4));
 
-		assertTrue(versionBasedRetentionPolicy.matchesPolicy(memberProperties1));
-		assertTrue(versionBasedRetentionPolicy.matchesPolicy(memberProperties2));
-		assertFalse(versionBasedRetentionPolicy.matchesPolicy(memberProperties3));
-		assertFalse(versionBasedRetentionPolicy.matchesPolicy(memberProperties4));
+		assertTrue(versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties1, viewName));
+		assertTrue(versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties2, viewName));
+		assertFalse(versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties3, viewName));
+		assertFalse(versionBasedRetentionPolicy.matchesPolicyOfView(memberProperties4, viewName));
 	}
 
 	private MemberProperties getMemberProperties(String memberId, String versionOf, LocalDateTime timestamp) {
