@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
-public class MongoAutoConfiguration {
+public class MongoFragmentationAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean

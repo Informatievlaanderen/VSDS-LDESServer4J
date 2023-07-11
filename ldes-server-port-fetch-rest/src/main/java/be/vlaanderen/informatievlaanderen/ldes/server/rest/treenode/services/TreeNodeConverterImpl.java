@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
@@ -10,10 +10,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStrea
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
