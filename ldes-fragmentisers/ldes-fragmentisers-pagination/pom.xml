@@ -27,6 +27,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-fragmentisers-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

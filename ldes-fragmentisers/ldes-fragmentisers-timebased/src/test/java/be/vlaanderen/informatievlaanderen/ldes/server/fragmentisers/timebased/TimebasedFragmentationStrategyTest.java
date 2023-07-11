@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
@@ -17,12 +17,7 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TimebasedFragmentationStrategyTest {
 
@@ -30,17 +25,17 @@ class TimebasedFragmentationStrategyTest {
 	private final OpenFragmentProvider openFragmentProvider = mock(OpenFragmentProvider.class);
 	private final FragmentationStrategy decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 	private FragmentationStrategy fragmentationStrategy;
-	private static LdesFragment PARENT_FRAGMENT;
-	private static LdesFragment OPEN_FRAGMENT;
-	private final LdesFragmentRepository ldesFragmentRepository = mock(LdesFragmentRepository.class);
+	private static Fragment PARENT_FRAGMENT;
+	private static Fragment OPEN_FRAGMENT;
+	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		OPEN_FRAGMENT = PARENT_FRAGMENT.createChild(new FragmentPair("generatedAtTime", "someTime"));
 		fragmentationStrategy = new TimebasedFragmentationStrategy(decoratedFragmentationStrategy,
 				openFragmentProvider, ObservationRegistry.create(),
-				ldesFragmentRepository);
+				fragmentRepository);
 	}
 
 	@Test
@@ -51,14 +46,14 @@ class TimebasedFragmentationStrategyTest {
 				.thenReturn(new ImmutablePair<>(OPEN_FRAGMENT, false));
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				member, any(Observation.class));
+				member.getLdesMemberId(), member.getModel(), any(Observation.class));
 
-		InOrder inOrder = inOrder(openFragmentProvider, ldesFragmentRepository,
+		InOrder inOrder = inOrder(openFragmentProvider, fragmentRepository,
 				decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
-		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member), any(Observation.class));
+		inOrder.verify(decoratedFragmentationStrategy, times(1))
+				.addMemberToFragment(eq(OPEN_FRAGMENT), any(), any(), any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -70,17 +65,16 @@ class TimebasedFragmentationStrategyTest {
 				.thenReturn(new ImmutablePair<>(OPEN_FRAGMENT, true));
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				member, any(Observation.class));
+				member.getLdesMemberId(), member.getModel(), any(Observation.class));
 
-		InOrder inOrder = inOrder(openFragmentProvider, ldesFragmentRepository,
+		InOrder inOrder = inOrder(openFragmentProvider, fragmentRepository,
 				decoratedFragmentationStrategy);
 		inOrder.verify(openFragmentProvider,
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
-		inOrder.verify(ldesFragmentRepository,
+		inOrder.verify(fragmentRepository,
 				times(1)).saveFragment(PARENT_FRAGMENT);
-		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToFragment(eq(OPEN_FRAGMENT), eq(member),
-						any(Observation.class));
+		inOrder.verify(decoratedFragmentationStrategy, times(1))
+				.addMemberToFragment(eq(OPEN_FRAGMENT), any(), any(), any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 }

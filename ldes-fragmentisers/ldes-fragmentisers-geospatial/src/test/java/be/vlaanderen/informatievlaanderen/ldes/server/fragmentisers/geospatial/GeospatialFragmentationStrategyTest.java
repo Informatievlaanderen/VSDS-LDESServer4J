@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.fragments.GeospatialFragmentCreator;
 import io.micrometer.observation.Observation;
@@ -19,25 +19,19 @@ import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class GeospatialFragmentationStrategyTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final LdesFragment PARENT_FRAGMENT = new LdesFragment(
+	private static final Fragment PARENT_FRAGMENT = new Fragment(
 			new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-	private static final LdesFragment ROOT_TILE_FRAGMENT = PARENT_FRAGMENT
+	private static final Fragment ROOT_TILE_FRAGMENT = PARENT_FRAGMENT
 			.createChild(new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT));
 
 	private GeospatialBucketiser geospatialBucketiser;
 	private GeospatialFragmentCreator fragmentCreator;
-	private final LdesFragmentRepository treeRelationsRepository = mock(LdesFragmentRepository.class);
+	private final FragmentRepository treeRelationsRepository = mock(FragmentRepository.class);
 	private FragmentationStrategy decoratedFragmentationStrategy;
 	private GeospatialFragmentationStrategy geospatialFragmentationStrategy;
 
@@ -58,29 +52,29 @@ class GeospatialFragmentationStrategyTest {
 	void when_MemberIsAddedToFragment_GeospatialFragmentationIsApplied() {
 		Member member = mock(Member.class);
 
-		when(geospatialBucketiser.bucketise(member)).thenReturn(Set.of("1/1/1",
+		when(geospatialBucketiser.bucketise(member.getModel())).thenReturn(Set.of("1/1/1",
 				"2/2/2", "3/3/3"));
-		LdesFragment tileFragmentOne = mockCreationGeospatialFragment("1/1/1");
-		LdesFragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2");
-		LdesFragment tileFragmentThree = mockCreationGeospatialFragment("3/3/3");
+		Fragment tileFragmentOne = mockCreationGeospatialFragment("1/1/1");
+		Fragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2");
+		Fragment tileFragmentThree = mockCreationGeospatialFragment("3/3/3");
 
-		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member,
-				mock(Observation.class));
+		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.getLdesMemberId(),
+				member.getModel(), mock(Observation.class));
 
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentOne),
-						eq(member), any(Observation.class));
+						any(), any(), any(Observation.class));
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentTwo),
-						eq(member), any(Observation.class));
+						any(), any(), any(Observation.class));
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentThree),
-						eq(member), any(Observation.class));
+						any(), any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
-	private LdesFragment mockCreationGeospatialFragment(String tile) {
-		LdesFragment tileFragment = PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
+	private Fragment mockCreationGeospatialFragment(String tile) {
+		Fragment tileFragment = PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
 		when(fragmentCreator.getOrCreateTileFragment(PARENT_FRAGMENT, tile,
 				ROOT_TILE_FRAGMENT))
 				.thenReturn(tileFragment);

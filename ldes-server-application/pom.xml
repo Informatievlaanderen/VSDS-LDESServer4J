@@ -52,6 +52,11 @@
                     <artifactId>mongo-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -130,26 +135,6 @@
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-fragmentisers-pagination</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>queue-none</id>
-            <dependencies>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-queue-none</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>queue-in-memory</id>
-            <dependencies>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-queue-in-memory</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

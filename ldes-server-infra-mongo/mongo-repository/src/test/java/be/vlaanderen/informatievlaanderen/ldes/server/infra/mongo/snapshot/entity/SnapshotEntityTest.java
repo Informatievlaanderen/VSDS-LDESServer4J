@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SnapshotEntityTest {
 

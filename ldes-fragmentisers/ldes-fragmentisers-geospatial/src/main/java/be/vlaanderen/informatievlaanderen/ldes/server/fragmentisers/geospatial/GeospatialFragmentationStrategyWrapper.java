@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.GeospatialBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
@@ -17,18 +17,18 @@ public class GeospatialFragmentationStrategyWrapper implements FragmentationStra
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
-		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
+		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		GeospatialConfig geospatialConfig = createGeospatialConfig(fragmentationProperties);
 		GeospatialBucketiser geospatialBucketiser = new GeospatialBucketiser(geospatialConfig);
 		TileFragmentRelationsAttributer tileFragmentRelationsAttributer = new TileFragmentRelationsAttributer(
-				ldesFragmentRepository);
-		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(ldesFragmentRepository,
+				fragmentRepository);
+		GeospatialFragmentCreator geospatialFragmentCreator = new GeospatialFragmentCreator(fragmentRepository,
 				tileFragmentRelationsAttributer);
 
 		return new GeospatialFragmentationStrategy(fragmentationStrategy,
-				geospatialBucketiser, geospatialFragmentCreator, observationRegistry, ldesFragmentRepository);
+				geospatialBucketiser, geospatialFragmentCreator, observationRegistry, fragmentRepository);
 	}
 
 	private GeospatialConfig createGeospatialConfig(ConfigProperties properties) {
