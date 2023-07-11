@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -22,11 +23,19 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 	public MemberProperties memberPropertiesEntryTransformer(Map<String, String> row) {
 		String string = LocalDateTime.now().toString();
 		System.out.println(string);
-		return new MemberProperties(
+		MemberProperties properties = new MemberProperties(
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp")));
+		properties.addViewReference(row.get("viewReference"));
+		return properties;
+	}
+
+	@Before
+	public void initialization() {
+		retrievedMemberProperties = List.of();
+		memberPropertiesRepository.removeMemberPropertiesOfCollection("mobility-hindrances");
 	}
 
 	@Given("The following MemberProperties")
@@ -37,6 +46,11 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 	@When("I save the MemberProperties using the MemberPropertiesRepository")
 	public void iSaveTheMemberPropertiesUsingTheMemberPropertiesRepository() {
 		memberProperties.forEach(memberPropertiesRepository::save);
+	}
+
+	@When("I save the MemberProperties without view using the MemberPropertiesRepository")
+	public void iSaveTheMemberPropertiesWithoutViewUsingTheMemberPropertiesRepository() {
+		memberProperties.forEach(memberPropertiesRepository::saveMemberPropertiesWithoutViews);
 	}
 
 	@And("I add the view with name {string} to the MemberProperties with id {string}")
@@ -54,9 +68,9 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		assertTrue(retrievedMemberProperties.get(0).containsViewReference(view));
 	}
 
-	@And("I retrieve all MemberProperties with versionOf {string}")
-	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf) {
-		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersion(versionOf);
+	@And("I retrieve all MemberProperties with versionOf {string} from view {string}")
+	public void iRetrieveAllMemberPropertiesWithVersionOf(String versionOf, String viewName) {
+		retrievedMemberProperties = memberPropertiesRepository.getMemberPropertiesOfVersionAndView(versionOf, viewName);
 	}
 
 	@Then("I have retrieved {int} MemberProperties")

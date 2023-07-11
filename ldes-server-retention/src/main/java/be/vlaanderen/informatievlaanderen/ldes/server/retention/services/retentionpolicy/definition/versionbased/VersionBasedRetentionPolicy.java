@@ -31,12 +31,12 @@ public class VersionBasedRetentionPolicy implements RetentionPolicy {
 	}
 
 	@Override
-	public boolean matchesPolicy(MemberProperties memberProperties) {
+	public boolean matchesPolicyOfView(MemberProperties memberProperties, String viewName) {
 		String versionOf = memberProperties.getVersionOf();
 		LocalDateTime timestamp = memberProperties.getTimestamp();
 		if (versionOf != null && timestamp != null) {
 			List<MemberProperties> membersOfVersion = memberPropertiesRepository
-					.getMemberPropertiesOfVersion(versionOf);
+					.getMemberPropertiesOfVersionAndView(versionOf, viewName);
 			if (numberOfMembersToKeep >= membersOfVersion.size()) {
 				return false;
 			}

@@ -17,7 +17,9 @@ public class MemberPropertiesEntityMapper {
 				memberPropertiesEntity.getCollectionName(),
 				memberPropertiesEntity.getVersionOf(),
 				memberPropertiesEntity.getTimestamp());
-		memberPropertiesEntity.getViews().forEach(memberProperties::addViewReference);
+		if (memberPropertiesEntity.getViews() != null) {
+			memberPropertiesEntity.getViews().forEach(memberProperties::addViewReference);
+		}
 		return memberProperties;
 	}
 }
