@@ -103,7 +103,7 @@ class TreeNodeConverterImplTest {
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		Assertions.assertEquals(10, getNumberOfStatements(model));
+		Assertions.assertEquals(9, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyIsPartOfStatement(model);
 		Resource relationObject = model.listStatements(null, TREE_RELATION,

@@ -117,7 +117,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private List<Statement> getMemberStatements(TreeNode treeNode, Resource viewId) {
 		List<Statement> statements = new ArrayList<>();
 		treeNode.getMembers()
-				.stream().map(Member::getId)
+				.stream().map(Member::getMemberIdWithoutPrefix)
 				.forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER,
 						createResource(memberId))));
 		return statements;
