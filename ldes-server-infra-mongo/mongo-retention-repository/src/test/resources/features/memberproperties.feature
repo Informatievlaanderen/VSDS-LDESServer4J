@@ -2,10 +2,20 @@ Feature: MemberRepository
   As a user
   I want to interact with the MemberRepository to save and retrieve MemberProperties
 
-  Scenario: Saving a MemberProperties
+  Scenario: Saving a MemberProperties without view
     Given The following MemberProperties
-      | id                                      | collectionName      | versionOf                             | timestamp               |
-      | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
+      | id                                      | collectionName      | versionOf                             | timestamp               | viewReference |
+      | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 | by-page |
+    When I save the MemberProperties without view using the MemberPropertiesRepository
+    And I retrieve the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
+    Then I have retrieved 1 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties 1 of the table
+    And The retrieved MemberProperties does not have the view "by-page" as a property
+
+  Scenario: Saving a MemberProperties with view
+    Given The following MemberProperties
+      | id                                      | collectionName      | versionOf                             | timestamp               | viewReference |
+      | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 | by-page |
     When I save the MemberProperties using the MemberPropertiesRepository
     And I retrieve the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
     Then I have retrieved 1 MemberProperties

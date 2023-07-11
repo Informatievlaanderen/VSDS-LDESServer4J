@@ -70,4 +70,9 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	public void iDeleteAllTheMembersOfCollection(String collectionName) {
 		memberRepository.deleteMembersByCollection(collectionName);
 	}
+
+	@When("I delete the member with id {string}")
+	public void iDeleteMemberWithId(String memberId) {
+		memberRepository.deleteMember(memberId);
+	}
 }

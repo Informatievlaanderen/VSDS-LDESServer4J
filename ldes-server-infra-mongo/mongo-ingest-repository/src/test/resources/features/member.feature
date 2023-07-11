@@ -1,6 +1,6 @@
 Feature: MemberRepository
   As a user
-  I want to interact with the MemberRepository to save and retrieve Members
+  I want to interact with the MemberRepository to save, retrieve and delete Members
 
   Scenario: Saving a member with all attributes
     Given The following members
@@ -52,3 +52,14 @@ Feature: MemberRepository
       When I save the members using the MemberRepository
       Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
       And The member with id "http://test-data/mobility-hindrance/fantasy-id" will not exist
+
+  Scenario: Delete a member with a certain id
+    Given The following members
+      | id                                      | collectionName      | sequenceNr | versionOf                             |
+      | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
+      | http://test-data/mobility-hindrance/1/2 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
+    When I save the members using the MemberRepository
+    Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
+    When I delete the member with id "http://test-data/mobility-hindrance/1/1"
+    Then The member with id "http://test-data/mobility-hindrance/1/2" will exist
+    And The member with id "http://test-data/mobility-hindrance/1/1" will not exist
