@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,58 +17,55 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private TimeBasedFragmentCreator fragmentCreator;
-	private LdesFragmentRepository ldesFragmentRepository;
+	private FragmentRepository fragmentRepository;
 
 	@BeforeEach
 	void setUp() {
-		ldesFragmentRepository = mock(LdesFragmentRepository.class);
+		fragmentRepository = mock(FragmentRepository.class);
 		fragmentCreator = new TimeBasedFragmentCreator(
-				ldesFragmentRepository,
+				fragmentRepository,
 				createProperty(PROV_GENERATED_AT_TIME));
 	}
 
 	@Test
 	@DisplayName("Creating First Time-Based Fragment")
 	void when_NoFragmentExists_thenNewFragmentIsCreated() {
-		LdesFragment parentFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 
-		LdesFragment newFragment = fragmentCreator.createNewFragment(parentFragment);
+		Fragment newFragment = fragmentCreator.createNewFragment(parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		verifyNoInteractions(ldesFragmentRepository);
+		verifyNoInteractions(fragmentRepository);
 	}
 
 	@Test
 	@DisplayName("Creating New Time-Based Fragment")
 	void when_AFragmentAlreadyExists_thenNewFragmentIsCreatedAndRelationsAreUpdated() {
-		LdesFragment parentFragment = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 
-		LdesFragment existingLdesFragment = new LdesFragment(new LdesFragmentIdentifier(
+		Fragment existingFragment = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(GENERATED_AT_TIME,
 						"2020-12-28T09:36:37.127Z"))));
 
-		LdesFragment newFragment = fragmentCreator.createNewFragment(existingLdesFragment, parentFragment);
+		Fragment newFragment = fragmentCreator.createNewFragment(existingFragment, parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		InOrder inOrder = inOrder(ldesFragmentRepository);
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
-		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
+		InOrder inOrder = inOrder(fragmentRepository);
+		inOrder.verify(fragmentRepository, times(1)).saveFragment(existingFragment);
+		inOrder.verify(fragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
 	}
 
-	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
+	private void verifyAssertionsOnAttributesOfFragment(Fragment fragment) {
 		assertEquals("/collectionName/view?generatedAtTime",
-				ldesFragment.getFragmentIdString().split("=")[0]);
-		assertEquals(VIEW_NAME, ldesFragment.getViewName());
-		assertTrue(ldesFragment.getValueOfKey(GENERATED_AT_TIME).isPresent());
+				fragment.getFragmentIdString().split("=")[0]);
+		assertEquals(VIEW_NAME, fragment.getViewName());
+		assertTrue(fragment.getValueOfKey(GENERATED_AT_TIME).isPresent());
 	}
 }

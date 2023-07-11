@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +16,7 @@ class GeospatialRelationsAttributerTest {
 
 	private final GeospatialRelationsAttributer geospatialRelationsAttributer = new GeospatialRelationsAttributer();
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final LdesFragment CHILD_FRAGMENT = new LdesFragment(new LdesFragmentIdentifier(VIEW_NAME,
+	private static final Fragment CHILD_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME,
 			List.of(new FragmentPair(FRAGMENT_KEY_TILE,
 					"1/1/1"))));
 

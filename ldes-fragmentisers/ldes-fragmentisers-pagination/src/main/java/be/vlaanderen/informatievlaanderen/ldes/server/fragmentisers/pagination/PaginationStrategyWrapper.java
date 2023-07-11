@@ -1,43 +1,44 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.PageCreator;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationProperties.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationProperties.BIDIRECTIONAL_RELATIONS;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.config.PaginationProperties.MEMBER_LIMIT;
 
 public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
-		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
+		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		OpenPageProvider openFragmentProvider = getOpenPageProvider(fragmentationProperties,
-				ldesFragmentRepository);
+				fragmentRepository);
 		return new PaginationStrategy(fragmentationStrategy,
-				openFragmentProvider, observationRegistry, ldesFragmentRepository);
+				openFragmentProvider, observationRegistry, fragmentRepository);
 
 	}
 
 	private OpenPageProvider getOpenPageProvider(ConfigProperties properties,
-			LdesFragmentRepository ldesFragmentRepository) {
+			FragmentRepository fragmentRepository) {
 		PaginationConfig paginationConfig = createPaginationConfig(properties);
 		PageCreator timeBasedFragmentCreator = getPageCreator(
-				ldesFragmentRepository, paginationConfig.bidirectionalRelations());
-		return new OpenPageProvider(timeBasedFragmentCreator, ldesFragmentRepository,
+				fragmentRepository, paginationConfig.bidirectionalRelations());
+		return new OpenPageProvider(timeBasedFragmentCreator, fragmentRepository,
 				paginationConfig.memberLimit());
 	}
 
-	private PageCreator getPageCreator(LdesFragmentRepository ldesFragmentRepository, boolean bidirectionalRelations) {
+	private PageCreator getPageCreator(FragmentRepository fragmentRepository, boolean bidirectionalRelations) {
 		return new PageCreator(
-				ldesFragmentRepository, bidirectionalRelations);
+				fragmentRepository, bidirectionalRelations);
 	}
 
 	private PaginationConfig createPaginationConfig(ConfigProperties properties) {

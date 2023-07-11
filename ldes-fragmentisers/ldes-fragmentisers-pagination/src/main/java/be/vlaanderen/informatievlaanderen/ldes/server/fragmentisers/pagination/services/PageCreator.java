@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,50 +12,50 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagin
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
 
 public class PageCreator {
-	private final LdesFragmentRepository ldesFragmentRepository;
+	private final FragmentRepository fragmentRepository;
 	private final boolean bidirectionalRelations;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
 
-	public PageCreator(LdesFragmentRepository ldesFragmentRepository, boolean bidirectionalRelations) {
+	public PageCreator(FragmentRepository fragmentRepository, boolean bidirectionalRelations) {
 
-		this.ldesFragmentRepository = ldesFragmentRepository;
+		this.fragmentRepository = fragmentRepository;
 		this.bidirectionalRelations = bidirectionalRelations;
 	}
 
-	public LdesFragment createFirstFragment(LdesFragment parentFragment) {
+	public Fragment createFirstFragment(Fragment parentFragment) {
 		return createFragment(parentFragment, FIRST_PAGE_NUMBER);
 	}
 
-	public LdesFragment createNewFragment(LdesFragment previousFragment, LdesFragment parentFragment) {
+	public Fragment createNewFragment(Fragment previousFragment, Fragment parentFragment) {
 		String nextPageNumber = getPageNumberAndGiveIncremented(previousFragment);
-		LdesFragment newFragment = createFragment(parentFragment, nextPageNumber);
+		Fragment newFragment = createFragment(parentFragment, nextPageNumber);
 		makeFragmentImmutableAndUpdateRelations(previousFragment, newFragment);
-		ldesFragmentRepository.saveFragment(newFragment);
+		fragmentRepository.saveFragment(newFragment);
 		return newFragment;
 	}
 
-	private LdesFragment createFragment(LdesFragment parentFragment, String pageNumber) {
-		LdesFragment newFragment = parentFragment.createChild(new FragmentPair(PAGE_NUMBER, pageNumber));
+	private Fragment createFragment(Fragment parentFragment, String pageNumber) {
+		Fragment newFragment = parentFragment.createChild(new FragmentPair(PAGE_NUMBER, pageNumber));
 		LOGGER.debug("Pagination fragment created with id: {}", newFragment.getFragmentId());
 		return newFragment;
 	}
 
-	private String getPageNumberAndGiveIncremented(LdesFragment previousFragment) {
+	private String getPageNumberAndGiveIncremented(Fragment previousFragment) {
 		String previousPageNumber = previousFragment.getValueOfKey(PAGE_NUMBER).orElseThrow();
 		int incremented = Integer.parseInt(previousPageNumber) + 1;
 		return String.valueOf(incremented);
 	}
 
-	private void makeFragmentImmutableAndUpdateRelations(LdesFragment completeLdesFragment,
-			LdesFragment newFragment) {
-		completeLdesFragment.makeImmutable();
-		completeLdesFragment
+	private void makeFragmentImmutableAndUpdateRelations(Fragment completeFragment,
+			Fragment newFragment) {
+		completeFragment.makeImmutable();
+		completeFragment
 				.addRelation(new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
 		if (bidirectionalRelations) {
 			newFragment
 					.addRelation(
-							new TreeRelation("", completeLdesFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
+							new TreeRelation("", completeFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
 		}
-		ldesFragmentRepository.saveFragment(completeLdesFragment);
+		fragmentRepository.saveFragment(completeFragment);
 	}
 }

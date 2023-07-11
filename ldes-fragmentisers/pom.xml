@@ -12,10 +12,12 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>ldes-fragmentisers-common</module>
 		<module>ldes-fragmentisers-geospatial</module>
         <module>ldes-fragmentisers-substring</module>
 		<module>ldes-fragmentisers-timebased</module>
 		<module>ldes-fragmentisers-pagination</module>
+        <module>ldes-snapshot</module>
     </modules>
 
 	<dependencyManagement>

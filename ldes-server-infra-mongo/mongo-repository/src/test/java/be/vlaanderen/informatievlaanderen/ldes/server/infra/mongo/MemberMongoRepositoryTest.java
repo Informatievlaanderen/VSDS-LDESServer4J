@@ -74,18 +74,6 @@ class MemberMongoRepositoryTest {
 	}
 
 	@Test
-	void when_AddMemberReference_MemberReferenceIsAdded() {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(MEMBER_ID));
-		Update update = new Update();
-		update.push(TREE_NODE_REFERENCES, FRAGMENT_ID);
-
-		ldesMemberMongoRepository.addMemberReference(MEMBER_ID, FRAGMENT_ID);
-
-		verify(mongoTemplate, times(1)).upsert(query, update, LdesMemberEntity.class);
-	}
-
-	@Test
 	void when_RemoveMemberReference_MemberReferenceIsDeleted() {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(MEMBER_ID));
