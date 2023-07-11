@@ -7,6 +7,7 @@ import java.util.List;
 public class ModelParser {
 	private ModelParser() {
 	}
+
 	public static Object getFragmentationObject(Model model, String subjectFilter, String fragmentationPredicate) {
 		// @formatter:off
 		return getFragmentationObjects(model, subjectFilter, fragmentationPredicate)

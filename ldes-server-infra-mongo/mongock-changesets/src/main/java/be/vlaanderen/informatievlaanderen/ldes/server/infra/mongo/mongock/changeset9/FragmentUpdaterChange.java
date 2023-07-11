@@ -24,7 +24,7 @@ public class FragmentUpdaterChange {
 	 **/
 	@Execution
 	public void changeSet() {
-		//noinspection Duplicates
+		// noinspection Duplicates
 		mongoTemplate.stream(new Query(), LdesFragmentEntityV4.class).forEach(ldesFragmentEntityV4 -> {
 			FragmentEntityV1 fragmentEntityV1 = new FragmentEntityV1(ldesFragmentEntityV4.getId(),
 					ldesFragmentEntityV4.getRoot(), ldesFragmentEntityV4.getViewName(),
@@ -38,7 +38,7 @@ public class FragmentUpdaterChange {
 
 	@RollbackExecution
 	public void rollback() {
-		//noinspection Duplicates
+		// noinspection Duplicates
 		mongoTemplate.stream(new Query(), FragmentEntityV1.class).forEach(fragmentEntityV1 -> {
 			LdesFragmentEntityV4 ldesFragmentEntityV4 = new LdesFragmentEntityV4(fragmentEntityV1.getId(),
 					fragmentEntityV1.getRoot(), fragmentEntityV1.getViewName(),
