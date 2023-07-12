@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset6.entities.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset6.entities.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.entities.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.entities.valueobjects.TreeRelation;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
