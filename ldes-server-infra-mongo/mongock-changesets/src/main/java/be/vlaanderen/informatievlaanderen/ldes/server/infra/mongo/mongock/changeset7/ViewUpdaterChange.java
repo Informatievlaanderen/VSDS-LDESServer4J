@@ -19,41 +19,41 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock
 @ChangeUnit(id = "view-updater-changeset-7", order = "7", author = "VSDS")
 public class ViewUpdaterChange {
 
-    private static final Logger log = LoggerFactory.getLogger(ViewUpdaterChange.class);
+	private static final Logger log = LoggerFactory.getLogger(ViewUpdaterChange.class);
 
-    private final MongoTemplate mongoTemplate;
-    private final AppConfigChangeset7 config;
+	private final MongoTemplate mongoTemplate;
+	private final AppConfigChangeset7 config;
 
-    public ViewUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset7 config) {
-        this.mongoTemplate = mongoTemplate;
-        this.config = config;
-    }
+	public ViewUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset7 config) {
+		this.mongoTemplate = mongoTemplate;
+		this.config = config;
+	}
 
-    @Execution
-    public void changeSet() {
-        if (collectionAlreadyExists()) {
-            log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
-            return;
-        }
-        if (config.getCollections() != null) {
-            List<ViewEntityV1> views = config.getCollections()
-                    .stream()
-                    .map(LdesConfig::getViews)
-                    .flatMap(Collection::stream)
-                    .map(ViewEntityV1Mapper::mapToEntity)
-                    .toList();
+	@Execution
+	public void changeSet() {
+		if (collectionAlreadyExists()) {
+			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
+			return;
+		}
+		if (config.getCollections() != null) {
+			List<ViewEntityV1> views = config.getCollections()
+					.stream()
+					.map(LdesConfig::getViews)
+					.flatMap(Collection::stream)
+					.map(ViewEntityV1Mapper::mapToEntity)
+					.toList();
 
-            mongoTemplate.insertAll(views);
-        }
-    }
+			mongoTemplate.insertAll(views);
+		}
+	}
 
-    private boolean collectionAlreadyExists() {
-        return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments() > 0;
-    }
+	private boolean collectionAlreadyExists() {
+		return mongoTemplate.getCollection(COLLECTION_NAME).countDocuments() > 0;
+	}
 
-    @RollbackExecution
-    public void rollback() {
-        mongoTemplate.dropCollection(COLLECTION_NAME);
-    }
+	@RollbackExecution
+	public void rollback() {
+		mongoTemplate.dropCollection(COLLECTION_NAME);
+	}
 
 }

@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment.entity.LdesFragmentEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;

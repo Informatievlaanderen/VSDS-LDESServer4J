@@ -31,7 +31,7 @@ public class MemberUpdaterChange {
 	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset2 appConfigChangeset2) {
 		this.mongoTemplate = mongoTemplate;
 
-		if (appConfigChangeset2.getCollections()!=null && appConfigChangeset2.getCollections().size() == 1) {
+		if (appConfigChangeset2.getCollections() != null && appConfigChangeset2.getCollections().size() == 1) {
 			LdesConfig ldesConfig = appConfigChangeset2.getCollections().get(0);
 			timeStampPath = ldesConfig.getTimestampPath();
 			versionOfPath = ldesConfig.getVersionOfPath();
