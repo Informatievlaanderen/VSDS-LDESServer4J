@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.valueobjects.ViewName;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -29,7 +31,9 @@ public class MemberPropertiesEntityV1 {
 	}
 
 	public static MemberPropertiesEntityV1 from(LdesMemberEntityV4 member) {
-		return new MemberPropertiesEntityV1(member.getId(), member.getCollectionName(), member.getTreeNodeReferences(),
+		return new MemberPropertiesEntityV1(member.getId(), member.getCollectionName(),
+				member.getTreeNodeReferences().stream().map(LdesFragmentIdentifier::fromFragmentId)
+						.map(LdesFragmentIdentifier::getViewName).map(ViewName::asString).toList(),
 				member.getVersionOf(), member.getTimestamp());
 	}
 
@@ -41,15 +45,8 @@ public class MemberPropertiesEntityV1 {
 		return collectionName;
 	}
 
-	public List<String> getViews() {
-		return views;
-	}
-
 	public String getVersionOf() {
 		return versionOf;
 	}
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
-	}
 }
