@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -17,7 +16,7 @@ public interface FragmentEntityRepository extends MongoRepository<FragmentEntity
 	List<FragmentEntity> findAllByImmutableAndViewName(
 			Boolean immutable, String viewName);
 
-	Optional<FragmentEntity> findAllByImmutableAndParentId(boolean immutable, LdesFragmentIdentifier parentId);
+	Optional<FragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
 
 	Stream<FragmentEntity> findAllByViewName(String viewName);
 

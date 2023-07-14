@@ -21,7 +21,7 @@ public class MemberUpdaterChange {
 	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset3 appConfigChangeset3) {
 		this.mongoTemplate = mongoTemplate;
 
-		if (appConfigChangeset3.getCollections().size() == 1) {
+		if (appConfigChangeset3.getCollections() != null && appConfigChangeset3.getCollections().size() == 1) {
 			LdesConfig ldesConfig = appConfigChangeset3.getCollections().get(0);
 			collection = ldesConfig.getCollectionName();
 		} else {

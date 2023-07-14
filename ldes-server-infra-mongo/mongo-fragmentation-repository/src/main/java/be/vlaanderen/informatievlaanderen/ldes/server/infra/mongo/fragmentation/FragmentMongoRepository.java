@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.resultchecker.ResultChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,6 +18,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import com.mongodb.client.result.UpdateResult;
 
 public class FragmentMongoRepository implements FragmentRepository {
 
@@ -58,7 +61,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
 				.findAllByImmutableAndParentId(false,
-						parentId)
+						parentId.asString())
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(Fragment::getFragmentIdString));
@@ -77,7 +80,8 @@ public class FragmentMongoRepository implements FragmentRepository {
 		query.addCriteria(Criteria.where("_id").is(fragmentId.asString()));
 
 		Update update = new Update().inc("numberOfMembers", 1);
-		mongoTemplate.updateFirst(query, update, FragmentEntity.class);
+		UpdateResult result = mongoTemplate.updateFirst(query, update, FragmentEntity.class);
+		ResultChecker.expect(result, 1);
 	}
 
 	@Override
