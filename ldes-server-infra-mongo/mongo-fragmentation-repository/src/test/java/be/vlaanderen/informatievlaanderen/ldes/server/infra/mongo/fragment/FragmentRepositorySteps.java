@@ -10,6 +10,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,14 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 			fragmentPairList.add(new FragmentPair(fragmentPairs[i], fragmentPairs[i + 1]));
 		}
 		return fragmentPairList;
+	}
+
+	@BeforeEach
+	public void setup() {
+		retrievedLdesFragment = Optional.empty();
+		fragments = List.of();
+		fragmentRepository.deleteTreeNodesByCollection("mobility-hindrances");
+		fragmentRepository.deleteTreeNodesByCollection("parcels");
 	}
 
 	@Given("The following ldesFragments")
