@@ -35,15 +35,16 @@ public class ViewUpdaterChange {
 			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
 			return;
 		}
+		if (config.getCollections() != null) {
+			List<ViewEntityV1> views = config.getCollections()
+					.stream()
+					.map(LdesConfig::getViews)
+					.flatMap(Collection::stream)
+					.map(ViewEntityV1Mapper::mapToEntity)
+					.toList();
 
-		List<ViewEntityV1> views = config.getCollections()
-				.stream()
-				.map(LdesConfig::getViews)
-				.flatMap(Collection::stream)
-				.map(ViewEntityV1Mapper::mapToEntity)
-				.toList();
-
-		mongoTemplate.insertAll(views);
+			mongoTemplate.insertAll(views);
+		}
 	}
 
 	private boolean collectionAlreadyExists() {

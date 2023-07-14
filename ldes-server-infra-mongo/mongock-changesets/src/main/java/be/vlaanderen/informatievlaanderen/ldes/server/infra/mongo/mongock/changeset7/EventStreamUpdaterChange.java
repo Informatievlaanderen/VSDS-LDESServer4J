@@ -30,11 +30,11 @@ public class EventStreamUpdaterChange {
 			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
 			return;
 		}
-
-		config.getCollections().forEach(collection -> {
-			mongoTemplate.save(new EventStreamEntityV1(collection.getCollectionName(), collection.getTimestampPath(),
-					collection.getVersionOfPath(), collection.getMemberType()));
-		});
+		if (config.getCollections() != null) {
+			config.getCollections().forEach(collection -> mongoTemplate
+					.save(new EventStreamEntityV1(collection.getCollectionName(), collection.getTimestampPath(),
+							collection.getVersionOfPath(), collection.getMemberType())));
+		}
 	}
 
 	private boolean collectionAlreadyExists() {
