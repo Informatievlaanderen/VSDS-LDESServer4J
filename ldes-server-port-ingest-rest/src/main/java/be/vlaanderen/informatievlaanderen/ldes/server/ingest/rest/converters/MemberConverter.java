@@ -58,7 +58,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 			throw new MissingEventStreamException(collectionName);
 		}
 
-		String memberId = extractMemberId(memberModel, memberType);
+		String memberId = extractMemberId(memberModel, memberType, collectionName);
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 
@@ -79,11 +79,11 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 		memberTypes.remove(event.collectionName());
 	}
 
-	private String extractMemberId(Model model, String memberType) {
+	private String extractMemberId(Model model, String memberType, String collectionName) {
 		return model
 				.listStatements(null, RdfConstants.RDF_SYNTAX_TYPE, ResourceFactory.createResource(memberType))
 				.nextOptional()
-				.map(statement -> statement.getSubject().toString())
+				.map(statement -> collectionName + "/" + statement.getSubject().toString())
 				.orElseThrow(() -> new MalformedMemberIdException(memberType));
 	}
 
