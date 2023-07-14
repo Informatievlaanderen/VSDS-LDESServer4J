@@ -17,13 +17,17 @@ FROM openjdk:18-ea-bullseye
 RUN apt-get update & apt-get upgrade
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
+
 COPY --from=app-stage ldes-server-infra-mongo/mongo-repository/target/mongo-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongock-changesets/target/mongock-changesets-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongo-ingest-repository/target/mongo-ingest-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-mongo/mongo-fragmentation-repository/target/mongo-fragmentation-repository-jar-with-dependencies.jar ./lib/
+
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-fetch-rest/target/ldes-server-port-fetch-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-admin-rest/target/ldes-server-port-admin-rest-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-common/target/ldes-fragmentisers-common-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-geospatial/target/ldes-fragmentisers-geospatial-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-timebased/target/ldes-fragmentisers-timebased-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-substring/target/ldes-fragmentisers-substring-jar-with-dependencies.jar ./lib/
