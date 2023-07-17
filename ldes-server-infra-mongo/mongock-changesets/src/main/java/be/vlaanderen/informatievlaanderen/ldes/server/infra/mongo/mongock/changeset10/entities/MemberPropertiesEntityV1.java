@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Document("member_properties")
+@Document("retention_member_properties")
 public class MemberPropertiesEntityV1 {
 	@Indexed
 	private final String id;
