@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.eventstream.EventStreamEntityV1.COLLECTION_NAME;
 
-@ChangeUnit(id = "eventstream-updater-changeset-7", order = "7", author = "VSDS")
+@ChangeUnit(id = "eventstream-updater-changeset-7", order = "2023-06-15 00:00:00", author = "VSDS")
 public class EventStreamUpdaterChange {
 
 	private static final Logger log = LoggerFactory.getLogger(EventStreamUpdaterChange.class);

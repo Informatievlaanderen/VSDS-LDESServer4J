@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 
-@ChangeUnit(id = "member-updater-changeset-1", order = "1", author = "VSDS")
+@ChangeUnit(id = "member-updater-changeset-1", order = "2023-03-27 00:00:00", author = "VSDS")
 public class MemberUpdaterChange {
 	private static final String MEMBERS = "members";
 	private final MongoTemplate mongoTemplate;
