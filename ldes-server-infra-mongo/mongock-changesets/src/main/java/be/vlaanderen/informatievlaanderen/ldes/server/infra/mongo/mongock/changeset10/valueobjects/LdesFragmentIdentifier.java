@@ -1,34 +1,85 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.valueobjects;
 
+import org.springframework.data.annotation.PersistenceCreator;
+
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LdesFragmentIdentifier {
 
 	private final ViewName viewName;
 	private final List<FragmentPair> fragmentPairs;
 
+	@PersistenceCreator
+	public LdesFragmentIdentifier(
+			ViewName viewName, List<FragmentPair> fragmentPairs) {
+		this.viewName = viewName;
+		this.fragmentPairs = fragmentPairs;
+	}
+
 	public LdesFragmentIdentifier(String viewName, List<FragmentPair> fragmentPairs) {
 		this.viewName = ViewName.fromString(viewName);
 		this.fragmentPairs = fragmentPairs;
+	}
+
+	public static LdesFragmentIdentifier fromFragmentId(String fragmentId) {
+		try {
+			String[] splitString = fragmentId.substring(1).split("\\?");
+			String viewName = splitString[0];
+			if (splitString.length > 1) {
+				List<FragmentPair> fragmentPairs = new ArrayList<>();
+				String[] fragmentPairStrings = splitString[1].split("&");
+				for (String fragmentPairString : fragmentPairStrings) {
+					String[] splitFragmentPairString = fragmentPairString.split("=", -1);
+					fragmentPairs.add(new FragmentPair(splitFragmentPairString[0], splitFragmentPairString[1]));
+				}
+				return new LdesFragmentIdentifier(viewName, fragmentPairs);
+			}
+			return new LdesFragmentIdentifier(viewName, List.of());
+		} catch (Exception e) {
+			throw new IllegalArgumentException(
+					"LdesFragmentIdentifier could not be created from string %s".formatted(fragmentId));
+		}
+
 	}
 
 	public ViewName getViewName() {
 		return viewName;
 	}
 
-	public static LdesFragmentIdentifier fromFragmentId(String fragmentId) {
-		String[] splitString = fragmentId.substring(1).split("\\?");
-		String viewName = splitString[0];
-		if (splitString.length > 1) {
-			List<FragmentPair> fragmentPairs = new ArrayList<>();
-			String[] fragmentPairStrings = splitString[1].split("&");
-			for (String fragmentPairString : fragmentPairStrings) {
-				String[] splitFragmentPairString = fragmentPairString.split("=", -1);
-				fragmentPairs.add(new FragmentPair(splitFragmentPairString[0], splitFragmentPairString[1]));
-			}
-			return new LdesFragmentIdentifier(viewName, fragmentPairs);
+	public List<FragmentPair> getFragmentPairs() {
+		return fragmentPairs;
+	}
+
+	public Optional<String> getValueOfFragmentPairKey(String key) {
+		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key))
+				.map(FragmentPair::fragmentValue)
+				.findFirst();
+	}
+
+	public String asString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("/").append(viewName.asString());
+
+		if (!fragmentPairs.isEmpty()) {
+			stringBuilder.append("?");
+			stringBuilder.append(fragmentPairs.stream()
+					.map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
+					.collect(Collectors.joining("&")));
 		}
-		return new LdesFragmentIdentifier(viewName, List.of());
+
+		return stringBuilder.toString();
+	}
+
+	public Optional<LdesFragmentIdentifier> getParentId() {
+
+		if (!this.fragmentPairs.isEmpty()) {
+			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
+			parentPairs.remove(parentPairs.size() - 1);
+
+			return Optional.of(new LdesFragmentIdentifier(viewName, parentPairs));
+		}
+		return Optional.empty();
 	}
 
 	@Override
