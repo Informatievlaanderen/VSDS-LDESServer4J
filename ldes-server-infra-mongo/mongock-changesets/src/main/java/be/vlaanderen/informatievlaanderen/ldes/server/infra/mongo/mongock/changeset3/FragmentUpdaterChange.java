@@ -17,7 +17,7 @@ import java.util.List;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-@ChangeUnit(id = "fragment-updater-changeset-2", order = "3", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-2", order = "2023-04-19 00:00:00", author = "VSDS")
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 	private final String collection;

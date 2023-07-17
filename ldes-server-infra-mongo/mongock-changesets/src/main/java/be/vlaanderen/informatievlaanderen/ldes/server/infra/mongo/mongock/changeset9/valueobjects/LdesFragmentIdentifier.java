@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.valueobjects;
 
 import org.springframework.data.annotation.PersistenceCreator;
 
@@ -69,6 +69,10 @@ public class LdesFragmentIdentifier {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public static void main(String[] args) {
+		LdesFragmentIdentifier identifier = fromFragmentId("/devices-by-time?generatedAtTime=2023-07-17T14:34:33.843Z");
 	}
 
 	public Optional<LdesFragmentIdentifier> getParentId() {

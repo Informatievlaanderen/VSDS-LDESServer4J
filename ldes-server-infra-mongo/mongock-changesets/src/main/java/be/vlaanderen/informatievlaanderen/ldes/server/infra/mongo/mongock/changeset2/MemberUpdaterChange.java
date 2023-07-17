@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-@ChangeUnit(id = "member-updater-changeset-2", order = "2", author = "VSDS")
+@ChangeUnit(id = "member-updater-changeset-2", order = "2023-04-03 00:00:00", author = "VSDS")
 public class MemberUpdaterChange {
 
 	private final MongoTemplate mongoTemplate;

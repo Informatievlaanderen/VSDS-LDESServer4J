@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.valueobjects;
 
 import java.io.Serial;
 import java.io.Serializable;
