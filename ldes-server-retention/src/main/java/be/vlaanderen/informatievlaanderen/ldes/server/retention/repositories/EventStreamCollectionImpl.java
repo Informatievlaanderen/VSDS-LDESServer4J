@@ -35,8 +35,6 @@ public class EventStreamCollectionImpl implements EventStreamCollection {
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		// TODO remove all records from table with collection equals
-		// event.collectionName()
 		eventStreamMap.remove(event.collectionName());
 	}
 }

@@ -17,7 +17,6 @@ public class DeleteEventHandler {
 		this.memberRemover = memberRemover;
 	}
 
-	// call from retentionPolicyCollectionImpl.handleViewDeletedEvent?
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		String viewName = event.getViewName().asString();
