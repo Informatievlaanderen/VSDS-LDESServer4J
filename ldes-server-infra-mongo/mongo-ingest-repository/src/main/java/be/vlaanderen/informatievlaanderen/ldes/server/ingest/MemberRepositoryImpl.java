@@ -56,4 +56,8 @@ public class MemberRepositoryImpl implements MemberRepository {
 				.map(memberEntityMapper::toMember);
 	}
 
+	@Override
+	public void deleteMember(String memberId) {
+		memberEntityRepository.deleteById(memberId);
+	}
 }

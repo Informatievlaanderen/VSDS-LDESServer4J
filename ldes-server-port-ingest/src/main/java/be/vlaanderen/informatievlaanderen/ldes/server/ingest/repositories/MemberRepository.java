@@ -20,4 +20,5 @@ public interface MemberRepository {
 
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 
+	void deleteMember(String memberId);
 }
