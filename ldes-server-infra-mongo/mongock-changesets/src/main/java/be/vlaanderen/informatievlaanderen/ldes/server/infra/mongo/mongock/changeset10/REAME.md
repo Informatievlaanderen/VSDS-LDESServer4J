@@ -1,7 +1,7 @@
 # Mongock Changeset 10
 
-As part of the Isolation of the Retention module, the ldesmember table has been removed and replaced with member_properties.
-This new table does not persist all the previous properties.
+As part of the Isolation of the Retention module a new table retention_member_properties has been created.
+This new table contains the part of the properties of the ldesmember table relevant to retention.
 
 Following configuration is needed to apply this changeset.
 
@@ -12,7 +12,5 @@ mongock:
 ```
 
 Consequences of Changeset:
-* renamed table ldesmember -> member_properties
-* table member_properties no longer has the properties sequenceNr and model
-* renamed property of table member_properties: treeNodeReferences -> views
+* add table retention_member_properties
         
