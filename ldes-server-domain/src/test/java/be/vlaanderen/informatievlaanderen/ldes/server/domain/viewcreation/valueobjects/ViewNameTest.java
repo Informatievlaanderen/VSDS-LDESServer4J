@@ -100,4 +100,11 @@ class ViewNameTest {
 		assertEquals("Invalid full view name: myView. '/' char expected after collectionName.",
 				exception.getMessage());
 	}
+
+	@Test
+	void fromString_shouldThrowException_whenMoreThanOneForwardSlash() {
+		var exception = assertThrows(IllegalArgumentException.class, () -> ViewName.fromString("/myCollection/myView"));
+		assertEquals("Invalid full view name: /myCollection/myView. Exactly one '/' char expected.",
+				exception.getMessage());
+	}
 }

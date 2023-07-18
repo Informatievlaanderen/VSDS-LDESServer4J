@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.entities.Snapshot;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 
 import java.util.Optional;
 

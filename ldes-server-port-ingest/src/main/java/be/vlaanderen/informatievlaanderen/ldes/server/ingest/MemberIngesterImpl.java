@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.events.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
@@ -40,7 +41,9 @@ public class MemberIngesterImpl implements MemberIngester {
 	private void ingestNewMember(Member member, String memberId) {
 		Metrics.counter("ldes_server_ingested_members_count").increment();
 		final Member savedMember = save(member);
-		eventPublisher.publishEvent(new MemberIngestedEvent(savedMember));
+		final var memberIngestedEvent = new MemberIngestedEvent(savedMember.getModel(), savedMember.getId(),
+				savedMember.getCollectionName());
+		eventPublisher.publishEvent(memberIngestedEvent);
 		log.debug("Member with id {} ingested.", memberId);
 	}
 

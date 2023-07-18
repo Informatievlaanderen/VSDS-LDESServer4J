@@ -1,6 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities;
 
-import org.apache.jena.rdf.model.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,10 +20,10 @@ public class Member {
 	private final String memberId;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
-	private final List<String> treeNodeReferences;
+	private final List<LdesFragmentIdentifier> treeNodeReferences;
 
 	public Member(String memberId, String collectionName, Long sequenceNr, String versionOf, LocalDateTime timestamp,
-			final Model memberModel, List<String> treeNodeReferences) {
+			final Model memberModel, List<LdesFragmentIdentifier> treeNodeReferences) {
 		this.collectionName = collectionName;
 		this.memberId = memberId;
 		this.sequenceNr = sequenceNr;
@@ -32,29 +35,6 @@ public class Member {
 
 	public Model getModel() {
 		return memberModel;
-	}
-
-	public Object getFragmentationObject(String subjectFilter, String fragmentationPredicate) {
-		// @formatter:off
-		return getFragmentationObjects(subjectFilter, fragmentationPredicate)
-				.stream()
-				.findFirst()
-				.orElse(null);
-		// @formatter:on
-	}
-
-	public List<Object> getFragmentationObjects(String subjectFilter, String fragmentationPath) {
-		// @formatter:off
-		return memberModel
-				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
-				.toList()
-				.stream()
-				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(Statement::getObject)
-				.map(RDFNode::asLiteral)
-				.map(Literal::getValue)
-				.toList();
-		// @formatter:on
 	}
 
 	public String getLdesMemberId() {
@@ -72,7 +52,7 @@ public class Member {
 		return memberModel.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
 	}
 
-	public List<String> getTreeNodeReferences() {
+	public List<LdesFragmentIdentifier> getTreeNodeReferences() {
 		return treeNodeReferences;
 	}
 
