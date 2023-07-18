@@ -20,7 +20,7 @@ public class AllocationMongoRepository implements AllocationRepository {
 	}
 
 	public void unallocateMemberFromView(String memberId, ViewName viewName) {
-		repository.deleteByAllocationKey_MemberIdAndViewName_CollectionName(memberId, viewName.getCollectionName());
+		repository.deleteByAllocationKey_MemberIdAndViewName(memberId, viewName);
 	}
 
 	public void unallocateAllMembersFromView(ViewName viewName) {
