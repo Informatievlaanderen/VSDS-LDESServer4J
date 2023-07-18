@@ -16,7 +16,7 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.view.ViewEntityV1.COLLECTION_NAME;
 
-@ChangeUnit(id = "view-updater-changeset-7", order = "7", author = "VSDS")
+@ChangeUnit(id = "view-updater-changeset-7", order = "2023-06-15 00:00:00", author = "VSDS")
 public class ViewUpdaterChange {
 
 	private static final Logger log = LoggerFactory.getLogger(ViewUpdaterChange.class);
@@ -35,15 +35,16 @@ public class ViewUpdaterChange {
 			log.warn("The collection '{}' already exists. Migration for this collection was skipped.", COLLECTION_NAME);
 			return;
 		}
+		if (config.getCollections() != null) {
+			List<ViewEntityV1> views = config.getCollections()
+					.stream()
+					.map(LdesConfig::getViews)
+					.flatMap(Collection::stream)
+					.map(ViewEntityV1Mapper::mapToEntity)
+					.toList();
 
-		List<ViewEntityV1> views = config.getCollections()
-				.stream()
-				.map(LdesConfig::getViews)
-				.flatMap(Collection::stream)
-				.map(ViewEntityV1Mapper::mapToEntity)
-				.toList();
-
-		mongoTemplate.insertAll(views);
+			mongoTemplate.insertAll(views);
+		}
 	}
 
 	private boolean collectionAlreadyExists() {

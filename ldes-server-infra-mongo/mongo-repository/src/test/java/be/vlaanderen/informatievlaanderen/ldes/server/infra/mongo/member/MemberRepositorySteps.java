@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.SpringIntegrationTest;
@@ -79,7 +80,8 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 
 	@And("The following treeNodeReferences on the members")
 	public void theFollowingTreeNodeReferencesOnTheMembers(List<String> treeNodeReferences) {
-		members.forEach(member -> member.getTreeNodeReferences().addAll(treeNodeReferences));
+		members.forEach(member -> member.getTreeNodeReferences()
+				.addAll(treeNodeReferences.stream().map(LdesFragmentIdentifier::fromFragmentId).toList()));
 	}
 
 	@When("I remove the view references of view {string}")
@@ -93,7 +95,7 @@ public class MemberRepositorySteps extends SpringIntegrationTest {
 		assertEquals(3, membersInDb.size());
 		membersInDb.forEach(member -> {
 			assertEquals(1, member.getTreeNodeReferences().size());
-			assertEquals(treeNodeReference, member.getTreeNodeReferences().get(0));
+			assertEquals(treeNodeReference, member.getTreeNodeReferences().get(0).asString());
 		});
 	}
 }

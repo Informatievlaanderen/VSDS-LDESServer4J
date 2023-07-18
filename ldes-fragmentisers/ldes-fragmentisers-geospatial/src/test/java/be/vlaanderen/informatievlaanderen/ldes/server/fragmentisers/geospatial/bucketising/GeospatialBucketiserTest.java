@@ -38,7 +38,7 @@ class GeospatialBucketiserTest {
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member);
+		Set<String> actualBuckets = bucketiser.bucketise(member.getModel());
 
 		assertEquals(4, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -54,7 +54,7 @@ class GeospatialBucketiserTest {
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member);
+		Set<String> actualBuckets = bucketiser.bucketise(member.getModel());
 
 		assertEquals(2, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);

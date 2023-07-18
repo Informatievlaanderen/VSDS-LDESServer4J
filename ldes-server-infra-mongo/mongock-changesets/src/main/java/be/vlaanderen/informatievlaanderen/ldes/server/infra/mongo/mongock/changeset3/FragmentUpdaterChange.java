@@ -17,7 +17,7 @@ import java.util.List;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-@ChangeUnit(id = "fragment-updater-changeset-2", order = "3", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-2", order = "2023-04-19 00:00:00", author = "VSDS")
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 	private final String collection;
@@ -26,7 +26,7 @@ public class FragmentUpdaterChange {
 	public FragmentUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset3 appConfigChangeset3) {
 		this.mongoTemplate = mongoTemplate;
 
-		if (appConfigChangeset3.getCollections().size() == 1) {
+		if (appConfigChangeset3.getCollections() != null && appConfigChangeset3.getCollections().size() == 1) {
 			LdesConfig ldesConfig = appConfigChangeset3.getCollections().get(0);
 			collection = ldesConfig.getCollectionName();
 			viewNames = ldesConfig.getViews().stream().map(ViewSpecification::getName).map(s -> "/" + s.asString())

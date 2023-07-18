@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldes.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.node.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.valueobjects.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,6 +18,10 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EtagCachingStrategyTest {
+	private static final LdesFragmentIdentifier node2 = new LdesFragmentIdentifier(
+			new ViewName("collectionName", "node2"), List.of());
+	private static final LdesFragmentIdentifier node3 = new LdesFragmentIdentifier(
+			new ViewName("collectionName", "node3"), List.of());
 
 	private static TreeNode createView(String viewName) {
 		return new TreeNode("/" + viewName, false, true, List.of(), List.of(), "collectionName");
@@ -25,13 +31,12 @@ class EtagCachingStrategyTest {
 		return new TreeNode("/" + viewName, false, true, relations, members, "collectionName");
 	}
 
-	private static TreeRelation createTreeRelation(String node) {
+	private static TreeRelation createTreeRelation(LdesFragmentIdentifier node) {
 		return new TreeRelation(null, node, null, null, null);
 	}
 
 	private static Member createMember(String memberId) {
-		return new Member(memberId, null, null, null,
-				null, null, null);
+		return new Member(memberId, null, null, null);
 	}
 
 	@ParameterizedTest
@@ -81,29 +86,29 @@ class EtagCachingStrategyTest {
 			return Stream.of(
 					Arguments.of("http://localhost:8080",
 							createView("view1",
-									List.of(createTreeRelation("node2")),
+									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"))),
-							"text/turtle", "ad7a41b04ef70a0de74d473b476575576e8c58bfa2f79d729e88c33b981cb2cb"),
+							"text/turtle", "a406fc6c4562baf9bb6312ff195e7d964156ecf4ac7ec25d6e81731594e4205a"),
 					Arguments.of("http://localhost:8080",
 							createView("view2",
-									List.of(createTreeRelation("node2")),
+									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"))),
-							"text/turtle", "0a3a53bcb170c8b216f7ee043bb811a8b089e60203c81ffaaa3f64339da513d1"),
+							"text/turtle", "57b620546b58690b28931fe9db60257fe2b2e2477ea48b96b722e9a00a22a791"),
 					Arguments.of("http://localhost:8080",
 							createView("view2",
-									List.of(createTreeRelation("node2"), createTreeRelation("node3")),
+									List.of(createTreeRelation(node2), createTreeRelation(node3)),
 									List.of(createMember("member1"))),
-							"text/turtle", "88635f10b457ec2539545a279ff8d1f8cb9c04814b4454412d20b66f8e726e69"),
+							"text/turtle", "1c9ed7f7dc03b9e58e577978f705810cb0ec0184cc74d3dd293e1b19fd15cd9a"),
 					Arguments.of("http://localhost:8080",
 							createView("view1",
-									List.of(createTreeRelation("node2")),
+									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"), createMember("member2"))),
-							"text/turtle", "b4f4bf39b350629af1bc439ea4db99156ba1cb3d3fac074e61000d5a0ce2d4a6"),
+							"text/turtle", "67d101c55840eb638294b244f68286f7f62dee1e9aeec21aaa1f6aef732dccb8"),
 					Arguments.of("http://localhost:8080",
 							createView("view1",
-									List.of(createTreeRelation("node2")),
+									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"), createMember("member2"))),
-							"application/n-quads", "2515a3a4308c44d4d4f95027ddedd25e749c70de7ff9c26e6970ba0b395ba445"));
+							"application/n-quads", "19cdab7a71dd21df12ed2aef54c6c5dd136910c807f0d7e2e59dc2f888716e23"));
 		}
 	}
 }

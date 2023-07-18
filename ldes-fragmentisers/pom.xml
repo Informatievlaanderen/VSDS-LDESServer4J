@@ -5,17 +5,19 @@
 	<parent>
     	<groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     	<artifactId>ldes-server</artifactId>
-    	<version>1.2.0</version>
+    	<version>1.3.0-SNAPSHOT</version>
   	</parent>
 	
 	<artifactId>ldes-fragmentisers</artifactId>
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>ldes-fragmentisers-common</module>
 		<module>ldes-fragmentisers-geospatial</module>
         <module>ldes-fragmentisers-substring</module>
 		<module>ldes-fragmentisers-timebased</module>
 		<module>ldes-fragmentisers-pagination</module>
+        <module>ldes-snapshot</module>
     </modules>
 
 	<dependencyManagement>

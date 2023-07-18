@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Set;
 
-@ChangeUnit(id = "fragment-updater-changeset-8", order = "8", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-8", order = "2023-06-29 00:00:00", author = "VSDS")
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 

@@ -2,11 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.bson.Document;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Sort;
@@ -25,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class MemberMongoRepositoryTest {
+	private final String MEMBER_ID = "memberId";
+	private final String FRAGMENT_ID = "/collection/fragmentId";
 	private final LdesMemberEntityRepository ldesMemberEntityRepository = mock(LdesMemberEntityRepository.class);
 	private final MongoTemplate mongoTemplate = mock(MongoTemplate.class);
 	private final MemberMongoRepository ldesMemberMongoRepository = new MemberMongoRepository(
@@ -55,42 +59,30 @@ class MemberMongoRepositoryTest {
 
 	@Test
 	void when_getMember_MemberIsReturned() {
-		LdesMemberEntity ldesMemberEntity = new LdesMemberEntity("memberId", "collectionName", 0L, "memberId",
+		LdesMemberEntity ldesMemberEntity = new LdesMemberEntity(MEMBER_ID, "collectionName", 0L, MEMBER_ID,
 				LocalDateTime.now(),
 				getModelString(), List.of());
-		when(ldesMemberEntityRepository.findById("memberId")).thenReturn(Optional.of(ldesMemberEntity));
+		when(ldesMemberEntityRepository.findById(MEMBER_ID)).thenReturn(Optional.of(ldesMemberEntity));
 
-		Optional<Member> member = ldesMemberMongoRepository.getMember("memberId");
+		Optional<Member> member = ldesMemberMongoRepository.getMember(MEMBER_ID);
 		assertTrue(member.isPresent());
 	}
 
 	@Test
 	void when_deleteMember_MemberIsDeleted() {
-		ldesMemberMongoRepository.deleteMember("memberId");
+		ldesMemberMongoRepository.deleteMember(MEMBER_ID);
 
-		verify(ldesMemberEntityRepository, times(1)).deleteById("memberId");
-	}
-
-	@Test
-	void when_AddMemberReference_MemberReferenceIsAdded() {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is("memberId"));
-		Update update = new Update();
-		update.push(TREE_NODE_REFERENCES, "fragmentId");
-
-		ldesMemberMongoRepository.addMemberReference("memberId", "fragmentId");
-
-		verify(mongoTemplate, times(1)).upsert(query, update, LdesMemberEntity.class);
+		verify(ldesMemberEntityRepository, times(1)).deleteById(MEMBER_ID);
 	}
 
 	@Test
 	void when_RemoveMemberReference_MemberReferenceIsDeleted() {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is("memberId"));
+		query.addCriteria(Criteria.where("_id").is(MEMBER_ID));
 		Update update = new Update();
-		update.pull(TREE_NODE_REFERENCES, "fragmentId");
+		update.pull(TREE_NODE_REFERENCES, FRAGMENT_ID);
 
-		ldesMemberMongoRepository.removeMemberReference("memberId", "fragmentId");
+		ldesMemberMongoRepository.removeMemberReference(MEMBER_ID, FRAGMENT_ID);
 
 		verify(mongoTemplate, times(1)).upsert(query, update, LdesMemberEntity.class);
 	}
@@ -98,9 +90,10 @@ class MemberMongoRepositoryTest {
 	@Test
 	void when_GetMembersByReference_ListOfMembersWithReferenceIsReturned() {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is("treeNodeId"));
+		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(FRAGMENT_ID));
 
-		List<Member> members = ldesMemberMongoRepository.getMembersByReference("treeNodeId").toList();
+		List<Member> members = ldesMemberMongoRepository
+				.getMembersByReference(FRAGMENT_ID).toList();
 
 		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
 
@@ -125,6 +118,19 @@ class MemberMongoRepositoryTest {
 		ldesMemberMongoRepository.getMembersOfVersion("versionOf");
 
 		verify(mongoTemplate, times(1)).stream(query, LdesMemberEntity.class);
+	}
+
+	@Test
+	void when_RemoveMemberReference_MemberReferenceIsDeleted2() {
+		final ViewName viewName = new ViewName("collection", "view");
+		final String regexMatchQueryParameters = "\\?.*";
+		final String regex = viewName.asString() + regexMatchQueryParameters;
+		final Query query = new Query(Criteria.where("_id").is(MEMBER_ID).and(TREE_NODE_REFERENCES).regex(regex));
+		final Update update = new Update().pull(TREE_NODE_REFERENCES, new Document("$regex", regex));
+
+		ldesMemberMongoRepository.removeViewReferenceOfMember(MEMBER_ID, viewName);
+
+		verify(mongoTemplate, times(1)).updateMulti(query, update, LdesMemberEntity.class);
 	}
 
 	private Model getModel() {

@@ -4,16 +4,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.mapping.event.BeforeConvertEvent;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.*;
 
 class MemberEntityListenerTest {
 
-	private final SequenceGeneratorService sequenceGeneratorService = mock(SequenceGeneratorService.class);
+	private final IngestMemberSequenceGeneratorService ingestMemberSequenceGeneratorService = mock(
+			IngestMemberSequenceGeneratorService.class);
 	private final MemberEntityListener ldesMemberEntityListener = new MemberEntityListener(
-			sequenceGeneratorService);
+			ingestMemberSequenceGeneratorService);
 
 	@Test
 	void test_MemberHasNoIndex() {
@@ -23,7 +21,7 @@ class MemberEntityListenerTest {
 
 		ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-		verify(sequenceGeneratorService, times(1)).generateSequence("collectionName");
+		verify(ingestMemberSequenceGeneratorService, times(1)).generateSequence("collectionName");
 	}
 
 	@Test
@@ -34,7 +32,7 @@ class MemberEntityListenerTest {
 
 		ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-		verifyNoInteractions(sequenceGeneratorService);
+		verifyNoInteractions(ingestMemberSequenceGeneratorService);
 	}
 
 }

@@ -1,0 +1,4 @@
+de.flapdoodle.mongodb.embedded.version: 4.0.2
+spring:
+  main:
+    allow-bean-definition-overriding: true

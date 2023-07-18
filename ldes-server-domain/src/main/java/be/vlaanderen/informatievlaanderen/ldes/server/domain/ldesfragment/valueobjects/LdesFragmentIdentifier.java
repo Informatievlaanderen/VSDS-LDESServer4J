@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.value
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.exceptions.LdesFragmentIdentifierParseException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.springframework.data.annotation.PersistenceCreator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,6 +13,7 @@ public class LdesFragmentIdentifier {
 	private final ViewName viewName;
 	private final List<FragmentPair> fragmentPairs;
 
+	@PersistenceCreator
 	public LdesFragmentIdentifier(ViewName viewName, List<FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
@@ -31,7 +33,8 @@ public class LdesFragmentIdentifier {
 	}
 
 	public Optional<String> getValueOfFragmentPairKey(String key) {
-		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key)).map(FragmentPair::fragmentValue)
+		return fragmentPairs.stream().filter(pair -> pair.fragmentKey().equals(key))
+				.map(FragmentPair::fragmentValue)
 				.findFirst();
 	}
 
@@ -43,7 +46,7 @@ public class LdesFragmentIdentifier {
 				List<FragmentPair> fragmentPairs = new ArrayList<>();
 				String[] fragmentPairStrings = splitString[1].split("&");
 				for (String fragmentPairString : fragmentPairStrings) {
-					String[] splitFragmentPairString = fragmentPairString.split("=");
+					String[] splitFragmentPairString = fragmentPairString.split("=", -1);
 					fragmentPairs.add(new FragmentPair(splitFragmentPairString[0], splitFragmentPairString[1]));
 				}
 				return new LdesFragmentIdentifier(viewName, fragmentPairs);
@@ -55,7 +58,7 @@ public class LdesFragmentIdentifier {
 
 	}
 
-	public String getFragmentId() {
+	public String asString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("/").append(viewName.asString());
 
@@ -67,6 +70,17 @@ public class LdesFragmentIdentifier {
 		}
 
 		return stringBuilder.toString();
+	}
+
+	public Optional<LdesFragmentIdentifier> getParentId() {
+
+		if (!this.fragmentPairs.isEmpty()) {
+			List<FragmentPair> parentPairs = new ArrayList<>(fragmentPairs);
+			parentPairs.remove(parentPairs.size() - 1);
+
+			return Optional.of(new LdesFragmentIdentifier(viewName, parentPairs));
+		}
+		return Optional.empty();
 	}
 
 	@Override
