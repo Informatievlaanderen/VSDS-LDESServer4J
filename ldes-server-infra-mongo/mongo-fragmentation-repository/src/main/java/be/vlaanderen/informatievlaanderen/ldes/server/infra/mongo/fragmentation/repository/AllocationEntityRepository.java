@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public interface AllocationEntityRepository extends MongoRepository<AllocationEntity, AllocationEntity.AllocationKey> {
 	Stream<AllocationEntity> findAllByAllocationKey_FragmentId(String fragmentId);
 
-	void deleteByAllocationKey_MemberIdAndViewName_CollectionName(String memberId, String collectionName);
+	void deleteByAllocationKey_MemberIdAndViewName(String memberId, ViewName viewName);
 
 	void deleteAllByViewName(ViewName viewName);
 
