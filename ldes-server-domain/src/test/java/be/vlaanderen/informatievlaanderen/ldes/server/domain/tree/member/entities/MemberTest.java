@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -59,11 +58,13 @@ class MemberTest {
 				ResourceUtils.getFile("classpath:example-ldes-member-multiple-properties-same-predicate.nq"),
 				StandardCharsets.UTF_8);
 
-		Model memberModel = createModel(ldesMemberString, Lang.NQUADS);
+		Member member = new Member(
+				"http://localhost:8080/member/1", "collectionName",
+				0L, null, null, createModel(ldesMemberString, Lang.NQUADS), List.of());
 
-		assertEquals(4, ModelParser.getFragmentationObjects(memberModel, ".*",
+		assertEquals(4, member.getFragmentationObjects(".*",
 				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
-		assertEquals(1, ModelParser.getFragmentationObjects(memberModel, ".*/member/.*",
+		assertEquals(1, member.getFragmentationObjects(".*/member/.*",
 				"http://www.w3.org/2004/02/skos/core#prefLabel").size());
 	}
 

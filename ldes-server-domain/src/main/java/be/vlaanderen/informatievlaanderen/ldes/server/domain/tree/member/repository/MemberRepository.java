@@ -30,6 +30,4 @@ public interface MemberRepository {
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 
 	List<Member> getMembersOfVersion(String versionOf);
-
-	void removeViewReferenceOfMember(String memberId, ViewName viewName);
 }

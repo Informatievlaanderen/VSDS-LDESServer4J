@@ -8,7 +8,7 @@ import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-@ChangeUnit(id = "multimodule-architecture-changeset-1", order = "2023-06-02 00:00:00", author = "VSDS")
+@ChangeUnit(id = "multimodule-architecture-changeset-1", order = "5", author = "VSDS")
 public class MemberIngestChange {
 
 	private final MongoTemplate mongoTemplate;

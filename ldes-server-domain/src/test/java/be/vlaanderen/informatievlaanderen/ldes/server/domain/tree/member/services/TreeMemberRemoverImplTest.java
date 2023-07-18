@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +33,7 @@ class TreeMemberRemoverImplTest {
 	@Test
 	void when_memberHasReferences_ItCannotBeDeleted() {
 		when(memberRepository.getMember("memberId"))
-				.thenReturn(Optional.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of(LdesFragmentIdentifier.fromFragmentId("/tree/reference")))));
+				.thenReturn(Optional.of(new Member("memberId", "collectionName", 0L, null, null, null, List.of("reference"))));
 		treeMemberRemover.deletingMemberFromCollection("memberId");
 
 		verify(memberRepository, times(1)).getMember("memberId");

@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-@ChangeUnit(id = "member-updater-changeset-2", order = "2023-04-03 00:00:00", author = "VSDS")
+@ChangeUnit(id = "member-updater-changeset-2", order = "2", author = "VSDS")
 public class MemberUpdaterChange {
 
 	private final MongoTemplate mongoTemplate;
@@ -31,7 +31,7 @@ public class MemberUpdaterChange {
 	public MemberUpdaterChange(MongoTemplate mongoTemplate, AppConfigChangeset2 appConfigChangeset2) {
 		this.mongoTemplate = mongoTemplate;
 
-		if (appConfigChangeset2.getCollections() != null && appConfigChangeset2.getCollections().size() == 1) {
+		if (appConfigChangeset2.getCollections().size() == 1) {
 			LdesConfig ldesConfig = appConfigChangeset2.getCollections().get(0);
 			timeStampPath = ldesConfig.getTimestampPath();
 			versionOfPath = ldesConfig.getVersionOfPath();

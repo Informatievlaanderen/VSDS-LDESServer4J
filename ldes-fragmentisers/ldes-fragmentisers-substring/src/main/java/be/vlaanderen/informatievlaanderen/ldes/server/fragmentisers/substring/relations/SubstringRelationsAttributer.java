@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.SubstringConstants.STRING_TYPE;
@@ -12,17 +12,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.subst
 
 public class SubstringRelationsAttributer {
 
-	private final FragmentRepository fragmentRepository;
+	private final LdesFragmentRepository ldesFragmentRepository;
 
 	private final SubstringConfig substringConfig;
 
-	public SubstringRelationsAttributer(FragmentRepository fragmentRepository,
+	public SubstringRelationsAttributer(LdesFragmentRepository ldesFragmentRepository,
 			SubstringConfig substringConfig) {
-		this.fragmentRepository = fragmentRepository;
+		this.ldesFragmentRepository = ldesFragmentRepository;
 		this.substringConfig = substringConfig;
 	}
 
-	public void addSubstringRelation(Fragment parentFragment, Fragment childFragment) {
+	public void addSubstringRelation(LdesFragment parentFragment, LdesFragment childFragment) {
 		String substringValue = getSubstringValue(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(substringConfig.getFragmentationPath(),
 				childFragment.getFragmentId(),
@@ -30,14 +30,14 @@ public class SubstringRelationsAttributer {
 				TREE_SUBSTRING_RELATION);
 		if (!parentFragment.containsRelation(parentChildRelation)) {
 			parentFragment.addRelation(parentChildRelation);
-			fragmentRepository.saveFragment(parentFragment);
+			ldesFragmentRepository.saveFragment(parentFragment);
 		}
 	}
 
-	private String getSubstringValue(Fragment childFragment) {
+	private String getSubstringValue(LdesFragment childFragment) {
 		return childFragment.getValueOfKey(SUBSTRING).map(substring -> substring.replace("\"", ""))
 				.orElseThrow(
-						() -> new MissingFragmentValueException(childFragment.getFragmentIdString(), SUBSTRING));
+						() -> new MissingFragmentValueException(childFragment.getFragmentId(), SUBSTRING));
 
 	}
 }

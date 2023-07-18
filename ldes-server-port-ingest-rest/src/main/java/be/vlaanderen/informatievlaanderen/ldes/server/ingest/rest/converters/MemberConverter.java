@@ -1,14 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpInputMessage;
@@ -26,9 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
@@ -59,7 +58,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 			throw new MissingEventStreamException(collectionName);
 		}
 
-		String memberId = extractMemberId(memberModel, memberType, collectionName);
+		String memberId = extractMemberId(memberModel, memberType);
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 
@@ -70,7 +69,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	}
 
 	@EventListener
-	public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
+	public void handleEventStreamChangedEvent(EventStreamChangedEvent event) {
 		EventStream eventStream = event.eventStream();
 		memberTypes.put(eventStream.getCollection(), eventStream.getMemberType());
 	}
@@ -80,11 +79,11 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 		memberTypes.remove(event.collectionName());
 	}
 
-	private String extractMemberId(Model model, String memberType, String collectionName) {
+	private String extractMemberId(Model model, String memberType) {
 		return model
-				.listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
+				.listStatements(null, RdfConstants.RDF_SYNTAX_TYPE, ResourceFactory.createResource(memberType))
 				.nextOptional()
-				.map(statement -> collectionName + "/" + statement.getSubject().toString())
+				.map(statement -> statement.getSubject().toString())
 				.orElseThrow(() -> new MalformedMemberIdException(memberType));
 	}
 

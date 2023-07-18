@@ -2,7 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.AppConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.MemberConverter;
@@ -40,13 +41,14 @@ import java.util.stream.Stream;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { MemberConverter.class, MemberIngestController.class,
-		IngestionRestResponseEntityExceptionHandler.class })
+		AppConfig.class, IngestionRestResponseEntityExceptionHandler.class })
 class MemberIngestControllerTest {
 
 	@Autowired
@@ -58,14 +60,17 @@ class MemberIngestControllerTest {
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 
+	@Autowired
+	private AppConfig appConfig;
+
 	@BeforeEach
 	void setUp() {
 		Stream.of(
 				new EventStream("mobility-hindrances", "timestampPath", "versionOfPath",
-						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"),
+						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", false),
 				new EventStream("restaurant", "timestampPath", "versionOfPath",
-						"http://example.com/restaurant#MenuItem"))
-				.map(EventStreamCreatedEvent::new)
+						"http://example.com/restaurant#MenuItem", false))
+				.map(EventStreamChangedEvent::new)
 				.forEach(eventPublisher::publishEvent);
 	}
 
@@ -117,7 +122,7 @@ class MemberIngestControllerTest {
 	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
 	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
 		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
+		String ldesMemberType = appConfig.getCollections().get(0).getMemberType();
 		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
 				ldesMemberType.substring(0, ldesMemberType.length() - 1));
 

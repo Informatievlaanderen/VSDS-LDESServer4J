@@ -111,15 +111,6 @@ public class MemberMongoRepository implements MemberRepository {
 	}
 
 	@Override
-	public void removeViewReferenceOfMember(String memberId, ViewName viewName) {
-		final String regexMatchQueryParameters = "\\?.*";
-		final String regex = viewName.asString() + regexMatchQueryParameters;
-		final Query query = new Query(Criteria.where("_id").is(memberId).and(TREE_NODE_REFERENCES).regex(regex));
-		final Update update = new Update().pull(TREE_NODE_REFERENCES, new Document("$regex", regex));
-		mongoTemplate.updateMulti(query, update, LdesMemberEntity.class);
-	}
-
-	@Override
 	public Stream<Member> getMembersByReference(String treeNodeId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TREE_NODE_REFERENCES).is(treeNodeId));

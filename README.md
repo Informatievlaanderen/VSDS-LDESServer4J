@@ -54,7 +54,7 @@ The current implementation consists of the following modules:
 - `ldes-server-application` which starts the spring boot application
 - `ldes-server-domain` which contains the domain logic of the ldes server
 - `ldes-server-infra-mongo` which allows to store ldes members and fragments in a mongoDB
-- `ldes-server-port-ingest` which allows to ingest ldes members
+- `ldes-server-port-ingestion-rest` which allows to ingest ldes members via HTTP
 - `ldes-server-port-fetch-rest` which allows to retrieve fragments via HTTP
 - `ldes-fragmentisers` which support different types of fragmentations
 
@@ -419,7 +419,7 @@ mvn clean verify -Dunittestskip=true
 #### Auto-Configurable Modules
 
 - ldes-server-infra-mongo
-- ldes-server-port-ingest
+- ldes-server-port-ingestion-rest
 - ldes-server-port-publication-rest
 - ldes-fragmentisers-timebased
 - ldes-fragmentisers-geospatial

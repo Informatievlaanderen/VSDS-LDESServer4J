@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ChangeUnit(id = "fragment-updater-changeset-1", order = "2023-03-27 00:00:00", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-1", order = "2", author = "VSDS")
 public class FragmentUpdaterChange {
 	private static final String TREE_NODE_REFERENCES = "treeNodeReferences";
 	private final MongoTemplate mongoTemplate;

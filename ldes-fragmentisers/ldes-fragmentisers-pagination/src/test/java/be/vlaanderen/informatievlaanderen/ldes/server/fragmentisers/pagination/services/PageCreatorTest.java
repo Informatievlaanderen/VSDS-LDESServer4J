@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,56 +15,58 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagin
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
 class PageCreatorTest {
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private PageCreator pageCreator;
-	private FragmentRepository fragmentRepository;
+	private LdesFragmentRepository ldesFragmentRepository;
 
 	@BeforeEach
 	void setUp() {
-		fragmentRepository = mock(FragmentRepository.class);
+		ldesFragmentRepository = mock(LdesFragmentRepository.class);
 		pageCreator = new PageCreator(
-				fragmentRepository, true);
+				ldesFragmentRepository, true);
 	}
 
 	@Test
 	@DisplayName("Creating First Page Fragment")
 	void createFirstFragment() {
-		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME,
-				List.of()));
+		LdesFragment parentFragment = new LdesFragment(VIEW_NAME,
+				List.of());
 
-		Fragment newFragment = pageCreator.createFirstFragment(parentFragment);
+		LdesFragment newFragment = pageCreator.createFirstFragment(parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		assertTrue(newFragment.getFragmentPairs().contains(new FragmentPair("pageNumber", FIRST_PAGE_NUMBER)));
+		assertTrue(newFragment.getFragmentId().contains("/collectionName/view?pageNumber=" + FIRST_PAGE_NUMBER));
 	}
 
 	@Test
 	@DisplayName("Creating Next Page Fragment")
 	void createNextFragmentAndCreateRelations() {
-		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME,
-				List.of()));
-		Fragment existingFragment = new Fragment(new LdesFragmentIdentifier(
+		LdesFragment parentFragment = new LdesFragment(VIEW_NAME,
+				List.of());
+		LdesFragment existingLdesFragment = new LdesFragment(
 				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
-						"1"))));
+						"1")));
 
-		Fragment newFragment = pageCreator.createNewFragment(existingFragment, parentFragment);
+		LdesFragment newFragment = pageCreator.createNewFragment(existingLdesFragment, parentFragment);
 
 		verifyAssertionsOnAttributesOfFragment(newFragment);
-		assertTrue(newFragment.getFragmentPairs().contains(new FragmentPair("pageNumber", "2")));
-		InOrder inOrder = inOrder(fragmentRepository);
-		inOrder.verify(fragmentRepository, times(1)).saveFragment(existingFragment);
-		inOrder.verify(fragmentRepository, times(1)).saveFragment(newFragment);
+		assertTrue(newFragment.getFragmentId().contains("/collectionName/view?pageNumber=2"));
+		InOrder inOrder = inOrder(ldesFragmentRepository);
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(existingLdesFragment);
+		inOrder.verify(ldesFragmentRepository, times(1)).saveFragment(newFragment);
 		inOrder.verifyNoMoreInteractions();
-		assertTrue(existingFragment.isImmutable());
+		assertTrue(existingLdesFragment.isImmutable());
 	}
 
-	private void verifyAssertionsOnAttributesOfFragment(Fragment fragment) {
+	private void verifyAssertionsOnAttributesOfFragment(LdesFragment ldesFragment) {
 		assertEquals("/collectionName/view?pageNumber",
-				fragment.getFragmentIdString().split("=")[0]);
-		assertEquals(VIEW_NAME, fragment.getViewName());
-		assertTrue(fragment.getValueOfKey(PAGE_NUMBER).isPresent());
+				ldesFragment.getFragmentId().split("=")[0]);
+		assertEquals(VIEW_NAME, ldesFragment.getViewName());
+		assertTrue(ldesFragment.getValueOfKey(PAGE_NUMBER).isPresent());
 	}
 }

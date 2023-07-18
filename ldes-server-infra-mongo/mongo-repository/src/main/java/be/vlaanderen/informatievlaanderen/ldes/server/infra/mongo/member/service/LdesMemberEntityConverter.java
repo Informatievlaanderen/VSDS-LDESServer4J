@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.entity.LdesMemberEntity;
 import org.apache.jena.rdf.model.Model;
@@ -19,8 +18,7 @@ public class LdesMemberEntityConverter {
 		return new LdesMemberEntity(member.getLdesMemberId(), member.getCollectionName(), member.getSequenceNr(),
 				member.getVersionOf(),
 				member.getTimestamp(),
-				ldesMemberString,
-				member.getTreeNodeReferences().stream().map(LdesFragmentIdentifier::asString).toList());
+				ldesMemberString, member.getTreeNodeReferences());
 	}
 
 	public Member toLdesMember(LdesMemberEntity ldesMemberEntity) {
@@ -29,6 +27,6 @@ public class LdesMemberEntityConverter {
 		return new Member(ldesMemberEntity.getId(), ldesMemberEntity.getCollectionName(),
 				ldesMemberEntity.getSequenceNr(),
 				ldesMemberEntity.getVersionOf(), ldesMemberEntity.getTimestamp(), ldesMemberModel,
-				ldesMemberEntity.getTreeNodeReferences().stream().map(LdesFragmentIdentifier::fromFragmentId).toList());
+				ldesMemberEntity.getTreeNodeReferences());
 	}
 }

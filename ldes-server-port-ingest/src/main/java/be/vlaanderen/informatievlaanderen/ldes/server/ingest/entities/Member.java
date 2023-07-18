@@ -35,13 +35,6 @@ public class Member {
 		return id;
 	}
 
-	public String getMemberIdWithoutPrefix() {
-		if (id.startsWith("http")) {
-			throw new IllegalStateException("id '%s' does not contain a prefix".formatted(id));
-		}
-		return id.substring(id.indexOf("/") + 1);
-	}
-
 	public void removeTreeMember() {
 		getCurrentTreeMemberStatement().ifPresent(model::remove);
 	}

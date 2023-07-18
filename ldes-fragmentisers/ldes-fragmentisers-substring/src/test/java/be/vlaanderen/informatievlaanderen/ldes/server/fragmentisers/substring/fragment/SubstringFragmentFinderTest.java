@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.relations.SubstringRelationsAttributer;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,20 +13,23 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator.SUBSTRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 class SubstringFragmentFinderTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static Fragment PARENT_FRAGMENT;
+	private static LdesFragment PARENT_FRAGMENT;
 	private SubstringFragmentCreator substringFragmentCreator;
 	private SubstringRelationsAttributer substringRelationsAttributer;
 	private SubstringFragmentFinder substringFragmentFinder;
 
 	@BeforeEach
 	void setUp() {
-		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of()));
+		PARENT_FRAGMENT = new LdesFragment(
+				VIEW_NAME, List.of());
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setMemberLimit(1);
 		substringRelationsAttributer = mock(SubstringRelationsAttributer.class);
@@ -38,9 +40,9 @@ class SubstringFragmentFinderTest {
 
 	@Test
 	void when_RootFragmentHasNotReachedLimitAndIsInBucket_RootFragmentIsReturned() {
-		Fragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
+		LdesFragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "\"\""));
 
-		Fragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
+		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("", "a", "ab"));
 
 		assertEquals(rootFragment, actualFragment);
@@ -51,19 +53,19 @@ class SubstringFragmentFinderTest {
 
 	@Test
 	void when_RootFragmentHasReachedItsLimit_FirstOpenFragmentIsReturned() {
-		Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\""))), false, 1,
+		LdesFragment rootFragment = new LdesFragment(
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "\"\"")), false, 1,
 				List.of());
-		Fragment aFragment = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a"))), false, 1,
+		LdesFragment aFragment = new LdesFragment(
+				VIEW_NAME, List.of(new FragmentPair(SUBSTRING, "a")), false, 1,
 				List.of());
-		Fragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
+		LdesFragment abFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, "ab"));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"a")).thenReturn(aFragment);
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
 				"ab")).thenReturn(abFragment);
 
-		Fragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
+		LdesFragment actualFragment = substringFragmentFinder.getOpenOrLastPossibleFragment(PARENT_FRAGMENT,
 				rootFragment, List.of("a", "ab"));
 
 		assertEquals(abFragment, actualFragment);

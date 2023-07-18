@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -9,7 +8,7 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -17,17 +16,16 @@
         <module>ldes-server-infra-mongo</module>
         <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-application</module>
+        <module>ldes-server-port-ingestion-rest</module>
         <module>ldes-fragmentisers</module>
+        <module>ldes-queues</module>
         <module>ldes-server-port-admin-rest</module>
-        <module>ldes-server-port-ingest</module>
-        <module>ldes-server-port-ingest-rest</module>
-        <module>ldes-server-retention</module>
     </modules>
 
     <developers>
         <developer>
             <name>Yalz</name>
-            <email>Yalz@users.noreply.github.com</email>
+            <email>Yalz@users.noreply.github.com </email>
             <organization>Cegeka</organization>
             <organizationUrl>http://www.sonatype.com</organizationUrl>
         </developer>
@@ -53,7 +51,7 @@
         <maven-failsafe-plugin.version>3.0.0-M7</maven-failsafe-plugin.version>
         <maven-javadoc-plugin.version>3.5.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
         <swagger-annotations.version>2.2.14</swagger-annotations.version>
@@ -66,9 +64,6 @@
 
         <!-- SPRING BOOT -->
         <spring-boot.version>3.1.1</spring-boot.version>
-
-        <!-- SPRING DATA -->
-        <spring-data.version>3.1.1</spring-data.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.8.0</apache-jena.version>
@@ -84,7 +79,7 @@
         <de.flapdoodle.embed.mongo.version>4.7.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
-        <cucumber.version>7.13.0</cucumber.version>
+        <cucumber.version>7.12.0</cucumber.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>8.3.1</depencency-check-maven.version>
@@ -255,13 +250,13 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
-
-            <!-- HASHING -->
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec.version}</version>
-            </dependency>
+			
+			<!-- HASHING -->
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.version}</version>
+			</dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -499,29 +494,27 @@
             <id>central</id>
             <url>https://repo1.maven.org/maven2</url>
         </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <url>https://repo.spring.io/snapshot</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/milestone</url>
-        </repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
+		<repository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</repository>
     </repositories>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-snapshots</id>
-            <url>https://repo.spring.io/snapshot</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <url>https://repo.spring.io/milestone</url>
-        </pluginRepository>
-    </pluginRepositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<url>https://repo.spring.io/snapshot</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<url>https://repo.spring.io/milestone</url>
+		</pluginRepository>
+	</pluginRepositories>
 
     <profiles>
         <profile>

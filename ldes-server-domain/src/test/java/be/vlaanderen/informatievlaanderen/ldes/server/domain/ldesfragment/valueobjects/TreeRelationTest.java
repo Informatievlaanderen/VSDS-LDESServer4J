@@ -17,17 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class TreeRelationTest {
 
-	private static final String TREENODE_REF = "/ref/treeNode";
-	private static final String DIF_TREENODE_REF = "/ref/othertreeNode";
-
 	@Test
 	@DisplayName("Test Equality of TreeRelations")
 	void test_EqualityOfTreeRelations() {
-		TreeRelation treeRelation = new TreeRelation("treePath", LdesFragmentIdentifier.fromFragmentId(TREENODE_REF),
-				"treeValue", "treeValueType", "relation");
-		TreeRelation otherTreeRelation = new TreeRelation("treePath",
-				LdesFragmentIdentifier.fromFragmentId(TREENODE_REF),
-				"treeValue", "treeValueType",
+		TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
+		TreeRelation otherTreeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType",
 				"relation");
 		assertEquals(treeRelation, otherTreeRelation);
 		assertEquals(treeRelation, treeRelation);
@@ -37,8 +31,7 @@ class TreeRelationTest {
 	@ParameterizedTest
 	@ArgumentsSource(TreeRelationArgumentsProvider.class)
 	void test_InequalityOfTreeRelations(Object otherTreeRelation) {
-		TreeRelation treeRelation = new TreeRelation("treePath", LdesFragmentIdentifier.fromFragmentId(TREENODE_REF),
-				"treeValue", "treeValueType", "relation");
+		TreeRelation treeRelation = new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType", "relation");
 		assertNotEquals(treeRelation, otherTreeRelation);
 	}
 
@@ -48,20 +41,15 @@ class TreeRelationTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(Arguments.of(new Member("some_id", "collectionName", 0L, null, null, null, List.of())),
 					Arguments.of((Object) null),
-					Arguments.of(new TreeRelation("differentTreePath",
-							LdesFragmentIdentifier.fromFragmentId(TREENODE_REF), "treeValue", "treeValueType",
+					Arguments.of(new TreeRelation("differentTreePath", "treeNode", "treeValue", "treeValueType",
 							"relation")),
-					Arguments.of(new TreeRelation("treePath",
-							LdesFragmentIdentifier.fromFragmentId(DIF_TREENODE_REF), "treeValue", "treeValueType",
+					Arguments.of(new TreeRelation("treePath", "differentTreeNode", "treeValue", "treeValueType",
 							"relation")),
-					Arguments.of(new TreeRelation("treePath", LdesFragmentIdentifier.fromFragmentId(TREENODE_REF),
-							"differentTreeValue", "treeValueType",
+					Arguments.of(new TreeRelation("treePath", "treeNode", "differentTreeValue", "treeValueType",
 							"relation")),
-					Arguments.of(new TreeRelation("treePath", LdesFragmentIdentifier.fromFragmentId(TREENODE_REF),
-							"treeValue", "differentTreeValueType",
+					Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "differentTreeValueType",
 							"relation")),
-					Arguments.of(new TreeRelation("treePath", LdesFragmentIdentifier.fromFragmentId(TREENODE_REF),
-							"treeValue", "treeValueType",
+					Arguments.of(new TreeRelation("treePath", "treeNode", "treeValue", "treeValueType",
 							"differentRelation")));
 		}
 	}

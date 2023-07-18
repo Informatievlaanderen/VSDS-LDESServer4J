@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.repository.LdesFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.services.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.services.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimebasedFragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.OpenFragmentProvider;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
@@ -20,30 +20,30 @@ public class TimebasedFragmentationStrategyWrapper implements FragmentationStrat
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
-		FragmentRepository fragmentRepository = applicationContext.getBean(FragmentRepository.class);
+		LdesFragmentRepository ldesFragmentRepository = applicationContext.getBean(LdesFragmentRepository.class);
 		ObservationRegistry observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 
 		OpenFragmentProvider openFragmentProvider = getOpenFragmentProvider(fragmentationProperties,
-				fragmentRepository);
+				ldesFragmentRepository);
 		return new TimebasedFragmentationStrategy(fragmentationStrategy,
-				openFragmentProvider, observationRegistry, fragmentRepository);
+				openFragmentProvider, observationRegistry, ldesFragmentRepository);
 
 	}
 
 	private OpenFragmentProvider getOpenFragmentProvider(ConfigProperties properties,
-			FragmentRepository fragmentRepository) {
+			LdesFragmentRepository ldesFragmentRepository) {
 		TimebasedFragmentationConfig timebasedFragmentationConfig = createTimebasedFragmentationConfig(properties);
 		TimeBasedFragmentCreator timeBasedFragmentCreator = getTimeBasedFragmentCreator(
-				fragmentRepository,
+				ldesFragmentRepository,
 				timebasedFragmentationConfig.fragmentationPath());
-		return new OpenFragmentProvider(timeBasedFragmentCreator, fragmentRepository,
+		return new OpenFragmentProvider(timeBasedFragmentCreator, ldesFragmentRepository,
 				timebasedFragmentationConfig.memberLimit());
 	}
 
-	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(FragmentRepository fragmentRepository,
+	private TimeBasedFragmentCreator getTimeBasedFragmentCreator(LdesFragmentRepository ldesFragmentRepository,
 			Property timebasedFragmentationConfig) {
 		return new TimeBasedFragmentCreator(
-				fragmentRepository,
+				ldesFragmentRepository,
 				timebasedFragmentationConfig);
 	}
 

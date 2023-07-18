@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentValueException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.entities.LdesFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.BoundingBoxConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.TileConverter;
@@ -12,7 +12,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialRelationsAttributer {
 
-	public TreeRelation getRelationToParentFragment(Fragment childFragment) {
+	public TreeRelation getRelationToParentFragment(LdesFragment childFragment) {
 		String targetWKT = getWKT(childFragment);
 
 		return new TreeRelation(GEOSPARQL_AS_WKT, childFragment.getFragmentId(),
@@ -20,9 +20,9 @@ public class GeospatialRelationsAttributer {
 
 	}
 
-	private String getWKT(Fragment currentFragment) {
+	private String getWKT(LdesFragment currentFragment) {
 		String fragmentWKT = currentFragment.getValueOfKey(FRAGMENT_KEY_TILE).orElseThrow(
-				() -> new MissingFragmentValueException(currentFragment.getFragmentIdString(), FRAGMENT_KEY_TILE));
+				() -> new MissingFragmentValueException(currentFragment.getFragmentId(), FRAGMENT_KEY_TILE));
 		Tile currentTile = TileConverter.fromString(fragmentWKT);
 		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
 		return BoundingBoxConverter.toWKT(currentBoundingBox);
