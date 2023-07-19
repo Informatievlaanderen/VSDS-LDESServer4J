@@ -18,6 +18,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.shacl.vocabulary.SHACL.targetClass;
 
 @Component
 public class EventStreamResponseConverterImpl implements EventStreamResponseConverter {
@@ -45,8 +46,16 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH);
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);
-		final String memberType = getResource(model, MEMBER_TYPE);
 		final Model shacl = getShaclFromModel(model);
+		final String memberType = shacl.listStatements(null, shacl.createProperty(targetClass.getURI()), (RDFNode) null)
+				.nextOptional()
+				.map(Statement::getObject)
+				.map(RDFNode::toString)
+				.orElseThrow(() -> {
+					throw new IllegalArgumentException(
+							"Could not find a targetClass in provided shape. Missing statement: "
+									+ targetClass.getURI());
+				});
 		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views,
 				shacl);
 	}
@@ -56,12 +65,10 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection());
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
 				createResource(EVENT_STREAM_TYPE));
-		final Statement memberType = createStatement(subject, MEMBER_TYPE,
-				createProperty(eventStreamResponse.getMemberType()));
 		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
-				.add(List.of(collectionNameStmt, memberType))
+				.add(collectionNameStmt)
 				.add(getVersionOfStatements(subject, eventStreamResponse))
 				.add(getTimestampPathStatements(subject, eventStreamResponse))
 				.add(eventStreamResponse.getShacl())
@@ -69,7 +76,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.add(getViewStatements(eventStreamResponse.getViews()))
 				.add(dataset);
 
-		getShaclReferenceStatement(eventStreamResponse.getShacl(), subject).ifPresent(eventStreamModel::add);
+		Statement shaclStatement = getShaclReferenceStatement(eventStreamResponse.getShacl(), subject);
+
+		eventStreamModel.add(shaclStatement);
+		eventStreamModel.add(createStatement(shaclStatement.getResource(), createProperty(targetClass.getURI()),
+				createProperty(eventStreamResponse.getMemberType())));
 
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
 	}
@@ -107,9 +118,10 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.toList();
 	}
 
-	private Optional<Statement> getShaclReferenceStatement(Model shacl, Resource subject) {
+	private Statement getShaclReferenceStatement(Model shacl, Resource subject) {
 		return getIdentifier(shacl, createResource(NODE_SHAPE_TYPE))
-				.map(resource -> createStatement(subject, TREE_SHAPE, resource));
+				.map(resource -> createStatement(subject, TREE_SHAPE, resource))
+				.orElse(createStatement(subject, TREE_MEMBER, createResource()));
 	}
 
 	private Resource getIRIFromCollectionName(String name) {

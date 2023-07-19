@@ -8,8 +8,8 @@
 [] a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
-    custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
     tree:shape [
         sh:closed true;
+        sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder>;
         a sh:NodeShape ;
     ] .

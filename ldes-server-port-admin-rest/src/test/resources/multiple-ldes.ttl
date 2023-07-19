@@ -25,12 +25,13 @@ view1:description  rdf:type  tree:ViewDescription ;
                 ]) .
 
 server:name2  rdf:type      ldes:EventStream ;
-        <http://example.org/memberType>
-                mobiliteit:Mobiliteitshinder ;
         ldes:timestampPath  terms:created ;
         ldes:versionOfPath  terms:isVersionOf ;
         tree:view           name2:view1 ;
-        tree:shape          server:shape .
+        tree:shape          name2:shape .
+
+name2:shape a sh:NodeShape ;
+    sh:targetClass mobiliteit:Mobiliteitshinder .
 
 view2:description  rdf:type  tree:ViewDescription ;
         tree:fragmentationStrategy
@@ -44,19 +45,14 @@ name2:view1 a tree:Node ;
 name1:view2 a tree:Node ;
   tree:viewDescription  view2:description .
 
-server:shape  rdf:type  sh:NodeShape ;
-        sh:deactivated  true ;
-        sh:nodeShape    [ sh:closed         true ;
-                          sh:propertyShape  []
-                        ] .
-
 server:name1  rdf:type      ldes:EventStream ;
-        <http://example.org/memberType>
-                mobiliteit:Mobiliteitshinder ;
         ldes:timestampPath  terms:created ;
         ldes:versionOfPath  terms:isVersionOf ;
         tree:view           name1:view2 , name1:view3 ;
-        tree:shape          server:shape .
+        tree:shape          name1:shape .
+
+name1:shape a sh:NodeShape ;
+    sh:targetClass mobiliteit:Mobiliteitshinder .
 
 name1:view3 a tree:Node ;
   tree:viewDescription  view3:description .
