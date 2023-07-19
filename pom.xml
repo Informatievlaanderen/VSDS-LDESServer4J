@@ -71,7 +71,7 @@
         <spring-data.version>3.1.1</spring-data.version>
 
         <!-- JSON & RDF -->
-        <apache-jena.version>4.8.0</apache-jena.version>
+        <apache-jena.version>4.9.0</apache-jena.version>
         <json-simple.version>1.1.1</json-simple.version>
 
         <!-- TESTING -->
