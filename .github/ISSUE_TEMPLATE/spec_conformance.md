@@ -2,7 +2,7 @@
 name: Spec conformance issue
 about: Report an issue related to spec conformance 
 title: "[Spec]: "
-labels: ['bug', 'spec conformity, 'needs triage']
+labels: ['bug', 'spec conformity', 'needs triage']
 assignees: 
   - rorlic
   - sandervd
