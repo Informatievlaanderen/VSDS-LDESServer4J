@@ -23,10 +23,8 @@ import static org.apache.jena.shacl.vocabulary.SHACL.targetClass;
 @Component
 public class EventStreamResponseConverterImpl implements EventStreamResponseConverter {
 
-	public static final String CUSTOM = "http://example.org/";
 	public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
 	public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
-	public static final Property MEMBER_TYPE = createProperty(CUSTOM, "memberType");
 	private final String hostname;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
@@ -47,15 +45,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);
 		final Model shacl = getShaclFromModel(model);
-		final String memberType = shacl.listStatements(null, shacl.createProperty(targetClass.getURI()), (RDFNode) null)
-				.nextOptional()
-				.map(Statement::getObject)
-				.map(RDFNode::toString)
-				.orElseThrow(() -> {
-					throw new IllegalArgumentException(
-							"Could not find a targetClass in provided shape. Missing statement: "
-									+ targetClass.getURI());
-				});
+		final String memberType = extractMemberType(shacl);
 		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views,
 				shacl);
 	}
@@ -179,5 +169,16 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		}
 
 		return statements;
+	}
+
+	private String extractMemberType(Model shacl) {
+		return shacl.listObjectsOfProperty(null, shacl.createProperty(targetClass.getURI()))
+				.nextOptional()
+				.map(RDFNode::toString)
+				.orElseThrow(() -> {
+					throw new IllegalArgumentException(
+							"Could not find a targetClass in provided shape. Missing statement: "
+									+ targetClass.getURI());
+				});
 	}
 }
