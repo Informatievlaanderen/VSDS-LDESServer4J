@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ class FragmentationExecutorTest {
 	private static final ViewName VIEW_NAME = new ViewName(COLLECTION_NAME, "view");
 	private final FragmentationStrategy fragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
+	private final MembersToFragmentRepository membersToFragmentRepository = mock(MembersToFragmentRepository.class);
 	private final FragmentationStrategyCollection fragmentationStrategyCollection = Mockito.mock(
 			FragmentationStrategyCollection.class);
 	private FragmentationExecutor fragmentationExecutor;
@@ -35,7 +37,8 @@ class FragmentationExecutorTest {
 	@BeforeEach
 	void setUp() {
 		fragmentationExecutor = new FragmentationExecutor(
-				fragmentRepository, ObservationRegistry.create(), fragmentationStrategyCollection);
+				fragmentRepository, ObservationRegistry.create(), fragmentationStrategyCollection,
+				membersToFragmentRepository);
 	}
 
 	@Test
@@ -50,7 +53,7 @@ class FragmentationExecutorTest {
 		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
 
 		fragmentationExecutor.executeFragmentation(new MemberIngestedEvent(member.getModel(), member.getLdesMemberId(),
-				member.getCollectionName()));
+				member.getCollectionName(), member.getSequenceNr()));
 
 		verify(fragmentRepository, times(1))
 				.retrieveRootFragment(VIEW_NAME.asString());
@@ -68,7 +71,7 @@ class FragmentationExecutorTest {
 		when(member.getCollectionName()).thenReturn(alternativeViewName.getCollectionName());
 
 		fragmentationExecutor.executeFragmentation(new MemberIngestedEvent(member.getModel(), member.getLdesMemberId(),
-				member.getCollectionName()));
+				member.getCollectionName(), member.getSequenceNr()));
 
 		verify(fragmentRepository, times(0))
 				.retrieveRootFragment(alternativeViewName.asString());
@@ -88,7 +91,7 @@ class FragmentationExecutorTest {
 		when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
 
 		MemberIngestedEvent memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getLdesMemberId(),
-				member.getCollectionName());
+				member.getCollectionName(), member.getSequenceNr());
 
 		MissingRootFragmentException missingRootFragmentException = assertThrows(MissingRootFragmentException.class,
 				() -> fragmentationExecutor.executeFragmentation(memberIngestedEvent));
@@ -112,7 +115,7 @@ class FragmentationExecutorTest {
 					Member member = mock(Member.class);
 					when(member.getCollectionName()).thenReturn(COLLECTION_NAME);
 					fragmentationExecutor.executeFragmentation(new MemberIngestedEvent(member.getModel(), member.getLdesMemberId(),
-							member.getCollectionName()));
+							member.getCollectionName(), member.getSequenceNr()));
 				});
 
 		InOrder inOrder = inOrder(fragmentRepository, fragmentationStrategy);

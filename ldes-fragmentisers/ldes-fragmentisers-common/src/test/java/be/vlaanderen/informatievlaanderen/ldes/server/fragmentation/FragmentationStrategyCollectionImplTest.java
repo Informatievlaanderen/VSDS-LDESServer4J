@@ -8,6 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -24,10 +26,12 @@ class FragmentationStrategyCollectionImplTest {
 			FragmentationStrategyCreator.class);
 	private final RefragmentationService refragmentationService = Mockito.mock(RefragmentationService.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
+	private final MembersToFragmentRepository membersToFragmentRepository = mock(MembersToFragmentRepository.class);
+	private final ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
 			rootFragmentCreator, fragmentationStrategyCreator, refragmentationService,
-			fragmentRepository, allocationRepository);
+			fragmentRepository, allocationRepository, observationRegistry, membersToFragmentRepository);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {

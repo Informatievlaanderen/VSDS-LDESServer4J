@@ -39,8 +39,7 @@ public class IngestedMemberHandler {
 				.getLocalDateTime((LiteralImpl) extractPropertyFromModel(event.model(),
 						eventStreamProperties.getTimestampPath()));
 		String versionOf = extractPropertyFromModel(event.model(), eventStreamProperties.getVersionOfPath()).toString();
-		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf,
-				timestamp);
+		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf, timestamp);
 		memberPropertiesRepository.saveMemberPropertiesWithoutViews(member);
 	}
 
