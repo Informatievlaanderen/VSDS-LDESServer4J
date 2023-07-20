@@ -11,10 +11,7 @@ ldes:collectionName1 a ldes:EventStream ;
    ldes:view ldes:view1 .
 
 ldes:shape a sh:NodeShape ;
-   sh:nodeShape [
-     sh:closed true ;
-     sh:propertyShape []
-     ] ;
+   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
    sh:deactivated true .
 
 server:view1

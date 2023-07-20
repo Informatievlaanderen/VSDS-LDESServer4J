@@ -60,8 +60,8 @@ An example of a valid LDES Event stream can be found here:
 <collectionName> a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
-    example:memberType <https://exampleMembertType> ;
     tree:shape [
+        sh:targetClass <https://exampleMembertType> ;
         sh:closed true;
         a sh:NodeShape ;
     ] .

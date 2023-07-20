@@ -1,7 +1,6 @@
 @prefix tree:            <https://w3id.org/tree#> .
 @prefix ldes:            <https://w3id.org/ldes#> .
 @prefix sh:              <http://www.w3.org/ns/shacl#> .
-@prefix example:         <http://example.org/> .
 @prefix dc:              <http://purl.org/dc/terms/> .
 @prefix col:             <http://localhost:8080/collectionName1/> .
 @prefix mobiliteit:      <https://data.vlaanderen.be/ns/mobiliteit#> .
@@ -20,16 +19,12 @@ col:view1 a tree:Node ;
 server:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dc:created ;
    ldes:versionOfPath dc:isVersionOf ;
-   example:memberType mobiliteit:Mobiliteitshinder ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 .
 
 col:shape a sh:NodeShape ;
-   sh:nodeShape [
-     sh:closed true ;
-     sh:propertyShape []
-     ] ;
+   sh:targetClass mobiliteit:Mobiliteitshinder ;
    sh:deactivated true .
 
 view1:description  rdf:type  tree:ViewDescription ;
