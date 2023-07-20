@@ -107,6 +107,11 @@
                     <artifactId>ldes-fragmentisers-geospatial</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
@@ -115,6 +120,11 @@
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-fragmentisers-timebased</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongo-fragmentation-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -127,16 +137,16 @@
                     <artifactId>ldes-fragmentisers-substring</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation</id>
+            <id>fragmentation-pagination</id>
             <dependencies>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-fragmentisers-common</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>ldes-fragmentisers-pagination</artifactId>
