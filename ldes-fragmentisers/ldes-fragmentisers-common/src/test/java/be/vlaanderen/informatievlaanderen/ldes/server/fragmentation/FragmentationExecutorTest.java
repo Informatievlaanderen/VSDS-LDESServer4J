@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
-import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -37,7 +36,7 @@ class FragmentationExecutorTest {
 	@BeforeEach
 	void setUp() {
 		fragmentationExecutor = new FragmentationExecutor(
-				fragmentRepository, ObservationRegistry.create(), fragmentationStrategyCollection,
+				fragmentationStrategyCollection,
 				membersToFragmentRepository);
 	}
 
