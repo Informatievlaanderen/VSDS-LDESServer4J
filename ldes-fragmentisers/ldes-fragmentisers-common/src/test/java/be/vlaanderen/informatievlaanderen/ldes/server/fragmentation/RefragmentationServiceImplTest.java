@@ -16,36 +16,36 @@ import static org.mockito.Mockito.*;
 
 class RefragmentationServiceImplTest {
 
-    public static final String COLLECTION_NAME = "collection";
-    public static final String VIEW = "view";
+	public static final String COLLECTION_NAME = "collection";
+	public static final String VIEW = "view";
 
-    private final EventSourceService eventSourceService = mock(EventSourceService.class);
-    private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
-    private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
+	private final EventSourceService eventSourceService = mock(EventSourceService.class);
+	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
+	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
 
-    private final RefragmentationService refragmentationService =
-            new RefragmentationServiceImpl(rootFragmentCreator, eventSourceService, ObservationRegistry.create());
+	private final RefragmentationService refragmentationService = new RefragmentationServiceImpl(rootFragmentCreator,
+			eventSourceService, ObservationRegistry.create());
 
-    @Test
-    void test() {
-        List<Member> members = List.of(getMember("1"), getMember("2"),
-                getMember("3"));
-        when(eventSourceService.getMemberStreamOfCollection(COLLECTION_NAME))
-                .thenReturn(members.stream());
-        ViewName viewName = new ViewName(COLLECTION_NAME, VIEW);
-        Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));
-        when(rootFragmentCreator.createRootFragmentForView(viewName)).thenReturn(parentFragment);
+	@Test
+	void test() {
+		List<Member> members = List.of(getMember("1"), getMember("2"),
+				getMember("3"));
+		when(eventSourceService.getMemberStreamOfCollection(COLLECTION_NAME))
+				.thenReturn(members.stream());
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW);
+		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));
+		when(rootFragmentCreator.createRootFragmentForView(viewName)).thenReturn(parentFragment);
 
-        refragmentationService.refragmentMembersForView(viewName, fragmentationStrategy);
+		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategy);
 
-        members.forEach(member -> verify(fragmentationStrategy)
-                .addMemberToFragment(eq(parentFragment), eq(member.getId()),
-                        eq(member.getModel()),
-                        any(Observation.class)));
-    }
+		members.forEach(member -> verify(fragmentationStrategy)
+				.addMemberToFragment(eq(parentFragment), eq(member.getId()),
+						eq(member.getModel()),
+						any(Observation.class)));
+	}
 
-    private Member getMember(String memberId) {
-        return new Member(memberId, null, null, null);
-    }
+	private Member getMember(String memberId) {
+		return new Member(memberId, null, null, null);
+	}
 
 }

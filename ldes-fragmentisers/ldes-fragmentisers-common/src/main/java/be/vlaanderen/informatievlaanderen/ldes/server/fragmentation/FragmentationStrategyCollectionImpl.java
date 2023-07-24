@@ -96,6 +96,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.ifPresent(fragmentationStrategySet::remove);
 	}
 
+	// TODO TVB: 24/07/23 is this tested?
 	@EventListener
 	public void handleMemberUnallocatedEvent(MemberUnallocatedEvent event) {
 		allocationRepository.unallocateMemberFromView(event.memberId(), event.viewName());
