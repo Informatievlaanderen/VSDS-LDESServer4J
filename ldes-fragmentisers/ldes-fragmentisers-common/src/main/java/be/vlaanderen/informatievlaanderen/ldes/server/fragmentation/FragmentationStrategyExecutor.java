@@ -61,11 +61,11 @@ public class FragmentationStrategyExecutor {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		FragmentationStrategyExecutor that = (FragmentationStrategyExecutor) o;
-		return Objects.equals(viewName, that.viewName);
+		return Objects.equals(getViewName(), that.getViewName());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(viewName);
+		return Objects.hash(getViewName());
 	}
 }
