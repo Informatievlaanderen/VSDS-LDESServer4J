@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.MongoFragmentationIntegrationTest;
+import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -41,6 +42,14 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 			fragmentPairList.add(new FragmentPair(fragmentPairs[i], fragmentPairs[i + 1]));
 		}
 		return fragmentPairList;
+	}
+
+	@Before
+	public void setup() {
+		retrievedLdesFragment = Optional.empty();
+		fragments = List.of();
+		fragmentRepository.deleteTreeNodesByCollection("mobility-hindrances");
+		fragmentRepository.deleteTreeNodesByCollection("parcels");
 	}
 
 	@Given("The following ldesFragments")
@@ -84,5 +93,27 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	@When("I delete the collection {string}")
 	public void iDeleteTheCollection(String collectionName) {
 		fragmentRepository.deleteTreeNodesByCollection(collectionName);
+	}
+
+	@When("I retrieve the open child fragment of fragment {int}")
+	public void retrieveOpenFragment(int index) {
+		retrievedLdesFragment = fragmentRepository.retrieveOpenChildFragment(fragments.get(index - 1).getFragmentId());
+	}
+
+	@When("I retrieve the root fragment of the view with viewname {string}")
+	public void retrieveRootFragment(String viewName) {
+		retrievedLdesFragment = fragmentRepository.retrieveRootFragment(viewName);
+	}
+
+	@When("I increment the number of members of fragment {int}")
+	public void incrementMembers(int index) {
+		fragmentRepository.incrementNumberOfMembers(fragments.get(index - 1).getFragmentId());
+	}
+
+	@Then("The retrieved ldesFragment has {int} members")
+	public void theRetrievedLdesFragmentHasGivenNumberOfMembers(int numberOfMembers) {
+		assertTrue(retrievedLdesFragment.isPresent());
+		Fragment actualFragment = this.retrievedLdesFragment.get();
+		assertEquals(numberOfMembers, actualFragment.getNumberOfMembers());
 	}
 }
