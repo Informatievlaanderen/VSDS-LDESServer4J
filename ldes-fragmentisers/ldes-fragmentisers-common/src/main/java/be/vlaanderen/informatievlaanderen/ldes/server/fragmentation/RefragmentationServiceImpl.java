@@ -25,10 +25,8 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 		this.observationRegistry = observationRegistry;
 	}
 
-	// TODO TVB: 24/07/23 test
 	@Override
-	public void refragmentMembersForView(ViewName viewName,
-			FragmentationStrategy fragmentationStrategyForView) {
+	public void refragmentMembersForView(ViewName viewName, FragmentationStrategy fragmentationStrategyForView) {
 		Fragment rootFragmentForView = rootFragmentCreator.createRootFragmentForView(viewName);
 		Stream<Member> memberStreamOfCollection = eventSourceService
 				.getMemberStreamOfCollection(rootFragmentForView.getViewName().getCollectionName());
