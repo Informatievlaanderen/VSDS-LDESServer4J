@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
-// TODO TVB: 20/07/23 test
 public class RootFragmentRetriever {
 
 	private final FragmentRepository fragmentRepository;
