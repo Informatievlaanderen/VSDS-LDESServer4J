@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// TODO TVB: 20/07/23 update tests
+// TODO TVB: 20/07/23 test
 @Component
 public class FragmentationExecutor {
 

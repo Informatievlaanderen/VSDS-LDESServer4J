@@ -56,7 +56,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.toList();
 	}
 
-	// TODO TVB: 20/07/23 update test
+	// TODO TVB: 20/07/23 test
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		final ViewName viewName = event.getViewName();
@@ -68,7 +68,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 	}
 
-	// TODO TVB: 20/07/23 update test
+	// TODO TVB: 20/07/23 test
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
@@ -84,7 +84,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		allocationRepository.unallocateMembersFromCollection(event.collectionName());
 	}
 
-	// TODO TVB: 24/07/23 update test
+	// TODO TVB: 24/07/23 test
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		fragmentRepository.removeLdesFragmentsOfView(event.getViewName().asString());

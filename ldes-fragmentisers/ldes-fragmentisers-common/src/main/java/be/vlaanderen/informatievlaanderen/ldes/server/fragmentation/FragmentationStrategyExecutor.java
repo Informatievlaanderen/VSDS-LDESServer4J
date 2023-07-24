@@ -32,7 +32,6 @@ public class FragmentationStrategyExecutor {
 	}
 
 	// TODO TVB: 20/07/23 test
-	// TODO TVB: 20/07/23 logging/tracking? ook in db terug te vinden natuurlijk
 	public void execute() {
 		executorService.execute(() -> {
 			var parentObservation = Observation.createNotStarted("execute fragmentation", observationRegistry).start();
