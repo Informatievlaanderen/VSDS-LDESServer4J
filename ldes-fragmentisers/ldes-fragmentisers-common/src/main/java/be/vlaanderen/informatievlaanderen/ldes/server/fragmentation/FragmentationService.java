@@ -4,18 +4,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.Membe
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
 import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// TODO TVB: 20/07/23 test
-@Component
-public class FragmentationExecutor {
+@Service
+public class FragmentationService {
 
 	private final FragmentationStrategyCollection fragmentationStrategyCollection;
 	private final MembersToFragmentRepository membersToFragmentRepository;
 
-	public FragmentationExecutor(FragmentationStrategyCollection fragmentationStrategyCollection,
+	public FragmentationService(FragmentationStrategyCollection fragmentationStrategyCollection,
 			MembersToFragmentRepository membersToFragmentRepository) {
 		this.fragmentationStrategyCollection = fragmentationStrategyCollection;
 		this.membersToFragmentRepository = membersToFragmentRepository;
