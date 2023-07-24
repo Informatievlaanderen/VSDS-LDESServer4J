@@ -46,7 +46,7 @@ public class IngestedMemberHandler {
 
 	private Optional<LocalDateTime> getTimestamp(Model model, EventStreamProperties eventStreamProperties) {
 		return extractPropertyFromModel(model, eventStreamProperties.getTimestampPath())
-				.map(node -> (LiteralImpl) node)
+				.map(LiteralImpl.class::cast)
 				.map(localDateTimeConverter::getLocalDateTime);
 	}
 
