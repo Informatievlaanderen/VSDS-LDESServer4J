@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.M
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,4 +47,26 @@ public class FragmentationStrategyExecutor {
 		});
 	}
 
+	public boolean isPartOfCollection(String collectionName) {
+		return Objects.equals(viewName.getCollectionName(), collectionName);
+	}
+
+	public ViewName getViewName() {
+		return viewName;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		FragmentationStrategyExecutor that = (FragmentationStrategyExecutor) o;
+		return Objects.equals(viewName, that.viewName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(viewName);
+	}
 }

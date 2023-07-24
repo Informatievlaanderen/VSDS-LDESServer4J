@@ -6,90 +6,76 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
-import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class FragmentationStrategyCollectionImpl implements FragmentationStrategyCollection {
 
-	// TODO TVB: 20/07/23 to be remove
-	private final Map<ViewName, FragmentationStrategy> fragmentationStrategyMap;
-	// TODO TVB: 20/07/23 extract to refragment service
-	private final RootFragmentCreator rootFragmentCreator;
-	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 	private final RefragmentationService refragmentationService;
 	private final FragmentRepository fragmentRepository;
 	private final AllocationRepository allocationRepository;
-	// TODO TVB: 20/07/23 should replace fragmentationStratMap
-	private final List<FragmentationStrategyExecutor> myList = new ArrayList<>();
-	private final ObservationRegistry observationRegistry;
-	private final MembersToFragmentRepository membersToFragmentRepository;
+	private final Set<FragmentationStrategyExecutor> fragmentationStrategySet;
+	private final FragmentationStrategyCreator fragmentationStrategyCreator;
+	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator;
 
 	public FragmentationStrategyCollectionImpl(
-			RootFragmentCreator rootFragmentCreator, FragmentationStrategyCreator fragmentationStrategyCreator,
+			FragmentationStrategyCreator fragmentationStrategyCreator,
 			RefragmentationService refragmentationService,
 			FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-			ObservationRegistry observationRegistry, MembersToFragmentRepository membersToFragmentRepository) {
+			FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
-		this.observationRegistry = observationRegistry;
-		this.membersToFragmentRepository = membersToFragmentRepository;
-		this.fragmentationStrategyMap = new HashMap<>();
-		this.rootFragmentCreator = rootFragmentCreator;
+		this.fragmentationStrategyExecutorCreator = fragmentationStrategyExecutorCreator;
+		this.fragmentationStrategySet = new HashSet<>();
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 		this.refragmentationService = refragmentationService;
 	}
 
-	public Map<ViewName, FragmentationStrategy> getFragmentationStrategyMap() {
-		return Map.copyOf(fragmentationStrategyMap);
-	}
-
-	public List<FragmentationStrategyExecutor> getFragmentationStrategyExecutors() {
-		return myList;
+	public List<FragmentationStrategyExecutor> getFragmentationStrategyExecutors(String collectionName) {
+		return fragmentationStrategySet
+				.stream()
+				.filter(executor -> executor.isPartOfCollection(collectionName))
+				.toList();
 	}
 
 	@Override
 	public List<ViewName> getViews(String collectionName) {
-		return fragmentationStrategyMap
-				.keySet()
+		return fragmentationStrategySet
 				.stream()
-				.filter(viewName -> Objects.equals(collectionName, viewName.getCollectionName()))
+				.filter(executor -> executor.isPartOfCollection(collectionName))
+				.map(FragmentationStrategyExecutor::getViewName)
 				.toList();
 	}
 
 	// TODO TVB: 20/07/23 update test
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
-		Fragment rootFragmentForView = rootFragmentCreator.createRootFragmentForView(event.getViewName());
-		FragmentationStrategy fragmentationStrategyForView = fragmentationStrategyCreator
+		final ViewName viewName = event.getViewName();
+		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(event.getViewSpecification());
-		refragmentationService.refragmentMembersForView(rootFragmentForView, fragmentationStrategyForView);
-		fragmentationStrategyMap.put(event.getViewName(), fragmentationStrategyForView);
-		// TODO TVB: 20/07/23 cleanup
-		RootFragmentRetriever rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository,
-				observationRegistry);
-		myList.add(new FragmentationStrategyExecutor(event.getViewName(), fragmentationStrategyForView,
-				rootFragmentRetriever, observationRegistry, membersToFragmentRepository));
+		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategy);
+		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
+				fragmentationStrategy);
+		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 	}
 
 	// TODO TVB: 20/07/23 update test
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
-		FragmentationStrategy fragmentationStrategyForView = fragmentationStrategyCreator
+		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(event.getViewSpecification());
-		fragmentationStrategyMap.put(event.getViewName(), fragmentationStrategyForView);
-		// TODO TVB: 20/07/23 cleanup
-		RootFragmentRetriever rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository,
-				observationRegistry);
-		myList.add(new FragmentationStrategyExecutor(event.getViewName(), fragmentationStrategyForView,
-				rootFragmentRetriever, observationRegistry, membersToFragmentRepository));
+		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator
+				.createExecutor(event.getViewName(), fragmentationStrategy);
+		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 	}
 
 	@EventListener
@@ -98,11 +84,16 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		allocationRepository.unallocateMembersFromCollection(event.collectionName());
 	}
 
+	// TODO TVB: 24/07/23 update test
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		fragmentRepository.removeLdesFragmentsOfView(event.getViewName().asString());
 		allocationRepository.unallocateAllMembersFromView(event.getViewName());
-		fragmentationStrategyMap.remove(event.getViewName());
+		fragmentationStrategySet
+				.stream()
+				.filter(executor -> executor.getViewName().equals(event.getViewName()))
+				.findFirst()
+				.ifPresent(fragmentationStrategySet::remove);
 	}
 
 	@EventListener

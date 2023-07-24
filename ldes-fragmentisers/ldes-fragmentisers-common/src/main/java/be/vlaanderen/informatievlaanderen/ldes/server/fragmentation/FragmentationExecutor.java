@@ -16,16 +16,17 @@ public class FragmentationExecutor {
 	private final MembersToFragmentRepository membersToFragmentRepository;
 
 	public FragmentationExecutor(FragmentationStrategyCollection fragmentationStrategyCollection,
-								 MembersToFragmentRepository membersToFragmentRepository) {
+			MembersToFragmentRepository membersToFragmentRepository) {
 		this.fragmentationStrategyCollection = fragmentationStrategyCollection;
 		this.membersToFragmentRepository = membersToFragmentRepository;
 	}
 
 	@EventListener
 	public void executeFragmentation(MemberIngestedEvent memberEvent) {
-		final List<ViewName> views = fragmentationStrategyCollection.getViews(memberEvent.collectionName());
+		final var collectionName = memberEvent.collectionName();
+		final List<ViewName> views = fragmentationStrategyCollection.getViews(collectionName);
 		membersToFragmentRepository.create(views, memberEvent.model(), memberEvent.sequenceNr(), memberEvent.id());
-		final var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors();
+		final var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors(collectionName);
 		executors.forEach(FragmentationStrategyExecutor::execute);
 	}
 

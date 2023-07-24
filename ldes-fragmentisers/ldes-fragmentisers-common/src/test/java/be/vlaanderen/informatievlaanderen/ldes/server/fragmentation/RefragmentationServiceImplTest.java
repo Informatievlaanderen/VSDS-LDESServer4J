@@ -21,7 +21,7 @@ class RefragmentationServiceImplTest {
 	private final FragmentationStrategy fragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
 
 	private final RefragmentationService refragmentationService = new RefragmentationServiceImpl(
-			eventSourceService, ObservationRegistry.create());
+			rootFragmentCreator, eventSourceService, ObservationRegistry.create());
 
 	@Test
 	void test() {

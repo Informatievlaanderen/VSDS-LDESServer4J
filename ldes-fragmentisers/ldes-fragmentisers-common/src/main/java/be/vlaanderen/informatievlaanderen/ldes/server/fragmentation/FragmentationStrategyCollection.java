@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface FragmentationStrategyCollection {
-	Map<ViewName, FragmentationStrategy> getFragmentationStrategyMap();
-
-	List<FragmentationStrategyExecutor> getFragmentationStrategyExecutors();
+	List<FragmentationStrategyExecutor> getFragmentationStrategyExecutors(String collectionName);
 
 	List<ViewName> getViews(String collectionName);
 }
