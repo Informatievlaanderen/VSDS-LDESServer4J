@@ -1,15 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MemberUnallocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -40,13 +41,18 @@ class FragmentationStrategyCollectionImplTest {
 
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
+		verifySingleViewAdded(initResult);
+		verify(refragmentationService).refragmentMembersForView(initResult.viewName(),
+				initResult.fragmentationStrategy());
+	}
+
+	private void verifySingleViewAdded(InitViewAddedResult initResult) {
 		var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME);
 		assertEquals(1, executors.size());
 		assertEquals(initResult.fragmentationStrategyExecutor(), executors.get(0));
 		var views = fragmentationStrategyCollection.getViews(COLLECTION_NAME);
 		assertEquals(1, views.size());
 		assertEquals(initResult.viewName(), views.get(0));
-		verify(refragmentationService).refragmentMembersForView(initResult.viewName(), initResult.fragmentationStrategy());
 	}
 
 	private InitViewAddedResult initAddView() {
@@ -58,10 +64,23 @@ class FragmentationStrategyCollectionImplTest {
 		FragmentationStrategyExecutor fragmentationStrategyExecutor = createFragmentationStrategyExecutor(viewName);
 		when(fragmentationStrategyExecutorCreator.createExecutor(viewName, fragmentationStrategy))
 				.thenReturn(fragmentationStrategyExecutor);
-		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy, fragmentationStrategyExecutor);
+		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
+				fragmentationStrategyExecutor);
 	}
 
-	private record InitViewAddedResult(ViewName viewName, ViewSpecification viewSpecification, FragmentationStrategy fragmentationStrategy, FragmentationStrategyExecutor fragmentationStrategyExecutor) {
+	@Test
+	void handleMemberUnallocatedEvent() {
+		ViewName viewName = new ViewName(COLLECTION_NAME, "view");
+		MemberUnallocatedEvent memberUnallocatedEvent = new MemberUnallocatedEvent("id", viewName);
+
+		fragmentationStrategyCollection.handleMemberUnallocatedEvent(memberUnallocatedEvent);
+
+		verify(allocationRepository)
+				.unallocateMemberFromView(memberUnallocatedEvent.memberId(), memberUnallocatedEvent.viewName());
+	}
+
+	private record InitViewAddedResult(ViewName viewName, ViewSpecification viewSpecification,
+			FragmentationStrategy fragmentationStrategy, FragmentationStrategyExecutor fragmentationStrategyExecutor) {
 	}
 
 	private static FragmentationStrategyExecutor createFragmentationStrategyExecutor(ViewName viewName) {
@@ -70,7 +89,6 @@ class FragmentationStrategyCollectionImplTest {
 		when(fragmentationStrategyExecutor.getViewName()).thenReturn(viewName);
 		return fragmentationStrategyExecutor;
 	}
-
 
 	@Test
 	void when_ViewDeletedEventIsReceived_FragmentationStrategyIsRemovedFromMap() {
@@ -87,26 +105,17 @@ class FragmentationStrategyCollectionImplTest {
 		verify(allocationRepository).unallocateAllMembersFromView(initResult.viewSpecification().getName());
 	}
 
-//	@Test
-//	void when_ViewInitializedEventIsReceived_FragmentationStrategyIsAddedToMap() {
-//		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
-//				List.of(), List.of());
-//
-//		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
-//				.thenReturn(mock(FragmentationStrategy.class));
-//		assertFalse(
-//
-//				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-//
-//		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
-//
-//		assertTrue(
-//
-//				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-//
-//		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
-//		verifyNoMoreInteractions(fragmentationStrategyCreator, rootFragmentCreator, refragmentationService);
-//	}
+	@Test
+	void when_ViewInitializedEventIsReceived_FragmentationStrategyIsAddedToMap() {
+		InitViewAddedResult initViewAddedResult = initAddView();
+		ViewSpecification viewSpecification = initViewAddedResult.viewSpecification;
+		assertTrue(fragmentationStrategyCollection.getViews(COLLECTION_NAME).isEmpty());
+		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+
+		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
+
+		verifySingleViewAdded(initViewAddedResult);
+	}
 
 	@Test
 	void should_DeleteTreeNodesByCollection_when_EventStreamDeletedEventIsReceived() {

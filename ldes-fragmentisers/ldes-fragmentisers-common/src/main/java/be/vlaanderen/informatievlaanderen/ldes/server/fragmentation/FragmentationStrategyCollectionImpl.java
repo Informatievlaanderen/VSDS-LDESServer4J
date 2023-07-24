@@ -62,12 +62,11 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(event.getViewSpecification());
 		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategy);
-		final var fragmentationStrategyExecutor =
-				fragmentationStrategyExecutorCreator.createExecutor(viewName, fragmentationStrategy);
+		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
+				fragmentationStrategy);
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 	}
 
-	// TODO TVB: 20/07/23 test
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
@@ -94,7 +93,6 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.ifPresent(fragmentationStrategySet::remove);
 	}
 
-	// TODO TVB: 24/07/23 is this tested?
 	@EventListener
 	public void handleMemberUnallocatedEvent(MemberUnallocatedEvent event) {
 		allocationRepository.unallocateMemberFromView(event.memberId(), event.viewName());
