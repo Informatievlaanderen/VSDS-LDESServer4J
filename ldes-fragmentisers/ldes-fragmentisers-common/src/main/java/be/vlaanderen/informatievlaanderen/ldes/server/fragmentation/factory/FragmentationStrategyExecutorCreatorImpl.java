@@ -9,6 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.M
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.Executors;
+
 @Service
 public class FragmentationStrategyExecutorCreatorImpl implements FragmentationStrategyExecutorCreator {
 
@@ -29,7 +31,7 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 			FragmentationStrategy fragmentationStrategy) {
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
 		return new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-				observationRegistry, membersToFragmentRepository);
+				observationRegistry, membersToFragmentRepository, Executors.newSingleThreadExecutor());
 	}
 
 }
