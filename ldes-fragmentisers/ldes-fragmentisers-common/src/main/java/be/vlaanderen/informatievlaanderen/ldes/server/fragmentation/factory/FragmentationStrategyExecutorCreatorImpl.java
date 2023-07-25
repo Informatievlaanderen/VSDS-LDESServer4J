@@ -26,7 +26,6 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 		this.membersToFragmentRepository = membersToFragmentRepository;
 	}
 
-	// TODO TVB: 24/07/23 test
 	public FragmentationStrategyExecutor createExecutor(ViewName viewName,
 			FragmentationStrategy fragmentationStrategy) {
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
