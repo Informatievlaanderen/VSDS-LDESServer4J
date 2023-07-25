@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.c
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.model.FragmentationTimestamp;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedRelationsAttributer;
 
@@ -20,35 +21,15 @@ public class TimeBasedFragmentFinder {
         this.relationsAttributer = relationsAttributer;
     }
 
-    public Fragment getLowestFragment() {
-
-    }
-
-    public Fragment getOpenOrLastPossibleFragment(Fragment parentFragment,
-                                                  Fragment rootFragment, List<String> buckets) {
-
-        Fragment currentParentFragment = rootFragment;
-        Fragment currentChildFragment = null;
-        for (String bucket : buckets) {
-            if (canBeAddedToRoot(rootFragment, bucket)) {
-                return rootFragment;
-            }
-            if (ROOT_SUBSTRING.equals(bucket)) {
-                continue;
-            }
-
-            currentChildFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, bucket);
-            substringRelationsAttributer.addSubstringRelation(currentParentFragment, currentChildFragment);
-            if (currentChildFragment.getNumberOfMembers() < substringConfig.getMemberLimit()) {
-                break;
-            }
-            currentParentFragment = currentChildFragment;
+    public Fragment getLowestFragment(Fragment parentFragment, FragmentationTimestamp fragmentationTimestamp, Fragment rootFragment, int granularity) {
+        if(isLowest(parentFragment)) {
+            return parentFragment;
         }
-        return currentChildFragment;
+        return getLowestFragment(fragmentCreator.getOrCreateFragment(parentFragment, fragmentationTimestamp, rootFragment, granularity), fragmentationTimestamp, rootFragment, granularity + 1);
     }
 
-    private boolean canBeAddedToRoot(Fragment rootFragment, String bucket) {
-        return ROOT_SUBSTRING.equals(bucket)
-                && rootFragment.getNumberOfMembers() < substringConfig.getMemberLimit();
+    private boolean isLowest(Fragment fragment) {
+        return fragment.getFragmentPairs().stream().anyMatch(fragmentPair -> fragmentPair.fragmentKey().equals(config.getMaxGranularity()));
     }
+
 }

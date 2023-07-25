@@ -130,6 +130,16 @@
             </dependencies>
         </profile>
         <profile>
+            <id>fragmentation-timebased-h</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-fragmentisers-timebased-hierarchical</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>fragmentation-substring</id>
             <dependencies>
                 <dependency>

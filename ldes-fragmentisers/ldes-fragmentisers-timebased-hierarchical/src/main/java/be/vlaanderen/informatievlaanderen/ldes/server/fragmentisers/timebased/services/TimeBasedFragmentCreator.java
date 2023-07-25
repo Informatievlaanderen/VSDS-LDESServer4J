@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.s
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants.TimeBasedConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.model.FragmentationTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +23,16 @@ public class TimeBasedFragmentCreator {
         this.relationsAttributer = relationsAttributer;
     }
 
-    public Fragment getOrCreateTileFragment(Fragment parentFragment, String tile,
-                                            Fragment rootTileFragment) {
-        Fragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_TILE, tile));
+    public Fragment getOrCreateFragment(Fragment parentFragment, FragmentationTimestamp fragmentationTimestamp,
+                                            Fragment rootTileFragment, int granularity) {
+        Fragment child = parentFragment.createChild(new FragmentPair(TimeBasedConstants.temporalFields[granularity], fragmentationTimestamp.getTemporalFieldsWithValues().get(TimeBasedConstants.temporalFields[granularity])));
         return fragmentRepository
                 .retrieveFragment(child.getFragmentId())
                 .orElseGet(() -> {
                     fragmentRepository.saveFragment(child);
-                    tileFragmentRelationsAttributer
-                            .addRelationsFromRootToBottom(rootTileFragment, child);
-                    LOGGER.debug("Geospatial fragment created with id: {}", child.getFragmentId());
+                    relationsAttributer
+                            .addInBetweenRelation(parentFragment, child);
+                    LOGGER.debug("Timebased fragment created with id: {}", child.getFragmentId());
                     return child;
                 });
     }

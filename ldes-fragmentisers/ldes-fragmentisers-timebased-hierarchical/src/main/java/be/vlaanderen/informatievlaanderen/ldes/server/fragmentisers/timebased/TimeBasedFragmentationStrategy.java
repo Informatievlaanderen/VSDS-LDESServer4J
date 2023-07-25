@@ -7,20 +7,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.constants.TimeBasedFragmentFinder;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.model.FragmentationTimestamp;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.services.TimeBasedFragmentCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
 import java.time.LocalDateTime;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class TimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
 	public static final String TIMEBASED_FRAGMENTATION = "TimeBasedFragmentation";
-
-	public static final String ROOT_SUBSTRING = "";
 
 	private final ObservationRegistry observationRegistry;
 	private final TimeBasedFragmentFinder fragmentFinder;
@@ -44,39 +41,25 @@ public class TimeBasedFragmentationStrategy extends FragmentationStrategyDecorat
 	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
 			Observation parentObservation) {
 
-		final Observation substringFragmentationObservation = startFragmentationObservation(parentObservation);
-		LocalDateTime fragmentationTimestamp = getFragmentationTimestamp(memberModel);
+		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
+		FragmentationTimestamp fragmentationTimestamp = getFragmentationTimestamp(memberModel);
 		final Fragment rootFragment = prepareRootFragment(parentFragment);
 
-		Set<Fragment> fragments = getSubstringFragments(parentFragment, fragmentationTimestamp, rootFragment);
-		fragments.parallelStream()
-				.forEach(substringFragment -> super.addMemberToFragment(substringFragment, memberId, memberModel,
-						substringFragmentationObservation));
-		substringFragmentationObservation.stop();
+		Fragment fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp, rootFragment, 0);
+		super.addMemberToFragment(fragment, memberId, memberModel, fragmentationObservation);
+		fragmentationObservation.stop();
 	}
 
-	private LocalDateTime getFragmentationTimestamp(Model memberModel) {
-		return (LocalDateTime) ModelParser.getFragmentationObject(memberModel,
+	private FragmentationTimestamp getFragmentationTimestamp(Model memberModel) {
+		return new FragmentationTimestamp( (LocalDateTime) ModelParser.getFragmentationObject(memberModel,
 				config.getFragmenterSubjectFilter(),
-				config.getFragmentationPath());
+				config.getFragmentationPath()), config.getMaxGranularity());
 	}
 
 	private Fragment prepareRootFragment(Fragment parentFragment) {
 		final Fragment rootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment);
 		super.addRelationFromParentToChild(parentFragment, rootFragment);
 		return rootFragment;
-	}
-
-	private Set<Fragment> getSubstringFragments(Fragment parentFragment,
-			FragmentationString fragmentationString,
-			Fragment rootFragment) {
-		return fragmentationString
-				.getTokens()
-				.stream()
-				.map(token -> substringFragmentFinder
-						.getOpenOrLastPossibleFragment(parentFragment, rootFragment, token.getBuckets()))
-				.collect(Collectors.toSet());
-
 	}
 
 	private Observation startFragmentationObservation(Observation parentObservation) {
