@@ -20,9 +20,9 @@ public class FragmentationStrategyExecutor {
 	private final MemberToFragmentRepository memberToFragmentRepository;
 
 	public FragmentationStrategyExecutor(ViewName viewName, FragmentationStrategy fragmentationStrategy,
-										 RootFragmentRetriever rootFragmentRetriever,
-										 ObservationRegistry observationRegistry,
-										 MemberToFragmentRepository memberToFragmentRepository, ExecutorService executorService) {
+			RootFragmentRetriever rootFragmentRetriever,
+			ObservationRegistry observationRegistry,
+			MemberToFragmentRepository memberToFragmentRepository, ExecutorService executorService) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
 		this.memberToFragmentRepository = memberToFragmentRepository;

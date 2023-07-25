@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
 
-// TODO TVB: 20/07/23 test
 @Component
 public class MemberToFragmentEntityMapper {
 
@@ -19,8 +18,8 @@ public class MemberToFragmentEntityMapper {
 		final StringWriter outputStream = new StringWriter();
 		RDFDataMgr.write(outputStream, member.model(), Lang.NQUADS);
 		final String modelString = outputStream.toString();
-		final MemberToFragmentEntity.MembersToFragmentEntityId id =
-				new MemberToFragmentEntity.MembersToFragmentEntityId(viewName, member.sequenceNr());
+		final MemberToFragmentEntity.MembersToFragmentEntityId id = new MemberToFragmentEntity.MembersToFragmentEntityId(
+				viewName, member.sequenceNr());
 
 		return new MemberToFragmentEntity(id, modelString, member.id());
 	}

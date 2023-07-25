@@ -35,7 +35,7 @@ public class MongoFragmentationAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public MemberToFragmentRepository membersToFragmentRepository(MemberToFragmentEntityRepository repository,
-																  MemberToFragmentEntityMapper memberToFragmentEntityMapper) {
+			MemberToFragmentEntityMapper memberToFragmentEntityMapper) {
 		return new MemberToFragmentMongoRepository(repository, memberToFragmentEntityMapper);
 	}
 

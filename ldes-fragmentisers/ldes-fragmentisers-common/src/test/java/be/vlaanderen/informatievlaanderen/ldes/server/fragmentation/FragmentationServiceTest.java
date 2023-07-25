@@ -43,7 +43,8 @@ class FragmentationServiceTest {
 		fragmentationService.executeFragmentation(memberIngestedEvent);
 
 		InOrder inOrder = inOrder(memberToFragmentRepository, executorA, executorB);
-		final Member member = new Member(memberIngestedEvent.id(), memberIngestedEvent.model(), memberIngestedEvent.sequenceNr());
+		final Member member = new Member(memberIngestedEvent.id(), memberIngestedEvent.model(),
+				memberIngestedEvent.sequenceNr());
 		inOrder.verify(memberToFragmentRepository).create(views, member);
 		inOrder.verify(executorA).executeNext();
 		inOrder.verify(executorB).executeNext();

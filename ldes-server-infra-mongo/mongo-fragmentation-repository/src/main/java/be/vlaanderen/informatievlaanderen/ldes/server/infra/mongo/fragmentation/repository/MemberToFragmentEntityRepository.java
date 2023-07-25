@@ -6,10 +6,9 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-// TODO TVB: 20/07/23 test
 public interface MemberToFragmentEntityRepository
 		extends MongoRepository<MemberToFragmentEntity, MemberToFragmentEntity.MembersToFragmentEntityId> {
 
-	Optional<MemberToFragmentEntity> findFirstById_ViewNameOrderById_ViewNameAsc(ViewName viewName);
+	Optional<MemberToFragmentEntity> findFirstById_ViewNameOrderById_SequenceNrAsc(ViewName viewName);
 
 }

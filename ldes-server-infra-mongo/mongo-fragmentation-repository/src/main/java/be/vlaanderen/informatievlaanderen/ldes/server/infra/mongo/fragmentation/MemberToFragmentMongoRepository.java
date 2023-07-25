@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.M
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.MemberToFragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.mapper.MemberToFragmentEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.MemberToFragmentEntityRepository;
-import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ public class MemberToFragmentMongoRepository implements MemberToFragmentReposito
 	private final MemberToFragmentEntityMapper memberToFragmentEntityMapper;
 
 	public MemberToFragmentMongoRepository(MemberToFragmentEntityRepository entityRepository,
-										   MemberToFragmentEntityMapper memberToFragmentEntityMapper) {
+			MemberToFragmentEntityMapper memberToFragmentEntityMapper) {
 		this.entityRepository = entityRepository;
 		this.memberToFragmentEntityMapper = memberToFragmentEntityMapper;
 	}
@@ -32,7 +31,7 @@ public class MemberToFragmentMongoRepository implements MemberToFragmentReposito
 	@Override
 	public Optional<Member> getNextMemberToFragment(ViewName viewName) {
 		return entityRepository
-				.findFirstById_ViewNameOrderById_ViewNameAsc(viewName)
+				.findFirstById_ViewNameOrderById_SequenceNrAsc(viewName)
 				.map(memberToFragmentEntityMapper::toMember);
 	}
 

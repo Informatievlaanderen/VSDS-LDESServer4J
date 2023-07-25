@@ -57,7 +57,7 @@ class FragmentationStrategyExecutorTest {
 
 			verify(executorService).execute(any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, observationRegistry,
-                    memberToFragmentRepository);
+					memberToFragmentRepository);
 		}
 
 		@Test
