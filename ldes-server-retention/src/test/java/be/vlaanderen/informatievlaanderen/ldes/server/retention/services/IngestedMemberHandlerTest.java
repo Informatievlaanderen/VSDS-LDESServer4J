@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class IngestedMemberHandlerTest {
@@ -57,14 +56,15 @@ class IngestedMemberHandlerTest {
     }
 
 	@Test
-	void when_MemberWithIncorrectPath_Then_ExceptionIsThrown() {
-		EventStreamProperties differentProperties = new EventStreamProperties("differentPath", TIMESTAMP_PATH);
+	void when_MemberWithIncorrectPath_Then_PropertyIsIgnored() {
+		EventStreamProperties differentProperties = new EventStreamProperties("otherVersionPath", "otherTimestampPath");
 		when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(differentProperties);
 
-		Exception e = assertThrows(MissingStatementException.class,
-				() -> ingestedMemberHandler.handleMemberIngestedEvent(event));
+		ingestedMemberHandler.handleMemberIngestedEvent(event);
 
-		assertEquals("Statement could not be found. Requires: property differentPath", e.getMessage());
+		verify(memberPropertiesRepository).saveMemberPropertiesWithoutViews(captor.capture());
+		assertNull(captor.getValue().getVersionOf());
+		assertNull(captor.getValue().getTimestamp());
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
