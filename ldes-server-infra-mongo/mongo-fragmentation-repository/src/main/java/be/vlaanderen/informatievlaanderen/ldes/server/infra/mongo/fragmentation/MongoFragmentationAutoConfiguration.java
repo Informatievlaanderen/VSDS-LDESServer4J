@@ -2,11 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.mapper.MembersToFragmentEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.mapper.MemberToFragmentEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.AllocationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.MembersToFragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.MemberToFragmentEntityRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +34,9 @@ public class MongoFragmentationAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public MembersToFragmentRepository membersToFragmentRepository(MembersToFragmentEntityRepository repository,
-			MembersToFragmentEntityMapper membersToFragmentEntityMapper) {
-		return new MembersToFragmentMongoRepository(repository, membersToFragmentEntityMapper);
+	public MemberToFragmentRepository membersToFragmentRepository(MemberToFragmentEntityRepository repository,
+																  MemberToFragmentEntityMapper memberToFragmentEntityMapper) {
+		return new MemberToFragmentMongoRepository(repository, memberToFragmentEntityMapper);
 	}
 
 }

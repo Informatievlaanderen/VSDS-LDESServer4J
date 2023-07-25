@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.ext.com.google.common.util.concurrent.MoreExecutors;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -44,41 +44,41 @@ class FragmentationStrategyExecutorTest {
 		private RootFragmentRetriever rootFragmentRetriever;
 
 		@Mock
-		private MembersToFragmentRepository membersToFragmentRepository;
+		private MemberToFragmentRepository memberToFragmentRepository;
 		private final ViewName viewName = ViewName.fromString("col/viewA");
 
 		@Test
 		void when_ExecuteNextIsCalled_then_AllLogicIsWrappedByTheExecutorService() {
 			ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-					observationRegistry, membersToFragmentRepository, executorService);
+					observationRegistry, memberToFragmentRepository, executorService);
 
 			executor.executeNext();
 
 			verify(executorService).execute(any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, observationRegistry,
-					membersToFragmentRepository);
+                    memberToFragmentRepository);
 		}
 
 		@Test
 		void when_ExecuteNextIsCalled_then_TheExecutorService_should_NotFragmentAnythingIfNotPresent() {
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-					ObservationRegistry.create(), membersToFragmentRepository,
+					ObservationRegistry.create(), memberToFragmentRepository,
 					MoreExecutors.newDirectExecutorService());
 
 			executor.executeNext();
 
-			verify(membersToFragmentRepository).getNextMemberToFragment(viewName);
-			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, membersToFragmentRepository);
+			verify(memberToFragmentRepository).getNextMemberToFragment(viewName);
+			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, memberToFragmentRepository);
 		}
 
 		@Test
 		void when_ExecuteNextIsCalled_then_TheExecutorService_should_FragmentTheNextMemberIfPresent() {
 			ObservationRegistry observationRegistry = ObservationRegistry.create();
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-					observationRegistry, membersToFragmentRepository, MoreExecutors.newDirectExecutorService());
+					observationRegistry, memberToFragmentRepository, MoreExecutors.newDirectExecutorService());
 			final Member member = new Member("id", ModelFactory.createDefaultModel(), 1L);
-			when(membersToFragmentRepository.getNextMemberToFragment(viewName)).thenReturn(Optional.of(member));
+			when(memberToFragmentRepository.getNextMemberToFragment(viewName)).thenReturn(Optional.of(member));
 			final Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));
 			when(rootFragmentRetriever.retrieveRootFragmentOfView(eq(viewName), any())).thenReturn(rootFragment);
 
@@ -86,7 +86,7 @@ class FragmentationStrategyExecutorTest {
 
 			verify(fragmentationStrategy).addMemberToFragment(eq(rootFragment), eq(member.id()), eq(member.model()),
 					any());
-			verify(membersToFragmentRepository).delete(viewName, member.sequenceNr());
+			verify(memberToFragmentRepository).delete(viewName, member.sequenceNr());
 		}
 	}
 
@@ -135,7 +135,7 @@ class FragmentationStrategyExecutorTest {
 					Arguments.of(equals(), executorA,
 							new FragmentationStrategyExecutor(viewNameA, mock(FragmentationStrategy.class),
 									mock(RootFragmentRetriever.class), mock(ObservationRegistry.class),
-									mock(MembersToFragmentRepository.class), mock(ExecutorService.class))),
+									mock(MemberToFragmentRepository.class), mock(ExecutorService.class))),
 					Arguments.of(notEquals(), executorA,
 							new FragmentationStrategyExecutor(ViewName.fromString("col/viewB"), null, null, null,
 									null, null)));

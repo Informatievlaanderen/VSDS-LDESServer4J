@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
-import org.apache.jena.rdf.model.Model;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,7 @@ class FragmentationServiceTest {
 	private FragmentationStrategyCollection fragmentationStrategyCollection;
 
 	@Mock
-	private MembersToFragmentRepository membersToFragmentRepository;
+	private MemberToFragmentRepository memberToFragmentRepository;
 
 	@InjectMocks
 	private FragmentationService fragmentationService;
@@ -42,9 +42,9 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation(memberIngestedEvent);
 
-		InOrder inOrder = inOrder(membersToFragmentRepository, executorA, executorB);
-		inOrder.verify(membersToFragmentRepository).create(views, memberIngestedEvent.model(),
-				memberIngestedEvent.sequenceNr(), memberIngestedEvent.id());
+		InOrder inOrder = inOrder(memberToFragmentRepository, executorA, executorB);
+		final Member member = new Member(memberIngestedEvent.id(), memberIngestedEvent.model(), memberIngestedEvent.sequenceNr());
+		inOrder.verify(memberToFragmentRepository).create(views, member);
 		inOrder.verify(executorA).executeNext();
 		inOrder.verify(executorB).executeNext();
 	}

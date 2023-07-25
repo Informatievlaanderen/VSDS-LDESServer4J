@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
@@ -17,15 +17,15 @@ public class FragmentationStrategyExecutor {
 	private final ViewName viewName;
 	private final RootFragmentRetriever rootFragmentRetriever;
 	private final ObservationRegistry observationRegistry;
-	private final MembersToFragmentRepository membersToFragmentRepository;
+	private final MemberToFragmentRepository memberToFragmentRepository;
 
 	public FragmentationStrategyExecutor(ViewName viewName, FragmentationStrategy fragmentationStrategy,
-			RootFragmentRetriever rootFragmentRetriever,
-			ObservationRegistry observationRegistry,
-			MembersToFragmentRepository membersToFragmentRepository, ExecutorService executorService) {
+										 RootFragmentRetriever rootFragmentRetriever,
+										 ObservationRegistry observationRegistry,
+										 MemberToFragmentRepository memberToFragmentRepository, ExecutorService executorService) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
-		this.membersToFragmentRepository = membersToFragmentRepository;
+		this.memberToFragmentRepository = memberToFragmentRepository;
 		this.executorService = executorService;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
@@ -38,12 +38,12 @@ public class FragmentationStrategyExecutor {
 	private Runnable addNextMemberToFragment() {
 		return () -> {
 			var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
-			membersToFragmentRepository.getNextMemberToFragment(viewName).ifPresent(member -> {
+			memberToFragmentRepository.getNextMemberToFragment(viewName).ifPresent(member -> {
 				var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
 				String memberId = member.id();
 				Model memberModel = member.model();
 				fragmentationStrategy.addMemberToFragment(rootFragmentOfView, memberId, memberModel, parentObservation);
-				membersToFragmentRepository.delete(viewName, member.sequenceNr());
+				memberToFragmentRepository.delete(viewName, member.sequenceNr());
 			});
 			parentObservation.stop();
 		};

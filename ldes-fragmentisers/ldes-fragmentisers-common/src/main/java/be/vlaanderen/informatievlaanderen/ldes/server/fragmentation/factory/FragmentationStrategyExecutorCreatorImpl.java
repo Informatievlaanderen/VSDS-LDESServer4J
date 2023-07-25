@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.RootFragmentRetriever;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MembersToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Service;
 
@@ -16,21 +16,21 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 
 	private final FragmentRepository fragmentRepository;
 	private final ObservationRegistry observationRegistry;
-	private final MembersToFragmentRepository membersToFragmentRepository;
+	private final MemberToFragmentRepository memberToFragmentRepository;
 
 	public FragmentationStrategyExecutorCreatorImpl(FragmentRepository fragmentRepository,
 			ObservationRegistry observationRegistry,
-			MembersToFragmentRepository membersToFragmentRepository) {
+			MemberToFragmentRepository memberToFragmentRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.observationRegistry = observationRegistry;
-		this.membersToFragmentRepository = membersToFragmentRepository;
+		this.memberToFragmentRepository = memberToFragmentRepository;
 	}
 
 	public FragmentationStrategyExecutor createExecutor(ViewName viewName,
 			FragmentationStrategy fragmentationStrategy) {
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
 		return new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-				observationRegistry, membersToFragmentRepository, Executors.newSingleThreadExecutor());
+				observationRegistry, memberToFragmentRepository, Executors.newSingleThreadExecutor());
 	}
 
 }

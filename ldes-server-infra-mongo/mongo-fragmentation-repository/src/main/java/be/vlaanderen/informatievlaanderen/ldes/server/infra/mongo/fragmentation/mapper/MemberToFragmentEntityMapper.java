@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.MembersToFragmentEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.MemberToFragmentEntity;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -13,19 +13,19 @@ import java.io.StringWriter;
 
 // TODO TVB: 20/07/23 test
 @Component
-public class MembersToFragmentEntityMapper {
+public class MemberToFragmentEntityMapper {
 
-	public MembersToFragmentEntity toMemberEntity(ViewName viewName, Model member, long sequenceNr, String memberId) {
+	public MemberToFragmentEntity toMemberEntity(ViewName viewName, Member member) {
 		final StringWriter outputStream = new StringWriter();
-		RDFDataMgr.write(outputStream, member, Lang.NQUADS);
+		RDFDataMgr.write(outputStream, member.model(), Lang.NQUADS);
 		final String modelString = outputStream.toString();
-		final MembersToFragmentEntity.MembersToFragmentEntityId id = new MembersToFragmentEntity.MembersToFragmentEntityId(
-				viewName, sequenceNr);
+		final MemberToFragmentEntity.MembersToFragmentEntityId id =
+				new MemberToFragmentEntity.MembersToFragmentEntityId(viewName, member.sequenceNr());
 
-		return new MembersToFragmentEntity(id, modelString, memberId);
+		return new MemberToFragmentEntity(id, modelString, member.id());
 	}
 
-	public Member toMember(MembersToFragmentEntity entity) {
+	public Member toMember(MemberToFragmentEntity entity) {
 		final Model model = RDFParserBuilder.create().fromString(entity.getMemberModel()).lang(Lang.NQUADS).toModel();
 		return new Member(entity.getMemberId(), model, entity.getId().sequenceNr());
 	}
