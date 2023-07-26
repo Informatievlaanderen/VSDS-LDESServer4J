@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import io.micrometer.observation.Observation;
@@ -11,17 +13,21 @@ import java.util.stream.Stream;
 
 @Service
 public class RefragmentationServiceImpl implements RefragmentationService {
+
+	private final RootFragmentCreator rootFragmentCreator;
 	private final EventSourceService eventSourceService;
 	private final ObservationRegistry observationRegistry;
 
-	public RefragmentationServiceImpl(EventSourceService eventSourceService, ObservationRegistry observationRegistry) {
+	public RefragmentationServiceImpl(RootFragmentCreator rootFragmentCreator, EventSourceService eventSourceService,
+			ObservationRegistry observationRegistry) {
+		this.rootFragmentCreator = rootFragmentCreator;
 		this.eventSourceService = eventSourceService;
 		this.observationRegistry = observationRegistry;
 	}
 
 	@Override
-	public void refragmentMembersForView(Fragment rootFragmentForView,
-			FragmentationStrategy fragmentationStrategyForView) {
+	public void refragmentMembersForView(ViewName viewName, FragmentationStrategy fragmentationStrategyForView) {
+		Fragment rootFragmentForView = rootFragmentCreator.createRootFragmentForView(viewName);
 		Stream<Member> memberStreamOfCollection = eventSourceService
 				.getMemberStreamOfCollection(rootFragmentForView.getViewName().getCollectionName());
 		memberStreamOfCollection
@@ -36,4 +42,5 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 				member.getModel(), parentObservation);
 		parentObservation.stop();
 	}
+
 }

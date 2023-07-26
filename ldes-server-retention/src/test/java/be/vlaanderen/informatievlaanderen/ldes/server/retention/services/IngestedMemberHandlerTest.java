@@ -41,7 +41,7 @@ class IngestedMemberHandlerTest {
 		memberPropertiesRepository = mock(MemberPropertiesRepository.class);
 		eventStreamCollection = mock(EventStreamCollection.class);
 		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, eventStreamCollection);
-		event = new MemberIngestedEvent(readModelFromFile("member.ttl"), MEMBER_ID, COLLECTION);
+		event = new MemberIngestedEvent(readModelFromFile("member.ttl"), MEMBER_ID, COLLECTION, 0L);
 	}
 
 	@Test
