@@ -85,11 +85,6 @@ public class MongoFragmentationIntegrationTest {
 			return mock(ShaclShapeRepository.class);
 		}
 
-		@Bean
-		public be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository oldMemberRepository() {
-			return mock(
-					be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository.class);
-		}
 	}
 
 }

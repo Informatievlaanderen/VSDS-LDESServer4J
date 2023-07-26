@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,11 +22,12 @@ public class MemberCollectorImpl implements MemberCollector {
 
 	@Override
 	public Map<String, List<Member>> getMembersGroupedByVersionOf(List<Fragment> fragments) {
-		return fragments.stream()
-				.map(Fragment::getFragmentId)
-				.map(LdesFragmentIdentifier::asString)
-				.flatMap(memberRepository::getMembersByReference)
-				.filter(new SnapshotValidPredicate())
-				.collect(Collectors.groupingBy(Member::getVersionOf));
+		throw new NotImplementedException("To be implemented with snapshot member repository");
+		// return fragments.stream()
+		// .map(Fragment::getFragmentId)
+		// .map(LdesFragmentIdentifier::asString)
+		// .flatMap(memberRepository::getMembersByReference)
+		// .filter(new SnapshotValidPredicate())
+		// .collect(Collectors.groupingBy(Member::versionOf));
 	}
 }
