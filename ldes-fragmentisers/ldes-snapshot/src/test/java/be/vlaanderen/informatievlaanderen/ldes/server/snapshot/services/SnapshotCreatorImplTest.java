@@ -41,7 +41,7 @@ class SnapshotCreatorImplTest {
 				shaclShapeService);
 	}
 
-	@Disabled
+	@Disabled("To be enabled when snapshotting becomes functional again")
 	@Test
 	void when_SnapshotIsCreated_MembersAreCollectedAndFragmentedForSnapshot() {
 		List<Fragment> fragmentsForSnapshot = getLdesFragmentsForSnapshot();

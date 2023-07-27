@@ -24,7 +24,7 @@ class MemberCollectorImplTest {
 	private final MemberRepository memberRepository = mock(MemberRepository.class);
 	private final MemberCollector memberCollector = new MemberCollectorImpl(memberRepository);
 
-	@Disabled
+	@Disabled("To be enabled when snapshotting becomes functional again")
 	@Test
 	void when_MembersHaveMultipleVersionsOverFragments_TheyAreGrouped() {
 		Fragment fragment = getLdesFragment("1");

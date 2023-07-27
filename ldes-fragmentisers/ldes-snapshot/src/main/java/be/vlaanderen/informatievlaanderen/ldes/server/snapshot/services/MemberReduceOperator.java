@@ -5,6 +5,7 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.function.BinaryOperator;
 
+@SuppressWarnings("java:S125")
 public class MemberReduceOperator implements BinaryOperator<Member> {
 	@Override
 	public Member apply(Member member, Member member2) {

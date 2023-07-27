@@ -18,7 +18,7 @@ class MemberReduceOperatorTest {
 
 	MemberReduceOperator memberReduceOperator = new MemberReduceOperator();
 
-	@Disabled
+	@Disabled("To be enabled when snapshotting becomes functional again")
 	@ParameterizedTest
 	@ArgumentsSource(ContentTypeRdfFormatLangArgumentsProvider.class)
 	void test_MemberReduceOperator(Member member, Member member2, String expectedId) {
