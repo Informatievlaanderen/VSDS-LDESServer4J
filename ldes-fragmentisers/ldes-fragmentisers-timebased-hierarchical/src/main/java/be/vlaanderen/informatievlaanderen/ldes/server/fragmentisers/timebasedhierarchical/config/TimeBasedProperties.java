@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebased.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config;
 
 public class TimeBasedProperties {
 
@@ -7,4 +7,5 @@ public class TimeBasedProperties {
 
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
 	public static final String MAX_GRANULARITY = "maxGranularity";
+	public static final String FRAGMENTATION_SUBJECT_FILTER = "fragmentationSubjectFilter";
 }

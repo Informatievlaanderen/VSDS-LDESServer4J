@@ -130,7 +130,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>fragmentation-timebased-h</id>
+            <id>fragmentation-timebased-hierarchical</id>
             <dependencies>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>

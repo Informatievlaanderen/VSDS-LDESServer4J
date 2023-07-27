@@ -1,11 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.constants;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants;
 
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Array;
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.function.Supplier;
+import java.util.Arrays;
+import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE;
 
@@ -22,6 +18,6 @@ public class TimeBasedConstants {
 	public static final String SECOND = "s";
 	public static final String TREE_INBETWEEN_RELATION = TREE + "InBetweenRelation";
 	public static final String DATETIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
-	public static final String[] temporalFields = {YEAR, MONTH, DAY, HOUR, MINUTE, SECOND};
+	public static final List<String> temporalFields = Arrays.asList(YEAR, MONTH, DAY, HOUR, MINUTE, SECOND);
 
 }
