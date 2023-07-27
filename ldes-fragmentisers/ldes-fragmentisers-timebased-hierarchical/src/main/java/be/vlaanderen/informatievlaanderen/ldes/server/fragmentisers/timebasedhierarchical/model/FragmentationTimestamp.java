@@ -60,7 +60,7 @@ public class FragmentationTimestamp {
 
 	private Map<String, String> localDateTimeToMap(LocalDateTime time, int granularity) {
 		Map<String, String> map = new HashMap<>();
-		for (int i = 0; i < granularity; i++) {
+		for (int i = 0; i <= granularity; i++) {
 			map.put(temporalFields.get(i), String.valueOf(tempFunctions.get(i).apply(time)));
 		}
 		return map;
