@@ -14,7 +14,7 @@ public class FragmentationTimestamp {
 	private final String granularity;
 
 	public FragmentationTimestamp(LocalDateTime time, String granularity) {
-		this.timeMap = localDateTimeToMap(time);
+		this.timeMap = localDateTimeToMap(time, indexOfGranularity(granularity));
 		this.granularity = granularity;
 	}
 
@@ -28,6 +28,10 @@ public class FragmentationTimestamp {
 	}
 
 	public int getGranularityNumber() {
+		return indexOfGranularity(this.getGranularity());
+	}
+
+	private int indexOfGranularity(String granularity) {
 		return temporalFields.indexOf(granularity);
 	}
 
@@ -54,14 +58,11 @@ public class FragmentationTimestamp {
 		return builder.toString();
 	}
 
-	private Map<String, String> localDateTimeToMap(LocalDateTime time) {
+	private Map<String, String> localDateTimeToMap(LocalDateTime time, int granularity) {
 		Map<String, String> map = new HashMap<>();
-		map.put(YEAR, String.valueOf(time.getYear()));
-		map.put(MONTH, String.valueOf(time.getMonthValue()));
-		map.put(DAY, String.valueOf(time.getDayOfMonth()));
-		map.put(HOUR, String.valueOf(time.getHour()));
-		map.put(MINUTE, String.valueOf(time.getMinute()));
-		map.put(SECOND, String.valueOf(time.getSecond()));
+		for (int i = 0; i < granularity; i++) {
+			map.put(temporalFields.get(i), String.valueOf(tempFunctions.get(i).apply(time)));
+		}
 		return map;
 	}
 
