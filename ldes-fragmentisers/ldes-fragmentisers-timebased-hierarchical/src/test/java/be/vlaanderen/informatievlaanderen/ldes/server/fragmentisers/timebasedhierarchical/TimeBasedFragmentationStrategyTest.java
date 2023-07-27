@@ -3,10 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
@@ -57,11 +57,11 @@ class TimeBasedFragmentationStrategyTest {
 		Member member = mock(Member.class);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
 		var modelParserMock = Mockito.mockStatic(ModelParser.class);
-		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.getModel()), any(), any()))
+		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
 				.thenReturn(TIME);
 		when(fragmentFinder.getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, 0)).thenReturn(CHILD_FRAGMENT);
 
-		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.getLdesMemberId(), member.getModel(),
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
 				mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(fragmentFinder, decoratedFragmentationStrategy);

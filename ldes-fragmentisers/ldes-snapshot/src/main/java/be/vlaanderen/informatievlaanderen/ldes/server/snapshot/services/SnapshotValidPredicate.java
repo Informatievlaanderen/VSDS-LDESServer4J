@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.SnapshotCreationException;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.function.Predicate;
 
