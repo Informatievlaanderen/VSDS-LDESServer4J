@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberEntityListener extends AbstractMongoEventListener<MemberEntity> {
 
-	private final IngestMemberSequenceGeneratorService sequenceGenerator;
+	private final IngestMemberSequenceService sequenceGenerator;
 
-	public MemberEntityListener(IngestMemberSequenceGeneratorService sequenceGenerator) {
+	public MemberEntityListener(IngestMemberSequenceService sequenceGenerator) {
 		this.sequenceGenerator = sequenceGenerator;
 	}
 
