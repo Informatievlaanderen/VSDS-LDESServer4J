@@ -3,9 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,11 +53,11 @@ class FragmentationStrategyDecoratorTest {
 		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		Member member = mock(Member.class);
 		Observation span = mock(Observation.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member.getLdesMemberId(), member.getModel(),
+		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member.id(), member.model(),
 				span);
 		verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member.getLdesMemberId(),
-						member.getModel(), span);
+				Mockito.times(1)).addMemberToFragment(parentFragment, member.id(),
+						member.model(), span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends
