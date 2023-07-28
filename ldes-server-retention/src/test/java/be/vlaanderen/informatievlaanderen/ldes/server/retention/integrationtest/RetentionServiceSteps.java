@@ -64,7 +64,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		return new MemberIngestedEvent(
 				createModel(row.get("versionOf"), row.get("timestamp")),
 				row.get("id"),
-				row.get("collectionName"));
+				row.get("collectionName"), Integer.parseInt(row.get("sequenceNumber")));
 	}
 
 	@Given("an EventStream with the following properties")
