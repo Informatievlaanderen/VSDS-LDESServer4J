@@ -34,6 +34,7 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 					memberToFragmentRepository.create(List.of(viewName), member);
 					if (count.getAndIncrement() == 1000) {
 						// TODO TVB: 28/07/23 we will need batch processing
+						// TODO TVB: 28/07/23 recovery?
 						fragmentationStrategyExecutor.resume();
 					}
 				});
