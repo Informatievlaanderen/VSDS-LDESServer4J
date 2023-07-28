@@ -130,6 +130,21 @@
             </dependencies>
         </profile>
         <profile>
+            <id>fragmentation-timebased-hierarchical</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-fragmentisers-timebased-hierarchical</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>fragmentation-substring</id>
             <dependencies>
                 <dependency>
