@@ -40,7 +40,7 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	void when_FragmentDoesNotExist_Then_NewFragmentIsCreated() {
 		LdesFragmentIdentifier exptectedFragmentId = new LdesFragmentIdentifier(VIEW_NAME,
-				List.of(timePair, new FragmentPair("M", "1")));
+				List.of(timePair, new FragmentPair("M", "01")));
 		when(fragmentRepository.retrieveFragment(exptectedFragmentId)).thenReturn(Optional.empty());
 
 		Fragment child = fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.MONTH);
@@ -55,7 +55,7 @@ class TimeBasedFragmentCreatorTest {
 
 	@Test
 	void when_FragmentDoesExist_Then_FragmentIsRetrieved() {
-		Fragment expectedChild = PARENT.createChild(new FragmentPair("M", "1"));
+		Fragment expectedChild = PARENT.createChild(new FragmentPair("M", "01"));
 		when(fragmentRepository.retrieveFragment(expectedChild.getFragmentId())).thenReturn(Optional.of(expectedChild));
 
 		Fragment child = fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.MONTH);

@@ -42,11 +42,11 @@ class FragmentationTimestampTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
 					Arguments.of(Granularity.YEAR, "2023"),
-					Arguments.of(Granularity.MONTH, "2023-1"),
-					Arguments.of(Granularity.DAY, "2023-1-2"),
-					Arguments.of(Granularity.HOUR, "2023-1-2T6"),
-					Arguments.of(Granularity.MINUTE, "2023-1-2T6:30"),
-					Arguments.of(Granularity.SECOND, "2023-1-2T6:30:40"));
+					Arguments.of(Granularity.MONTH, "2023-01"),
+					Arguments.of(Granularity.DAY, "2023-01-02"),
+					Arguments.of(Granularity.HOUR, "2023-01-02T06"),
+					Arguments.of(Granularity.MINUTE, "2023-01-02T06:30"),
+					Arguments.of(Granularity.SECOND, "2023-01-02T06:30:40"));
 		}
 	};
 
