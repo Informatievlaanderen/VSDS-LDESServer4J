@@ -46,8 +46,8 @@ class FragmentationServiceTest {
 		final Member member = new Member(memberIngestedEvent.id(), memberIngestedEvent.model(),
 				memberIngestedEvent.sequenceNr());
 		inOrder.verify(memberToFragmentRepository).create(views, member);
-		inOrder.verify(executorA).executeNext();
-		inOrder.verify(executorB).executeNext();
+		inOrder.verify(executorA).execute();
+		inOrder.verify(executorB).execute();
 	}
 
 }

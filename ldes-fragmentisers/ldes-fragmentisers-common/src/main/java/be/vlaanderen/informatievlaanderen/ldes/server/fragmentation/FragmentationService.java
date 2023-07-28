@@ -28,7 +28,7 @@ public class FragmentationService {
 		final Member member = new Member(memberEvent.id(), memberEvent.model(), memberEvent.sequenceNr());
 		memberToFragmentRepository.create(views, member);
 		final var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors(collectionName);
-		executors.forEach(FragmentationStrategyExecutor::executeNext);
+		executors.forEach(FragmentationStrategyExecutor::execute);
 	}
 
 }

@@ -53,7 +53,7 @@ class FragmentationStrategyExecutorTest {
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
 					observationRegistry, memberToFragmentRepository, executorService);
 
-			executor.executeNext();
+			executor.execute();
 
 			verify(executorService).execute(any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, observationRegistry,
@@ -66,7 +66,7 @@ class FragmentationStrategyExecutorTest {
 					ObservationRegistry.create(), memberToFragmentRepository,
 					MoreExecutors.newDirectExecutorService());
 
-			executor.executeNext();
+			executor.execute();
 
 			verify(memberToFragmentRepository).getNextMemberToFragment(viewName);
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, memberToFragmentRepository);
@@ -82,7 +82,7 @@ class FragmentationStrategyExecutorTest {
 			final Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));
 			when(rootFragmentRetriever.retrieveRootFragmentOfView(eq(viewName), any())).thenReturn(rootFragment);
 
-			executor.executeNext();
+			executor.execute();
 
 			verify(fragmentationStrategy).addMemberToFragment(eq(rootFragment), eq(member.id()), eq(member.model()),
 					any());

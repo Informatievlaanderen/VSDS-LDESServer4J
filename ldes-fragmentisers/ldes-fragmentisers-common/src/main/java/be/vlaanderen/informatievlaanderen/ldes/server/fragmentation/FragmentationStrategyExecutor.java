@@ -1,17 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
+import java.util.Optional;
+import java.util.concurrent.*;
 
 import static io.micrometer.observation.Observation.createNotStarted;
 
 public class FragmentationStrategyExecutor {
 
+	private boolean readyForRequests = true;
 	private final ExecutorService executorService;
 	private final FragmentationStrategy fragmentationStrategy;
 	private final ViewName viewName;
@@ -31,22 +34,31 @@ public class FragmentationStrategyExecutor {
 		this.viewName = viewName;
 	}
 
-	public void executeNext() {
-		executorService.execute(addNextMemberToFragment());
+	// TODO TVB: 28/07/23 test
+	public void execute() {
+		if (readyForRequests) {
+			executorService.execute(addMembersToFragments());
+		}
 	}
 
-	private Runnable addNextMemberToFragment() {
+	private Runnable addMembersToFragments() {
 		return () -> {
-			var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
-			memberToFragmentRepository.getNextMemberToFragment(viewName).ifPresent(member -> {
-				var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
-				String memberId = member.id();
-				Model memberModel = member.model();
-				fragmentationStrategy.addMemberToFragment(rootFragmentOfView, memberId, memberModel, parentObservation);
-				memberToFragmentRepository.delete(viewName, member.sequenceNr());
-			});
-			parentObservation.stop();
+			Optional<Member> nextMemberToFragment = memberToFragmentRepository.getNextMemberToFragment(viewName);
+			while (nextMemberToFragment.isPresent()) {
+				fragment(nextMemberToFragment.get());
+				nextMemberToFragment = memberToFragmentRepository.getNextMemberToFragment(viewName);
+			}
 		};
+	}
+
+	private void fragment(Member member) {
+		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
+		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
+		String memberId = member.id();
+		Model memberModel = member.model();
+		fragmentationStrategy.addMemberToFragment(rootFragmentOfView, memberId, memberModel, parentObservation);
+		memberToFragmentRepository.delete(viewName, member.sequenceNr());
+		parentObservation.stop();
 	}
 
 	public boolean isPartOfCollection(String collectionName) {
@@ -70,5 +82,16 @@ public class FragmentationStrategyExecutor {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getViewName());
+	}
+
+	// TODO TVB: 27/07/23 test
+	public void pause() {
+		readyForRequests = false;
+	}
+
+	// TODO TVB: 28/07/23 test
+	public void resume() {
+		readyForRequests = true;
+		execute();
 	}
 }

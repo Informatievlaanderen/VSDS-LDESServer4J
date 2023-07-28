@@ -8,5 +8,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
  * existing members.
  */
 public interface RefragmentationService {
-	void refragmentMembersForView(ViewName viewName, FragmentationStrategy fragmentationStrategyForView);
+	void refragmentMembersForView(ViewName viewName, FragmentationStrategyExecutor fragmentationStrategyExecutor);
 }

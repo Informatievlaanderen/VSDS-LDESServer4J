@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import io.micrometer.observation.Observation;
@@ -22,9 +23,10 @@ class RefragmentationServiceImplTest {
 	private final EventSourceService eventSourceService = mock(EventSourceService.class);
 	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
+	private final MemberToFragmentRepository memberToFragmentRepository = mock(MemberToFragmentRepository.class);
 
-	private final RefragmentationService refragmentationService = new RefragmentationServiceImpl(rootFragmentCreator,
-			eventSourceService, ObservationRegistry.create());
+	private final RefragmentationService refragmentationService = new RefragmentationServiceImpl(
+			eventSourceService, memberToFragmentRepository);
 
 	@Test
 	void test() {

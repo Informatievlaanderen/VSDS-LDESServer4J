@@ -1,46 +1,38 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import io.micrometer.observation.Observation;
-import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Stream;
+import java.util.List;
 
+// TODO TVB: 28/07/23 test
 @Service
 public class RefragmentationServiceImpl implements RefragmentationService {
 
-	private final RootFragmentCreator rootFragmentCreator;
 	private final EventSourceService eventSourceService;
-	private final ObservationRegistry observationRegistry;
+	private final MemberToFragmentRepository memberToFragmentRepository;
 
-	public RefragmentationServiceImpl(RootFragmentCreator rootFragmentCreator, EventSourceService eventSourceService,
-			ObservationRegistry observationRegistry) {
-		this.rootFragmentCreator = rootFragmentCreator;
+	public RefragmentationServiceImpl(EventSourceService eventSourceService,
+			MemberToFragmentRepository memberToFragmentRepository) {
 		this.eventSourceService = eventSourceService;
-		this.observationRegistry = observationRegistry;
+		this.memberToFragmentRepository = memberToFragmentRepository;
 	}
 
 	@Override
-	public void refragmentMembersForView(ViewName viewName, FragmentationStrategy fragmentationStrategyForView) {
-		Fragment rootFragmentForView = rootFragmentCreator.createRootFragmentForView(viewName);
-		Stream<Member> memberStreamOfCollection = eventSourceService
-				.getMemberStreamOfCollection(rootFragmentForView.getViewName().getCollectionName());
-		memberStreamOfCollection
-				.forEach(member -> fragmentMember(rootFragmentForView, fragmentationStrategyForView, member));
-	}
+	public void refragmentMembersForView(ViewName viewName,
+			FragmentationStrategyExecutor fragmentationStrategyExecutor) {
+		eventSourceService
+				.getMemberStreamOfCollection(viewName.getCollectionName())
+				.forEach(ingestMember -> {
+					final Member member = new Member(ingestMember.getId(), ingestMember.getModel(),
+							ingestMember.getSequenceNr());
+					memberToFragmentRepository.create(List.of(viewName), member);
+				});
 
-	private void fragmentMember(Fragment rootFragmentForView, FragmentationStrategy fragmentationStrategyForView,
-			Member member) {
-		Observation parentObservation = Observation.createNotStarted("execute refragmentation",
-				observationRegistry).start();
-		fragmentationStrategyForView.addMemberToFragment(rootFragmentForView, member.getId(),
-				member.getModel(), parentObservation);
-		parentObservation.stop();
+		fragmentationStrategyExecutor.resume();
 	}
 
 }

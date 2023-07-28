@@ -11,6 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.Frag
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -56,14 +57,17 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.toList();
 	}
 
+	// TODO TVB: 28/07/23 update test
+	@Async // refragmentation can take a while and should not block the thread
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		final ViewName viewName = event.getViewName();
 		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(event.getViewSpecification());
-		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategy);
 		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
 				fragmentationStrategy);
+		fragmentationStrategyExecutor.pause();
+		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategyExecutor);
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 	}
 
