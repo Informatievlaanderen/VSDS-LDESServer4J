@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
@@ -39,7 +40,7 @@ public class TimeBasedFragmentationStrategy extends FragmentationStrategyDecorat
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
 		FragmentationTimestamp fragmentationTimestamp = getFragmentationTimestamp(memberModel);
 
-		Fragment fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp, 0);
+		Fragment fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp, Granularity.YEAR);
 		super.addMemberToFragment(fragment, memberId, memberModel, fragmentationObservation);
 		fragmentationObservation.stop();
 	}

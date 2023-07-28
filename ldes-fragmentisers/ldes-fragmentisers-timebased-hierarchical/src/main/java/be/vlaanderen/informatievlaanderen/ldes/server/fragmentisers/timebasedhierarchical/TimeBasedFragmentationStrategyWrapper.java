@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedRelationsAttributer;
@@ -34,7 +35,7 @@ public class TimeBasedFragmentationStrategyWrapper implements FragmentationStrat
 
 	private TimeBasedConfig createConfig(ConfigProperties properties) {
 		return new TimeBasedConfig(properties.getOrDefault(FRAGMENTATION_SUBJECT_FILTER, ".*"),
-				properties.get(FRAGMENTATION_PATH), properties.get(MAX_GRANULARITY));
+				properties.get(FRAGMENTATION_PATH), Granularity.from(properties.get(MAX_GRANULARITY)));
 	}
 
 }

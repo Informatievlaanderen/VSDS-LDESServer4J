@@ -1,24 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.fragmentisers.FragmentiserConfigException;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.temporalFields;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 
 public class TimeBasedConfig {
 	private final String fragmenterSubjectFilter;
 	private final String fragmentationPath;
-	private final String maxGranularity;
+	private final Granularity maxGranularity;
 
-	public TimeBasedConfig(String fragmenterSubjectFilter, String fragmentationPath, String maxGranularity) {
+	public TimeBasedConfig(String fragmenterSubjectFilter, String fragmentationPath, Granularity maxGranularity) {
 		this.fragmenterSubjectFilter = fragmenterSubjectFilter;
 		this.fragmentationPath = fragmentationPath;
-		if (temporalFields.contains(maxGranularity)) {
-			this.maxGranularity = maxGranularity;
-		} else {
-			throw new FragmentiserConfigException(
-					maxGranularity + " is not allowed. Allowed values are: "
-							+ String.join(", ", temporalFields));
-		}
+		this.maxGranularity = maxGranularity;
 	}
 
 	public String getFragmentationPath() {
@@ -29,7 +21,7 @@ public class TimeBasedConfig {
 		return fragmenterSubjectFilter;
 	}
 
-	public String getMaxGranularity() {
+	public Granularity getMaxGranularity() {
 		return maxGranularity;
 	}
 }

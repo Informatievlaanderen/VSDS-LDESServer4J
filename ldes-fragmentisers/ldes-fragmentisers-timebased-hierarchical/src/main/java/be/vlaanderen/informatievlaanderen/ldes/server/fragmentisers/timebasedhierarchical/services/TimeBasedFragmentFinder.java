@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 
 public class TimeBasedFragmentFinder {
@@ -15,18 +16,18 @@ public class TimeBasedFragmentFinder {
 	}
 
 	public Fragment getLowestFragment(Fragment parentFragment, FragmentationTimestamp fragmentationTimestamp,
-			int granularity) {
+			Granularity granularity) {
 		if (isLowest(parentFragment)) {
 			return parentFragment;
 		}
 		return getLowestFragment(
 				fragmentCreator.getOrCreateFragment(parentFragment, fragmentationTimestamp, granularity),
-				fragmentationTimestamp, granularity + 1);
+				fragmentationTimestamp, granularity.getChild());
 	}
 
 	private boolean isLowest(Fragment fragment) {
 		return fragment.getFragmentPairs().stream()
-				.anyMatch(fragmentPair -> fragmentPair.fragmentKey().equals(config.getMaxGranularity()));
+				.anyMatch(fragmentPair -> fragmentPair.fragmentKey().equals(config.getMaxGranularity().getValue()));
 	}
 
 }

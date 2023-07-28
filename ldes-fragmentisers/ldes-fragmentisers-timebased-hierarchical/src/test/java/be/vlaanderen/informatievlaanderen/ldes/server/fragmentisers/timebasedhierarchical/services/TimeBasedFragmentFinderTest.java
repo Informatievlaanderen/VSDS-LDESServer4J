@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,14 +24,14 @@ class TimeBasedFragmentFinderTest {
 			new FragmentPair("M", "1"), new FragmentPair("D", "1"));
 	private static final Fragment PARENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
-			"D");
+			Granularity.DAY);
 	private TimeBasedConfig config;
 	private TimeBasedFragmentCreator fragmentCreator;
 	private TimeBasedFragmentFinder fragmentFinder;
 
 	@BeforeEach
 	void setUp() {
-		config = new TimeBasedConfig(".*", "", "D");
+		config = new TimeBasedConfig(".*", "", Granularity.DAY);
 		fragmentCreator = mock(TimeBasedFragmentCreator.class);
 		fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator, config);
 
@@ -42,11 +43,11 @@ class TimeBasedFragmentFinderTest {
 		Fragment firstSub = PARENT.createChild(new FragmentPair("Y", "2023"));
 		Fragment secondSub = firstSub.createChild(new FragmentPair("M", "1"));
 		Fragment thirdSub = secondSub.createChild(new FragmentPair("D", "1"));
-		when(fragmentCreator.getOrCreateFragment(PARENT, TIME, 0)).thenReturn(firstSub);
-		when(fragmentCreator.getOrCreateFragment(firstSub, TIME, 1)).thenReturn(secondSub);
-		when(fragmentCreator.getOrCreateFragment(secondSub, TIME, 2)).thenReturn(thirdSub);
+		when(fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.YEAR)).thenReturn(firstSub);
+		when(fragmentCreator.getOrCreateFragment(firstSub, TIME, Granularity.MONTH)).thenReturn(secondSub);
+		when(fragmentCreator.getOrCreateFragment(secondSub, TIME, Granularity.DAY)).thenReturn(thirdSub);
 
-		Fragment actual = fragmentFinder.getLowestFragment(PARENT, TIME, 0);
+		Fragment actual = fragmentFinder.getLowestFragment(PARENT, TIME, Granularity.YEAR);
 
 		assertEquals(expected, actual);
 	}

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.temporalFields;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FragmentationTimestampTest {
@@ -20,7 +20,7 @@ class FragmentationTimestampTest {
 
 	@ParameterizedTest(name = "test asString for granularity {0}")
 	@ArgumentsSource(TimeArgumentProvider.class)
-	void when_AsStringForGranularity_Then_ReturnCorrectString(String granularity, String expected) {
+	void when_AsStringForGranularity_Then_ReturnCorrectString(Granularity granularity, String expected) {
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, granularity);
 
 		assertEquals(expected, fragmentationTimestamp.asString());
@@ -41,12 +41,12 @@ class FragmentationTimestampTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
-					Arguments.of(temporalFields.get(0), "2023"),
-					Arguments.of(temporalFields.get(1), "2023-1"),
-					Arguments.of(temporalFields.get(2), "2023-1-2"),
-					Arguments.of(temporalFields.get(3), "2023-1-2T6"),
-					Arguments.of(temporalFields.get(4), "2023-1-2T6:30"),
-					Arguments.of(temporalFields.get(5), "2023-1-2T6:30:40"));
+					Arguments.of(Granularity.YEAR, "2023"),
+					Arguments.of(Granularity.MONTH, "2023-1"),
+					Arguments.of(Granularity.DAY, "2023-1-2"),
+					Arguments.of(Granularity.HOUR, "2023-1-2T6"),
+					Arguments.of(Granularity.MINUTE, "2023-1-2T6:30"),
+					Arguments.of(Granularity.SECOND, "2023-1-2T6:30:40"));
 		}
 	};
 
@@ -54,17 +54,19 @@ class FragmentationTimestampTest {
 
 		private static final String idA = "idA";
 		private static final FragmentationTimestamp time = new FragmentationTimestamp(
-				LocalDateTime.of(2023, 1, 1, 0, 0, 0), "s");
+				LocalDateTime.of(2023, 1, 1, 0, 0, 0), Granularity.SECOND);
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of(equals(), time, time),
-					Arguments.of(equals(), new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0), "s"),
+					Arguments.of(equals(),
+							new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0), Granularity.SECOND),
 							time),
 					Arguments.of(notEquals(),
-							new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0), "D"), time),
-					Arguments.of(notEquals(), new FragmentationTimestamp(LocalDateTime.of(2023, 2, 1, 0, 0, 0), "s"),
+							new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0), Granularity.DAY), time),
+					Arguments.of(notEquals(),
+							new FragmentationTimestamp(LocalDateTime.of(2023, 2, 1, 0, 0, 0), Granularity.SECOND),
 							time));
 		}
 

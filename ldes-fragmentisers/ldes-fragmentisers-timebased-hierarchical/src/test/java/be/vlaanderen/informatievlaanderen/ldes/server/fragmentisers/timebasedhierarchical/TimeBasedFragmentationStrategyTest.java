@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
@@ -31,7 +32,7 @@ class TimeBasedFragmentationStrategyTest {
 	private static Fragment PARENT_FRAGMENT;
 	private static Fragment CHILD_FRAGMENT;
 	private static LocalDateTime TIME;
-	private static String GRANULARITY;
+	private static Granularity GRANULARITY;
 	private TimeBasedFragmentationStrategy fragmentationStrategy;
 	private TimeBasedFragmentFinder fragmentFinder;
 	private TimeBasedConfig config;
@@ -43,7 +44,7 @@ class TimeBasedFragmentationStrategyTest {
 		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		CHILD_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(new FragmentPair("is", "child"))));
 		TIME = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
-		GRANULARITY = "s";
+		GRANULARITY = Granularity.SECOND;
 		config = new TimeBasedConfig(".*", "", GRANULARITY);
 		fragmentFinder = mock(TimeBasedFragmentFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
@@ -59,13 +60,14 @@ class TimeBasedFragmentationStrategyTest {
 		var modelParserMock = Mockito.mockStatic(ModelParser.class);
 		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
 				.thenReturn(TIME);
-		when(fragmentFinder.getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, 0)).thenReturn(CHILD_FRAGMENT);
+		when(fragmentFinder.getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, Granularity.YEAR))
+				.thenReturn(CHILD_FRAGMENT);
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
 				mock(Observation.class));
 
 		InOrder inOrder = Mockito.inOrder(fragmentFinder, decoratedFragmentationStrategy);
-		inOrder.verify(fragmentFinder).getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, 0);
+		inOrder.verify(fragmentFinder).getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, Granularity.YEAR);
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
 						any(), any(Observation.class));

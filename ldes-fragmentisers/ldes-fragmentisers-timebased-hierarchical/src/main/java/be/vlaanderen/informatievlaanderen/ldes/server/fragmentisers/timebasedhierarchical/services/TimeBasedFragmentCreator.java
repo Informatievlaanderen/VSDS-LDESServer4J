@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,10 @@ public class TimeBasedFragmentCreator {
 	}
 
 	public Fragment getOrCreateFragment(Fragment parentFragment, FragmentationTimestamp fragmentationTimestamp,
-			int granularity) {
+			Granularity granularity) {
 		Fragment child = parentFragment
-				.createChild(new FragmentPair(TimeBasedConstants.temporalFields.get(granularity), fragmentationTimestamp
-						.getTemporalFieldsWithValues().get(TimeBasedConstants.temporalFields.get(granularity))));
+				.createChild(new FragmentPair(granularity.getValue(),
+						fragmentationTimestamp.getTimeValueForGranularity(granularity)));
 		return fragmentRepository
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {

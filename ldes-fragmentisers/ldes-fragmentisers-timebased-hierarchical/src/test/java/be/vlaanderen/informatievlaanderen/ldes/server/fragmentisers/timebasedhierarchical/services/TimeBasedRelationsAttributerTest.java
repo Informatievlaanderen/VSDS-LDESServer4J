@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,7 @@ class TimeBasedRelationsAttributerTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final FragmentPair timePair = new FragmentPair("Y", "2023");
-	private static final FragmentPair monthPair = new FragmentPair("M", "1");
+	private static final FragmentPair monthPair = new FragmentPair("M", "2");
 	private static final Fragment PARENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair)));
 	private TimeBasedRelationsAttributer relationsAttributer;
 	private FragmentRepository fragmentRepository;
@@ -31,7 +32,7 @@ class TimeBasedRelationsAttributerTest {
 	@BeforeEach
 	void setUp() {
 		fragmentRepository = mock(FragmentRepository.class);
-		config = new TimeBasedConfig(".*", "", "s");
+		config = new TimeBasedConfig(".*", "", Granularity.SECOND);
 		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, config);
 	}
 
@@ -40,7 +41,7 @@ class TimeBasedRelationsAttributerTest {
 		Fragment child = PARENT.createChild(monthPair);
 		TreeRelation expected = new TreeRelation(config.getFragmentationPath(),
 				child.getFragmentId(),
-				"2023-1", DATETIME_TYPE,
+				"2023-02", DATETIME_TYPE,
 				TREE_INBETWEEN_RELATION);
 
 		relationsAttributer.addInBetweenRelation(PARENT, child);
