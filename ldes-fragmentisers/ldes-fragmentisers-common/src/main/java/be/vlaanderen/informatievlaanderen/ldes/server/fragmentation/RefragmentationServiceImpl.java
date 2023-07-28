@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // TODO TVB: 28/07/23 test
 @Service
@@ -24,15 +25,18 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 	@Override
 	public void refragmentMembersForView(ViewName viewName,
 			FragmentationStrategyExecutor fragmentationStrategyExecutor) {
+		AtomicInteger count = new AtomicInteger();
 		eventSourceService
 				.getMemberStreamOfCollection(viewName.getCollectionName())
 				.forEach(ingestMember -> {
 					final Member member = new Member(ingestMember.getId(), ingestMember.getModel(),
 							ingestMember.getSequenceNr());
 					memberToFragmentRepository.create(List.of(viewName), member);
+					if (count.getAndIncrement() == 1000) {
+						// TODO TVB: 28/07/23 we will need batch processing
+						fragmentationStrategyExecutor.resume();
+					}
 				});
-
-		fragmentationStrategyExecutor.resume();
 	}
 
 }
