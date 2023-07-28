@@ -8,8 +8,6 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
-	// TODO Update implementation see
-	// (https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/838)
 	void saveMemberPropertiesWithoutViews(MemberProperties memberProperties);
 
 	void save(MemberProperties memberProperties);
