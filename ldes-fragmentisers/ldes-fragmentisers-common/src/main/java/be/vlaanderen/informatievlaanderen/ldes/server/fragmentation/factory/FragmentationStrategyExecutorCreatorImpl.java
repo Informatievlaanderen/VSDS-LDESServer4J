@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.RootFragmentRetriever;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Service;
 
@@ -17,23 +17,23 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 
 	private final FragmentRepository fragmentRepository;
 	private final ObservationRegistry observationRegistry;
-	private final MemberToFragmentRepository memberToFragmentRepository;
-	private final MemberRepository memberRepository;
+	private final EventSourceService eventSourceService;
+	private final FragmentSequenceRepository fragmentSequenceRepository;
 
 	public FragmentationStrategyExecutorCreatorImpl(FragmentRepository fragmentRepository,
-													ObservationRegistry observationRegistry,
-													MemberToFragmentRepository memberToFragmentRepository, MemberRepository memberRepository) {
+													ObservationRegistry observationRegistry, EventSourceService eventSourceService, FragmentSequenceRepository fragmentSequenceRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.observationRegistry = observationRegistry;
-		this.memberToFragmentRepository = memberToFragmentRepository;
-		this.memberRepository = memberRepository;
+		this.eventSourceService = eventSourceService;
+
+		this.fragmentSequenceRepository = fragmentSequenceRepository;
 	}
 
 	public FragmentationStrategyExecutor createExecutor(ViewName viewName,
 			FragmentationStrategy fragmentationStrategy) {
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
 		return new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-				observationRegistry, memberToFragmentRepository, createExecutorService(), memberRepository);
+				observationRegistry, createExecutorService(), eventSourceService, fragmentSequenceRepository);
 	}
 
 	/**

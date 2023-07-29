@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// TODO TVB: 29/07/23 REMOVE THIS CLASS
 // TODO TVB: 28/07/23 test
 @Service
 public class RefragmentationServiceImpl implements RefragmentationService {
@@ -40,7 +41,7 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 					if (count.getAndIncrement() == 300_000) {
 //						// TODO TVB: 28/07/23 we will need batch processing
 //						// TODO TVB: 28/07/23 recovery?
-		fragmentationStrategyExecutor.resume();
+//		fragmentationStrategyExecutor.resume();
 
 					}
 				});

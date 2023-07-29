@@ -22,5 +22,5 @@ public interface MemberRepository {
 
 	void deleteMember(String memberId);
 
-	Optional<Member> findMemberEntityByCollectionNameAndAndSequenceNr(String collectionName, long sequenceNr);
+	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr);
 }
