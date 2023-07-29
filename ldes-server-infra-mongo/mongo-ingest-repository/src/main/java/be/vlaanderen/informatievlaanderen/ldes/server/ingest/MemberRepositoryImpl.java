@@ -60,4 +60,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
 	}
+
+	@Override
+	public Optional<Member> findMemberEntityByCollectionNameAndAndSequenceNr(String collectionName, long sequenceNr) {
+		return memberEntityRepository
+				.findMemberEntityByCollectionNameAndAndSequenceNr(collectionName, sequenceNr)
+				.map(memberEntityMapper::toMember);
+	}
 }

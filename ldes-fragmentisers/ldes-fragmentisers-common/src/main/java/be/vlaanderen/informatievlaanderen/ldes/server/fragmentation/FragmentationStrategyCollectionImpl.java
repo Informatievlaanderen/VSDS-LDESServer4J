@@ -66,7 +66,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.createFragmentationStrategyForView(event.getViewSpecification());
 		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
 				fragmentationStrategy);
-		fragmentationStrategyExecutor.pause();
+		fragmentationStrategyExecutor.pause(); // TODO TVB: 28/07/23 ook niet nodig
 		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategyExecutor);
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 	}

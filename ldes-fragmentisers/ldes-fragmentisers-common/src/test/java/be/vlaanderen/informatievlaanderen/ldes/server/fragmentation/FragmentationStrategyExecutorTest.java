@@ -51,7 +51,7 @@ class FragmentationStrategyExecutorTest {
 		void when_ExecuteNextIsCalled_then_AllLogicIsWrappedByTheExecutorService() {
 			ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-					observationRegistry, memberToFragmentRepository, executorService);
+					observationRegistry, memberToFragmentRepository, executorService, memberRepository);
 
 			executor.execute();
 
@@ -64,7 +64,7 @@ class FragmentationStrategyExecutorTest {
 		void when_ExecuteNextIsCalled_then_TheExecutorService_should_NotFragmentAnythingIfNotPresent() {
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
 					ObservationRegistry.create(), memberToFragmentRepository,
-					MoreExecutors.newDirectExecutorService());
+					MoreExecutors.newDirectExecutorService(), memberRepository);
 
 			executor.execute();
 
@@ -76,7 +76,7 @@ class FragmentationStrategyExecutorTest {
 		void when_ExecuteNextIsCalled_then_TheExecutorService_should_FragmentTheNextMemberIfPresent() {
 			ObservationRegistry observationRegistry = ObservationRegistry.create();
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-					observationRegistry, memberToFragmentRepository, MoreExecutors.newDirectExecutorService());
+					observationRegistry, memberToFragmentRepository, MoreExecutors.newDirectExecutorService(), memberRepository);
 			final Member member = new Member("id", ModelFactory.createDefaultModel(), 1L);
 			when(memberToFragmentRepository.getNextMemberToFragment(viewName)).thenReturn(Optional.of(member));
 			final Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));
@@ -94,7 +94,7 @@ class FragmentationStrategyExecutorTest {
 	void isPartOfCollection() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA, null, null, null,
-				null, null);
+				null, null, memberRepository);
 
 		assertTrue(executorA.isPartOfCollection(viewNameA.getCollectionName()));
 		assertFalse(executorA.isPartOfCollection("other"));
@@ -104,7 +104,7 @@ class FragmentationStrategyExecutorTest {
 	void getViewName() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA, null, null, null,
-				null, null);
+				null, null, memberRepository);
 
 		assertEquals(viewNameA, executorA.getViewName());
 	}
@@ -124,21 +124,21 @@ class FragmentationStrategyExecutorTest {
 
 		private static final ViewName viewNameA = ViewName.fromString("col/viewA");
 		private static final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA,
-				null, null, null, null, null);
+				null, null, null, null, null, memberRepository);
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of(equals(), executorA, executorA),
 					Arguments.of(equals(), executorA,
-							new FragmentationStrategyExecutor(viewNameA, null, null, null, null, null)),
+							new FragmentationStrategyExecutor(viewNameA, null, null, null, null, null, memberRepository)),
 					Arguments.of(equals(), executorA,
 							new FragmentationStrategyExecutor(viewNameA, mock(FragmentationStrategy.class),
 									mock(RootFragmentRetriever.class), mock(ObservationRegistry.class),
-									mock(MemberToFragmentRepository.class), mock(ExecutorService.class))),
+									mock(MemberToFragmentRepository.class), mock(ExecutorService.class), memberRepository)),
 					Arguments.of(notEquals(), executorA,
 							new FragmentationStrategyExecutor(ViewName.fromString("col/viewB"), null, null, null,
-									null, null)));
+									null, null, memberRepository)));
 		}
 
 		private static BiConsumer<Object, Object> equals() {

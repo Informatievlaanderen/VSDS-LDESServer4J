@@ -21,4 +21,6 @@ public interface MemberRepository {
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 
 	void deleteMember(String memberId);
+
+	Optional<Member> findMemberEntityByCollectionNameAndAndSequenceNr(String collectionName, long sequenceNr);
 }

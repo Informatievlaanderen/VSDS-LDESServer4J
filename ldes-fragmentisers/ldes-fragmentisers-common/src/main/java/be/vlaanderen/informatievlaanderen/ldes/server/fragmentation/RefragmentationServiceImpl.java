@@ -25,6 +25,11 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 	@Override
 	public void refragmentMembersForView(ViewName viewName,
 			FragmentationStrategyExecutor fragmentationStrategyExecutor) {
+
+		// TODO: 28/07/23 flow:
+		// get
+
+
 		AtomicInteger count = new AtomicInteger();
 		eventSourceService
 				.getMemberStreamOfCollection(viewName.getCollectionName())
@@ -32,12 +37,16 @@ public class RefragmentationServiceImpl implements RefragmentationService {
 					final Member member = new Member(ingestMember.getId(), ingestMember.getModel(),
 							ingestMember.getSequenceNr());
 					memberToFragmentRepository.create(List.of(viewName), member);
-					if (count.getAndIncrement() == 1000) {
-						// TODO TVB: 28/07/23 we will need batch processing
-						// TODO TVB: 28/07/23 recovery?
-						fragmentationStrategyExecutor.resume();
+					if (count.getAndIncrement() == 300_000) {
+//						// TODO TVB: 28/07/23 we will need batch processing
+//						// TODO TVB: 28/07/23 recovery?
+		fragmentationStrategyExecutor.resume();
+
 					}
 				});
+
+		// per 1.000 ophalen en fragmenteren
+
 	}
 
 }

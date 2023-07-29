@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface MemberToFragmentEntityRepository
-		extends MongoRepository<MemberToFragmentEntity, MemberToFragmentEntity.MembersToFragmentEntityId> {
+		extends MongoRepository<MemberToFragmentEntity, String> {
 
-	Optional<MemberToFragmentEntity> findFirstById_ViewNameOrderById_SequenceNrAsc(ViewName viewName);
+	Optional<MemberToFragmentEntity> findFirstByViewNameOrderBySequenceNrAsc(String viewName);
 
 }

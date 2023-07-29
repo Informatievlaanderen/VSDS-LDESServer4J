@@ -21,12 +21,12 @@ public class MemberToFragmentEntityMapper {
 		final MemberToFragmentEntity.MembersToFragmentEntityId id = new MemberToFragmentEntity.MembersToFragmentEntityId(
 				viewName, member.sequenceNr());
 
-		return new MemberToFragmentEntity(id, modelString, member.id());
+		return MemberToFragmentEntity.from(id, modelString, member.id());
 	}
 
 	public Member toMember(MemberToFragmentEntity entity) {
 		final Model model = RDFParserBuilder.create().fromString(entity.getMemberModel()).lang(Lang.NQUADS).toModel();
-		return new Member(entity.getMemberId(), model, entity.getId().sequenceNr());
+		return new Member(entity.getMemberId(), model, entity.getSequenceNr());
 	}
 
 }

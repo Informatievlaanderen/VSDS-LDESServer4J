@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.RootFragmentRetriever;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.stereotype.Service;
 
@@ -17,20 +18,22 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 	private final FragmentRepository fragmentRepository;
 	private final ObservationRegistry observationRegistry;
 	private final MemberToFragmentRepository memberToFragmentRepository;
+	private final MemberRepository memberRepository;
 
 	public FragmentationStrategyExecutorCreatorImpl(FragmentRepository fragmentRepository,
-			ObservationRegistry observationRegistry,
-			MemberToFragmentRepository memberToFragmentRepository) {
+													ObservationRegistry observationRegistry,
+													MemberToFragmentRepository memberToFragmentRepository, MemberRepository memberRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.observationRegistry = observationRegistry;
 		this.memberToFragmentRepository = memberToFragmentRepository;
+		this.memberRepository = memberRepository;
 	}
 
 	public FragmentationStrategyExecutor createExecutor(ViewName viewName,
 			FragmentationStrategy fragmentationStrategy) {
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
 		return new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-				observationRegistry, memberToFragmentRepository, createExecutorService());
+				observationRegistry, memberToFragmentRepository, createExecutorService(), memberRepository);
 	}
 
 	/**

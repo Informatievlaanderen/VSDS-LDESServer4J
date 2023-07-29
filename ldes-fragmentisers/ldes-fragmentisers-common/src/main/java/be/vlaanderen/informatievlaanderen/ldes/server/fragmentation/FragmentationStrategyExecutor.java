@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
@@ -21,17 +22,19 @@ public class FragmentationStrategyExecutor {
 	private final RootFragmentRetriever rootFragmentRetriever;
 	private final ObservationRegistry observationRegistry;
 	private final MemberToFragmentRepository memberToFragmentRepository;
+	private final MemberRepository memberRepository;
 
 	public FragmentationStrategyExecutor(ViewName viewName, FragmentationStrategy fragmentationStrategy,
-			RootFragmentRetriever rootFragmentRetriever,
-			ObservationRegistry observationRegistry,
-			MemberToFragmentRepository memberToFragmentRepository, ExecutorService executorService) {
+										 RootFragmentRetriever rootFragmentRetriever,
+										 ObservationRegistry observationRegistry,
+										 MemberToFragmentRepository memberToFragmentRepository, ExecutorService executorService, MemberRepository memberRepository) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
 		this.memberToFragmentRepository = memberToFragmentRepository;
 		this.executorService = executorService;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
+		this.memberRepository = memberRepository;
 	}
 
 	// TODO TVB: 28/07/23 test
@@ -50,6 +53,22 @@ public class FragmentationStrategyExecutor {
 			}
 		};
 	}
+
+//	private Runnable addMembersToFragments() {
+//		return () -> {
+//			long sequenceNr = 600_000;
+//			Optional<Member> nextMemberToFragment =
+//					memberRepository.findMemberEntityByCollectionNameAndAndSequenceNr(viewName.getCollectionName(), sequenceNr)
+//							.map(m -> new Member(m.getId(), m.getModel(), m.getSequenceNr()));
+//			while (nextMemberToFragment.isPresent()) {
+//				fragment(nextMemberToFragment.get());
+//				sequenceNr++;
+//				nextMemberToFragment =
+//						memberRepository.findMemberEntityByCollectionNameAndAndSequenceNr(viewName.getCollectionName(), sequenceNr)
+//								.map(m -> new Member(m.getId(), m.getModel(), m.getSequenceNr()));
+//			}
+//		};
+//	}
 
 	private void fragment(Member member) {
 		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();

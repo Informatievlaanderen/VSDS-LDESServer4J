@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface MemberEntityRepository extends MongoRepository<MemberEntity, String> {
@@ -12,4 +13,6 @@ public interface MemberEntityRepository extends MongoRepository<MemberEntity, St
 	Stream<MemberEntity> getAllByCollectionNameOrderBySequenceNrAsc(String collectionName);
 
 	Stream<MemberEntity> findAllByIdIn(List<String> memberIds);
+
+	Optional<MemberEntity> findMemberEntityByCollectionNameAndAndSequenceNr(String collectionName, long sequenceNr);
 }

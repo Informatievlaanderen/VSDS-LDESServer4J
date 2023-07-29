@@ -31,13 +31,13 @@ public class MemberToFragmentMongoRepository implements MemberToFragmentReposito
 	@Override
 	public Optional<Member> getNextMemberToFragment(ViewName viewName) {
 		return entityRepository
-				.findFirstById_ViewNameOrderById_SequenceNrAsc(viewName)
+				.findFirstByViewNameOrderBySequenceNrAsc(viewName.asString())
 				.map(memberToFragmentEntityMapper::toMember);
 	}
 
 	@Override
 	public void delete(ViewName viewName, Long sequenceNr) {
-		entityRepository.deleteById(new MemberToFragmentEntity.MembersToFragmentEntityId(viewName, sequenceNr));
+		entityRepository.deleteById(viewName.asString() + "/" + sequenceNr);
 	}
 
 }
