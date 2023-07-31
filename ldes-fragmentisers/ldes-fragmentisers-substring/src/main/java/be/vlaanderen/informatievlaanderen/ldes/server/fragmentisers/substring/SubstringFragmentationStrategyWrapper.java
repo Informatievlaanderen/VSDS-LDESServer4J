@@ -11,8 +11,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.re
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.FRAGMENTATION_PATH;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.MEMBER_LIMIT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig.DEFAULT_CASE_SENSITIVE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringProperties.*;
 
 public class SubstringFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
@@ -36,6 +36,8 @@ public class SubstringFragmentationStrategyWrapper implements FragmentationStrat
 		SubstringConfig substringConfig = new SubstringConfig();
 		substringConfig.setFragmenterPath(properties.get(FRAGMENTATION_PATH));
 		substringConfig.setMemberLimit(Integer.valueOf(properties.get(MEMBER_LIMIT)));
+		substringConfig.setCaseSensitive(
+				Boolean.parseBoolean(properties.getOrDefault(CASE_SENSITIVE, DEFAULT_CASE_SENSITIVE)));
 		return substringConfig;
 	}
 

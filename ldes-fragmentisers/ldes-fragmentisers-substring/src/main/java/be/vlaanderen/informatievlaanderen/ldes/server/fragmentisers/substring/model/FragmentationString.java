@@ -16,16 +16,22 @@ public class FragmentationString {
 		this.string = string;
 	}
 
-	public Set<Token> getTokens() {
-		return tokenize().stream().map(Token::new).collect(Collectors.toSet());
+	public Set<Token> getTokens(boolean caseSensitive) {
+		return tokenize(caseSensitive)
+				.stream()
+				.map(Token::new)
+				.collect(Collectors.toSet());
 	}
 
-	private List<String> tokenize() {
+	private List<String> tokenize(boolean caseSensitive) {
 		if (StringUtils.isBlank(string)) {
 			return List.of();
 		}
 
-		final String normalizedInput = normalize(string);
+		String normalizedInput = normalize(string);
+		if (!caseSensitive) {
+			normalizedInput = normalizedInput.toLowerCase();
+		}
 		return new ArrayList<>(Arrays.asList(normalizedInput.split(" ")));
 	}
 
@@ -33,7 +39,6 @@ public class FragmentationString {
 		return Normalizer.normalize(substringTarget.trim(), Normalizer.Form.NFKD)
 				.replaceAll("\\p{M}", "")
 				.replace(",", "")
-				.replace("-", " ")
-				.toLowerCase();
+				.replace("-", " ");
 	}
 }
