@@ -11,4 +11,6 @@ public interface FragmentSequenceRepository {
 
 	void saveLastProcessedSequence(FragmentSequence sequence);
 
+	void deleteByViewName(ViewName viewName);
+
 }

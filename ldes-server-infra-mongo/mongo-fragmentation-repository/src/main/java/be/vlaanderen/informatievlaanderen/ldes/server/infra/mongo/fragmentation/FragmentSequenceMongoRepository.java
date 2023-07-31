@@ -34,4 +34,9 @@ public class FragmentSequenceMongoRepository implements FragmentSequenceReposito
 		sequenceEntityRepository.save(sequenceEntityMapper.toEntity(sequence));
 	}
 
+	@Override
+	public void deleteByViewName(ViewName viewName) {
+		sequenceEntityRepository.deleteById(viewName.asString());
+	}
+
 }
