@@ -2,14 +2,18 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TreenodeUrlDecoderTest {
-	@Test
-	void when_URIContainsSpecialCharacters_Then_CharactersAreDecoded() {
-		String toDecode = "%25%24%26";
+	@ParameterizedTest
+	@CsvSource({ "%25%24%26,%$&",
+			"http://localhost:8080/kbo/by-time?created=2023-07-20T15%3A41%3A43.215Z,http://localhost:8080/kbo/by-time?created=2023-07-20T15:41:43.215Z" })
+	void when_URIContainsSpecialCharacters_Then_CharactersAreDecoded(String input, String expected) {
+		String actual = TreenodeUrlDecoder.decode(input);
 
-		String actual = TreenodeUrlDecoder.decode(toDecode);
-
-		Assertions.assertEquals("%$&", actual);
+		assertEquals(expected, actual);
 	}
 }
