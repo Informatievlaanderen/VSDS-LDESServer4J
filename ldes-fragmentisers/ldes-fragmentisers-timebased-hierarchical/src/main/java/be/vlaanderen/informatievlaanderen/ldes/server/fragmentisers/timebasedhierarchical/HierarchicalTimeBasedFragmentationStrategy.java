@@ -23,10 +23,10 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	private final TimeBasedConfig config;
 
 	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
-													  ObservationRegistry observationRegistry,
-													  TimeBasedFragmentFinder fragmentFinder,
-													  FragmentRepository fragmentRepository,
-													  TimeBasedConfig config) {
+			ObservationRegistry observationRegistry,
+			TimeBasedFragmentFinder fragmentFinder,
+			FragmentRepository fragmentRepository,
+			TimeBasedConfig config) {
 		super(fragmentationStrategy, fragmentRepository);
 		this.observationRegistry = observationRegistry;
 		this.fragmentFinder = fragmentFinder;
