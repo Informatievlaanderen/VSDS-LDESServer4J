@@ -6,5 +6,5 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragmentatio
 
 public interface FragmentationStrategyExecutorCreator {
 	FragmentationStrategyExecutor createExecutor(ViewName viewName,
-                                                 ViewSpecification viewSpecification);
+			ViewSpecification viewSpecification);
 }

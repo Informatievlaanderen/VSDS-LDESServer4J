@@ -50,21 +50,19 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.toList();
 	}
 
-	// TODO TVB: 28/07/23 update test
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		prepareFragmentationStrategyExecutor(event.getViewName(), event.getViewSpecification());
 	}
 
-	// TODO TVB: 31/07/23 update test
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
 		prepareFragmentationStrategyExecutor(event.getViewName(), event.getViewSpecification());
 	}
 
 	private void prepareFragmentationStrategyExecutor(ViewName viewName, ViewSpecification viewSpecification) {
-		final var fragmentationStrategyExecutor =
-				fragmentationStrategyExecutorCreator.createExecutor(viewName, viewSpecification);
+		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
+				viewSpecification);
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
 		fragmentationStrategyExecutor.execute();
 	}

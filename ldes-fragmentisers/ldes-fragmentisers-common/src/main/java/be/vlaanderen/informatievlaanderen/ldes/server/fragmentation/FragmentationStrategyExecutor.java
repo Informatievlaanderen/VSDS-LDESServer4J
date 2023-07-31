@@ -24,11 +24,13 @@ public class FragmentationStrategyExecutor {
 	private final EventSourceService eventSourceService;
 	private final FragmentSequenceRepository fragmentSequenceRepository;
 
-	public FragmentationStrategyExecutor(ViewName viewName, FragmentationStrategy fragmentationStrategy,
-										 RootFragmentRetriever rootFragmentRetriever,
-										 ObservationRegistry observationRegistry,
-										 ExecutorService executorService, EventSourceService eventSourceService,
-										 FragmentSequenceRepository fragmentSequenceRepository) {
+	public FragmentationStrategyExecutor(ViewName viewName,
+			FragmentationStrategy fragmentationStrategy,
+			RootFragmentRetriever rootFragmentRetriever,
+			ObservationRegistry observationRegistry,
+			ExecutorService executorService,
+			EventSourceService eventSourceService,
+			FragmentSequenceRepository fragmentSequenceRepository) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
 		this.eventSourceService = eventSourceService;
@@ -38,38 +40,40 @@ public class FragmentationStrategyExecutor {
 		this.fragmentSequenceRepository = fragmentSequenceRepository;
 	}
 
-	// TODO TVB: 28/07/23 test
 	public void execute() {
 		executorService.execute(addMembersToFragments());
 	}
 
-	// TODO TVB: 31/07/23 CLEANUP
 	private Runnable addMembersToFragments() {
 		return () -> {
-			Optional<Member> nextMemberToFragment =
-					getNextMemberToFragment(fragmentSequenceRepository.findLastProcessedSequence(viewName));
+			var nextMemberToFragment = getNextMemberToFragment(
+					fragmentSequenceRepository.findLastProcessedSequence(viewName));
+
 			while (nextMemberToFragment.isPresent()) {
-				final Member member = nextMemberToFragment.get();
-				fragment(member);
-				final FragmentSequence lastProcessedSequence = new FragmentSequence(viewName, member.sequenceNr());
-				fragmentSequenceRepository.saveLastProcessedSequence(lastProcessedSequence);
+				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
 		};
 	}
 
 	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
-		return eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(), lastProcessedSequence.sequenceNr())
+		final String collectionName = viewName.getCollectionName();
+		final long lastProcessedSequenceNr = lastProcessedSequence.sequenceNr();
+		return eventSourceService
+				.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, lastProcessedSequenceNr)
 				.map(member -> new Member(member.getId(), member.getModel(), member.getSequenceNr()));
 	}
 
-	private void fragment(Member member) {
+	private FragmentSequence fragment(Member member) {
 		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
 		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
 		String memberId = member.id();
 		Model memberModel = member.model();
 		fragmentationStrategy.addMemberToFragment(rootFragmentOfView, memberId, memberModel, parentObservation);
+		final FragmentSequence lastProcessedSequence = new FragmentSequence(viewName, member.sequenceNr());
+		fragmentSequenceRepository.saveLastProcessedSequence(lastProcessedSequence);
 		parentObservation.stop();
+		return lastProcessedSequence;
 	}
 
 	public boolean isPartOfCollection(String collectionName) {

@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -24,7 +23,6 @@ class FragmentationStrategyCollectionImplTest {
 
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator = mock(
 			FragmentationStrategyExecutorCreatorImpl.class);
-	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 
@@ -41,7 +39,7 @@ class FragmentationStrategyCollectionImplTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
-		// TODO TVB: 31/07/23 check executor is resumed
+		verify(initResult.fragmentationStrategyExecutor()).execute();
 	}
 
 	private void verifySingleViewAdded(InitViewAddedResult initResult) {
@@ -57,10 +55,9 @@ class FragmentationStrategyCollectionImplTest {
 		ViewName viewName = new ViewName(COLLECTION_NAME, "additonalView");
 		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
-				.thenReturn(fragmentationStrategy);
+
 		FragmentationStrategyExecutor fragmentationStrategyExecutor = createFragmentationStrategyExecutor(viewName);
-		when(fragmentationStrategyExecutorCreator.createExecutor(viewName, fragmentationStrategy))
+		when(fragmentationStrategyExecutorCreator.createExecutor(viewName, viewSpecification))
 				.thenReturn(fragmentationStrategyExecutor);
 		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
 				fragmentationStrategyExecutor);
@@ -113,6 +110,7 @@ class FragmentationStrategyCollectionImplTest {
 		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
 
 		verifySingleViewAdded(initViewAddedResult);
+		verify(initViewAddedResult.fragmentationStrategyExecutor()).execute();
 	}
 
 	@Test

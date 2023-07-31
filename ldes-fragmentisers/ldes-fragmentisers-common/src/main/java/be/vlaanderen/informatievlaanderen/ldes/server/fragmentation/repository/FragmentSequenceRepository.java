@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 
 public interface FragmentSequenceRepository {
 
-    FragmentSequence findLastProcessedSequence(ViewName viewName);
+	FragmentSequence findLastProcessedSequence(ViewName viewName);
 
-    void saveLastProcessedSequence(FragmentSequence sequence);
+	void saveLastProcessedSequence(FragmentSequence sequence);
 
 }
