@@ -11,14 +11,14 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
-class TimeBasedFragmentationStrategyWrapperTest {
+class HierarchicalHierarchicalTimeBasedFragmentationStrategyWrapperTest {
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
 	private final FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
-	private TimeBasedFragmentationStrategyWrapper fragmentationStrategyWrapper;
+	private HierarchicalTimeBasedFragmentationStrategyWrapper fragmentationStrategyWrapper;
 
 	@BeforeEach
 	void setUp() {
-		fragmentationStrategyWrapper = new TimeBasedFragmentationStrategyWrapper();
+		fragmentationStrategyWrapper = new HierarchicalTimeBasedFragmentationStrategyWrapper();
 	}
 
 	@Test
@@ -27,7 +27,7 @@ class TimeBasedFragmentationStrategyWrapperTest {
 				Map.of("maxGranularity", "s", "fragmentationPath", "http://www.w3.org/ns/prov#generatedAtTime"));
 		FragmentationStrategy decoratedFragmentationStrategy = fragmentationStrategyWrapper
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
-		assertTrue(decoratedFragmentationStrategy instanceof TimeBasedFragmentationStrategy);
+		assertTrue(decoratedFragmentationStrategy instanceof HierarchicalTimeBasedFragmentationStrategy);
 	}
 
 }

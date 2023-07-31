@@ -14,7 +14,7 @@ import org.apache.jena.rdf.model.Model;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser.getFragmentationObjectLocalDateTime;
 
-public class TimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
+public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
 	public static final String TIMEBASED_FRAGMENTATION_HIERARCHICAL = "HierarchicalTimeBasedFragmentation";
 
@@ -22,7 +22,7 @@ public class TimeBasedFragmentationStrategy extends FragmentationStrategyDecorat
 	private final TimeBasedFragmentFinder fragmentFinder;
 	private final TimeBasedConfig config;
 
-	public TimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
+	public HierarchicalTimeBasedFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
 			ObservationRegistry observationRegistry,
 			TimeBasedFragmentFinder fragmentFinder,
 			FragmentRepository fragmentRepository,
