@@ -66,7 +66,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 		memberEntityRepository.deleteById(memberId);
 	}
 
-	// TODO TVB: 29/07/23 test with passing seq 3 and first one is seq 5
 	@Override
 	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
 		return memberEntityRepository
