@@ -120,4 +120,13 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 		return count > 0;
 	}
 
+	@And("I search for the first member from collection {string} and sequenceNr greater than {int}")
+	public void iSearchForTheFirstMemberFromCollectionAndSequenceNrGreaterThan(String collectionName, int sequence) {
+		retrievedMember = memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, sequence);
+	}
+
+	@Then("The retrieved member is empty")
+	public void theRetrievedMemberIsEmpty() {
+		assertTrue(retrievedMember.isEmpty());
+	}
 }

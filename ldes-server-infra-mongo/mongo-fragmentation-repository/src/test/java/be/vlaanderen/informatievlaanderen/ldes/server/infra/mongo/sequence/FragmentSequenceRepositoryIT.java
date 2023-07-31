@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membertofragment;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.sequence;// package
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.MongoFragmentationIntegrationTest;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -7,6 +7,6 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features/membertofragment")
-public class MemberToFragmentRepositoryIT extends MongoFragmentationIntegrationTest {
+@SelectClasspathResource("features/sequence")
+public class FragmentSequenceRepositoryIT extends MongoFragmentationIntegrationTest {
 }

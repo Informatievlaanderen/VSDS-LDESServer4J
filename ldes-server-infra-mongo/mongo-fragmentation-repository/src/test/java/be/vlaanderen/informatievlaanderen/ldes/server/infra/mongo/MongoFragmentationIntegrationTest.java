@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.Sh
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -39,7 +39,7 @@ public class MongoFragmentationIntegrationTest {
 	public FragmentRepository fragmentRepository;
 
 	@Autowired
-	public MemberToFragmentRepository memberToFragmentRepository;
+	public FragmentSequenceRepository fragmentSequenceRepository;
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {

@@ -65,4 +65,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
 	}
+
+	@Override
+	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
+		return memberEntityRepository
+				.findFirstByCollectionNameAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, sequenceNr)
+				.map(memberEntityMapper::toMember);
+	}
 }

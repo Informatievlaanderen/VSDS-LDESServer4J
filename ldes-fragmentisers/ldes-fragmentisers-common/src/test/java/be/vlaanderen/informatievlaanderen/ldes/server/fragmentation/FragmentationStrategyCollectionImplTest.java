@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -24,45 +23,37 @@ class FragmentationStrategyCollectionImplTest {
 
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator = mock(
 			FragmentationStrategyExecutorCreatorImpl.class);
-	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
-	private final RefragmentationService refragmentationService = mock(RefragmentationService.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			fragmentationStrategyCreator, refragmentationService, fragmentRepository, allocationRepository,
+			fragmentRepository, allocationRepository,
 			fragmentationStrategyExecutorCreator);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
 		InitViewAddedResult initResult = initAddView();
-		assertTrue(fragmentationStrategyCollection.getViews(COLLECTION_NAME).isEmpty());
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
-		verify(refragmentationService).refragmentMembersForView(initResult.viewName(),
-				initResult.fragmentationStrategy());
+		verify(initResult.fragmentationStrategyExecutor()).execute();
 	}
 
 	private void verifySingleViewAdded(InitViewAddedResult initResult) {
 		var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME);
 		assertEquals(1, executors.size());
 		assertEquals(initResult.fragmentationStrategyExecutor(), executors.get(0));
-		var views = fragmentationStrategyCollection.getViews(COLLECTION_NAME);
-		assertEquals(1, views.size());
-		assertEquals(initResult.viewName(), views.get(0));
 	}
 
 	private InitViewAddedResult initAddView() {
 		ViewName viewName = new ViewName(COLLECTION_NAME, "additonalView");
 		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
-				.thenReturn(fragmentationStrategy);
+
 		FragmentationStrategyExecutor fragmentationStrategyExecutor = createFragmentationStrategyExecutor(viewName);
-		when(fragmentationStrategyExecutorCreator.createExecutor(viewName, fragmentationStrategy))
+		when(fragmentationStrategyExecutorCreator.createExecutor(viewName, viewSpecification))
 				.thenReturn(fragmentationStrategyExecutor);
 		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
 				fragmentationStrategyExecutor);
@@ -95,11 +86,9 @@ class FragmentationStrategyCollectionImplTest {
 		InitViewAddedResult initResult = initAddView();
 
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
-		assertFalse(fragmentationStrategyCollection.getViews(COLLECTION_NAME).isEmpty());
 		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
-		assertTrue(fragmentationStrategyCollection.getViews(COLLECTION_NAME).isEmpty());
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 		verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
 		verify(allocationRepository).unallocateAllMembersFromView(initResult.viewSpecification().getName());
@@ -109,12 +98,12 @@ class FragmentationStrategyCollectionImplTest {
 	void when_ViewInitializedEventIsReceived_FragmentationStrategyIsAddedToMap() {
 		InitViewAddedResult initViewAddedResult = initAddView();
 		ViewSpecification viewSpecification = initViewAddedResult.viewSpecification;
-		assertTrue(fragmentationStrategyCollection.getViews(COLLECTION_NAME).isEmpty());
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
 
 		verifySingleViewAdded(initViewAddedResult);
+		verify(initViewAddedResult.fragmentationStrategyExecutor()).execute();
 	}
 
 	@Test

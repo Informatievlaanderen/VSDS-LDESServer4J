@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueob
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -20,24 +20,18 @@ import java.util.Set;
 @Component
 public class FragmentationStrategyCollectionImpl implements FragmentationStrategyCollection {
 
-	private final RefragmentationService refragmentationService;
 	private final FragmentRepository fragmentRepository;
 	private final AllocationRepository allocationRepository;
 	private final Set<FragmentationStrategyExecutor> fragmentationStrategySet;
-	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator;
 
 	public FragmentationStrategyCollectionImpl(
-			FragmentationStrategyCreator fragmentationStrategyCreator,
-			RefragmentationService refragmentationService,
 			FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
 			FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.fragmentationStrategyExecutorCreator = fragmentationStrategyExecutorCreator;
 		this.fragmentationStrategySet = new HashSet<>();
-		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
-		this.refragmentationService = refragmentationService;
 	}
 
 	public List<FragmentationStrategyExecutor> getFragmentationStrategyExecutors(String collectionName) {
@@ -47,33 +41,21 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.toList();
 	}
 
-	@Override
-	public List<ViewName> getViews(String collectionName) {
-		return fragmentationStrategySet
-				.stream()
-				.filter(executor -> executor.isPartOfCollection(collectionName))
-				.map(FragmentationStrategyExecutor::getViewName)
-				.toList();
-	}
-
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
-		final ViewName viewName = event.getViewName();
-		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
-				.createFragmentationStrategyForView(event.getViewSpecification());
-		refragmentationService.refragmentMembersForView(viewName, fragmentationStrategy);
-		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
-				fragmentationStrategy);
-		fragmentationStrategySet.add(fragmentationStrategyExecutor);
+		prepareFragmentationStrategyExecutor(event.getViewName(), event.getViewSpecification());
 	}
 
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
-		final FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
-				.createFragmentationStrategyForView(event.getViewSpecification());
-		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator
-				.createExecutor(event.getViewName(), fragmentationStrategy);
+		prepareFragmentationStrategyExecutor(event.getViewName(), event.getViewSpecification());
+	}
+
+	private void prepareFragmentationStrategyExecutor(ViewName viewName, ViewSpecification viewSpecification) {
+		final var fragmentationStrategyExecutor = fragmentationStrategyExecutorCreator.createExecutor(viewName,
+				viewSpecification);
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
+		fragmentationStrategyExecutor.execute();
 	}
 
 	@EventListener
