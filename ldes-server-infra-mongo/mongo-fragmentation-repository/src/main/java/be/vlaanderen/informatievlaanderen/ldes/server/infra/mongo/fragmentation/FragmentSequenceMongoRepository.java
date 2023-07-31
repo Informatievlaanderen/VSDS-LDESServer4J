@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-// TODO TVB: 31/07/23 add testing
 @Component
 public class FragmentSequenceMongoRepository implements FragmentSequenceRepository {
 
