@@ -26,14 +26,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class TimeBasedFragmentationStrategyTest {
+class HierarchicalTimeBasedFragmentationStrategyTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static Fragment PARENT_FRAGMENT;
 	private static Fragment CHILD_FRAGMENT;
 	private static LocalDateTime TIME;
 	private static Granularity GRANULARITY;
-	private TimeBasedFragmentationStrategy fragmentationStrategy;
+	private HierarchicalTimeBasedFragmentationStrategy fragmentationStrategy;
 	private TimeBasedFragmentFinder fragmentFinder;
 	private TimeBasedConfig config;
 	private FragmentationStrategy decoratedFragmentationStrategy;
@@ -49,7 +49,7 @@ class TimeBasedFragmentationStrategyTest {
 		fragmentFinder = mock(TimeBasedFragmentFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		fragmentRepository = mock(FragmentRepository.class);
-		fragmentationStrategy = new TimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
+		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), fragmentFinder, fragmentRepository, config);
 	}
 

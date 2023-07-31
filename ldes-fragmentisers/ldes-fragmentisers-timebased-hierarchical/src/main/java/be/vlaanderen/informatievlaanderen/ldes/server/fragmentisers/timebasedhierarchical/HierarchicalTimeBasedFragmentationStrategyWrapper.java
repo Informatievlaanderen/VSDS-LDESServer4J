@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.config.TimeBasedProperties.*;
 
-public class TimeBasedFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
+public class HierarchicalTimeBasedFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
@@ -28,7 +28,7 @@ public class TimeBasedFragmentationStrategyWrapper implements FragmentationStrat
 				relationsAttributer);
 		TimeBasedFragmentFinder fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator,
 				config);
-		return new TimeBasedFragmentationStrategy(fragmentationStrategy,
+		return new HierarchicalTimeBasedFragmentationStrategy(fragmentationStrategy,
 				observationRegistry, fragmentFinder,
 				fragmentRepository, config);
 	}
