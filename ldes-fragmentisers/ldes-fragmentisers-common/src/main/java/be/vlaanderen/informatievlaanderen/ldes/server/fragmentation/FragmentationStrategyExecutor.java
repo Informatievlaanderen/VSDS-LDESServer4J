@@ -46,14 +46,18 @@ public class FragmentationStrategyExecutor {
 
 	private Runnable addMembersToFragments() {
 		return () -> {
-			var nextMemberToFragment = getNextMemberToFragment(
-					fragmentSequenceRepository.findLastProcessedSequence(viewName));
+			var nextMemberToFragment = getNextMemberToFragment(determineLastProcessedSequence());
 
 			while (nextMemberToFragment.isPresent()) {
 				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
 		};
+	}
+
+	private FragmentSequence determineLastProcessedSequence() {
+		return fragmentSequenceRepository.findLastProcessedSequence(viewName)
+				.orElse(FragmentSequence.createNeverProcessedSequence(viewName));
 	}
 
 	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {

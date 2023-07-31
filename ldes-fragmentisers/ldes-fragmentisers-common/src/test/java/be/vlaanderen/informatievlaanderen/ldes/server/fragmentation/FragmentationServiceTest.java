@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,9 +29,6 @@ class FragmentationServiceTest {
 		final FragmentationStrategyExecutor executorB = mock(FragmentationStrategyExecutor.class);
 		when(fragmentationStrategyCollection.getFragmentationStrategyExecutors(memberIngestedEvent.collectionName()))
 				.thenReturn(List.of(executorA, executorB));
-		List<ViewName> views = List.of(ViewName.fromString("c/v1"), ViewName.fromString("c/v2"));
-		when(fragmentationStrategyCollection.getViews(memberIngestedEvent.collectionName()))
-				.thenReturn(views);
 
 		fragmentationService.executeFragmentation(memberIngestedEvent);
 

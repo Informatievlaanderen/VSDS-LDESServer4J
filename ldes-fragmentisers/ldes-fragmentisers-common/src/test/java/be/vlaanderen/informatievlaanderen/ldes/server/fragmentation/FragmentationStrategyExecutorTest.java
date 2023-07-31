@@ -70,7 +70,8 @@ class FragmentationStrategyExecutorTest {
 					ObservationRegistry.create(),
 					MoreExecutors.newDirectExecutorService(), eventSourceService, fragmentSequenceRepository);
 			FragmentSequence fragmentSequence = new FragmentSequence(viewName, 0L);
-			when(fragmentSequenceRepository.findLastProcessedSequence(viewName)).thenReturn(fragmentSequence);
+			when(fragmentSequenceRepository.findLastProcessedSequence(viewName))
+					.thenReturn(Optional.of(fragmentSequence));
 
 			executor.execute();
 
@@ -86,13 +87,12 @@ class FragmentationStrategyExecutorTest {
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
 					observationRegistry, MoreExecutors.newDirectExecutorService(), eventSourceService,
 					fragmentSequenceRepository);
-			FragmentSequence fragmentSequence = new FragmentSequence(viewName, 0L);
-			when(fragmentSequenceRepository.findLastProcessedSequence(viewName)).thenReturn(fragmentSequence);
+			when(fragmentSequenceRepository.findLastProcessedSequence(viewName)).thenReturn(Optional.empty());
 			String memberId = "id";
 			Model memberModel = ModelFactory.createDefaultModel();
 			long sequenceNr = 1L;
 			when(eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(),
-					fragmentSequence.sequenceNr()))
+					FragmentSequence.createNeverProcessedSequence(viewName).sequenceNr()))
 					.thenReturn(Optional.of(createIngestMember(memberId, memberModel, sequenceNr)));
 			final Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));
 			when(rootFragmentRetriever.retrieveRootFragmentOfView(eq(viewName), any())).thenReturn(rootFragment);
