@@ -44,6 +44,8 @@ Feature: MemberRepository
     Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
     And The member with id "http://test-data/gipod/1/1" will not exist
     And The member with id "http://test-data/gipod/1/2" will not exist
+    And The sequence for "gipod" will have been removed
+    And The sequence for "mobility-hindrances" will still exist
 
   Scenario: The repository can indicate if members exist or not
     Given The following members

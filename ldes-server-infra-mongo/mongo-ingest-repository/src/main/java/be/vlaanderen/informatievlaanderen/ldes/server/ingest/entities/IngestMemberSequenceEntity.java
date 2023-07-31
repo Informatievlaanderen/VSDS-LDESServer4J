@@ -1,10 +1,12 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "ingest_member_sequence")
+@Document(collection = IngestMemberSequenceEntity.COLLECTION_NAME)
 public class IngestMemberSequenceEntity {
+
+	public static final String COLLECTION_NAME = "ingest_member_sequence";
 
 	@Id
 	private String id;

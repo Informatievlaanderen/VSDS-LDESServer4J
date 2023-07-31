@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +16,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 
 	private final MemberEntityRepository memberEntityRepository;
 	private final MemberEntityMapper memberEntityMapper;
+	private final IngestMemberSequenceService sequenceService;
 
 	public MemberRepositoryImpl(MemberEntityRepository memberEntityRepository,
-			MemberEntityMapper memberEntityMapper) {
+			MemberEntityMapper memberEntityMapper,
+			IngestMemberSequenceService sequenceService) {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
+		this.sequenceService = sequenceService;
 	}
 
 	public boolean memberExists(String memberId) {
@@ -47,6 +51,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public void deleteMembersByCollection(String collectionName) {
 		memberEntityRepository.deleteAllByCollectionName(collectionName);
+		sequenceService.removeSequence(collectionName);
 	}
 
 	@Override

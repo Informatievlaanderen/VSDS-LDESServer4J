@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest.stub.InMemoryMemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.execution.SchedulingConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest.stub.InMemoryMemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

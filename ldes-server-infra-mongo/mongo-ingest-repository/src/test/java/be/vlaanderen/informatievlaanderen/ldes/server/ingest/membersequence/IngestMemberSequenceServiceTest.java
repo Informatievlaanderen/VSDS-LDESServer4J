@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestMemberSequenceEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
@@ -12,10 +13,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
-class IngestMemberSequenceGeneratorServiceTest {
+class IngestMemberSequenceServiceTest {
 
 	private final MongoOperations mongoOperations = mock(MongoOperations.class);
-	private final IngestMemberSequenceGeneratorService ingestMemberSequenceGeneratorService = new IngestMemberSequenceGeneratorService(
+	private final IngestMemberSequenceService ingestMemberSequenceService = new IngestMemberSequenceService(
 			mongoOperations);
 
 	@Test
@@ -27,14 +28,14 @@ class IngestMemberSequenceGeneratorServiceTest {
 				eq(new Update().inc("seq", 1)),
 				any(),
 				eq(IngestMemberSequenceEntity.class))).thenReturn(ingestMemberSequenceEntity);
-		long sequence = ingestMemberSequenceGeneratorService.generateSequence("collectionName");
+		long sequence = ingestMemberSequenceService.generateSequence("collectionName");
 
 		assertEquals(100, sequence);
 	}
 
 	@Test
 	void test_memberSequenceEntityIsNull() {
-		long sequence = ingestMemberSequenceGeneratorService.generateSequence("collectionName");
+		long sequence = ingestMemberSequenceService.generateSequence("collectionName");
 
 		assertEquals(1, sequence);
 	}
