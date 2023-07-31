@@ -10,7 +10,7 @@ import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
 
 import static io.micrometer.observation.Observation.createNotStarted;
 
@@ -43,25 +43,24 @@ public class FragmentationStrategyExecutor {
 		executorService.execute(addMembersToFragments());
 	}
 
+	// TODO TVB: 31/07/23 CLEANUP
 	private Runnable addMembersToFragments() {
 		return () -> {
-//			long sequenceNr = 5;
-			FragmentSequence lastProcessedSequence = fragmentSequenceRepository.findLastProcessedSequence(viewName);
-			// TODO TVB: 29/07/23 cleanup
 			Optional<Member> nextMemberToFragment =
-					eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(), lastProcessedSequence.sequenceNr())
-							.map(m -> new Member(m.getId(), m.getModel(), m.getSequenceNr()));
+					getNextMemberToFragment(fragmentSequenceRepository.findLastProcessedSequence(viewName));
 			while (nextMemberToFragment.isPresent()) {
-				Member member = nextMemberToFragment.get();
+				final Member member = nextMemberToFragment.get();
 				fragment(member);
-//				sequenceNr++;
-				lastProcessedSequence = new FragmentSequence(viewName, member.sequenceNr() + 1);
+				final FragmentSequence lastProcessedSequence = new FragmentSequence(viewName, member.sequenceNr());
 				fragmentSequenceRepository.saveLastProcessedSequence(lastProcessedSequence);
-				nextMemberToFragment =
-						eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(), lastProcessedSequence.sequenceNr())
-								.map(m -> new Member(m.getId(), m.getModel(), m.getSequenceNr()));
+				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
 		};
+	}
+
+	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
+		return eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(), lastProcessedSequence.sequenceNr())
+				.map(member -> new Member(member.getId(), member.getModel(), member.getSequenceNr()));
 	}
 
 	private void fragment(Member member) {

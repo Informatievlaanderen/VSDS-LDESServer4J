@@ -2,12 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.MemberToFragmentRepository;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,9 +18,6 @@ class FragmentationServiceTest {
 
 	@Mock
 	private FragmentationStrategyCollection fragmentationStrategyCollection;
-
-	@Mock
-	private MemberToFragmentRepository memberToFragmentRepository;
 
 	@InjectMocks
 	private FragmentationService fragmentationService;
@@ -42,12 +36,8 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation(memberIngestedEvent);
 
-		InOrder inOrder = inOrder(memberToFragmentRepository, executorA, executorB);
-		final Member member = new Member(memberIngestedEvent.id(), memberIngestedEvent.model(),
-				memberIngestedEvent.sequenceNr());
-		inOrder.verify(memberToFragmentRepository).create(views, member);
-		inOrder.verify(executorA).execute();
-		inOrder.verify(executorB).execute();
+		verify(executorA).execute();
+		verify(executorB).execute();
 	}
 
 }

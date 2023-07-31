@@ -25,12 +25,11 @@ class FragmentationStrategyCollectionImplTest {
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator = mock(
 			FragmentationStrategyExecutorCreatorImpl.class);
 	private final FragmentationStrategyCreator fragmentationStrategyCreator = mock(FragmentationStrategyCreator.class);
-	private final RefragmentationService refragmentationService = mock(RefragmentationService.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			fragmentationStrategyCreator, refragmentationService, fragmentRepository, allocationRepository,
+			fragmentRepository, allocationRepository,
 			fragmentationStrategyExecutorCreator);
 
 	@Test
@@ -42,8 +41,7 @@ class FragmentationStrategyCollectionImplTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
-		verify(refragmentationService).refragmentMembersForView(initResult.viewName(),
-				initResult.fragmentationStrategy());
+		// TODO TVB: 31/07/23 check executor is resumed
 	}
 
 	private void verifySingleViewAdded(InitViewAddedResult initResult) {

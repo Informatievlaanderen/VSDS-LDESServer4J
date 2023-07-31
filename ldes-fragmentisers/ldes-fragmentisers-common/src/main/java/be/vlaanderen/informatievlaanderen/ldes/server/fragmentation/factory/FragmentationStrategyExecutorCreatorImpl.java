@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyExecutor;
@@ -19,18 +20,26 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 	private final ObservationRegistry observationRegistry;
 	private final EventSourceService eventSourceService;
 	private final FragmentSequenceRepository fragmentSequenceRepository;
+	private final FragmentationStrategyCreator fragmentationStrategyCreator;
 
 	public FragmentationStrategyExecutorCreatorImpl(FragmentRepository fragmentRepository,
-													ObservationRegistry observationRegistry, EventSourceService eventSourceService, FragmentSequenceRepository fragmentSequenceRepository) {
+													ObservationRegistry observationRegistry,
+													EventSourceService eventSourceService,
+													FragmentSequenceRepository fragmentSequenceRepository,
+													FragmentationStrategyCreator fragmentationStrategyCreator) {
 		this.fragmentRepository = fragmentRepository;
 		this.observationRegistry = observationRegistry;
 		this.eventSourceService = eventSourceService;
 
 		this.fragmentSequenceRepository = fragmentSequenceRepository;
+		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
 	}
 
+	// TODO TVB: 31/07/23 update test
 	public FragmentationStrategyExecutor createExecutor(ViewName viewName,
-			FragmentationStrategy fragmentationStrategy) {
+														ViewSpecification viewSpecification) {
+		final FragmentationStrategy fragmentationStrategy =
+				fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification);
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
 		return new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
 				observationRegistry, createExecutorService(), eventSourceService, fragmentSequenceRepository);
