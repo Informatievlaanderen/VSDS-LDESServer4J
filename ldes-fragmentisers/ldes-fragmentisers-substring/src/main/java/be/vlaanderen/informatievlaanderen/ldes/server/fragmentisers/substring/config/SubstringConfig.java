@@ -3,10 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.c
 public class SubstringConfig {
 
 	public static final String DEFAULT_FRAGMENTER_SUBJECT_FILTER = ".*";
+	public static final String DEFAULT_CASE_SENSITIVE = "false";
 
 	private String fragmenterSubjectFilter = DEFAULT_FRAGMENTER_SUBJECT_FILTER;
 	private String fragmentationPath;
 	private Integer memberLimit;
+	private boolean caseSensitive;
 
 	public String getFragmentationPath() {
 		return fragmentationPath;
@@ -30,5 +32,13 @@ public class SubstringConfig {
 
 	public int getMemberLimit() {
 		return memberLimit;
+	}
+
+	public boolean getCaseSensitive() {
+		return caseSensitive;
+	}
+
+	public void setCaseSensitive(boolean caseSensitive) {
+		this.caseSensitive = caseSensitive;
 	}
 }
