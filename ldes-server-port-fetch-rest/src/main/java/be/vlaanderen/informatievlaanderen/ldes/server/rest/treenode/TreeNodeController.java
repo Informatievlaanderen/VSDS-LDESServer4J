@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreenodeUrlCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreenodeUrlDecoder;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -54,7 +54,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(),
-								TreenodeUrlCreator.decode(entry.getValue())))
+								TreenodeUrlDecoder.decode(entry.getValue())))
 						.toList());
 
 		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
