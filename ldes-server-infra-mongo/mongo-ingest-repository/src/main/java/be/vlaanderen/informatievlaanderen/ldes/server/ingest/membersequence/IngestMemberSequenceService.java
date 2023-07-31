@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestMemberSequenceEntity;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
@@ -11,15 +12,15 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @Component
-public class IngestMemberSequenceGeneratorService {
+public class IngestMemberSequenceService {
 
 	private final MongoOperations mongoOperations;
 
-	public IngestMemberSequenceGeneratorService(MongoOperations mongoOperations) {
+	public IngestMemberSequenceService(MongoOperations mongoOperations) {
 		this.mongoOperations = mongoOperations;
 	}
 
-	public long generateSequence(String collectionName) {
+	long generateSequence(String collectionName) {
 		IngestMemberSequenceEntity counter = mongoOperations.findAndModify(
 				query(where("_id").is(collectionName)),
 				new Update().inc("seq", 1),
@@ -27,4 +28,11 @@ public class IngestMemberSequenceGeneratorService {
 				IngestMemberSequenceEntity.class);
 		return !Objects.isNull(counter) ? counter.getSeq() : 1;
 	}
+
+	public void removeSequence(String collectionName) {
+		mongoOperations.findAndRemove(
+				query(where("_id").is(collectionName)),
+				IngestMemberSequenceEntity.class);
+	}
+
 }

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.listeners;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MemberDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
