@@ -41,15 +41,6 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				.toList();
 	}
 
-	@Override
-	public List<ViewName> getViews(String collectionName) {
-		return fragmentationStrategySet
-				.stream()
-				.filter(executor -> executor.isPartOfCollection(collectionName))
-				.map(FragmentationStrategyExecutor::getViewName)
-				.toList();
-	}
-
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		prepareFragmentationStrategyExecutor(event.getViewName(), event.getViewSpecification());
