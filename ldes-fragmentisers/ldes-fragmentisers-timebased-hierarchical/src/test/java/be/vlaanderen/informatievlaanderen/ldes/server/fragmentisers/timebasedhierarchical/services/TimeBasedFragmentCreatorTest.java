@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 class TimeBasedFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final FragmentPair timePair = new FragmentPair("Y", "2023");
+	private static final FragmentPair timePair = new FragmentPair(Granularity.YEAR.getValue(), "2023");
 	private static final Fragment PARENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair)));
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.MONTH);
@@ -40,7 +40,7 @@ class TimeBasedFragmentCreatorTest {
 	@Test
 	void when_FragmentDoesNotExist_Then_NewFragmentIsCreated() {
 		LdesFragmentIdentifier exptectedFragmentId = new LdesFragmentIdentifier(VIEW_NAME,
-				List.of(timePair, new FragmentPair("M", "01")));
+				List.of(timePair, new FragmentPair(Granularity.MONTH.getValue(), "01")));
 		when(fragmentRepository.retrieveFragment(exptectedFragmentId)).thenReturn(Optional.empty());
 
 		Fragment child = fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.MONTH);
@@ -55,7 +55,7 @@ class TimeBasedFragmentCreatorTest {
 
 	@Test
 	void when_FragmentDoesExist_Then_FragmentIsRetrieved() {
-		Fragment expectedChild = PARENT.createChild(new FragmentPair("M", "01"));
+		Fragment expectedChild = PARENT.createChild(new FragmentPair(Granularity.MONTH.getValue(), "01"));
 		when(fragmentRepository.retrieveFragment(expectedChild.getFragmentId())).thenReturn(Optional.of(expectedChild));
 
 		Fragment child = fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.MONTH);

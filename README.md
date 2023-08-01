@@ -332,7 +332,7 @@ Full documentation for hierarchical timebased fragmentation can be found [here](
   
   tree:fragmentationStrategy [
         a tree:HierarchicalTimeBasedFragmentation ;
-        tree:maxGranularity "D" ;
+        tree:maxGranularity "day" ;
         tree:fragmentationPath <http://www.w3.org/ns/prov#generatedAtTime> ;
     ] .
   ```
