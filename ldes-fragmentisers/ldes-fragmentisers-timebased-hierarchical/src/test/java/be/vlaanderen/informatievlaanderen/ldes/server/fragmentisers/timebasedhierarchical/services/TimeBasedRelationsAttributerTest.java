@@ -22,8 +22,8 @@ import static org.mockito.Mockito.verify;
 class TimeBasedRelationsAttributerTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final FragmentPair timePair = new FragmentPair("Y", "2023");
-	private static final FragmentPair monthPair = new FragmentPair("M", "2");
+	private static final FragmentPair timePair = new FragmentPair(Granularity.YEAR.getValue(), "2023");
+	private static final FragmentPair monthPair = new FragmentPair(Granularity.MONTH.getValue(), "02");
 	private static final Fragment PARENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(timePair)));
 	private TimeBasedRelationsAttributer relationsAttributer;
 	private FragmentRepository fragmentRepository;

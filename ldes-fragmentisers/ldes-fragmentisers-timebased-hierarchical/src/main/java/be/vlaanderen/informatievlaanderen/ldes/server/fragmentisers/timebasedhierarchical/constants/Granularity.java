@@ -8,12 +8,12 @@ import java.util.stream.Stream;
 
 public enum Granularity {
 	// @formatter:off
-	SECOND("s", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss"), DateTimeFormatter.ofPattern("ss"), null),
-	MINUTE("m", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm"), DateTimeFormatter.ofPattern("mm"), Granularity.SECOND),
-	HOUR("h", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh"), DateTimeFormatter.ofPattern("hh"), Granularity.MINUTE),
-	DAY("D", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"), Granularity.HOUR),
-	MONTH("M", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"), Granularity.DAY),
-	YEAR("Y", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"), Granularity.MONTH);
+	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss"), DateTimeFormatter.ofPattern("ss"), null),
+	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm"), DateTimeFormatter.ofPattern("mm"), Granularity.SECOND),
+	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh"), DateTimeFormatter.ofPattern("hh"), Granularity.MINUTE),
+	DAY("day", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"), Granularity.HOUR),
+	MONTH("month", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"), Granularity.DAY),
+	YEAR("year", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"), Granularity.MONTH);
 	// @formatter:on
 
 	private final String value;

@@ -20,8 +20,8 @@ import static org.mockito.Mockito.when;
 class TimeBasedFragmentFinderTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final List<FragmentPair> timePairs = List.of(new FragmentPair("Y", "2023"),
-			new FragmentPair("M", "1"), new FragmentPair("D", "1"));
+	private static final List<FragmentPair> timePairs = List.of(new FragmentPair(Granularity.YEAR.getValue(), "2023"),
+			new FragmentPair(Granularity.MONTH.getValue(), "01"), new FragmentPair(Granularity.DAY.getValue(), "01"));
 	private static final Fragment PARENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 	private static final FragmentationTimestamp TIME = new FragmentationTimestamp(LocalDateTime.of(2023, 1, 1, 0, 0, 0),
 			Granularity.DAY);
@@ -40,9 +40,9 @@ class TimeBasedFragmentFinderTest {
 	@Test
 	void when_GetLowestIsCalled_Then_ReturnExpectedFragment() {
 		Fragment expected = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, timePairs));
-		Fragment firstSub = PARENT.createChild(new FragmentPair("Y", "2023"));
-		Fragment secondSub = firstSub.createChild(new FragmentPair("M", "1"));
-		Fragment thirdSub = secondSub.createChild(new FragmentPair("D", "1"));
+		Fragment firstSub = PARENT.createChild(new FragmentPair(Granularity.YEAR.getValue(), "2023"));
+		Fragment secondSub = firstSub.createChild(new FragmentPair(Granularity.MONTH.getValue(), "01"));
+		Fragment thirdSub = secondSub.createChild(new FragmentPair(Granularity.DAY.getValue(), "01"));
 		when(fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.YEAR)).thenReturn(firstSub);
 		when(fragmentCreator.getOrCreateFragment(firstSub, TIME, Granularity.MONTH)).thenReturn(secondSub);
 		when(fragmentCreator.getOrCreateFragment(secondSub, TIME, Granularity.DAY)).thenReturn(thirdSub);

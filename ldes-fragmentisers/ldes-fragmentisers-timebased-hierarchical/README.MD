@@ -14,7 +14,7 @@ Timebased fragmentation will create fragments based on a time selected from the 
         tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ;
     ] .
   ```
-For maxGranularity the following values are allowed: Y, M, D, h, m, s.
+For maxGranularity the following values are allowed: year, month, day, hour, minute, second.
 
 ## Algorithm
 
@@ -37,7 +37,7 @@ Example properties:
   
   tree:fragmentationStrategy [
         a tree:HierarchicalTimeBasedFragmentation ;
-        tree:maxGranularity "D" ;
+        tree:maxGranularity "day" ;
         tree:fragmentationPath <http://www.w3.org/ns/prov#generatedAtTime> ;
     ] .
   ```

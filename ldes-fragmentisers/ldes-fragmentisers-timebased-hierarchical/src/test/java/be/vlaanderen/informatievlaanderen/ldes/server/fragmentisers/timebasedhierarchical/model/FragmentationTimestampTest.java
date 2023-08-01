@@ -51,8 +51,6 @@ class FragmentationTimestampTest {
 	};
 
 	static class EqualityTestProvider implements ArgumentsProvider {
-
-		private static final String idA = "idA";
 		private static final FragmentationTimestamp time = new FragmentationTimestamp(
 				LocalDateTime.of(2023, 1, 1, 0, 0, 0), Granularity.SECOND);
 

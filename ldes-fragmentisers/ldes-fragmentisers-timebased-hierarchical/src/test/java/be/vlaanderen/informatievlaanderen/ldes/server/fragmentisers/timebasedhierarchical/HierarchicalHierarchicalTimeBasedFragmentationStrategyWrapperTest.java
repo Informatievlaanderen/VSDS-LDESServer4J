@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
@@ -24,7 +25,8 @@ class HierarchicalHierarchicalTimeBasedFragmentationStrategyWrapperTest {
 	@Test
 	void when_FragmentationStrategyIsUpdated_TimebasedFragmentationStrategyIsReturned() {
 		ConfigProperties properties = new ConfigProperties(
-				Map.of("maxGranularity", "s", "fragmentationPath", "http://www.w3.org/ns/prov#generatedAtTime"));
+				Map.of("maxGranularity", Granularity.SECOND.getValue(), "fragmentationPath",
+						"http://www.w3.org/ns/prov#generatedAtTime"));
 		FragmentationStrategy decoratedFragmentationStrategy = fragmentationStrategyWrapper
 				.wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
 		assertTrue(decoratedFragmentationStrategy instanceof HierarchicalTimeBasedFragmentationStrategy);
