@@ -71,7 +71,7 @@ public class SubstringFragmentationStrategy extends FragmentationStrategyDecorat
 			FragmentationString fragmentationString,
 			Fragment rootFragment) {
 		return fragmentationString
-				.getTokens()
+				.getTokens(substringConfig.getCaseSensitive())
 				.stream()
 				.map(token -> substringFragmentFinder
 						.getOpenOrLastPossibleFragment(parentFragment, rootFragment, token.getBuckets()))

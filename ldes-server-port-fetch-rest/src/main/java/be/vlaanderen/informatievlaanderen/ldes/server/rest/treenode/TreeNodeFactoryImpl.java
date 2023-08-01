@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreenodeUrlCreator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 	@Override
 	public TreeNode getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
-		String extendedTreeNodeId = TreenodeUrlCreator.encode(hostName, treeNodeId);
+		String extendedTreeNodeId = hostName + treeNodeId.asString();
 		Fragment fragment = fragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));

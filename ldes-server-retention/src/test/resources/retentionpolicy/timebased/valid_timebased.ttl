@@ -1,3 +1,3 @@
 [ a                              <https://w3id.org/ldes#DurationAgoPolicy> ;
-  <https://w3id.org/tree#value>  "PT2M"^^<http://www.w3.org/2001/XMLSchema#duration>
+  <https://w3id.org/tree#value>  "P10Y"^^<http://www.w3.org/2001/XMLSchema#duration>
 ] .

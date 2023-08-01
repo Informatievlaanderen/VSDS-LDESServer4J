@@ -49,7 +49,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, MEMBER_TYPE);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
-		Model shape = readModelFromFile("example-shape.ttl");
+		Model shape1 = readModelFromFile("shape-name1.ttl");
+		Model shape2 = readModelFromFile("shape-name2.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
@@ -71,9 +72,9 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION)).thenReturn(views);
 		when(viewRepository.retrieveAllViewsOfCollection(collection2)).thenReturn(List.of(singleView));
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
-				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
+				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape1)));
 		when(shaclShapeRepository.retrieveShaclShape(collection2))
-				.thenReturn(Optional.of(new ShaclShape(collection2, shape)));
+				.thenReturn(Optional.of(new ShaclShape(collection2, shape2)));
 	}
 
 	@When("the client calls {string}")

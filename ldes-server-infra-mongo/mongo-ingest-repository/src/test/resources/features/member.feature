@@ -44,6 +44,8 @@ Feature: MemberRepository
     Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
     And The member with id "http://test-data/gipod/1/1" will not exist
     And The member with id "http://test-data/gipod/1/2" will not exist
+    And The sequence for "gipod" will have been removed
+    And The sequence for "mobility-hindrances" will still exist
 
   Scenario: The repository can indicate if members exist or not
     Given The following members
@@ -95,3 +97,17 @@ Feature: MemberRepository
     When I delete the member with id "http://test-data/mobility-hindrance/1/1"
     Then The member with id "http://test-data/mobility-hindrance/1/2" will exist
     And The member with id "http://test-data/mobility-hindrance/1/1" will not exist
+
+    Scenario: Find member by collection name and sequence number greater than
+      Given The following members
+        | id                                      | collectionName      | sequenceNr | versionOf                             |
+        | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | 5          | http://test-data/mobility-hindrance/1 |
+        | http://test-data/mobility-hindrance/1/2 | mobility-hindrances | 12         | http://test-data/mobility-hindrance/1 |
+        | http://test-data/mobility-hindrance/1/3 | mobility-hindrances | 3          | http://test-data/mobility-hindrance/1 |
+      When I save the members using the MemberRepository
+      And I search for the first member from collection "mobility-hindrances" and sequenceNr greater than -1
+      Then The retrieved member has the same properties as the 3 member in the table and has sequenceNr 3
+      When I search for the first member from collection "mobility-hindrances" and sequenceNr greater than 3
+      Then The retrieved member has the same properties as the 1 member in the table and has sequenceNr 5
+      When I search for the first member from collection "mobility-hindrances" and sequenceNr greater than 15
+      Then The retrieved member is empty

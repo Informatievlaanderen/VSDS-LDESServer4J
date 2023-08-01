@@ -2,7 +2,6 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix custom: <http://example.org/> .
 @prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
 @prefix col: <http://localhost:8080/collectionName1/> .
 @prefix server: <http://localhost:8080/> .
@@ -20,7 +19,6 @@
 server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
-   custom:memberType mobiliteit:Mobiliteitshinder ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 ;
@@ -31,10 +29,7 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    dct:creator <http://sample.org/company/MyDataOwner> .
 
 col:shape a sh:NodeShape ;
-   sh:nodeShape [
-     sh:closed true ;
-     sh:propertyShape []
-     ] ;
+   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
    sh:deactivated true .
 
 col:view1 a tree:Node ;

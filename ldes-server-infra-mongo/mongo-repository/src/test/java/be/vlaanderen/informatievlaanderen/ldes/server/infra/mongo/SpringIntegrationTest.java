@@ -4,8 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.DcatServerMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.dcatserver.repository.DcatCatalogEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.MemberMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member.repository.LdesMemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.DcatViewMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.DcatServiceEntityConverter;
@@ -17,7 +15,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -25,8 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
-@ContextConfiguration(classes = { LdesMemberEntityRepository.class,
-		DataServiceEntityRepository.class, DcatCatalogEntityRepository.class })
+@ContextConfiguration(classes = { DataServiceEntityRepository.class, DcatCatalogEntityRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.member",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.membersequence",
 		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation" })
@@ -37,8 +33,6 @@ public class SpringIntegrationTest {
 	public DcatServerMongoRepository serverDcatMongoRepository;
 	@Autowired
 	public DcatViewMongoRepository dcatViewMongoRepository;
-	@Autowired
-	public MemberMongoRepository memberRepository;
 
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
@@ -55,11 +49,5 @@ public class SpringIntegrationTest {
 			return new DcatServerMongoRepository(dcatCatalogEntityRepository);
 		}
 
-		@Bean
-		public MemberMongoRepository ldesMemberMongoRepository(
-				final LdesMemberEntityRepository ldesMemberEntityRepository,
-				final MongoTemplate mongoTemplate) {
-			return new MemberMongoRepository(ldesMemberEntityRepository, mongoTemplate);
-		}
 	}
 }

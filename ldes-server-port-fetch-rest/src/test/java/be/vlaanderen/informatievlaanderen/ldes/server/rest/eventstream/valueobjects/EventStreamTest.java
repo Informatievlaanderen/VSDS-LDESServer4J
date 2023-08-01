@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -52,7 +52,7 @@ class EventStreamTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
 			return Stream.of(
 					Arguments.of((Object) null),
-					Arguments.of(new Member("id", "collectionName", 0L, null, null, null, List.of())),
+					Arguments.of(new Member("id", "collectionName", 0L, null)),
 					Arguments.of(new EventStream(COLLECTION,
 							"other timestamp path", "other version", SHAPE, List.of())),
 					Arguments.of(new EventStream("Other collection", TIMESTAMP_PATH, VERSION_OF_PATH, SHAPE,

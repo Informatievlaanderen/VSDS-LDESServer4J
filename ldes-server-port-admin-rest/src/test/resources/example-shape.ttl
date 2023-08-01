@@ -4,8 +4,4 @@
 @prefix server: <http://localhost:8080/> .
 
 server:shape a sh:NodeShape ;
-   sh:nodeShape [
-     sh:closed true ;
-     sh:propertyShape []
-     ] ;
-   sh:deactivated true .
+   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;

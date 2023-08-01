@@ -3,10 +3,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.config.SubstringConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring.fragment.SubstringFragmentCreator;
@@ -50,7 +50,7 @@ class SubstringFragmentationStrategyTest {
 	void when_SubstringFragmentationStrategyIsCalled_SubstringFragmentationIsAppliedAndDecoratedServiceIsCalled() {
 		Member member = mock(Member.class);
 		var modelParserMock = Mockito.mockStatic(ModelParser.class);
-		modelParserMock.when(() -> ModelParser.getFragmentationObject(eq(member.getModel()), any(), any()))
+		modelParserMock.when(() -> ModelParser.getFragmentationObject(eq(member.model()), any(), any()))
 				.thenReturn("abc");
 		Fragment rootFragment = PARENT_FRAGMENT.createChild(new FragmentPair(SUBSTRING, ""));
 		when(substringFragmentCreator.getOrCreateSubstringFragment(PARENT_FRAGMENT,
@@ -60,7 +60,7 @@ class SubstringFragmentationStrategyTest {
 				rootFragment,
 				List.of(ROOT_SUBSTRING, "a", "ab", "abc"))).thenReturn(childFragment);
 
-		substringFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.getLdesMemberId(), member.getModel(),
+		substringFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
 				mock(Observation.class));
 
 		InOrder inOrder = inOrder(fragmentRepository,

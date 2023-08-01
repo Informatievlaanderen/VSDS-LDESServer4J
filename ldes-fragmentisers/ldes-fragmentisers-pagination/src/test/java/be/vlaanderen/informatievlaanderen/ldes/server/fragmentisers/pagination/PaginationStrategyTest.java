@@ -2,10 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
@@ -44,12 +44,12 @@ class PaginationStrategyTest {
 	@Test
 	void when_MemberIsAddedToFragment_PaginationIsApplied() {
 		Member member = mock(Member.class);
-		when(member.getLdesMemberId()).thenReturn("memberId");
+		when(member.id()).thenReturn("memberId");
 		when(openPageProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(new ImmutablePair<>(OPEN_FRAGMENT, false));
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				member.getLdesMemberId(), member.getModel(), any(Observation.class));
+				member.id(), member.model(), any(Observation.class));
 
 		InOrder inOrder = inOrder(openPageProvider, fragmentRepository,
 				decoratedFragmentationStrategy);
@@ -64,12 +64,12 @@ class PaginationStrategyTest {
 	@Test
 	void when_MemberIsAddedToFirstFragment_PaginationIsAppliedAndRelationIsAdded() {
 		Member member = mock(Member.class);
-		when(member.getLdesMemberId()).thenReturn("memberId");
+		when(member.id()).thenReturn("memberId");
 		when(openPageProvider.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT))
 				.thenReturn(new ImmutablePair<>(OPEN_FRAGMENT, true));
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				member.getLdesMemberId(), member.getModel(), any(Observation.class));
+				member.id(), member.model(), any(Observation.class));
 
 		InOrder inOrder = inOrder(openPageProvider, fragmentRepository,
 				decoratedFragmentationStrategy);

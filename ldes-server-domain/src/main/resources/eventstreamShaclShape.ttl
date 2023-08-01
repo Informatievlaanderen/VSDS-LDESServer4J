@@ -30,13 +30,6 @@
     sh:name "versionOfPath"@en;
     sh:path <https://w3id.org/ldes#versionOfPath>
   ], [
-    sh:nodeKind sh:IRI ;
-    sh:description "The object property that indicates the type of a member."@en;
-    sh:maxCount 1;
-    sh:minCount 1;
-    sh:name "memberType"@en;
-    sh:path <http://example.org/memberType>
-  ], [
     sh:datatype xsd:boolean ;
     sh:description "The object property that indicates whether the object has a default view."@en;
     sh:maxCount 1;
@@ -123,6 +116,7 @@ shsh:ShapeShape
 		sh:nodeKind	sh:IRIOrLiteral ;   # targetNode-nodeKind
 	] ;
 	sh:property [
+      	sh:minCount 1;
 		sh:path sh:targetClass ;
 		sh:nodeKind sh:IRI ;            # targetClass-nodeKind
 	] ;

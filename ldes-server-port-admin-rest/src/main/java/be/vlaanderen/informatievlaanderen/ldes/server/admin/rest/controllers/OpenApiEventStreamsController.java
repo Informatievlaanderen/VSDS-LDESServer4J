@@ -22,7 +22,6 @@ public interface OpenApiEventStreamsController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ldes: <https://w3id.org/ldes#> .
-					@prefix custom: <http://example.org/> .
 					@prefix dcterms: <http://purl.org/dc/terms/> .
 					@prefix tree: <https://w3id.org/tree#>.
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
@@ -34,13 +33,11 @@ public interface OpenApiEventStreamsController {
 					server:mobility-hindrances a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
-						custom:memberType <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
 						tree:shape mobility-hindrances:shape .
 
 					server:parcels a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
-						custom:memberType <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> ;
 						tree:shape server:shape .
 						ldes:view parcels:by-page .
 
@@ -52,48 +49,32 @@ public interface OpenApiEventStreamsController {
 					] .
 
 					parcels:shape a sh:NodeShape ;
-						sh:nodeShape [
-							sh:closed true ;
-							sh:propertyShape []
-							] ;
-						sh:deactivated true .
+						sh:targetClass <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 
 					mobility-hindrances:shape a sh:NodeShape ;
-						sh:nodeShape [
-							sh:closed true ;
-							sh:propertyShape []
-							] ;
-						sh:deactivated true .
+						sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .
 					""")),
 			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					<http://localhost:8080/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-					  <http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-					  <http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					  <http://localhost:8080/mobility-hindrances> <http://example.org/memberType> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .
-					  <http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#shape> <http://localhost:8080/mobility-hindrances/shape> .
-					  <http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-					  <http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-					  <http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					  <http://localhost:8080/parcels> <http://example.org/memberType> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
-					  <http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/shape> .
-					  <https://w3id.org/ldes#view> <http://localhost:8080/parcels/by-page> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
-					  _:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/tree#PaginationFragmentation> .
-					  _:genid2 <https://w3id.org/tree#memberLimit> "250" .
-					  _:genid1 <https://w3id.org/tree#fragmentationStrategy> _:genid2 .
-					  <http://localhost:8080/parcels/paged> <https://w3id.org/tree#viewDescription> _:genid1 .
-					  <http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
-					  <http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#nodeShape> _:genid3 .
-					  <http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#deactivated> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					  _:genid3 <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					  _:genid3 <http://www.w3.org/ns/shacl#propertyShape> _:genid4 .
-					  <http://localhost:8080/mobility-hindrances/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
-					  <http://localhost:8080/mobility-hindrances/shape> <http://www.w3.org/ns/shacl#nodeShape> _:genid5 .
-					  <http://localhost:8080/mobility-hindrances/shape> <http://www.w3.org/ns/shacl#deactivated> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					  _:genid5 <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					  _:genid5 <http://www.w3.org/ns/shacl#propertyShape> _:genid6 .
+					<http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+					<http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+					<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#shape> <http://localhost:8080/mobility-hindrances/shape> .
+					<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+					<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+					<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+					<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/shape> .
+					<https://w3id.org/ldes#view> <http://localhost:8080/parcels/by-page> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
+					_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/tree#PaginationFragmentation> .
+					_:genid2 <https://w3id.org/tree#memberLimit> "250" .
+					_:genid1 <https://w3id.org/tree#fragmentationStrategy> _:genid2 .
+					<http://localhost:8080/parcels/paged> <https://w3id.org/tree#viewDescription> _:genid1 .
+					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#targetClass> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
+					<http://localhost:8080/mobility-hindrances/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+					<http://localhost:8080/mobility-hindrances/shape> <http://www.w3.org/ns/shacl#targetClass> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .
 					""")),
 			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
-					[{"@id":"_:b0","@type":["https://w3id.org/tree#PaginationFragmentation"],"https://w3id.org/tree#memberLimit":[{"@value":"250"}]},{"@id":"_:b1","https://w3id.org/tree#fragmentationStrategy":[{"@id":"_:b0"}]},{"@id":"_:b2","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b3"}]},{"@id":"_:b3"},{"@id":"_:b4","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b5"}]},{"@id":"_:b5"},{"@id":"http://localhost:8080/mobility-hindrances","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"http://example.org/memberType":[{"@id":"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/mobility-hindrances/shape"}]},{"@id":"http://localhost:8080/mobility-hindrances/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b4"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"http://example.org/memberType":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/shape"}]},{"@id":"http://localhost:8080/parcels/paged","https://w3id.org/tree#viewDescription":[{"@id":"_:b1"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b2"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://localhost:8080/shape"},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/by-page":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]},{"@id":"https://w3id.org/tree#PaginationFragmentation"}]
+					[{"@id":"_:b0","@type":["https://w3id.org/tree#PaginationFragmentation"],"https://w3id.org/tree#memberLimit":[{"@value":"250"}]},{"@id":"_:b1","https://w3id.org/tree#fragmentationStrategy":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/mobility-hindrances","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/mobility-hindrances/shape"}]},{"@id":"http://localhost:8080/mobility-hindrances/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#targetClass":[{"@id":"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"}]},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/shape"}]},{"@id":"http://localhost:8080/parcels/paged","https://w3id.org/tree#viewDescription":[{"@id":"_:b1"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#targetClass":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}]},{"@id":"http://localhost:8080/shape"},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/by-page":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]},{"@id":"https://w3id.org/tree#PaginationFragmentation"}]
 					"""))
 	})
 	List<EventStreamResponse> getEventStreams();
@@ -102,7 +83,6 @@ public interface OpenApiEventStreamsController {
 	@ApiResponse(responseCode = "201", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ldes: <https://w3id.org/ldes#> .
-					@prefix custom: <http://example.org/> .
 					@prefix dcterms: <http://purl.org/dc/terms/> .
 					@prefix tree: <https://w3id.org/tree#>.
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
@@ -113,30 +93,21 @@ public interface OpenApiEventStreamsController {
 					server:parcels a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
-						custom:memberType <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> ;
 						tree:shape parcels:shape .
 
 					parcels:shape a sh:NodeShape ;
-						sh:nodeShape [
-							sh:closed true ;
-							sh:propertyShape []
-							] ;
-						sh:deactivated true .
+						sh:targetClass <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					""")),
 			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
 					<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
 					<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					<http://localhost:8080/parcels> <http://example.org/memberType> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
 					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#nodeShape> _:genid1 .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#deactivated> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					_:genid1 <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					_:genid1 <http://www.w3.org/ns/shacl#propertyShape> _:genid2 .
+					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#targetClass> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					""")),
 			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
-					[{"@id":"_:b0","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b1"}]},{"@id":"_:b1"},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"http://example.org/memberType":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b0"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"}]
+					[{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#targetClass":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"}]
 					"""))
 	})
 	@ApiResponse(responseCode = "400", description = "The provided config is not valid", content = @Content)
@@ -144,7 +115,6 @@ public interface OpenApiEventStreamsController {
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							@prefix ldes: <https://w3id.org/ldes#> .
-							@prefix custom: <http://example.org/> .
 							@prefix dcterms: <http://purl.org/dc/terms/> .
 							@prefix tree: <https://w3id.org/tree#>.
 							@prefix sh:   <http://www.w3.org/ns/shacl#> .
@@ -155,30 +125,21 @@ public interface OpenApiEventStreamsController {
 							server:parcels a ldes:EventStream ;
 								ldes:timestampPath dcterms:created ;
 								ldes:versionOfPath dcterms:isVersionOf ;
-								custom:memberType <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> ;
 								tree:shape parcels:shape .
 
 							parcels:shape a sh:NodeShape ;
-								sh:nodeShape [
-									sh:closed true ;
-									sh:propertyShape []
-									] ;
-								sh:deactivated true .
+								sh:targetClass <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 							""")),
 					@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-							<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-							<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-							<http://localhost:8080/parcels> <http://example.org/memberType> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
-							<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
-							<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
-							<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#nodeShape> _:genid1 .
-							<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#deactivated> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-							_:genid1 <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-							_:genid1 <http://www.w3.org/ns/shacl#propertyShape> _:genid2 .
+							 	<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+							 	<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+							 	<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
+							 	<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+							 	<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#targetClass> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 							""")),
 					@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
-							[{"@id":"_:b0","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b1"}]},{"@id":"_:b1"},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"http://example.org/memberType":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b0"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"}]
+							[{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#targetClass":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"}]
 							"""))
 			}) Model eventStreamModel);
 
@@ -186,7 +147,6 @@ public interface OpenApiEventStreamsController {
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ldes: <https://w3id.org/ldes#> .
-					@prefix custom: <http://example.org/> .
 					@prefix dcterms: <http://purl.org/dc/terms/> .
 					@prefix tree: <https://w3id.org/tree#>.
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
@@ -197,7 +157,6 @@ public interface OpenApiEventStreamsController {
 					server:parcels a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
-						custom:memberType <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> ;
 						tree:shape parcels:shape .
 						ldes:view parcels:pagination .
 
@@ -209,31 +168,23 @@ public interface OpenApiEventStreamsController {
 					] .
 
 					parcels:shape a sh:NodeShape ;
-						sh:nodeShape [
-							sh:closed true ;
-							sh:propertyShape []
-							] ;
-						sh:deactivated true .
+						sh:targetClass <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					""")),
 			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
 					<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
 					<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					<http://localhost:8080/parcels> <http://example.org/memberType> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
 					<https://w3id.org/ldes#view> <http://localhost:8080/parcels/pagination> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
 					_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/tree#PaginationFragmentation> .
-					_:genid2 <http://example.org/memberLimit> "100" .
-					_:genid1 <http://example.org/fragmentationStrategy> _:genid2 .
+					_:genid2 <https://w3id.org/tree#memberLimit> "100" .
+					_:genid1 <https://w3id.org/tree#fragmentationStrategy> _:genid2 .
 					<http://localhost:8080/parcels/pagination> <https://w3id.org/tree#viewDescription> _:genid1 .
 					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#nodeShape> _:genid3 .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#deactivated> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					_:genid3 <http://www.w3.org/ns/shacl#closed> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					_:genid3 <http://www.w3.org/ns/shacl#propertyShape> _:genid4 .
+					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#targetClass> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					""")),
 			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
-					[{"@id":"_:b0","@type":["https://w3id.org/tree#PaginationFragmentation"],"https://w3id.org/tree#memberLimit":[{"@value":"100"}]},{"@id":"_:b1","https://w3id.org/tree#fragmentationStrategy":[{"@id":"_:b0"}]},{"@id":"_:b2","http://www.w3.org/ns/shacl#closed":[{"@value":true}],"http://www.w3.org/ns/shacl#propertyShape":[{"@id":"_:b3"}]},{"@id":"_:b3"},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"http://example.org/memberType":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/pagination","https://w3id.org/tree#viewDescription":[{"@id":"_:b1"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#nodeShape":[{"@id":"_:b2"}],"http://www.w3.org/ns/shacl#deactivated":[{"@value":true}]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/pagination":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]},{"@id":"https://w3id.org/tree#PaginationFragmentation"}]
+					[{"@id":"_:b0","@type":["https://w3id.org/tree#PaginationFragmentation"],"https://w3id.org/tree#memberLimit":[{"@value":"100"}]},{"@id":"_:b1","https://w3id.org/tree#fragmentationStrategy":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/pagination","https://w3id.org/tree#viewDescription":[{"@id":"_:b1"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"],"http://www.w3.org/ns/shacl#targetClass":[{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"}]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/pagination":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]},{"@id":"https://w3id.org/tree#PaginationFragmentation"}]
 					"""))
 	})
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found", content = @Content)

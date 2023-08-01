@@ -18,6 +18,7 @@
 		<module>ldes-fragmentisers-timebased</module>
 		<module>ldes-fragmentisers-pagination</module>
         <module>ldes-snapshot</module>
+        <module>ldes-fragmentisers-timebased-hierarchical</module>
     </modules>
 
 	<dependencyManagement>

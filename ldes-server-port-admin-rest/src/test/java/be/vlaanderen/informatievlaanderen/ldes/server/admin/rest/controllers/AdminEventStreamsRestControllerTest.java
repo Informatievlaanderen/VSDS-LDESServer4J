@@ -67,7 +67,8 @@ class AdminEventStreamsRestControllerTest {
 
 		@BeforeEach
 		void initEventStreams() throws URISyntaxException {
-			Model shape = readModelFromFile("example-shape.ttl");
+			Model shape1 = readModelFromFile("shape-name1.ttl");
+			Model shape2 = readModelFromFile("shape-name2.ttl");
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
 			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
@@ -88,11 +89,11 @@ class AdminEventStreamsRestControllerTest {
 			eventStreams = List.of(
 					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shape),
+							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", views, shape1),
 					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
 							"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder", List.of(singleView),
-							shape));
+							shape2));
 		}
 
 		@Test
