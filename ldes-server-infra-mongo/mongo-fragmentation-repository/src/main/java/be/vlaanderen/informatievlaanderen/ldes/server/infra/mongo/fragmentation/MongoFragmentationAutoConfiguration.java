@@ -1,10 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.mapper.SequenceEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.AllocationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.SequenceEntityRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,12 +16,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class MongoFragmentationAutoConfiguration {
-
-	@Bean
-	@ConditionalOnMissingBean
-	public AllocationRepository allocationRepository(final AllocationEntityRepository repository) {
-		return new AllocationMongoRepository(repository);
-	}
 
 	@Bean
 	@ConditionalOnMissingBean

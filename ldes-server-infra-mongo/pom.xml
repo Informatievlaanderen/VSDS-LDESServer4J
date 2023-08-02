@@ -17,6 +17,7 @@
         <module>mongo-ingest-repository</module>
         <module>mongo-retention-repository</module>
         <module>mongo-fragmentation-repository</module>
+        <module>mongo-fetch-repository</module>
     </modules>
 
     <properties>

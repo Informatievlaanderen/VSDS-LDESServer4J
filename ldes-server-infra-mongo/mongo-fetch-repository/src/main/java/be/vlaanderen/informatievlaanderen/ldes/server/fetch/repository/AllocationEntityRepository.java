@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.AllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.AllocationEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.stream.Stream;

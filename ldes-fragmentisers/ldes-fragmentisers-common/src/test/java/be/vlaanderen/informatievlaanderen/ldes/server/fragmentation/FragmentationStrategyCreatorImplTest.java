@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +31,6 @@ class FragmentationStrategyCreatorImplTest {
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final RootFragmentCreator rootFragmentCreator = mock(RootFragmentCreator.class);
-	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
 
@@ -40,7 +38,7 @@ class FragmentationStrategyCreatorImplTest {
 	void setUp() {
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
 				applicationContext, fragmentRepository, rootFragmentCreator,
-				allocationRepository, eventPublisher);
+				eventPublisher);
 	}
 
 	@Test

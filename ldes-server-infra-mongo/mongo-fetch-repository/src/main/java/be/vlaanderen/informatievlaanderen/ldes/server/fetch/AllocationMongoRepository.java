@@ -1,12 +1,14 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.AllocationEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.AllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class AllocationMongoRepository implements AllocationRepository {
 
 	private final AllocationEntityRepository repository;
