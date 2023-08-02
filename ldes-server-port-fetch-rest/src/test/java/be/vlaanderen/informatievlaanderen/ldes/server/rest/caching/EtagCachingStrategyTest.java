@@ -3,9 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,10 +41,9 @@ class EtagCachingStrategyTest {
 	@ParameterizedTest
 	@ArgumentsSource(value = ETagEventStreamArgumentsProvider.class)
 	void when_EventStreamIsRequested_thenACorrectEtagIsGenerated(String hostname, String collection,
-			List<TreeNode> views, String language, String expectedEtag) {
+																 String language, String expectedEtag) {
 
-		EventStream eventStream = new EventStream(collection, "", "", "", views);
-		String etag = cachingStrategy(hostname).generateCacheIdentifier(eventStream.collection(), language);
+		String etag = cachingStrategy(hostname).generateCacheIdentifier(collection, language);
 
 		assertEquals(expectedEtag, etag);
 	}

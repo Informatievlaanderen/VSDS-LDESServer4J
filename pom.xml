@@ -15,13 +15,14 @@
     <modules>
         <module>ldes-server-domain</module>
         <module>ldes-server-infra-mongo</module>
-        <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-application</module>
         <module>ldes-fragmentisers</module>
         <module>ldes-server-port-admin-rest</module>
         <module>ldes-server-port-ingest</module>
         <module>ldes-server-port-ingest-rest</module>
         <module>ldes-server-retention</module>
+        <module>ldes-server-port-fetch</module>
+        <module>ldes-server-port-fetch-rest</module>
     </modules>
 
     <developers>

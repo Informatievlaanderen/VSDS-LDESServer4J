@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 
 public interface TreeNodeFetcher {
 	TreeNode getFragment(LdesFragmentRequest ldesFragmentRequest);
