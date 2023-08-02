@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;

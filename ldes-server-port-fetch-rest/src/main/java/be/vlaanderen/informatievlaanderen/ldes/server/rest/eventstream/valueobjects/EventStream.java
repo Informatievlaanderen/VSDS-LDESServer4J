@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 
 import java.util.List;
 import java.util.Objects;

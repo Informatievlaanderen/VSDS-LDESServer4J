@@ -1,17 +1,15 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.TreeNodeFactory;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.TreeNodeFactoryImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,16 +42,16 @@ class TreeNodeFactoryImplTest {
 	}
 
 	@Test
-	void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
-		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
+    void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
+        when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
 
-		MissingFragmentException treeNodeId = Assertions.assertThrows(MissingFragmentException.class,
-				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME));
+        MissingFragmentException treeNodeId = Assertions.assertThrows(MissingFragmentException.class,
+                () -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME));
 
-		Assertions.assertEquals(
-				"No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
-				treeNodeId.getMessage());
-	}
+        Assertions.assertEquals(
+                "No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
+                treeNodeId.getMessage());
+    }
 
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {

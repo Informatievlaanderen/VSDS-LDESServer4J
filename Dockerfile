@@ -26,6 +26,7 @@ COPY --from=app-stage ldes-server-infra-mongo/mongo-fragmentation-repository/tar
 
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-port-fetch/target/ldes-server-port-fetch-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-fetch-rest/target/ldes-server-port-fetch-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-admin-rest/target/ldes-server-port-admin-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-common/target/ldes-fragmentisers-common-jar-with-dependencies.jar ./lib/
