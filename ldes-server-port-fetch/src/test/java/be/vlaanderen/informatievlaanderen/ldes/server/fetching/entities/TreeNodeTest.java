@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.valueobjects.EventStream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -9,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -36,10 +36,10 @@ class TreeNodeTest {
 
 	static class TreeNodeArgumentProvider implements ArgumentsProvider {
 		@Override
-		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
 			return Stream.of(
 					Arguments.of((Object) null),
-					Arguments.of(new EventStream("collection", "timestamp", "path", "shape", List.of())),
+					Arguments.of(new BigDecimal(0)),
 					Arguments.of(new TreeNode("Other id", true, false, List.of(), null, "collectionName")),
 					Arguments.of(new TreeNode("Another id", false, false, null, List.of(), "collectionName")));
 		}

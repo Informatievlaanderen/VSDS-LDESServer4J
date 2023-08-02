@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
