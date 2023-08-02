@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.data.annotation.Id;
@@ -7,7 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
-@Document("fragmentation_allocation")
+@Document("fetch_allocation")
 public class AllocationEntity {
 	@Id
 	private final AllocationKey allocationKey;

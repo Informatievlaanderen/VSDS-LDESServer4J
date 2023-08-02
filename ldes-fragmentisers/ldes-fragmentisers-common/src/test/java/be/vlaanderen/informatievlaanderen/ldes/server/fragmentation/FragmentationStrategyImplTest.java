@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,13 +14,12 @@ import static org.mockito.Mockito.*;
 
 class FragmentationStrategyImplTest {
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
-	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = mock(NonCriticalTasksExecutor.class);
 	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 
 	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
 			fragmentRepository,
-			allocationRepository, nonCriticalTasksExecutor, eventPublisher);
+			nonCriticalTasksExecutor, eventPublisher);
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {

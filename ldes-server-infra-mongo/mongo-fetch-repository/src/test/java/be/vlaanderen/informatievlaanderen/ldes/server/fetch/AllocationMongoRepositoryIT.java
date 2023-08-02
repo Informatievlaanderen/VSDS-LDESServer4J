@@ -1,10 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.allocation;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.AllocationMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.AllocationEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.AllocationEntity.AllocationKey;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.AllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
@@ -20,7 +18,8 @@ class AllocationMongoRepositoryIT {
 		String memberId = "memberId";
 		String fragmentId = "fragmentId";
 		ViewName viewName = ViewName.fromString("collection" + "/" + "view");
-		AllocationEntity allocation = new AllocationEntity(new AllocationKey(memberId, fragmentId), viewName);
+		AllocationEntity allocation = new AllocationEntity(new AllocationEntity.AllocationKey(memberId, fragmentId),
+				viewName);
 		allocationMongoRepository.allocateMemberToFragment(memberId, viewName, fragmentId);
 
 		verify(allocationEntityRepository, times(1)).save(allocation);

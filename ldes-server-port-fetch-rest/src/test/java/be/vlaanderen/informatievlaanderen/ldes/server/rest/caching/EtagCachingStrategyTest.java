@@ -41,7 +41,7 @@ class EtagCachingStrategyTest {
 	@ParameterizedTest
 	@ArgumentsSource(value = ETagEventStreamArgumentsProvider.class)
 	void when_EventStreamIsRequested_thenACorrectEtagIsGenerated(String hostname, String collection,
-																 String language, String expectedEtag) {
+			String language, String expectedEtag) {
 
 		String etag = cachingStrategy(hostname).generateCacheIdentifier(collection, language);
 
