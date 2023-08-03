@@ -43,7 +43,7 @@ class FragmentationStrategyCreatorImplTest {
 
 	@Test
 	void when_ViewSpecificationFragmentationConfigIsNull_FragmentationStrategyImplIsReturned() {
-		ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of());
+		ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of(), pageSize);
 
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
@@ -92,7 +92,7 @@ class FragmentationStrategyCreatorImplTest {
 	private ViewSpecification getViewSpecification() {
 		FragmentationConfig geospatialConfig = getFragmentationConfig(GEOSPATIAL, GEOSPATIAL_PROPERTIES);
 		FragmentationConfig timebasedConfig = getFragmentationConfig(TIMEBASED, TIMEBASED_PROPERTIES);
-		return new ViewSpecification(VIEW_NAME, List.of(), List.of(geospatialConfig, timebasedConfig));
+		return new ViewSpecification(VIEW_NAME, List.of(), List.of(geospatialConfig, timebasedConfig), pageSize);
 	}
 
 	private FragmentationConfig getFragmentationConfig(String name, Map<String, String> config) {

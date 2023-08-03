@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.Mode
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.graph.Factory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -25,6 +26,7 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 @Component
 public class ViewSpecificationConverter {
 
+	public static final int DEFAULT_PAGE_SIZE = 100;
 	private final String hostname;
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
@@ -40,9 +42,18 @@ public class ViewSpecificationConverter {
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
 		List<Statement> statements = viewModel.listStatements().toList();
 		ViewName viewName = viewNameFromStatements(statements, collectionName);
+		int pageSize = pageSizeFromStatements(statements);
 		List<Model> retentionPolicies = retentionModelExtractor.extractRetentionStatements(viewModel);
 		var fragmentationConfigs = fragmentationConfigExtractor.extractFragmentationConfigs(statements);
-		return new ViewSpecification(viewName, retentionPolicies, fragmentationConfigs);
+		return new ViewSpecification(viewName, retentionPolicies, fragmentationConfigs, pageSize);
+	}
+
+	private int pageSizeFromStatements(List<Statement> statements) {
+		return statements.stream()
+				.filter(statement -> statement.getPredicate().toString().equals(TREE_PAGESIZE))
+				.map(statement -> statement.getObject().asLiteral().getInt())
+				.findFirst()
+				.orElse(DEFAULT_PAGE_SIZE);
 	}
 
 	public Model modelFromView(ViewSpecification view) {
@@ -54,6 +65,7 @@ public class ViewSpecificationConverter {
 				createProperty(TREE_VIEW_DESCRIPTION),
 				getIRIDescription(viewName));
 		model.add(viewDescription);
+		model.add(createStatement(viewResource, createProperty(TREE_PAGESIZE), createTypedLiteral(view.getPageSize())));
 		model.add(createStatement(viewResource, RDF.type, createResource(TREE_NODE_RESOURCE)));
 
 		addRetentionPoliciesToModel(view.getRetentionConfigs(), model, viewDescription);

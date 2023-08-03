@@ -28,12 +28,12 @@ class ViewSpecificationTest {
 
 	private final ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "view"),
 			ViewSpecificationArgumentsProvider.getRetentionPolicies(),
-			ViewSpecificationArgumentsProvider.getFragmentations());
+			ViewSpecificationArgumentsProvider.getFragmentations(), pageSize);
 
 	@Test
 	void test_equality() {
 		ViewSpecification otherViewSpecification = new ViewSpecification(new ViewName("collection", "view"),
-				getOtherRetentionPolicies(), getOtherFragmentations());
+				getOtherRetentionPolicies(), getOtherFragmentations(), pageSize);
 
 		assertEquals(viewSpecification, viewSpecification);
 		assertEquals(otherViewSpecification, otherViewSpecification);
@@ -68,7 +68,7 @@ class ViewSpecificationTest {
 			return Stream.of(
 					Arguments.of(new ViewSpecification(new ViewName("otherCollection", "view"),
 							getRetentionPolicies(),
-							getFragmentations())),
+							getFragmentations(), pageSize)),
 					Arguments.of("String instead of view"));
 		}
 

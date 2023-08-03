@@ -22,7 +22,7 @@ class RetentionPolicyCollectionImplTest {
 	@Test
 	void test_AddingAndDeletingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
-				List.of(), List.of());
+				List.of(), List.of(), pageSize);
 
 		assertFalse(
 				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
@@ -38,7 +38,7 @@ class RetentionPolicyCollectionImplTest {
 	@Test
 	void test_InitializingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
-				List.of(), List.of());
+				List.of(), List.of(), pageSize);
 		assertFalse(
 				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
 

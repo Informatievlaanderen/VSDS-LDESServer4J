@@ -46,7 +46,7 @@ class FragmentationStrategyCollectionImplTest {
 
 	private InitViewAddedResult initAddView() {
 		ViewName viewName = new ViewName(COLLECTION_NAME, "additonalView");
-		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), pageSize);
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 
 		FragmentationStrategyExecutor fragmentationStrategyExecutor = createFragmentationStrategyExecutor(viewName);

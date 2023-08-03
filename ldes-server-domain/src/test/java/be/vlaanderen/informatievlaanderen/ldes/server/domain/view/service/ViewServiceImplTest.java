@@ -43,10 +43,10 @@ class ViewServiceImplTest {
 	@Nested
 	class AddView {
 		private final ViewSpecification view = new ViewSpecification(new ViewName(COLLECTION, "view"), List.of(),
-				List.of());
+				List.of(), pageSize);
 		private final ViewSpecification viewOfNotExistingCollection = new ViewSpecification(
 				new ViewName(NOT_EXISTING_COLLECTION, "view"), List.of(),
-				List.of());
+				List.of(), pageSize);
 
 		@Test
         void when_ViewDoesNotExist_then_ViewIsAdded() {
@@ -104,7 +104,7 @@ class ViewServiceImplTest {
 
 		@Test
 		void when_DefaultViewExists_then_ThrowDuplicateViewExcpetion() {
-			final ViewSpecification view = new ViewSpecification(VIEW_NAME, List.of(), List.of());
+			final ViewSpecification view = new ViewSpecification(VIEW_NAME, List.of(), List.of(), pageSize);
 			when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.of(view));
 
 			viewService.addDefaultView(COLLECTION);
@@ -144,7 +144,7 @@ class ViewServiceImplTest {
 
 		@Test
 		void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
-			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), pageSize);
 			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(viewSpecification));
 
 			viewService.deleteViewByViewName(viewName);
@@ -162,7 +162,8 @@ class ViewServiceImplTest {
 
 		@Test
 		void when_GetViewAndViewIsPresent_then_ViewIsReturned() {
-			ViewSpecification expectedViewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+			ViewSpecification expectedViewSpecification = new ViewSpecification(viewName, List.of(), List.of(),
+					pageSize);
 			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(expectedViewSpecification));
 
 			ViewSpecification actualViewSpecification = viewService.getViewByViewName(viewName);
@@ -190,7 +191,7 @@ class ViewServiceImplTest {
 	class GetViewsOfCollection {
 		private final ViewName viewName = new ViewName(COLLECTION, "view");
 		private final ViewSpecification expectedViewSpecification = new ViewSpecification(viewName, List.of(),
-				List.of());
+				List.of(), pageSize);
 
 		@Test
 		void when_GetViewsByCollectionNameAndEventStreamDoesNotExist_then_MissingEventStreamExceptionIsThrown() {
@@ -221,9 +222,9 @@ class ViewServiceImplTest {
 		@Test
 		void when_ApplicationIsStartedUp_then_ViewAddedEventsAreSent() {
 			ViewSpecification firstViewSpecification = new ViewSpecification(new ViewName(COLLECTION, "view"),
-					List.of(), List.of());
+					List.of(), List.of(), pageSize);
 			ViewSpecification secondViewSpecification = new ViewSpecification(new ViewName(COLLECTION, "view2"),
-					List.of(), List.of());
+					List.of(), List.of(), pageSize);
 			when(viewRepository.retrieveAllViews())
 					.thenReturn(List.of(firstViewSpecification, secondViewSpecification));
 
@@ -239,9 +240,9 @@ class ViewServiceImplTest {
 	@Test
 	void should_CallRepositoryWithDcatView_when_ViewDeletedEventIsPublished() {
 		ViewName view = new ViewName(COLLECTION, "view");
-		ViewSpecification firstViewSpecification = new ViewSpecification(view, List.of(), List.of());
+		ViewSpecification firstViewSpecification = new ViewSpecification(view, List.of(), List.of(), pageSize);
 		ViewName view2 = new ViewName(COLLECTION, "view2");
-		ViewSpecification secondViewSpecification = new ViewSpecification(view2, List.of(), List.of());
+		ViewSpecification secondViewSpecification = new ViewSpecification(view2, List.of(), List.of(), pageSize);
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION))
 				.thenReturn(List.of(firstViewSpecification, secondViewSpecification));
 

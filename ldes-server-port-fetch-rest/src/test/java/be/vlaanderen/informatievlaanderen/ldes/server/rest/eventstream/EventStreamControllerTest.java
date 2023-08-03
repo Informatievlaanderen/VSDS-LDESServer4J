@@ -102,7 +102,7 @@ class EventStreamControllerTest {
 		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(shaclShape);
 		when(viewService.getViewByViewName(new ViewName(COLLECTION, "by-page"))).thenReturn(
-				new ViewSpecification(new ViewName(COLLECTION, "by-page"), List.of(), List.of()));
+				new ViewSpecification(new ViewName(COLLECTION, "by-page"), List.of(), List.of(), pageSize));
 	}
 
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")

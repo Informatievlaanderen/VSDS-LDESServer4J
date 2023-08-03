@@ -75,16 +75,16 @@ class AdminEventStreamsRestControllerTest {
 			ViewSpecification singleView = new ViewSpecification(
 					new ViewName("name2", "view1"),
 					List.of(),
-					List.of(fragmentationConfig));
+					List.of(fragmentationConfig), pageSize);
 			List<ViewSpecification> views = List.of(
 					new ViewSpecification(
 							new ViewName(COLLECTION, "view2"),
 							List.of(),
-							List.of(fragmentationConfig)),
+							List.of(fragmentationConfig), pageSize),
 					new ViewSpecification(
 							new ViewName(COLLECTION, "view3"),
 							List.of(),
-							List.of(fragmentationConfig)));
+							List.of(fragmentationConfig), pageSize));
 
 			eventStreams = List.of(
 					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
