@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.Mode
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.graph.Factory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -65,7 +64,8 @@ public class ViewSpecificationConverter {
 				createProperty(TREE_VIEW_DESCRIPTION),
 				getIRIDescription(viewName));
 		model.add(viewDescription);
-		model.add(createStatement(viewResource, createProperty(TREE_PAGESIZE), createTypedLiteral(view.getPageSize())));
+		model.add(createStatement(viewDescription.getResource(), createProperty(TREE_PAGESIZE),
+				createTypedLiteral(view.getPageSize())));
 		model.add(createStatement(viewResource, RDF.type, createResource(TREE_NODE_RESOURCE)));
 
 		addRetentionPoliciesToModel(view.getRetentionConfigs(), model, viewDescription);

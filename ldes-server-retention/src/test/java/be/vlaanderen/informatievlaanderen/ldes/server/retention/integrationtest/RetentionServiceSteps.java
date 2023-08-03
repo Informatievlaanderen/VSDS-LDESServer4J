@@ -55,7 +55,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	public ViewSpecification ViewSpecificationEntryTransformer(Map<String, String> row) throws URISyntaxException {
 		return new ViewSpecification(
 				ViewName.fromString(row.get("viewName")),
-				List.of(readRetentionPolicyFromFile(row.get("rdfDescriptionFileName"))), List.of(), pageSize);
+				List.of(readRetentionPolicyFromFile(row.get("rdfDescriptionFileName"))), List.of(), 100);
 	}
 
 	@DataTableType
