@@ -64,10 +64,8 @@ public interface OpenApiAdminViewsRestController {
 
 									server:time-based-retention tree:viewDescription [
 										a tree:fragmentationStrategy;
-										tree:fragmentationStrategy ([
-											a tree:PaginationFragmentation ;
-									  		tree:memberLimit 100;
-									    ]);
+										tree:fragmentationStrategy  () ;
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									    ldes:retentionPolicy [
 									        a ldes:DurationAgoPolicy  ;
 									        tree:value "PT2M"^^xsd:duration ;
@@ -81,10 +79,8 @@ public interface OpenApiAdminViewsRestController {
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 
 									server:version-based-retention tree:viewDescription [
-										tree:fragmentationStrategy ([
-											a tree:PaginationFragmentation ;
-									  		tree:memberLimit 100;
-									    ]);
+										tree:fragmentationStrategy  () ;
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									    ldes:retentionPolicy [
 									        a ldes:LatestVersionSubset;
 									        ldes:amount 2 ;
@@ -102,10 +98,8 @@ public interface OpenApiAdminViewsRestController {
 									        a ldes:PointInTimePolicy ;
 									        ldes:pointInTime "2023-04-12T00:00:00"^^xsd:dateTime
 									    ] ;
-									    tree:fragmentationStrategy ([
-											a tree:PaginationFragmentation ;
-									  		tree:memberLimit 100;
-									    ]);
+										tree:fragmentationStrategy  () ;
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									] .
 									"""),
 							@ExampleObject(name = "Pagination Fragmentation Strategy", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
@@ -113,10 +107,8 @@ public interface OpenApiAdminViewsRestController {
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:pagination tree:viewDescription [
-										tree:fragmentationStrategy ([
-											a tree:PaginationFragmentation ;
-									  		tree:memberLimit 100;
-									    ]);
+										tree:fragmentationStrategy  () ;
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
 									 ] .
 									"""),
 							@ExampleObject(name = "Time-Based Fragmentation Strategy", description = "A time-based fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
@@ -130,6 +122,7 @@ public interface OpenApiAdminViewsRestController {
 									        tree:memberLimit 100 ;
 									        tree:fragmentationPath ldes:timestampPath ;
 									    ]) ;
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
 									 ] .
 									"""),
 							@ExampleObject(name = "Geospatial-Pagination Fragmentation Strategy", description = "A combined geospatial-pagination fragmentation strategy which is configured to first partition the data on zoom level 15 and within this zoom level create pages with at most 100 members.", value = """
@@ -141,11 +134,8 @@ public interface OpenApiAdminViewsRestController {
 											a tree:GeospatialFragmentation ;
 											tree:maxZoom 15 ;
 											tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
-										]
-										[
-											a tree:PaginationFragmentation ;
-											tree:memberLimit 100
-										])
+										]) ;
+										tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
 									] .
 									""")
 					})

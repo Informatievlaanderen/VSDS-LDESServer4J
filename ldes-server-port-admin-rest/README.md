@@ -110,10 +110,8 @@ There is no SHACL shape for the LDES view provided yet. But the following exampl
 
 <view1> a ldes:View ;
   tree:viewDescription [
-    tree:fragmentationStrategy [
-        a tree:PaginationFragmentation ;
-        tree:memberLimit "10" ;
-    ]
+    tree:fragmentationStrategy  () ;
+    tree:pageSize               "100"^^<http://www.w3.org/2001/XMLSchema#int> .
 ] .
 ```
 
