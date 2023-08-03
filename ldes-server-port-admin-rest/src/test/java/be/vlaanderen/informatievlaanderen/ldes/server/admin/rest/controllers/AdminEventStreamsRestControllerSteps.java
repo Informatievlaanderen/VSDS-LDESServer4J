@@ -57,16 +57,16 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		ViewSpecification singleView = new ViewSpecification(
 				new ViewName(collection2, "view1"),
 				List.of(),
-				List.of(fragmentationConfig));
+				List.of(fragmentationConfig), 100);
 		List<ViewSpecification> views = List.of(
 				new ViewSpecification(
 						new ViewName(COLLECTION, "view2"),
 						List.of(),
-						List.of(fragmentationConfig)),
+						List.of(fragmentationConfig), 100),
 				new ViewSpecification(
 						new ViewName(COLLECTION, "view3"),
 						List.of(),
-						List.of(fragmentationConfig)));
+						List.of(fragmentationConfig), 100));
 
 		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(eventStream, eventStream2));
 		when(viewRepository.retrieveAllViewsOfCollection(COLLECTION)).thenReturn(views);

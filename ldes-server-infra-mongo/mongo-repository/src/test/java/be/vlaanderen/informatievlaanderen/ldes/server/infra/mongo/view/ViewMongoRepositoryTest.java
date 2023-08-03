@@ -30,20 +30,20 @@ class ViewMongoRepositoryTest {
     void test_retrievingAllViews_AND_retrievingAllViewsOfCollection() {
         when(viewEntityRepository.findAll())
                 .thenReturn(List.of(
-                        new ViewEntity("collection1/view1", List.of(), List.of()),
-                        new ViewEntity("collection1/view2", List.of(), List.of()),
-                        new ViewEntity("collection2/view1", List.of(), List.of())));
+                        new ViewEntity("collection1/view1", List.of(), List.of(), 100),
+                        new ViewEntity("collection1/view2", List.of(), List.of(), 100),
+                        new ViewEntity("collection2/view1", List.of(), List.of(), 100)));
 
         final List<ViewSpecification> expectedViews = List.of(
-                new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of()),
-                new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of()),
-                new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of()));
+                new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of(), 100),
+                new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of(), 100),
+                new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of(), 100));
         final List<ViewSpecification> viewsOfCollection1 = List.of(
-                new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of()),
-                new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of())
+                new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of(), 100),
+                new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of(), 100)
         );
         final List<ViewSpecification> viewsOfCollection2 = List.of(
-                new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of()));
+                new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of(), 100));
 
         List<ViewSpecification> viewSpecifications = repository.retrieveAllViews();
         assertEquals(expectedViews, viewSpecifications);
@@ -60,7 +60,7 @@ class ViewMongoRepositoryTest {
 	@Test
 	void test_savingOfView() {
 		final ViewSpecification view = new ViewSpecification(new ViewName("collection1", "view1"), List.of(),
-				List.of());
+				List.of(), 100);
 
 		repository.saveView(view);
 
@@ -78,9 +78,9 @@ class ViewMongoRepositoryTest {
 
 	@Test
 	void test_getViewByViewName() {
-		ViewEntity viewEntity = new ViewEntity("collection1/view1", List.of(), List.of());
+		ViewEntity viewEntity = new ViewEntity("collection1/view1", List.of(), List.of(), 100);
 		ViewSpecification expectedViewSpecification = new ViewSpecification(new ViewName("collection1", "view1"),
-				List.of(), List.of());
+				List.of(), List.of(), 100);
 		when(viewEntityRepository.findById(expectedViewSpecification.getName().asString()))
 				.thenReturn(Optional.of(viewEntity));
 

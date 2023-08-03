@@ -1,25 +1,29 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ViewSpecification {
 
 	private ViewName name;
 	private DcatView dcat;
-	private List<Model> retentionPolicies;
-	private List<FragmentationConfig> fragmentations;
+	private final List<Model> retentionPolicies;
+	private final List<FragmentationConfig> fragmentations;
+	private final int pageSize;
 
 	public ViewSpecification(ViewName name, List<Model> retentionPolicies,
-			List<FragmentationConfig> fragmentations) {
+			List<FragmentationConfig> fragmentations, int pageSize) {
 		this.name = name;
 		this.retentionPolicies = retentionPolicies;
 		this.fragmentations = fragmentations;
+		this.pageSize = pageSize;
 	}
 
 	public ViewName getName() {
@@ -38,16 +42,8 @@ public class ViewSpecification {
 		return fragmentations;
 	}
 
-	public void setFragmentations(List<FragmentationConfig> fragmentations) {
-		this.fragmentations = fragmentations;
-	}
-
 	public List<Model> getRetentionConfigs() {
 		return retentionPolicies == null ? List.of() : retentionPolicies;
-	}
-
-	public void setRetentionPolicies(List<Model> retentionPolicies) {
-		this.retentionPolicies = retentionPolicies;
 	}
 
 	public DcatView getDcat() {
@@ -56,6 +52,15 @@ public class ViewSpecification {
 
 	public void setDcat(DcatView dcat) {
 		this.dcat = dcat;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public ConfigProperties getPaginationProperties() {
+		return new ConfigProperties(
+				Map.of("memberLimit", String.valueOf(pageSize), "bidirectionalRelations", String.valueOf(false)));
 	}
 
 	@Override

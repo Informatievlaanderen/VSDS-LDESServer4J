@@ -15,6 +15,7 @@ import java.util.List;
 
 @Component
 public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCreator {
+	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 	private final ApplicationContext applicationContext;
 	private final FragmentRepository fragmentRepository;
 	private final RootFragmentCreator rootFragmentCreator;
@@ -35,6 +36,10 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(fragmentRepository,
 				nonCriticalTasksExecutor, eventPublisher);
+		FragmentationStrategyWrapper paginationWrapper = (FragmentationStrategyWrapper) applicationContext
+				.getBean(PAGINATION_FRAGMENTATION);
+		fragmentationStrategy = paginationWrapper.wrapFragmentationStrategy(applicationContext, fragmentationStrategy,
+				viewSpecification.getPaginationProperties());
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);

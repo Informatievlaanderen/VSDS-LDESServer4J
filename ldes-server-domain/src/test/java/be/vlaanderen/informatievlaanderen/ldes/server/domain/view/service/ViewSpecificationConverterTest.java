@@ -37,7 +37,7 @@ class ViewSpecificationConverterTest {
 				Map.of("pageSize", "100", "property", "example/property"));
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
-		view = new ViewSpecification(viewName, List.of(retentionModel), fragmentations);
+		view = new ViewSpecification(viewName, List.of(retentionModel), fragmentations, 100);
 		Model dcat = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
 		view.setDcat(dcatView);
@@ -89,7 +89,7 @@ class ViewSpecificationConverterTest {
 		paginationConfig.setConfig(
 				Map.of("memberLimit", "100"));
 		List<FragmentationConfig> fragmentations = List.of(geospatialConfig, paginationConfig);
-		return new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), fragmentations);
+		return new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), fragmentations, 100);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

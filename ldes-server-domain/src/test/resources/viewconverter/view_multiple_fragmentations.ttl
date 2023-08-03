@@ -8,6 +8,7 @@ server:geospatial
 
 viewName:description
         a   tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy ([
             a tree:GeospatialFragmentation ;
             tree:maxZoom "15";
