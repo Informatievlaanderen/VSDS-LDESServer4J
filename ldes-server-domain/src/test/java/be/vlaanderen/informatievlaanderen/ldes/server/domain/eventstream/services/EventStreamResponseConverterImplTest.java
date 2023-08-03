@@ -58,11 +58,11 @@ class EventStreamResponseConverterImplTest {
 					new ViewSpecification(
 							new ViewName("collectionName1", "view2"),
 							List.of(),
-							List.of(fragmentationConfig), pageSize),
+							List.of(fragmentationConfig), 100),
 					new ViewSpecification(
 							new ViewName("collectionName1", "view1"),
 							List.of(),
-							List.of(fragmentationConfig), pageSize));
+							List.of(fragmentationConfig), 100));
 
 			eventStreamModel = readModelFromFile("eventstream/streams/ldes-with-named-views.ttl");
 		}
@@ -150,11 +150,11 @@ class EventStreamResponseConverterImplTest {
 					new ViewSpecification(
 							new ViewName("collectionName1", "view2"),
 							List.of(),
-							List.of(fragmentationConfig), pageSize),
+							List.of(fragmentationConfig), 100),
 					new ViewSpecification(
 							new ViewName("collectionName1", "view1"),
 							List.of(),
-							List.of(fragmentationConfig), pageSize));
+							List.of(fragmentationConfig), 100));
 
 			eventStreamModel = readModelFromFile("eventstream/streams/ldes-and-dataset-with-named-views.ttl");
 		}

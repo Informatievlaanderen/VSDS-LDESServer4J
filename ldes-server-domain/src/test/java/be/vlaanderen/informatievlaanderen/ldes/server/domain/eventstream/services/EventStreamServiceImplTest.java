@@ -80,7 +80,7 @@ class EventStreamServiceImplTest {
 		final String otherCollection = "other";
 		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", "memberType");
 		List<ViewSpecification> views = List
-				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), pageSize));
+				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
 		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
 				"memberType", views, ModelFactory.createDefaultModel(), dataset);
