@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.AllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.mapper.MemberAllocationEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import org.springframework.stereotype.Component;
 
@@ -12,31 +12,34 @@ import java.util.List;
 public class AllocationMongoRepository implements AllocationRepository {
 
 	private final AllocationEntityRepository repository;
+	private final MemberAllocationEntityMapper mapper;
 
-	public AllocationMongoRepository(AllocationEntityRepository repository) {
+	public AllocationMongoRepository(AllocationEntityRepository repository, MemberAllocationEntityMapper mapper) {
 		this.repository = repository;
+		this.mapper = mapper;
 	}
 
-	public void allocateMemberToFragment(String memberId, ViewName viewName, String fragmentId) {
-		repository.save(new AllocationEntity(new AllocationEntity.AllocationKey(memberId, fragmentId), viewName));
+	public void saveAllocation(MemberAllocation memberAllocation) {
+		repository.save(mapper.toMemberAllocationEntity(memberAllocation));
 	}
 
-	public void unallocateMemberFromView(String memberId, ViewName viewName) {
-		repository.deleteByAllocationKey_MemberIdAndViewName(memberId, viewName);
+	public void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName) {
+		repository.deleteByMemberIdAndCollectionNameAndViewName(memberId, collectionName, viewName);
 	}
 
-	public void unallocateAllMembersFromView(ViewName viewName) {
-		repository.deleteAllByViewName(viewName);
-	}
-
-	public void unallocateMembersFromCollection(String collectionName) {
-		repository.deleteAllByViewName_CollectionName(collectionName);
-	}
-
-	public List<String> findMemberIdsForFragment(String fragmentId) {
-		return repository.findAllByAllocationKey_FragmentId(fragmentId)
-				.map(AllocationEntity::getAllocationKey)
-				.map(AllocationEntity.AllocationKey::memberId)
+	public List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId) {
+		return repository.findAllByFragmentId(fragmentId)
+				.stream()
+				.map(mapper::toMemberAllocation)
 				.toList();
 	}
+
+	public void deleteByCollectionNameAndViewName(String collectionName, String viewName) {
+		repository.deleteAllByCollectionNameAndViewName(collectionName, viewName);
+	}
+
+	public void deleteByCollectionName(String collectionName) {
+		repository.deleteAllByCollectionName(collectionName);
+	}
+
 }

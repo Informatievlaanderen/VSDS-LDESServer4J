@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -33,8 +34,9 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));
 
-		List<String> memberIds = allocationRepository.findMemberIdsForFragment(treeNodeId.asString());
-		List<Member> members = memberRepository.findAllByIds(memberIds);
+		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asString());
+		List<Member> members = memberRepository
+				.findAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
 		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
 				members, collectionName);

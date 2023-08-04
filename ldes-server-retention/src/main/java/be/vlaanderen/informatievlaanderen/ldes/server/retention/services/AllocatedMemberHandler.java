@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberAllocatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,8 @@ public class AllocatedMemberHandler {
 
 	@EventListener
 	public void handleMemberAllocatedEvent(MemberAllocatedEvent event) {
-		memberPropertiesRepository.addViewReference(event.memberId(), event.viewName().asString());
+		memberPropertiesRepository.addViewReference(event.memberId(),
+				new ViewName(event.collectionName(), event.viewName()).asString());
 	}
 
 }

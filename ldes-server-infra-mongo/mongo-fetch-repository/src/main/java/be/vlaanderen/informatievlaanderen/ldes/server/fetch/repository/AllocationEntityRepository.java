@@ -1,17 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.AllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.stream.Stream;
+import java.util.List;
 
-public interface AllocationEntityRepository extends MongoRepository<AllocationEntity, AllocationEntity.AllocationKey> {
-	Stream<AllocationEntity> findAllByAllocationKey_FragmentId(String fragmentId);
+public interface AllocationEntityRepository extends MongoRepository<MemberAllocationEntity, String> {
 
-	void deleteByAllocationKey_MemberIdAndViewName(String memberId, ViewName viewName);
+	List<MemberAllocationEntity> findAllByFragmentId(String fragmentId);
 
-	void deleteAllByViewName(ViewName viewName);
+	void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName);
 
-	void deleteAllByViewName_CollectionName(String collectionName);
+	void deleteAllByCollectionNameAndViewName(String collectionName, String viewName);
+
+	void deleteAllByCollectionName(String collectionName);
 }

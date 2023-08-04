@@ -16,6 +16,7 @@ public class MemberUnallocatedHandlerFetch {
 
 	@EventListener
 	public void handleMemberUnallocatedEvent(MemberUnallocatedEvent event) {
-		allocationRepository.unallocateMemberFromView(event.memberId(), event.viewName());
+		allocationRepository.deleteByMemberIdAndCollectionNameAndViewName(event.memberId(),
+				event.viewName().getCollectionName(), event.viewName().getViewName());
 	}
 }

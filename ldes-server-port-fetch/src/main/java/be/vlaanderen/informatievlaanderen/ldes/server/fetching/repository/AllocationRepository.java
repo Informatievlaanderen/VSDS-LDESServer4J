@@ -1,17 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 
 import java.util.List;
 
 public interface AllocationRepository {
-	void allocateMemberToFragment(String memberId, ViewName viewName, String fragmentId);
+	void saveAllocation(MemberAllocation memberAllocation);
 
-	void unallocateMemberFromView(String memberId, ViewName viewName);
+	List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
 
-	void unallocateAllMembersFromView(ViewName viewName);
+	void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName);
 
-	void unallocateMembersFromCollection(String collectionName);
+	void deleteByCollectionName(String collectionName);
 
-	List<String> findMemberIdsForFragment(String fragmentId);
+	void deleteByCollectionNameAndViewName(String collectionName, String viewName);
 }
