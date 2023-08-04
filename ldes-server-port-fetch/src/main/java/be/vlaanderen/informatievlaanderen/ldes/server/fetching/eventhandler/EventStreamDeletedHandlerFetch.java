@@ -16,6 +16,6 @@ public class EventStreamDeletedHandlerFetch {
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		allocationRepository.unallocateMembersFromCollection(event.collectionName());
+		allocationRepository.deleteByCollectionName(event.collectionName());
 	}
 }

@@ -24,7 +24,8 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 			Observation parentObservation) {
 		nonCriticalTasksExecutor.submit(
 				() -> eventPublisher.publishEvent(
-						new MemberAllocatedEvent(memberId, fragment.getViewName(), fragment.getFragmentIdString())));
+						new MemberAllocatedEvent(memberId, fragment.getViewName().getCollectionName(),
+								fragment.getViewName().getViewName(), fragment.getFragmentIdString())));
 		fragmentRepository.incrementNumberOfMembers(fragment.getFragmentId());
 
 	}

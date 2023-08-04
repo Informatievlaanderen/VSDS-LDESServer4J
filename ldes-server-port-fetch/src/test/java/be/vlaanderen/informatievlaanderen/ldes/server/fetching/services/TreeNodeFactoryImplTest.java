@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingF
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -60,7 +61,8 @@ class TreeNodeFactoryImplTest {
 				"valueType", "relation"));
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
 		Member member = new Member("member", COLLECTION_NAME, 0L, null);
-		when(allocationRepository.findMemberIdsForFragment(TREE_NODE_ID.asString())).thenReturn(List.of("member"));
+		when(allocationRepository.findMemberIdsForFragment(TREE_NODE_ID.asString()))
+				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
 		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
