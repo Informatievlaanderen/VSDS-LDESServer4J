@@ -27,7 +27,7 @@ public class AllocationMongoRepository implements AllocationRepository {
 		repository.deleteByMemberIdAndCollectionNameAndViewName(memberId, collectionName, viewName);
 	}
 
-	public List<MemberAllocation> findMemberIdsForFragment(String fragmentId) {
+	public List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId) {
 		return repository.findAllByFragmentId(fragmentId)
 				.stream()
 				.map(mapper::toMemberAllocation)

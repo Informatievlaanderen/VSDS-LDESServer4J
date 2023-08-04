@@ -34,7 +34,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.orElseThrow(
 						() -> new MissingFragmentException(extendedTreeNodeId));
 
-		List<MemberAllocation> memberIds = allocationRepository.findMemberIdsForFragment(treeNodeId.asString());
+		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asString());
 		List<Member> members = memberRepository
 				.findAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
 		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),

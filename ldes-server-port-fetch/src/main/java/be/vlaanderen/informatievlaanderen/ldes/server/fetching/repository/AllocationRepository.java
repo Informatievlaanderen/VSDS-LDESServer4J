@@ -7,7 +7,7 @@ import java.util.List;
 public interface AllocationRepository {
 	void saveAllocation(MemberAllocation memberAllocation);
 
-	List<MemberAllocation> findMemberIdsForFragment(String fragmentId);
+	List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
 
 	void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName);
 
