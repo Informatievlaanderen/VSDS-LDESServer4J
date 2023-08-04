@@ -130,10 +130,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 
 	@And("the following members are allocated to the view {string}")
 	public void theFollowingMembersAreAllocatedToTheView(String viewName, List<String> members) {
-		members.forEach(member -> {
-			applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member,
-					fragment.getViewName().getCollectionName(), ViewName.fromString(viewName), ""));
-		});
+		members.forEach(member -> applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member,
+				ViewName.fromString(viewName).getCollectionName(), ViewName.fromString(viewName).getViewName(), "")));
 	}
 
 	private record DeletedMember(String id, boolean deleted) {

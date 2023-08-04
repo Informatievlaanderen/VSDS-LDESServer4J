@@ -13,7 +13,7 @@ class AllocatedMemberHandlerTest {
 	private final static String ID = "id";
 	private final static ViewName VIEW = new ViewName("collection", "view");
 	private final static MemberAllocatedEvent event = new MemberAllocatedEvent(ID,
-			fragment.getViewName().getCollectionName(), VIEW, "");
+			VIEW.getCollectionName(), VIEW.getViewName(), "");
 	private AllocatedMemberHandler handler;
 	private MemberPropertiesRepository repo;
 
