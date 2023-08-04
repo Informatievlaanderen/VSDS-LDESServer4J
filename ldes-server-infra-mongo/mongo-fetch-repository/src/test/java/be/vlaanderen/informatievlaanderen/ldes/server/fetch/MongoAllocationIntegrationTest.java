@@ -21,4 +21,7 @@ public class MongoAllocationIntegrationTest {
 	@Autowired
 	AllocationMongoRepository allocationMongoRepository;
 
+	@Autowired
+	AllocationEntityRepository allocationEntityRepository;
+
 }
