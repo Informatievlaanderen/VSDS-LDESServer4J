@@ -1,12 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset7.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.apache.commons.lang3.Validate.notNull;
@@ -14,9 +12,8 @@ import static org.apache.commons.lang3.Validate.notNull;
 public class ViewConfig {
 
 	private static final String DEFAULT_VIEW_NAME = "by-page";
-	private static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
-	private static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
-			"bidirectionalRelations", "false");
+	private static final int DEFAULT_VIEW_PAGE_SIZE = 100;
+
 	private final List<ViewSpecification> views;
 	private final boolean hasDefaultView;
 
@@ -45,12 +42,9 @@ public class ViewConfig {
 
 	public Optional<ViewSpecification> getDefaultPaginationView(String collectionName) {
 		if (hasDefaultView) {
-			FragmentationConfig fragmentationConfig = new FragmentationConfig();
-			fragmentationConfig.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
-			fragmentationConfig.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
 			ViewName viewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
-			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(),
-					List.of(fragmentationConfig));
+			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(),
+					DEFAULT_VIEW_PAGE_SIZE);
 			return Optional.of(viewSpecification);
 		} else {
 			return Optional.empty();

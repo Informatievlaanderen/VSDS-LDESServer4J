@@ -13,12 +13,14 @@
 @prefix view3:      <http://localhost:8080/name1/view3/> .
 
 view3:description  rdf:type  tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy
                 ([ a tree:ExampleFragmentation ;
                   tree:property  "ldes:propertyPath"
                 ]) .
 
 view1:description  rdf:type  tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy
                 ([ a tree:ExampleFragmentation ;
                   tree:property  "ldes:propertyPath"
@@ -34,6 +36,7 @@ name2:shape a sh:NodeShape ;
     sh:targetClass mobiliteit:Mobiliteitshinder .
 
 view2:description  rdf:type  tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy
                 ([ a tree:ExampleFragmentation ;
                   tree:property "ldes:propertyPath"

@@ -28,12 +28,14 @@ col:shape a sh:NodeShape ;
    sh:deactivated true .
 
 view1:description  rdf:type  tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy
                 ([ a  tree:ExampleFragmentation ;
                   tree:property  "ldes:propertyPath"
                 ]) .
 
 view2:description  rdf:type  tree:ViewDescription ;
+        tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
         tree:fragmentationStrategy
                 ([ a  tree:ExampleFragmentation ;
                   tree:property  "ldes:propertyPath"
