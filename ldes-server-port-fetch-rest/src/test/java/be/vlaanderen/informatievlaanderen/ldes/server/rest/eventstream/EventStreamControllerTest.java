@@ -16,11 +16,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSe
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters.EventStreamResponseHttpConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.EtagCachingStrategy;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.config.RestConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.eventstream.EventStreamController;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.eventstream.converters.EventStreamResponseHttpConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.exceptionhandling.RestResponseEntityExceptionHandler;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;

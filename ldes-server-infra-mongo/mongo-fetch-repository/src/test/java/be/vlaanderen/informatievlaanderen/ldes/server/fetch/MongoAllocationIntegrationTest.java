@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.AllocationMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.repository.AllocationEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -19,7 +20,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class MongoAllocationIntegrationTest {
 
 	@Autowired
-	AllocationMongoRepository allocationMongoRepository;
+    AllocationMongoRepository allocationMongoRepository;
 
 	@Autowired
 	AllocationEntityRepository allocationEntityRepository;
