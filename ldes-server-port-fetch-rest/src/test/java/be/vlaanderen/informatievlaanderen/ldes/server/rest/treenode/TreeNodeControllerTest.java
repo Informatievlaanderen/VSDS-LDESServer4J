@@ -12,7 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatVi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMembers;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
@@ -102,10 +102,10 @@ class TreeNodeControllerTest {
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
-		TreeMembers treeMembers = new TreeMembers(COLLECTION_NAME, List.of());
-		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(treeNodeInfo, treeMembers), fragmentId,
+		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
+		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(treeNodeInfo, treeMemberList), fragmentId,
 				List.of(), List.of(), immutable, false,
-				List.of(), COLLECTION_NAME);
+				COLLECTION_NAME);
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 
@@ -175,7 +175,7 @@ class TreeNodeControllerTest {
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
 		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragmentId, List.of(), List.of(), false, false,
-				List.of(), COLLECTION_NAME);
+				COLLECTION_NAME);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
 				.accept("application/json"))

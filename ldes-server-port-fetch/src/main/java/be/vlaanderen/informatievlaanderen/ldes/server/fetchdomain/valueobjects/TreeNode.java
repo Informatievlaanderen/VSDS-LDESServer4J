@@ -7,17 +7,17 @@ import java.util.List;
 
 public class TreeNode {
 	private final TreeNodeInfo treeNodeInfo;
-	private final TreeMembers treeMembers;
+	private final TreeMemberList treeMemberList;
 
-	public TreeNode(TreeNodeInfo treeNodeInfo, TreeMembers treeMembers) {
+	public TreeNode(TreeNodeInfo treeNodeInfo, TreeMemberList treeMemberList) {
 		this.treeNodeInfo = treeNodeInfo;
-		this.treeMembers = treeMembers;
+		this.treeMemberList = treeMemberList;
 	}
 
 	public Model getModel() {
 		Model model = ModelFactory.createDefaultModel();
 		model.add(treeNodeInfo.convertToStatements());
-		model.add(treeMembers.convertToStatements());
+		model.add(treeMemberList.convertToStatements());
 		return model;
 	}
 

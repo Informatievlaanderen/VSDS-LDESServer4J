@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,20 +12,18 @@ public class TreeNodeDto {
 	private final List<String> memberIds;
 	private final boolean immutable;
 	private final boolean isView;
-	private final List<Member> members;
 	private final String collectionName;
 
 	public TreeNodeDto(TreeNode treeNode, String fragmentId, List<String> treeNodeIdsInRelations,
 			List<String> memberIds, boolean immutable,
 			boolean isView,
-			List<Member> members, String collectionName) {
+			String collectionName) {
 		this.treeNode = treeNode;
 		this.fragmentId = fragmentId;
 		this.treeNodeIdsInRelations = treeNodeIdsInRelations;
 		this.memberIds = memberIds;
 		this.immutable = immutable;
 		this.isView = isView;
-		this.members = members;
 		this.collectionName = collectionName;
 	}
 
@@ -40,10 +37,6 @@ public class TreeNodeDto {
 
 	public List<String> getTreeNodeIdsInRelations() {
 		return treeNodeIdsInRelations;
-	}
-
-	public List<Member> getMembers() {
-		return members;
 	}
 
 	public boolean isView() {

@@ -13,7 +13,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -40,7 +39,7 @@ class TreeNodeConverterImplTest {
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
-	private DcatViewService dcatViewService;;
+	private DcatViewService dcatViewService;
 
 	@BeforeEach
 	void setUp() {
@@ -61,8 +60,9 @@ class TreeNodeConverterImplTest {
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
-				new TreeNode(new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()), new TreeMembers(PREFIX, List.of())),
-				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, true, List.of(),
+				new TreeNode(new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
+						new TreeMemberList(PREFIX, List.of())),
+				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, true,
 				COLLECTION_NAME);
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
@@ -79,8 +79,9 @@ class TreeNodeConverterImplTest {
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
-				new TreeNode(new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()), new TreeMembers(PREFIX, List.of())),
-				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, false, List.of(),
+				new TreeNode(new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
+						new TreeMemberList(PREFIX, List.of())),
+				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, false,
 				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNodeDto);
 
@@ -95,19 +96,17 @@ class TreeNodeConverterImplTest {
 				<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
-		Member member = new Member(
-				"collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165",
-				"collectionName",
-				0L, ldesMemberModel);
+		String treeMemberIdentifier = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
+		TreeMember treeMember = new TreeMember(
+				treeMemberIdentifier, ldesMemberModel);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(PREFIX + "/" + VIEW_NAME,
 				List.of(new TreeRelation("path", "http://localhost:8080/mobility-hindrances/node", "value",
 						"http://www.w3.org/2001/XMLSchema#dateTime", "relation")));
-		TreeMembers treeMembers = new TreeMembers(PREFIX,
-				List.of(new TreeMember(member.getMemberIdWithoutPrefix(), member.getModel())));
-		TreeNode treeNode = new TreeNode(treeNodeInfo, treeMembers);
+		TreeMemberList treeMemberList = new TreeMemberList(PREFIX, List.of(treeMember));
+		TreeNode treeNode = new TreeNode(treeNodeInfo, treeMemberList);
 		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, PREFIX + "/" + VIEW_NAME, List.of(),
-				List.of(member.getMemberIdWithoutPrefix()), false, false,
-				List.of(member), COLLECTION_NAME);
+				List.of(treeMemberIdentifier), false, false,
+				COLLECTION_NAME);
 
 		Model model = treeNodeConverter.toModel(treeNodeDto);
 

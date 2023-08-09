@@ -59,7 +59,7 @@ class TreeNodeFetcherImplTest {
 				ldesFragmentRequest.fragmentPairs()));
 		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragment.getFragmentIdString(), List.of(), List.of(), true,
 				false,
-				List.of(), "collectionName");
+				"collectionName");
 		Mockito.when(treeNodeFactory.getTreeNode(fragment.getFragmentId(), hostName,
 				COLLECTION))
 				.thenReturn(treeNodeDto);

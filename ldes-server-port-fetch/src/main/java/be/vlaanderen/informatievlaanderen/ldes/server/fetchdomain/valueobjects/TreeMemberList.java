@@ -10,22 +10,22 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.constan
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
-public class TreeMembers {
+public class TreeMemberList {
 	private final String eventStreamIdentifier;
-	private final List<TreeMember> treeMemberList;
+	private final List<TreeMember> treeMembers;
 
-	public TreeMembers(String eventStreamIdentifier, List<TreeMember> treeMemberList) {
+	public TreeMemberList(String eventStreamIdentifier, List<TreeMember> treeMembers) {
 		this.eventStreamIdentifier = eventStreamIdentifier;
-		this.treeMemberList = treeMemberList;
+		this.treeMembers = treeMembers;
 	}
 
 	public List<Statement> convertToStatements() {
 		List<Statement> statements = new ArrayList<>();
-		if (!treeMemberList.isEmpty()) {
+		if (!treeMembers.isEmpty()) {
 			Resource eventStreamResource = createResource(eventStreamIdentifier);
 			statements
 					.add(createStatement(eventStreamResource, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
-			treeMemberList
+			treeMembers
 					.forEach(treeMember -> statements.addAll(treeMember.convertToStatements(eventStreamResource)));
 		}
 		return statements;

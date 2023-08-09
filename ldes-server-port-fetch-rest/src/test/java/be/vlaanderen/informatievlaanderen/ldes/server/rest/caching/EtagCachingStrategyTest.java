@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMembers;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.EtagCachingStrategy;
@@ -27,10 +27,10 @@ class EtagCachingStrategyTest {
 	private static TreeNodeDto createViewTreeNodeDto(String viewName, List<String> treeNodeIdsInRelations,
 			List<String> memberIds) {
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo("/" + viewName, List.of());
-		TreeMembers treeMembers = new TreeMembers("/", List.of());
-		return new TreeNodeDto(new TreeNode(treeNodeInfo, treeMembers), "/" + viewName,
+		TreeMemberList treeMemberList = new TreeMemberList("/", List.of());
+		return new TreeNodeDto(new TreeNode(treeNodeInfo, treeMemberList), "/" + viewName,
 				treeNodeIdsInRelations, memberIds, false,
-				true, List.of(), "collectionName");
+				true, "collectionName");
 	}
 
 	private static String createTreeRelation(LdesFragmentIdentifier node) {
