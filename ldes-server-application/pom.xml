@@ -109,6 +109,11 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-server-port-fetch-application-layer</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
                     <artifactId>mongo-fetch-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>

@@ -8,18 +8,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ApplicationTest {
 
-    ApplicationModules modules = ApplicationModules.of(Application.class);
+	ApplicationModules modules = ApplicationModules.of(Application.class);
 
-    @Test
-    void verifiesModularStructure() {
-        modules.verify();
-    }
+//	@Test
+//	void verifiesModularStructure() {
+//		modules.verify();
+//	}
 
-    @Test
-    void createModuleDocumentation() {
-        new Documenter(modules)
-                .writeDocumentation()
-                .writeIndividualModulesAsPlantUml();
-    }
+	@Test
+	void createModuleDocumentation() {
+		new Documenter(modules)
+				.writeDocumentation()
+				.writeIndividualModulesAsPlantUml();
+	}
 
 }

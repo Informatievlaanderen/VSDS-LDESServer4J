@@ -19,7 +19,6 @@ public class AllocatedMemberHandlerFetch {
 
 	@EventListener
 	public void handleMemberAllocatedEvent(MemberAllocatedEvent event) {
-
 		allocationRepository.saveAllocation(memberAllocatedMapper.toEntity(event));
 	}
 

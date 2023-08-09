@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
+package fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
@@ -7,6 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.TreeNodeFactory;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.TreeNodeFactoryImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
