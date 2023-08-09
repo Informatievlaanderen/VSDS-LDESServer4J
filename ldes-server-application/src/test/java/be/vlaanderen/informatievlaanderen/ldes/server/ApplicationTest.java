@@ -10,10 +10,10 @@ class ApplicationTest {
 
 	ApplicationModules modules = ApplicationModules.of(Application.class);
 
-//	@Test
-//	void verifiesModularStructure() {
-//		modules.verify();
-//	}
+	// @Test
+	// void verifiesModularStructure() {
+	// modules.verify();
+	// }
 
 	@Test
 	void createModuleDocumentation() {
