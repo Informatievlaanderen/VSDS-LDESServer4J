@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Component
 public class FragmentationStrategyCollectionImpl implements FragmentationStrategyCollection {
@@ -75,10 +76,10 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		fragmentSequenceRepository.deleteByViewName(event.getViewName());
 	}
 
-	private void removeFromStrategySet(Function<FragmentationStrategyExecutor, Boolean> filter) {
+	private void removeFromStrategySet(Predicate<FragmentationStrategyExecutor> filterPredicate) {
 		fragmentationStrategySet
 				.stream()
-				.filter(filter::apply)
+				.filter(filterPredicate)
 				.toList()
 				.forEach(executor -> {
 					executor.shutdown();
