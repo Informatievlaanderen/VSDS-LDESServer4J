@@ -17,7 +17,7 @@ public class ViewEntityConverter {
 				.map(retentionModel -> RdfModelConverter.toString(retentionModel, Lang.NQUADS))
 				.toList();
 		return new ViewEntity(viewSpecification.getName().asString(), serializedRetentionModels,
-				viewSpecification.getFragmentations());
+				viewSpecification.getFragmentations(), viewSpecification.getPageSize());
 	}
 
 	public ViewSpecification toView(ViewEntity viewEntity) {
@@ -27,6 +27,6 @@ public class ViewEntityConverter {
 				.map(serializedRetentionModel -> RdfModelConverter.fromString(serializedRetentionModel, Lang.NQUADS))
 				.toList();
 		return new ViewSpecification(ViewName.fromString(viewEntity.getViewName()), retentionModels,
-				viewEntity.getFragmentations());
+				viewEntity.getFragmentations(), viewEntity.getPageSize());
 	}
 }

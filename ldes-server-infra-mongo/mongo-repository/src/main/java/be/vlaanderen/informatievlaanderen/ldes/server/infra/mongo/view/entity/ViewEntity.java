@@ -13,12 +13,14 @@ public class ViewEntity {
 	private final String viewName;
 	private final List<String> retentionPolicies;
 	private final List<FragmentationConfig> fragmentations;
+	private final int pageSize;
 
 	public ViewEntity(String viewName, List<String> retentionPolicies,
-			List<FragmentationConfig> fragmentations) {
+			List<FragmentationConfig> fragmentations, int pageSize) {
 		this.viewName = viewName;
 		this.retentionPolicies = retentionPolicies;
 		this.fragmentations = fragmentations;
+		this.pageSize = pageSize;
 	}
 
 	public String getViewName() {
@@ -31,5 +33,9 @@ public class ViewEntity {
 
 	public List<FragmentationConfig> getFragmentations() {
 		return fragmentations;
+	}
+
+	public int getPageSize() {
+		return pageSize;
 	}
 }

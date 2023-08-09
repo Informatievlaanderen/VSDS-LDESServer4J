@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MemberUnallocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
@@ -8,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.Test;
 
@@ -24,10 +22,9 @@ class FragmentationStrategyCollectionImplTest {
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator = mock(
 			FragmentationStrategyExecutorCreatorImpl.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
-	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
 
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			fragmentRepository, allocationRepository,
+			fragmentRepository,
 			fragmentationStrategyExecutorCreator);
 
 	@Test
@@ -49,7 +46,7 @@ class FragmentationStrategyCollectionImplTest {
 
 	private InitViewAddedResult initAddView() {
 		ViewName viewName = new ViewName(COLLECTION_NAME, "additonalView");
-		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of());
+		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
 		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
 
 		FragmentationStrategyExecutor fragmentationStrategyExecutor = createFragmentationStrategyExecutor(viewName);
@@ -57,17 +54,6 @@ class FragmentationStrategyCollectionImplTest {
 				.thenReturn(fragmentationStrategyExecutor);
 		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
 				fragmentationStrategyExecutor);
-	}
-
-	@Test
-	void handleMemberUnallocatedEvent() {
-		ViewName viewName = new ViewName(COLLECTION_NAME, "view");
-		MemberUnallocatedEvent memberUnallocatedEvent = new MemberUnallocatedEvent("id", viewName);
-
-		fragmentationStrategyCollection.handleMemberUnallocatedEvent(memberUnallocatedEvent);
-
-		verify(allocationRepository)
-				.unallocateMemberFromView(memberUnallocatedEvent.memberId(), memberUnallocatedEvent.viewName());
 	}
 
 	private record InitViewAddedResult(ViewName viewName, ViewSpecification viewSpecification,
@@ -91,7 +77,6 @@ class FragmentationStrategyCollectionImplTest {
 		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 		verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
-		verify(allocationRepository).unallocateAllMembersFromView(initResult.viewSpecification().getName());
 	}
 
 	@Test
@@ -112,7 +97,6 @@ class FragmentationStrategyCollectionImplTest {
 
 		fragmentationStrategyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
 
-		verify(allocationRepository).unallocateMembersFromCollection(collectionName);
 		verify(fragmentRepository).deleteTreeNodesByCollection(collectionName);
 	}
 

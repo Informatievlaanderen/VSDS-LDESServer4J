@@ -11,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.Vi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,18 +19,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class ViewServiceImpl implements ViewService {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
-
 	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
-
-	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
-			"bidirectionalRelations", "false");
+	public static final int DEFAULT_VIEW_PAGE_SIZE = 100;
 
 	private final DcatViewService dcatViewService;
 	private final ViewRepository viewRepository;
@@ -68,11 +63,8 @@ public class ViewServiceImpl implements ViewService {
 	public void addDefaultView(String collectionName) {
 		ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
 		if (viewRepository.getViewByViewName(defaultViewName).isEmpty()) {
-			FragmentationConfig fragmentation = new FragmentationConfig();
-			fragmentation.setName(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
-			fragmentation.setConfig(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES);
-
-			ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(fragmentation));
+			ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(),
+					DEFAULT_VIEW_PAGE_SIZE);
 			addView(defaultView);
 		}
 	}
