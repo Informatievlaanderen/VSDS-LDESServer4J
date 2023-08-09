@@ -12,6 +12,8 @@ import java.util.Optional;
 @Component
 public class FragmentSequenceMongoRepository implements FragmentSequenceRepository {
 
+	private static final String COLLECTION_VIEW_SEPARATOR = "/";
+
 	private final SequenceEntityRepository sequenceEntityRepository;
 	private final SequenceEntityMapper sequenceEntityMapper;
 
@@ -36,6 +38,11 @@ public class FragmentSequenceMongoRepository implements FragmentSequenceReposito
 	@Override
 	public void deleteByViewName(ViewName viewName) {
 		sequenceEntityRepository.deleteById(viewName.asString());
+	}
+
+	@Override
+	public void deleteByCollection(String collectionName) {
+		sequenceEntityRepository.deleteAllByViewNameStartingWith(collectionName + COLLECTION_VIEW_SEPARATOR);
 	}
 
 }
