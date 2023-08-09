@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.AllocationMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.repository.AllocationEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +14,12 @@ import org.springframework.test.context.ContextConfiguration;
 @DataMongoTest
 @ActiveProfiles("mongo-test")
 @ContextConfiguration(classes = { AllocationEntityRepository.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.fetch" })
+@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo" })
 @SuppressWarnings("java:S2187")
 public class MongoAllocationIntegrationTest {
 
 	@Autowired
-    AllocationMongoRepository allocationMongoRepository;
+	AllocationMongoRepository allocationMongoRepository;
 
 	@Autowired
 	AllocationEntityRepository allocationEntityRepository;

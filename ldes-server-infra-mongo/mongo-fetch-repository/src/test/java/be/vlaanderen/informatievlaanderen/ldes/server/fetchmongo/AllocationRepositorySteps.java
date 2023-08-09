@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import io.cucumber.java.DataTableType;
