@@ -111,6 +111,7 @@
 
         <!-- HASHING -->
         <commons-codec.version>1.16.0</commons-codec.version>
+        <spring-modulith-bom.version>0.5.1</spring-modulith-bom.version>
     </properties>
 
     <dependencyManagement>
@@ -262,6 +263,15 @@
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.springframework.experimental</groupId>
+                <artifactId>spring-modulith-bom</artifactId>
+                <version>${spring-modulith-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
         </dependencies>
     </dependencyManagement>
