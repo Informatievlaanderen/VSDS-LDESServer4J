@@ -1,22 +1,20 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects;
 
 import org.apache.jena.rdf.model.Statement;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-class TreeRelationResponseTest {
-
+class TreeRelationTest {
 	private static final String HOST_NAME = "http://localhost:8080";
 	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String VIEW_NAME = "view";
 
 	@Test
 	void when_RelationsAreNotEmpty_MultipleStatementsAreReturned() {
-		TreeRelationResponse treeRelation = new TreeRelationResponse("path",
+		TreeRelation treeRelation = new TreeRelation("path",
 				HOST_NAME + "/" + COLLECTION_NAME + "/node", "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
 
@@ -50,5 +48,4 @@ class TreeRelationResponseTest {
 				String.format("[%s, https://w3id.org/tree#value, \"value\"^^http://www.w3.org/2001/XMLSchema#dateTime]",
 						anonymousObjectId)));
 	}
-
 }
