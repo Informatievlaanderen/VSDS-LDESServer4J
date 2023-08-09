@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatVi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMembers;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
@@ -100,8 +101,10 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(new TreeNodeInfo(fragmentId, List.of())), fragmentId,
-				List.of(), immutable, false,
+		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
+		TreeMembers treeMembers = new TreeMembers(COLLECTION_NAME, List.of());
+		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(treeNodeInfo, treeMembers), fragmentId,
+				List.of(), List.of(), immutable, false,
 				List.of(), COLLECTION_NAME);
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
@@ -171,7 +174,7 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragmentId, List.of(), false, false,
+		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragmentId, List.of(), List.of(), false, false,
 				List.of(), COLLECTION_NAME);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)

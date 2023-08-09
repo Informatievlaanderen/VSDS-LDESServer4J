@@ -5,9 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -32,21 +30,31 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 	@Override
 	public TreeNodeDto getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
-		String extendedTreeNodeId = hostName + treeNodeId.asString();
+		String eventStreamIdentifier = hostName + "/" + collectionName;
+		String treeNodeIdentifier = hostName + treeNodeId.asString();
 		Fragment fragment = fragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
-						() -> new MissingFragmentException(extendedTreeNodeId));
+						() -> new MissingFragmentException(treeNodeIdentifier));
 
-		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asString());
+		List<String> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asString()).stream()
+				.map(MemberAllocation::getMemberId).toList();
 		List<Member> members = memberRepository
-				.findAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
-		return new TreeNodeDto(new TreeNode(new TreeNodeInfo(extendedTreeNodeId, getRelations(fragment, hostName))),
-				extendedTreeNodeId,
+				.findAllByIds(memberIds);
+		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
+		TreeMembers treeMembers = new TreeMembers(eventStreamIdentifier, getMembers(members));
+		TreeNode treeNode = new TreeNode(treeNodeInfo, treeMembers);
+		return new TreeNodeDto(treeNode,
+				treeNodeIdentifier,
 				fragment.getRelations().stream().map(
 						be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation::treeNode)
 						.map(x -> hostName + x.asString()).toList(),
-				fragment.isImmutable(), fragment.getFragmentPairs().isEmpty(),
+				memberIds, fragment.isImmutable(), fragment.getFragmentPairs().isEmpty(),
 				members, collectionName);
+	}
+
+	private static List<TreeMember> getMembers(List<Member> members) {
+		return members.stream().map(member -> new TreeMember(member.getMemberIdWithoutPrefix(), member.getModel()))
+				.toList();
 	}
 
 	private List<TreeRelation> getRelations(Fragment fragment, String hostName) {

@@ -57,7 +57,8 @@ class TreeNodeFetcherImplTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs()));
-		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragment.getFragmentIdString(), List.of(), true, false,
+		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragment.getFragmentIdString(), List.of(), List.of(), true,
+				false,
 				List.of(), "collectionName");
 		Mockito.when(treeNodeFactory.getTreeNode(fragment.getFragmentId(), hostName,
 				COLLECTION))

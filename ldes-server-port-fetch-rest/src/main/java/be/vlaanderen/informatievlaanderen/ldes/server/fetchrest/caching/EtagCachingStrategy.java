@@ -1,11 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
@@ -28,9 +25,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 	public String generateCacheIdentifier(TreeNodeDto treeNodeDto, String language) {
 		return sha256Hex(treeNodeDto.getFragmentId()
 				+ String.join("", treeNodeDto.getTreeNodeIdsInRelations())
-				+ treeNodeDto.getMembers().stream()
-						.map(Member::getId)
-						.collect(Collectors.joining(""))
+				+ String.join("", treeNodeDto.getMemberIds())
 				+ language);
 	}
 }

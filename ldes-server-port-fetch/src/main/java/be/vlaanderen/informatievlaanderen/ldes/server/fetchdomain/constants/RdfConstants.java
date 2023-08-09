@@ -14,9 +14,10 @@ public class RdfConstants {
 	public static final Property TREE_VALUE = createProperty(TREE, "value");
 	public static final Property TREE_PATH = createProperty(TREE, "path");
 	public static final Property TREE_NODE = createProperty(TREE, "node");
+	public static final Property TREE_MEMBER = createProperty(TREE, "member");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
-
 	public static final String TREE_NODE_RESOURCE = TREE + "Node";
+	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
 
 }

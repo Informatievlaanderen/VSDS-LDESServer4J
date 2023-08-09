@@ -11,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.Shac
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -51,14 +50,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	public Model toModel(final TreeNodeDto treeNodeDto) {
 		Model model = ModelFactory.createDefaultModel()
 				.add(addTreeNodeStatements(treeNodeDto, treeNodeDto.getCollectionName()));
-
-		if (!treeNodeDto.getMembers().isEmpty()) {
-			String baseUrl = hostName + "/" + treeNodeDto.getCollectionName();
-			model.add(addEventStreamStatements(treeNodeDto, baseUrl));
-			treeNodeDto.getMembers().stream()
-					.map(Member::getModel).forEach(model::add);
-		}
-
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
@@ -97,29 +88,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		dcatViewService.findByViewName(viewName)
 				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
 
-	}
-
-	private List<Statement> addEventStreamStatements(TreeNodeDto treeNodeDto, String baseUrl) {
-		List<Statement> statements = new ArrayList<>();
-		Resource viewId = createResource(baseUrl);
-		statements.addAll(getEventStreamStatements(viewId));
-		statements.addAll(getMemberStatements(treeNodeDto, viewId));
-		return statements;
-	}
-
-	private List<Statement> getMemberStatements(TreeNodeDto treeNodeDto, Resource viewId) {
-		List<Statement> statements = new ArrayList<>();
-		treeNodeDto.getMembers()
-				.stream().map(Member::getMemberIdWithoutPrefix)
-				.forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER,
-						createResource(memberId))));
-		return statements;
-	}
-
-	private List<Statement> getEventStreamStatements(Resource viewId) {
-		List<Statement> statements = new ArrayList<>();
-		statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
-		return statements;
 	}
 
 	@EventListener

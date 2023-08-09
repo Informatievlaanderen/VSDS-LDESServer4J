@@ -13,20 +13,22 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 public class TreeNodeInfo {
 
-	private final String treeNodeId;
+	private final String treeNodeIdentifier;
 	private final List<TreeRelation> treeRelations;
 
-	public TreeNodeInfo(String treeNodeId, List<TreeRelation> treeRelations) {
-		this.treeNodeId = treeNodeId;
+	public TreeNodeInfo(String treeNodeIdentifier, List<TreeRelation> treeRelations) {
+		this.treeNodeIdentifier = treeNodeIdentifier;
 		this.treeRelations = treeRelations;
 	}
 
 	public List<Statement> convertToStatements() {
 		List<Statement> statements = new ArrayList<>();
 		statements
-				.add(createStatement(createResource(treeNodeId), RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)));
+				.add(createStatement(createResource(treeNodeIdentifier), RDF_SYNTAX_TYPE,
+						createResource(TREE_NODE_RESOURCE)));
 		treeRelations.forEach(
-				treeRelationResponse -> statements.addAll(treeRelationResponse.convertToStatements(treeNodeId)));
+				treeRelationResponse -> statements
+						.addAll(treeRelationResponse.convertToStatements(treeNodeIdentifier)));
 		return Collections.unmodifiableList(statements);
 	}
 

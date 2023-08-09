@@ -10,17 +10,20 @@ public class TreeNodeDto {
 	private final TreeNode treeNode;
 	private final String fragmentId;
 	private final List<String> treeNodeIdsInRelations;
+	private final List<String> memberIds;
 	private final boolean immutable;
 	private final boolean isView;
 	private final List<Member> members;
 	private final String collectionName;
 
-	public TreeNodeDto(TreeNode treeNode, String fragmentId, List<String> treeNodeIdsInRelations, boolean immutable,
+	public TreeNodeDto(TreeNode treeNode, String fragmentId, List<String> treeNodeIdsInRelations,
+			List<String> memberIds, boolean immutable,
 			boolean isView,
 			List<Member> members, String collectionName) {
 		this.treeNode = treeNode;
 		this.fragmentId = fragmentId;
 		this.treeNodeIdsInRelations = treeNodeIdsInRelations;
+		this.memberIds = memberIds;
 		this.immutable = immutable;
 		this.isView = isView;
 		this.members = members;
@@ -70,4 +73,7 @@ public class TreeNodeDto {
 		return collectionName;
 	}
 
+	public List<String> getMemberIds() {
+		return memberIds;
+	}
 }

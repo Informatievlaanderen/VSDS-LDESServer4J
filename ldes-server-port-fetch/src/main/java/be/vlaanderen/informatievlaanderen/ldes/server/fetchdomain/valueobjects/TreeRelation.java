@@ -14,15 +14,15 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 public class TreeRelation {
 	private final String treePath;
-	private final String treeNode;
+	private final String treeNodeIdentifier;
 	private final String treeValue;
 	private final String treeValueType;
 	private final String relation;
 
-	public TreeRelation(String treePath, String treeNode, String treeValue, String treeValueType,
+	public TreeRelation(String treePath, String treeNodeIdentifier, String treeValue, String treeValueType,
 			String relation) {
 		this.treePath = treePath;
-		this.treeNode = treeNode;
+		this.treeNodeIdentifier = treeNodeIdentifier;
 		this.treeValue = treeValue;
 		this.treeValueType = treeValueType;
 		this.relation = relation;
@@ -38,7 +38,7 @@ public class TreeRelation {
 		}
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treePath);
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
-				treeNode);
+				treeNodeIdentifier);
 		addStatementIfMeaningful(statements, treeRelationNode, RDF_SYNTAX_TYPE, relation);
 		return Collections.unmodifiableList(statements);
 	}
@@ -55,6 +55,6 @@ public class TreeRelation {
 	}
 
 	public String getTreeNodeId() {
-		return treeNode;
+		return treeNodeIdentifier;
 	}
 }
