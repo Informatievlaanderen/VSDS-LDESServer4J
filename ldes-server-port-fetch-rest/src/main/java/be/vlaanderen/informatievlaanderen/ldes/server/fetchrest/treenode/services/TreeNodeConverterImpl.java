@@ -7,12 +7,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -50,32 +48,26 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	@Override
-	public Model toModel(final TreeNode treeNode) {
+	public Model toModel(final TreeNodeDto treeNodeDto) {
 		Model model = ModelFactory.createDefaultModel()
-				.add(addTreeNodeStatements(treeNode, treeNode.getCollectionName()));
+				.add(addTreeNodeStatements(treeNodeDto, treeNodeDto.getCollectionName()));
 
-		if (!treeNode.getMembers().isEmpty()) {
-			String baseUrl = hostName + "/" + treeNode.getCollectionName();
-			model.add(addEventStreamStatements(treeNode, baseUrl));
-			treeNode.getMembers().stream()
+		if (!treeNodeDto.getMembers().isEmpty()) {
+			String baseUrl = hostName + "/" + treeNodeDto.getCollectionName();
+			model.add(addEventStreamStatements(treeNodeDto, baseUrl));
+			treeNodeDto.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
 		}
 
 		return prefixAdder.addPrefixesToModel(model);
 	}
 
-	private List<Statement> addTreeNodeStatements(TreeNode treeNode, String collectionName) {
+	private List<Statement> addTreeNodeStatements(TreeNodeDto treeNodeDto, String collectionName) {
 		EventStream eventStream = eventStreams.get(collectionName);
 		ShaclShape shaclShape = shaclShapes.get(collectionName);
-		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
-				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						hostName + treeRelation.treeNode().asString(),
-						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
-				.toList();
-		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
-				treeRelationResponses);
-		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape);
+		List<Statement> statements = new ArrayList<>(treeNodeDto.getTreeNode().getModel().listStatements().toList());
+		addLdesCollectionStatements(statements, treeNodeDto.isView(), treeNodeDto.getFragmentId(), eventStream,
+				shaclShape);
 
 		return statements;
 	}
@@ -107,17 +99,17 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	}
 
-	private List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
+	private List<Statement> addEventStreamStatements(TreeNodeDto treeNodeDto, String baseUrl) {
 		List<Statement> statements = new ArrayList<>();
 		Resource viewId = createResource(baseUrl);
 		statements.addAll(getEventStreamStatements(viewId));
-		statements.addAll(getMemberStatements(treeNode, viewId));
+		statements.addAll(getMemberStatements(treeNodeDto, viewId));
 		return statements;
 	}
 
-	private List<Statement> getMemberStatements(TreeNode treeNode, Resource viewId) {
+	private List<Statement> getMemberStatements(TreeNodeDto treeNodeDto, Resource viewId) {
 		List<Statement> statements = new ArrayList<>();
-		treeNode.getMembers()
+		treeNodeDto.getMembers()
 				.stream().map(Member::getMemberIdWithoutPrefix)
 				.forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER,
 						createResource(memberId))));

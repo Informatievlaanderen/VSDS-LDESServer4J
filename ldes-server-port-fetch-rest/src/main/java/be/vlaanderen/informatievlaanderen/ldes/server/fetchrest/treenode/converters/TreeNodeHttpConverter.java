@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -19,7 +19,7 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
-public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
+public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNodeDto> {
 
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 
@@ -36,7 +36,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 
 	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-		return clazz.isAssignableFrom(TreeNode.class);
+		return clazz.isAssignableFrom(TreeNodeDto.class);
 	}
 
 	@Override
@@ -45,17 +45,17 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 	}
 
 	@Override
-	public TreeNode read(Class<? extends TreeNode> clazz, HttpInputMessage inputMessage)
+	public TreeNodeDto read(Class<? extends TreeNodeDto> clazz, HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
 		return null;
 	}
 
 	@Override
-	public void write(TreeNode treeNode, MediaType contentType, HttpOutputMessage outputMessage)
+	public void write(TreeNodeDto treeNodeDto, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		OutputStream body = outputMessage.getBody();
 		Lang rdfFormat = getLang(contentType, FETCH);
-		Model fragmentModel = treeNodeConverter.toModel(treeNode);
+		Model fragmentModel = treeNodeConverter.toModel(treeNodeDto);
 		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
 		body.write(outputString.getBytes());
 	}

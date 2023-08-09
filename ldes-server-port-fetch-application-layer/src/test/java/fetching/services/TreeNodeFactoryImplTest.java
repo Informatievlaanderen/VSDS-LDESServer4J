@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactoryImpl;
@@ -67,16 +67,11 @@ class TreeNodeFactoryImplTest {
 				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
 		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
 
-		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
+		TreeNodeDto treeNodeDto = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 
-		Assertions.assertEquals(HOSTNAME + fragment.getFragmentIdString(), treeNode.getFragmentId());
-		Assertions.assertEquals(fragment.isImmutable(), treeNode.isImmutable());
-		Assertions.assertEquals(List.of(member), treeNode.getMembers());
-		Assertions.assertEquals(
-				List.of(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
-						"valueType",
-						"relation")),
-				treeNode.getRelations());
+		Assertions.assertEquals(HOSTNAME + fragment.getFragmentIdString(), treeNodeDto.getFragmentId());
+		Assertions.assertEquals(fragment.isImmutable(), treeNodeDto.isImmutable());
+		Assertions.assertEquals(List.of(member), treeNodeDto.getMembers());
 	}
 
 }

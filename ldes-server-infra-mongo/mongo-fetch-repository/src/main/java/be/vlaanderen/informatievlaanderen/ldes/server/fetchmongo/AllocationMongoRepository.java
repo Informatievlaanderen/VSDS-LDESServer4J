@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.mapper.MemberAllocationEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.repository.AllocationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.mapper.MemberAllocationEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.repository.AllocationEntityRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -3,7 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -23,12 +25,11 @@ class EtagCachingStrategyTest {
 	private static final LdesFragmentIdentifier node3 = new LdesFragmentIdentifier(
 			new ViewName("collectionName", "node3"), List.of());
 
-	private static TreeNode createView(String viewName) {
-		return new TreeNode("/" + viewName, false, true, List.of(), List.of(), "collectionName");
-	}
-
-	private static TreeNode createView(String viewName, List<TreeRelation> relations, List<Member> members) {
-		return new TreeNode("/" + viewName, false, true, relations, members, "collectionName");
+	private static TreeNodeDto createViewTreeNodeDto(String viewName, List<TreeRelation> relations,
+			List<Member> members) {
+		return new TreeNodeDto(new TreeNode(new TreeNodeInfo("/" + viewName, List.of())), "/" + viewName,
+				relations.stream().map(TreeRelation::treeNode).map(LdesFragmentIdentifier::asString).toList(), false,
+				true, members, "collectionName");
 	}
 
 	private static TreeRelation createTreeRelation(LdesFragmentIdentifier node) {
@@ -51,9 +52,9 @@ class EtagCachingStrategyTest {
 
 	@ParameterizedTest
 	@ArgumentsSource(value = ETagTreeNodeArgumentsProvider.class)
-	void when_TreeNodeIsRequested_thenACorrectEtagIsGenerated(String hostname, TreeNode treeNode,
+	void when_TreeNodeIsRequested_thenACorrectEtagIsGenerated(String hostname, TreeNodeDto treeNodeDto,
 			String language, String expectedEtag) {
-		String etag = cachingStrategy(hostname).generateCacheIdentifier(treeNode, language);
+		String etag = cachingStrategy(hostname).generateCacheIdentifier(treeNodeDto, language);
 
 		assertEquals(expectedEtag, etag);
 	}
@@ -82,27 +83,27 @@ class EtagCachingStrategyTest {
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of("http://localhost:8080",
-							createView("view1",
+							createViewTreeNodeDto("view1",
 									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"))),
 							"text/turtle", "a406fc6c4562baf9bb6312ff195e7d964156ecf4ac7ec25d6e81731594e4205a"),
 					Arguments.of("http://localhost:8080",
-							createView("view2",
+							createViewTreeNodeDto("view2",
 									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"))),
 							"text/turtle", "57b620546b58690b28931fe9db60257fe2b2e2477ea48b96b722e9a00a22a791"),
 					Arguments.of("http://localhost:8080",
-							createView("view2",
+							createViewTreeNodeDto("view2",
 									List.of(createTreeRelation(node2), createTreeRelation(node3)),
 									List.of(createMember("member1"))),
 							"text/turtle", "1c9ed7f7dc03b9e58e577978f705810cb0ec0184cc74d3dd293e1b19fd15cd9a"),
 					Arguments.of("http://localhost:8080",
-							createView("view1",
+							createViewTreeNodeDto("view1",
 									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"), createMember("member2"))),
 							"text/turtle", "67d101c55840eb638294b244f68286f7f62dee1e9aeec21aaa1f6aef732dccb8"),
 					Arguments.of("http://localhost:8080",
-							createView("view1",
+							createViewTreeNodeDto("view1",
 									List.of(createTreeRelation(node2)),
 									List.of(createMember("member1"), createMember("member2"))),
 							"application/n-quads", "19cdab7a71dd21df12ed2aef54c6c5dd136910c807f0d7e2e59dc2f888716e23"));

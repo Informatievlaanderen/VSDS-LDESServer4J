@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.entity.MemberAllocationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchmongo.entity.MemberAllocationEntity;
 import org.springframework.stereotype.Component;
 
 @Component

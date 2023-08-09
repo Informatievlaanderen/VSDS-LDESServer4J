@@ -1,26 +1,28 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 
 import java.util.List;
 import java.util.Objects;
 
-public class TreeNode {
+public class TreeNodeDto {
+	private final TreeNode treeNode;
 	private final String fragmentId;
+	private final List<String> treeNodeIdsInRelations;
 	private final boolean immutable;
 	private final boolean isView;
-	private final List<TreeRelation> relations;
 	private final List<Member> members;
 	private final String collectionName;
 
-	public TreeNode(String fragmentId, boolean immutable, boolean isView,
-			List<TreeRelation> relations,
+	public TreeNodeDto(TreeNode treeNode, String fragmentId, List<String> treeNodeIdsInRelations, boolean immutable,
+			boolean isView,
 			List<Member> members, String collectionName) {
+		this.treeNode = treeNode;
 		this.fragmentId = fragmentId;
+		this.treeNodeIdsInRelations = treeNodeIdsInRelations;
 		this.immutable = immutable;
 		this.isView = isView;
-		this.relations = relations;
 		this.members = members;
 		this.collectionName = collectionName;
 	}
@@ -33,8 +35,8 @@ public class TreeNode {
 		return immutable;
 	}
 
-	public List<TreeRelation> getRelations() {
-		return relations;
+	public List<String> getTreeNodeIdsInRelations() {
+		return treeNodeIdsInRelations;
 	}
 
 	public List<Member> getMembers() {
@@ -45,13 +47,17 @@ public class TreeNode {
 		return isView;
 	}
 
+	public TreeNode getTreeNode() {
+		return treeNode;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
 		if (o == null || getClass() != o.getClass())
 			return false;
-		TreeNode that = (TreeNode) o;
+		TreeNodeDto that = (TreeNodeDto) o;
 		return Objects.equals(fragmentId, that.fragmentId);
 	}
 

@@ -10,8 +10,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.config.RestConfig;
@@ -98,10 +100,11 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		TreeNode treeNode = new TreeNode(fragmentId, immutable, false, List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(new TreeNodeInfo(fragmentId, List.of())), fragmentId,
+				List.of(), immutable, false,
 				List.of(), COLLECTION_NAME);
 
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
+		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 
 		ResultActions resultActions = mockMvc
 				.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
@@ -168,9 +171,9 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		TreeNode treeNode = new TreeNode(fragmentId, false, false, List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragmentId, List.of(), false, false,
 				List.of(), COLLECTION_NAME);
-		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
+		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
 				.accept("application/json"))
 				.andExpect(status().isUnsupportedMediaType());

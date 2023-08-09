@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -171,7 +171,7 @@ public interface OpenApiTreeNodeController {
 					""")),
 	})
 	@ApiResponse(responseCode = "404", content = @Content, description = "No Linked Data Event Stream found with provided collection name")
-	ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
+	ResponseEntity<TreeNodeDto> retrieveLdesFragment(HttpServletResponse response,
 			@Parameter(example = "PaginationFragmentation") String view,
 			@Parameter(examples = @ExampleObject(value = """
 					{

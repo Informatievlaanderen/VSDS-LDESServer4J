@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreenodeUrlDecoder;
@@ -35,22 +35,22 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}/{view}")
-	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
+	public ResponseEntity<TreeNodeDto> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String view,
 			@RequestParam Map<String, String> requestParameters,
 			@RequestHeader(HttpHeaders.ACCEPT) String language,
 			@PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
-		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
+		TreeNodeDto treeNodeDto = returnRequestedTreeNode(response, viewName, requestParameters);
 		setContentTypeHeader(language, response);
 		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
 		return ResponseEntity
 				.ok()
-				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
-				.body(treeNode);
+				.eTag(cachingStrategy.generateCacheIdentifier(treeNodeDto, language))
+				.body(treeNodeDto);
 	}
 
-	private TreeNode returnRequestedTreeNode(HttpServletResponse response, ViewName viewName,
+	private TreeNodeDto returnRequestedTreeNode(HttpServletResponse response, ViewName viewName,
 			Map<String, String> fragmentationMap) {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
@@ -58,14 +58,14 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 								TreenodeUrlDecoder.decode(entry.getValue())))
 						.toList());
 
-		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
-		setCacheControlHeader(response, treeNode);
-		return treeNode;
+		TreeNodeDto treeNodeDto = treeNodeFetcher.getFragment(ldesFragmentRequest);
+		setCacheControlHeader(response, treeNodeDto);
+		return treeNodeDto;
 
 	}
 
-	private void setCacheControlHeader(HttpServletResponse response, TreeNode treeNode) {
-		if (treeNode.isImmutable()) {
+	private void setCacheControlHeader(HttpServletResponse response, TreeNodeDto treeNodeDto) {
+		if (treeNodeDto.isImmutable()) {
 			response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
 		} else {
 			response.setHeader(CACHE_CONTROL, restConfig.generateMutableCacheControl());

@@ -5,13 +5,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -61,14 +62,15 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(new TreeNodeInfo(PREFIX + VIEW_NAME, List.of())),
+				PREFIX + VIEW_NAME, List.of(), false, true, List.of(),
 				COLLECTION_NAME);
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
 		Mockito.when(dcatViewService.findByViewName(viewName)).thenReturn(Optional.of(dcatView));
 
-		Model model = treeNodeConverter.toModel(treeNode);
+		Model model = treeNodeConverter.toModel(treeNodeDto);
 
 		Assertions.assertEquals(20, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
@@ -77,9 +79,10 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(), List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(new TreeNodeInfo(PREFIX + VIEW_NAME, List.of())),
+				PREFIX + VIEW_NAME, List.of(), false, false, List.of(),
 				COLLECTION_NAME);
-		Model model = treeNodeConverter.toModel(treeNode);
+		Model model = treeNodeConverter.toModel(treeNodeDto);
 
 		Assertions.assertEquals(2, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
@@ -96,13 +99,13 @@ class TreeNodeConverterImplTest {
 				"collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165",
 				"collectionName",
 				0L, ldesMemberModel);
-		TreeRelation treeRelation = new TreeRelation("path",
-				new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
-				"http://www.w3.org/2001/XMLSchema#dateTime", "relation");
-		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
+		TreeNode treeNode = new TreeNode(new TreeNodeInfo(PREFIX + VIEW_NAME,
+				List.of(new TreeRelation("path", "http://localhost:8080/mobility-hindrances/node", "value",
+						"http://www.w3.org/2001/XMLSchema#dateTime", "relation"))));
+		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, PREFIX + VIEW_NAME, List.of(), false, false,
 				List.of(member), COLLECTION_NAME);
 
-		Model model = treeNodeConverter.toModel(treeNode);
+		Model model = treeNodeConverter.toModel(treeNodeDto);
 
 		Assertions.assertEquals(9, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);

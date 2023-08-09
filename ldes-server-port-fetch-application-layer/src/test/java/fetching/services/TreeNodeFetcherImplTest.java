@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcherImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -57,14 +57,14 @@ class TreeNodeFetcherImplTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs()));
-		TreeNode treeNode = new TreeNode(fragment.getFragmentIdString(), true, false, List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragment.getFragmentIdString(), List.of(), true, false,
 				List.of(), "collectionName");
 		Mockito.when(treeNodeFactory.getTreeNode(fragment.getFragmentId(), hostName,
 				COLLECTION))
-				.thenReturn(treeNode);
+				.thenReturn(treeNodeDto);
 
-		TreeNode returnedTreeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
+		TreeNodeDto returnedTreeNodeDto = treeNodeFetcher.getFragment(ldesFragmentRequest);
 
-		Assertions.assertEquals(treeNode, returnedTreeNode);
+		Assertions.assertEquals(treeNodeDto, returnedTreeNodeDto);
 	}
 }
