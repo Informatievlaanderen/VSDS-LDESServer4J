@@ -5,12 +5,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.Shacl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactoryImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -40,6 +42,7 @@ class TreeNodeFactoryImplTest {
 	private AllocationRepository allocationRepository;
 	private MemberRepository memberRepository;
 	private ShaclRepository shaclRepository;
+	private EventStreamRepository eventStreamRepository;
 	private DcatViewService dcatViewService;
 
 	@BeforeEach
@@ -49,8 +52,9 @@ class TreeNodeFactoryImplTest {
 		allocationRepository = mock(AllocationRepository.class);
 		shaclRepository = mock(ShaclRepository.class);
 		dcatViewService = mock(DcatViewService.class);
+		eventStreamRepository = mock(EventStreamRepository.class);
 		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository,
-				shaclRepository, dcatViewService);
+				shaclRepository, eventStreamRepository, dcatViewService);
 	}
 
 	@Test
@@ -78,6 +82,8 @@ class TreeNodeFactoryImplTest {
 		when(shaclRepository.getShaclByCollection(COLLECTION_NAME))
 				.thenReturn(new Shacl(COLLECTION_NAME, ModelFactory.createDefaultModel()));
 		when(dcatViewService.findByViewName(VIEW_NAME)).thenReturn(Optional.empty());
+		when(eventStreamRepository.getEventStreamByCollection(COLLECTION_NAME))
+				.thenReturn(new EventStream("", "", "", ""));
 
 		TreeNodeDto treeNodeDto = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

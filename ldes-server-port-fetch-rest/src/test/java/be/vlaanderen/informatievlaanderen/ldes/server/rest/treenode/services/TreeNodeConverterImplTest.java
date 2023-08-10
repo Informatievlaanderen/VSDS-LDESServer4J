@@ -2,11 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
@@ -35,13 +34,13 @@ class TreeNodeConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
-		EventStream eventStream = new EventStream(COLLECTION_NAME,
-				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType");
+		// EventStream eventStream = new EventStream(COLLECTION_NAME,
+		// "http://www.w3.org/ns/prov#generatedAtTime",
+		// "http://purl.org/dc/terms/isVersionOf", "memberType");
 
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
-		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder);
+		// ((TreeNodeConverterImpl) treeNodeConverter)
+		// .handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 	}
 
 	@Test
@@ -53,9 +52,12 @@ class TreeNodeConverterImplTest {
 		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
 		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
 		List<Statement> dcatStatements = dcatView.getStatementsWithBase(HOST_NAME);
+		List<Statement> eventStreamStatements = new EventStream(eventStreamIdentifier, COLLECTION_NAME,
+				"http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf")
+				.convertToStatements(treeNodeIdentifier);
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(
 				treeNodeIdentifier, eventStreamIdentifier,
-				shacl, true, dcatStatements);
+				shacl, true, dcatStatements, eventStreamStatements);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
 
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
@@ -77,7 +79,7 @@ class TreeNodeConverterImplTest {
 		String eventStreamIdentifier = PREFIX;
 		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
-				ModelFactory.createDefaultModel(), false, List.of());
+				ModelFactory.createDefaultModel(), false, List.of(), List.of());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
@@ -102,7 +104,7 @@ class TreeNodeConverterImplTest {
 		String eventStreamIdentifier = PREFIX;
 		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
-				ModelFactory.createDefaultModel(), false, List.of());
+				ModelFactory.createDefaultModel(), false, List.of(), List.of());
 		TreeMember treeMember = new TreeMember(
 				treeMemberIdentifier, ldesMemberModel);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier,

@@ -102,7 +102,7 @@ class TreeNodeControllerTest {
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(fragmentId, COLLECTION_NAME,
-				ModelFactory.createDefaultModel(), true, List.of());
+				ModelFactory.createDefaultModel(), true, List.of(), List.of());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList),
@@ -240,9 +240,9 @@ class TreeNodeControllerTest {
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
+		public TreeNodeConverter ldesFragmentConverter() {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, hostName);
+			return new TreeNodeConverterImpl(prefixAdder);
 		}
 
 		@Bean

@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatVi
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -24,14 +25,17 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final AllocationRepository allocationRepository;
 	private final MemberRepository memberRepository;
 	private final ShaclRepository shaclRepository;
+	private final EventStreamRepository eventStreamRepository;
 	private final DcatViewService dcatViewService;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-			MemberRepository memberRepository, ShaclRepository shaclRepository, DcatViewService dcatViewService) {
+			MemberRepository memberRepository, ShaclRepository shaclRepository,
+			EventStreamRepository eventStreamRepository, DcatViewService dcatViewService) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.memberRepository = memberRepository;
 		this.shaclRepository = shaclRepository;
+		this.eventStreamRepository = eventStreamRepository;
 		this.dcatViewService = dcatViewService;
 	}
 
@@ -49,9 +53,11 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.findAllByIds(memberIds);
 		List<Statement> dcatStatments = dcatViewService.findByViewName(treeNodeId.getViewName())
 				.map(dcatView -> dcatView.getStatementsWithBase(hostName)).orElse(List.of());
+		List<Statement> statements = eventStreamRepository.getEventStreamByCollection(collectionName)
+				.convertToStatements(treeNodeIdentifier);
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
 				shaclRepository.getShaclByCollection(collectionName).getModel(), fragment.getFragmentPairs().isEmpty(),
-				dcatStatments);
+				dcatStatments, statements);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, getMembers(members));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
