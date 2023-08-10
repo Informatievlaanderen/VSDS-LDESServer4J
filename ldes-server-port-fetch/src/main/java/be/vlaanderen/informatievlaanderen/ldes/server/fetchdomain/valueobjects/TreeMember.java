@@ -27,4 +27,8 @@ public class TreeMember {
 		statements.addAll(model.listStatements().toList());
 		return statements;
 	}
+
+	public String getMemberId() {
+		return treeMemberIdentifier;
+	}
 }

@@ -45,14 +45,12 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		TreeNode treeNode = new TreeNode(treeNodeInfo, treeMemberList);
 		return new TreeNodeDto(treeNode,
 				treeNodeIdentifier,
-				fragment.getRelations().stream().map(
-						be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation::treeNode)
-						.map(x -> hostName + x.asString()).toList(),
+				treeNode.getTreeNodeIdsInRelations(),
 				memberIds, fragment.isImmutable(), fragment.getFragmentPairs().isEmpty(),
 				collectionName);
 	}
 
-	private static List<TreeMember> getMembers(List<Member> members) {
+	private List<TreeMember> getMembers(List<Member> members) {
 		return members.stream().map(member -> new TreeMember(member.getMemberIdWithoutPrefix(), member.getModel()))
 				.toList();
 	}

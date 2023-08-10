@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
+import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,8 +44,8 @@ public class TreeNodeDto {
 		return isView;
 	}
 
-	public TreeNode getTreeNode() {
-		return treeNode;
+	public Model getModel() {
+		return treeNode.getModel();
 	}
 
 	@Override

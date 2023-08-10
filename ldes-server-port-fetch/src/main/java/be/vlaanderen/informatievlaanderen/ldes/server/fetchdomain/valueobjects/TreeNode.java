@@ -24,4 +24,8 @@ public class TreeNode {
 	public List<String> getTreeNodeIdsInRelations() {
 		return treeNodeInfo.getTreeNodeIdsInRelations();
 	}
+
+	public List<String> getMemberIds() {
+		return treeMemberList.getMemberIds();
+	}
 }

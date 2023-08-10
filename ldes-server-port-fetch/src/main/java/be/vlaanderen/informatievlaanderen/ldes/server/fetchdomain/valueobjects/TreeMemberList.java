@@ -30,4 +30,8 @@ public class TreeMemberList {
 		}
 		return statements;
 	}
+
+	public List<String> getMemberIds() {
+		return treeMembers.stream().map(TreeMember::getMemberId).toList();
+	}
 }

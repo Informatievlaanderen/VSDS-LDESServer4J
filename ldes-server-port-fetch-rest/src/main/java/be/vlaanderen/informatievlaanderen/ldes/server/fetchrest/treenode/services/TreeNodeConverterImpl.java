@@ -56,7 +56,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private List<Statement> addTreeNodeStatements(TreeNodeDto treeNodeDto, String collectionName) {
 		EventStream eventStream = eventStreams.get(collectionName);
 		ShaclShape shaclShape = shaclShapes.get(collectionName);
-		List<Statement> statements = new ArrayList<>(treeNodeDto.getTreeNode().getModel().listStatements().toList());
+		List<Statement> statements = new ArrayList<>(treeNodeDto.getModel().listStatements().toList());
 		addLdesCollectionStatements(statements, treeNodeDto.isView(), treeNodeDto.getFragmentId(), eventStream,
 				shaclShape);
 
