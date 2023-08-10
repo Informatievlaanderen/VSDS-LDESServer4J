@@ -1,0 +1,9 @@
+<http://localhost:8080/people>
+        a                               <https://w3id.org/ldes#EventStream> ;
+        <https://w3id.org/tree#member>  <http://localhost:8080/people/2> , <http://localhost:8080/people/1> .
+
+<http://localhost:8080/people/2>
+        <http://schema.org/name>  "John Doe" .
+
+<http://localhost:8080/people/1>
+        <http://schema.org/name>  "Jane Doe" .
