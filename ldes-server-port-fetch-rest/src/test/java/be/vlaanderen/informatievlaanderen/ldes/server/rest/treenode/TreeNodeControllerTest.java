@@ -102,7 +102,7 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel(), true);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList),

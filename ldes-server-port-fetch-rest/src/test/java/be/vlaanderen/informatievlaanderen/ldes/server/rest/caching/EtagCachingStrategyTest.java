@@ -28,7 +28,7 @@ class EtagCachingStrategyTest {
 
 	private static TreeNodeDto createViewTreeNodeDto(String viewName, List<String> treeNodeIdsInRelations,
 			List<String> memberIds) {
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel(), true);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo("/" + viewName, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList("/", List.of());
 		return new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList), "/" + viewName,

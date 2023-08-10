@@ -44,7 +44,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		List<Member> members = memberRepository
 				.findAllByIds(memberIds);
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(
-				shaclRepository.getShaclByCollection(collectionName).getModel());
+				shaclRepository.getShaclByCollection(collectionName).getModel(), fragment.getFragmentPairs().isEmpty());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, getMembers(members));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);

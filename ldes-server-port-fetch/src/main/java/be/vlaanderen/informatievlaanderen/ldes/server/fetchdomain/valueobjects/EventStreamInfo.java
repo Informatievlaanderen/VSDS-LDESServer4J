@@ -7,12 +7,18 @@ import java.util.List;
 
 public class EventStreamInfo {
 	private final Model shacl;
+	private final boolean isView;
 
-	public EventStreamInfo(Model shacl) {
+	public EventStreamInfo(Model shacl, boolean isView) {
 		this.shacl = shacl;
+		this.isView = isView;
 	}
 
 	public List<Statement> convertToStatements() {
-		return shacl.listStatements().toList();
+		if (isView) {
+			return shacl.listStatements().toList();
+		} else {
+			return List.of();
+		}
 	}
 }

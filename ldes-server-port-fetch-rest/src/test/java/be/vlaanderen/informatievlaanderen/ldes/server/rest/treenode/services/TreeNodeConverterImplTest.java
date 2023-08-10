@@ -2,10 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
@@ -57,7 +55,7 @@ class TreeNodeConverterImplTest {
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(
-				RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel());
+				RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel(), true);
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
 				new TreeNode(eventStreamInfo, new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
 						new TreeMemberList(PREFIX, List.of())),
@@ -77,7 +75,7 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel(), false);
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
 				new TreeNode(eventStreamInfo, new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
 						new TreeMemberList(PREFIX, List.of())),
@@ -97,7 +95,7 @@ class TreeNodeConverterImplTest {
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
 		String treeMemberIdentifier = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel(), false);
 		TreeMember treeMember = new TreeMember(
 				treeMemberIdentifier, ldesMemberModel);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(PREFIX + "/" + VIEW_NAME,
