@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MemberAllocatedMapper {
+	// TODO use MapStruct
 
 	public MemberAllocation toEntity(MemberAllocatedEvent memberAllocatedEvent) {
 		String id = memberAllocatedEvent.memberId() + "/" + memberAllocatedEvent.fragmentId();

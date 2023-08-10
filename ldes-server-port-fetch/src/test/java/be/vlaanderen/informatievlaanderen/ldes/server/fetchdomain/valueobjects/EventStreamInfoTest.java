@@ -45,7 +45,6 @@ class EventStreamInfoTest {
 				dcat.listStatements().toList(), eventStreamProperties);
 
 		Model actualModel = ModelFactory.createDefaultModel().add(eventStreamInfo.convertToStatements());
-		System.out.println(RDFWriter.source(actualModel).lang(Lang.TURTLE).asString());
 		Model expectedModel = readModelFromFile(expectedModelFile);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}

@@ -27,6 +27,7 @@ public class EventStreamCreatedHandlerFetch {
 		eventStreamRepository.saveEventStream(getEventStream(event));
 	}
 
+	// TODO use MapStruct
 	private EventStream getEventStream(EventStreamCreatedEvent event) {
 		return new EventStream(event.eventStream().getCollection(),
 				new EventStreamProperties(hostname + "/" + event.eventStream().getCollection(),

@@ -40,6 +40,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		this.dcatViewService = dcatViewService;
 	}
 
+	// TODO use MapStruct
 	@Override
 	public TreeNodeDto getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
 		String eventStreamIdentifier = hostName + "/" + collectionName;

@@ -28,6 +28,7 @@ public class EventStreamInfo {
 		this.eventStreamProperties = eventStreamProperties;
 	}
 
+	// TODO use polymorphism
 	public List<Statement> convertToStatements() {
 		List<Statement> statements = new ArrayList<>();
 		if (isView) {
