@@ -3,6 +3,7 @@ package fetching.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
@@ -39,6 +40,7 @@ class TreeNodeFactoryImplTest {
 	private AllocationRepository allocationRepository;
 	private MemberRepository memberRepository;
 	private ShaclRepository shaclRepository;
+	private DcatViewService dcatViewService;
 
 	@BeforeEach
 	void setUp() {
@@ -46,8 +48,9 @@ class TreeNodeFactoryImplTest {
 		memberRepository = mock(MemberRepository.class);
 		allocationRepository = mock(AllocationRepository.class);
 		shaclRepository = mock(ShaclRepository.class);
+		dcatViewService = mock(DcatViewService.class);
 		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository,
-				shaclRepository);
+				shaclRepository, dcatViewService);
 	}
 
 	@Test
@@ -74,6 +77,7 @@ class TreeNodeFactoryImplTest {
 		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
 		when(shaclRepository.getShaclByCollection(COLLECTION_NAME))
 				.thenReturn(new Shacl(COLLECTION_NAME, ModelFactory.createDefaultModel()));
+		when(dcatViewService.findByViewName(VIEW_NAME)).thenReturn(Optional.empty());
 
 		TreeNodeDto treeNodeDto = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

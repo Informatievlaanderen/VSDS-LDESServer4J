@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingF
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
@@ -103,7 +102,7 @@ class TreeNodeControllerTest {
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(fragmentId, COLLECTION_NAME,
-				ModelFactory.createDefaultModel(), true);
+				ModelFactory.createDefaultModel(), true, List.of());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList),
@@ -243,7 +242,7 @@ class TreeNodeControllerTest {
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, hostName, mock(DcatViewService.class));
+			return new TreeNodeConverterImpl(prefixAdder, hostName);
 		}
 
 		@Bean

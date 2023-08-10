@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
@@ -11,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,13 +24,15 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final AllocationRepository allocationRepository;
 	private final MemberRepository memberRepository;
 	private final ShaclRepository shaclRepository;
+	private final DcatViewService dcatViewService;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-			MemberRepository memberRepository, ShaclRepository shaclRepository) {
+			MemberRepository memberRepository, ShaclRepository shaclRepository, DcatViewService dcatViewService) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.memberRepository = memberRepository;
 		this.shaclRepository = shaclRepository;
+		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
@@ -43,8 +47,11 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.map(MemberAllocation::getMemberId).toList();
 		List<Member> members = memberRepository
 				.findAllByIds(memberIds);
+		List<Statement> dcatStatments = dcatViewService.findByViewName(treeNodeId.getViewName())
+				.map(dcatView -> dcatView.getStatementsWithBase(hostName)).orElse(List.of());
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
-				shaclRepository.getShaclByCollection(collectionName).getModel(), fragment.getFragmentPairs().isEmpty());
+				shaclRepository.getShaclByCollection(collectionName).getModel(), fragment.getFragmentPairs().isEmpty(),
+				dcatStatments);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, getMembers(members));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);

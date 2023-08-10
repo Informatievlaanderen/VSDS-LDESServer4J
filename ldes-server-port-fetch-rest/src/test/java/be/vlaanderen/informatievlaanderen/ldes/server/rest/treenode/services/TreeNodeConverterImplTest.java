@@ -5,26 +5,20 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -38,7 +32,6 @@ class TreeNodeConverterImplTest {
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
-	private DcatViewService dcatViewService;
 
 	@BeforeEach
 	void setUp() {
@@ -46,19 +39,23 @@ class TreeNodeConverterImplTest {
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
-		dcatViewService = Mockito.mock(DcatViewService.class);
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
 		String eventStreamIdentifier = PREFIX;
 		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
+		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
+		List<Statement> dcatStatements = dcatView.getStatementsWithBase(HOST_NAME);
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(
 				treeNodeIdentifier, eventStreamIdentifier,
-				RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel(), true);
+				shacl, true, dcatStatements);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
 
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
@@ -67,10 +64,6 @@ class TreeNodeConverterImplTest {
 						treeMemberList),
 				treeNodeIdentifier, List.of(), List.of(), false, true,
 				COLLECTION_NAME);
-		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
-		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
-		DcatView dcatView = DcatView.from(viewName, dcat);
-		Mockito.when(dcatViewService.findByViewName(viewName)).thenReturn(Optional.of(dcatView));
 
 		Model model = treeNodeConverter.toModel(treeNodeDto);
 
@@ -84,7 +77,7 @@ class TreeNodeConverterImplTest {
 		String eventStreamIdentifier = PREFIX;
 		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
-				ModelFactory.createDefaultModel(), false);
+				ModelFactory.createDefaultModel(), false, List.of());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
@@ -109,7 +102,7 @@ class TreeNodeConverterImplTest {
 		String eventStreamIdentifier = PREFIX;
 		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
-				ModelFactory.createDefaultModel(), false);
+				ModelFactory.createDefaultModel(), false, List.of());
 		TreeMember treeMember = new TreeMember(
 				treeMemberIdentifier, ldesMemberModel);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier,

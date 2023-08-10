@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -29,13 +27,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private String hostName;
 
 	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
-	private final DcatViewService dcatViewService;
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
-			DcatViewService dcatViewService) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;
-		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
@@ -65,15 +60,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					null,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
 		}
-	}
-
-	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
-		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
-		dcatViewService.findByViewName(viewName)
-				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
-
 	}
 
 	@EventListener
