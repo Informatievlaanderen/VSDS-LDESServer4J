@@ -3,10 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.EtagCachingStrategy;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,9 +28,10 @@ class EtagCachingStrategyTest {
 
 	private static TreeNodeDto createViewTreeNodeDto(String viewName, List<String> treeNodeIdsInRelations,
 			List<String> memberIds) {
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo("/" + viewName, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList("/", List.of());
-		return new TreeNodeDto(new TreeNode(treeNodeInfo, treeMemberList), "/" + viewName,
+		return new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList), "/" + viewName,
 				treeNodeIdsInRelations, memberIds, false,
 				true, "collectionName");
 	}

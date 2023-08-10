@@ -6,13 +6,16 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.Shacl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFactoryImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,13 +38,16 @@ class TreeNodeFactoryImplTest {
 	private FragmentRepository fragmentRepository;
 	private AllocationRepository allocationRepository;
 	private MemberRepository memberRepository;
+	private ShaclRepository shaclRepository;
 
 	@BeforeEach
 	void setUp() {
 		fragmentRepository = mock(FragmentRepository.class);
 		memberRepository = mock(MemberRepository.class);
 		allocationRepository = mock(AllocationRepository.class);
-		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository);
+		shaclRepository = mock(ShaclRepository.class);
+		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository,
+				shaclRepository);
 	}
 
 	@Test
@@ -66,6 +72,8 @@ class TreeNodeFactoryImplTest {
 		when(allocationRepository.getMemberAllocationsByFragmentId(TREE_NODE_ID.asString()))
 				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
 		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
+		when(shaclRepository.getShaclByCollection(COLLECTION_NAME))
+				.thenReturn(new Shacl(COLLECTION_NAME, ModelFactory.createDefaultModel()));
 
 		TreeNodeDto treeNodeDto = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

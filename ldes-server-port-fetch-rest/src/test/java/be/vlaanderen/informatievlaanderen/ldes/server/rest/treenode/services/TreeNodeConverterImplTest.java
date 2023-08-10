@@ -14,6 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
@@ -43,8 +44,6 @@ class TreeNodeConverterImplTest {
 
 	@BeforeEach
 	void setUp() {
-		Model shacl = RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel();
-
 		EventStream eventStream = new EventStream(COLLECTION_NAME,
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
@@ -53,14 +52,14 @@ class TreeNodeConverterImplTest {
 		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
-		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleShaclInitEvent(new ShaclChangedEvent(new ShaclShape(COLLECTION_NAME, shacl)));
 	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(
+				RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
-				new TreeNode(new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
+				new TreeNode(eventStreamInfo, new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
 						new TreeMemberList(PREFIX, List.of())),
 				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, true,
 				COLLECTION_NAME);
@@ -78,8 +77,9 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
-				new TreeNode(new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
+				new TreeNode(eventStreamInfo, new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
 						new TreeMemberList(PREFIX, List.of())),
 				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, false,
 				COLLECTION_NAME);
@@ -97,13 +97,14 @@ class TreeNodeConverterImplTest {
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
 		String treeMemberIdentifier = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
 		TreeMember treeMember = new TreeMember(
 				treeMemberIdentifier, ldesMemberModel);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(PREFIX + "/" + VIEW_NAME,
 				List.of(new TreeRelation("path", "http://localhost:8080/mobility-hindrances/node", "value",
 						"http://www.w3.org/2001/XMLSchema#dateTime", "relation")));
 		TreeMemberList treeMemberList = new TreeMemberList(PREFIX, List.of(treeMember));
-		TreeNode treeNode = new TreeNode(treeNodeInfo, treeMemberList);
+		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
 		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, PREFIX + "/" + VIEW_NAME, List.of(),
 				List.of(treeMemberIdentifier), false, false,
 				COLLECTION_NAME);

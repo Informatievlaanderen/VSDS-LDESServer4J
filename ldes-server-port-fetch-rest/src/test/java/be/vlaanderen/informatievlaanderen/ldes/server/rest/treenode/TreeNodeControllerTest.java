@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatVi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
@@ -101,9 +102,11 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
-		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(treeNodeInfo, treeMemberList), fragmentId,
+		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList),
+				fragmentId,
 				List.of(), List.of(), immutable, false,
 				COLLECTION_NAME);
 

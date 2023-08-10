@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -20,12 +21,14 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final FragmentRepository fragmentRepository;
 	private final AllocationRepository allocationRepository;
 	private final MemberRepository memberRepository;
+	private final ShaclRepository shaclRepository;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-			MemberRepository memberRepository) {
+			MemberRepository memberRepository, ShaclRepository shaclRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.memberRepository = memberRepository;
+		this.shaclRepository = shaclRepository;
 	}
 
 	@Override
@@ -40,13 +43,15 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.map(MemberAllocation::getMemberId).toList();
 		List<Member> members = memberRepository
 				.findAllByIds(memberIds);
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(
+				shaclRepository.getShaclByCollection(collectionName).getModel());
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, getMembers(members));
-		TreeNode treeNode = new TreeNode(treeNodeInfo, treeMemberList);
+		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
 		return new TreeNodeDto(treeNode,
 				treeNodeIdentifier,
 				treeNode.getTreeNodeIdsInRelations(),
-				memberIds, fragment.isImmutable(), fragment.getFragmentPairs().isEmpty(),
+				treeNode.getMemberIds(), fragment.isImmutable(), fragment.getFragmentPairs().isEmpty(),
 				collectionName);
 	}
 
