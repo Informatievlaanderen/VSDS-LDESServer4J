@@ -54,12 +54,12 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.findAllByIds(memberIds);
 		List<Statement> dcatStatments = dcatViewService.findByViewName(treeNodeId.getViewName())
 				.map(dcatView -> dcatView.getStatementsWithBase(hostName)).orElse(List.of());
-		List<Statement> statements = eventStreamRepository.getEventStreamByCollection(collectionName)
-				.convertToStatements(treeNodeIdentifier);
+		EventStreamProperties eventStreamProperties = eventStreamRepository.getEventStreamByCollection(collectionName)
+				.getEventStreamProperties();
 		Model model = shaclRepository.getShaclByCollection(collectionName).getModel();
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
 				model, fragment.getFragmentPairs().isEmpty(),
-				dcatStatments, statements);
+				dcatStatments, eventStreamProperties);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, getMembers(members));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);

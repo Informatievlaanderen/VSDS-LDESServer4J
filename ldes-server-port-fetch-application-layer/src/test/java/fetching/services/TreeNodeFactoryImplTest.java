@@ -14,6 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.Shacl
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -83,7 +84,7 @@ class TreeNodeFactoryImplTest {
 				.thenReturn(new Shacl(COLLECTION_NAME, ModelFactory.createDefaultModel()));
 		when(dcatViewService.findByViewName(VIEW_NAME)).thenReturn(Optional.empty());
 		when(eventStreamRepository.getEventStreamByCollection(COLLECTION_NAME))
-				.thenReturn(new EventStream("", "", "", ""));
+				.thenReturn(new EventStream("", new EventStreamProperties("", "", "")));
 
 		TreeNodeDto treeNodeDto = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

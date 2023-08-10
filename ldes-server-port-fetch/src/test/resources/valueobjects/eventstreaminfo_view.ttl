@@ -1,0 +1,8 @@
+<http://localhost:8080/mobility-hindrances>
+        a                              <https://w3id.org/ldes#EventStream> , <http://www.w3.org/ns/dcat#DataService> ;
+        <https://w3id.org/ldes#timestampPath>
+                <http://www.w3.org/ns/prov#generatedAtTime> ;
+        <https://w3id.org/ldes#versionOfPath>
+                <http://purl.org/dc/terms/isVersionOf> ;
+        <https://w3id.org/tree#shape>  <http://localhost:8080/mobility-hindrances/shape> ;
+        <https://w3id.org/tree#view>   <http://localhost:8080/mobility-hindrances/node> .

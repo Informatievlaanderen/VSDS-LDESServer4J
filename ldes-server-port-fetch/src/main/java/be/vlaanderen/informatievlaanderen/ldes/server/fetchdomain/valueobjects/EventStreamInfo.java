@@ -16,16 +16,16 @@ public class EventStreamInfo {
 	private final String treeNodeIdentifier;
 	private final String eventStreamIdentifier;
 	private final List<Statement> dcatStatements;
-	private final List<Statement> eventStreamStatements;
+	private final EventStreamProperties eventStreamProperties;
 
 	public EventStreamInfo(String treeNodeIdentifier, String eventStreamIdentifier, Model shacl, boolean isView,
-			List<Statement> dcatStatements, List<Statement> eventStreamStatements) {
+			List<Statement> dcatStatements, EventStreamProperties eventStreamProperties) {
 		this.treeNodeIdentifier = treeNodeIdentifier;
 		this.eventStreamIdentifier = eventStreamIdentifier;
 		this.shacl = shacl;
 		this.isView = isView;
 		this.dcatStatements = dcatStatements;
-		this.eventStreamStatements = eventStreamStatements;
+		this.eventStreamProperties = eventStreamProperties;
 	}
 
 	public List<Statement> convertToStatements() {
@@ -33,7 +33,7 @@ public class EventStreamInfo {
 		if (isView) {
 			statements.addAll(shacl.listStatements().toList());
 			statements.addAll(dcatStatements);
-			statements.addAll(eventStreamStatements);
+			statements.addAll(eventStreamProperties.convertToStatements(treeNodeIdentifier));
 		} else {
 			statements.add(createStatement(createResource(treeNodeIdentifier), IS_PART_OF_PROPERTY,
 					createResource(eventStreamIdentifier)));

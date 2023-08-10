@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.eventhan
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.EventStreamRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -27,8 +28,9 @@ public class EventStreamCreatedHandlerFetch {
 	}
 
 	private EventStream getEventStream(EventStreamCreatedEvent event) {
-		return new EventStream(hostname + "/" + event.eventStream().getCollection(),
-				event.eventStream().getCollection(), event.eventStream().getTimestampPath(),
-				event.eventStream().getVersionOfPath());
+		return new EventStream(event.eventStream().getCollection(),
+				new EventStreamProperties(hostname + "/" + event.eventStream().getCollection(),
+						event.eventStream().getTimestampPath(),
+						event.eventStream().getVersionOfPath()));
 	}
 }
