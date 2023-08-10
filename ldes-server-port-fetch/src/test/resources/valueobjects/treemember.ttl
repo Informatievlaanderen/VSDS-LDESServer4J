@@ -1,0 +1,5 @@
+<http://localhost:8080/people>
+        <https://w3id.org/tree#member>  <http://localhost:8080/people/1> .
+
+<http://localhost:8080/people/1>
+        <http://schema.org/name>  "Jane Doe" .

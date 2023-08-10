@@ -5,7 +5,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.constants.RdfConstants.TREE_MEMBER;
@@ -21,7 +20,7 @@ public class TreeMember {
 		this.model = model;
 	}
 
-	public Collection<Statement> convertToStatements(Resource eventStreamResource) {
+	public List<Statement> convertToStatements(Resource eventStreamResource) {
 		List<Statement> statements = new ArrayList<>();
 		statements.add(createStatement(eventStreamResource, TREE_MEMBER, createResource(treeMemberIdentifier)));
 		statements.addAll(model.listStatements().toList());
