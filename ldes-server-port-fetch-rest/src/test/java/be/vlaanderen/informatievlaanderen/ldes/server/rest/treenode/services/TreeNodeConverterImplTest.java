@@ -45,7 +45,7 @@ class TreeNodeConverterImplTest {
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
 				new TreeNode(eventStreamInfo, treeNodeInfo,
-						treeMemberList),
+						treeMemberList).getModel(),
 				treeNodeIdentifier, List.of(), List.of(), false);
 
 		Model model = treeNodeDto.getModel();
@@ -65,7 +65,7 @@ class TreeNodeConverterImplTest {
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
 				new TreeNode(eventStreamInfo, treeNodeInfo,
-						treeMemberList),
+						treeMemberList).getModel(),
 				treeNodeIdentifier, List.of(), List.of(), false);
 		Model model = treeNodeDto.getModel();
 
@@ -92,7 +92,7 @@ class TreeNodeConverterImplTest {
 						"http://www.w3.org/2001/XMLSchema#dateTime", "relation")));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of(treeMember));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
-		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, treeNodeIdentifier, List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode.getModel(), treeNodeIdentifier, List.of(),
 				List.of(treeMemberIdentifier), false);
 
 		Model model = treeNodeDto.getModel();

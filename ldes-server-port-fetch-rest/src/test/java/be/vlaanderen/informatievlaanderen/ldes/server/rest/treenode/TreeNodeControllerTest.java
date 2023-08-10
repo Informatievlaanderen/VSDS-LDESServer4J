@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
@@ -9,10 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamInfo;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNodeInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.config.RestConfig;
@@ -20,7 +14,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.exceptionhandlin
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.TreeNodeController;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.config.TreeViewWebConfig;
 import org.apache.http.HttpHeaders;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +30,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -51,10 +44,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,8 +69,6 @@ class TreeNodeControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
-	@Autowired
-	private ApplicationEventPublisher eventPublisher;
 
 	@BeforeEach
 	void setUp() {
@@ -89,22 +79,16 @@ class TreeNodeControllerTest {
 	@ArgumentsSource(MediaTypeRdfFormatsArgumentsProvider.class)
 	void when_GETRequestIsPerformed_ResponseContainsAnLDesFragment(String mediaType, Lang lang, boolean immutable,
 			String expectedHeaderValue, String expectedEtag) throws Exception {
-		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, null);
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
-
+		Model model = RDFParserBuilder.create().fromString("""
+				<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#member>
+				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
+				.""").lang(Lang.NQUADS).toModel();
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(ViewName.fromString(fullViewName),
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(fragmentId, COLLECTION_NAME,
-				ModelFactory.createDefaultModel(), true, List.of(), List.of());
-		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(fragmentId, List.of());
-		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
-		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList),
-				fragmentId,
-				List.of(), List.of(), immutable);
-
+		TreeNodeDto treeNodeDto = new TreeNodeDto(model, fragmentId, List.of(), List.of(), immutable);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 
 		ResultActions resultActions = mockMvc
@@ -136,20 +120,8 @@ class TreeNodeControllerTest {
 
 		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
 				.toModel();
-		assertEquals(TREE_NODE_RESOURCE, getObjectURI(resultModel,
-				RDF_SYNTAX_TYPE));
+		assertTrue(model.isIsomorphicWith(resultModel));
 		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
-	}
-
-	private String getObjectURI(Model model, Property property) {
-		return model
-				.listStatements(null, property, (Resource) null)
-				.nextOptional()
-				.map(Statement::getObject)
-				.map(RDFNode::asResource)
-				.map(Resource::getURI)
-				.map(Objects::toString)
-				.orElse(null);
 	}
 
 	private Integer extractMaxAge(MvcResult result) {

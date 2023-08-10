@@ -13,6 +13,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Component;
 
@@ -55,13 +56,14 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.map(dcatView -> dcatView.getStatementsWithBase(hostName)).orElse(List.of());
 		List<Statement> statements = eventStreamRepository.getEventStreamByCollection(collectionName)
 				.convertToStatements(treeNodeIdentifier);
+		Model model = shaclRepository.getShaclByCollection(collectionName).getModel();
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
-				shaclRepository.getShaclByCollection(collectionName).getModel(), fragment.getFragmentPairs().isEmpty(),
+				model, fragment.getFragmentPairs().isEmpty(),
 				dcatStatments, statements);
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, getRelations(fragment, hostName));
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, getMembers(members));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
-		return new TreeNodeDto(treeNode,
+		return new TreeNodeDto(treeNode.getModel(),
 				treeNodeIdentifier,
 				treeNode.getTreeNodeIdsInRelations(),
 				treeNode.getMemberIds(), fragment.isImmutable());
