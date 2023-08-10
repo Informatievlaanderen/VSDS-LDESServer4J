@@ -25,11 +25,8 @@ class PrefixAdderImplTest {
 		Model updatedModel = prefixAdder.addPrefixesToModel(model);
 		Map<String, String> nsPrefixMap = updatedModel.getNsPrefixMap();
 
-		// verify that there is no prefix for a namespace if ONE or MORE of its
-		// localNames is invalid.
-		assertFalse(nsPrefixMap.containsKey("mobiliteit"));
-
-		assertTrue(nsPrefixMap.containsKey("statuses"));
+		assertTrue(nsPrefixMap.containsKey("v1"));
+		assertTrue(nsPrefixMap.containsKey("id"));
 		assertTrue(nsPrefixMap.containsKey("rdf"));
 	}
 
