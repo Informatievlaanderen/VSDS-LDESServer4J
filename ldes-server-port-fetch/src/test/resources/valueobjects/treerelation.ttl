@@ -1,0 +1,7 @@
+<http://localhost:8080/mobility-hindrances/node>
+        <https://w3id.org/tree#relation>
+                [ a                              <https://w3id.org/tree#Relation> ;
+                  <https://w3id.org/tree#node>   <http://localhost:8080/mobility-hindrances/otherNode> ;
+                  <https://w3id.org/tree#path>   <http://www.w3.org/ns/prov#generatedAtTime> ;
+                  <https://w3id.org/tree#value>  "value"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+                ] .
