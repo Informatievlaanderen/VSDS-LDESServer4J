@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
