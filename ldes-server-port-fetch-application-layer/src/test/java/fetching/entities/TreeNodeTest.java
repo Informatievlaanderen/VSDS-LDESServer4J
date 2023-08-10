@@ -1,6 +1,6 @@
 package fetching.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -18,8 +18,8 @@ class TreeNodeTest {
 
 	@Test
 	void test_EqualityOfTreeNodes() {
-		var treeNode = new TreeNodeDto(null, ID, List.of(), List.of(), false, true, "collectionName");
-		var treeNode2 = new TreeNodeDto(null, ID, List.of(), List.of(), true, true, "collectionName");
+		var treeNode = new TreeNodeDto(null, ID, List.of(), List.of(), false);
+		var treeNode2 = new TreeNodeDto(null, ID, List.of(), List.of(), true);
 
 		Assertions.assertEquals(treeNode, treeNode2);
 		Assertions.assertEquals(treeNode, treeNode);
@@ -29,7 +29,7 @@ class TreeNodeTest {
 	@ParameterizedTest
 	@ArgumentsSource(TreeNodeArgumentProvider.class)
 	void test_InequalityOfTreeNodes(Object otherTreeNode) {
-		var treeNode = new TreeNodeDto(null, ID, List.of(), List.of(), false, false, "collectionName");
+		var treeNode = new TreeNodeDto(null, ID, List.of(), List.of(), false);
 
 		Assertions.assertNotEquals(treeNode, otherTreeNode);
 
@@ -41,11 +41,9 @@ class TreeNodeTest {
 			return Stream.of(
 					Arguments.of((Object) null),
 					Arguments.of(new BigDecimal(0)),
-					Arguments.of(new TreeNodeDto(null, "Other id", List.of(), List.of(), true, false,
-							"collectionName")),
+					Arguments.of(new TreeNodeDto(null, "Other id", List.of(), List.of(), true)),
 					Arguments.of(
-							new TreeNodeDto(null, "Another id", List.of(), List.of(), false, false,
-									"collectionName")));
+							new TreeNodeDto(null, "Another id", List.of(), List.of(), false)));
 		}
 	}
 }

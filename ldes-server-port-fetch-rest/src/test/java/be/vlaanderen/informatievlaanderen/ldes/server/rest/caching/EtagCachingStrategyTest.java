@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeNode;
@@ -35,8 +35,7 @@ class EtagCachingStrategyTest {
 		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		return new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList), treeNodeIdentifier,
-				treeNodeIdsInRelations, memberIds, false,
-				true, "collectionName");
+				treeNodeIdsInRelations, memberIds, false);
 	}
 
 	private static String createTreeRelation(LdesFragmentIdentifier node) {

@@ -1,11 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.services.PrefixAdder;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.services.PrefixAdderImpl;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 
 import java.util.List;
 
 public class TreeNode {
+	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private final EventStreamInfo eventStreamInfo;
 	private final TreeNodeInfo treeNodeInfo;
 	private final TreeMemberList treeMemberList;
@@ -21,7 +24,7 @@ public class TreeNode {
 		model.add(eventStreamInfo.convertToStatements());
 		model.add(treeNodeInfo.convertToStatements());
 		model.add(treeMemberList.convertToStatements());
-		return model;
+		return prefixAdder.addPrefixesToModel(model);
 	}
 
 	public List<String> getTreeNodeIdsInRelations() {

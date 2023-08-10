@@ -1,8 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpInputMessage;
@@ -22,12 +21,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNodeDto> {
 
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-
-	private final TreeNodeConverter treeNodeConverter;
-
-	public TreeNodeHttpConverter(TreeNodeConverter treeNodeConverter) {
-		this.treeNodeConverter = treeNodeConverter;
-	}
 
 	@Override
 	public boolean canRead(Class<?> clazz, MediaType mediaType) {
@@ -55,7 +48,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNodeDto> 
 			throws IOException, HttpMessageNotWritableException {
 		OutputStream body = outputMessage.getBody();
 		Lang rdfFormat = getLang(contentType, FETCH);
-		Model fragmentModel = treeNodeConverter.toModel(treeNodeDto);
+		Model fragmentModel = treeNodeDto.getModel();
 		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
 		body.write(outputString.getBytes());
 	}

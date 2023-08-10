@@ -1,20 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,19 +24,6 @@ class TreeNodeConverterImplTest {
 	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME;
 	private static final String VIEW_NAME = "view";
-	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
-	private TreeNodeConverter treeNodeConverter;
-
-	@BeforeEach
-	void setUp() {
-		// EventStream eventStream = new EventStream(COLLECTION_NAME,
-		// "http://www.w3.org/ns/prov#generatedAtTime",
-		// "http://purl.org/dc/terms/isVersionOf", "memberType");
-
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder);
-		// ((TreeNodeConverterImpl) treeNodeConverter)
-		// .handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
-	}
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
@@ -64,10 +46,9 @@ class TreeNodeConverterImplTest {
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
 				new TreeNode(eventStreamInfo, treeNodeInfo,
 						treeMemberList),
-				treeNodeIdentifier, List.of(), List.of(), false, true,
-				COLLECTION_NAME);
+				treeNodeIdentifier, List.of(), List.of(), false);
 
-		Model model = treeNodeConverter.toModel(treeNodeDto);
+		Model model = treeNodeDto.getModel();
 
 		Assertions.assertEquals(20, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
@@ -85,9 +66,8 @@ class TreeNodeConverterImplTest {
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
 				new TreeNode(eventStreamInfo, treeNodeInfo,
 						treeMemberList),
-				treeNodeIdentifier, List.of(), List.of(), false, false,
-				COLLECTION_NAME);
-		Model model = treeNodeConverter.toModel(treeNodeDto);
+				treeNodeIdentifier, List.of(), List.of(), false);
+		Model model = treeNodeDto.getModel();
 
 		Assertions.assertEquals(2, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
@@ -113,10 +93,9 @@ class TreeNodeConverterImplTest {
 		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of(treeMember));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
 		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, treeNodeIdentifier, List.of(),
-				List.of(treeMemberIdentifier), false, false,
-				COLLECTION_NAME);
+				List.of(treeMemberIdentifier), false);
 
-		Model model = treeNodeConverter.toModel(treeNodeDto);
+		Model model = treeNodeDto.getModel();
 
 		Assertions.assertEquals(9, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);

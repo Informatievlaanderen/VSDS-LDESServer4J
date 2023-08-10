@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreenodeUrlDecoder;

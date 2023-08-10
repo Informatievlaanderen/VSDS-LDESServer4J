@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingF
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.entities.MemberAllocation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.repository.ShaclRepository;
@@ -64,8 +64,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		return new TreeNodeDto(treeNode,
 				treeNodeIdentifier,
 				treeNode.getTreeNodeIdsInRelations(),
-				treeNode.getMemberIds(), fragment.isImmutable(), fragment.getFragmentPairs().isEmpty(),
-				collectionName);
+				treeNode.getMemberIds(), fragment.isImmutable());
 	}
 
 	private List<TreeMember> getMembers(List<Member> members) {

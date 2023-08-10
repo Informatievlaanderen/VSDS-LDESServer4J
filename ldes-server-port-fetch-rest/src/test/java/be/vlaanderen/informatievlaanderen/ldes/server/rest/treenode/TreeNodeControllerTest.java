@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
@@ -9,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.valueobjects.TreeNodeDto;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.EventStreamInfo;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects.TreeMemberList;
@@ -21,8 +19,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.config.RestConfi
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.TreeNodeController;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.config.TreeViewWebConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetchrest.treenode.services.TreeNodeConverterImpl;
 import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
@@ -107,8 +103,7 @@ class TreeNodeControllerTest {
 		TreeMemberList treeMemberList = new TreeMemberList(COLLECTION_NAME, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList),
 				fragmentId,
-				List.of(), List.of(), immutable, false,
-				COLLECTION_NAME);
+				List.of(), List.of(), immutable);
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 
@@ -177,8 +172,7 @@ class TreeNodeControllerTest {
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
 				.asString();
-		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragmentId, List.of(), List.of(), false, false,
-				COLLECTION_NAME);
+		TreeNodeDto treeNodeDto = new TreeNodeDto(null, fragmentId, List.of(), List.of(), false);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNodeDto);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
 				.accept("application/json"))
@@ -238,12 +232,6 @@ class TreeNodeControllerTest {
 
 	@TestConfiguration
 	public static class TreeNodeControllerTestConfiguration {
-
-		@Bean
-		public TreeNodeConverter ldesFragmentConverter() {
-			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder);
-		}
 
 		@Bean
 		public CachingStrategy cachingStrategy(@Value(HOST_NAME_KEY) String hostName) {
