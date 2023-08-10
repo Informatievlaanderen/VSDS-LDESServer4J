@@ -10,7 +10,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.entities.TreeNodeDto;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
@@ -21,10 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.IS_PART_OF_PROPERTY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
@@ -60,7 +56,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
 			EventStream eventStream) {
 		String baseUrl = hostName + "/" + eventStream.getCollection();
-		Resource collection = createResource(baseUrl);
 
 		if (isView) {
 			EventStreamInfoResponse eventStreamInfoResponse = new EventStreamInfoResponse(
@@ -71,8 +66,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
-		} else {
-			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
 	}
 

@@ -54,12 +54,18 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
+		String eventStreamIdentifier = PREFIX;
+		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(
+				treeNodeIdentifier, eventStreamIdentifier,
 				RDFParser.source("eventstream/streams/example-shape.ttl").lang(Lang.TURTLE).build().toModel(), true);
+		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
+
+		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
-				new TreeNode(eventStreamInfo, new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
-						new TreeMemberList(PREFIX, List.of())),
-				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, true,
+				new TreeNode(eventStreamInfo, treeNodeInfo,
+						treeMemberList),
+				treeNodeIdentifier, List.of(), List.of(), false, true,
 				COLLECTION_NAME);
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
@@ -75,11 +81,16 @@ class TreeNodeConverterImplTest {
 
 	@Test
 	void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel(), false);
+		String eventStreamIdentifier = PREFIX;
+		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
+				ModelFactory.createDefaultModel(), false);
+		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier, List.of());
+		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of());
 		TreeNodeDto treeNodeDto = new TreeNodeDto(
-				new TreeNode(eventStreamInfo, new TreeNodeInfo(PREFIX + "/" + VIEW_NAME, List.of()),
-						new TreeMemberList(PREFIX, List.of())),
-				PREFIX + "/" + VIEW_NAME, List.of(), List.of(), false, false,
+				new TreeNode(eventStreamInfo, treeNodeInfo,
+						treeMemberList),
+				treeNodeIdentifier, List.of(), List.of(), false, false,
 				COLLECTION_NAME);
 		Model model = treeNodeConverter.toModel(treeNodeDto);
 
@@ -95,15 +106,18 @@ class TreeNodeConverterImplTest {
 				<https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
 				.""").lang(Lang.NQUADS).toModel();
 		String treeMemberIdentifier = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165";
-		EventStreamInfo eventStreamInfo = new EventStreamInfo(ModelFactory.createDefaultModel(), false);
+		String eventStreamIdentifier = PREFIX;
+		String treeNodeIdentifier = PREFIX + "/" + VIEW_NAME;
+		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier,
+				ModelFactory.createDefaultModel(), false);
 		TreeMember treeMember = new TreeMember(
 				treeMemberIdentifier, ldesMemberModel);
-		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(PREFIX + "/" + VIEW_NAME,
+		TreeNodeInfo treeNodeInfo = new TreeNodeInfo(treeNodeIdentifier,
 				List.of(new TreeRelation("path", "http://localhost:8080/mobility-hindrances/node", "value",
 						"http://www.w3.org/2001/XMLSchema#dateTime", "relation")));
-		TreeMemberList treeMemberList = new TreeMemberList(PREFIX, List.of(treeMember));
+		TreeMemberList treeMemberList = new TreeMemberList(eventStreamIdentifier, List.of(treeMember));
 		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
-		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, PREFIX + "/" + VIEW_NAME, List.of(),
+		TreeNodeDto treeNodeDto = new TreeNodeDto(treeNode, treeNodeIdentifier, List.of(),
 				List.of(treeMemberIdentifier), false, false,
 				COLLECTION_NAME);
 

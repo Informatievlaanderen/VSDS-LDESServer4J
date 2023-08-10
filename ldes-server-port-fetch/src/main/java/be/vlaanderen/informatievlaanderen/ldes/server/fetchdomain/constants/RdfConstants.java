@@ -19,5 +19,6 @@ public class RdfConstants {
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
 	public static final String TREE_NODE_RESOURCE = TREE + "Node";
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
+	public static final Property IS_PART_OF_PROPERTY = createProperty("http://purl.org/dc/terms/isPartOf");
 
 }
