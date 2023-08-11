@@ -15,7 +15,7 @@ public class ViewDeletedHandlerFetch {
 	}
 
 	@EventListener
-	public void handleEventStreamDeletedEvent(ViewDeletedEvent event) {
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		allocationRepository.deleteByCollectionNameAndViewName(event.getViewName().getCollectionName(),
 				event.getViewName().getViewName());
 	}
