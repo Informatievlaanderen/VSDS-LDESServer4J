@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 
 @Component
-public class EventSteamRepositoryImpl implements EventStreamRepository {
+public class EventStreamRepositoryImpl implements EventStreamRepository {
 	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 
 	@Override
