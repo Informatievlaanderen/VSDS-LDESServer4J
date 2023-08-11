@@ -31,14 +31,14 @@ class TreeNodeInfoTest {
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
 
-	private static TreeRelation getTreeRelationTwo() {
+	private TreeRelation getTreeRelationTwo() {
 		String treeNodeIdentifierOfSecondRelation = HOST_NAME + "/" + COLLECTION_NAME + "/secondNode";
 		return new TreeRelation("http://www.w3.org/ns/prov#generatedAtTime",
 				treeNodeIdentifierOfSecondRelation, "value",
 				"http://www.w3.org/2001/XMLSchema#dateTime", "https://w3id.org/tree#Relation");
 	}
 
-	private static TreeRelation getTreeRelationOne() {
+	private TreeRelation getTreeRelationOne() {
 		String treeNodeIdentifierOfFirstRelation = HOST_NAME + "/" + COLLECTION_NAME + "/firstNode";
 		return new TreeRelation("http://www.w3.org/ns/prov#generatedAtTime",
 				treeNodeIdentifierOfFirstRelation, "value",

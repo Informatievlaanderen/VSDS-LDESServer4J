@@ -1,0 +1,30 @@
+@prefix ldes:                <https://w3id.org/ldes#> .
+@prefix mobility-hindrances: <http://localhost:8080/mobility-hindrances/> .
+@prefix prov:                <http://www.w3.org/ns/prov#> .
+@prefix rdf:                 <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix terms:               <http://purl.org/dc/terms/> .
+@prefix tree:                <https://w3id.org/tree#> .
+
+mobility-hindrances:2
+        <http://schema.org/name>  "Hindrance2" .
+
+mobility-hindrances:node
+        rdf:type        tree:Node ;
+        terms:isPartOf  <http://localhost:8080/mobility-hindrances> ;
+        tree:relation   [ rdf:type    tree:Relation ;
+                          tree:node   mobility-hindrances:secondNode ;
+                          tree:path   prov:generatedAtTime ;
+                          tree:value  "value"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+                        ] ;
+        tree:relation   [ rdf:type    tree:Relation ;
+                          tree:node   mobility-hindrances:firstNode ;
+                          tree:path   prov:generatedAtTime ;
+                          tree:value  "value"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+                        ] .
+
+mobility-hindrances:1
+        <http://schema.org/name>  "Hindrance1" .
+
+<http://localhost:8080/mobility-hindrances>
+        rdf:type     ldes:EventStream ;
+        tree:member  mobility-hindrances:2 , mobility-hindrances:1 .

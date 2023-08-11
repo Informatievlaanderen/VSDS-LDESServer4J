@@ -28,13 +28,13 @@ class TreeMemberListTest {
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
 
-	private static TreeMember getTreeMemberTwo() {
+	private TreeMember getTreeMemberTwo() {
 		Model modelTwo = RDFParserBuilder.create().fromString("""
 				<http://localhost:8080/people/2> <http://schema.org/name> "John Doe".""").lang(Lang.NQUADS).toModel();
 		return new TreeMember("http://localhost:8080/people/2", modelTwo);
 	}
 
-	private static TreeMember getTreeMemberOne() {
+	private TreeMember getTreeMemberOne() {
 		Model modelOne = RDFParserBuilder.create().fromString("""
 				<http://localhost:8080/people/1> <http://schema.org/name> "Jane Doe".""").lang(Lang.NQUADS).toModel();
 		return new TreeMember("http://localhost:8080/people/1", modelOne);
