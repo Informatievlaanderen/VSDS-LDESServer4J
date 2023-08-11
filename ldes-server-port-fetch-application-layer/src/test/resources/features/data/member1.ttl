@@ -1,0 +1,2 @@
+<http://localhost:8080/mobility-hindrances/1/1>
+        <http://schema.org/name>  "MobilityHindrance1" .

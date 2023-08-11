@@ -1,4 +1,4 @@
-package fetching.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetchapplication.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;

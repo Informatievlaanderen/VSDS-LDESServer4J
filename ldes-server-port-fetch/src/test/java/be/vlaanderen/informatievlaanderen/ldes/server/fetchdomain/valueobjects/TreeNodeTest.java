@@ -1,11 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetchdomain.valueobjects;
 
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
-import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
