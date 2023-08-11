@@ -42,4 +42,9 @@ public class FragmentSequenceRepositorySteps extends MongoFragmentationIntegrati
 	public void iDoNotFindAFragmentSequence() {
 		assertTrue(retrieveFragmentSequence.isEmpty());
 	}
+
+	@When("I delete the sequence for collection {string}")
+	public void iDeleteTheSequenceForCollection(String collectionName) {
+		fragmentSequenceRepository.deleteByCollection(collectionName);
+	}
 }

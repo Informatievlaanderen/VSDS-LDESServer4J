@@ -122,6 +122,18 @@ class FragmentationStrategyExecutorTest {
 	}
 
 	@Test
+	void shutDown() throws InterruptedException {
+		final ViewName viewName = ViewName.fromString("col/viewA");
+		final FragmentationStrategyExecutor executor = new FragmentationStrategyExecutor(viewName, null, null, null,
+				executorService, eventSourceService, fragmentSequenceRepository);
+
+		executor.shutdown();
+
+		verify(executorService).shutdown();
+		verify(executorService).awaitTermination(anyLong(), any());
+	}
+
+	@Test
 	void getViewName() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA, null, null, null,

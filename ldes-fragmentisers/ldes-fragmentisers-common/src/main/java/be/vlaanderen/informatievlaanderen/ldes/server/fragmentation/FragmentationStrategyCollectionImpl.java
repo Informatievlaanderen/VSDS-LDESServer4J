@@ -8,12 +8,16 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @Component
 public class FragmentationStrategyCollectionImpl implements FragmentationStrategyCollection {
@@ -21,12 +25,15 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	private final FragmentRepository fragmentRepository;
 	private final Set<FragmentationStrategyExecutor> fragmentationStrategySet;
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator;
+	private final FragmentSequenceRepository fragmentSequenceRepository;
 
 	public FragmentationStrategyCollectionImpl(
 			FragmentRepository fragmentRepository,
-			FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator) {
+			FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator,
+			FragmentSequenceRepository fragmentSequenceRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationStrategyExecutorCreator = fragmentationStrategyExecutorCreator;
+		this.fragmentSequenceRepository = fragmentSequenceRepository;
 		this.fragmentationStrategySet = new HashSet<>();
 	}
 
@@ -56,17 +63,28 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		removeFromStrategySet(
+				executor -> Objects.equals(executor.getViewName().getCollectionName(), event.collectionName()));
 		fragmentRepository.deleteTreeNodesByCollection(event.collectionName());
+		fragmentSequenceRepository.deleteByCollection(event.collectionName());
 	}
 
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		removeFromStrategySet(executor -> Objects.equals(executor.getViewName(), event.getViewName()));
 		fragmentRepository.removeLdesFragmentsOfView(event.getViewName().asString());
+		fragmentSequenceRepository.deleteByViewName(event.getViewName());
+	}
+
+	private void removeFromStrategySet(Predicate<FragmentationStrategyExecutor> filterPredicate) {
 		fragmentationStrategySet
 				.stream()
-				.filter(executor -> executor.getViewName().equals(event.getViewName()))
-				.findFirst()
-				.ifPresent(fragmentationStrategySet::remove);
+				.filter(filterPredicate)
+				.toList()
+				.forEach(executor -> {
+					executor.shutdown();
+					fragmentationStrategySet.remove(executor);
+				});
 	}
 
 }

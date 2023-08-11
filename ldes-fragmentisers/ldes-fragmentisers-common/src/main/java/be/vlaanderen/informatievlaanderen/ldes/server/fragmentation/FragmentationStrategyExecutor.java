@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.Model;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static io.micrometer.observation.Observation.createNotStarted;
 
@@ -23,6 +24,7 @@ public class FragmentationStrategyExecutor {
 	private final ObservationRegistry observationRegistry;
 	private final EventSourceService eventSourceService;
 	private final FragmentSequenceRepository fragmentSequenceRepository;
+	private boolean isExecutorActive = true;
 
 	public FragmentationStrategyExecutor(ViewName viewName,
 			FragmentationStrategy fragmentationStrategy,
@@ -48,7 +50,7 @@ public class FragmentationStrategyExecutor {
 		return () -> {
 			var nextMemberToFragment = getNextMemberToFragment(determineLastProcessedSequence());
 
-			while (nextMemberToFragment.isPresent()) {
+			while (nextMemberToFragment.isPresent() && isExecutorActive) {
 				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
@@ -86,6 +88,17 @@ public class FragmentationStrategyExecutor {
 
 	public ViewName getViewName() {
 		return viewName;
+	}
+
+	public void shutdown() {
+		isExecutorActive = false;
+		executorService.shutdown();
+		try {
+			// noinspection ResultOfMethodCallIgnored
+			executorService.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	@Override

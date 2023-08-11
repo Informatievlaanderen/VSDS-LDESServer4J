@@ -8,7 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entiti
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.util.List;
 
@@ -22,10 +24,11 @@ class FragmentationStrategyCollectionImplTest {
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator = mock(
 			FragmentationStrategyExecutorCreatorImpl.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
+	private final FragmentSequenceRepository fragmentSequenceRepository = mock(FragmentSequenceRepository.class);
 
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
 			fragmentRepository,
-			fragmentationStrategyExecutorCreator);
+			fragmentationStrategyExecutorCreator, fragmentSequenceRepository);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -70,13 +73,19 @@ class FragmentationStrategyCollectionImplTest {
 	@Test
 	void when_ViewDeletedEventIsReceived_FragmentationStrategyIsRemovedFromMap() {
 		InitViewAddedResult initResult = initAddView();
-
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
+
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
-		verify(fragmentRepository).removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
+		// verify that the executor is shutdown before removing everything from repos.
+		var fragmentationStrategyExecutor = initResult.fragmentationStrategyExecutor;
+		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository, fragmentationStrategyExecutor);
+		inOrder.verify(fragmentationStrategyExecutor).shutdown();
+		inOrder.verify(fragmentRepository)
+				.removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
+		inOrder.verify(fragmentSequenceRepository).deleteByViewName(initResult.viewName);
 	}
 
 	@Test
@@ -93,11 +102,20 @@ class FragmentationStrategyCollectionImplTest {
 
 	@Test
 	void should_DeleteTreeNodesByCollection_when_EventStreamDeletedEventIsReceived() {
-		String collectionName = "collectionName";
+		InitViewAddedResult initResult = initAddView();
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
+		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+		fragmentationStrategyCollection.handleEventStreamDeletedEvent(
+				new EventStreamDeletedEvent(initResult.viewName.getCollectionName()));
 
-		verify(fragmentRepository).deleteTreeNodesByCollection(collectionName);
+		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		// verify that the executor is shutdown before removing everything from repos.
+		var fragmentationStrategyExecutor = initResult.fragmentationStrategyExecutor;
+		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository, fragmentationStrategyExecutor);
+		inOrder.verify(fragmentationStrategyExecutor).shutdown();
+		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());
+		inOrder.verify(fragmentSequenceRepository).deleteByCollection(initResult.viewName.getCollectionName());
 	}
 
 }

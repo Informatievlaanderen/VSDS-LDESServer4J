@@ -108,7 +108,7 @@ public interface OpenApiAdminViewsRestController {
 
 									server:pagination tree:viewDescription [
 										tree:fragmentationStrategy  () ;
-									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									 ] .
 									"""),
 							@ExampleObject(name = "Time-Based Fragmentation Strategy", description = "A time-based fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
@@ -122,7 +122,7 @@ public interface OpenApiAdminViewsRestController {
 									        tree:memberLimit 100 ;
 									        tree:fragmentationPath ldes:timestampPath ;
 									    ]) ;
-									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
+									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									 ] .
 									"""),
 							@ExampleObject(name = "Geospatial-Pagination Fragmentation Strategy", description = "A combined geospatial-pagination fragmentation strategy which is configured to first partition the data on zoom level 15 and within this zoom level create pages with at most 100 members.", value = """
@@ -135,7 +135,7 @@ public interface OpenApiAdminViewsRestController {
 											tree:maxZoom 15 ;
 											tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
 										]) ;
-										tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
+										tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									] .
 									""")
 					})

@@ -129,7 +129,7 @@ public interface OpenApiEventStreamController {
 
 					parcels:by-page tree:viewDescription [
 						tree:fragmentationStrategy  () ;
-						tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> .
+						tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 					] .
 
 					parcels:shape a sh:NodeShape ;
