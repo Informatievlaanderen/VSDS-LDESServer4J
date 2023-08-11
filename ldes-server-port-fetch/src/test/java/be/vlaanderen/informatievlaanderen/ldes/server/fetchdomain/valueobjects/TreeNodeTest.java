@@ -6,32 +6,56 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.apache.jena.riot.RDFWriter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TreeNodeTest {
 
 	private static final String HOST_NAME = "http://localhost:8080";
 	private static final String COLLECTION_NAME = "mobility-hindrances";
+	private TreeNode treeNode;
 
-	@Test
-	void when_TreeNodeIsConvertedToStatements_then_ResultingModelIsAsExpected() throws URISyntaxException {
+	@BeforeEach
+	void setUp() {
 		String eventStreamIdentifier = HOST_NAME + "/" + COLLECTION_NAME;
 		String treeNodeIdentifier = HOST_NAME + "/" + COLLECTION_NAME + "/node";
 		EventStreamInfo eventStreamInfo = getEventStreamInfo(treeNodeIdentifier, eventStreamIdentifier);
 		TreeNodeInfo treeNodeInfo = getTreeNodeInfo(treeNodeIdentifier);
 		TreeMemberList treeMemberList = getTreeMemberList(eventStreamIdentifier);
-		TreeNode treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
+		treeNode = new TreeNode(eventStreamInfo, treeNodeInfo, treeMemberList);
+	}
 
+	@Test
+	void when_TreeNodeIsConvertedToStatements_then_ResultingModelIsAsExpected() throws URISyntaxException {
 		Model actualModel = treeNode.getModel();
 
 		Model expectedModel = readModelFromFile("valueobjects/treenode.ttl");
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
+	}
+
+	@Test
+	void when_TreeNodeGetTreeNodeIdsInRelations_then_ListOfTreeNodeIdsInRelationsIsReturned() {
+		List<String> treeNodeIdsInRelations = treeNode.getTreeNodeIdsInRelations();
+
+		List<String> expectedTreeNodeIdsInRelations = List.of("http://localhost:8080/mobility-hindrances/firstNode",
+				"http://localhost:8080/mobility-hindrances/secondNode");
+		assertEquals(expectedTreeNodeIdsInRelations, treeNodeIdsInRelations);
+	}
+
+	@Test
+	void when_TreeNodeGetMemberIds_then_ListOfMemberIdsIsReturned() {
+		List<String> memberIds = treeNode.getMemberIds();
+
+		List<String> expectedMemberIds = List.of("http://localhost:8080/mobility-hindrances/1",
+				"http://localhost:8080/mobility-hindrances/2");
+		assertEquals(expectedMemberIds, memberIds);
 	}
 
 	private TreeMemberList getTreeMemberList(String eventStreamIdentifier) {
