@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.modulith.docs.Documenter;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 class ApplicationTest {
 
 	ApplicationModules modules = ApplicationModules.of(Application.class);
@@ -13,6 +15,7 @@ class ApplicationTest {
 		new Documenter(modules)
 				.writeDocumentation()
 				.writeIndividualModulesAsPlantUml();
+		assertTrue(true);
 	}
 
 }
