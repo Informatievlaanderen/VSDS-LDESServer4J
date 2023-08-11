@@ -49,17 +49,7 @@ open data.
 
 ## Set-up of the LDES Server
 
-The current implementation consists of the following modules:
-
-- `ldes-server-application` which starts the spring boot application
-- `ldes-server-domain` which contains the domain logic of the ldes server
-- `ldes-server-infra-mongo` which allows to store ldes members and fragments in a mongoDB
-- `ldes-server-port-ingest` which allows to ingest ldes members
-- `ldes-server-port-fetch-rest` which allows to retrieve fragments via HTTP
-- `ldes-fragmentisers` which support different types of fragmentations
-
-The modules `ldes-server-infra-mongo` is built so
-that it can be replaced by other implementations without the need for code changes in ldes-server-domain.
+The current implementation consists of multiple modules each having their own responsibility. The different modules have `README.md` files which describe their functionality. In the module `ldes-server-application` the global structure of the ldes server is presented.
 
 ## How To Run
 
