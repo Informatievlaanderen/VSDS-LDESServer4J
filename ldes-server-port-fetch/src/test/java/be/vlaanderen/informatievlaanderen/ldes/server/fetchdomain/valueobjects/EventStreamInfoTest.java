@@ -29,7 +29,6 @@ class EventStreamInfoTest {
 			String expectedModelFile) throws URISyntaxException {
 		String eventStreamIdentifier = HOST_NAME + "/" + COLLECTION_NAME;
 		String treeNodeIdentifier = HOST_NAME + "/" + COLLECTION_NAME + "/node";
-
 		Model shacl = RDFParserBuilder.create().fromString(
 				"""
 						<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#shape> <http://localhost:8080/mobility-hindrances/shape>.""")
@@ -40,11 +39,11 @@ class EventStreamInfoTest {
 				.lang(Lang.NQUADS).toModel();
 		EventStreamProperties eventStreamProperties = new EventStreamProperties(eventStreamIdentifier,
 				"http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf");
-
 		EventStreamInfo eventStreamInfo = new EventStreamInfo(treeNodeIdentifier, eventStreamIdentifier, shacl, isView,
 				dcat.listStatements().toList(), eventStreamProperties);
 
 		Model actualModel = ModelFactory.createDefaultModel().add(eventStreamInfo.convertToStatements());
+
 		Model expectedModel = readModelFromFile(expectedModelFile);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
