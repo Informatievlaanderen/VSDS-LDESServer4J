@@ -7,11 +7,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConv
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.ViewValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.FragmentationConfigExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.RetentionModelExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.RetentionModelExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;

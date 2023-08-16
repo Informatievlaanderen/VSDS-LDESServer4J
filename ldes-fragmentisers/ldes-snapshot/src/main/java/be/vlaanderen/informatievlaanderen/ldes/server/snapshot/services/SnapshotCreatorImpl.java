@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -24,25 +23,23 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
-	private final ShaclShapeService shaclShapeService;
+//	private final ShaclShapeService shaclShapeService;
 
 	public SnapshotCreatorImpl(@Value(HOST_NAME_KEY) String hostName, MemberCollector memberCollector,
-			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter,
-			ShaclShapeService shaclShapeService) {
+			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
 		this.hostName = hostName;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.snapshotFragmenter = snapshotFragmenter;
-		this.shaclShapeService = shaclShapeService;
 	}
 
 	@Override
 	public Snapshot createSnapshotForTreeNodes(List<Fragment> treeNodesForSnapshot,
 			String collectionName) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		Model shacl = shaclShapeService.retrieveShaclShape(collectionName).getModel();
+//		Model shacl = shaclShapeService.retrieveShaclShape(collectionName).getModel();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
-				shacl, snapshotTime, hostName + "/" + collectionName);
+				null, snapshotTime, hostName + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		Fragment rootTreeNodeOfSnapshot = rootFragmentCreator
 				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));

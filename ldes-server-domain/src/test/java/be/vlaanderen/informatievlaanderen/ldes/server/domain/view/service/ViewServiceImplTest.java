@@ -7,9 +7,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingE
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.junit.jupiter.api.BeforeEach;

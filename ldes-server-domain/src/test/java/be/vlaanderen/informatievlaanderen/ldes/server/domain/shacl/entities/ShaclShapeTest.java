@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.junit.jupiter.api.Assertions.*;
 
 class ShaclShapeTest {
 	private static final String COLLECTION = "my-collection";

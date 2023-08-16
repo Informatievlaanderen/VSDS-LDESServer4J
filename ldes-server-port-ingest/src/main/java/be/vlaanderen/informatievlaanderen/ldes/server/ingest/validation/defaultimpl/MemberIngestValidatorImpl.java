@@ -22,11 +22,10 @@ public class MemberIngestValidatorImpl implements MemberIngestValidator {
 
 	@EventListener
 	public void handleShaclChangedEvent(ShaclChangedEvent event) {
-		final ShaclShape shacl = event.getShacl();
-		final String collectionName = shacl.getCollection();
+		final String collectionName = event.getCollection();
 
 		validators.compute(collectionName,
-				(key, oldValue) -> validatorFactory.createValidator(shacl.getModel()));
+				(key, oldValue) -> validatorFactory.createValidator(event.getModel()));
 	}
 
 	@EventListener

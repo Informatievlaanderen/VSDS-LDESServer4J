@@ -1,23 +1,40 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class ShaclChangedEvent {
-	private final ShaclShape shacl;
 
-	public ShaclChangedEvent(ShaclShape shacl) {
-		this.shacl = shacl;
-	}
+	private final String collection;
+	private final Model model;
 
 	public ShaclChangedEvent(String collectionName, Model shacl) {
-		this.shacl = new ShaclShape(collectionName, shacl);
+		this.collection = collectionName;
+		this.model = shacl;
 	}
 
-	public ShaclShape getShacl() {
-		return shacl;
+	public String getCollection() {
+		return collection;
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	// TODO TVB: 16/08/23 delete
+	public static void main(String[] args) {
+		CompletableFuture.runAsync(() -> {
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+			System.out.println("yay");
+		});
+
+		System.out.println("end");
 	}
 
 	@Override
@@ -26,11 +43,11 @@ public class ShaclChangedEvent {
 			return true;
 		if (!(o instanceof ShaclChangedEvent that))
 			return false;
-		return Objects.equals(shacl, that.shacl);
+		return Objects.equals(collection, that.collection);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(shacl);
+		return Objects.hash(collection);
 	}
 }

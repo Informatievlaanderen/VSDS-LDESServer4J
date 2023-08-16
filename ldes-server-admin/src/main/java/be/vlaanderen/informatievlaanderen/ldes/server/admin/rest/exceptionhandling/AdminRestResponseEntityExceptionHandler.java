@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.exceptions.MissingDcatServerException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.DuplicateViewException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewDcatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.exception.MissingViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.SnapshotCreationException;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.shared.PropertyNotFoundException;

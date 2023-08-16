@@ -54,7 +54,7 @@ class TreeNodeConverterImplTest {
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleShaclInitEvent(new ShaclChangedEvent(new ShaclShape(COLLECTION_NAME, shacl)));
+				.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
 	}
 
 	@Test

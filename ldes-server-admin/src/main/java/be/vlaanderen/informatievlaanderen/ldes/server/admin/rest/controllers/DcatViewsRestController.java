@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatViewValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpStatus;

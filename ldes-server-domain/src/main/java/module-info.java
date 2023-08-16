@@ -12,23 +12,17 @@ module ldes.domain {
     requires spring.data.commons;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.services;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.services;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
 }

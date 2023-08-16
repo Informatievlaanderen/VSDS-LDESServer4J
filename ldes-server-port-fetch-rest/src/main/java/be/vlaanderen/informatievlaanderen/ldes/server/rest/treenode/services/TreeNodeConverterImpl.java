@@ -3,14 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -39,7 +36,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private String hostName;
 
 	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
-	private final HashMap<String, ShaclShape> shaclShapes = new HashMap<>();
+	private final HashMap<String, Model> shaclShapes = new HashMap<>();
 	private final DcatViewService dcatViewService;
 
 	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
@@ -66,7 +63,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode, String collectionName) {
 		EventStream eventStream = eventStreams.get(collectionName);
-		ShaclShape shaclShape = shaclShapes.get(collectionName);
+		Model shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
 						hostName + treeRelation.treeNode().asString(),
@@ -81,7 +78,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
-			EventStream eventStream, ShaclShape shaclShape) {
+			EventStream eventStream, Model shaclShape) {
 		String baseUrl = hostName + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
@@ -93,7 +90,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					null,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			statements.addAll(shaclShape.getModel().listStatements().toList());
+			statements.addAll(shaclShape.listStatements().toList());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
@@ -137,7 +134,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	@EventListener
 	public void handleShaclInitEvent(ShaclChangedEvent event) {
-		shaclShapes.put(event.getShacl().getCollection(), event.getShacl());
+		shaclShapes.put(event.getCollection(), event.getModel());
 	}
 
 	@EventListener

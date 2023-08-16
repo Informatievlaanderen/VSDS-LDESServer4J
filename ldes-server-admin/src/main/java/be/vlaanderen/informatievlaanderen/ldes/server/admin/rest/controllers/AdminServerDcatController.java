@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.services.DcatServerService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatCatalogValidator;
 import jakarta.servlet.http.HttpServletResponse;

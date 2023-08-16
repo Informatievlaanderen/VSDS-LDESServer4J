@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.SpringIntegrationTest;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
