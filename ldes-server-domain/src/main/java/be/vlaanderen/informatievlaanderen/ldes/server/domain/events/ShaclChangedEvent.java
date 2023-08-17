@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
 public class ShaclChangedEvent {
 

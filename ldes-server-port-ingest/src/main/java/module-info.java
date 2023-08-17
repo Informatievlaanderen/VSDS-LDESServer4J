@@ -1,4 +1,4 @@
-module ingest.domain {
+module ldes.ingest.domain {
     requires ldes.domain;
     requires spring.context;
     requires org.apache.jena.core;

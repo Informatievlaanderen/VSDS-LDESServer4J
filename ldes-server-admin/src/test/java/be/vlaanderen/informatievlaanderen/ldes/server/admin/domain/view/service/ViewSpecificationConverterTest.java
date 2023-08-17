@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;

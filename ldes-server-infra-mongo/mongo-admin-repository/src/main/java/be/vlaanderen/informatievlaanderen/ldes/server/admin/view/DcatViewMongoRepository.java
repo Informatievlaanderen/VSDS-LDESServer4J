@@ -2,10 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.view.entity.DataServiceEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.view.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.view.service.DcatServiceEntityConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
 import java.util.List;
 import java.util.Optional;

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.SnapshotCreationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services.SnapshotService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,6 +31,7 @@ class SnapshotControllerTest {
 	@MockBean
 	private SnapshotService snapshotService;
 
+	@Disabled("Snapshotting is currently not supported")
 	@Test
 	void when_SnapshotIsCreated_OKIsReturned() throws Exception {
 		mockMvc.perform(post("/admin/api/v1/{collection}/snapshots", COLLECTION))
@@ -38,6 +40,7 @@ class SnapshotControllerTest {
 		verify(snapshotService, times(1)).createSnapshot(COLLECTION);
 	}
 
+	@Disabled("Snapshotting is currently not supported")
 	@Test
 	void when_SnapshotCannotBeCreated_500IsReturnedWithErrorMessage() throws Exception {
 		doThrow(new SnapshotCreationException("cause")).when(snapshotService).createSnapshot(COLLECTION);

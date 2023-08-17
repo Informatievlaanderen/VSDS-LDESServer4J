@@ -56,7 +56,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
 		// TODO TVB: 17/08/23 figure out issue
-//		logger.error(ex.getMessage());
+		// logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -65,7 +65,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	private ResponseEntity<Object> handleExceptionWithCustomMessage(
 			RuntimeException ex, String body, HttpStatus status, WebRequest request) {
 		// TODO TVB: 17/08/23 figure out issue
-//		logger.error(body);
+		// logger.error(body);
 		return handleExceptionInternal(ex, body,
 				new HttpHeaders(), status, request);
 	}

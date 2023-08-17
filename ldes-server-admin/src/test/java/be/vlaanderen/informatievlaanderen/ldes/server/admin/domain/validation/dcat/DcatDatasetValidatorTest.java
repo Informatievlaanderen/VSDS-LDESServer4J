@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatDatasetValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;

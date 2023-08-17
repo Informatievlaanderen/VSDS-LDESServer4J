@@ -13,6 +13,7 @@ module admin {
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities;
 
     opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 //    opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config to spring.core;

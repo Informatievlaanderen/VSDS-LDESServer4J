@@ -1,8 +1,8 @@
-module fetch.domain {
+module ldes.fetch.domain {
     requires ldes.domain;
     requires spring.context;
-    requires ingest.domain;
-    requires fragmentation.domain;
+    requires ldes.ingest.domain;
+    requires ldes.fragmentation.domain;
     requires spring.beans;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository;

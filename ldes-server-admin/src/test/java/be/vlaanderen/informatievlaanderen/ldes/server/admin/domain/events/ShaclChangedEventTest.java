@@ -37,7 +37,8 @@ class ShaclChangedEventTest {
 		ShaclChangedEvent shaclChangedEvent = new ShaclChangedEvent(COLLECTION_NAME,
 				ShaclChangedEventArgumentsProvider.getModel());
 		ShaclShape otherShaclShape = new ShaclShape(COLLECTION_NAME, ShaclChangedEventArgumentsProvider.getModel());
-		ShaclChangedEvent otherShaclChangedEvent = new ShaclChangedEvent(otherShaclShape.getCollection(), otherShaclShape.getModel());
+		ShaclChangedEvent otherShaclChangedEvent = new ShaclChangedEvent(otherShaclShape.getCollection(),
+				otherShaclShape.getModel());
 		assertEquals(shaclChangedEvent, otherShaclChangedEvent);
 		assertEquals(shaclChangedEvent, shaclChangedEvent);
 		assertEquals(otherShaclChangedEvent, otherShaclChangedEvent);

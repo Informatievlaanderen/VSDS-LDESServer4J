@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class MongoAdminAutoConfiguration {
 
-
 	@Bean
 	@ConditionalOnMissingBean
 	public EventStreamRepository eventStreamRepository(final EventStreamEntityRepository eventStreamEntityRepository) {

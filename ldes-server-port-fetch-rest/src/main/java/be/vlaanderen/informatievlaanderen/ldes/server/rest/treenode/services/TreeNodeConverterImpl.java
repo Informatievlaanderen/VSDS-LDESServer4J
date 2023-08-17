@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
@@ -10,7 +11,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -35,14 +35,17 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private String hostName;
+	private final String hostName;
+	private final DcatViewService dcatViewService;
 
 	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 	private final HashMap<String, Model> shaclShapes = new HashMap<>();
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
+			DcatViewService dcatViewService) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;
+		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
@@ -99,10 +102,8 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
 		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
 
-		// TODO TVB: 17/08/23 dcatView listener and pairs bijhouden
-//		dcatViewService.findByViewName(viewName)
-//				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
-
+		dcatViewService.findByViewName(viewName)
+				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
 	}
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {

@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
@@ -29,7 +29,8 @@ class SnapshotCreatorImplTest {
 	private final MemberCollector memberCollector = Mockito.mock(MemberCollector.class);
 	private final RootFragmentCreator rootFragmentCreator = Mockito.mock(RootFragmentCreator.class);
 	private final SnapshotFragmenter snapshotFragmenter = Mockito.mock(SnapshotFragmenter.class);
-//	private final ShaclShapeService shaclShapeService = mock(ShaclShapeService.class);
+	// private final ShaclShapeService shaclShapeService =
+	// mock(ShaclShapeService.class);
 	private SnapShotCreator snapShotCreator;
 
 	@BeforeEach
@@ -48,8 +49,8 @@ class SnapshotCreatorImplTest {
 				new LdesFragmentIdentifier(new ViewName("collectionName", "snapshot-"), List.of()));
 		when(rootFragmentCreator.createRootFragmentForView(any())).thenReturn(rootFragmentOfSnapshot);
 
-//		when(shaclShapeService.retrieveShaclShape("collection"))
-//				.thenReturn(new ShaclShape("collection", ModelFactory.createDefaultModel()));
+		// when(shaclShapeService.retrieveShaclShape("collection"))
+		// .thenReturn(new ShaclShape("collection", ModelFactory.createDefaultModel()));
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(fragmentsForSnapshot, "collection");
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);

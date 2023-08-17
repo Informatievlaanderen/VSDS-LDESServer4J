@@ -36,7 +36,8 @@ public class RestResponseEntityExceptionHandler
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-//		logger.error(ex.getMessage()); // TODO: 14/08/23 figure out what is wrong here
+		// logger.error(ex.getMessage()); // TODO: 14/08/23 figure out what is wrong
+		// here
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -44,7 +45,8 @@ public class RestResponseEntityExceptionHandler
 
 	private ResponseEntity<Object> handleExceptionWithoutDetails(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-//		logger.error(ex.getMessage()); // TODO: 14/08/23 figure out what is wrong here
+		// logger.error(ex.getMessage()); // TODO: 14/08/23 figure out what is wrong
+		// here
 		return handleExceptionInternal(ex, null, new HttpHeaders(), status, request);
 	}
 }

@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 
