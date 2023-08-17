@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.vocabulary.RDF;
 

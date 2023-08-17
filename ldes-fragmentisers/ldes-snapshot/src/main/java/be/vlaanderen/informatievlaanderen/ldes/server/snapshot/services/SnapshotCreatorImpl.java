@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
-import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

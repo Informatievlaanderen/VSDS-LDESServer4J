@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.repository.SnapshotRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.SnapshotCreationException;
@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_NAME;
 
 @Component
 public class SnapshotServiceImpl implements SnapshotService {
+
+	public static final String DEFAULT_VIEW_NAME = "by-page";
+
 	private final SnapShotCreator snapShotCreator;
 	private final FragmentRepository fragmentRepository;
 	private final SnapshotRepository snapshotRepository;

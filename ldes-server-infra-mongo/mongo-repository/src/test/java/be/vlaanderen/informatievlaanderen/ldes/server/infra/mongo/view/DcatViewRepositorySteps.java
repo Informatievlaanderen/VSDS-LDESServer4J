@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.SpringIntegrationTest;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;

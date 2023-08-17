@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.ModelToViewConverterException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.graph.Factory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.DcatView.VIEW_DESCRIPTION_SUFFIX;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesconfig.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 public class InvalidConfigOperationException extends RuntimeException {
 

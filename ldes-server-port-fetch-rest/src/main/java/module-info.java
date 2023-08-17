@@ -12,4 +12,5 @@ module fetch.rest {
     requires spring.context;
     requires spring.boot.autoconfigure;
     requires org.apache.commons.codec;
+    requires admin;
 }

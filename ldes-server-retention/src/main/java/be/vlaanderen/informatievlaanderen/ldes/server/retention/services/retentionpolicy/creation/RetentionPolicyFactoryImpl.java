@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.pointintime.PointInTimeRetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.timebased.TimeBasedRetentionPolicyCreator;

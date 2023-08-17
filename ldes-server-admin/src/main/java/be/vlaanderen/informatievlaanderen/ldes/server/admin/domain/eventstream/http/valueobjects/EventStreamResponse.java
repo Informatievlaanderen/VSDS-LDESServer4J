@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service.ViewEntityConverter;
 

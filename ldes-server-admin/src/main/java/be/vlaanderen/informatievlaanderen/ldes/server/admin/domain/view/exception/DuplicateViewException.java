@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
 public class DuplicateViewException extends RuntimeException {
 

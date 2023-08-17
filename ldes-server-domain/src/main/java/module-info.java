@@ -10,7 +10,6 @@ module ldes.domain {
     requires spring.boot;
     requires spring.core;
     requires spring.data.commons;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention;
@@ -20,9 +19,7 @@ module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
 }

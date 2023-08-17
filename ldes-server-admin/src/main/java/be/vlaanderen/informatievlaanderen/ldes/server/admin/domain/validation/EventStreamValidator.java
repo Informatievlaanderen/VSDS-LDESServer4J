@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.shacl.Shapes;

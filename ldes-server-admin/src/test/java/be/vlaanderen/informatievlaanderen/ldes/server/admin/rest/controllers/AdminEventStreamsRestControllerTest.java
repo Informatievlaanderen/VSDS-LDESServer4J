@@ -10,13 +10,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.h
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.EventStreamValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;

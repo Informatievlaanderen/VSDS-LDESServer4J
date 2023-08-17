@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
 
 import java.util.Objects;
 

@@ -8,7 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -37,13 +38,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 	private final HashMap<String, Model> shaclShapes = new HashMap<>();
-	private final DcatViewService dcatViewService;
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
-			DcatViewService dcatViewService) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;
-		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
@@ -99,8 +97,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
 		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
-		dcatViewService.findByViewName(viewName)
-				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
+
+		// TODO TVB: 17/08/23 dcatView listener and pairs bijhouden
+//		dcatViewService.findByViewName(viewName)
+//				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
 
 	}
 

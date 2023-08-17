@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.entity.DataServiceEntity;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;

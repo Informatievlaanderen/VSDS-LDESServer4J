@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
 
 import java.io.Serial;
 import java.io.Serializable;

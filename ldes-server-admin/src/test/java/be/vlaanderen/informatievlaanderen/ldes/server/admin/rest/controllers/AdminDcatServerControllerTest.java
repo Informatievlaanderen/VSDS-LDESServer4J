@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DcatAlreadyConfiguredException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatCatalogValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatCatalogValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;

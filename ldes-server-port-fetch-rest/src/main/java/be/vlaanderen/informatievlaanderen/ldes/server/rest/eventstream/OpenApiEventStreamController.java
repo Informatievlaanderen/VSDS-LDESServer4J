@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects.EventStreamResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -156,6 +156,6 @@ public interface OpenApiEventStreamController {
 	})
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found", content = @Content)
 	ResponseEntity<EventStreamResponse> retrieveLdesFragment(@Parameter(hidden = true) String language,
-			HttpServletResponse response,
-			@Parameter(example = "parcels") String collectionName);
+															 HttpServletResponse response,
+															 @Parameter(example = "parcels") String collectionName);
 }

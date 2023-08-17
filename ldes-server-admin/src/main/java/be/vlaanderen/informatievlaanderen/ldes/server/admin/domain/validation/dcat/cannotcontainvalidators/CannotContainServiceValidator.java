@@ -1,13 +1,13 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.cannotcontainvalidators;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.cannotcontainvalidators;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatNodeValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatNodeValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.vocabulary.RDF;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE_PREDICATE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatValidator.DCAT_DATA_SERVICE_PREDICATE;
 
 public class CannotContainServiceValidator implements DcatNodeValidator {
 	private final List<CannotContainRule> rules;

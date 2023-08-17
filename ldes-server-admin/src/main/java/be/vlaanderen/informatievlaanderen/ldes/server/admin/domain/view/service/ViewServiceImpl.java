@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.entities.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -21,7 +21,6 @@ import java.util.Optional;
 public class ViewServiceImpl implements ViewService {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
-	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
 	public static final int DEFAULT_VIEW_PAGE_SIZE = 100;
 
 	private final DcatViewService dcatViewService;

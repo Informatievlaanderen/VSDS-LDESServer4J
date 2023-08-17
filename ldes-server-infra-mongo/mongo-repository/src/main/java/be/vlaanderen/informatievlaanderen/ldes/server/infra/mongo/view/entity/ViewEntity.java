@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.view.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

@@ -23,20 +23,6 @@ public class ShaclChangedEvent {
 		return model;
 	}
 
-	// TODO TVB: 16/08/23 delete
-	public static void main(String[] args) {
-		CompletableFuture.runAsync(() -> {
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-			System.out.println("yay");
-		});
-
-		System.out.println("end");
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
