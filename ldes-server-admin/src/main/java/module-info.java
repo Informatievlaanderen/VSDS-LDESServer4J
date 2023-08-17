@@ -2,6 +2,11 @@ module admin {
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services;
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects;
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services;
     requires spring.web;
     requires org.apache.jena.core;
     requires org.apache.tomcat.embed.core;

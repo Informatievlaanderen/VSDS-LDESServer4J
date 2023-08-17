@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
-public class MongoAutoConfiguration {
+public class MongoAdminAutoConfiguration {
 
 
 	@Bean
