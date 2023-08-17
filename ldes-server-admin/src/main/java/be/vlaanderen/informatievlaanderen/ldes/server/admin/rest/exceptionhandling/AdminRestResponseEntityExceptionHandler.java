@@ -7,6 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exceptio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.shared.PropertyNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+	private static final Logger log = LoggerFactory.getLogger(AdminRestResponseEntityExceptionHandler.class);
 
 	@ExceptionHandler(value = { MissingShaclShapeException.class,
 			MissingEventStreamException.class, MissingViewException.class, MissingViewDcatException.class,
@@ -55,8 +59,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		// TODO TVB: 17/08/23 figure out issue
-		// logger.error(ex.getMessage());
+		 log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -64,8 +67,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleExceptionWithCustomMessage(
 			RuntimeException ex, String body, HttpStatus status, WebRequest request) {
-		// TODO TVB: 17/08/23 figure out issue
-		// logger.error(body);
+		 log.error(body);
 		return handleExceptionInternal(ex, body,
 				new HttpHeaders(), status, request);
 	}
