@@ -128,10 +128,8 @@ public interface OpenApiEventStreamController {
 						ldes:view parcels:by-page .
 
 					parcels:by-page tree:viewDescription [
-						tree:fragmentationStrategy ([
-							a tree:PaginationFragmentation ;
-							tree:memberLimit "100"
-						]) ;
+						tree:fragmentationStrategy  () ;
+						tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 					] .
 
 					parcels:shape a sh:NodeShape ;

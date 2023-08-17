@@ -55,7 +55,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	public ViewSpecification ViewSpecificationEntryTransformer(Map<String, String> row) throws URISyntaxException {
 		return new ViewSpecification(
 				ViewName.fromString(row.get("viewName")),
-				List.of(readRetentionPolicyFromFile(row.get("rdfDescriptionFileName"))), List.of());
+				List.of(readRetentionPolicyFromFile(row.get("rdfDescriptionFileName"))), List.of(), 100);
 	}
 
 	@DataTableType
@@ -130,9 +130,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 
 	@And("the following members are allocated to the view {string}")
 	public void theFollowingMembersAreAllocatedToTheView(String viewName, List<String> members) {
-		members.forEach(member -> {
-			applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member, ViewName.fromString(viewName)));
-		});
+		members.forEach(member -> applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member,
+				ViewName.fromString(viewName).getCollectionName(), ViewName.fromString(viewName).getViewName(), "")));
 	}
 
 	private record DeletedMember(String id, boolean deleted) {

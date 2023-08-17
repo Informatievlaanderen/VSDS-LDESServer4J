@@ -255,7 +255,15 @@ Currently, there are 3 possible retention policies each with a different type an
 ##### Fragmentation
 
 To configure a view with a certain fragmentation,
-a fragmentation strategy has to be added when creating the view.
+a fragmentation strategy has to be added when creating the view. The final step in the fragmentation strategy is automatically pagination. Per view the size of the pages can be configured as follows:
+
+```ttl
+  @prefix tree: <https://w3id.org/tree#>.
+  parcels:pagination tree:viewDescription [
+    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
+    tree:fragmentationStrategy () ;
+  ] .
+```
 
 
 ##### Example Timebased Fragmentation
@@ -273,11 +281,11 @@ Full documentation for geospatial fragmentation can be found [here](ldes-fragmen
   <view1> a tree:Node ;
     tree:viewDescription [
       a tree:ViewDescription ;
-      tree:fragmentationStrategy [
+      tree:fragmentationStrategy ([
         a tree:GeospatialFragmentation ;
         tree:maxZoom "15" ;
         tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT> ;
-      ] ;
+      ]) ;
     ] .
   
   
@@ -297,11 +305,11 @@ Full documentation for substring fragmentation can be found [here](ldes-fragment
   <view1> a tree:Node ;
     tree:viewDescription [
       a tree:ViewDescription ;
-      tree:fragmentationStrategy [
+      tree:fragmentationStrategy ([
         a tree:SubstringFragmentation ;
         tree:memberLimit "10" ;
         tree:fragmentationPath <https://data.vlaanderen.be/ns/adres#volledigAdres> ;
-      ] ;
+      ]) ;
     ] .
   ```
 
@@ -316,10 +324,10 @@ Full documentation for pagination fragmentation can be found [here](ldes-fragmen
   <view1> a tree:Node ;
     tree:viewDescription [
         a tree:ViewDescription ;
-        tree:fragmentationStrategy [
+        tree:fragmentationStrategy ([
           a tree:PaginationFragmentation ;
           tree:memberLimit 10 ;
-        ] ;
+        ]) ;
   ] .
   ```
 
@@ -330,11 +338,11 @@ Full documentation for hierarchical timebased fragmentation can be found [here](
   ```ttl
   @prefix tree: <https://w3id.org/tree#> .
   
-  tree:fragmentationStrategy [
+  tree:fragmentationStrategy ([
         a tree:HierarchicalTimeBasedFragmentation ;
         tree:maxGranularity "day" ;
         tree:fragmentationPath <http://www.w3.org/ns/prov#generatedAtTime> ;
-    ] .
+    ]) .
   ```
 
 ##### Example Serving Static Content

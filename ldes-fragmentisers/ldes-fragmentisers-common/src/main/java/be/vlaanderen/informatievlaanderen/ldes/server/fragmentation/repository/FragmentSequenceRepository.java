@@ -13,4 +13,5 @@ public interface FragmentSequenceRepository {
 
 	void deleteByViewName(ViewName viewName);
 
+	void deleteByCollection(String collectionName);
 }
