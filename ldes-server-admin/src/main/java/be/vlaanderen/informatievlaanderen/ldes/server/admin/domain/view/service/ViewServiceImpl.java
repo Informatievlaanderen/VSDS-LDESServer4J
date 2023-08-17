@@ -21,6 +21,7 @@ import java.util.Optional;
 public class ViewServiceImpl implements ViewService {
 
 	public static final String DEFAULT_VIEW_NAME = "by-page";
+	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
 	public static final int DEFAULT_VIEW_PAGE_SIZE = 100;
 
 	private final DcatViewService dcatViewService;
