@@ -5,8 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.shaclshape.ent
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ShaclShapeEntityConverterTest {
 	private static final String COLLECTION = "collection_name1";
 	private final ShaclShapeEntityConverter converter = new ShaclShapeEntityConverter();

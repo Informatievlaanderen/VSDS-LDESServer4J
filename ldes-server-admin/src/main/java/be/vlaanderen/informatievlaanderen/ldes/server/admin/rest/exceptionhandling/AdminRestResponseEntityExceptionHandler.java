@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
-import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.SnapshotCreationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.shared.PropertyNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -42,12 +41,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleExceptionWithCustomMessage(ex, message, HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { SnapshotCreationException.class })
-	protected ResponseEntity<Object> handleSnapshotCreationException(
-			RuntimeException ex, WebRequest request) {
-		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
-	}
-
 	@ExceptionHandler(value = { ExistingResourceException.class })
 	protected ResponseEntity<Object> handleExistingResourceException(
 			RuntimeException ex, WebRequest request) {
@@ -62,7 +55,8 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		logger.error(ex.getMessage());
+		// TODO TVB: 17/08/23 figure out issue
+//		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -70,7 +64,8 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleExceptionWithCustomMessage(
 			RuntimeException ex, String body, HttpStatus status, WebRequest request) {
-		logger.error(body);
+		// TODO TVB: 17/08/23 figure out issue
+//		logger.error(body);
 		return handleExceptionInternal(ex, body,
 				new HttpHeaders(), status, request);
 	}

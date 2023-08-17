@@ -15,5 +15,7 @@ module admin {
     requires spring.beans;
     requires org.apache.jena.shacl;
     requires org.apache.commons.lang3;
+    requires spring.webmvc;
+    requires org.apache.jena.ext.com.google;
 
 }

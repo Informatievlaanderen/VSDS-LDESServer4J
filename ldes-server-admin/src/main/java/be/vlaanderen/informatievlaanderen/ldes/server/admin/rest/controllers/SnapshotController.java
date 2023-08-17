@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services.SnapshotService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,15 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Snapshots")
 public class SnapshotController {
 
-	private final SnapshotService snapshotService;
-
-	public SnapshotController(SnapshotService snapshotService) {
-		this.snapshotService = snapshotService;
-	}
-
 	@PostMapping("{collection}/snapshots")
 	@Operation(summary = "Creation of Snapshot")
 	public void createSnapshot(@PathVariable("collection") String collectionName) {
-		snapshotService.createSnapshot(collectionName);
+		// replace with firing event if snapshot is ever supported again
+		//		snapshotService.createSnapshot(collectionName);
 	}
 }

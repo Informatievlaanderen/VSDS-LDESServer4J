@@ -18,6 +18,7 @@
         <module>mongo-retention-repository</module>
         <module>mongo-fragmentation-repository</module>
         <module>mongo-fetch-repository</module>
+        <module>mongo-admin-repository</module>
     </modules>
 
     <properties>
