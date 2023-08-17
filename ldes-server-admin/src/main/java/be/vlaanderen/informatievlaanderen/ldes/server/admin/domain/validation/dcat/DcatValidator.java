@@ -39,7 +39,7 @@ public abstract class DcatValidator implements Validator {
 		return Model.class.isAssignableFrom(clazz);
 	}
 
-	protected void validate(Model dcat) {
+	public void validate(Model dcat) {
 		blankNodeValidator.validate(dcat);
 		cannotContainValidators.forEach(validator -> validator.validate(dcat));
 	}

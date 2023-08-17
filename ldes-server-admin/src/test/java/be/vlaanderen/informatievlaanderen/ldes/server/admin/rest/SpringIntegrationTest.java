@@ -32,11 +32,11 @@ import org.springframework.test.web.servlet.MockMvc;
 		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class })
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.view",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset",
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.validation",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling" })
