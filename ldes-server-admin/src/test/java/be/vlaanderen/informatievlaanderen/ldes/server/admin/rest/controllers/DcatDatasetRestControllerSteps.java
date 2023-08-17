@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.SpringIntegrationTest;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;

@@ -11,10 +11,14 @@ module admin {
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
     exports be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat;
 
-    opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config to spring.core;
+    opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
+//    opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config to spring.core;
     opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers to spring.core;
     opens be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling to spring.core;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities;
     requires spring.web;
     requires org.apache.jena.core;
     requires org.apache.tomcat.embed.core;

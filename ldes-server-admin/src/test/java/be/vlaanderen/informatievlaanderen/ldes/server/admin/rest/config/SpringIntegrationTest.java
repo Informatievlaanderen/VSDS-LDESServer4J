@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminEventStreamsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.AdminServerDcatController;
@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.reposit
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,7 +32,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminServerDcatController.class,
 		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class })
 @ComponentScan(value = {
-		"be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver",
