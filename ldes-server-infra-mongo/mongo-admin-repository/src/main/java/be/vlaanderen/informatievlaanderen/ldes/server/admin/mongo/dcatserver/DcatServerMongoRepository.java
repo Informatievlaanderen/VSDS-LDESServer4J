@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.repository.DcatCatalogEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.service.DcatCatalogEntityConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.repository.DcatCatalogEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.service.DcatCatalogEntityConverter;
 
 import java.util.List;
 import java.util.Optional;

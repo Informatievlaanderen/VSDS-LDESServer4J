@@ -1,15 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatdataset.DcatDatasetMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.DcatServerMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.repository.DcatCatalogEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatdataset.DcatDatasetMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatdataset.repository.DcatDatasetEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.DcatServerMongoRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.repository.DcatCatalogEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.EventStreamMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.shaclshape.ShaclShapeMongoRepository;

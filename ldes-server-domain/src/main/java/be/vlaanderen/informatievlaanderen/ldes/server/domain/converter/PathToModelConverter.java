@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.config;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.entity.DcatCatalogEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.dcatserver.entity.DcatCatalogEntity;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
