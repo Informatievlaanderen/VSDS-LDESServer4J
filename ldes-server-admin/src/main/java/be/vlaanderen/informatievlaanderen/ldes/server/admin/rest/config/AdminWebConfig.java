@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;

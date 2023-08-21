@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatDatasetValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions.MissingResourceException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;

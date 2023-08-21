@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;

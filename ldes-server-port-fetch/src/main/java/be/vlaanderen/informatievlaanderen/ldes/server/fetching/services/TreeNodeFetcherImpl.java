@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;

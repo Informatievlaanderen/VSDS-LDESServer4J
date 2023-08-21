@@ -1,6 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.DcatAlreadyConfiguredException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.MissingStatementException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
@@ -59,7 +64,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		 log.error(ex.getMessage());
+		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -67,7 +72,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleExceptionWithCustomMessage(
 			RuntimeException ex, String body, HttpStatus status, WebRequest request) {
-		 log.error(body);
+		log.error(body);
 		return handleExceptionInternal(ex, body,
 				new HttpHeaders(), status, request);
 	}

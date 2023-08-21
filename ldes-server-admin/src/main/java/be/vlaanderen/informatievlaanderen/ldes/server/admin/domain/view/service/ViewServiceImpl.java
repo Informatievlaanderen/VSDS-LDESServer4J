@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;

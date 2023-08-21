@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

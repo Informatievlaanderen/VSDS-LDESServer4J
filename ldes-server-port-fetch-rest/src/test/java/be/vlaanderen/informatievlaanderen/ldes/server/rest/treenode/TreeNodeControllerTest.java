@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.MissingFragmentException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;

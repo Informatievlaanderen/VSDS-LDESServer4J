@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services.EventStreamResponseConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamResponseConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;

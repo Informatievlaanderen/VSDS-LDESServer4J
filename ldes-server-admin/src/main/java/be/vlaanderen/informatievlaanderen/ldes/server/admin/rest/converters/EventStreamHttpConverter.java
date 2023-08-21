@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;

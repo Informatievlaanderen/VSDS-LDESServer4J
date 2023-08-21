@@ -4,7 +4,7 @@ import org.apache.jena.rdf.model.Model;
 
 import java.util.Objects;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services.EventStreamResponseConverterImpl.DATASET_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamResponseConverterImpl.DATASET_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;

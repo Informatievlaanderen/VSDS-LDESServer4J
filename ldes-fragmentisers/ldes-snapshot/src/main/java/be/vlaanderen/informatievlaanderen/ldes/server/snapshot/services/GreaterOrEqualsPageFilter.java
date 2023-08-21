@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.GreaterOrEqualsPageFilterException;
 

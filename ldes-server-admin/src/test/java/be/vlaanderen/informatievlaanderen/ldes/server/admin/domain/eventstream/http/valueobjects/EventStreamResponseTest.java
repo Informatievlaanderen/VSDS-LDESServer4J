@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.apache.jena.rdf.model.ModelFactory;

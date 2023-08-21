@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.services.EventStreamResponseConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.http.valueobjects.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewSpecificationConverter;

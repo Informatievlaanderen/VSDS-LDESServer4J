@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.MissingFragmentException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestResponseEntityExceptionHandler
 		extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MissingFragmentException.class, CollectionNotFoundException.class })
+	@ExceptionHandler(value = { MissingFragmentException.class })
 	protected ResponseEntity<Object> handleNotFoundException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);

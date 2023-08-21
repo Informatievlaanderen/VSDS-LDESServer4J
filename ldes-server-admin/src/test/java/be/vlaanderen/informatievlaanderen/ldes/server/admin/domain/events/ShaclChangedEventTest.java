@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.events;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
