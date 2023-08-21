@@ -27,7 +27,7 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 	private final EventStreamValidator eventStreamValidator;
 
 	public AdminEventStreamsRestController(EventStreamService eventStreamService,
-										   EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
+			EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamService = eventStreamService;
 		this.eventStreamValidator = eventStreamValidator;
 		this.eventStreamResponseConverter = eventStreamResponseConverter;

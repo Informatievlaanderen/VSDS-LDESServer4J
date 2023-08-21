@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface EventStreamServiceSpi {
 	List<EventStreamResponse> retrieveAllEventStreams();
+
 	EventStreamResponse retrieveEventStream(String collectionName);
+
 	Model getComposedDcat();
 }

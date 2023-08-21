@@ -5,8 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServi
 
 public interface EventStreamService extends EventStreamServiceSpi {
 
-    void deleteEventStream(String collectionName);
+	void deleteEventStream(String collectionName);
 
-    EventStreamResponse createEventStream(EventStreamResponse eventStream);
+	EventStreamResponse createEventStream(EventStreamResponse eventStream);
 
 }
