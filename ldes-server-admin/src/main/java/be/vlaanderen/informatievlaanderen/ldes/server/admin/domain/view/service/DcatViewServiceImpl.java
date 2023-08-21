@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-// TODO TVB: 21/08/23 test events
 @Service
 public class DcatViewServiceImpl implements DcatViewService {
 

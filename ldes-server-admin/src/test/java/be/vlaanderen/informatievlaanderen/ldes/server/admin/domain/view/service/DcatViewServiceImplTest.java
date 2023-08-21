@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -13,7 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,6 +32,9 @@ class DcatViewServiceImplTest {
 	private final static Model MODEL = ModelFactory.createDefaultModel();
 
 	@Mock
+	private ApplicationEventPublisher eventPublisher;
+
+	@Mock
 	private DcatViewRepository dcatViewRepository;
 
 	@InjectMocks
@@ -37,6 +44,7 @@ class DcatViewServiceImplTest {
 	void should_CallRepositoryWithDcatView_when_CreateIsCalled() {
 		dcatViewService.create(VIEW_NAME, MODEL);
 
+		verify(eventPublisher).publishEvent(any(DcatViewSavedEvent.class));
 		verify(dcatViewRepository).save(DcatView.from(VIEW_NAME, MODEL));
 		verifyNoMoreInteractions(dcatViewRepository);
 	}
@@ -56,6 +64,7 @@ class DcatViewServiceImplTest {
 	void should_CallRepositoryWithDcatView_when_DeleteIsCalled() {
 		dcatViewService.delete(VIEW_NAME);
 
+		verify(eventPublisher).publishEvent(new DcatViewDeletedEvent(VIEW_NAME));
 		verify(dcatViewRepository).delete(VIEW_NAME);
 		verifyNoMoreInteractions(dcatViewRepository);
 	}
@@ -64,8 +73,23 @@ class DcatViewServiceImplTest {
 	void should_CallRepositoryWithDcatView_when_ViewDeletedEventIsPublished() {
 		dcatViewService.handleEventStreamInitEvent(new ViewDeletedEvent(VIEW_NAME));
 
+		verify(eventPublisher).publishEvent(new DcatViewDeletedEvent(VIEW_NAME));
 		verify(dcatViewRepository).delete(VIEW_NAME);
 		verifyNoMoreInteractions(dcatViewRepository);
+	}
+
+	@Test
+	void initViews() {
+		DcatView dcatViewA = DcatView.from(ViewName.fromString("coll/A"), MODEL);
+		DcatView dcatViewB = DcatView.from(ViewName.fromString("coll/B"), MODEL);
+		DcatView dcatViewC = DcatView.from(ViewName.fromString("coll/C"), MODEL);
+		when(dcatViewRepository.findAll()).thenReturn(List.of(dcatViewA, dcatViewB, dcatViewC));
+
+		dcatViewService.initViews();
+
+		verify(eventPublisher).publishEvent(new DcatViewSavedEvent(dcatViewA));
+		verify(eventPublisher).publishEvent(new DcatViewSavedEvent(dcatViewB));
+		verify(eventPublisher).publishEvent(new DcatViewSavedEvent(dcatViewC));
 	}
 
 	@Nested
@@ -77,6 +101,7 @@ class DcatViewServiceImplTest {
 
 			dcatViewService.update(VIEW_NAME, MODEL);
 
+			verify(eventPublisher).publishEvent(any(DcatViewSavedEvent.class));
 			verify(dcatViewRepository).save(DcatView.from(VIEW_NAME, MODEL));
 			verifyNoMoreInteractions(dcatViewRepository);
 		}
