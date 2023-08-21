@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;
@@ -78,7 +78,7 @@ class EventStreamControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 	@MockBean
-	private EventStreamService eventStreamService;
+	private EventStreamServiceSpi eventStreamService;
 	@MockBean
 	private ViewService viewService;
 	@MockBean

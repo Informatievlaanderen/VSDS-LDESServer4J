@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,10 +18,10 @@ public class EventStreamController implements OpenApiEventStreamController {
 
 	private final RestConfig restConfig;
 	private final CachingStrategy cachingStrategy;
-	private final EventStreamService eventStreamService;
+	private final EventStreamServiceSpi eventStreamService;
 
 	public EventStreamController(RestConfig restConfig, CachingStrategy cachingStrategy,
-			EventStreamService eventStreamService) {
+			EventStreamServiceSpi eventStreamService) {
 		this.restConfig = restConfig;
 		this.cachingStrategy = cachingStrategy;
 		this.eventStreamService = eventStreamService;

@@ -1,8 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamResponseConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.EventStreamValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.RetentionModelExtractor;
@@ -11,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;

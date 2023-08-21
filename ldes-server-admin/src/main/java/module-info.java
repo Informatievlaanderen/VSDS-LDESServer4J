@@ -6,19 +6,19 @@ open module ldes.admin {
     requires ldes.domain;
 
     // external dependencies
-    requires spring.web;
-    requires org.apache.jena.core;
-    requires org.apache.tomcat.embed.core;
-    requires spring.context;
-    requires org.apache.jena.arq;
     requires spring.boot;
+    requires spring.beans;
+    requires spring.context;
+    requires spring.web;
+    requires spring.webmvc;
+    requires spring.boot.autoconfigure;
+    requires org.apache.commons.lang3;
+    requires org.apache.tomcat.embed.core;
+    requires org.apache.jena.arq;
+    requires org.apache.jena.core;
+    requires org.apache.jena.shacl;
+    requires org.apache.jena.ext.com.google;
     requires org.slf4j;
     requires io.swagger.v3.oas.annotations;
-    requires spring.beans;
-    requires org.apache.jena.shacl;
-    requires org.apache.commons.lang3;
-    requires spring.webmvc;
-    requires org.apache.jena.ext.com.google;
-    requires spring.boot.autoconfigure;
 
 }

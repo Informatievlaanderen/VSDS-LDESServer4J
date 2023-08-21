@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;

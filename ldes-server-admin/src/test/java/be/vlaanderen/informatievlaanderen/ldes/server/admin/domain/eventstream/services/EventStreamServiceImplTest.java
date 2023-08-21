@@ -3,12 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
@@ -32,7 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -155,26 +155,6 @@ class EventStreamServiceImplTest {
 		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
-	}
-
-	@Test
-	void when_collectionExists_and_retrieveMemberType_then_retrieveMemberType() {
-		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
-
-		String memberType = assertDoesNotThrow(() -> service.retrieveMemberType(COLLECTION));
-		assertEquals(MEMBER_TYPE, memberType);
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-		verifyNoInteractions(viewService, shaclShapeService);
-	}
-
-	@Test
-	void when_collectionDoesNotExist_and_retrieveMemberType_then_throwException() {
-		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
-
-		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveMemberType(COLLECTION));
-		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
-		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
-		verifyNoInteractions(shaclShapeService, viewService);
 	}
 
 	@Test

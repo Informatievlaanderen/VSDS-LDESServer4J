@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
@@ -232,7 +231,7 @@ class TreeNodeControllerTest {
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, hostName, mock(DcatViewService.class));
+			return new TreeNodeConverterImpl(prefixAdder, hostName);
 		}
 
 		@Bean

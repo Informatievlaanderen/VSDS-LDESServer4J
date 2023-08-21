@@ -1,15 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -21,10 +16,8 @@ import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -38,7 +31,6 @@ class TreeNodeConverterImplTest {
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
 	private TreeNodeConverter treeNodeConverter;
-	private DcatViewService dcatViewService;;
 
 	@BeforeEach
 	void setUp() {
@@ -48,8 +40,7 @@ class TreeNodeConverterImplTest {
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
-		dcatViewService = Mockito.mock(DcatViewService.class);
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
 		((TreeNodeConverterImpl) treeNodeConverter)
 				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 		((TreeNodeConverterImpl) treeNodeConverter)
@@ -63,7 +54,6 @@ class TreeNodeConverterImplTest {
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
-		Mockito.when(dcatViewService.findByViewName(viewName)).thenReturn(Optional.of(dcatView));
 
 		Model model = treeNodeConverter.toModel(treeNode);
 

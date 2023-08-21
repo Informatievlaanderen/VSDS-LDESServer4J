@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.EventStreamValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 	private final EventStreamValidator eventStreamValidator;
 
 	public AdminEventStreamsRestController(EventStreamService eventStreamService,
-			EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
+										   EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamService = eventStreamService;
 		this.eventStreamValidator = eventStreamValidator;
 		this.eventStreamResponseConverter = eventStreamResponseConverter;

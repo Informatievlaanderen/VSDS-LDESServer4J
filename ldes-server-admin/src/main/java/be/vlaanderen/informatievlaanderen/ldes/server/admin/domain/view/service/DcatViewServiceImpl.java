@@ -2,29 +2,37 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+// TODO TVB: 21/08/23 test events
 @Service
 public class DcatViewServiceImpl implements DcatViewService {
 
 	private final DcatViewRepository dcatViewRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
-	public DcatViewServiceImpl(DcatViewRepository dcatViewRepository) {
+	public DcatViewServiceImpl(DcatViewRepository dcatViewRepository, ApplicationEventPublisher eventPublisher) {
 		this.dcatViewRepository = dcatViewRepository;
+		this.eventPublisher = eventPublisher;
 	}
 
 	@Override
 	public void create(ViewName viewName, Model dcat) {
-		dcatViewRepository.save(DcatView.from(viewName, dcat));
+		DcatView dcatView = DcatView.from(viewName, dcat);
+		dcatViewRepository.save(dcatView);
+		eventPublisher.publishEvent(new DcatViewSavedEvent(dcatView));
 	}
 
 	@Override
@@ -38,12 +46,15 @@ public class DcatViewServiceImpl implements DcatViewService {
 			throw new MissingViewDcatException();
 		}
 
-		dcatViewRepository.save(DcatView.from(viewName, dcat));
+		DcatView dcatView = DcatView.from(viewName, dcat);
+		dcatViewRepository.save(dcatView);
+		eventPublisher.publishEvent(new DcatViewSavedEvent(dcatView));
 	}
 
 	@Override
 	public void delete(ViewName viewName) {
 		dcatViewRepository.delete(viewName);
+		eventPublisher.publishEvent(new DcatViewDeletedEvent(viewName));
 	}
 
 	@Override
@@ -54,6 +65,16 @@ public class DcatViewServiceImpl implements DcatViewService {
 	@EventListener
 	public void handleEventStreamInitEvent(ViewDeletedEvent event) {
 		delete(event.getViewName());
+	}
+
+	/**
+	 * Initializes the dcatViews.
+	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+	 * to give db migrations such as mongock time before this init.
+	 */
+	@EventListener(ApplicationReadyEvent.class)
+	public void initViews() {
+		findAll().forEach(dcatView -> eventPublisher.publishEvent(new DcatViewSavedEvent(dcatView)));
 	}
 
 }

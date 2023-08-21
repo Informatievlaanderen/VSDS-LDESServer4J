@@ -1,14 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
@@ -21,31 +18,27 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
+// TODO TVB: 21/08/23 update dcatview tests
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final String hostName;
-	private final DcatViewService dcatViewService;
 
-	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
-	private final HashMap<String, Model> shaclShapes = new HashMap<>();
+	private final Map<ViewName, DcatView> dcatViews = new HashMap<>();
+	private final Map<String, EventStream> eventStreams = new HashMap<>();
+	private final Map<String, Model> shaclShapes = new HashMap<>();
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
-			DcatViewService dcatViewService) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;
-		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
@@ -101,9 +94,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
 		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
-
-		dcatViewService.findByViewName(viewName)
-				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
+		DcatView dcatView = dcatViews.get(viewName);
+		if (dcatView != null) {
+			statements.addAll(dcatView.getStatementsWithBase(hostName));
+		}
 	}
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
@@ -135,17 +129,28 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	@EventListener
-	public void handleShaclInitEvent(ShaclChangedEvent event) {
-		shaclShapes.put(event.getCollection(), event.getModel());
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		eventStreams.remove(event.collectionName());
 	}
 
 	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		eventStreams.remove(event.collectionName());
+	public void handleShaclInitEvent(ShaclChangedEvent event) {
+		shaclShapes.put(event.getCollection(), event.getModel());
 	}
 
 	@EventListener
 	public void handleShaclDeletedEvent(ShaclDeletedEvent event) {
 		shaclShapes.remove(event.collectionName());
 	}
+
+	@EventListener
+	public void handleDcatViewSavedEvent(DcatViewSavedEvent event) {
+		dcatViews.put(event.dcatView().getViewName(), event.dcatView());
+	}
+
+	@EventListener
+	public void handleDcatViewDeletedEvent(DcatViewDeletedEvent event) {
+		dcatViews.remove(event.viewName());
+	}
+
 }

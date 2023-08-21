@@ -8,7 +8,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.r
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
@@ -66,13 +65,6 @@ public class EventStreamServiceImpl implements EventStreamService {
 		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
 				eventStream.getVersionOfPath(), eventStream.getMemberType(), views,
 				shaclShape.getModel(), dataset.orElse(null));
-	}
-
-	@Override
-	public String retrieveMemberType(String collectionName) {
-		return eventStreamRepository.retrieveEventStream(collectionName)
-				.map(EventStream::getMemberType)
-				.orElseThrow(() -> new MissingEventStreamException(collectionName));
 	}
 
 	@Override
