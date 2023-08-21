@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.excepti
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.shared.PropertyNotFoundException;

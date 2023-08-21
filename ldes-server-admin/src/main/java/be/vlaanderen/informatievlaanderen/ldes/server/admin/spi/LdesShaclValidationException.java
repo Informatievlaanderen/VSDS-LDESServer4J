@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import org.apache.jena.rdf.model.Model;
 
