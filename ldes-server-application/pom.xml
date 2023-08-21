@@ -214,5 +214,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>compaction</id>
+            <dependencies>
+                <dependency>
+                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+                    <artifactId>ldes-server-compaction</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 </project>
