@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching;
+package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.rdf.model.Property;

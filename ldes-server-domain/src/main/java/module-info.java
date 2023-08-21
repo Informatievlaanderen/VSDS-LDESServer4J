@@ -1,7 +1,5 @@
 module ldes.domain {
 
-    // TODO TVB: 17/08/23 fetching?? see what we can move out
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
