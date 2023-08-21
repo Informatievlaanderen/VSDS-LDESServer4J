@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 @Component
@@ -23,5 +24,10 @@ public class ViewCollectionImpl implements ViewCollection {
     @Override
     public void deleteViewCapacityByViewName(ViewName viewName) {
         viewCapacities.remove(viewName);
+    }
+
+    @Override
+    public Collection<ViewCapacity> getAllViewCapacities() {
+        return viewCapacities.values();
     }
 }
