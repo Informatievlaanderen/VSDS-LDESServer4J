@@ -12,7 +12,7 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser.getFragmentationObjectLocalDateTime;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser.getFragmentationObjectLocalDateTime;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
