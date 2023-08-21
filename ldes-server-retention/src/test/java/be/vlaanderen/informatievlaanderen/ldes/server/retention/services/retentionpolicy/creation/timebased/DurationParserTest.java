@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.timebased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DurationParserException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

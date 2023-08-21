@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.timebased;
 
 public class DurationParserException extends RuntimeException {
 

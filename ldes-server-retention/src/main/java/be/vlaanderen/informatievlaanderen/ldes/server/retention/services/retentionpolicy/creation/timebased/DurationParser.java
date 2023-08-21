@@ -1,6 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
-
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DurationParserException;
+package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.timebased;
 
 import java.time.Duration;
 import java.time.Period;

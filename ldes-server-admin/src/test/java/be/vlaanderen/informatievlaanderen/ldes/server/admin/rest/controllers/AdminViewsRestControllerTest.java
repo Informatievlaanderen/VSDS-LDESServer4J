@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ListViewHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -47,7 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminViewsRestController.class, PrefixAdderImpl.class,
-		ModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class, ViewSpecificationConverter.class,
+		HttpModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class,
+		ViewSpecificationConverter.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
 		FragmentationConfigExtractor.class })
 class AdminViewsRestControllerTest {

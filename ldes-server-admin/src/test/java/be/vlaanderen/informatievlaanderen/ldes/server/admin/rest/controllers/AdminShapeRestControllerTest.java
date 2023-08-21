@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ShaclShapeValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.exceptions.MissingShaclShapeException;
 import org.apache.jena.rdf.model.Model;
@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminShapeRestController.class, ModelConverter.class,
+@ContextConfiguration(classes = { AdminShapeRestController.class, HttpModelConverter.class,
 		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class })
 class AdminShapeRestControllerTest {
 	@MockBean
@@ -132,8 +132,8 @@ class AdminShapeRestControllerTest {
 	@TestConfiguration
 	static class AdminShapeRestControllerTestConfig {
 		@Bean
-		public ModelConverter modelConverter() {
-			return new ModelConverter(new PrefixAdderImpl());
+		public HttpModelConverter modelConverter() {
+			return new HttpModelConverter(new PrefixAdderImpl());
 		}
 	}
 }

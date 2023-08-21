@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatDatasetValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions.MissingResourceException;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { ModelConverter.class, PrefixAdderImpl.class, DcatDatasetRestController.class,
+@ContextConfiguration(classes = { HttpModelConverter.class, PrefixAdderImpl.class, DcatDatasetRestController.class,
 		AdminRestResponseEntityExceptionHandler.class })
 class DcatDatasetRestControllerTest {
 	private final static String COLLECTION_NAME = "collection";

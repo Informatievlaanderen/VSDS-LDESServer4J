@@ -18,12 +18,12 @@ import java.util.Objects;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
-public class ModelConverter implements HttpMessageConverter<Model> {
+public class HttpModelConverter implements HttpMessageConverter<Model> {
 
 	private final PrefixAdder prefixAdder;
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 
-	public ModelConverter(PrefixAdder prefixAdder) {
+	public HttpModelConverter(PrefixAdder prefixAdder) {
 		this.prefixAdder = prefixAdder;
 	}
 

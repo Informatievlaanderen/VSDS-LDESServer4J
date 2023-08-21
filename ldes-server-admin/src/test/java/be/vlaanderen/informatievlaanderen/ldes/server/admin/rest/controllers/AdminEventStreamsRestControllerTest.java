@@ -11,7 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.Even
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, ModelConverter.class,
+@ContextConfiguration(classes = { AdminEventStreamsRestController.class, HttpModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamValidator.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,

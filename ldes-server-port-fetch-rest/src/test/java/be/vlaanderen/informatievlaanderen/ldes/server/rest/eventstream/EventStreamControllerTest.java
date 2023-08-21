@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
@@ -69,7 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { EventStreamController.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
-		RetentionModelExtractor.class, ModelConverter.class, FragmentationConfigExtractor.class
+		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";

@@ -6,7 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatCatalogValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.DcatAlreadyConfiguredException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = { AdminServerDcatController.class, ModelConverter.class, PrefixAdderImpl.class,
+@ContextConfiguration(classes = { AdminServerDcatController.class, HttpModelConverter.class, PrefixAdderImpl.class,
 		AdminRestResponseEntityExceptionHandler.class })
 @ExtendWith(MockitoExtension.class)
 class AdminDcatServerControllerTest {
