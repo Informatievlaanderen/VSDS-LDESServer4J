@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot;
+package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities;
 
 import org.apache.jena.rdf.model.Model;
 
