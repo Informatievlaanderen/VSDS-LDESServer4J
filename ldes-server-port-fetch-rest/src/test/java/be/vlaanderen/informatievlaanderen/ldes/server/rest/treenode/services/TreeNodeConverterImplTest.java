@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
@@ -30,7 +32,7 @@ class TreeNodeConverterImplTest {
 	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
-	private TreeNodeConverter treeNodeConverter;
+	private TreeNodeConverterImpl treeNodeConverter;
 
 	@BeforeEach
 	void setUp() {
@@ -41,10 +43,8 @@ class TreeNodeConverterImplTest {
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
 		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
-		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
-		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
+		treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
+		treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
 	}
 
 	@Test
@@ -54,6 +54,7 @@ class TreeNodeConverterImplTest {
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
+		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
@@ -188,6 +189,21 @@ class TreeNodeConverterImplTest {
 						+ ", http://purl.org/dc/terms/isPartOf, " + HOST_NAME + "/" + COLLECTION_NAME + "]",
 				model.listStatements(null, IS_PART_OF_PROPERTY, (Resource) null).nextStatement()
 						.toString());
+	}
+
+	@Test
+	void testHandleDcatViewEvents() {
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+				COLLECTION_NAME);
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
+
+		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
+		Assertions.assertEquals(20, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
+		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 	}
 
 }

@@ -25,7 +25,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
-// TODO TVB: 21/08/23 update dcatview tests
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
