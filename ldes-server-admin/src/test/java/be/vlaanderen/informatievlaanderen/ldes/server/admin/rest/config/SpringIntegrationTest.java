@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminServerDcatController.class,
 		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class })
 @ComponentScan(value = {
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.spi",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view",
