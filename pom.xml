@@ -17,7 +17,7 @@
         <module>ldes-server-infra-mongo</module>
         <module>ldes-server-application</module>
         <module>ldes-fragmentisers</module>
-        <module>ldes-server-port-admin-rest</module>
+        <module>ldes-server-admin</module>
         <module>ldes-server-port-ingest</module>
         <module>ldes-server-port-ingest-rest</module>
         <module>ldes-server-retention</module>
@@ -270,6 +270,12 @@
         <pluginManagement>
             <plugins>
                 <!-- MAVEN -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>

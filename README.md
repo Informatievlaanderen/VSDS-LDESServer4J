@@ -143,9 +143,9 @@ These collection are to be added one by one on the following POST endpoint.
   {server_url}/admin/api/v1/eventstreams  
   ```
 The collection must be passed in RDF in either turtle, n-quads or json-ld format.
-An example can be found [here](ldes-server-port-admin-rest/README.md#ldes-event-stream)
+An example can be found [here](ldes-server-admin/README.md#ldes-event-stream)
 
-A detailed explanation on how to add or remove a collection can be found [here](ldes-server-port-admin-rest/README.md)
+A detailed explanation on how to add or remove a collection can be found [here](ldes-server-admin/README.md)
 
 ##### Example Mongo Configuration
 
@@ -185,9 +185,9 @@ Additional views can be added one by one on the following POST endpoint.
   {server_url}/admin/api/v1/eventstreams/{collection_name}/views
   ```
 The view must be passed in RDF in either turtle, n-quads or json-ld format.
-An example can be found [here](ldes-server-port-admin-rest/README.md#ldes-view)
+An example can be found [here](ldes-server-admin/README.md#ldes-view)
 
-A detailed explanation on how to add or remove a view can be found [here](ldes-server-port-admin-rest/README.md)
+A detailed explanation on how to add or remove a view can be found [here](ldes-server-admin/README.md)
 
 
 
@@ -360,7 +360,7 @@ spring:
 
 Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
-A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-port-admin-rest/README.md#dcat-endpoints)
+A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-admin/README.md#dcat-endpoints)
 or on the [swagger endpoint](#example-swagger-configuration) if it is configured.
 
 ### Docker Setup

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.fragmentisers.FragmentiserConfigException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.exceptions.FragmentiserConfigException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;

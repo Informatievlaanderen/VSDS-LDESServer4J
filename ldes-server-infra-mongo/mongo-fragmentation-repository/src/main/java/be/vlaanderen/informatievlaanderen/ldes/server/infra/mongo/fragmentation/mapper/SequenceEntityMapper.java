@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.SequenceEntity;
 import org.springframework.stereotype.Component;

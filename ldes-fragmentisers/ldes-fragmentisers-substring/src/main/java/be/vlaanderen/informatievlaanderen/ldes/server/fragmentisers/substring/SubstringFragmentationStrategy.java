@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.substring;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;

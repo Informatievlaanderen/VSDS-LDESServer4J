@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
@@ -14,10 +14,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
-
 @Configuration
 public class SnapshotConfig {
+
+	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
 
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");

@@ -1,17 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.EventStreamInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeNodeInfoResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.fetching.TreeRelationResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -22,10 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
@@ -36,17 +26,15 @@ import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
-	private String hostName;
+	private final String hostName;
 
-	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
-	private final HashMap<String, ShaclShape> shaclShapes = new HashMap<>();
-	private final DcatViewService dcatViewService;
+	private final Map<ViewName, DcatView> dcatViews = new HashMap<>();
+	private final Map<String, EventStream> eventStreams = new HashMap<>();
+	private final Map<String, Model> shaclShapes = new HashMap<>();
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName,
-			DcatViewService dcatViewService) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;
-		this.dcatViewService = dcatViewService;
 	}
 
 	@Override
@@ -66,7 +54,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private List<Statement> addTreeNodeStatements(TreeNode treeNode, String collectionName) {
 		EventStream eventStream = eventStreams.get(collectionName);
-		ShaclShape shaclShape = shaclShapes.get(collectionName);
+		Model shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
 						hostName + treeRelation.treeNode().asString(),
@@ -81,7 +69,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
-			EventStream eventStream, ShaclShape shaclShape) {
+			EventStream eventStream, Model shaclShape) {
 		String baseUrl = hostName + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
@@ -93,7 +81,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					null,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			statements.addAll(shaclShape.getModel().listStatements().toList());
+			statements.addAll(shaclShape.listStatements().toList());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
@@ -102,9 +90,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private void addDcatStatements(List<Statement> statements, String currentFragmentId, String collection) {
 		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
-		dcatViewService.findByViewName(viewName)
-				.ifPresent(dcatView -> statements.addAll(dcatView.getStatementsWithBase(hostName)));
-
+		DcatView dcatView = dcatViews.get(viewName);
+		if (dcatView != null) {
+			statements.addAll(dcatView.getStatementsWithBase(hostName));
+		}
 	}
 
 	private List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
@@ -136,17 +125,28 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 	}
 
 	@EventListener
-	public void handleShaclInitEvent(ShaclChangedEvent event) {
-		shaclShapes.put(event.getShacl().getCollection(), event.getShacl());
+	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+		eventStreams.remove(event.collectionName());
 	}
 
 	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		eventStreams.remove(event.collectionName());
+	public void handleShaclInitEvent(ShaclChangedEvent event) {
+		shaclShapes.put(event.getCollection(), event.getModel());
 	}
 
 	@EventListener
 	public void handleShaclDeletedEvent(ShaclDeletedEvent event) {
 		shaclShapes.remove(event.collectionName());
 	}
+
+	@EventListener
+	public void handleDcatViewSavedEvent(DcatViewSavedEvent event) {
+		dcatViews.put(event.dcatView().getViewName(), event.dcatView());
+	}
+
+	@EventListener
+	public void handleDcatViewDeletedEvent(DcatViewDeletedEvent event) {
+		dcatViews.remove(event.viewName());
+	}
+
 }

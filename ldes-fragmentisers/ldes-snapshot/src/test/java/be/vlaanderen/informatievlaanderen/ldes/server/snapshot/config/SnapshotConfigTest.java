@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ConfigProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.NonCriticalTasksExecutor;
@@ -10,8 +10,8 @@ import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.ViewServiceImpl.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.snapshot.config.SnapshotConfig.DEFAULT_VIEW_FRAGMENTATION_PROPERTIES;
+import static be.vlaanderen.informatievlaanderen.ldes.server.snapshot.config.SnapshotConfig.DEFAULT_VIEW_FRAGMENTATION_STRATEGY;
 import static org.mockito.Mockito.*;
 
 class SnapshotConfigTest {
