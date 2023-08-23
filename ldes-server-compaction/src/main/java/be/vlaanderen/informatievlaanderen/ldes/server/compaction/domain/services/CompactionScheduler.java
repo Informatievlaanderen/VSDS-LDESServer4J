@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class CompactionService {
+public class CompactionScheduler {
     private final ViewCollection viewCollection;
     private final FragmentRepository fragmentRepository;
     private final PaginationCompactionService paginationCompactionService;
 
 
-    public CompactionService(ViewCollection viewCollection, FragmentRepository fragmentRepository, PaginationCompactionService paginationCompactionService) {
+    public CompactionScheduler(ViewCollection viewCollection, FragmentRepository fragmentRepository, PaginationCompactionService paginationCompactionService) {
         this.viewCollection = viewCollection;
         this.fragmentRepository = fragmentRepository;
         this.paginationCompactionService = paginationCompactionService;

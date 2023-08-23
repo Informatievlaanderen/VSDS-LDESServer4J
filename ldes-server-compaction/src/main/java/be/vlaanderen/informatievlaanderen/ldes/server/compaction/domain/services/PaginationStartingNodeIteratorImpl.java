@@ -16,7 +16,7 @@ public class PaginationStartingNodeIteratorImpl implements PaginationStartingNod
 
     public PaginationStartingNodeIteratorImpl(FragmentRepository fragmentRepository, Fragment rootFragment) {
         this.fragmentRepository = fragmentRepository;
-        this.compactableFragmentPredicate = new CompactableFragmentPredicate(fragmentRepository);
+        this.compactableFragmentPredicate = new CompactableFragmentPredicate();
         this.structuralFragments = new ArrayList<>();
         this.structuralFragments.add(rootFragment);
         this.startingNodeFragments = new ArrayList<>();

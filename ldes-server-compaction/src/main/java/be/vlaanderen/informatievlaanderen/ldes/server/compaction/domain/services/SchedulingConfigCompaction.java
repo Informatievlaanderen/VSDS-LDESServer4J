@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -16,7 +15,7 @@ public class SchedulingConfigCompaction {
 
     @Bean
     @Qualifier("compaction-fragmentation")
-    public FragmentationStrategy compactionFragmentationStrategy(FragmentRepository fragmentRepository,
+    public FragmentationStrategyImpl compactionFragmentationStrategy(FragmentRepository fragmentRepository,
                                                                  NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
         return new FragmentationStrategyImpl(fragmentRepository,
                 nonCriticalTasksExecutor,
