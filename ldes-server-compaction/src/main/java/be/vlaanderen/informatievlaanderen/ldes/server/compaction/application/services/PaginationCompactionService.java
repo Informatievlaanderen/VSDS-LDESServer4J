@@ -1,5 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableFragmentPredicate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableRelationPredicate;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactionComparator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -24,14 +27,14 @@ public class PaginationCompactionService {
 
 	}
 
-	public void applyCompactionStartingFromNode(Fragment fragment, int capacityPerPage) {
+	public void applyCompactionStartingFromNode(Fragment fragment) {
 		Fragment firstFragmentOfCompaction = fragment;
 		while (firstFragmentOfCompactionHasOutgoingRelations(firstFragmentOfCompaction)) {
 			Optional<Fragment> secondFragmentOfCompaction = retrieveMostCompactedRelationFragment(
 					firstFragmentOfCompaction);
 			if (secondFragmentOfCompaction.isPresent()) {
-				testAndApplyPossibleCompaction(firstFragmentOfCompaction, secondFragmentOfCompaction.get(),
-						capacityPerPage);
+				testAndApplyPossibleCompaction(firstFragmentOfCompaction, secondFragmentOfCompaction.get()
+				);
 				firstFragmentOfCompaction = secondFragmentOfCompaction.get();
 			} else {
 				break;
@@ -40,12 +43,12 @@ public class PaginationCompactionService {
 	}
 
 	private void testAndApplyPossibleCompaction(Fragment firstFragmentOfCompaction,
-			Fragment secondFragmentOfCompaction, int capacityPerPage) {
+			Fragment secondFragmentOfCompaction) {
 		if (compactableRelationPredicate.test(firstFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(secondFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(firstFragmentOfCompaction)) {
-			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction,
-					capacityPerPage);
+			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction
+			);
 		}
 	}
 

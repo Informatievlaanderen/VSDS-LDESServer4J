@@ -1,5 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.events.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -23,12 +24,12 @@ public class FragmentCompactionService {
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
-	public void compactFragments(Fragment firstFragment, Fragment secondFragment, int capacityPerPage) {
+	public void compactFragments(Fragment firstFragment, Fragment secondFragment) {
 		LdesFragmentIdentifier ldesFragmentIdentifier = generateNewLdesFragmentIdentifier(firstFragment,
 				secondFragment);
 		if (fragmentRepository.retrieveFragment(ldesFragmentIdentifier).isEmpty()) {
-			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier,
-					capacityPerPage);
+			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier
+			);
 			applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(firstFragment, secondFragment));
 		}
 

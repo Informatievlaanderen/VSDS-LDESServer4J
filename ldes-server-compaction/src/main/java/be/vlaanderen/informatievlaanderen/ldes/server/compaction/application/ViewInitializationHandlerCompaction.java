@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.ViewCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
 import org.springframework.context.event.EventListener;

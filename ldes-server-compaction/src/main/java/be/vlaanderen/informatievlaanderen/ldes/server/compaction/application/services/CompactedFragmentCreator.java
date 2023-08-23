@@ -1,5 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
@@ -23,20 +24,23 @@ public class CompactedFragmentCreator {
 	private final FragmentationStrategyImpl fragmentationStrategy;
 	private final ObservationRegistry observationRegistry;
 	private final AllocationRepository allocationRepository;
+	private final ViewCollection viewCollection;
 
 	public CompactedFragmentCreator(FragmentRepository fragmentRepository,
-			@Qualifier("compaction-fragmentation") FragmentationStrategyImpl fragmentationStrategy,
-			ObservationRegistry observationRegistry, AllocationRepository allocationRepository) {
+									@Qualifier("compaction-fragmentation") FragmentationStrategyImpl fragmentationStrategy,
+									ObservationRegistry observationRegistry, AllocationRepository allocationRepository, ViewCollection viewCollection) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.observationRegistry = observationRegistry;
 		this.allocationRepository = allocationRepository;
+		this.viewCollection = viewCollection;
 	}
 
 	public void createCompactedFragment(Fragment firstFragment, Fragment secondFragment,
-			LdesFragmentIdentifier ldesFragmentIdentifier, int capacityPerPage) {
+			LdesFragmentIdentifier ldesFragmentIdentifier) {
 		List<String> membersOfCompactedFragments = getMembersOfCompactedFragments(firstFragment, secondFragment);
-		if (membersOfCompactedFragments.size() < capacityPerPage) {
+		int pageCapacityOfView = viewCollection.getViewCapacityByViewName(ldesFragmentIdentifier.getViewName()).getCapacityPerPage();
+		if (membersOfCompactedFragments.size() < pageCapacityOfView) {
 			Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
 			updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);
 			addMembersOfFragmentsToCompactedFragment(membersOfCompactedFragments, compactedFragment);
