@@ -37,6 +37,8 @@ COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-timebased-hierarchic
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-substring/target/ldes-fragmentisers-substring-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-pagination/target/ldes-fragmentisers-pagination-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-retention/target/ldes-server-retention-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-compaction/target/ldes-server-compaction-jar-with-dependencies.jar ./lib/
+
 
 RUN useradd -u 2000 ldes
 USER ldes
