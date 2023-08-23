@@ -1,5 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ConfigFilterPredicate;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;

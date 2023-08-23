@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.ModelToViewConverterException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;

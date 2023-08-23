@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.repository.SnapshotRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.SnapshotMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.repository.SnapshotEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.repository.SnapshotRepository;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;

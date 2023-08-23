@@ -1,21 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamResponseConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.FragmentationConfigExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.RetentionModelExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -65,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
-@Import(EventStreamControllerTest.EventStreamControllerTestConfiguration.class)
+@Import({ EventStreamControllerTest.EventStreamControllerTestConfiguration.class })
 @ContextConfiguration(classes = { EventStreamController.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
@@ -79,10 +74,6 @@ class EventStreamControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private EventStreamServiceSpi eventStreamService;
-	@MockBean
-	private ViewService viewService;
-	@MockBean
-	private ShaclShapeService shaclShapeService;
 	private String hostname;
 
 	@BeforeEach
@@ -97,12 +88,7 @@ class EventStreamControllerTest {
 				createProperty(NODE_SHAPE_TYPE),
 				createResource("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"));
 
-		ShaclShape shaclShape = new ShaclShape(COLLECTION, shacl);
-
 		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
-		when(shaclShapeService.retrieveShaclShape(COLLECTION)).thenReturn(shaclShape);
-		when(viewService.getViewByViewName(new ViewName(COLLECTION, "by-page"))).thenReturn(
-				new ViewSpecification(new ViewName(COLLECTION, "by-page"), List.of(), List.of(), 100));
 	}
 
 	@ParameterizedTest(name = "Correct getting of an EventStream from the REST Service with mediatype{0}")

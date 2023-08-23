@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.extension.ExtensionContext;
