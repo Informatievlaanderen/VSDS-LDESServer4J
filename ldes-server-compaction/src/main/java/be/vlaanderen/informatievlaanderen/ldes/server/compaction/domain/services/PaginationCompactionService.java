@@ -24,13 +24,14 @@ public class PaginationCompactionService {
 
 	}
 
-	public void applyCompactionStartingFromNode(Fragment fragment) {
+	public void applyCompactionStartingFromNode(Fragment fragment, int capacityPerPage) {
 		Fragment firstFragmentOfCompaction = fragment;
 		while (firstFragmentOfCompactionHasOutgoingRelations(firstFragmentOfCompaction)) {
 			Optional<Fragment> secondFragmentOfCompaction = retrieveMostCompactedRelationFragment(
 					firstFragmentOfCompaction);
 			if (secondFragmentOfCompaction.isPresent()) {
-				testAndApplyPossibleCompaction(firstFragmentOfCompaction, secondFragmentOfCompaction.get());
+				testAndApplyPossibleCompaction(firstFragmentOfCompaction, secondFragmentOfCompaction.get(),
+						capacityPerPage);
 				firstFragmentOfCompaction = secondFragmentOfCompaction.get();
 			} else {
 				break;
@@ -39,11 +40,12 @@ public class PaginationCompactionService {
 	}
 
 	private void testAndApplyPossibleCompaction(Fragment firstFragmentOfCompaction,
-			Fragment secondFragmentOfCompaction) {
+			Fragment secondFragmentOfCompaction, int capacityPerPage) {
 		if (compactableRelationPredicate.test(firstFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(secondFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(firstFragmentOfCompaction)) {
-			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction);
+			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction,
+					capacityPerPage);
 		}
 	}
 

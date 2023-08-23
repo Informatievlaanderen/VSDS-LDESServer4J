@@ -32,7 +32,8 @@ public class CompactionScheduler {
 								fragmentRepository, fragment.get());
 						while (paginationStartingNodeIterator.hasNext()) {
 							paginationCompactionService
-									.applyCompactionStartingFromNode(paginationStartingNodeIterator.next());
+									.applyCompactionStartingFromNode(paginationStartingNodeIterator.next(),
+											viewCapacity.getCapacityPerPage());
 						}
 					}
 				});

@@ -23,11 +23,12 @@ public class FragmentCompactionService {
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
-	public void compactFragments(Fragment firstFragment, Fragment secondFragment) {
+	public void compactFragments(Fragment firstFragment, Fragment secondFragment, int capacityPerPage) {
 		LdesFragmentIdentifier ldesFragmentIdentifier = generateNewLdesFragmentIdentifier(firstFragment,
 				secondFragment);
 		if (fragmentRepository.retrieveFragment(ldesFragmentIdentifier).isEmpty()) {
-			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier);
+			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier,
+					capacityPerPage);
 			applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(firstFragment, secondFragment));
 		}
 

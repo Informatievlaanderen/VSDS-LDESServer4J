@@ -34,22 +34,27 @@ public class CompactedFragmentCreator {
 	}
 
 	public void createCompactedFragment(Fragment firstFragment, Fragment secondFragment,
-			LdesFragmentIdentifier ldesFragmentIdentifier) {
-		Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
-		updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);
-		addMembersOfFragmentsToCompactedFragment(firstFragment, secondFragment, compactedFragment);
+			LdesFragmentIdentifier ldesFragmentIdentifier, int capacityPerPage) {
+		List<String> membersOfCompactedFragments = getMembersOfCompactedFragments(firstFragment, secondFragment);
+		if (membersOfCompactedFragments.size() < capacityPerPage) {
+			Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
+			updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);
+			addMembersOfFragmentsToCompactedFragment(membersOfCompactedFragments, compactedFragment);
+		}
 	}
 
-	private void addMembersOfFragmentsToCompactedFragment(Fragment firstFragment, Fragment secondFragment,
-			Fragment fragment) {
+	private List<String> getMembersOfCompactedFragments(Fragment firstFragment, Fragment secondFragment) {
 		List<MemberAllocation> memberAllocationsByFragmentIdOne = allocationRepository
 				.getMemberAllocationsByFragmentId(firstFragment.getFragmentIdString());
 		List<MemberAllocation> memberAllocationsByFragmentIdTwo = allocationRepository
 				.getMemberAllocationsByFragmentId(secondFragment.getFragmentIdString());
-		List<String> memberIds = Stream.of(memberAllocationsByFragmentIdOne, memberAllocationsByFragmentIdTwo)
+		return Stream.of(memberAllocationsByFragmentIdOne, memberAllocationsByFragmentIdTwo)
 				.flatMap(List::stream)
 				.map(MemberAllocation::getMemberId).toList();
-		memberIds.forEach(memberId -> {
+	}
+
+	private void addMembersOfFragmentsToCompactedFragment(List<String> membersOfCompactedFragments, Fragment fragment) {
+		membersOfCompactedFragments.forEach(memberId -> {
 			Observation compactionObservation = Observation.createNotStarted("compaction", observationRegistry).start();
 			// memberModel can be null, since we explicitly use FragmentationStrategyImpl
 			fragmentationStrategy.addMemberToFragment(fragment, memberId, null, compactionObservation);

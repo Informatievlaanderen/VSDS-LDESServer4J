@@ -14,4 +14,8 @@ public class ViewCapacity {
 	public ViewName getViewName() {
 		return viewName;
 	}
+
+	public int getCapacityPerPage() {
+		return capacityPerPage;
+	}
 }
