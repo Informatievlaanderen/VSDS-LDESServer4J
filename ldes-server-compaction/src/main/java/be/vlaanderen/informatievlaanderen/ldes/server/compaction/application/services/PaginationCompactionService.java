@@ -33,8 +33,7 @@ public class PaginationCompactionService {
 			Optional<Fragment> secondFragmentOfCompaction = retrieveMostCompactedRelationFragment(
 					firstFragmentOfCompaction);
 			if (secondFragmentOfCompaction.isPresent()) {
-				testAndApplyPossibleCompaction(firstFragmentOfCompaction, secondFragmentOfCompaction.get()
-				);
+				testAndApplyPossibleCompaction(firstFragmentOfCompaction, secondFragmentOfCompaction.get());
 				firstFragmentOfCompaction = secondFragmentOfCompaction.get();
 			} else {
 				break;
@@ -47,8 +46,7 @@ public class PaginationCompactionService {
 		if (compactableRelationPredicate.test(firstFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(secondFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(firstFragmentOfCompaction)) {
-			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction
-			);
+			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction);
 		}
 	}
 

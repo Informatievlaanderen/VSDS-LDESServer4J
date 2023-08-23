@@ -27,8 +27,9 @@ public class CompactedFragmentCreator {
 	private final ViewCollection viewCollection;
 
 	public CompactedFragmentCreator(FragmentRepository fragmentRepository,
-									@Qualifier("compaction-fragmentation") FragmentationStrategyImpl fragmentationStrategy,
-									ObservationRegistry observationRegistry, AllocationRepository allocationRepository, ViewCollection viewCollection) {
+			@Qualifier("compaction-fragmentation") FragmentationStrategyImpl fragmentationStrategy,
+			ObservationRegistry observationRegistry, AllocationRepository allocationRepository,
+			ViewCollection viewCollection) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.observationRegistry = observationRegistry;
@@ -39,7 +40,8 @@ public class CompactedFragmentCreator {
 	public void createCompactedFragment(Fragment firstFragment, Fragment secondFragment,
 			LdesFragmentIdentifier ldesFragmentIdentifier) {
 		List<String> membersOfCompactedFragments = getMembersOfCompactedFragments(firstFragment, secondFragment);
-		int pageCapacityOfView = viewCollection.getViewCapacityByViewName(ldesFragmentIdentifier.getViewName()).getCapacityPerPage();
+		int pageCapacityOfView = viewCollection.getViewCapacityByViewName(ldesFragmentIdentifier.getViewName())
+				.getCapacityPerPage();
 		if (membersOfCompactedFragments.size() < pageCapacityOfView) {
 			Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
 			updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);

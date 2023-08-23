@@ -28,8 +28,7 @@ public class FragmentCompactionService {
 		LdesFragmentIdentifier ldesFragmentIdentifier = generateNewLdesFragmentIdentifier(firstFragment,
 				secondFragment);
 		if (fragmentRepository.retrieveFragment(ldesFragmentIdentifier).isEmpty()) {
-			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier
-			);
+			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier);
 			applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(firstFragment, secondFragment));
 		}
 
