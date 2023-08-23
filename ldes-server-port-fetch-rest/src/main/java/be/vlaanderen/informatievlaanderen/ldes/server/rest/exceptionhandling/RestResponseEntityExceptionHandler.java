@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.MissingFragmentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler
 		extends ResponseEntityExceptionHandler {
+
+	private static final Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
 	@ExceptionHandler(value = { MissingFragmentException.class })
 	protected ResponseEntity<Object> handleNotFoundException(
@@ -35,8 +39,7 @@ public class RestResponseEntityExceptionHandler
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		// logger.error(ex.getMessage()); // TODO: 14/08/23 figure out what is wrong
-		// here
+		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -44,8 +47,7 @@ public class RestResponseEntityExceptionHandler
 
 	private ResponseEntity<Object> handleExceptionWithoutDetails(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		// logger.error(ex.getMessage()); // TODO: 14/08/23 figure out what is wrong
-		// here
+		log.error(ex.getMessage());
 		return handleExceptionInternal(ex, null, new HttpHeaders(), status, request);
 	}
 }
