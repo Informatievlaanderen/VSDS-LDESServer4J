@@ -6,9 +6,9 @@ import java.util.function.Predicate;
 
 public class CompactableFragmentPredicate implements Predicate<Fragment> {
 
-    @Override
-    public boolean test(Fragment fragment) {
-        return fragment.getNumberOfMembers() > 0
-                && fragment.isImmutable();
-    }
+	@Override
+	public boolean test(Fragment fragment) {
+		return fragment.getNumberOfMembers() > 0
+				&& fragment.isImmutable();
+	}
 }

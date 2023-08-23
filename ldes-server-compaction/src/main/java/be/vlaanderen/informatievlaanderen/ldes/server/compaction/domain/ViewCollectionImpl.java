@@ -9,25 +9,25 @@ import java.util.HashMap;
 
 @Component
 public class ViewCollectionImpl implements ViewCollection {
-    private final HashMap<ViewName, ViewCapacity> viewCapacities = new HashMap<>();
+	private final HashMap<ViewName, ViewCapacity> viewCapacities = new HashMap<>();
 
-    @Override
-    public void saveViewCapacity(ViewCapacity viewCapacity) {
-        viewCapacities.put(viewCapacity.getViewName(), viewCapacity);
-    }
+	@Override
+	public void saveViewCapacity(ViewCapacity viewCapacity) {
+		viewCapacities.put(viewCapacity.getViewName(), viewCapacity);
+	}
 
-    @Override
-    public ViewCapacity getViewCapacityByViewName(ViewName viewName) {
-        return viewCapacities.get(viewName);
-    }
+	@Override
+	public ViewCapacity getViewCapacityByViewName(ViewName viewName) {
+		return viewCapacities.get(viewName);
+	}
 
-    @Override
-    public void deleteViewCapacityByViewName(ViewName viewName) {
-        viewCapacities.remove(viewName);
-    }
+	@Override
+	public void deleteViewCapacityByViewName(ViewName viewName) {
+		viewCapacities.remove(viewName);
+	}
 
-    @Override
-    public Collection<ViewCapacity> getAllViewCapacities() {
-        return viewCapacities.values();
-    }
+	@Override
+	public Collection<ViewCapacity> getAllViewCapacities() {
+		return viewCapacities.values();
+	}
 }

@@ -13,14 +13,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class SchedulingConfigCompaction {
 
-    @Bean
-    @Qualifier("compaction-fragmentation")
-    public FragmentationStrategyImpl compactionFragmentationStrategy(FragmentRepository fragmentRepository,
-                                                                 NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
-        return new FragmentationStrategyImpl(fragmentRepository,
-                nonCriticalTasksExecutor,
-                eventPublisher);
+	@Bean
+	@Qualifier("compaction-fragmentation")
+	public FragmentationStrategyImpl compactionFragmentationStrategy(FragmentRepository fragmentRepository,
+			NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
+		return new FragmentationStrategyImpl(fragmentRepository,
+				nonCriticalTasksExecutor,
+				eventPublisher);
 
-    }
+	}
 
 }

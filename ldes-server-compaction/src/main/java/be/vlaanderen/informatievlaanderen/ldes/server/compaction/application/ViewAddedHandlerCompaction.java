@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ViewAddedHandlerCompaction {
-    private final ViewCollection viewCollection;
+	private final ViewCollection viewCollection;
 
-    public ViewAddedHandlerCompaction(ViewCollection viewCollection) {
-        this.viewCollection = viewCollection;
-    }
+	public ViewAddedHandlerCompaction(ViewCollection viewCollection) {
+		this.viewCollection = viewCollection;
+	}
 
-    @EventListener
-    public void handleViewAddedEvent(ViewAddedEvent event) {
-        viewCollection.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
-    }
-
+	@EventListener
+	public void handleViewAddedEvent(ViewAddedEvent event) {
+		viewCollection
+				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
+	}
 
 }

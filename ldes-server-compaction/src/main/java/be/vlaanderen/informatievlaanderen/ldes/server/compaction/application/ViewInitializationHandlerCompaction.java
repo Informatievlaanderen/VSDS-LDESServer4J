@@ -8,14 +8,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ViewInitializationHandlerCompaction {
-    private final ViewCollection viewCollection;
+	private final ViewCollection viewCollection;
 
-    public ViewInitializationHandlerCompaction(ViewCollection viewCollection) {
-        this.viewCollection = viewCollection;
-    }
+	public ViewInitializationHandlerCompaction(ViewCollection viewCollection) {
+		this.viewCollection = viewCollection;
+	}
 
-    @EventListener
-    public void handleViewInitializationEvent(ViewInitializationEvent event) {
-        viewCollection.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
-    }
+	@EventListener
+	public void handleViewInitializationEvent(ViewInitializationEvent event) {
+		viewCollection
+				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
+	}
 }

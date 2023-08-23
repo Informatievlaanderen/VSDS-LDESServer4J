@@ -3,11 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.service
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 
 public class FragmentsCompactedEvent {
-    private final Fragment firstFragment;
-    private final Fragment secondFragment;
+	private final Fragment firstFragment;
+	private final Fragment secondFragment;
 
-    public FragmentsCompactedEvent(Fragment firstFragment, Fragment secondFragment) {
-        this.firstFragment = firstFragment;
-        this.secondFragment = secondFragment;
-    }
+	public FragmentsCompactedEvent(Fragment firstFragment, Fragment secondFragment) {
+		this.firstFragment = firstFragment;
+		this.secondFragment = secondFragment;
+	}
 }

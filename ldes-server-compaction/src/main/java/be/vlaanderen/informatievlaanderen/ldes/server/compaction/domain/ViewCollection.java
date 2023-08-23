@@ -6,11 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueo
 import java.util.Collection;
 
 public interface ViewCollection {
-    void saveViewCapacity(ViewCapacity viewCapacity) ;
+	void saveViewCapacity(ViewCapacity viewCapacity);
 
-    ViewCapacity getViewCapacityByViewName(ViewName viewName);
+	ViewCapacity getViewCapacityByViewName(ViewName viewName);
 
-    void deleteViewCapacityByViewName(ViewName viewName) ;
+	void deleteViewCapacityByViewName(ViewName viewName);
 
-    Collection<ViewCapacity> getAllViewCapacities();
+	Collection<ViewCapacity> getAllViewCapacities();
 }

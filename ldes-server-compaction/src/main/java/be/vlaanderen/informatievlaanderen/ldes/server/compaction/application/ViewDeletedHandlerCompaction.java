@@ -7,16 +7,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ViewDeletedHandlerCompaction {
-    private final ViewCollection viewCollection;
+	private final ViewCollection viewCollection;
 
-    public ViewDeletedHandlerCompaction(ViewCollection viewCollection) {
-        this.viewCollection = viewCollection;
-    }
+	public ViewDeletedHandlerCompaction(ViewCollection viewCollection) {
+		this.viewCollection = viewCollection;
+	}
 
-    @EventListener
-    public void handleViewDeletedEvent(ViewDeletedEvent event) {
-        viewCollection.deleteViewCapacityByViewName(event.getViewName());
-    }
-
+	@EventListener
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		viewCollection.deleteViewCapacityByViewName(event.getViewName());
+	}
 
 }
