@@ -27,4 +27,6 @@ public interface FragmentRepository {
 	void removeLdesFragmentsOfView(String viewName);
 
 	void deleteTreeNodesByCollection(String collectionName);
+
+	List<Fragment> retrieveFragmentsByOutgoingRelation(LdesFragmentIdentifier fragmentId);
 }

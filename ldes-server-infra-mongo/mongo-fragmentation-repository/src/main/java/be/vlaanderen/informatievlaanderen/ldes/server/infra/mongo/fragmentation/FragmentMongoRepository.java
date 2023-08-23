@@ -102,4 +102,13 @@ public class FragmentMongoRepository implements FragmentRepository {
 		log.info("Deleted {} treeNodes", deleteCount);
 	}
 
+	@Override
+	public List<Fragment> retrieveFragmentsByOutgoingRelation(LdesFragmentIdentifier fragmentId) {
+		return repository
+				.findAllByRelations_TreeNode(fragmentId)
+				.stream()
+				.map(FragmentEntity::toLdesFragment)
+				.toList();
+	}
+
 }

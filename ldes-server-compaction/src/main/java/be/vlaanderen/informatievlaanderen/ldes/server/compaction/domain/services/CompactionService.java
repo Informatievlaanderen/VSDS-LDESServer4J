@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
+
 @Service
 public class CompactionService {
     private final CompactableFragmentPredicate compactableFragmentPredicate = new CompactableFragmentPredicate();
@@ -76,12 +78,16 @@ public class CompactionService {
                 .flatMap(List::stream)
                 .map(MemberAllocation::getMemberId).toList();
         fragmentRepository.saveFragment(fragment);
+        List<Fragment> fragments = fragmentRepository.retrieveFragmentsByOutgoingRelation(firstFragment.getFragmentId());
+        fragments.forEach(prefragment->{
+            prefragment.addRelation(new TreeRelation("",fragment.getFragmentId(),"","",GENERIC_TREE_RELATION));
+            fragmentRepository.saveFragment(prefragment);
+        });
         memberRepository.findAllByIds(memberIds).forEach(member -> {
             Observation compactionObservation = Observation.createNotStarted("compaction", observationRegistry).start();
             fragmentationStrategy.addMemberToFragment(fragment, member.getId(), member.getModel(), compactionObservation);
             compactionObservation.stop();
         });
-        System.out.println();
     }
 
     private String getPageNumber(Fragment firstFragment) {

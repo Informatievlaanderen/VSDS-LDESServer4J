@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
@@ -21,4 +22,6 @@ public interface FragmentEntityRepository extends MongoRepository<FragmentEntity
 	List<FragmentEntity> removeByViewName(String viewName);
 
 	Long deleteAllByCollectionName(String collectionName);
+
+	List<FragmentEntity> findAllByRelations_TreeNode(LdesFragmentIdentifier fragmentId);
 }
