@@ -22,7 +22,6 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
-	// private final ShaclShapeService shaclShapeService;
 
 	public SnapshotCreatorImpl(@Value(HOST_NAME_KEY) String hostName, MemberCollector memberCollector,
 			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
@@ -36,8 +35,6 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	public Snapshot createSnapshotForTreeNodes(List<Fragment> treeNodesForSnapshot,
 			String collectionName) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		// Model shacl =
-		// shaclShapeService.retrieveShaclShape(collectionName).getModel();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
 				null, snapshotTime, hostName + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);

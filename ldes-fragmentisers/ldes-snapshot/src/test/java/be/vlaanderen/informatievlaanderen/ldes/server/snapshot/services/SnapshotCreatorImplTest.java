@@ -29,8 +29,6 @@ class SnapshotCreatorImplTest {
 	private final MemberCollector memberCollector = Mockito.mock(MemberCollector.class);
 	private final RootFragmentCreator rootFragmentCreator = Mockito.mock(RootFragmentCreator.class);
 	private final SnapshotFragmenter snapshotFragmenter = Mockito.mock(SnapshotFragmenter.class);
-	// private final ShaclShapeService shaclShapeService =
-	// mock(ShaclShapeService.class);
 	private SnapShotCreator snapShotCreator;
 
 	@BeforeEach

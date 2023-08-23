@@ -16,6 +16,5 @@ public class SnapshotController {
 	@Operation(summary = "Creation of Snapshot")
 	public void createSnapshot(@PathVariable("collection") String collectionName) {
 		// replace with firing event if snapshot is ever supported again
-		// snapshotService.createSnapshot(collectionName);
 	}
 }
