@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.eventhandler;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction.FragmentsCompactedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
@@ -13,21 +14,27 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 
 @Component
 public class FragmentDeleteTimeSetter {
-    private final FragmentRepository fragmentRepository;
-    private final Duration compactionDuration;
+	private final FragmentRepository fragmentRepository;
+	private final Duration compactionDuration;
 
-    public FragmentDeleteTimeSetter(@Value(COMPACTION_DURATION) String compactionDuration, FragmentRepository fragmentRepository) {
-        this.fragmentRepository = fragmentRepository;
-        this.compactionDuration = Duration.parse(compactionDuration);
-    }
+	public FragmentDeleteTimeSetter(@Value(COMPACTION_DURATION) String compactionDuration,
+			FragmentRepository fragmentRepository) {
+		this.fragmentRepository = fragmentRepository;
+		this.compactionDuration = Duration.parse(compactionDuration);
+	}
 
-    @EventListener
-    public void handleFragmentsCompactedEvent(FragmentsCompactedEvent event) {
-        fragmentRepository
-                .retrieveFragment(event.firstFragment())
-                .ifPresent(fragment -> {
-                    fragment.setDeleteTime(LocalDateTime.now().plus(compactionDuration));
-                    fragmentRepository.saveFragment(fragment);
-                });
-    }
+	@EventListener
+	public void handleFragmentsCompactedEvent(FragmentsCompactedEvent event) {
+		setDeleteTimeOfFragment(event.firstFragment());
+		setDeleteTimeOfFragment(event.secondFragment());
+	}
+
+	private void setDeleteTimeOfFragment(LdesFragmentIdentifier event) {
+		fragmentRepository
+				.retrieveFragment(event)
+				.ifPresent(fragment -> {
+					fragment.setDeleteTime(LocalDateTime.now().plus(compactionDuration));
+					fragmentRepository.saveFragment(fragment);
+				});
+	}
 }

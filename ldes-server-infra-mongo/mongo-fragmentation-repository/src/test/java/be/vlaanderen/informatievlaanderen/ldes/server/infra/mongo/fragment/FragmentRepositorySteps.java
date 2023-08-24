@@ -45,7 +45,8 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				row.get("relations").equals("") ? List.of()
 						: Arrays.stream(row.get("relations").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-								.toList(), deleteTime));
+								.toList(),
+				deleteTime));
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")

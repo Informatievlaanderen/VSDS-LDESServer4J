@@ -111,4 +111,16 @@ public class FragmentMongoRepository implements FragmentRepository {
 				.toList();
 	}
 
+	@Override
+	public Stream<Fragment> getDeletionCandidates() {
+		return repository
+				.findByDeleteTimeNotNull()
+				.map(FragmentEntity::toLdesFragment);
+	}
+
+	@Override
+	public void deleteFragment(Fragment readyForDeletionFragment) {
+		repository.delete(FragmentEntity.fromLdesFragment(readyForDeletionFragment));
+	}
+
 }

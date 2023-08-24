@@ -25,7 +25,7 @@ public class Fragment {
 	}
 
 	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int numberOfMembers,
-					List<TreeRelation> relations, LocalDateTime deleteTime) {
+			List<TreeRelation> relations, LocalDateTime deleteTime) {
 		this.identifier = identifier;
 		this.immutable = immutable;
 		this.numberOfMembers = numberOfMembers;
@@ -80,17 +80,16 @@ public class Fragment {
 		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> ROOT);
 	}
 
-	public boolean readyForDeletion(){
-		if(deleteTime!=null){
+	public boolean isReadyForDeletion() {
+		if (deleteTime != null) {
 			return LocalDateTime.now().isAfter(deleteTime);
 		}
 		return false;
 	}
 
-	public void setDeleteTime(LocalDateTime localDateTime){
+	public void setDeleteTime(LocalDateTime localDateTime) {
 		this.deleteTime = localDateTime;
 	}
-
 
 	@Override
 	public boolean equals(Object o) {
@@ -125,5 +124,9 @@ public class Fragment {
 
 	public LocalDateTime getDeleteTime() {
 		return deleteTime;
+	}
+
+	public void removeRelation(TreeRelation treeRelation) {
+		relations.remove(treeRelation);
 	}
 }
