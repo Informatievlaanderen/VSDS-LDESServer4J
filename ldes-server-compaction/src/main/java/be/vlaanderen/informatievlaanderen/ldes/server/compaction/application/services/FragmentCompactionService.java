@@ -1,11 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.events.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,13 +14,11 @@ public class FragmentCompactionService {
 	public static final String PAGE_NUMBER = "pageNumber";
 	private final FragmentRepository fragmentRepository;
 	private final CompactedFragmentCreator compactedFragmentCreator;
-	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public FragmentCompactionService(FragmentRepository fragmentRepository,
-			CompactedFragmentCreator compactedFragmentCreator, ApplicationEventPublisher applicationEventPublisher) {
+			CompactedFragmentCreator compactedFragmentCreator) {
 		this.fragmentRepository = fragmentRepository;
 		this.compactedFragmentCreator = compactedFragmentCreator;
-		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	public void compactFragments(Fragment firstFragment, Fragment secondFragment) {
@@ -30,7 +26,6 @@ public class FragmentCompactionService {
 				secondFragment);
 		if (fragmentRepository.retrieveFragment(ldesFragmentIdentifier).isEmpty()) {
 			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier);
-			applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(firstFragment, secondFragment));
 		}
 
 	}

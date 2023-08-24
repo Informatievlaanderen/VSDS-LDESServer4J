@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.events.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
@@ -11,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,16 +27,18 @@ public class CompactedFragmentCreator {
 	private final ObservationRegistry observationRegistry;
 	private final AllocationRepository allocationRepository;
 	private final ViewCollection viewCollection;
+	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public CompactedFragmentCreator(FragmentRepository fragmentRepository,
 			@Qualifier("compaction-fragmentation") FragmentationStrategy fragmentationStrategy,
 			ObservationRegistry observationRegistry, AllocationRepository allocationRepository,
-			ViewCollection viewCollection) {
+			ViewCollection viewCollection, ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.observationRegistry = observationRegistry;
 		this.allocationRepository = allocationRepository;
 		this.viewCollection = viewCollection;
+		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	public void createCompactedFragment(Fragment firstFragment, Fragment secondFragment,
@@ -46,6 +50,7 @@ public class CompactedFragmentCreator {
 			Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
 			updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);
 			addMembersOfFragmentsToCompactedFragment(membersOfCompactedFragments, compactedFragment);
+			applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(firstFragment, secondFragment));
 		}
 	}
 
