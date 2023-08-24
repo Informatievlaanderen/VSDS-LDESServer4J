@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
 import java.util.Collection;
 
