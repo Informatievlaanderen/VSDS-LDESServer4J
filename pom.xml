@@ -24,6 +24,7 @@
         <module>ldes-server-port-fetch</module>
         <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-compaction</module>
+        <module>ldes-server-integration-test</module>
     </modules>
 
     <developers>
