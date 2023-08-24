@@ -42,7 +42,7 @@ public class CompactedFragmentCreator {
 		List<String> membersOfCompactedFragments = getMembersOfCompactedFragments(firstFragment, secondFragment);
 		int pageCapacityOfView = viewCollection.getViewCapacityByViewName(ldesFragmentIdentifier.getViewName())
 				.getCapacityPerPage();
-		if (membersOfCompactedFragments.size() < pageCapacityOfView) {
+		if (membersOfCompactedFragments.size() <= pageCapacityOfView) {
 			Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
 			updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);
 			addMembersOfFragmentsToCompactedFragment(membersOfCompactedFragments, compactedFragment);
