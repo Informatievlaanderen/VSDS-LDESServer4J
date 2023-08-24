@@ -103,9 +103,9 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public List<Fragment> retrieveFragmentsByOutgoingRelation(LdesFragmentIdentifier fragmentId) {
+	public List<Fragment> retrieveFragmentsByOutgoingRelation(LdesFragmentIdentifier ldesFragmentIdentifier) {
 		return repository
-				.findAllByRelations_TreeNode(fragmentId)
+				.findAllByRelations_TreeNode(ldesFragmentIdentifier)
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
 				.toList();

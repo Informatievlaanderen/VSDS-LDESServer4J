@@ -2,16 +2,23 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.ev
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ViewInitializationHandlerCompaction {
+public class ViewCapacityCreator {
 	private final ViewCollection viewCollection;
 
-	public ViewInitializationHandlerCompaction(ViewCollection viewCollection) {
+	public ViewCapacityCreator(ViewCollection viewCollection) {
 		this.viewCollection = viewCollection;
+	}
+
+	@EventListener
+	public void handleViewAddedEvent(ViewAddedEvent event) {
+		viewCollection
+				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
 	}
 
 	@EventListener
@@ -19,4 +26,5 @@ public class ViewInitializationHandlerCompaction {
 		viewCollection
 				.saveViewCapacity(new ViewCapacity(event.getViewName(), event.getViewSpecification().getPageSize()));
 	}
+
 }

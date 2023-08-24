@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.Observation;
@@ -21,13 +21,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 @Service
 public class CompactedFragmentCreator {
 	private final FragmentRepository fragmentRepository;
-	private final FragmentationStrategyImpl fragmentationStrategy;
+	private final FragmentationStrategy fragmentationStrategy;
 	private final ObservationRegistry observationRegistry;
 	private final AllocationRepository allocationRepository;
 	private final ViewCollection viewCollection;
 
 	public CompactedFragmentCreator(FragmentRepository fragmentRepository,
-			@Qualifier("compaction-fragmentation") FragmentationStrategyImpl fragmentationStrategy,
+			@Qualifier("compaction-fragmentation") FragmentationStrategy fragmentationStrategy,
 			ObservationRegistry observationRegistry, AllocationRepository allocationRepository,
 			ViewCollection viewCollection) {
 		this.fragmentRepository = fragmentRepository;

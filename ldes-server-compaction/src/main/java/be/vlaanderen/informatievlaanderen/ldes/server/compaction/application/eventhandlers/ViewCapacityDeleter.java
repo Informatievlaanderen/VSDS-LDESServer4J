@@ -6,10 +6,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ViewDeletedHandlerCompaction {
+public class ViewCapacityDeleter {
 	private final ViewCollection viewCollection;
 
-	public ViewDeletedHandlerCompaction(ViewCollection viewCollection) {
+	public ViewCapacityDeleter(ViewCollection viewCollection) {
 		this.viewCollection = viewCollection;
 	}
 
