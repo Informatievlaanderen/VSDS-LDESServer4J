@@ -13,6 +13,7 @@ import java.util.List;
 
 @Service
 public class FragmentCompactionService {
+	public static final String PAGE_NUMBER = "pageNumber";
 	private final FragmentRepository fragmentRepository;
 	private final CompactedFragmentCreator compactedFragmentCreator;
 	private final ApplicationEventPublisher applicationEventPublisher;
@@ -38,7 +39,7 @@ public class FragmentCompactionService {
 		List<FragmentPair> fragmentPairs = new ArrayList<>(firstFragment.getFragmentPairs());
 		fragmentPairs.remove(fragmentPairs.size() - 1);
 		fragmentPairs.add(
-				new FragmentPair("pageNumber", getPageNumber(firstFragment) + "/" + getPageNumber(secondFragment)));
+				new FragmentPair(PAGE_NUMBER, getPageNumber(firstFragment) + "/" + getPageNumber(secondFragment)));
 		return new LdesFragmentIdentifier(firstFragment.getViewName(), fragmentPairs);
 	}
 
