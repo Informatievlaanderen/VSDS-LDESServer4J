@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application;
+package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.eventhandlers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
