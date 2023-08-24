@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,17 +18,19 @@ public class Fragment {
 	private Boolean immutable;
 	private final int numberOfMembers;
 	private final List<TreeRelation> relations;
+	private LocalDateTime deleteTime;
 
 	public Fragment(LdesFragmentIdentifier identifier) {
-		this(identifier, false, 0, new ArrayList<>());
+		this(identifier, false, 0, new ArrayList<>(), null);
 	}
 
 	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int numberOfMembers,
-			List<TreeRelation> relations) {
+					List<TreeRelation> relations, LocalDateTime deleteTime) {
 		this.identifier = identifier;
 		this.immutable = immutable;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
+		this.deleteTime = deleteTime;
 	}
 
 	public LdesFragmentIdentifier getFragmentId() {
@@ -77,6 +80,18 @@ public class Fragment {
 		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> ROOT);
 	}
 
+	public boolean readyForDeletion(){
+		if(deleteTime!=null){
+			return LocalDateTime.now().isAfter(deleteTime);
+		}
+		return false;
+	}
+
+	public void setDeleteTime(LocalDateTime localDateTime){
+		this.deleteTime = localDateTime;
+	}
+
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -108,4 +123,7 @@ public class Fragment {
 		return this.identifier.getFragmentPairs().isEmpty();
 	}
 
+	public LocalDateTime getDeleteTime() {
+		return deleteTime;
+	}
 }

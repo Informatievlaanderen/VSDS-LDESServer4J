@@ -32,7 +32,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				Boolean.parseBoolean(row.get("immutable")),
 				Integer.parseInt(row.get("numberOfMembers")),
-				List.of());
+				List.of(), deleteTime);
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
@@ -45,7 +45,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				row.get("relations").equals("") ? List.of()
 						: Arrays.stream(row.get("relations").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-								.toList()));
+								.toList(), deleteTime));
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")

@@ -10,6 +10,7 @@ module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction;
 
     requires spring.web;
     requires spring.context;

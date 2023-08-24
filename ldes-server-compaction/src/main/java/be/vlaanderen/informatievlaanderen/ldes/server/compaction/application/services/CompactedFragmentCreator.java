@@ -84,7 +84,7 @@ public class CompactedFragmentCreator {
 	}
 
 	private Fragment createAndSaveNewFragment(Fragment secondFragment, LdesFragmentIdentifier ldesFragmentIdentifier) {
-		Fragment fragment = new Fragment(ldesFragmentIdentifier, true, 0, secondFragment.getRelations());
+		Fragment fragment = new Fragment(ldesFragmentIdentifier, true, 0, secondFragment.getRelations(), null);
 		fragmentRepository.saveFragment(fragment);
 		return fragment;
 	}

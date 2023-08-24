@@ -79,7 +79,7 @@ class FragmentMongoRepositoryTest {
 		private static FragmentEntity createLdesFragmentEntity(boolean immutable, ViewName viewName, String value) {
 			Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName,
 					List.of(new FragmentPair("generatedAtTime", value))),
-					immutable, 0, List.of());
+					immutable, 0, List.of(), deleteTime);
 			return FragmentEntity.fromLdesFragment(fragment);
 		}
 

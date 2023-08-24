@@ -6,5 +6,6 @@ public class ServerConstants {
 	}
 
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
+	public static final String COMPACTION_DURATION = "${ldes-server.compaction-duration}";
 
 }
