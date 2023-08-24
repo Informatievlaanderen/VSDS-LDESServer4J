@@ -25,11 +25,11 @@ public class CompactionScheduler {
 	public void compactFragments() {
 		viewCollection.getAllViewCapacities()
 				.forEach(viewCapacity -> {
-					Optional<Fragment> fragment = fragmentRepository
+					Optional<Fragment> rootFragment = fragmentRepository
 							.retrieveRootFragment(viewCapacity.getViewName().asString());
-					if (fragment.isPresent()) {
+					if (rootFragment.isPresent()) {
 						PaginationStartingNodeIterator paginationStartingNodeIterator = new PaginationStartingNodeIteratorImpl(
-								fragmentRepository, fragment.get());
+								fragmentRepository, rootFragment.get());
 						while (paginationStartingNodeIterator.hasNext()) {
 							paginationCompactionService
 									.applyCompactionStartingFromNode(paginationStartingNodeIterator.next());

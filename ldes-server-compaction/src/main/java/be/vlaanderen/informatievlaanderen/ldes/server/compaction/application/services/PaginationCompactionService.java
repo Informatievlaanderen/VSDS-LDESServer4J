@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.se
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableFragmentPredicate;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableRelationPredicate;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactionComparator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.stereotype.Component;
@@ -54,16 +55,17 @@ public class PaginationCompactionService {
 	}
 
 	private Optional<Fragment> retrieveMostCompactedRelationFragment(Fragment currentFragment) {
+		LdesFragmentIdentifier ldesFragmentIdentifier = currentFragment
+				.getRelations()
+				.stream()
+				.map(TreeRelation::treeNode)
+				.max(new CompactionComparator())
+				.orElse(currentFragment
+						.getRelations()
+						.get(0)
+						.treeNode());
 		return fragmentRepository
 				.retrieveFragment(
-						currentFragment
-								.getRelations()
-								.stream()
-								.map(TreeRelation::treeNode)
-								.max(new CompactionComparator())
-								.orElse(currentFragment
-										.getRelations()
-										.get(0)
-										.treeNode()));
+						ldesFragmentIdentifier);
 	}
 }

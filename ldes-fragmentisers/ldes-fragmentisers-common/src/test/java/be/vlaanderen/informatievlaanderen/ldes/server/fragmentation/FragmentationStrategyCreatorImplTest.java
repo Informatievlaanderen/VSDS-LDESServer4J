@@ -61,7 +61,6 @@ class FragmentationStrategyCreatorImplTest {
 		assertEquals(paginationFragmentationStrategy, fragmentationStrategy);
 		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
 		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
-		inOrder.verify(applicationContext).getBean(NonCriticalTasksExecutor.class);
 		inOrder.verify(applicationContext).getBean(PAGINATION_FRAGMENTATION);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -100,7 +99,6 @@ class FragmentationStrategyCreatorImplTest {
 		assertEquals(geospatialFragmentationStrategy, fragmentationStrategy);
 		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
 		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
-		inOrder.verify(applicationContext).getBean(NonCriticalTasksExecutor.class);
 		inOrder.verify(applicationContext).getBean(PAGINATION_FRAGMENTATION);
 		inOrder.verify(applicationContext).getBean(TIMEBASED);
 		inOrder.verify(applicationContext).getBean(GEOSPATIAL);

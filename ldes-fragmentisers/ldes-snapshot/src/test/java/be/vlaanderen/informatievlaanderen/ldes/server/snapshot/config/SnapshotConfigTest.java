@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.config;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,7 +16,6 @@ import static org.mockito.Mockito.*;
 class SnapshotConfigTest {
 	private final ApplicationContext applicationContext = mock(ApplicationContext.class);
 	private final FragmentRepository fragmentRepository = Mockito.mock(FragmentRepository.class);
-	private final NonCriticalTasksExecutor nonCriticalTasksExecutor = Mockito.mock(NonCriticalTasksExecutor.class);
 	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 
 	@Test
@@ -27,7 +25,7 @@ class SnapshotConfigTest {
 
 		SnapshotConfig snapshotConfig = new SnapshotConfig();
 		FragmentationStrategy fragmentationStrategy = snapshotConfig.snapshotFragmentationStrategy(applicationContext,
-				fragmentRepository, nonCriticalTasksExecutor,
+				fragmentRepository,
 				eventPublisher);
 
 		verify(fragmentationStrategyWrapper).wrapFragmentationStrategy(eq(applicationContext),
