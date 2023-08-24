@@ -17,17 +17,17 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @RecordApplicationEvents
-@ContextConfiguration(classes = {SchedulingConfigCompaction.class})
-@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.compaction"})
+@ContextConfiguration(classes = { SchedulingConfigCompaction.class })
+@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.compaction" })
 @SuppressWarnings("java:S2187")
 public class CompactionIntegrationTest {
 
-    @Autowired
-    ApplicationEventPublisher applicationEventPublisher;
-    @MockBean
-    FragmentRepository fragmentRepository;
-    @MockBean
-    NonCriticalTasksExecutor nonCriticalTasksExecutor;
-    @MockBean
-    AllocationRepository allocationRepository;
+	@Autowired
+	ApplicationEventPublisher applicationEventPublisher;
+	@MockBean
+	FragmentRepository fragmentRepository;
+	@MockBean
+	NonCriticalTasksExecutor nonCriticalTasksExecutor;
+	@MockBean
+	AllocationRepository allocationRepository;
 }
