@@ -24,6 +24,7 @@ COPY --from=app-stage ldes-server-infra-mongo/mongo-ingest-repository/target/mon
 COPY --from=app-stage ldes-server-infra-mongo/mongo-fetch-repository/target/mongo-fetch-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongo-retention-repository/target/mongo-retention-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-mongo/mongo-fragmentation-repository/target/mongo-fragmentation-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-mongo/mongo-admin-repository/target/mongo-admin-repository-jar-with-dependencies.jar ./lib/
 
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/
