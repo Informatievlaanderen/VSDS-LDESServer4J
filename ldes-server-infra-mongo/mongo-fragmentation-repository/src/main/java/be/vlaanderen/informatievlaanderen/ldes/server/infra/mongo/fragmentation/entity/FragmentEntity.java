@@ -80,4 +80,11 @@ public class FragmentEntity {
 				fragment.getFragmentId().getViewName().getCollectionName(), fragment.getDeleteTime());
 	}
 
+	public List<TreeRelation> getRelations() {
+		return relations;
+	}
+
+	public void removeRelation(TreeRelation treeRelation) {
+		relations.remove(treeRelation);
+	}
 }

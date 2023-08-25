@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
@@ -119,8 +120,21 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public void deleteFragment(Fragment readyForDeletionFragment) {
+	public void deleteFragmentAndRemoveRelationsPointingToFragment(Fragment readyForDeletionFragment) {
 		repository.delete(FragmentEntity.fromLdesFragment(readyForDeletionFragment));
+		removeRelationsPointingToDeletedFragment(readyForDeletionFragment);
+	}
+
+	private void removeRelationsPointingToDeletedFragment(Fragment readyForDeletionFragment) {
+		List<FragmentEntity> fragments = repository
+				.findAllByRelations_TreeNode(readyForDeletionFragment.getFragmentId());
+		fragments.forEach(fragment -> {
+			List<TreeRelation> relationsToRemove = fragment.getRelations().stream()
+					.filter(treeRelation -> treeRelation.treeNode().equals(readyForDeletionFragment.getFragmentId()))
+					.toList();
+			relationsToRemove.forEach(fragment::removeRelation);
+			repository.save(fragment);
+		});
 	}
 
 }
