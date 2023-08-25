@@ -1,13 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableFragmentPredicate;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableRelationPredicate;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactionComparator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.stereotype.Component;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+
 import java.util.Optional;
 
 @Component
@@ -43,7 +44,7 @@ public class PaginationCompactionService {
 
 	private void testAndApplyPossibleCompaction(Fragment firstFragmentOfCompaction,
 			Fragment secondFragmentOfCompaction) {
-		if (compactableRelationPredicate.test(firstFragmentOfCompaction)
+		if (compactableRelationPredicate.test(new CompactionCandidate(firstFragmentOfCompaction, secondFragmentOfCompaction))
 				&& compactableFragmentPredicate.test(secondFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(firstFragmentOfCompaction)) {
 			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction);
@@ -55,17 +56,11 @@ public class PaginationCompactionService {
 	}
 
 	private Optional<Fragment> retrieveMostCompactedRelationFragment(Fragment currentFragment) {
-		LdesFragmentIdentifier ldesFragmentIdentifier = currentFragment
+		return currentFragment
 				.getRelations()
 				.stream()
 				.map(TreeRelation::treeNode)
 				.max(new CompactionComparator())
-				.orElse(currentFragment
-						.getRelations()
-						.get(0)
-						.treeNode());
-		return fragmentRepository
-				.retrieveFragment(
-						ldesFragmentIdentifier);
+				.flatMap(fragmentRepository::retrieveFragment);
 	}
 }
