@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.MongoFragmentationIntegrationTest;
@@ -12,11 +13,10 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +33,27 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				Boolean.parseBoolean(row.get("immutable")),
 				Integer.parseInt(row.get("numberOfMembers")),
 				List.of());
+	}
+
+	@DataTableType(replaceWithEmptyString = "[blank]")
+	public FragmentWithRelation fragmentWithRelationsEntryTransformer(Map<String, String> row) {
+		return new FragmentWithRelation(new Fragment(new LdesFragmentIdentifier(
+				ViewName.fromString(row.get("viewName")),
+				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
+				false,
+				0,
+				row.get("relations").equals("") ? List.of()
+						: Arrays.stream(row.get("relations").split(",")).map(treeNode -> new TreeRelation("",
+								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
+								.toList()));
+	}
+
+	@DataTableType(replaceWithEmptyString = "[blank]")
+	public OutgoingRelationResult outgoingRelationResultEntryTransformer(Map<String, String> row) {
+		return new OutgoingRelationResult(LdesFragmentIdentifier.fromFragmentId(row.get("outgoingRelation")),
+				row.get("fragmentIds").equals("") ? Set.of()
+						: Arrays.stream(row.get("fragmentIds").split(",")).map(LdesFragmentIdentifier::fromFragmentId)
+								.collect(Collectors.toSet()));
 	}
 
 	private List<FragmentPair> getFragmentPairs(String row) {
@@ -115,5 +136,29 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 		assertTrue(retrievedLdesFragment.isPresent());
 		Fragment actualFragment = this.retrievedLdesFragment.get();
 		assertEquals(numberOfMembers, actualFragment.getNumberOfMembers());
+	}
+
+	@Given("The following ldesFragments with relations")
+	public void theFollowingLdesFragmentsWithRelations(List<FragmentWithRelation> fragments) {
+		this.fragments = fragments.stream().map(FragmentWithRelation::fragment).toList();
+	}
+
+	@Then("the repository the following fragments with outgoing relations")
+	public void theRepositoryTheFollowingFragmentsWithOutgoingRelations(
+			List<OutgoingRelationResult> outgoingRelationResults) {
+		outgoingRelationResults.forEach(outgoingRelationResult -> {
+			List<Fragment> fragmentsByOutgoingRelation = fragmentRepository
+					.retrieveFragmentsByOutgoingRelation(outgoingRelationResult.outgoingRelation);
+			assertEquals(outgoingRelationResult.fragmentIds,
+					fragmentsByOutgoingRelation.stream().map(Fragment::getFragmentId).collect(Collectors.toSet()));
+		});
+
+	}
+
+	public record OutgoingRelationResult(LdesFragmentIdentifier outgoingRelation,
+			Set<LdesFragmentIdentifier> fragmentIds) {
+	}
+
+	public record FragmentWithRelation(Fragment fragment) {
 	}
 }

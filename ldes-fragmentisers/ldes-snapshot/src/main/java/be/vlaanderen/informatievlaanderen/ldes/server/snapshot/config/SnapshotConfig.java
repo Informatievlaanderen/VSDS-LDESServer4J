@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigPropert
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -26,13 +25,12 @@ public class SnapshotConfig {
 	@Qualifier("snapshot-fragmentation")
 	public FragmentationStrategy snapshotFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentRepository fragmentRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
+			ApplicationEventPublisher eventPublisher) {
 		FragmentationStrategyWrapper fragmentationStrategyWrapper = (FragmentationStrategyWrapper) applicationContext
 				.getBean(DEFAULT_VIEW_FRAGMENTATION_STRATEGY);
 		return fragmentationStrategyWrapper.wrapFragmentationStrategy(
 				applicationContext,
 				new FragmentationStrategyImpl(fragmentRepository,
-						nonCriticalTasksExecutor,
 						eventPublisher),
 				new ConfigProperties(DEFAULT_VIEW_FRAGMENTATION_PROPERTIES));
 

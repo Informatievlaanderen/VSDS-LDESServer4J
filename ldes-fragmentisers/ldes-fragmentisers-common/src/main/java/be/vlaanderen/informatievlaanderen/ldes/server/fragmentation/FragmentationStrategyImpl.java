@@ -9,12 +9,10 @@ import org.springframework.context.ApplicationEventPublisher;
 
 public class FragmentationStrategyImpl implements FragmentationStrategy {
 	private final FragmentRepository fragmentRepository;
-	private final NonCriticalTasksExecutor nonCriticalTasksExecutor;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public FragmentationStrategyImpl(FragmentRepository fragmentRepository,
-			NonCriticalTasksExecutor nonCriticalTasksExecutor, ApplicationEventPublisher eventPublisher) {
-		this.nonCriticalTasksExecutor = nonCriticalTasksExecutor;
+			ApplicationEventPublisher eventPublisher) {
 		this.fragmentRepository = fragmentRepository;
 		this.eventPublisher = eventPublisher;
 	}
@@ -22,10 +20,9 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 	@Override
 	public void addMemberToFragment(Fragment fragment, String memberId, Model memberModel,
 			Observation parentObservation) {
-		nonCriticalTasksExecutor.submit(
-				() -> eventPublisher.publishEvent(
-						new MemberAllocatedEvent(memberId, fragment.getViewName().getCollectionName(),
-								fragment.getViewName().getViewName(), fragment.getFragmentIdString())));
+		eventPublisher.publishEvent(
+				new MemberAllocatedEvent(memberId, fragment.getViewName().getCollectionName(),
+						fragment.getViewName().getViewName(), fragment.getFragmentIdString()));
 		fragmentRepository.incrementNumberOfMembers(fragment.getFragmentId());
 
 	}
