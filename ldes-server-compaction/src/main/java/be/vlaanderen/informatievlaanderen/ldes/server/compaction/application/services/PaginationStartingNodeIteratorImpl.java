@@ -30,12 +30,12 @@ public class PaginationStartingNodeIteratorImpl implements PaginationStartingNod
 	@Override
 	public boolean hasNext() {
 		while (startingNodeFragments.isEmpty() && !structuralFragments.isEmpty()) {
-			processsStructuralFragment(structuralFragments.remove(0));
+			processStructuralFragment(structuralFragments.remove(0));
 		}
 		return !startingNodeFragments.isEmpty();
 	}
 
-	private void processsStructuralFragment(Fragment fragment) {
+	private void processStructuralFragment(Fragment fragment) {
 		fragment.getRelations()
 				.stream()
 				.map(TreeRelation::treeNode)

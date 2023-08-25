@@ -18,7 +18,7 @@ public class RootFragmentRetriever {
 		this.observationRegistry = observationRegistry;
 	}
 
-	Fragment retrieveRootFragmentOfView(ViewName viewName, Observation parentObservation) {
+	public Fragment retrieveRootFragmentOfView(ViewName viewName, Observation parentObservation) {
 		Observation rootRetrievalObservation = Observation
 				.createNotStarted("retrieve root of view " + viewName, observationRegistry)
 				.parentObservation(parentObservation).start();
