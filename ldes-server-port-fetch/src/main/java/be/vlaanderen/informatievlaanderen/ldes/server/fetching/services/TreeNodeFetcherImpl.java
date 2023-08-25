@@ -8,7 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 
 @Component
 public class TreeNodeFetcherImpl implements TreeNodeFetcher {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 

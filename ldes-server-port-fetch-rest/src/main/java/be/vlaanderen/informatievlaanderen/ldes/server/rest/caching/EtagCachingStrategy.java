@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 import static org.apache.commons.codec.digest.DigestUtils.sha256Hex;
 
 @Component
