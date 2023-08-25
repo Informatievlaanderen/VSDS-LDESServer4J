@@ -14,42 +14,43 @@ import java.util.List;
 
 @Service
 public class FragmentCompactionService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FragmentCompactionService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentCompactionService.class);
 
-    public static final String PAGE_NUMBER_KEY = "pageNumber";
-    private final FragmentRepository fragmentRepository;
-    private final CompactedFragmentCreator compactedFragmentCreator;
+	public static final String PAGE_NUMBER_KEY = "pageNumber";
+	private final FragmentRepository fragmentRepository;
+	private final CompactedFragmentCreator compactedFragmentCreator;
 
-    public FragmentCompactionService(FragmentRepository fragmentRepository,
-                                     CompactedFragmentCreator compactedFragmentCreator) {
-        this.fragmentRepository = fragmentRepository;
-        this.compactedFragmentCreator = compactedFragmentCreator;
-    }
+	public FragmentCompactionService(FragmentRepository fragmentRepository,
+			CompactedFragmentCreator compactedFragmentCreator) {
+		this.fragmentRepository = fragmentRepository;
+		this.compactedFragmentCreator = compactedFragmentCreator;
+	}
 
-    public void compactFragments(Fragment firstFragment, Fragment secondFragment) {
-        LdesFragmentIdentifier ldesFragmentIdentifier = generateNewLdesFragmentIdentifier(firstFragment,
-                secondFragment);
-        if (fragmentRepository.retrieveFragment(ldesFragmentIdentifier).isEmpty()) {
-            compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier);
-        } else {
-            String ldesFragmentIdentifierString = ldesFragmentIdentifier.asString();
-            LOGGER.warn("Already created a compacted fragment with identifier {}", ldesFragmentIdentifierString);
-        }
+	public void compactFragments(Fragment firstFragment, Fragment secondFragment) {
+		LdesFragmentIdentifier ldesFragmentIdentifier = generateNewLdesFragmentIdentifier(firstFragment,
+				secondFragment);
+		if (fragmentRepository.retrieveFragment(ldesFragmentIdentifier).isEmpty()) {
+			compactedFragmentCreator.createCompactedFragment(firstFragment, secondFragment, ldesFragmentIdentifier);
+		} else {
+			String ldesFragmentIdentifierString = ldesFragmentIdentifier.asString();
+			LOGGER.warn("Already created a compacted fragment with identifier {}", ldesFragmentIdentifierString);
+		}
 
-    }
+	}
 
-    private LdesFragmentIdentifier generateNewLdesFragmentIdentifier(Fragment firstFragment, Fragment secondFragment) {
-        List<FragmentPair> fragmentPairs = new ArrayList<>(firstFragment.getFragmentPairs());
-        fragmentPairs.remove(fragmentPairs.size() - 1);
-        fragmentPairs.add(
-                new FragmentPair(PAGE_NUMBER_KEY, getPageNumber(firstFragment) + "/" + getPageNumber(secondFragment)));
-        return new LdesFragmentIdentifier(firstFragment.getViewName(), fragmentPairs);
-    }
+	private LdesFragmentIdentifier generateNewLdesFragmentIdentifier(Fragment firstFragment, Fragment secondFragment) {
+		List<FragmentPair> fragmentPairs = new ArrayList<>(firstFragment.getFragmentPairs());
+		fragmentPairs.remove(fragmentPairs.size() - 1);
+		fragmentPairs.add(
+				new FragmentPair(PAGE_NUMBER_KEY, getPageNumber(firstFragment) + "/" + getPageNumber(secondFragment)));
+		return new LdesFragmentIdentifier(firstFragment.getViewName(), fragmentPairs);
+	}
 
-    private String getPageNumber(Fragment firstFragment) {
-        return firstFragment
-                .getFragmentId()
-                .getValueOfFragmentPairKey(PAGE_NUMBER_KEY)
-                .orElseThrow(() -> new MissingFragmentValueException(firstFragment.getFragmentIdString(), PAGE_NUMBER_KEY));
-    }
+	private String getPageNumber(Fragment firstFragment) {
+		return firstFragment
+				.getFragmentId()
+				.getValueOfFragmentPairKey(PAGE_NUMBER_KEY)
+				.orElseThrow(
+						() -> new MissingFragmentValueException(firstFragment.getFragmentIdString(), PAGE_NUMBER_KEY));
+	}
 }
