@@ -20,14 +20,21 @@ open data.
             - [Application Configuration](#application-configuration)
                 * [Example HTTP Ingest-Fetch Configuration](#example-http-ingest-fetch-configuration)
                 * [Example Mongo Configuration](#example-mongo-configuration)
+                * [Example Swagger Configuration](#example-swagger-configuration)
                 * [Example Views Configuration](#example-views-configuration)
                 * [Example Retention](#example-retention)
+                * [Timebased retention](#timebased-retention)
+                * [Example versionbased retention](#example-versionbased-retention)
+                * [Example point in time retention](#example-point-in-time-retention)
+                * [Fragmentation](#fragmentation)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
                 * [Example Pagination](#example-pagination)
+                * [Example Hierarchical Timebased Fragmentation](#example-hierarchical-timebased-fragmentation)
                 * [Example Serving Static Content](#example-serving-static-content)
                 * [Example Serving DCAT Metadata](#example-serving-dcat-metadata)
+                * [Example Compaction](#example-compaction)
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
@@ -46,6 +53,8 @@ open data.
         + [Health and Info](#health-and-info)
             - [Local Health and Info](#local-health-and-info)
             - [Docker](#docker)
+        + [Logging](#logging)
+            - [Logging configuration](#logging-configuration)
 
 ## Set-up of the LDES Server
 
@@ -365,9 +374,14 @@ or on the [swagger endpoint](#example-swagger-configuration) if it is configured
 
 ##### Example Compaction
 
-Compaction is a process that allows to merge immutable fragments that are underutilized (i.e. there are less members in the fragment than indicated in the `pageSize` of the view).
+Compaction is a process that allows to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the `pageSize` of the view).
 Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be "copied" to the new fragment.
-This process runs entirely in the background. By default the fragments that have been compacted will remain available for 7 days, `PD7`. After that period they will be deleted.
+This process runs entirely in the background. By default, the fragments that have been compacted will remain available for 7 days, `PD7`, but it can be configured differently. After that period they will be deleted.
+
+```yaml
+ldes-server:
+  compaction-duration: "PT1M"
+```
 
 ### Docker Setup
 
