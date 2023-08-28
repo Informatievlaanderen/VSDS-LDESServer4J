@@ -13,19 +13,20 @@ import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class FragmentDeletedHandlerFetchTest {
-    @Mock
-    private AllocationRepository allocationRepository;
-    @InjectMocks
-    private FragmentDeletedHandlerFetch fragmentDeletedHandlerFetch;
+	@Mock
+	private AllocationRepository allocationRepository;
+	@InjectMocks
+	private FragmentDeletedHandlerFetch fragmentDeletedHandlerFetch;
 
-    @Test
-    void when_FragmentIsDeleted_AllAllocationsRelatedToThatFragmentAreDeleted(){
-        String fragmentId = "/mobility-hindrances/view?a=b";
-        FragmentDeletedEvent fragmentDeletedEvent = new FragmentDeletedEvent(LdesFragmentIdentifier.fromFragmentId(fragmentId));
+	@Test
+	void when_FragmentIsDeleted_AllAllocationsRelatedToThatFragmentAreDeleted() {
+		String fragmentId = "/mobility-hindrances/view?a=b";
+		FragmentDeletedEvent fragmentDeletedEvent = new FragmentDeletedEvent(
+				LdesFragmentIdentifier.fromFragmentId(fragmentId));
 
-        fragmentDeletedHandlerFetch.handleFragmentDeletedEvent(fragmentDeletedEvent);
+		fragmentDeletedHandlerFetch.handleFragmentDeletedEvent(fragmentDeletedEvent);
 
-        verify(allocationRepository).deleteByFragmentId(fragmentId);
-    }
+		verify(allocationRepository).deleteByFragmentId(fragmentId);
+	}
 
 }
