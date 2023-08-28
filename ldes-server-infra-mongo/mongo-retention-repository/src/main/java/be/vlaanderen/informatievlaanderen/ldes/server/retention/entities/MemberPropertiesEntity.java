@@ -4,7 +4,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Document("retention_member_properties")
 public class MemberPropertiesEntity {
@@ -13,13 +13,13 @@ public class MemberPropertiesEntity {
 	@Indexed
 	private final String collectionName;
 	@Indexed
-	private final List<String> views;
+	private final Set<String> views;
 	@Indexed
 	private final String versionOf;
 	@Indexed
 	private final LocalDateTime timestamp;
 
-	public MemberPropertiesEntity(String id, String collectionName, List<String> views, String versionOf,
+	public MemberPropertiesEntity(String id, String collectionName, Set<String> views, String versionOf,
 			LocalDateTime timestamp) {
 		this.id = id;
 		this.collectionName = collectionName;
@@ -36,7 +36,7 @@ public class MemberPropertiesEntity {
 		return collectionName;
 	}
 
-	public List<String> getViews() {
+	public Set<String> getViews() {
 		return views;
 	}
 

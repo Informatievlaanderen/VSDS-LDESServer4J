@@ -16,7 +16,7 @@ public class FragmentDeletedHandlerFetch {
 
 	@EventListener
 	public void handleFragmentDeletedEvent(FragmentDeletedEvent event) {
-		allocationRepository.deleteByCollectionName(event.ldesFragmentIdentifier().asString());
+		allocationRepository.deleteByFragmentId(event.ldesFragmentIdentifier().asString());
 	}
 
 }
