@@ -38,6 +38,11 @@ public class AllocationMongoRepository implements AllocationRepository {
 		repository.deleteAllByCollectionNameAndViewName(collectionName, viewName);
 	}
 
+	@Override
+	public void deleteByFragmentId(String fragmentId) {
+		repository.deleteAllByFragmentId(fragmentId);
+	}
+
 	public void deleteByCollectionName(String collectionName) {
 		repository.deleteAllByCollectionName(collectionName);
 	}
