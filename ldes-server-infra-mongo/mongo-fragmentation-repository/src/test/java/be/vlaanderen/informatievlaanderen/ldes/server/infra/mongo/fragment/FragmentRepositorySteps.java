@@ -156,6 +156,29 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 
 	}
 
+	@When("I delete the fragment {string}")
+	public void iDeleteTheFragment(String fragmentId) {
+		fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(fragmentId))
+				.ifPresent(fragmentRepository::deleteFragmentAndRemoveRelationsPointingToFragment);
+	}
+
+	@Then("The repository has the following fragments left")
+	public void theRepositoryHasTheFollowingFragmentsLeft(List<FragmentWithRelation> fragmentWithRelations) {
+		fragmentWithRelations.forEach(fragmentWithRelation -> {
+			Optional<Fragment> fragment = fragmentRepository
+					.retrieveFragment(fragmentWithRelation.fragment.getFragmentId());
+			assertEquals(fragmentWithRelation.fragment.getRelations()
+					.stream()
+					.map(TreeRelation::treeNode)
+					.collect(Collectors.toSet()),
+					fragment
+							.stream()
+							.flatMap(fragment1 -> fragment1.getRelations().stream())
+							.map(TreeRelation::treeNode)
+							.collect(Collectors.toSet()));
+		});
+	}
+
 	public record OutgoingRelationResult(LdesFragmentIdentifier outgoingRelation,
 			Set<LdesFragmentIdentifier> fragmentIds) {
 	}
