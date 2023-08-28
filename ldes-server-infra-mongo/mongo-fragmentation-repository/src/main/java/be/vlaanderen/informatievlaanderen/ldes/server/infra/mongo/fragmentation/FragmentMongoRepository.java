@@ -140,7 +140,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 					relationsToRemove.forEach(fragment::removeRelation);
 					return fragment;
 				}).collect(Collectors.toSet());
-		repository.deleteAll(updatedFragmentEntities);
+		repository.saveAll(updatedFragmentEntities);
 	}
 
 }
