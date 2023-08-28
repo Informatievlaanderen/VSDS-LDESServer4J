@@ -24,7 +24,7 @@ public class FragmentDeleterScheduler {
 				.getDeletionCandidates()
 				.filter(Fragment::isReadyForDeletion)
 				.forEach(readyForDeletionFragment -> {
-					fragmentRepository.deleteFragmentAndRemoveRelationsPointingToFragment(readyForDeletionFragment);
+					fragmentRepository.removeRelationsPointingToFragmentAndDeleteFragment(readyForDeletionFragment);
 					applicationEventPublisher
 							.publishEvent(new FragmentDeletedEvent(readyForDeletionFragment.getFragmentId()));
 				});

@@ -18,6 +18,8 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.mongodb.client.result.UpdateResult;
@@ -120,21 +122,25 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public void deleteFragmentAndRemoveRelationsPointingToFragment(Fragment readyForDeletionFragment) {
-		repository.delete(FragmentEntity.fromLdesFragment(readyForDeletionFragment));
+	public void removeRelationsPointingToFragmentAndDeleteFragment(Fragment readyForDeletionFragment) {
 		removeRelationsPointingToDeletedFragment(readyForDeletionFragment);
+		repository.delete(FragmentEntity.fromLdesFragment(readyForDeletionFragment));
 	}
 
 	private void removeRelationsPointingToDeletedFragment(Fragment readyForDeletionFragment) {
 		List<FragmentEntity> fragments = repository
 				.findAllByRelations_TreeNode(readyForDeletionFragment.getFragmentId());
-		fragments.forEach(fragment -> {
-			List<TreeRelation> relationsToRemove = fragment.getRelations().stream()
-					.filter(treeRelation -> treeRelation.treeNode().equals(readyForDeletionFragment.getFragmentId()))
-					.toList();
-			relationsToRemove.forEach(fragment::removeRelation);
-			repository.save(fragment);
-		});
+		Set<FragmentEntity> updatedFragmentEntities = fragments
+				.stream()
+				.map(fragment -> {
+					List<TreeRelation> relationsToRemove = fragment.getRelations().stream()
+							.filter(treeRelation -> treeRelation.treeNode()
+									.equals(readyForDeletionFragment.getFragmentId()))
+							.toList();
+					relationsToRemove.forEach(fragment::removeRelation);
+					return fragment;
+				}).collect(Collectors.toSet());
+		repository.deleteAll(updatedFragmentEntities);
 	}
 
 }

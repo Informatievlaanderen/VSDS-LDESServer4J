@@ -37,7 +37,7 @@ class FragmentDeleterSchedulerTest {
 		fragmentDeleterScheduler.deleteFragments();
 
 		verify(fragmentRepository).getDeletionCandidates();
-		verify(fragmentRepository).deleteFragmentAndRemoveRelationsPointingToFragment(expiredFragment);
+		verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(expiredFragment);
 		verify(applicationEventPublisher).publishEvent(new FragmentDeletedEvent(expiredFragment.getFragmentId()));
 		verifyNoMoreInteractions(fragmentRepository, applicationEventPublisher);
 	}
