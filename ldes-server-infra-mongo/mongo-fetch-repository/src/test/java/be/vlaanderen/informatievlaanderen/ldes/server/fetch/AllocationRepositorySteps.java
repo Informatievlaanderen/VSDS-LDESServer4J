@@ -95,6 +95,11 @@ public class AllocationRepositorySteps extends MongoAllocationIntegrationTest {
 		allocationMongoRepository.deleteByCollectionName(collectionName);
 	}
 
+	@When("^Deleting by the fragment id ([^ ]+)")
+	public void deletingByTheFragmentIdFragmentId(String fragmentId) {
+		allocationMongoRepository.deleteByFragmentId(fragmentId);
+	}
+
 	private record RetrievedMemberAllocations(String fragmentId, List<String> expectedIds) {
 	}
 }
