@@ -8,15 +8,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class FragmentDeletedHandlerFetch {
 
-    private final AllocationRepository allocationRepository;
+	private final AllocationRepository allocationRepository;
 
-    public FragmentDeletedHandlerFetch(AllocationRepository allocationRepository) {
-        this.allocationRepository = allocationRepository;
-    }
+	public FragmentDeletedHandlerFetch(AllocationRepository allocationRepository) {
+		this.allocationRepository = allocationRepository;
+	}
 
-    @EventListener
-    public void handleFragmentDeletedEvent(FragmentDeletedEvent event) {
-        allocationRepository.deleteByCollectionName(event.ldesFragmentIdentifier().asString());
-    }
+	@EventListener
+	public void handleFragmentDeletedEvent(FragmentDeletedEvent event) {
+		allocationRepository.deleteByCollectionName(event.ldesFragmentIdentifier().asString());
+	}
 
 }
