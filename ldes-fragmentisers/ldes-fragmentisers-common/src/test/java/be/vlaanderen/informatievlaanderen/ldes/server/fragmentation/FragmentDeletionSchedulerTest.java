@@ -18,14 +18,14 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FragmentDeleterSchedulerTest {
+class FragmentDeletionSchedulerTest {
 
 	@Mock
 	ApplicationEventPublisher applicationEventPublisher;
 	@Mock
 	FragmentRepository fragmentRepository;
 	@InjectMocks
-	FragmentDeleterScheduler fragmentDeleterScheduler;
+	FragmentDeletionScheduler fragmentDeletionScheduler;
 
 	@Test
 	void when_FragmentHasDeleteTimeEarlierThanCurrentTime_then_ItIsDeletedAndEventIsSent() {
@@ -34,7 +34,7 @@ class FragmentDeleterSchedulerTest {
 				LocalDateTime.now().plusDays(1));
 		when(fragmentRepository.getDeletionCandidates()).thenReturn(Stream.of(expiredFragment, notExpiredFragment));
 
-		fragmentDeleterScheduler.deleteFragments();
+		fragmentDeletionScheduler.deleteFragments();
 
 		verify(fragmentRepository).getDeletionCandidates();
 		verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(expiredFragment);

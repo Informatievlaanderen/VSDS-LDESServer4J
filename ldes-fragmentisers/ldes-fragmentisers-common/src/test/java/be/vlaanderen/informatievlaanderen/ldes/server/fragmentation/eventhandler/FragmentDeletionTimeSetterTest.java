@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class FragmentDeleteTimeSetterTest {
+class FragmentDeletionTimeSetterTest {
 	@Spy
 	private final ServerConfig serverConfig = new ServerConfig();
 	@Mock
 	private FragmentRepository fragmentRepository;
 	@InjectMocks
-	private FragmentDeleteTimeSetter fragmentDeleteTimeSetter;
+	private FragmentDeletionTimeSetter fragmentDeletionTimeSetter;
 
 	@BeforeEach
 	void setUp() {
@@ -41,7 +41,7 @@ class FragmentDeleteTimeSetterTest {
 		when(fragmentRepository.retrieveFragment(secondFragment.getFragmentId()))
 				.thenReturn(Optional.of(secondFragment));
 
-		fragmentDeleteTimeSetter.handleFragmentsCompactedEvent(
+		fragmentDeletionTimeSetter.handleFragmentsCompactedEvent(
 				new FragmentsCompactedEvent(firstFragment.getFragmentId(), secondFragment.getFragmentId()));
 
 		assertNotNull(firstFragment.getDeleteTime());

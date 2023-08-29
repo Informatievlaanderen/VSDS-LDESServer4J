@@ -8,11 +8,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FragmentDeleterScheduler {
+public class FragmentDeletionScheduler {
 	private final FragmentRepository fragmentRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
 
-	public FragmentDeleterScheduler(FragmentRepository fragmentRepository,
+	public FragmentDeletionScheduler(FragmentRepository fragmentRepository,
 			ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentRepository = fragmentRepository;
 		this.applicationEventPublisher = applicationEventPublisher;

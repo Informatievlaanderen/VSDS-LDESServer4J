@@ -11,11 +11,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Component
-public class FragmentDeleteTimeSetter {
+public class FragmentDeletionTimeSetter {
 	private final FragmentRepository fragmentRepository;
 	private final Duration compactionDuration;
 
-	public FragmentDeleteTimeSetter(ServerConfig serverConfig,
+	public FragmentDeletionTimeSetter(ServerConfig serverConfig,
 			FragmentRepository fragmentRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.compactionDuration = Duration.parse(serverConfig.getCompactionDuration());

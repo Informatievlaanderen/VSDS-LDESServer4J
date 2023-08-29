@@ -374,7 +374,7 @@ or on the [swagger endpoint](#example-swagger-configuration) if it is configured
 
 ##### Example Compaction
 
-Compaction is a process that allows to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the `pageSize` of the view).
+Compaction is a process that allows the server to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the `pageSize` of the view).
 Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be "copied" to the new fragment.
 This process runs entirely in the background. By default, the fragments that have been compacted will remain available for 7 days, `PD7`, but it can be configured differently. After that period they will be deleted.
 
