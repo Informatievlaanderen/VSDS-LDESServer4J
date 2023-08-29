@@ -59,7 +59,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		Query query = new Query();
 		query.addCriteria(Criteria.where(ID).is(id));
 		Update update = new Update();
-		update.push(VIEWS, viewName);
+		update.addToSet(VIEWS, viewName);
 		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
 	}
 

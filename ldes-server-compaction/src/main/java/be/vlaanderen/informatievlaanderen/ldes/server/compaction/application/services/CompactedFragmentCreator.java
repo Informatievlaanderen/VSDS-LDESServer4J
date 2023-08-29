@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.events.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
@@ -50,7 +50,8 @@ public class CompactedFragmentCreator {
 			Fragment compactedFragment = createAndSaveNewFragment(secondFragment, ldesFragmentIdentifier);
 			updateRelationsOfPredecessorFragments(firstFragment, compactedFragment);
 			addMembersOfFragmentsToCompactedFragment(membersOfCompactedFragments, compactedFragment);
-			applicationEventPublisher.publishEvent(new FragmentsCompactedEvent(firstFragment, secondFragment));
+			applicationEventPublisher.publishEvent(
+					new FragmentsCompactedEvent(firstFragment.getFragmentId(), secondFragment.getFragmentId()));
 		}
 	}
 
@@ -84,7 +85,7 @@ public class CompactedFragmentCreator {
 	}
 
 	private Fragment createAndSaveNewFragment(Fragment secondFragment, LdesFragmentIdentifier ldesFragmentIdentifier) {
-		Fragment fragment = new Fragment(ldesFragmentIdentifier, true, 0, secondFragment.getRelations());
+		Fragment fragment = new Fragment(ldesFragmentIdentifier, true, 0, secondFragment.getRelations(), null);
 		fragmentRepository.saveFragment(fragment);
 		return fragment;
 	}

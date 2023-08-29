@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -81,7 +81,7 @@ class OpenPageProviderTest {
 		Fragment completeFragment = new Fragment(new LdesFragmentIdentifier(
 				VIEW_NAME, List.of(new FragmentPair(PAGE_NUMBER,
 						"2"))),
-				false, 3, List.of());
+				false, 3, List.of(), null);
 		Fragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"3"));
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))

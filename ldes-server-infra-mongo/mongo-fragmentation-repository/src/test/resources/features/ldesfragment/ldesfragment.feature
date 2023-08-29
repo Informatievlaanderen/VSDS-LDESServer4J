@@ -86,3 +86,38 @@ Feature: LdesFragmentRepository
       | /mobility-hindrances/by-page?page=2   | /mobility-hindrances/by-page?page=1                                       |
       | /mobility-hindrances/by-page?page=1/2 | /mobility-hindrances/by-page                                              |
       | /mobility-hindrances/by-page?page=3   | /mobility-hindrances/by-page?page=2,/mobility-hindrances/by-page?page=1/2 |
+
+  Scenario: Delete Fragment
+    Given The following ldesFragments with relations
+      | viewName                    | fragmentPairs | relations                                                                 |
+      | mobility-hindrances/by-page | [blank]       | /mobility-hindrances/by-page?page=1,/mobility-hindrances/by-page?page=1/2 |
+      | mobility-hindrances/by-page | page,1        | /mobility-hindrances/by-page?page=2                                       |
+      | mobility-hindrances/by-page | page,2        | /mobility-hindrances/by-page?page=3                                       |
+      | mobility-hindrances/by-page | page,1/2      | /mobility-hindrances/by-page?page=3                                       |
+      | mobility-hindrances/by-page | page,3        | [blank]                                                                   |
+    And I save the ldesFragments using the LdesFragmentRepository
+    When I delete the fragment "/mobility-hindrances/by-page?page=3"
+    Then The repository has the following fragments left
+      | viewName                    | fragmentPairs | relations                                                                 |
+      | mobility-hindrances/by-page | [blank]       | /mobility-hindrances/by-page?page=1,/mobility-hindrances/by-page?page=1/2 |
+      | mobility-hindrances/by-page | page,1        | /mobility-hindrances/by-page?page=2                                       |
+      | mobility-hindrances/by-page | page,2        | [blank]                                       |
+      | mobility-hindrances/by-page | page,1/2      | [blank]                                       |
+    When I delete the fragment "/mobility-hindrances/by-page?page=2"
+    Then The repository has the following fragments left
+      | viewName                    | fragmentPairs | relations                                                                 |
+      | mobility-hindrances/by-page | [blank]       | /mobility-hindrances/by-page?page=1,/mobility-hindrances/by-page?page=1/2 |
+      | mobility-hindrances/by-page | page,1        | [blank]                                       |
+      | mobility-hindrances/by-page | page,1/2      | [blank]                                       |
+    When I delete the fragment "/mobility-hindrances/by-page?page=1/2"
+    Then The repository has the following fragments left
+      | viewName                    | fragmentPairs | relations                                                                 |
+      | mobility-hindrances/by-page | [blank]       | /mobility-hindrances/by-page?page=1 |
+      | mobility-hindrances/by-page | page,1        | [blank]                                        |
+    When I delete the fragment "/mobility-hindrances/by-page?page=1"
+    Then The repository has the following fragments left
+      | viewName                    | fragmentPairs | relations                                                                 |
+      | mobility-hindrances/by-page | [blank]       |  [blank]  |
+    When I delete the fragment "/mobility-hindrances/by-page"
+    Then the repository contains 0 ldesFragments with viewname "mobility-hindrances/by-page"
+

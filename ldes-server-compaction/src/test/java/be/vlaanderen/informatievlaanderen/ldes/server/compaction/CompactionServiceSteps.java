@@ -55,7 +55,8 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 				row.get("relation").equals("") ? new ArrayList<>()
 						: Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-								.collect(Collectors.toList()));
+								.collect(Collectors.toList()),
+				null);
 	}
 
 	@Given("a view with the following properties")

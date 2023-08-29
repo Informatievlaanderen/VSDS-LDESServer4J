@@ -32,7 +32,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				Boolean.parseBoolean(row.get("immutable")),
 				Integer.parseInt(row.get("numberOfMembers")),
-				List.of());
+				List.of(), null);
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
@@ -45,7 +45,8 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				row.get("relations").equals("") ? List.of()
 						: Arrays.stream(row.get("relations").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-								.toList()));
+								.toList(),
+				null));
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
@@ -153,6 +154,29 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 					fragmentsByOutgoingRelation.stream().map(Fragment::getFragmentId).collect(Collectors.toSet()));
 		});
 
+	}
+
+	@When("I delete the fragment {string}")
+	public void iDeleteTheFragment(String fragmentId) {
+		fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(fragmentId))
+				.ifPresent(fragmentRepository::removeRelationsPointingToFragmentAndDeleteFragment);
+	}
+
+	@Then("The repository has the following fragments left")
+	public void theRepositoryHasTheFollowingFragmentsLeft(List<FragmentWithRelation> fragmentWithRelations) {
+		fragmentWithRelations.forEach(fragmentWithRelation -> {
+			Optional<Fragment> fragment = fragmentRepository
+					.retrieveFragment(fragmentWithRelation.fragment.getFragmentId());
+			assertEquals(fragmentWithRelation.fragment.getRelations()
+					.stream()
+					.map(TreeRelation::treeNode)
+					.collect(Collectors.toSet()),
+					fragment
+							.stream()
+							.flatMap(fragment1 -> fragment1.getRelations().stream())
+							.map(TreeRelation::treeNode)
+							.collect(Collectors.toSet()));
+		});
 	}
 
 	public record OutgoingRelationResult(LdesFragmentIdentifier outgoingRelation,

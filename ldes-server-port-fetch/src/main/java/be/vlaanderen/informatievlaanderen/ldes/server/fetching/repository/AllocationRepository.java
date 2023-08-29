@@ -14,4 +14,6 @@ public interface AllocationRepository {
 	void deleteByCollectionName(String collectionName);
 
 	void deleteByCollectionNameAndViewName(String collectionName, String viewName);
+
+	void deleteByFragmentId(String fragmentId);
 }

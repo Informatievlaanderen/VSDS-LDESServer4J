@@ -4,6 +4,7 @@ module ldes.fragmentation.domain {
     requires micrometer.observation;
     requires spring.context;
     requires org.apache.jena.core;
+    requires spring.beans;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
 

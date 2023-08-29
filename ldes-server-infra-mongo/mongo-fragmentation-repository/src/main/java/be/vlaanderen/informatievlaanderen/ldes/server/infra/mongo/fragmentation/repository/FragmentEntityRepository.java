@@ -24,4 +24,6 @@ public interface FragmentEntityRepository extends MongoRepository<FragmentEntity
 	Long deleteAllByCollectionName(String collectionName);
 
 	List<FragmentEntity> findAllByRelations_TreeNode(LdesFragmentIdentifier fragmentId);
+
+	Stream<FragmentEntity> findByDeleteTimeNotNull();
 }

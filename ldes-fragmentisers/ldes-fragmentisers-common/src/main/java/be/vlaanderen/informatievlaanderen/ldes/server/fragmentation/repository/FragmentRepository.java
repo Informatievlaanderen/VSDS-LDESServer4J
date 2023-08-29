@@ -53,4 +53,8 @@ public interface FragmentRepository {
 	 * </ul>
 	 */
 	List<Fragment> retrieveFragmentsByOutgoingRelation(LdesFragmentIdentifier ldesFragmentIdentifier);
+
+	Stream<Fragment> getDeletionCandidates();
+
+	void removeRelationsPointingToFragmentAndDeleteFragment(Fragment readyForDeletionFragment);
 }
