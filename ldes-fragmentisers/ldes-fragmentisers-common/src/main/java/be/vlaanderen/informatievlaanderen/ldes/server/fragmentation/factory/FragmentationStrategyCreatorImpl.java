@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.NonCriticalTasksExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,9 +32,8 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
-		NonCriticalTasksExecutor nonCriticalTasksExecutor = applicationContext.getBean(NonCriticalTasksExecutor.class);
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(fragmentRepository,
-				nonCriticalTasksExecutor, eventPublisher);
+				eventPublisher);
 		FragmentationStrategyWrapper paginationWrapper = (FragmentationStrategyWrapper) applicationContext
 				.getBean(PAGINATION_FRAGMENTATION);
 		fragmentationStrategy = paginationWrapper.wrapFragmentationStrategy(applicationContext, fragmentationStrategy,

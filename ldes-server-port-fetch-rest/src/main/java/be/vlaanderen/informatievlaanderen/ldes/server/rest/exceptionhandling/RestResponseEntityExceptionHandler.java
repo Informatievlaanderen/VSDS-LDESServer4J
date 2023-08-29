@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.LdesShaclValidationException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingFragmentException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.MissingFragmentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestResponseEntityExceptionHandler
 		extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MissingFragmentException.class, CollectionNotFoundException.class })
+	private static final Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
+
+	@ExceptionHandler(value = { MissingFragmentException.class })
 	protected ResponseEntity<Object> handleNotFoundException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
@@ -36,7 +39,7 @@ public class RestResponseEntityExceptionHandler
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		logger.error(ex.getMessage());
+		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
 				new HttpHeaders(), status, request);
@@ -44,7 +47,7 @@ public class RestResponseEntityExceptionHandler
 
 	private ResponseEntity<Object> handleExceptionWithoutDetails(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		logger.error(ex.getMessage());
+		log.error(ex.getMessage());
 		return handleExceptionInternal(ex, null, new HttpHeaders(), status, request);
 	}
 }

@@ -1,14 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Snapshot;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -31,14 +29,12 @@ class SnapshotCreatorImplTest {
 	private final MemberCollector memberCollector = Mockito.mock(MemberCollector.class);
 	private final RootFragmentCreator rootFragmentCreator = Mockito.mock(RootFragmentCreator.class);
 	private final SnapshotFragmenter snapshotFragmenter = Mockito.mock(SnapshotFragmenter.class);
-	private final ShaclShapeService shaclShapeService = mock(ShaclShapeService.class);
 	private SnapShotCreator snapShotCreator;
 
 	@BeforeEach
 	void setUp() {
 		snapShotCreator = new SnapshotCreatorImpl("localhost:8080", memberCollector, rootFragmentCreator,
-				snapshotFragmenter,
-				shaclShapeService);
+				snapshotFragmenter);
 	}
 
 	@Disabled("To be enabled when snapshotting becomes functional again")
@@ -51,8 +47,8 @@ class SnapshotCreatorImplTest {
 				new LdesFragmentIdentifier(new ViewName("collectionName", "snapshot-"), List.of()));
 		when(rootFragmentCreator.createRootFragmentForView(any())).thenReturn(rootFragmentOfSnapshot);
 
-		when(shaclShapeService.retrieveShaclShape("collection"))
-				.thenReturn(new ShaclShape("collection", ModelFactory.createDefaultModel()));
+		// when(shaclShapeService.retrieveShaclShape("collection"))
+		// .thenReturn(new ShaclShape("collection", ModelFactory.createDefaultModel()));
 		Snapshot snapshot = snapShotCreator.createSnapshotForTreeNodes(fragmentsForSnapshot, "collection");
 
 		InOrder inOrder = inOrder(memberCollector, rootFragmentCreator, snapshotFragmenter);

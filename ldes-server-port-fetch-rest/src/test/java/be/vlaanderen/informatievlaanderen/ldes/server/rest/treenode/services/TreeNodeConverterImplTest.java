@@ -2,15 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ShaclChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.entities.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.entity.DcatView;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.service.DcatViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -22,10 +18,8 @@ import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
@@ -38,8 +32,7 @@ class TreeNodeConverterImplTest {
 	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
 	private static final String VIEW_NAME = "view";
 	private final PrefixAdder prefixAdder = new PrefixAdderImpl();
-	private TreeNodeConverter treeNodeConverter;
-	private DcatViewService dcatViewService;;
+	private TreeNodeConverterImpl treeNodeConverter;
 
 	@BeforeEach
 	void setUp() {
@@ -49,12 +42,9 @@ class TreeNodeConverterImplTest {
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
-		dcatViewService = Mockito.mock(DcatViewService.class);
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, dcatViewService);
-		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
-		((TreeNodeConverterImpl) treeNodeConverter)
-				.handleShaclInitEvent(new ShaclChangedEvent(new ShaclShape(COLLECTION_NAME, shacl)));
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
+		treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
+		treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
 	}
 
 	@Test
@@ -64,7 +54,7 @@ class TreeNodeConverterImplTest {
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
-		Mockito.when(dcatViewService.findByViewName(viewName)).thenReturn(Optional.of(dcatView));
+		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
@@ -199,6 +189,21 @@ class TreeNodeConverterImplTest {
 						+ ", http://purl.org/dc/terms/isPartOf, " + HOST_NAME + "/" + COLLECTION_NAME + "]",
 				model.listStatements(null, IS_PART_OF_PROPERTY, (Resource) null).nextStatement()
 						.toString());
+	}
+
+	@Test
+	void testHandleDcatViewEvents() {
+		TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+				COLLECTION_NAME);
+		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		DcatView dcatView = DcatView.from(viewName, dcat);
+
+		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
+		Assertions.assertEquals(20, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
+		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 	}
 
 }

@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,17 +18,19 @@ public class Fragment {
 	private Boolean immutable;
 	private final int numberOfMembers;
 	private final List<TreeRelation> relations;
+	private LocalDateTime deleteTime;
 
 	public Fragment(LdesFragmentIdentifier identifier) {
-		this(identifier, false, 0, new ArrayList<>());
+		this(identifier, false, 0, new ArrayList<>(), null);
 	}
 
 	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int numberOfMembers,
-			List<TreeRelation> relations) {
+			List<TreeRelation> relations, LocalDateTime deleteTime) {
 		this.identifier = identifier;
 		this.immutable = immutable;
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
+		this.deleteTime = deleteTime;
 	}
 
 	public LdesFragmentIdentifier getFragmentId() {
@@ -77,6 +80,17 @@ public class Fragment {
 		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> ROOT);
 	}
 
+	public boolean isReadyForDeletion() {
+		if (deleteTime != null) {
+			return LocalDateTime.now().isAfter(deleteTime);
+		}
+		return false;
+	}
+
+	public void setDeleteTime(LocalDateTime localDateTime) {
+		this.deleteTime = localDateTime;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -108,4 +122,11 @@ public class Fragment {
 		return this.identifier.getFragmentPairs().isEmpty();
 	}
 
+	public LocalDateTime getDeleteTime() {
+		return deleteTime;
+	}
+
+	public void removeRelation(TreeRelation treeRelation) {
+		relations.remove(treeRelation);
+	}
 }

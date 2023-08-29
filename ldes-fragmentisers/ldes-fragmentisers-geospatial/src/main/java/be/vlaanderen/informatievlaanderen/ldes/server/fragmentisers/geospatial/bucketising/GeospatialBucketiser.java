@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ModelParser;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.exceptions.RdfGeometryException;
 import org.apache.jena.geosparql.implementation.GeometryWrapper;

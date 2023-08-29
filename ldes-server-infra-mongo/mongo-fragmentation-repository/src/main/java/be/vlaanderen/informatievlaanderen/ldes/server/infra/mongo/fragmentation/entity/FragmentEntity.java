@@ -1,37 +1,39 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("fragmentation_fragment")
 public class FragmentEntity {
 	@Id
-	private final String id;
+	private String id;
 	@Indexed
-	private final Boolean root;
+	private Boolean root;
 	@Indexed
-	private final String viewName;
-	private final List<FragmentPair> fragmentPairs;
+	private String viewName;
+	private List<FragmentPair> fragmentPairs;
 	@Indexed
-	private final Boolean immutable;
+	private Boolean immutable;
 	@Indexed
-	private final String parentId;
-	private final Integer numberOfMembers;
-	private final List<TreeRelation> relations;
+	private String parentId;
+	private Integer numberOfMembers;
+	private List<TreeRelation> relations;
 	@Indexed
-	private final String collectionName;
+	private String collectionName;
+	private LocalDateTime deleteTime;
 
 	public FragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable, String parentId, Integer numberOfMembers,
-			List<TreeRelation> relations, String collectionName) {
+			List<TreeRelation> relations, String collectionName, LocalDateTime localDateTime) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -41,6 +43,10 @@ public class FragmentEntity {
 		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
 		this.collectionName = collectionName;
+		this.deleteTime = localDateTime;
+	}
+
+	public FragmentEntity() {
 	}
 
 	public String getId() {
@@ -55,15 +61,11 @@ public class FragmentEntity {
 		int effectiveNumberOfMembers = numberOfMembers == null ? 0 : numberOfMembers;
 		return new Fragment(new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs), immutable,
 				effectiveNumberOfMembers,
-				relations);
+				relations, deleteTime);
 	}
 
 	public String getViewName() {
 		return viewName;
-	}
-
-	public List<FragmentPair> getFragmentPairs() {
-		return fragmentPairs;
 	}
 
 	public static FragmentEntity fromLdesFragment(Fragment fragment) {
@@ -75,14 +77,14 @@ public class FragmentEntity {
 				fragment.getParentIdAsString(),
 				fragment.getNumberOfMembers(),
 				fragment.getRelations(),
-				fragment.getFragmentId().getViewName().getCollectionName());
-	}
-
-	public Boolean getRoot() {
-		return root;
+				fragment.getFragmentId().getViewName().getCollectionName(), fragment.getDeleteTime());
 	}
 
 	public List<TreeRelation> getRelations() {
 		return relations;
+	}
+
+	public void removeRelation(TreeRelation treeRelation) {
+		relations.remove(treeRelation);
 	}
 }

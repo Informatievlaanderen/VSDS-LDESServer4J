@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.config.AppConfigChangeset3;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.config.LdesConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset3.entities.LdesFragmentEntityV2;
