@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.CollectionNotFoundException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +22,7 @@ public class IngestionRestResponseEntityExceptionHandler
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { CollectionNotFoundException.class, MissingEventStreamException.class })
+	@ExceptionHandler(value = { MissingEventStreamException.class })
 	protected ResponseEntity<Object> handleNotFoundException(RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();

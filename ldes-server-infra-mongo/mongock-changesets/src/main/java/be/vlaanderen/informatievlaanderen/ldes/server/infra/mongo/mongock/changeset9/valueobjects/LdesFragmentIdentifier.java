@@ -71,10 +71,6 @@ public class LdesFragmentIdentifier {
 		return stringBuilder.toString();
 	}
 
-	public static void main(String[] args) {
-		LdesFragmentIdentifier identifier = fromFragmentId("/devices-by-time?generatedAtTime=2023-07-17T14:34:33.843Z");
-	}
-
 	public Optional<LdesFragmentIdentifier> getParentId() {
 
 		if (!this.fragmentPairs.isEmpty()) {

@@ -20,14 +20,21 @@ open data.
             - [Application Configuration](#application-configuration)
                 * [Example HTTP Ingest-Fetch Configuration](#example-http-ingest-fetch-configuration)
                 * [Example Mongo Configuration](#example-mongo-configuration)
+                * [Example Swagger Configuration](#example-swagger-configuration)
                 * [Example Views Configuration](#example-views-configuration)
                 * [Example Retention](#example-retention)
+                * [Timebased retention](#timebased-retention)
+                * [Example versionbased retention](#example-versionbased-retention)
+                * [Example point in time retention](#example-point-in-time-retention)
+                * [Fragmentation](#fragmentation)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
                 * [Example Substring Fragmentation](#example-substring-fragmentation)
                 * [Example Pagination](#example-pagination)
+                * [Example Hierarchical Timebased Fragmentation](#example-hierarchical-timebased-fragmentation)
                 * [Example Serving Static Content](#example-serving-static-content)
                 * [Example Serving DCAT Metadata](#example-serving-dcat-metadata)
+                * [Example Compaction](#example-compaction)
         + [Docker Setup](#docker-setup)
             - [Docker-compose](#docker-compose)
             - [The Config Files](#the-config-files)
@@ -46,6 +53,8 @@ open data.
         + [Health and Info](#health-and-info)
             - [Local Health and Info](#local-health-and-info)
             - [Docker](#docker)
+        + [Logging](#logging)
+            - [Logging configuration](#logging-configuration)
 
 ## Set-up of the LDES Server
 
@@ -98,18 +107,19 @@ To enrich the server, certain Maven profiles can be activated:
 
 #### Profiles
 
-| Profile Group                           | Profile Name             | Description                                                                     | Parameters                                                                  | Further Info                                                                                                                        |
-|-----------------------------------------|--------------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
-| **HTTP Endpoints (Fetch/Ingestion)**    | http-ingest              | Enables a HTTP endpoint to insert LDES members.                                 | [HTTP configuration](#example-http-ingest-fetch-configuration)              | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
-| **HTTP Endpoints (Fetch/Ingestion)**    | http-fetch               | Enables a HTTP endpoint to retrieve LDES fragments                              | [Example Views Configuration](#example-views-configuration)                 | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
-| **Storage**                             | storage-mongo            | Allows the LDES server to read and write from a mongo database.                 | [Mongo configuration](#example-mongo-configuration)                         |                                                                                                                                     |
-| **Timebased Fragmentation[DEPRECATED]** | fragmentation-timebased  | Supports timebased fragmentation.                                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)   |                                                                                                                                     |
-| **Geospatial Fragmentation**            | fragmentation-geospatial | Supports geospatial fragmentation.                                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation) |                                                                                                                                     |
-| **Substring Fragmentation**             | fragmentation-substring  | Supports substring fragmentation.                                               | [Substring fragmentation configuration](#example-substring-fragmentation)   |                                                                                                                                     |
-| **Pagination Fragmentation**            | fragmentation-pagination | Supports pagination.                                                            | [Pagination configuration](#example-pagination)                             | The pagenumbers start with pagenumber 1                                                                                             |
-| **Ldes-queues**                         | queue-none               | Members are fragmented immediately.                                             | N/A activating the profile is enough                                        |                                                                                                                                     |
-| **Ldes-queues**                         | queue-in-memory          | Members are queued in memory before fragmentation.                              | N/A activating the profile is enough                                        |                                                                                                                                     |
-| **HTTP Endpoints (Admin)**              | http-admin               | Enables HTTP endpoints. These will be used later to configure different streams |                                                                             |                                                                                                                                     |
+| Profile Group                            | Profile Name                         | Description                                                                     | Parameters                                                                             | Further Info                                                                                                                        |
+|------------------------------------------|--------------------------------------|---------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| **HTTP Endpoints (Fetch/Ingestion)**     | http-ingest                          | Enables a HTTP endpoint to insert LDES members.                                 | [HTTP configuration](#example-http-ingest-fetch-configuration)                         | Endpoint:<br><br>- URL: /{ldes.collection-name}<br>- Request type: POST<br>- Accept: "application/n-quads", "application/n-triples" |
+| **HTTP Endpoints (Fetch/Ingestion)**     | http-fetch                           | Enables a HTTP endpoint to retrieve LDES fragments                              | [Example Views Configuration](#example-views-configuration)                            | Endpoint:<br>- URL: /{views.name}<br><br>- Request type: GET<br>- Accept: "application/n-quads", "application/ld+json"              |
+| **Storage**                              | storage-mongo                        | Allows the LDES server to read and write from a mongo database.                 | [Mongo configuration](#example-mongo-configuration)                                    |                                                                                                                                     |
+| **Timebased Fragmentation[DEPRECATED]**  | fragmentation-timebased              | Supports timebased fragmentation.                                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)              |                                                                                                                                     |
+| **Geospatial Fragmentation**             | fragmentation-geospatial             | Supports geospatial fragmentation.                                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation)            |                                                                                                                                     |
+| **Substring Fragmentation**              | fragmentation-substring              | Supports substring fragmentation.                                               | [Substring fragmentation configuration](#example-substring-fragmentation)              |                                                                                                                                     |
+| **Pagination Fragmentation**             | fragmentation-pagination             | Supports pagination.                                                            | [Pagination configuration](#example-pagination)                                        | The pagenumbers start with pagenumber 1                                                                                             |
+| **Hierarchical Timebased Fragmentation** | fragmentation-timebased-hierarchical | Supports hierarchical timebased fragmentation.                                  | [Timebased fragmentation configuration](#example-hierarchical-timebased-fragmentation) |                                                                                                                                     |
+| **Ldes-queues**                          | queue-none                           | Members are fragmented immediately.                                             | N/A activating the profile is enough                                                   |                                                                                                                                     |
+| **Ldes-queues**                          | queue-in-memory                      | Members are queued in memory before fragmentation.                              | N/A activating the profile is enough                                                   |                                                                                                                                     |
+| **HTTP Endpoints (Admin)**               | http-admin                           | Enables HTTP endpoints. These will be used later to configure different streams |                                                                                        |                                                                                                                                     |
 
 
 The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to function properly:
@@ -142,9 +152,9 @@ These collection are to be added one by one on the following POST endpoint.
   {server_url}/admin/api/v1/eventstreams  
   ```
 The collection must be passed in RDF in either turtle, n-quads or json-ld format.
-An example can be found [here](ldes-server-port-admin-rest/README.md#ldes-event-stream)
+An example can be found [here](ldes-server-admin/README.md#ldes-event-stream)
 
-A detailed explanation on how to add or remove a collection can be found [here](ldes-server-port-admin-rest/README.md)
+A detailed explanation on how to add or remove a collection can be found [here](ldes-server-admin/README.md)
 
 ##### Example Mongo Configuration
 
@@ -184,9 +194,9 @@ Additional views can be added one by one on the following POST endpoint.
   {server_url}/admin/api/v1/eventstreams/{collection_name}/views
   ```
 The view must be passed in RDF in either turtle, n-quads or json-ld format.
-An example can be found [here](ldes-server-port-admin-rest/README.md#ldes-view)
+An example can be found [here](ldes-server-admin/README.md#ldes-view)
 
-A detailed explanation on how to add or remove a view can be found [here](ldes-server-port-admin-rest/README.md)
+A detailed explanation on how to add or remove a view can be found [here](ldes-server-admin/README.md)
 
 
 
@@ -254,7 +264,15 @@ Currently, there are 3 possible retention policies each with a different type an
 ##### Fragmentation
 
 To configure a view with a certain fragmentation,
-a fragmentation strategy has to be added when creating the view.
+a fragmentation strategy has to be added when creating the view. The final step in the fragmentation strategy is automatically pagination. Per view the size of the pages can be configured as follows:
+
+```ttl
+  @prefix tree: <https://w3id.org/tree#>.
+  parcels:pagination tree:viewDescription [
+    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
+    tree:fragmentationStrategy () ;
+  ] .
+```
 
 
 ##### Example Timebased Fragmentation
@@ -272,11 +290,11 @@ Full documentation for geospatial fragmentation can be found [here](ldes-fragmen
   <view1> a tree:Node ;
     tree:viewDescription [
       a tree:ViewDescription ;
-      tree:fragmentationStrategy [
+      tree:fragmentationStrategy ([
         a tree:GeospatialFragmentation ;
         tree:maxZoom "15" ;
         tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT> ;
-      ] ;
+      ]) ;
     ] .
   
   
@@ -296,11 +314,11 @@ Full documentation for substring fragmentation can be found [here](ldes-fragment
   <view1> a tree:Node ;
     tree:viewDescription [
       a tree:ViewDescription ;
-      tree:fragmentationStrategy [
+      tree:fragmentationStrategy ([
         a tree:SubstringFragmentation ;
         tree:memberLimit "10" ;
         tree:fragmentationPath <https://data.vlaanderen.be/ns/adres#volledigAdres> ;
-      ] ;
+      ]) ;
     ] .
   ```
 
@@ -315,11 +333,25 @@ Full documentation for pagination fragmentation can be found [here](ldes-fragmen
   <view1> a tree:Node ;
     tree:viewDescription [
         a tree:ViewDescription ;
-        tree:fragmentationStrategy [
+        tree:fragmentationStrategy ([
           a tree:PaginationFragmentation ;
           tree:memberLimit 10 ;
-        ] ;
+        ]) ;
   ] .
+  ```
+
+##### Example Hierarchical Timebased Fragmentation
+
+Full documentation for hierarchical timebased fragmentation can be found [here](ldes-fragmentisers/ldes-fragmentisers-timebased-hierarchical/README.MD)
+
+  ```ttl
+  @prefix tree: <https://w3id.org/tree#> .
+  
+  tree:fragmentationStrategy ([
+        a tree:HierarchicalTimeBasedFragmentation ;
+        tree:maxGranularity "day" ;
+        tree:fragmentationPath <http://www.w3.org/ns/prov#generatedAtTime> ;
+    ]) .
   ```
 
 ##### Example Serving Static Content
@@ -337,8 +369,19 @@ spring:
 
 Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
-A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-port-admin-rest/README.md#dcat-endpoints)
+A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-admin/README.md#dcat-endpoints)
 or on the [swagger endpoint](#example-swagger-configuration) if it is configured.
+
+##### Example Compaction
+
+Compaction is a process that allows the server to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the `pageSize` of the view).
+Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be "copied" to the new fragment.
+This process runs entirely in the background. By default, the fragments that have been compacted will remain available for 7 days, `PD7`, but it can be configured differently. After that period they will be deleted.
+
+```yaml
+ldes-server:
+  compaction-duration: "PT1M"
+```
 
 ### Docker Setup
 

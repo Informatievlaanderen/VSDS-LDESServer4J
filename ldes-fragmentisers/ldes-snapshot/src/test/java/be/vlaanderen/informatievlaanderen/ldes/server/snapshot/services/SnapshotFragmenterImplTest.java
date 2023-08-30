@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ class SnapshotFragmenterImplTest {
 
 	@Test
 	void when_MembersAreSentForFragmentation_TheyAreFragmentedOneByOne() {
-		Set<Member> members = Set.of(new Member("id", "collectionName", 0L, null, null, null, List.of()));
+		Set<Member> members = Set.of(new Member("id", null, null, null));
 		Fragment rootTreeNode = new Fragment(
 				new LdesFragmentIdentifier(new ViewName("collectionName", "view"), List.of()));
 
@@ -34,7 +34,7 @@ class SnapshotFragmenterImplTest {
 
 		members.forEach(member -> verify(fragmentationStrategy, times(1))
 				.addMemberToFragment(eq(rootTreeNode),
-						eq(member.getLdesMemberId()), eq(member.getModel()), any(Observation.class)));
+						eq(member.id()), eq(member.model()), any(Observation.class)));
 		Mockito.verifyNoMoreInteractions(fragmentationStrategy);
 	}
 

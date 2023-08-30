@@ -1,97 +1,121 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.valueobjects.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.InOrder;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class FragmentationStrategyCollectionImplTest {
+
 	private static final String COLLECTION_NAME = "collectionName";
-	private final RootFragmentCreator rootFragmentCreator = Mockito.mock(RootFragmentCreator.class);
-	private final FragmentationStrategyCreator fragmentationStrategyCreator = Mockito.mock(
-			FragmentationStrategyCreator.class);
-	private final RefragmentationService refragmentationService = Mockito.mock(RefragmentationService.class);
+
+	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator = mock(
+			FragmentationStrategyExecutorCreatorImpl.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
-	private final AllocationRepository allocationRepository = mock(AllocationRepository.class);
+	private final FragmentSequenceRepository fragmentSequenceRepository = mock(FragmentSequenceRepository.class);
+
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			rootFragmentCreator, fragmentationStrategyCreator, refragmentationService,
-			fragmentRepository, allocationRepository);
+			fragmentRepository,
+			fragmentationStrategyExecutorCreator, fragmentSequenceRepository);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
-		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
-				List.of(), List.of());
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
-				.thenReturn(Mockito.mock(FragmentationStrategy.class));
-		assertFalse(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
+		InitViewAddedResult initResult = initAddView();
+		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
-		assertTrue(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-		verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
-		verify(refragmentationService).refragmentMembersForView(any(), any());
-		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
+		verifySingleViewAdded(initResult);
+		verify(initResult.fragmentationStrategyExecutor()).execute();
+	}
+
+	private void verifySingleViewAdded(InitViewAddedResult initResult) {
+		var executors = fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME);
+		assertEquals(1, executors.size());
+		assertEquals(initResult.fragmentationStrategyExecutor(), executors.get(0));
+	}
+
+	private InitViewAddedResult initAddView() {
+		ViewName viewName = new ViewName(COLLECTION_NAME, "additonalView");
+		ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
+		FragmentationStrategy fragmentationStrategy = mock(FragmentationStrategy.class);
+
+		FragmentationStrategyExecutor fragmentationStrategyExecutor = createFragmentationStrategyExecutor(viewName);
+		when(fragmentationStrategyExecutorCreator.createExecutor(viewName, viewSpecification))
+				.thenReturn(fragmentationStrategyExecutor);
+		return new InitViewAddedResult(viewName, viewSpecification, fragmentationStrategy,
+				fragmentationStrategyExecutor);
+	}
+
+	private record InitViewAddedResult(ViewName viewName, ViewSpecification viewSpecification,
+			FragmentationStrategy fragmentationStrategy, FragmentationStrategyExecutor fragmentationStrategyExecutor) {
+	}
+
+	private static FragmentationStrategyExecutor createFragmentationStrategyExecutor(ViewName viewName) {
+		FragmentationStrategyExecutor fragmentationStrategyExecutor = mock(FragmentationStrategyExecutor.class);
+		when(fragmentationStrategyExecutor.isPartOfCollection(COLLECTION_NAME)).thenReturn(true);
+		when(fragmentationStrategyExecutor.getViewName()).thenReturn(viewName);
+		return fragmentationStrategyExecutor;
 	}
 
 	@Test
 	void when_ViewDeletedEventIsReceived_FragmentationStrategyIsRemovedFromMap() {
-		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
-				List.of(), List.of());
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
-				.thenReturn(Mockito.mock(FragmentationStrategy.class));
-		assertFalse(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
+		InitViewAddedResult initResult = initAddView();
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
+		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		assertTrue(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
+		fragmentationStrategyCollection.handleViewDeletedEvent(new ViewDeletedEvent(initResult.viewName()));
 
-		assertFalse(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-		verify(fragmentRepository).removeLdesFragmentsOfView(viewSpecification.getName().asString());
-		verify(allocationRepository).unallocateAllMembersFromView(viewSpecification.getName());
+		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		// verify that the executor is shutdown before removing everything from repos.
+		var fragmentationStrategyExecutor = initResult.fragmentationStrategyExecutor;
+		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository, fragmentationStrategyExecutor);
+		inOrder.verify(fragmentationStrategyExecutor).shutdown();
+		inOrder.verify(fragmentRepository)
+				.removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
+		inOrder.verify(fragmentSequenceRepository).deleteByViewName(initResult.viewName);
 	}
 
 	@Test
 	void when_ViewInitializedEventIsReceived_FragmentationStrategyIsAddedToMap() {
-		ViewSpecification viewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, "additonalView"),
-				List.of(), List.of());
-		when(fragmentationStrategyCreator.createFragmentationStrategyForView(viewSpecification))
-				.thenReturn(Mockito.mock(FragmentationStrategy.class));
-		assertFalse(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
+		InitViewAddedResult initViewAddedResult = initAddView();
+		ViewSpecification viewSpecification = initViewAddedResult.viewSpecification;
+		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
 		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
 
-		assertTrue(
-				fragmentationStrategyCollection.getFragmentationStrategyMap().containsKey(viewSpecification.getName()));
-		verify(fragmentationStrategyCreator).createFragmentationStrategyForView(viewSpecification);
-		verifyNoMoreInteractions(fragmentationStrategyCreator, rootFragmentCreator, refragmentationService);
+		verifySingleViewAdded(initViewAddedResult);
+		verify(initViewAddedResult.fragmentationStrategyExecutor()).execute();
 	}
 
 	@Test
 	void should_DeleteTreeNodesByCollection_when_EventStreamDeletedEventIsReceived() {
-		String collectionName = "collectionName";
+		InitViewAddedResult initResult = initAddView();
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
+		assertFalse(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
+		fragmentationStrategyCollection.handleEventStreamDeletedEvent(
+				new EventStreamDeletedEvent(initResult.viewName.getCollectionName()));
 
-		verify(allocationRepository).unallocateMembersFromCollection(collectionName);
-		verify(fragmentRepository).deleteTreeNodesByCollection(collectionName);
+		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
+		// verify that the executor is shutdown before removing everything from repos.
+		var fragmentationStrategyExecutor = initResult.fragmentationStrategyExecutor;
+		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository, fragmentationStrategyExecutor);
+		inOrder.verify(fragmentationStrategyExecutor).shutdown();
+		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());
+		inOrder.verify(fragmentSequenceRepository).deleteByCollection(initResult.viewName.getCollectionName());
 	}
 
 }

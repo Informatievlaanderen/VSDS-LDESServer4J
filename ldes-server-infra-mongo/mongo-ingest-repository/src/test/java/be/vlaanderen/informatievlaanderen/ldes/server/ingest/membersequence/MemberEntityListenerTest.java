@@ -8,10 +8,10 @@ import static org.mockito.Mockito.*;
 
 class MemberEntityListenerTest {
 
-	private final IngestMemberSequenceGeneratorService ingestMemberSequenceGeneratorService = mock(
-			IngestMemberSequenceGeneratorService.class);
+	private final IngestMemberSequenceService ingestMemberSequenceService = mock(
+			IngestMemberSequenceService.class);
 	private final MemberEntityListener ldesMemberEntityListener = new MemberEntityListener(
-			ingestMemberSequenceGeneratorService);
+			ingestMemberSequenceService);
 
 	@Test
 	void test_MemberHasNoIndex() {
@@ -21,7 +21,7 @@ class MemberEntityListenerTest {
 
 		ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-		verify(ingestMemberSequenceGeneratorService, times(1)).generateSequence("collectionName");
+		verify(ingestMemberSequenceService, times(1)).generateSequence("collectionName");
 	}
 
 	@Test
@@ -32,7 +32,7 @@ class MemberEntityListenerTest {
 
 		ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-		verifyNoInteractions(ingestMemberSequenceGeneratorService);
+		verifyNoInteractions(ingestMemberSequenceService);
 	}
 
 }

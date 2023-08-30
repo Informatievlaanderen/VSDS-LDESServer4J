@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -28,12 +30,12 @@ class ViewSpecificationTest {
 
 	private final ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "view"),
 			ViewSpecificationArgumentsProvider.getRetentionPolicies(),
-			ViewSpecificationArgumentsProvider.getFragmentations());
+			ViewSpecificationArgumentsProvider.getFragmentations(), 100);
 
 	@Test
 	void test_equality() {
 		ViewSpecification otherViewSpecification = new ViewSpecification(new ViewName("collection", "view"),
-				getOtherRetentionPolicies(), getOtherFragmentations());
+				getOtherRetentionPolicies(), getOtherFragmentations(), 100);
 
 		assertEquals(viewSpecification, viewSpecification);
 		assertEquals(otherViewSpecification, otherViewSpecification);
@@ -68,7 +70,7 @@ class ViewSpecificationTest {
 			return Stream.of(
 					Arguments.of(new ViewSpecification(new ViewName("otherCollection", "view"),
 							getRetentionPolicies(),
-							getFragmentations())),
+							getFragmentations(), 100)),
 					Arguments.of("String instead of view"));
 		}
 

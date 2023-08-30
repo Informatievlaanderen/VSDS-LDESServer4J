@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.exception.SnapshotCreationException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,8 +24,7 @@ class SnapshotValidPredicateTest {
 
 		@Test
 		void test_validMember() {
-			Member member = new Member("id", "collectionName", 0L, "versionOf", LocalDateTime.now(), null,
-					List.of());
+			Member member = new Member("id", null, "versionOf", LocalDateTime.now());
 
 			assertTrue(snapshotValidPredicate.test(member));
 		}
@@ -51,8 +49,8 @@ class SnapshotValidPredicateTest {
 			public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 				return Stream.of(
 						Arguments.of(
-								new Member("id", "collectionName", 0L, null, LocalDateTime.now(), null, List.of())),
-						Arguments.of(new Member("id", "collectionName", 0L, "versionOf", null, null, List.of())));
+								new Member("id", null, null, LocalDateTime.now()),
+								Arguments.of(new Member("id", null, "versionOf", null))));
 			}
 		}
 	}

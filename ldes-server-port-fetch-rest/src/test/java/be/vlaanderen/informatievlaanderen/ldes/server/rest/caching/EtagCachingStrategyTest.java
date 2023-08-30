@@ -1,11 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.valueobjects.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -42,10 +41,9 @@ class EtagCachingStrategyTest {
 	@ParameterizedTest
 	@ArgumentsSource(value = ETagEventStreamArgumentsProvider.class)
 	void when_EventStreamIsRequested_thenACorrectEtagIsGenerated(String hostname, String collection,
-			List<TreeNode> views, String language, String expectedEtag) {
+			String language, String expectedEtag) {
 
-		EventStream eventStream = new EventStream(collection, "", "", "", views);
-		String etag = cachingStrategy(hostname).generateCacheIdentifier(eventStream.collection(), language);
+		String etag = cachingStrategy(hostname).generateCacheIdentifier(collection, language);
 
 		assertEquals(expectedEtag, etag);
 	}
@@ -68,13 +66,11 @@ class EtagCachingStrategyTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
-					Arguments.of("http://localhost:8080", "collection1", List.of(),
+					Arguments.of("http://localhost:8080", "collection1",
 							"text/turtle", "69a427a7acd03828f1c8a3f0f6727ae31e9e7df352f865d81c6fe022783bc8ef"),
 					Arguments.of("http://localhost:8080", "collection1",
-							List.of(createView("view1"), createView("view2")),
 							"text/turtle", "69a427a7acd03828f1c8a3f0f6727ae31e9e7df352f865d81c6fe022783bc8ef"),
 					Arguments.of("http://localhost:8080", "collection1",
-							List.of(createView("view1"), createView("view2")),
 							"application/n-quads", "9b5da23793852ec35e73ffe6c36a302d289d59009f05930850a88d7f4baa3926"));
 		}
 	}

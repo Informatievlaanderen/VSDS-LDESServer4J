@@ -101,6 +101,11 @@ jobs:
           tags: |
             type=raw,value=${{env.IMAGE_TAG}}
             type=raw,value=${{env.LATEST}}
+      - name: Free disk space
+        run: |
+          sudo docker rmi $(docker image ls -aq) >/dev/null 2>&1 || true
+          sudo rm -rf \
+            /home/runner/.m2 /home/runner/.sonar/cache || true
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:

@@ -9,19 +9,21 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>ldes-server-domain</module>
         <module>ldes-server-infra-mongo</module>
-        <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-application</module>
         <module>ldes-fragmentisers</module>
-        <module>ldes-server-port-admin-rest</module>
+        <module>ldes-server-admin</module>
         <module>ldes-server-port-ingest</module>
         <module>ldes-server-port-ingest-rest</module>
         <module>ldes-server-retention</module>
+        <module>ldes-server-port-fetch</module>
+        <module>ldes-server-port-fetch-rest</module>
+        <module>ldes-server-compaction</module>
     </modules>
 
     <developers>
@@ -55,8 +57,8 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-gpg-plugin.version>3.1.0</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <springdoc-openapi.version>2.1.0</springdoc-openapi.version>
-        <swagger-annotations.version>2.2.14</swagger-annotations.version>
+        <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
+        <swagger-annotations.version>2.2.15</swagger-annotations.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -65,10 +67,10 @@
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
 
         <!-- SPRING BOOT -->
-        <spring-boot.version>3.1.1</spring-boot.version>
+        <spring-boot.version>3.1.2</spring-boot.version>
 
         <!-- SPRING DATA -->
-        <spring-data.version>3.1.1</spring-data.version>
+        <spring-data.version>3.1.2</spring-data.version>
 
         <!-- JSON & RDF -->
         <apache-jena.version>4.8.0</apache-jena.version>
@@ -76,9 +78,9 @@
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.9.3</junit-platform-suite.version>
+        <junit-platform-suite.version>1.10.0</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.9.3</jupiter.version>
+        <jupiter.version>5.10.0</jupiter.version>
         <mockito.version>5.4.0</mockito.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.7.0</de.flapdoodle.embed.mongo.version>
@@ -269,6 +271,12 @@
         <pluginManagement>
             <plugins>
                 <!-- MAVEN -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>

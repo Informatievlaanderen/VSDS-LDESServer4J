@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.valueobject.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.entities.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class RetentionPolicyCollectionImplTest {
 	@Test
 	void test_AddingAndDeletingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
-				List.of(), List.of());
+				List.of(), List.of(), 100);
 
 		assertFalse(
 				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
@@ -38,7 +38,7 @@ class RetentionPolicyCollectionImplTest {
 	@Test
 	void test_InitializingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
-				List.of(), List.of());
+				List.of(), List.of(), 100);
 		assertFalse(
 				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
 

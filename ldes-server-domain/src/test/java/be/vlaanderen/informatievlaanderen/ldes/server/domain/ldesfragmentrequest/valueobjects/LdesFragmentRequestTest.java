@@ -1,7 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentRequest;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -63,7 +64,7 @@ class LdesFragmentRequestTest {
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(Arguments.of(new Member("some_id", "collectionName", 0L, null, null, null, List.of())),
+			return Stream.of(Arguments.of("otherClass"),
 					Arguments.of((Object) null),
 					Arguments.of(new LdesFragmentRequest(new ViewName("otherCollection", "otherView"),
 							List.of(new FragmentPair(KEY, VALUE), new FragmentPair(KEY_2,
