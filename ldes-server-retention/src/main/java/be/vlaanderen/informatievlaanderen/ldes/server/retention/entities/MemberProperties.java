@@ -1,15 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.entities;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MemberProperties {
 	private final String id;
 	private final String collectionName;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
-	private final List<String> viewReferences;
+	private final Set<String> viewReferences;
 
 	public MemberProperties(String id, String collectionName, String versionOf,
 			LocalDateTime timestamp) {
@@ -17,7 +17,7 @@ public class MemberProperties {
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
-		this.viewReferences = new ArrayList<>();
+		this.viewReferences = new HashSet<>();
 	}
 
 	public String getId() {
@@ -36,7 +36,7 @@ public class MemberProperties {
 		return timestamp;
 	}
 
-	public List<String> getViewReferences() {
+	public Set<String> getViewReferences() {
 		return viewReferences;
 	}
 

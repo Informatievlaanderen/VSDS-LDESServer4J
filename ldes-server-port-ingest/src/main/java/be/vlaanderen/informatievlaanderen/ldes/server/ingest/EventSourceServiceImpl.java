@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -18,6 +19,11 @@ public class EventSourceServiceImpl implements EventSourceService {
 	@Override
 	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
 		return memberRepository.getMemberStreamOfCollection(collectionName);
+	}
+
+	@Override
+	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
+		return memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, sequenceNr);
 	}
 
 }

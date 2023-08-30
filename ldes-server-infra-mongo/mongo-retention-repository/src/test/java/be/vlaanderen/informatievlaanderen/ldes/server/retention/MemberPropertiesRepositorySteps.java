@@ -21,8 +21,6 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@DataTableType
 	public MemberProperties memberPropertiesEntryTransformer(Map<String, String> row) {
-		String string = LocalDateTime.now().toString();
-		System.out.println(string);
 		MemberProperties properties = new MemberProperties(
 				row.get("id"),
 				row.get("collectionName"),

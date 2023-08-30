@@ -1,19 +1,20 @@
 # Substring fragmentation
 
 Substring fragmentation will create fragments based on substrings of the `fragmentationPath`.
-This allows you to efficiently implement autocompletion.
+This allows you to efficiently implement autocompletion. This particular implementation is inspired by the [SubjectPageBucketizer in TREEcg](https://github.com/TREEcg/bucketizers/blob/f23cc8778439091b12ed1c668b953bbf8d531db8/packages/bucketizer-subject-page/lib/SubjectPageBucketizer.ts).
 
 ## Properties
 
   ```ttl
   @prefix tree: <https://w3id.org/tree#> .
   
-  tree:fragmentationStrategy [
+  tree:fragmentationStrategy ([
         a tree:SubstringFragmentation ;
         tree:memberLimit { Mandatory:member limit > 0 } ;
         tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ;
+        tree:caseSensitive { Optional: true or false (default) } ;
         tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ;
-    ] .
+    ]) .
   ```
 
 ## Algorithm
@@ -105,4 +106,4 @@ These are the first available (not full) fragments of the different tokens. The 
 
 In a scenario where the root is full and there are already 10 addresses starting with 'k' and only 2 with 'ka', it would be added to http://localhost:8080/addresses/by-name?substring=ka
 
-Note that this is all lowercase.
+Note that this is all lowercase, since the default configuration is case-insensitive.

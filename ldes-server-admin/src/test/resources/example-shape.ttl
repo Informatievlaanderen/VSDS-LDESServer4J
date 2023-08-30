@@ -1,0 +1,7 @@
+@prefix tree: <https://w3id.org/tree#> .
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix server: <http://localhost:8080/> .
+
+server:shape a sh:NodeShape ;
+   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;

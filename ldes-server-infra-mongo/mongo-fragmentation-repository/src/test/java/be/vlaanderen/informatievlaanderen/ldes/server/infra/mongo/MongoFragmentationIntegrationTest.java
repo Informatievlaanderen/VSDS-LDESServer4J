@@ -1,12 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatdataset.repository.DcatDatasetRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.dcatserver.repositories.DcatServerRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.eventstream.repository.EventStreamRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.DcatViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
@@ -37,6 +32,9 @@ public class MongoFragmentationIntegrationTest {
 	@Autowired
 	public FragmentRepository fragmentRepository;
 
+	@Autowired
+	public FragmentSequenceRepository fragmentSequenceRepository;
+
 	@TestConfiguration
 	public static class EventStreamControllerTestConfiguration {
 
@@ -50,41 +48,6 @@ public class MongoFragmentationIntegrationTest {
 			return mock(MemberRepository.class);
 		}
 
-		@Bean
-		public DcatDatasetRepository dcatDatasetMongoRepository() {
-			return mock(DcatDatasetRepository.class);
-		}
-
-		@Bean
-		public DcatServerRepository dcatServerRepository() {
-			return mock(DcatServerRepository.class);
-		}
-
-		@Bean
-		public DcatViewRepository dcatViewRepository() {
-			return mock(DcatViewRepository.class);
-		}
-
-		@Bean
-		public EventStreamRepository eventStreamRepository() {
-			return mock(EventStreamRepository.class);
-		}
-
-		@Bean
-		public ViewRepository viewRepository() {
-			return mock(ViewRepository.class);
-		}
-
-		@Bean
-		public ShaclShapeRepository shaclShapeRepository() {
-			return mock(ShaclShapeRepository.class);
-		}
-
-		@Bean
-		public be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository oldMemberRepository() {
-			return mock(
-					be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.repository.MemberRepository.class);
-		}
 	}
 
 }

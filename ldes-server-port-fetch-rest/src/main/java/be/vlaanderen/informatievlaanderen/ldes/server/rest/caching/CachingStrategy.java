@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 
 public interface CachingStrategy {
 

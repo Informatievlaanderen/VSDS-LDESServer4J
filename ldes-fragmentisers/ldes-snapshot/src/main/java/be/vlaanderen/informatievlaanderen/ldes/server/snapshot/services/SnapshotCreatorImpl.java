@@ -1,12 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.snapshot.Snapshot;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import org.apache.jena.rdf.model.Model;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Snapshot;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 
 @Component
 public class SnapshotCreatorImpl implements SnapShotCreator {
@@ -24,25 +22,21 @@ public class SnapshotCreatorImpl implements SnapShotCreator {
 	private final MemberCollector memberCollector;
 	private final RootFragmentCreator rootFragmentCreator;
 	private final SnapshotFragmenter snapshotFragmenter;
-	private final ShaclShapeService shaclShapeService;
 
 	public SnapshotCreatorImpl(@Value(HOST_NAME_KEY) String hostName, MemberCollector memberCollector,
-			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter,
-			ShaclShapeService shaclShapeService) {
+			RootFragmentCreator rootFragmentCreator, SnapshotFragmenter snapshotFragmenter) {
 		this.hostName = hostName;
 		this.memberCollector = memberCollector;
 		this.rootFragmentCreator = rootFragmentCreator;
 		this.snapshotFragmenter = snapshotFragmenter;
-		this.shaclShapeService = shaclShapeService;
 	}
 
 	@Override
 	public Snapshot createSnapshotForTreeNodes(List<Fragment> treeNodesForSnapshot,
 			String collectionName) {
 		LocalDateTime snapshotTime = LocalDateTime.now();
-		Model shacl = shaclShapeService.retrieveShaclShape(collectionName).getModel();
 		Snapshot snapshot = new Snapshot(getSnapshotId(collectionName, snapshotTime), collectionName,
-				shacl, snapshotTime, hostName + "/" + collectionName);
+				null, snapshotTime, hostName + "/" + collectionName);
 		Set<Member> membersOfSnapshot = getMembersOfSnapshot(treeNodesForSnapshot);
 		Fragment rootTreeNodeOfSnapshot = rootFragmentCreator
 				.createRootFragmentForView(ViewName.fromString(snapshot.getSnapshotId()));

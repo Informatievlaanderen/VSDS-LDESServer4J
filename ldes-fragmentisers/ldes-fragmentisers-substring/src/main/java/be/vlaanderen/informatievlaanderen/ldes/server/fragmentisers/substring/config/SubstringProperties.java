@@ -7,4 +7,5 @@ public class SubstringProperties {
 
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
 	public static final String MEMBER_LIMIT = "memberLimit";
+	public static final String CASE_SENSITIVE = "caseSensitive";
 }

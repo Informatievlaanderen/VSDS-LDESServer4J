@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestMemberSequenceEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
@@ -9,6 +10,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 import java.util.Map;
@@ -99,5 +102,31 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	@When("I delete the member with id {string}")
 	public void iDeleteMemberWithId(String memberId) {
 		memberRepository.deleteMember(memberId);
+	}
+
+	@And("The sequence for {string} will have been removed")
+	public void theSequenceForWillHaveBeenRemoved(String collectionName) {
+		assertFalse(hasSequence(collectionName));
+	}
+
+	@And("The sequence for {string} will still exist")
+	public void theSequenceForWillStillExist(String collectionName) {
+		assertTrue(hasSequence(collectionName));
+	}
+
+	private boolean hasSequence(String collectionName) {
+		Query query = new Query(Criteria.where("_id").is(collectionName));
+		long count = mongoTemplate.count(query, IngestMemberSequenceEntity.COLLECTION_NAME);
+		return count > 0;
+	}
+
+	@And("I search for the first member from collection {string} and sequenceNr greater than {int}")
+	public void iSearchForTheFirstMemberFromCollectionAndSequenceNrGreaterThan(String collectionName, int sequence) {
+		retrievedMember = memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, sequence);
+	}
+
+	@Then("The retrieved member is empty")
+	public void theRetrievedMemberIsEmpty() {
+		assertTrue(retrievedMember.isEmpty());
 	}
 }

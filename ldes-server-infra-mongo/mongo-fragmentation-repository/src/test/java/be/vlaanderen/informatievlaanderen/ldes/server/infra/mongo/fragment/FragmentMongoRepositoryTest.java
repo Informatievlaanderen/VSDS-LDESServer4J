@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragment;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragment.valueobjects.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.ldesfragmentrequest.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.viewcreation.valueobjects.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.FragmentMongoRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.FragmentEntity;
@@ -79,7 +79,7 @@ class FragmentMongoRepositoryTest {
 		private static FragmentEntity createLdesFragmentEntity(boolean immutable, ViewName viewName, String value) {
 			Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName,
 					List.of(new FragmentPair("generatedAtTime", value))),
-					immutable, 0, List.of());
+					immutable, 0, List.of(), null);
 			return FragmentEntity.fromLdesFragment(fragment);
 		}
 

@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.snapshot.services;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.entities.Member;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,8 +27,8 @@ public class SnapshotFragmenterImpl implements SnapshotFragmenter {
 				observationRegistry)
 				.start();
 		membersOfSnapshot.forEach(
-				member -> fragmentationStrategy.addMemberToFragment(rootTreeNodeOfSnapshot, member.getLdesMemberId(),
-						member.getModel(), parentObservation));
+				member -> fragmentationStrategy.addMemberToFragment(rootTreeNodeOfSnapshot, member.id(),
+						member.model(), parentObservation));
 		parentObservation.stop();
 	}
 }

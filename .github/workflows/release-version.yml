@@ -31,4 +31,4 @@ jobs:
           version-major: ${{ github.event.inputs.type_of_bump == 'major' }}
           maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Ddockerfile.skip -DdockerCompose.skip -Dmaven.deploy.skip=true -Dskipdeploy=true"
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          release-branch-name: 'main'
+          release-branch-name: 'develop'

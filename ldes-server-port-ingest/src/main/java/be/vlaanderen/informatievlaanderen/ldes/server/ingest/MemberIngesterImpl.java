@@ -42,7 +42,7 @@ public class MemberIngesterImpl implements MemberIngester {
 		Metrics.counter("ldes_server_ingested_members_count").increment();
 		final Member savedMember = save(member);
 		final var memberIngestedEvent = new MemberIngestedEvent(savedMember.getModel(), savedMember.getId(),
-				savedMember.getCollectionName());
+				savedMember.getCollectionName(), savedMember.getSequenceNr());
 		eventPublisher.publishEvent(memberIngestedEvent);
 		log.debug("Member with id {} ingested.", memberId);
 	}

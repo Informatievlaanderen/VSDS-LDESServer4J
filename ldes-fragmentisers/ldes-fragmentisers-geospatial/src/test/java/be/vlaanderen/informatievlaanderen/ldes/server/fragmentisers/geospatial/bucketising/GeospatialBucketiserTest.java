@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.tree.member.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,7 +37,7 @@ class GeospatialBucketiserTest {
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getModel());
+		Set<String> actualBuckets = bucketiser.bucketise(member.model());
 
 		assertEquals(4, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -54,7 +53,7 @@ class GeospatialBucketiserTest {
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.getModel());
+		Set<String> actualBuckets = bucketiser.bucketise(member.model());
 
 		assertEquals(2, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -69,8 +68,7 @@ class GeospatialBucketiserTest {
 				.toModel();
 
 		return new Member("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				"collectionName",
-				0L, null, null, outputModel, List.of());
+				outputModel, 0L);
 	}
 
 }
