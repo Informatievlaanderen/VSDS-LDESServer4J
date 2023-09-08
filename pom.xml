@@ -84,7 +84,7 @@
         <mockito.version>5.4.0</mockito.version>
         <byte-buddy.version>1.14.5</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.7.0</de.flapdoodle.embed.mongo.version>
-        <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
+        <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.13.0</cucumber.version>
 
