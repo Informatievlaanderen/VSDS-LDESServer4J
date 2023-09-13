@@ -78,10 +78,7 @@ public class ViewServiceImpl implements ViewService {
 		if (isEventStreamMissing(viewName.getCollectionName())) {
 			throw new MissingEventStreamException(viewName.getCollectionName());
 		}
-		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewName);
-		if (view.isEmpty()) {
-			throw new MissingViewException(viewName);
-		}
+
 		deleteViews(List.of(viewName));
 	}
 
