@@ -37,4 +37,22 @@
         </dependencies>
     </dependencyManagement>
 
+    <build>
+    <pluginManagement>
+    <plugins>
+    <!-- MAVEN -->
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+            <compilerArgs>
+                <arg>-parameters</arg>
+            </compilerArgs>
+        </configuration>
+    </plugin>
+    </plugins>
+    </pluginManagement>
+    </build>
+
 </project>
