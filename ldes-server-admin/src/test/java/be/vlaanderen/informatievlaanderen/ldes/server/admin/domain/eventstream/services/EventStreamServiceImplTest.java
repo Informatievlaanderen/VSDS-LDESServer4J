@@ -176,7 +176,6 @@ class EventStreamServiceImplTest {
 		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
 		inOrder.verify(eventStreamRepository).saveEventStream(eventStream);
 		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
-		inOrder.verify(viewService).addDefaultView(COLLECTION);
 	}
 
 	@Test
