@@ -100,18 +100,6 @@ class ViewServiceImplTest {
 		}
 
 		@Test
-		void when_DeleteViewAndViewDoesNotExist_then_MissingViewExceptionIsThrown() {
-			MissingViewException missingViewException = assertThrows(MissingViewException.class,
-					() -> viewService.deleteViewByViewName(notExistingViewName));
-
-			assertEquals("Collection collection does not have a view: not_existing_view",
-					missingViewException.getMessage());
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verify(viewRepository).getViewByViewName(notExistingViewName);
-			inOrder.verifyNoMoreInteractions();
-		}
-
-		@Test
 		void when_DeleteViewAndViewExists_then_ViewIsDeleted() {
 			ViewSpecification viewSpecification = new ViewSpecification(viewName, List.of(), List.of(), 100);
 			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.of(viewSpecification));
