@@ -20,10 +20,6 @@ import java.util.Optional;
 @Service
 public class ViewServiceImpl implements ViewService {
 
-	public static final String DEFAULT_VIEW_NAME = "by-page";
-	public static final String DEFAULT_VIEW_FRAGMENTATION_STRATEGY = "PaginationFragmentation";
-	public static final int DEFAULT_VIEW_PAGE_SIZE = 100;
-
 	private final DcatViewService dcatViewService;
 	private final ViewRepository viewRepository;
 	private final ApplicationEventPublisher eventPublisher;
@@ -53,16 +49,6 @@ public class ViewServiceImpl implements ViewService {
 
 	private boolean isEventStreamMissing(String collectionName) {
 		return !eventStreams.containsKey(collectionName);
-	}
-
-	@Override
-	public void addDefaultView(String collectionName) {
-		ViewName defaultViewName = new ViewName(collectionName, DEFAULT_VIEW_NAME);
-		if (viewRepository.getViewByViewName(defaultViewName).isEmpty()) {
-			ViewSpecification defaultView = new ViewSpecification(defaultViewName, List.of(), List.of(),
-					DEFAULT_VIEW_PAGE_SIZE);
-			addView(defaultView);
-		}
 	}
 
 	@Override

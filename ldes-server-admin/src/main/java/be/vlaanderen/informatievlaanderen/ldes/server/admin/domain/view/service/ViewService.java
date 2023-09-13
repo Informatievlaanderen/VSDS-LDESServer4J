@@ -9,8 +9,6 @@ public interface ViewService {
 
 	void addView(ViewSpecification viewSpecification);
 
-	void addDefaultView(String collectionName);
-
 	ViewSpecification getViewByViewName(ViewName viewName);
 
 	List<ViewSpecification> getViewsByCollectionName(String collectionName);
