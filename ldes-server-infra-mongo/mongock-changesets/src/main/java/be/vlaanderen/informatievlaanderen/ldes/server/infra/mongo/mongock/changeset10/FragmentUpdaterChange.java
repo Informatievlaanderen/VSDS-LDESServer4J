@@ -8,7 +8,7 @@ import io.mongock.api.annotations.RollbackExecution;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
-@ChangeUnit(id = "fragment-updater-changeset-6", order = "2023-06-02 00:00:00", author = "VSDS")
+@ChangeUnit(id = "fragment-updater-changeset-10", order = "2023-09-14 00:00:00", author = "VSDS")
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 
