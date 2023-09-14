@@ -99,14 +99,15 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 		predecessorFragments.forEach(predecessorFragment -> {
 			verify(fragmentRepository)
 					.saveFragment(new Fragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment)));
-			assertEquals(1, fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))
-					.orElseThrow()
-					.getRelations()
-					.stream()
-					.map(TreeRelation::treeNode)
-					.map(LdesFragmentIdentifier::asString)
-					.filter(identifier -> !identifier.contains("dummy"))
-					.count());
+			assertEquals(1,
+					fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))
+							.orElseThrow()
+							.getRelations()
+							.stream()
+							.map(TreeRelation::treeNode)
+							.map(LdesFragmentIdentifier::asString)
+							.filter(identifier -> !identifier.contains("dummy"))
+							.count());
 		});
 	}
 

@@ -45,15 +45,15 @@ class IngestedMemberHandlerTest {
 	}
 
 	@Test
-    void when_MemberIngested_Then_MemberIsSaved() {
-        when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(eventStreamProperties);
+	void when_MemberIngested_Then_MemberIsSaved() {
+		when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(eventStreamProperties);
 
-        ingestedMemberHandler.handleMemberIngestedEvent(event);
+		ingestedMemberHandler.handleMemberIngestedEvent(event);
 
-        verify(memberPropertiesRepository).saveMemberPropertiesWithoutViews(captor.capture());
-        assertEquals("version", captor.getValue().getVersionOf());
-        assertEquals(LocalDateTime.parse("2022-09-28T07:14:00.000"), captor.getValue().getTimestamp());
-    }
+		verify(memberPropertiesRepository).saveMemberPropertiesWithoutViews(captor.capture());
+		assertEquals("version", captor.getValue().getVersionOf());
+		assertEquals(LocalDateTime.parse("2022-09-28T07:14:00.000"), captor.getValue().getTimestamp());
+	}
 
 	@Test
 	void when_MemberWithIncorrectPath_Then_PropertyIsIgnored() {

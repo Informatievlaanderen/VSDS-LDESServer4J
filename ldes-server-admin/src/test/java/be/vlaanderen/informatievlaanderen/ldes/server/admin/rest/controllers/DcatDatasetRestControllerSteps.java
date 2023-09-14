@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatDatasetRestController.BASE_URL;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -101,8 +100,8 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
 	}
 
 	@And("The dataset does not yet exist")
-    public void theDataserviceDoesNotYetExist() {
-        when(dcatDatasetRepository.retrieveDataset(COLLECTION_NAME)).thenReturn(Optional.empty());
-    }
+	public void theDataserviceDoesNotYetExist() {
+		when(dcatDatasetRepository.retrieveDataset(COLLECTION_NAME)).thenReturn(Optional.empty());
+	}
 
 }

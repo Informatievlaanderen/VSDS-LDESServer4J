@@ -32,32 +32,37 @@ class MemberIngestValidatorImplTest {
 	}
 
 	@Test
-    void validationShouldThrowException_whenMemberIsInvalid() {
-        when(factory.createValidator(null)).thenReturn(model -> {
-            throw new IngestValidationException("invalid");
-        });
-        validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
+	void validationShouldThrowException_whenMemberIsInvalid() {
+		when(factory.createValidator(null)).thenReturn(model -> {
+			throw new IngestValidationException("invalid");
+		});
+		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 
-        Member member = createBasicMember();
-        assertThrows(IngestValidationException.class, () -> validator.validate(member));
-    }
+		Member member = createBasicMember();
+		assertThrows(IngestValidationException.class, () -> validator.validate(member));
+	}
 
 	@Test
-    void validatorShouldBeOverWritten_onChangedEvent() {
-        when(factory.createValidator(null))
-                .thenReturn(model -> {throw new IngestValidationException("invalid");})
-                .thenReturn(model -> {});
-        validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
-        validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
+	void validatorShouldBeOverWritten_onChangedEvent() {
+		when(factory.createValidator(null))
+				.thenReturn(model -> {
+					throw new IngestValidationException("invalid");
+				})
+				.thenReturn(model -> {
+				});
+		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
+		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 
-        Member member = createBasicMember();
-        assertDoesNotThrow(() -> validator.validate(member));
-    }
+		Member member = createBasicMember();
+		assertDoesNotThrow(() -> validator.validate(member));
+	}
 
 	@Test
 	void validatorShouldBeRemoved_onDeleteEvent() {
 		when(factory.createValidator(null))
-				.thenReturn(model -> {throw new IngestValidationException("invalid");});
+				.thenReturn(model -> {
+					throw new IngestValidationException("invalid");
+				});
 		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 		validator.handleShaclDeletedEvent(new ShaclDeletedEvent("myCollection"));
 
