@@ -45,8 +45,7 @@ class EventStreamMongoRepositoryTest {
 		List<EventStream> eventStreams = mongoRepository.retrieveAllEventStreams();
 		List<EventStream> expectedEventStreams = List.of(
 				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version", "memberType")
-		);
+				new EventStream("other_collection", "created", "version", "memberType"));
 		verify(eventStreamEntityRepository).findAll();
 		assertEquals(expectedEventStreams, eventStreams);
 	}

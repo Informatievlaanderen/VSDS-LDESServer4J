@@ -62,10 +62,10 @@ class RootFragmentRetrieverTest {
 	}
 
 	@Test
-    void should_ThrowException_when_RootFragmentIsNotFound() {
-        when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.empty());
+	void should_ThrowException_when_RootFragmentIsNotFound() {
+		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.empty());
 
-        assertThrows(MissingRootFragmentException.class,
-                () -> rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation));
-    }
+		assertThrows(MissingRootFragmentException.class,
+				() -> rootFragmentRetriever.retrieveRootFragmentOfView(VIEW_NAME, observation));
+	}
 }

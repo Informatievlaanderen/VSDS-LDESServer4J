@@ -37,7 +37,8 @@ class RootFragmentCreatorImplTest {
 
 	@Test
 	void when_RootFragmentExists_NothingHappens() {
-		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString())).thenReturn(Optional.of(mock(Fragment.class)));
+		when(fragmentRepository.retrieveRootFragment(VIEW_NAME.asString()))
+				.thenReturn(Optional.of(mock(Fragment.class)));
 		rootFragmentCreator.createRootFragmentForView(VIEW_NAME);
 
 		InOrder inOrder = inOrder(fragmentRepository);
