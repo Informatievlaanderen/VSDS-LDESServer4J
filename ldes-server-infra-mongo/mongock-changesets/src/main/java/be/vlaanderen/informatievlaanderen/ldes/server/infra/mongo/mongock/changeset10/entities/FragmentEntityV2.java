@@ -22,14 +22,14 @@ public class FragmentEntityV2 {
 	private Boolean immutable;
 	@Indexed
 	private String parentId;
-	private Integer nrOfMembersAdded;
+	private Integer numberOfMembers;
 	private List<TreeRelationV2> relations;
 	@Indexed
 	private String collectionName;
 	private LocalDateTime deleteTime;
 
 	public FragmentEntityV2(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
-			Boolean immutable, String parentId, Integer nrOfMembersAdded,
+			Boolean immutable, String parentId, Integer numberOfMembers,
 			List<TreeRelationV2> relations, String collectionName, LocalDateTime deleteTime) {
 		this.id = id;
 		this.root = root;
@@ -37,7 +37,7 @@ public class FragmentEntityV2 {
 		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.parentId = parentId;
-		this.nrOfMembersAdded = nrOfMembersAdded;
+		this.numberOfMembers = numberOfMembers;
 		this.relations = relations;
 		this.collectionName = collectionName;
 		this.deleteTime = deleteTime;
@@ -78,8 +78,8 @@ public class FragmentEntityV2 {
 		return parentId;
 	}
 
-	public Integer getNrOfMembersAdded() {
-		return nrOfMembersAdded;
+	public Integer getNumberOfMembers() {
+		return numberOfMembers;
 	}
 
 	public String getCollectionName() {
