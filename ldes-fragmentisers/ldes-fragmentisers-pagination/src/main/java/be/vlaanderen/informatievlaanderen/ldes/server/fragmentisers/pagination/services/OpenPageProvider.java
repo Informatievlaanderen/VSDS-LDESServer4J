@@ -37,6 +37,6 @@ public class OpenPageProvider {
 	}
 
 	public boolean needsToCreateNewFragment(Fragment fragment) {
-		return fragment.getNumberOfMembers() >= memberLimit;
+		return fragment.getNrOfMembersAdded() >= memberLimit;
 	}
 }
