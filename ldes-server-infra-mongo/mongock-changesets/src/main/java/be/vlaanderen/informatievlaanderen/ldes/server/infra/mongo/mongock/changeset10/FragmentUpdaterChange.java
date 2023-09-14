@@ -61,7 +61,7 @@ public class FragmentUpdaterChange {
 					newEntity.getFragmentPairs(),
 					newEntity.getImmutable(),
 					newEntity.getParentId(),
-					newEntity.getNrOfMembersAdded(),
+					newEntity.getNumberOfMembers(),
 					relations,
 					newEntity.getCollectionName(),
 					newEntity.getDeleteTime());
