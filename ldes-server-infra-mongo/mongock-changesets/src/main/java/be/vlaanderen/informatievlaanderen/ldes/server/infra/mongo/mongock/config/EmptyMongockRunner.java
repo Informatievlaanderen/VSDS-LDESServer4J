@@ -8,23 +8,23 @@ import io.mongock.runner.core.executor.MongockRunner;
  * provided.
  */
 public class EmptyMongockRunner implements MongockRunner {
-    @Override
-    public boolean isExecutionInProgress() {
-        return false;
-    }
+	@Override
+	public boolean isExecutionInProgress() {
+		return false;
+	}
 
-    @Override
-    public boolean isEnabled() {
-        return false;
-    }
+	@Override
+	public boolean isEnabled() {
+		return false;
+	}
 
-    @Override
-    public void forceEnable() {
+	@Override
+	public void forceEnable() {
 
-    }
+	}
 
-    @Override
-    public void execute() throws MongockException {
+	@Override
+	public void execute() throws MongockException {
 
-    }
+	}
 }

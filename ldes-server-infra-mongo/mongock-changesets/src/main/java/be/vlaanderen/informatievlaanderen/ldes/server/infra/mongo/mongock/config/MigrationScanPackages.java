@@ -9,14 +9,14 @@ import java.util.List;
 @ConfigurationProperties(prefix = "mongock")
 public class MigrationScanPackages {
 
-    private List<String> migrationScanPackage;
+	private List<String> migrationScanPackage;
 
-    public List<String> getMigrationScanPackage() {
-        return migrationScanPackage;
-    }
+	public List<String> getMigrationScanPackage() {
+		return migrationScanPackage;
+	}
 
-    public void setMigrationScanPackage(List<String> migrationScanPackage) {
-        this.migrationScanPackage = migrationScanPackage;
-    }
+	public void setMigrationScanPackage(List<String> migrationScanPackage) {
+		this.migrationScanPackage = migrationScanPackage;
+	}
 
 }
