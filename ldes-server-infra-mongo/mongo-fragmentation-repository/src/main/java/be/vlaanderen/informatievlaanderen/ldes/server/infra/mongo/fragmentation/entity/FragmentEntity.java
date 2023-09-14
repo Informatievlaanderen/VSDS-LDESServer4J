@@ -33,7 +33,7 @@ public class FragmentEntity {
 
 	public FragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable, String parentId, Integer nrOfMembersAdded,
-			List<TreeRelation> relations, String collectionName, LocalDateTime localDateTime) {
+			List<TreeRelation> relations, String collectionName, LocalDateTime deleteTime) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -43,7 +43,7 @@ public class FragmentEntity {
 		this.nrOfMembersAdded = nrOfMembersAdded;
 		this.relations = relations;
 		this.collectionName = collectionName;
-		this.deleteTime = localDateTime;
+		this.deleteTime = deleteTime;
 	}
 
 	public FragmentEntity() {
