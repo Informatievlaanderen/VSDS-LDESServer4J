@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset11.entities;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities.valueobjects.FragmentPair;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities.valueobjects.TreeRelationV2;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset11.entities.valueobjects.FragmentPair;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset11.entities.valueobjects.TreeRelation;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("fragmentation_fragment")
-public class FragmentEntityV2 {
+public class FragmentEntityV3 {
 	@Id
 	private String id;
 	@Indexed
@@ -23,14 +23,14 @@ public class FragmentEntityV2 {
 	@Indexed
 	private String parentId;
 	private Integer nrOfMembersAdded;
-	private List<TreeRelationV2> relations;
+	private List<TreeRelation> relations;
 	@Indexed
 	private String collectionName;
 	private LocalDateTime deleteTime;
 
-	public FragmentEntityV2(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
+	public FragmentEntityV3(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable, String parentId, Integer nrOfMembersAdded,
-			List<TreeRelationV2> relations, String collectionName, LocalDateTime deleteTime) {
+			List<TreeRelation> relations, String collectionName, LocalDateTime deleteTime) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -43,7 +43,7 @@ public class FragmentEntityV2 {
 		this.deleteTime = deleteTime;
 	}
 
-	public FragmentEntityV2() {
+	public FragmentEntityV3() {
 	}
 
 	public String getId() {
@@ -58,7 +58,7 @@ public class FragmentEntityV2 {
 		return viewName;
 	}
 
-	public List<TreeRelationV2> getRelations() {
+	public List<TreeRelation> getRelations() {
 		return relations;
 	}
 

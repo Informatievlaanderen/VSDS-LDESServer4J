@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities.valueobjects;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset11.entities.valueobjects;
 
 import org.springframework.data.annotation.PersistenceCreator;
 
