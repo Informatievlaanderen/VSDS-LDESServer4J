@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class MongockRunnerExecutor {
 
-    private final MongockRunner applicationRunner;
+	private final MongockRunner applicationRunner;
 
-    public MongockRunnerExecutor(MongockRunner applicationRunner) {
-        this.applicationRunner = applicationRunner;
-    }
+	public MongockRunnerExecutor(MongockRunner applicationRunner) {
+		this.applicationRunner = applicationRunner;
+	}
 
-    @EventListener(ApplicationReadyEvent.class)
-    public void execute() {
-        if (applicationRunner.isEnabled()) {
-            applicationRunner.execute();
-        }
-    }
+	@EventListener(ApplicationReadyEvent.class)
+	public void execute() {
+		if (applicationRunner.isEnabled()) {
+			applicationRunner.execute();
+		}
+	}
 }
