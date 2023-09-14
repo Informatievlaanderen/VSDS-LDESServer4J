@@ -77,7 +77,7 @@ public class Fragment {
 	}
 
 	public String getParentIdAsString() {
-		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElseGet(() -> ROOT);
+		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElse(ROOT);
 	}
 
 	public boolean isReadyForDeletion() {
@@ -128,5 +128,9 @@ public class Fragment {
 
 	public void removeRelation(TreeRelation treeRelation) {
 		relations.remove(treeRelation);
+	}
+
+	public void removeRelationToIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
+		relations.removeIf(treeRelation -> treeRelation.treeNode().equals(fragmentIdentifier));
 	}
 }
