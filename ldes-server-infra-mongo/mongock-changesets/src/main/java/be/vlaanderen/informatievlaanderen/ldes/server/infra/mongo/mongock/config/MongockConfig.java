@@ -17,13 +17,7 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
-//@EnableMongock
 public class MongockConfig {
-
-//	@Bean
-//	public ConnectionDriver mongockConnection(MongoTemplate mongoTemplate) {
-//		return SpringDataMongoV4Driver.withDefaultLock(mongoTemplate);
-//	}
 
 	@Bean
 	public MongockRunner applicationRunner(MongoTemplate mongoTemplate,
