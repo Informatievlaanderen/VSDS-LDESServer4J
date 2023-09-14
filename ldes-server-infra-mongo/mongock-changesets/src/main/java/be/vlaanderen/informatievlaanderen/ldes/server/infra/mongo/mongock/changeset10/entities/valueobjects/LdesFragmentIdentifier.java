@@ -14,12 +14,14 @@ public class LdesFragmentIdentifier {
 	private final List<be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair> fragmentPairs;
 
 	@PersistenceCreator
-	public LdesFragmentIdentifier(ViewName viewName, List<be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair> fragmentPairs) {
+	public LdesFragmentIdentifier(ViewName viewName,
+			List<be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair> fragmentPairs) {
 		this.viewName = viewName;
 		this.fragmentPairs = fragmentPairs;
 	}
 
-	public LdesFragmentIdentifier(String viewName, List<be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair> fragmentPairs) {
+	public LdesFragmentIdentifier(String viewName,
+			List<be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair> fragmentPairs) {
 		this.viewName = ViewName.fromString(viewName);
 		this.fragmentPairs = fragmentPairs;
 	}
@@ -47,7 +49,8 @@ public class LdesFragmentIdentifier {
 				String[] fragmentPairStrings = splitString[1].split("&");
 				for (String fragmentPairString : fragmentPairStrings) {
 					String[] splitFragmentPairString = fragmentPairString.split("=", -1);
-					fragmentPairs.add(new be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair(splitFragmentPairString[0], splitFragmentPairString[1]));
+					fragmentPairs.add(new be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair(
+							splitFragmentPairString[0], splitFragmentPairString[1]));
 				}
 				return new LdesFragmentIdentifier(viewName, fragmentPairs);
 			}

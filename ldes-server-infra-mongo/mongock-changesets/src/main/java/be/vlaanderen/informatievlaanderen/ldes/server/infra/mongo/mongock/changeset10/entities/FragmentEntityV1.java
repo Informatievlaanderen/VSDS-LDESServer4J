@@ -29,8 +29,8 @@ public class FragmentEntityV1 {
 	private LocalDateTime deleteTime;
 
 	public FragmentEntityV1(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
-							Boolean immutable, String parentId, Integer numberOfMembers,
-							List<TreeRelation> relations, String collectionName, LocalDateTime deleteTime) {
+			Boolean immutable, String parentId, Integer numberOfMembers,
+			List<TreeRelation> relations, String collectionName, LocalDateTime deleteTime) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
