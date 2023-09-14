@@ -29,8 +29,7 @@ public class FragmentUpdaterChange {
 					oldEntity.getNumberOfMembers(),
 					oldEntity.getRelations(),
 					oldEntity.getCollectionName(),
-					oldEntity.getDeleteTime()
-			);
+					oldEntity.getDeleteTime());
 			mongoTemplate.save(newEntity);
 		});
 	}
@@ -48,8 +47,7 @@ public class FragmentUpdaterChange {
 					v2Entity.getNrOfMembersAdded(),
 					v2Entity.getRelations(),
 					v2Entity.getCollectionName(),
-					v2Entity.getDeleteTime()
-			);
+					v2Entity.getDeleteTime());
 			mongoTemplate.save(v1Entity);
 		});
 	}
