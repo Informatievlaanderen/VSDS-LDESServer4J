@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.chang
 
 import java.util.Objects;
 
-public record TreeRelation(String treePath, String treeNode, String treeValue, String treeValueType, String relation) {
+public record TreeRelation(String treePath, LdesFragmentIdentifier treeNode, String treeValue, String treeValueType, String relation) {
     @Override
     public boolean equals(Object o) {
         if (this == o)
