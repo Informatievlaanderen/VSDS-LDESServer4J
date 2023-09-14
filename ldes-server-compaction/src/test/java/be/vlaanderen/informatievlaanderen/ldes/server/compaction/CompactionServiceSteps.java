@@ -52,7 +52,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 	public Fragment FragmentEntryTransformer(Map<String, String> row) {
 		return new Fragment(
 				LdesFragmentIdentifier.fromFragmentId(row.get("fragmentIdentifier")),
-				Boolean.parseBoolean(row.get("immutable")), Integer.parseInt(row.get("numberOfMembers")),
+				Boolean.parseBoolean(row.get("immutable")), Integer.parseInt(row.get("nrOfMembersAdded")),
 				row.get("relation").equals("") ? new ArrayList<>()
 						: Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))

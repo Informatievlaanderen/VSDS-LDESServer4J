@@ -23,7 +23,7 @@ public class FragmentationStrategyImpl implements FragmentationStrategy {
 		eventPublisher.publishEvent(
 				new MemberAllocatedEvent(memberId, fragment.getViewName().getCollectionName(),
 						fragment.getViewName().getViewName(), fragment.getFragmentIdString()));
-		fragmentRepository.incrementNumberOfMembers(fragment.getFragmentId());
+		fragmentRepository.incrementNrOfMembersAdded(fragment.getFragmentId());
 
 	}
 

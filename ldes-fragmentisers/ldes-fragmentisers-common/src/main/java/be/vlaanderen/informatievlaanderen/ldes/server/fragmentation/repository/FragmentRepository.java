@@ -20,7 +20,7 @@ public interface FragmentRepository {
 
 	Optional<Fragment> retrieveRootFragment(String viewName);
 
-	void incrementNumberOfMembers(LdesFragmentIdentifier fragmentId);
+	void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId);
 
 	Stream<Fragment> retrieveFragmentsOfView(String defaultViewName);
 

@@ -16,7 +16,7 @@ public class Fragment {
 	public static final String ROOT = "root";
 	private final LdesFragmentIdentifier identifier;
 	private Boolean immutable;
-	private final int numberOfMembers;
+	private final int nrOfMembersAdded;
 	private final List<TreeRelation> relations;
 	private LocalDateTime deleteTime;
 
@@ -24,11 +24,11 @@ public class Fragment {
 		this(identifier, false, 0, new ArrayList<>(), null);
 	}
 
-	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int numberOfMembers,
+	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int nrOfMembersAdded,
 			List<TreeRelation> relations, LocalDateTime deleteTime) {
 		this.identifier = identifier;
 		this.immutable = immutable;
-		this.numberOfMembers = numberOfMembers;
+		this.nrOfMembersAdded = nrOfMembersAdded;
 		this.relations = relations;
 		this.deleteTime = deleteTime;
 	}
@@ -68,8 +68,8 @@ public class Fragment {
 		return this.identifier.getViewName();
 	}
 
-	public int getNumberOfMembers() {
-		return this.numberOfMembers;
+	public int getNrOfMembersAdded() {
+		return this.nrOfMembersAdded;
 	}
 
 	public Optional<LdesFragmentIdentifier> getParentId() {
