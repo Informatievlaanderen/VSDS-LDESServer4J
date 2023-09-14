@@ -32,22 +32,24 @@ class RetentionServiceTest {
 	}
 
 	@Test
-    void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreDeleted() {
-        when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of(VIEW, List.of(new TimeBasedRetentionPolicy(Duration.ZERO))));
-        MemberProperties firstMember = getMemberProperties("1",0);
-        MemberProperties secondMember = getMemberProperties("2",1);
-        MemberProperties thirdMember = getMemberProperties("3",0);
-        when(memberPropertiesRepository.getMemberPropertiesWithViewReference(VIEW)).thenReturn(Stream.of(firstMember, secondMember, thirdMember));
+	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreDeleted() {
+		when(retentionPolicyCollection.getRetentionPolicyMap())
+				.thenReturn(Map.of(VIEW, List.of(new TimeBasedRetentionPolicy(Duration.ZERO))));
+		MemberProperties firstMember = getMemberProperties("1", 0);
+		MemberProperties secondMember = getMemberProperties("2", 1);
+		MemberProperties thirdMember = getMemberProperties("3", 0);
+		when(memberPropertiesRepository.getMemberPropertiesWithViewReference(VIEW))
+				.thenReturn(Stream.of(firstMember, secondMember, thirdMember));
 
-        retentionService.executeRetentionPolicies();
+		retentionService.executeRetentionPolicies();
 
-        InOrder inOrder = inOrder(retentionPolicyCollection, memberPropertiesRepository, memberRemover);
-        inOrder.verify(retentionPolicyCollection).getRetentionPolicyMap();
-        inOrder.verify(memberPropertiesRepository).getMemberPropertiesWithViewReference(VIEW);
-        inOrder.verify(memberRemover).removeMemberFromView(firstMember, VIEW);
-        inOrder.verify(memberRemover).removeMemberFromView(thirdMember, VIEW);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(retentionPolicyCollection, memberPropertiesRepository, memberRemover);
+		inOrder.verify(retentionPolicyCollection).getRetentionPolicyMap();
+		inOrder.verify(memberPropertiesRepository).getMemberPropertiesWithViewReference(VIEW);
+		inOrder.verify(memberRemover).removeMemberFromView(firstMember, VIEW);
+		inOrder.verify(memberRemover).removeMemberFromView(thirdMember, VIEW);
+		inOrder.verifyNoMoreInteractions();
+	}
 
 	private MemberProperties getMemberProperties(String memberId, int plusDays) {
 		return new MemberProperties(memberId, null, null, LocalDateTime.now().plusDays(plusDays));

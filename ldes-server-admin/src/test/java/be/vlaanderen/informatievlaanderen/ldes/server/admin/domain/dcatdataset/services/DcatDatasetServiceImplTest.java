@@ -84,7 +84,8 @@ class DcatDatasetServiceImplTest {
 
 			Exception e = assertThrows(MissingResourceException.class, () -> datasetService.updateDataset(dataset));
 
-			assertEquals("Resource of type: dcat-dataset with id: " + DATASET_ID + " could not be found.", e.getMessage());
+			assertEquals("Resource of type: dcat-dataset with id: " + DATASET_ID + " could not be found.",
+					e.getMessage());
 			verify(repository).retrieveDataset(DATASET_ID);
 			verifyNoMoreInteractions(repository);
 		}

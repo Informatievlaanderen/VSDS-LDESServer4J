@@ -43,16 +43,16 @@ class TreeNodeFactoryImplTest {
 	}
 
 	@Test
-    void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
-        when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
+	void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
+		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
 
-        MissingFragmentException treeNodeId = Assertions.assertThrows(MissingFragmentException.class,
-                () -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME));
+		MissingFragmentException treeNodeId = Assertions.assertThrows(MissingFragmentException.class,
+				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME));
 
-        Assertions.assertEquals(
-                "No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
-                treeNodeId.getMessage());
-    }
+		Assertions.assertEquals(
+				"No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
+				treeNodeId.getMessage());
+	}
 
 	@Test
 	void when_LdesFragmentExists_ReturnTreeNode() {

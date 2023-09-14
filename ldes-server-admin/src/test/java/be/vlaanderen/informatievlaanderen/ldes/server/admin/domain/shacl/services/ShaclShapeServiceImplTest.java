@@ -57,26 +57,28 @@ class ShaclShapeServiceImplTest {
 		}
 
 		@Test
-        void when_collectionExists_and_hasNoShapeConfigured_then_retrieveRelatedShape() {
-            when(shaclShapeRepository.retrieveShaclShape(COLLECTION_NAME_1)).thenReturn(Optional.of(new ShaclShape(COLLECTION_NAME_1, null)));
+		void when_collectionExists_and_hasNoShapeConfigured_then_retrieveRelatedShape() {
+			when(shaclShapeRepository.retrieveShaclShape(COLLECTION_NAME_1))
+					.thenReturn(Optional.of(new ShaclShape(COLLECTION_NAME_1, null)));
 
-            assertEquals(new ShaclShape(COLLECTION_NAME_1, null), service.retrieveShaclShape(COLLECTION_NAME_1));
-            InOrder inOrder = inOrder(shaclShapeRepository, eventPublisher);
-            inOrder.verify(shaclShapeRepository).retrieveShaclShape(COLLECTION_NAME_1);
-            inOrder.verifyNoMoreInteractions();
-        }
+			assertEquals(new ShaclShape(COLLECTION_NAME_1, null), service.retrieveShaclShape(COLLECTION_NAME_1));
+			InOrder inOrder = inOrder(shaclShapeRepository, eventPublisher);
+			inOrder.verify(shaclShapeRepository).retrieveShaclShape(COLLECTION_NAME_1);
+			inOrder.verifyNoMoreInteractions();
+		}
 
 		@Test
-        void when_collectionDoesNotExists_then_throwException() {
-            when(shaclShapeRepository.retrieveShaclShape(COLLECTION_NAME_1)).thenReturn(Optional.empty());
+		void when_collectionDoesNotExists_then_throwException() {
+			when(shaclShapeRepository.retrieveShaclShape(COLLECTION_NAME_1)).thenReturn(Optional.empty());
 
-            Exception e = assertThrows(MissingShaclShapeException.class, () -> service.retrieveShaclShape(COLLECTION_NAME_1));
+			Exception e = assertThrows(MissingShaclShapeException.class,
+					() -> service.retrieveShaclShape(COLLECTION_NAME_1));
 
-            assertEquals("No shacl shape configured for collection " + COLLECTION_NAME_1, e.getMessage());
-            InOrder inOrder = inOrder(shaclShapeRepository, eventPublisher);
-            inOrder.verify(shaclShapeRepository).retrieveShaclShape(COLLECTION_NAME_1);
-            inOrder.verifyNoMoreInteractions();
-        }
+			assertEquals("No shacl shape configured for collection " + COLLECTION_NAME_1, e.getMessage());
+			InOrder inOrder = inOrder(shaclShapeRepository, eventPublisher);
+			inOrder.verify(shaclShapeRepository).retrieveShaclShape(COLLECTION_NAME_1);
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
 	@Nested

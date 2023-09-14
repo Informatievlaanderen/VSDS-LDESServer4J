@@ -47,9 +47,9 @@ class DcatViewsRestControllerTest {
 	private MockMvc mockMvc;
 
 	@BeforeEach
-    void setUp() {
-        when(validator.supports(any())).thenReturn(true);
-    }
+	void setUp() {
+		when(validator.supports(any())).thenReturn(true);
+	}
 
 	@Nested
 	class CreateDcat {

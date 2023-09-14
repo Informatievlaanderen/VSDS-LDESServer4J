@@ -23,7 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,16 +49,16 @@ class DcatDatasetMongoRepositoryTest {
 	}
 
 	@Test
-    void when_DatasetPresent_Then_ReturnDataset() {
-        when(entityRepository.findById(DATASET_ID)).thenReturn(Optional.of(entity));
+	void when_DatasetPresent_Then_ReturnDataset() {
+		when(entityRepository.findById(DATASET_ID)).thenReturn(Optional.of(entity));
 
-        Optional<DcatDataset> actualDataset = mongoRepository.retrieveDataset(DATASET_ID);
+		Optional<DcatDataset> actualDataset = mongoRepository.retrieveDataset(DATASET_ID);
 
-        verify(entityRepository).findById(DATASET_ID);
-        assertTrue(actualDataset.isPresent());
-        assertEquals(dataset.getCollectionName(), actualDataset.get().getCollectionName());
+		verify(entityRepository).findById(DATASET_ID);
+		assertTrue(actualDataset.isPresent());
+		assertEquals(dataset.getCollectionName(), actualDataset.get().getCollectionName());
 		assertTrue(dataset.getModel().isIsomorphicWith(actualDataset.get().getModel()));
-    }
+	}
 
 	@Test
 	void when_DatasetNotPresent_Then_ReturnEmpty() {
