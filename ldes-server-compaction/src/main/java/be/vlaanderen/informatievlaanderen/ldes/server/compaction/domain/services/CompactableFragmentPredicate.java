@@ -8,7 +8,7 @@ public class CompactableFragmentPredicate implements Predicate<Fragment> {
 
 	@Override
 	public boolean test(Fragment fragment) {
-		return fragment.getNumberOfMembers() > 0
+		return fragment.getNrOfMembersAdded() > 0
 				&& fragment.isImmutable();
 	}
 }

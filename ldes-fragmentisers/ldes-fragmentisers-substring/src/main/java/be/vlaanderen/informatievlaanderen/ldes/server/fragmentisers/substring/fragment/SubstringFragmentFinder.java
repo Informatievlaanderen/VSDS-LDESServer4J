@@ -35,7 +35,7 @@ public class SubstringFragmentFinder {
 
 			currentChildFragment = substringFragmentCreator.getOrCreateSubstringFragment(parentFragment, bucket);
 			substringRelationsAttributer.addSubstringRelation(currentParentFragment, currentChildFragment);
-			if (currentChildFragment.getNumberOfMembers() < substringConfig.getMemberLimit()) {
+			if (currentChildFragment.getNrOfMembersAdded() < substringConfig.getMemberLimit()) {
 				break;
 			}
 			currentParentFragment = currentChildFragment;
@@ -45,7 +45,7 @@ public class SubstringFragmentFinder {
 
 	private boolean canBeAddedToRoot(Fragment rootFragment, String bucket) {
 		return ROOT_SUBSTRING.equals(bucket)
-				&& rootFragment.getNumberOfMembers() < substringConfig.getMemberLimit();
+				&& rootFragment.getNrOfMembersAdded() < substringConfig.getMemberLimit();
 	}
 
 }

@@ -38,6 +38,6 @@ public class OpenFragmentProvider {
 	}
 
 	public boolean needsToCreateNewFragment(Fragment fragment) {
-		return fragment.getNumberOfMembers() >= memberLimit;
+		return fragment.getNrOfMembersAdded() >= memberLimit;
 	}
 }

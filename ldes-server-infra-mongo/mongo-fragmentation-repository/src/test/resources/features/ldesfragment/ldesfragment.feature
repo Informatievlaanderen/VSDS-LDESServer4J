@@ -4,10 +4,10 @@ Feature: LdesFragmentRepository
 
   Scenario: Saving, retrieving and deleting an LdesFragment
     Given The following ldesFragments
-      | viewName                             | fragmentPairs         | immutable | softdeleted | numberOfMembers |
-      | mobility-hindrances/by-name-and-page | [blank]               | false     | false       | 23              |
-      | mobility-hindrances/by-name-and-page | substring,gent,page,1 | false     | false       | 23              |
-      | mobility-hindrances/by-name-and-page | substring,gent,page,2 | false     | false       | 23              |
+      | viewName                             | fragmentPairs         | immutable | softdeleted | nrOfMembersAdded |
+      | mobility-hindrances/by-name-and-page | [blank]               | false     | false       | 23               |
+      | mobility-hindrances/by-name-and-page | substring,gent,page,1 | false     | false       | 23               |
+      | mobility-hindrances/by-name-and-page | substring,gent,page,2 | false     | false       | 23               |
     When I save the ldesFragments using the LdesFragmentRepository
     Then the repository contains 3 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
     And The ldesFragment with id "/mobility-hindrances/by-name-and-page" can be retrieved from the database
@@ -21,12 +21,12 @@ Feature: LdesFragmentRepository
 
   Scenario: Deleting a collection
     Given The following ldesFragments
-      | viewName                             | fragmentPairs         | immutable | softdeleted | numberOfMembers |
-      | mobility-hindrances/by-name-and-page | [blank]               | false     | false       | 23              |
-      | mobility-hindrances/by-name-and-page | substring,gent,page,1 | false     | false       | 23              |
-      | mobility-hindrances/by-name-and-page | substring,gent,page,2 | false     | false       | 23              |
-      | parcels/by-page                      | page,1                | false     | false       | 23              |
-      | parcels/by-page                      | page,2                | false     | false       | 21              |
+      | viewName                             | fragmentPairs         | immutable | softdeleted | nrOfMembersAdded |
+      | mobility-hindrances/by-name-and-page | [blank]               | false     | false       | 23               |
+      | mobility-hindrances/by-name-and-page | substring,gent,page,1 | false     | false       | 23               |
+      | mobility-hindrances/by-name-and-page | substring,gent,page,2 | false     | false       | 23               |
+      | parcels/by-page                      | page,1                | false     | false       | 23               |
+      | parcels/by-page                      | page,2                | false     | false       | 21               |
     And I save the ldesFragments using the LdesFragmentRepository
     Then the repository contains 3 ldesFragments with viewname "mobility-hindrances/by-name-and-page"
     And the repository contains 2 ldesFragments with viewname "parcels/by-page"
@@ -39,10 +39,10 @@ Feature: LdesFragmentRepository
 
   Scenario: Retrieve open child fragment
     Given The following ldesFragments
-      | viewName                    | fragmentPairs | immutable | softdeleted | numberOfMembers |
-      | mobility-hindrances/by-page | [blank]       | false     | false       | 23              |
-      | mobility-hindrances/by-page | page,1        | true      | false       | 23              |
-      | mobility-hindrances/by-page | page,2        | false     | false       | 23              |
+      | viewName                    | fragmentPairs | immutable | softdeleted | nrOfMembersAdded |
+      | mobility-hindrances/by-page | [blank]       | false     | false       | 23               |
+      | mobility-hindrances/by-page | page,1        | true      | false       | 23               |
+      | mobility-hindrances/by-page | page,2        | false     | false       | 23               |
     And I save the ldesFragments using the LdesFragmentRepository
     Then the repository contains 3 ldesFragments with viewname "mobility-hindrances/by-page"
     When I retrieve the open child fragment of fragment 1
@@ -50,10 +50,10 @@ Feature: LdesFragmentRepository
 
   Scenario: Retrieve root fragment
     Given The following ldesFragments
-      | viewName                    | fragmentPairs | immutable | softdeleted | numberOfMembers |
-      | mobility-hindrances/by-page | [blank]       | false     | false       | 23              |
-      | mobility-hindrances/by-page | page,1        | true      | false       | 23              |
-      | mobility-hindrances/by-page | page,2        | false     | false       | 23              |
+      | viewName                    | fragmentPairs | immutable | softdeleted | nrOfMembersAdded |
+      | mobility-hindrances/by-page | [blank]       | false     | false       | 23               |
+      | mobility-hindrances/by-page | page,1        | true      | false       | 23               |
+      | mobility-hindrances/by-page | page,2        | false     | false       | 23               |
     And I save the ldesFragments using the LdesFragmentRepository
     Then the repository contains 3 ldesFragments with viewname "mobility-hindrances/by-page"
     When I retrieve the root fragment of the view with viewname "mobility-hindrances/by-page"
@@ -61,9 +61,9 @@ Feature: LdesFragmentRepository
 
   Scenario: Increment number of members
     Given The following ldesFragments
-      | viewName                    | fragmentPairs | immutable | softdeleted | numberOfMembers |
-      | mobility-hindrances/by-page | [blank]       | false     | false       | 23              |
-      | mobility-hindrances/by-page | page,1        | true      | false       | 23              |
+      | viewName                    | fragmentPairs | immutable | softdeleted | nrOfMembersAdded |
+      | mobility-hindrances/by-page | [blank]       | false     | false       | 23               |
+      | mobility-hindrances/by-page | page,1        | true      | false       | 23               |
     And I save the ldesFragments using the LdesFragmentRepository
     Then the repository contains 2 ldesFragments with viewname "mobility-hindrances/by-page"
     When I increment the number of members of fragment 2
