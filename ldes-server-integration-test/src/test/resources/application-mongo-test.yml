@@ -1,0 +1,4 @@
+de.flapdoodle.mongodb.embedded.version: 4.0.2
+ldes-server:
+  host-name: "http://localhost:8080"
+  compaction-duration: "PT1M"
