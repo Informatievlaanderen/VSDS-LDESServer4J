@@ -1,0 +1,34 @@
+@prefix ldes:       <https://w3id.org/ldes#> .
+@prefix mobiliteit: <https://data.vlaanderen.be/ns/mobiliteit#> .
+@prefix prov:       <http://www.w3.org/ns/prov#> .
+@prefix rdf:        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix terms:      <http://purl.org/dc/terms/> .
+@prefix tree:       <https://w3id.org/tree#> .
+
+<http://test-data/mobility-hindrance/1/1>
+        rdf:type              mobiliteit:Mobiliteitshinder ;
+        terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
+        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+<http://test-data/mobility-hindrance/1/4>
+        rdf:type              mobiliteit:Mobiliteitshinder ;
+        terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
+        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+<http://test-data/mobility-hindrance/1/2>
+        rdf:type              mobiliteit:Mobiliteitshinder ;
+        terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
+        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+
+<http://localhost:8080/mobility-hindrances/paged?pageNumber=1>
+        rdf:type        tree:Node ;
+        terms:isPartOf  <http://localhost:8080/mobility-hindrances> .
+
+<http://localhost:8080/mobility-hindrances>
+        rdf:type     ldes:EventStream ;
+        tree:member  <http://test-data/mobility-hindrance/1/1> , <http://test-data/mobility-hindrance/1/2> , <http://test-data/mobility-hindrance/1/3> , <http://test-data/mobility-hindrance/1/4> .
+
+<http://test-data/mobility-hindrance/1/3>
+        rdf:type              mobiliteit:Mobiliteitshinder ;
+        terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
+        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
