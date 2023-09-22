@@ -3,13 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFParser;
-import org.apache.jena.riot.RDFWriter;
+import org.apache.jena.riot.*;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,18 +20,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@Given("I create the eventstream {string}")
 	public void iCreateTheEventstream(String eventStreamDescriptionFile) throws Exception {
-		Model model = readModelFromFile(eventStreamDescriptionFile);
+		String eventstream = readBodyFromFile(eventStreamDescriptionFile);
 		mockMvc.perform(post("/admin/api/v1/eventstreams")
-				.contentType("text/turtle")
-				.content(RDFWriter.source(model).lang(Lang.TURTLE).asString()))
+				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFile).getContentTypeStr())
+				.content(eventstream))
 				.andExpect(status().isCreated());
 	}
 
@@ -81,5 +79,28 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		Model expectedModel = readModelFromFile(expectedOutputFile);
 		Model actualModel = getResponseAsModel(url);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
+	}
+
+	@When("I ingest the member described in {string} the collection {string}")
+	public void iIngestTheMemberDescribedInTheCollection(String memberFileName, String collectionName)
+			throws Exception {
+		String member = readBodyFromFile(memberFileName);
+		ContentType contentType = RDFLanguages.guessContentType(memberFileName);
+		mockMvc.perform(post("/" + collectionName)
+				.contentType(contentType.getContentTypeStr())
+				.content(member))
+				.andExpect(status().isOk());
+	}
+
+	private String readBodyFromFile(String fileName) throws URISyntaxException, IOException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		URI uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI();
+		return Files.lines(Paths.get(uri)).collect(Collectors.joining("\n"));
+	}
+
+	@Then("I delete the eventstream {string}")
+	public void iDeleteTheEventstream(String eventStreamName) throws Exception {
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStreamName))
+				.andExpect(status().isOk());
 	}
 }
