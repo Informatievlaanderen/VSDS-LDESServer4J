@@ -1,9 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.services.CompactableFragmentPredicate;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

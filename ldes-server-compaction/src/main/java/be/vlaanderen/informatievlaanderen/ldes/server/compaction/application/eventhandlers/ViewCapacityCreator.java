@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.eventhandlers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.ViewCapacity;
+import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.repository.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
 import org.springframework.context.event.EventListener;
