@@ -11,7 +11,7 @@ Following configuration is needed to apply this changeset.
 ```
 mongock:
   migration-scan-package:
-    - be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset8
+    - be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10
 ```
 
 ## Consequences of this changeset
