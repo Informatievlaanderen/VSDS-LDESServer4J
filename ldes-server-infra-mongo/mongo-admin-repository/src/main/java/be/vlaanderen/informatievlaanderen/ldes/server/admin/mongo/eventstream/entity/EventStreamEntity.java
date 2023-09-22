@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.e
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "eventstreams")
+@Document(collection = "eventstream")
 public class EventStreamEntity {
 	@Id
 	private final String id;
