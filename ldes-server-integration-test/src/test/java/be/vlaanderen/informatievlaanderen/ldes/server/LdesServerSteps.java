@@ -26,10 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
 
-	private Model getResponseAsModel(String url) throws Exception {
+	private Model getResponseAsModel(String url, String contentType) throws Exception {
 		return RDFParser.fromString(mockMvc.perform(get(url)
-				.accept("text/turtle"))
-				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString()).lang(Lang.TURTLE).toModel();
+				.accept(contentType))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+				.lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
 	@When("I ingest {int} members to the collection {string}")
@@ -65,11 +66,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.atMost(10, SECONDS)
 				.pollInterval(1, SECONDS)
 				.until(() -> {
-					int size = getResponseAsModel(url).listObjectsOfProperty(TREE_MEMBER).toList().size();
+					int size = getResponseAsModel(url, "text/turtle").listObjectsOfProperty(TREE_MEMBER).toList()
+							.size();
 					return size == expectedNumberOfMembers;
 				});
 		Model expectedModel = readModelFromFile(expectedOutputFile);
-		Model actualModel = getResponseAsModel(url);
+		Model actualModel = getResponseAsModel(url, "text/turtle");
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
 
@@ -100,15 +102,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.andExpect(status().isCreated());
 	}
 
-	@Then("^I can fetch the TreeNode ([^ ]+)")
-	public void iCanFetchTheTreeNodeCollectionEndpoint(String treeNodeUrl) throws Exception {
-		assertFalse(getResponseAsModel(treeNodeUrl).listStatements().toList().isEmpty());
-	}
-
 	@Then("^I delete the eventstream ([^ ]+)")
 	public void iDeleteTheEventstreamCollectionName(String eventStreamName) throws Exception {
 		String eventStreamNameSanitized = eventStreamName.replace("\"", "");
 		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStreamNameSanitized))
 				.andExpect(status().isOk());
+	}
+
+	@Then("^I can fetch the TreeNode ([^ ]+) using content-type ([^ ]+)")
+	public void iCanFetchTheTreeNodeTreeNodeUrlUsingContentTypeContentType(String treeNodeUrl, String contentType)
+			throws Exception {
+		assertFalse(getResponseAsModel(treeNodeUrl.replace("\"", ""), contentType.replace("\"", "")).listStatements()
+				.toList().isEmpty());
 	}
 }
