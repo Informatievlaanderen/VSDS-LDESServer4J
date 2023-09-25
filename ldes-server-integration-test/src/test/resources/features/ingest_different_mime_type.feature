@@ -1,7 +1,7 @@
 Feature: The LDES server supports different mime types for ingestion
 
   Scenario:
-    Given I create the eventstream "data/input/eventstreams/paginated_1500_eventstream.ttl"
+    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
     When I ingest the member described in "data/input/members/member_turtle.ttl" the collection "mobility-hindrances"
     And I ingest the member described in "data/input/members/member_nquads.nq" the collection "mobility-hindrances"
     And I ingest the member described in "data/input/members/member_ntriples.nt" the collection "mobility-hindrances"

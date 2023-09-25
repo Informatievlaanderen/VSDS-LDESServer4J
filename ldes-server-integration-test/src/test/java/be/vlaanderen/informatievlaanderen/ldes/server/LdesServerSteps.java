@@ -19,20 +19,12 @@ import java.util.stream.Collectors;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
-
-	@Given("I create the eventstream {string}")
-	public void iCreateTheEventstream(String eventStreamDescriptionFile) throws Exception {
-		String eventstream = readBodyFromFile(eventStreamDescriptionFile);
-		mockMvc.perform(post("/admin/api/v1/eventstreams")
-				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFile).getContentTypeStr())
-				.content(eventstream))
-				.andExpect(status().isCreated());
-	}
 
 	private Model getResponseAsModel(String url) throws Exception {
 		return RDFParser.fromString(mockMvc.perform(get(url)
@@ -98,9 +90,25 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		return Files.lines(Paths.get(uri)).collect(Collectors.joining("\n"));
 	}
 
-	@Then("I delete the eventstream {string}")
-	public void iDeleteTheEventstream(String eventStreamName) throws Exception {
-		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStreamName))
+	@Given("^I create the eventstream ([^ ]+)")
+	public void iCreateTheEventstreamEventStreamDescription(String eventStreamDescriptionFile) throws Exception {
+		String eventStreamDescriptionFileSanitized = eventStreamDescriptionFile.replace("\"", "");
+		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized);
+		mockMvc.perform(post("/admin/api/v1/eventstreams")
+				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
+				.content(eventstream))
+				.andExpect(status().isCreated());
+	}
+
+	@Then("^I can fetch the TreeNode ([^ ]+)")
+	public void iCanFetchTheTreeNodeCollectionEndpoint(String treeNodeUrl) throws Exception {
+		assertFalse(getResponseAsModel(treeNodeUrl).listStatements().toList().isEmpty());
+	}
+
+	@Then("^I delete the eventstream ([^ ]+)")
+	public void iDeleteTheEventstreamCollectionName(String eventStreamName) throws Exception {
+		String eventStreamNameSanitized = eventStreamName.replace("\"", "");
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStreamNameSanitized))
 				.andExpect(status().isOk());
 	}
 }
