@@ -4,7 +4,7 @@ Feature: The LDES server has a fixed naming strategy
     Given I create the eventstream <eventStreamDescription>
     Then I can fetch the TreeNode <collectionEndpoint> using content-type "text/turtle"
     And I can fetch the TreeNode <viewEndpoint> using content-type "text/turtle"
-    Then I delete the eventstream <collectionName>
+    And I delete the eventstream <collectionName>
 
     Examples:
       | eventStreamDescription                                         | collectionEndpoint   | viewEndpoint                 | collectionName      |
