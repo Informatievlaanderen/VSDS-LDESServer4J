@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.*;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,8 +20,7 @@ import java.util.stream.Collectors;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -114,5 +114,15 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			throws Exception {
 		assertFalse(getResponseAsModel(treeNodeUrl.replace("\"", ""), contentType.replace("\"", "")).listStatements()
 				.toList().isEmpty());
+	}
+
+	@Then("The response from requesting the url {string} has access control headers and an etag")
+	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
+				.header("Access-Control-Request-Method", "GET")
+				.header("Origin", "http://www.someurl.com"))
+				.andExpect(status().isOk()).andReturn().getResponse();
+		assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
+		assertNotNull(response.getHeader("ETag"));
 	}
 }
