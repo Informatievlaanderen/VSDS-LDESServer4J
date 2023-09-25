@@ -2,8 +2,8 @@ Feature: The LDES server has a fixed naming strategy
 
   Scenario Outline:
     Given I create the eventstream <eventStreamDescription>
-    Then I can fetch the TreeNode <collectionEndpoint>
-    And I can fetch the TreeNode <viewEndpoint>
+    Then I can fetch the TreeNode <collectionEndpoint> using content-type "text/turtle"
+    And I can fetch the TreeNode <viewEndpoint> using content-type "text/turtle"
     Then I delete the eventstream <collectionName>
 
     Examples:
