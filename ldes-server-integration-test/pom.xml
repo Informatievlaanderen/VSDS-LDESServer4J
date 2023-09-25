@@ -9,7 +9,6 @@
         <version>2.0.2-SNAPSHOT</version>
     </parent>
 
-    <groupId>be.informatievlaanderen.ldes.server.integration.test</groupId>
     <artifactId>ldes-server-integration-test</artifactId>
 
     <properties>

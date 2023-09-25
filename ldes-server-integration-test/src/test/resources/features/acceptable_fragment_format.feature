@@ -1,9 +1,9 @@
-Feature: The LDES server has a fixed naming strategy
+Feature: The LDES server supports different mime types for fetching
 
   Scenario Outline:
     Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
     Then I can fetch the TreeNode <treeNodeUrl> using content-type <contentType>
-    Then I delete the eventstream "mobility-hindrances"
+    And I delete the eventstream "mobility-hindrances"
 
     Examples:
       | treeNodeUrl                  | contentType           |
