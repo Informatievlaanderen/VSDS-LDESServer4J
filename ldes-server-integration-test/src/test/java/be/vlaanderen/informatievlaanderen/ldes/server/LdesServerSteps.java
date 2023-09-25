@@ -112,6 +112,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("^I can fetch the TreeNode ([^ ]+) using content-type ([^ ]+)")
 	public void iCanFetchTheTreeNodeTreeNodeUrlUsingContentTypeContentType(String treeNodeUrl, String contentType)
 			throws Exception {
-		assertFalse(getResponseAsModel(treeNodeUrl, contentType).listStatements().toList().isEmpty());
+		assertFalse(getResponseAsModel(treeNodeUrl.replace("\"", ""), contentType.replace("\"", "")).listStatements()
+				.toList().isEmpty());
 	}
 }
