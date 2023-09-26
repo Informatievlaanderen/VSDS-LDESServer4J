@@ -1,9 +1,9 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset12.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities.EventStreamEntityV2.COLLECTION_NAME;
+import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset12.entities.EventStreamEntityV2.COLLECTION_NAME;
 
 @Document(collection = COLLECTION_NAME)
 public class EventStreamEntityV2 {

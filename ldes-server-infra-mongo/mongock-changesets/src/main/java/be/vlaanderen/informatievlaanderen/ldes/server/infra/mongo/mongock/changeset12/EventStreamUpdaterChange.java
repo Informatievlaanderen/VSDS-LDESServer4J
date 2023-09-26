@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10;
+package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset12;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities.EventStreamEntityV1;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset10.entities.EventStreamEntityV2;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset12.entities.EventStreamEntityV1;
+import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset12.entities.EventStreamEntityV2;
 import io.mongock.api.annotations.ChangeUnit;
 import io.mongock.api.annotations.Execution;
 import io.mongock.api.annotations.RollbackExecution;

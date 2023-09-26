@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.confi
 
 import io.mongock.driver.mongodb.springdata.v4.SpringDataMongoV4Driver;
 import io.mongock.runner.core.executor.MongockRunner;
-import io.mongock.runner.springboot.EnableMongock;
 import io.mongock.runner.springboot.MongockSpringboot;
 import io.mongock.utils.CollectionUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
