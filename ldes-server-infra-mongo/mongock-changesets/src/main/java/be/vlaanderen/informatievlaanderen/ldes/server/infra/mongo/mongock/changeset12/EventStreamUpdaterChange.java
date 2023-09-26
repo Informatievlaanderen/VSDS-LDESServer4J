@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-@ChangeUnit(id = "eventstream-updater-changeset-10", order = "2023-09-22 00:00:00", author = "VSDS")
+@ChangeUnit(id = "eventstream-updater-changeset-12", order = "2023-09-22 00:00:00", author = "VSDS")
 public class EventStreamUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 
