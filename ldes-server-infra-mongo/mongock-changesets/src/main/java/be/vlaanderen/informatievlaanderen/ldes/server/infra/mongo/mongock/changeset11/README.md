@@ -1,9 +1,13 @@
-# Mongock Changeset 10
+# Mongock Changeset 11
 
-The following configuration is needed to apply this changeset.
 
+## Reason of this changeset
 This changeset updates the FragmentEntity and renames the attribute `numberOfMembers` to `nrOfMembersAdded`
 to better reflect its actual meaning.
+
+
+## Required config
+The following configuration is needed to apply this changeset.
 
 ```
 mongock:
