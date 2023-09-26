@@ -2,8 +2,7 @@
 
 The following configuration is needed to apply this changeset.
 
-This changeset updates the FragmentEntity and renames the attribute `numberOfMembers` to `nrOfMembersAdded`
-to better reflect its actual meaning.
+This changeset updates the TreeRelation in FragmentEntity so it uses LdesFragmentIdentifier instead of a string for its treenode.
 
 ```
 mongock:
@@ -12,4 +11,4 @@ mongock:
 ```
 
 Consequences of Changeset:
-* Renaming of `numberOfMembers` to `nrOfMembersAdded` in the LdesFragment
+* TreeRelation now uses LdesFragmentIdentifier instead of a string
