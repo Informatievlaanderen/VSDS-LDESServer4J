@@ -78,11 +78,11 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public void incrementNumberOfMembers(LdesFragmentIdentifier fragmentId) {
+	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("_id").is(fragmentId.asString()));
 
-		Update update = new Update().inc("numberOfMembers", 1);
+		Update update = new Update().inc("nrOfMembersAdded", 1);
 		UpdateResult result = mongoTemplate.updateFirst(query, update, FragmentEntity.class);
 		ResultChecker.expect(result, 1);
 	}

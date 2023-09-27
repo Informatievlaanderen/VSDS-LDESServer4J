@@ -26,15 +26,15 @@ class EventSourceServiceImplTest {
 	private EventSourceServiceImpl eventSourceService;
 
 	@Test
-    void test_getMemberStreamOfCollection() {
-        when(memberRepository.getMemberStreamOfCollection(COLLECTION_NAME))
-                .thenReturn(Stream.of(createMember(0), createMember(1), createMember(2)));
+	void test_getMemberStreamOfCollection() {
+		when(memberRepository.getMemberStreamOfCollection(COLLECTION_NAME))
+				.thenReturn(Stream.of(createMember(0), createMember(1), createMember(2)));
 
-        Stream<Member> result = eventSourceService.getMemberStreamOfCollection(COLLECTION_NAME);
+		Stream<Member> result = eventSourceService.getMemberStreamOfCollection(COLLECTION_NAME);
 
-        List<Member> resultList = result.toList();
-        assertEquals(3, resultList.size());
-    }
+		List<Member> resultList = result.toList();
+		assertEquals(3, resultList.size());
+	}
 
 	private Member createMember(int id) {
 		return new Member(String.valueOf(id), COLLECTION_NAME, (long) id, null);

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -51,7 +52,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 	public Fragment FragmentEntryTransformer(Map<String, String> row) {
 		return new Fragment(
 				LdesFragmentIdentifier.fromFragmentId(row.get("fragmentIdentifier")),
-				Boolean.parseBoolean(row.get("immutable")), Integer.parseInt(row.get("numberOfMembers")),
+				Boolean.parseBoolean(row.get("immutable")), Integer.parseInt(row.get("nrOfMembersAdded")),
 				row.get("relation").equals("") ? new ArrayList<>()
 						: Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
@@ -95,8 +96,19 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 
 	@And("verify update of predecessor relations")
 	public void verifyUpdateOfPredecessorRelations(List<String> predecessorFragments) {
-		predecessorFragments.forEach(predecessorFragment -> verify(fragmentRepository)
-				.saveFragment(new Fragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))));
+		predecessorFragments.forEach(predecessorFragment -> {
+			verify(fragmentRepository)
+					.saveFragment(new Fragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment)));
+			assertEquals(1,
+					fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))
+							.orElseThrow()
+							.getRelations()
+							.stream()
+							.map(TreeRelation::treeNode)
+							.map(LdesFragmentIdentifier::asString)
+							.filter(identifier -> !identifier.contains("dummy"))
+							.count());
+		});
 	}
 
 	@And("verify fragmentation of members")

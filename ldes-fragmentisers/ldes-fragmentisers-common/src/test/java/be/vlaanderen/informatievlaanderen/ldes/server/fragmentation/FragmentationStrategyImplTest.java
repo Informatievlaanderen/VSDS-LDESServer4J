@@ -29,6 +29,6 @@ class FragmentationStrategyImplTest {
 
 		fragmentationStrategy.addMemberToFragment(fragment, member.id(), member.model(), any());
 
-		verify(fragmentRepository, times(1)).incrementNumberOfMembers(fragment.getFragmentId());
+		verify(fragmentRepository, times(1)).incrementNrOfMembersAdded(fragment.getFragmentId());
 	}
 }

@@ -46,29 +46,30 @@ class ViewServiceImplTest {
 				List.of(), 100);
 
 		@Test
-        void when_ViewDoesNotExist_then_ViewIsAdded() {
-            when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+		void when_ViewDoesNotExist_then_ViewIsAdded() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
 
-            viewService.addView(view);
+			viewService.addView(view);
 
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).getViewByViewName(view.getName());
-            inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
-            inOrder.verify(viewRepository).saveView(view);
-            inOrder.verifyNoMoreInteractions();
-        }
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
+			inOrder.verify(viewRepository).saveView(view);
+			inOrder.verifyNoMoreInteractions();
+		}
 
 		@Test
-        void when_ViewDoesExist_then_DuplicateViewExceptionIsThrown() {
-            when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
+		void when_ViewDoesExist_then_DuplicateViewExceptionIsThrown() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
 
-            DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class, () -> viewService.addView(view));
+			DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class,
+					() -> viewService.addView(view));
 
-            assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).getViewByViewName(view.getName());
-            inOrder.verifyNoMoreInteractions();
-        }
+			assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verifyNoMoreInteractions();
+		}
 
 		@Test
 		void when_EventStreamDoesNotExist_then_MissingEventStreamExceptionIsThrown() {
@@ -79,34 +80,6 @@ class ViewServiceImplTest {
 					missingEventStreamException.getMessage());
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verifyNoMoreInteractions();
-		}
-	}
-
-	@Nested
-	class AddDefaultView {
-		private static final ViewName VIEW_NAME = new ViewName(COLLECTION, "by-page");
-
-		@Test
-        void when_DefaultViewDoesNotExist_then_DefaultViewIsAdded() {
-            when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.empty());
-
-            viewService.addDefaultView(COLLECTION);
-
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository, times(2)).getViewByViewName(VIEW_NAME);
-            inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
-            inOrder.verify(viewRepository).saveView(any(ViewSpecification.class));
-            inOrder.verifyNoMoreInteractions();
-        }
-
-		@Test
-		void when_DefaultViewExists_then_ThrowDuplicateViewExcpetion() {
-			final ViewSpecification view = new ViewSpecification(VIEW_NAME, List.of(), List.of(), 100);
-			when(viewRepository.getViewByViewName(VIEW_NAME)).thenReturn(Optional.of(view));
-
-			viewService.addDefaultView(COLLECTION);
-			verify(viewRepository).getViewByViewName(VIEW_NAME);
-			verifyNoMoreInteractions(viewRepository, eventPublisher);
 		}
 	}
 
@@ -124,18 +97,6 @@ class ViewServiceImplTest {
 			assertEquals("No event stream found for collection not_existing_collection",
 					missingEventStreamException.getMessage());
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verifyNoMoreInteractions();
-		}
-
-		@Test
-		void when_DeleteViewAndViewDoesNotExist_then_MissingViewExceptionIsThrown() {
-			MissingViewException missingViewException = assertThrows(MissingViewException.class,
-					() -> viewService.deleteViewByViewName(notExistingViewName));
-
-			assertEquals("Collection collection does not have a view: not_existing_view",
-					missingViewException.getMessage());
-			InOrder inOrder = inOrder(viewRepository, eventPublisher);
-			inOrder.verify(viewRepository).getViewByViewName(notExistingViewName);
 			inOrder.verifyNoMoreInteractions();
 		}
 
@@ -172,16 +133,17 @@ class ViewServiceImplTest {
 		}
 
 		@Test
-        void when_GetViewAndViewIsNotPresent_then_MissingViewExceptionIsThrown() {
-            when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.empty());
+		void when_GetViewAndViewIsNotPresent_then_MissingViewExceptionIsThrown() {
+			when(viewRepository.getViewByViewName(viewName)).thenReturn(Optional.empty());
 
-            MissingViewException missingViewException = assertThrows(MissingViewException.class, () -> viewService.getViewByViewName(viewName));
+			MissingViewException missingViewException = assertThrows(MissingViewException.class,
+					() -> viewService.getViewByViewName(viewName));
 
-            assertEquals("Collection collection does not have a view: view", missingViewException.getMessage());
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).getViewByViewName(viewName);
-            inOrder.verifyNoMoreInteractions();
-        }
+			assertEquals("Collection collection does not have a view: view", missingViewException.getMessage());
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(viewName);
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
 	@Nested
@@ -202,16 +164,18 @@ class ViewServiceImplTest {
 		}
 
 		@Test
-        void when_GetViewsByCollectionName_then_ViewsAreReturned() {
-            when(viewRepository.retrieveAllViewsOfCollection(viewName.getCollectionName())).thenReturn(List.of(expectedViewSpecification));
+		void when_GetViewsByCollectionName_then_ViewsAreReturned() {
+			when(viewRepository.retrieveAllViewsOfCollection(viewName.getCollectionName()))
+					.thenReturn(List.of(expectedViewSpecification));
 
-            List<ViewSpecification> actualViewSpecifications = viewService.getViewsByCollectionName(viewName.getCollectionName());
+			List<ViewSpecification> actualViewSpecifications = viewService
+					.getViewsByCollectionName(viewName.getCollectionName());
 
-            assertEquals(List.of(expectedViewSpecification), actualViewSpecifications);
-            InOrder inOrder = inOrder(viewRepository, eventPublisher);
-            inOrder.verify(viewRepository).retrieveAllViewsOfCollection(viewName.getCollectionName());
-            inOrder.verifyNoMoreInteractions();
-        }
+			assertEquals(List.of(expectedViewSpecification), actualViewSpecifications);
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).retrieveAllViewsOfCollection(viewName.getCollectionName());
+			inOrder.verifyNoMoreInteractions();
+		}
 	}
 
 	@Nested

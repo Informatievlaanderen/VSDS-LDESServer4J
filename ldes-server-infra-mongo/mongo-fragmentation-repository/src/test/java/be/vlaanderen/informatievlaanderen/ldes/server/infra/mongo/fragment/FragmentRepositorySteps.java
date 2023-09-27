@@ -31,7 +31,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 				ViewName.fromString(row.get("viewName")),
 				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				Boolean.parseBoolean(row.get("immutable")),
-				Integer.parseInt(row.get("numberOfMembers")),
+				Integer.parseInt(row.get("nrOfMembersAdded")),
 				List.of(), null);
 	}
 
@@ -103,7 +103,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 		assertEquals(expectedFragment.getViewName(), actualFragment.getViewName());
 		assertEquals(expectedFragment.getFragmentPairs(), actualFragment.getFragmentPairs());
 		assertEquals(expectedFragment.isImmutable(), actualFragment.isImmutable());
-		assertEquals(expectedFragment.getNumberOfMembers(), actualFragment.getNumberOfMembers());
+		assertEquals(expectedFragment.getNrOfMembersAdded(), actualFragment.getNrOfMembersAdded());
 		assertEquals(expectedFragment.getRelations(), actualFragment.getRelations());
 	}
 
@@ -129,14 +129,14 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 
 	@When("I increment the number of members of fragment {int}")
 	public void incrementMembers(int index) {
-		fragmentRepository.incrementNumberOfMembers(fragments.get(index - 1).getFragmentId());
+		fragmentRepository.incrementNrOfMembersAdded(fragments.get(index - 1).getFragmentId());
 	}
 
 	@Then("The retrieved ldesFragment has {int} members")
-	public void theRetrievedLdesFragmentHasGivenNumberOfMembers(int numberOfMembers) {
+	public void theRetrievedLdesFragmentHasGivenNrOfMembersAdded(int nrOfMembersAdded) {
 		assertTrue(retrievedLdesFragment.isPresent());
 		Fragment actualFragment = this.retrievedLdesFragment.get();
-		assertEquals(numberOfMembers, actualFragment.getNumberOfMembers());
+		assertEquals(nrOfMembersAdded, actualFragment.getNrOfMembersAdded());
 	}
 
 	@Given("The following ldesFragments with relations")

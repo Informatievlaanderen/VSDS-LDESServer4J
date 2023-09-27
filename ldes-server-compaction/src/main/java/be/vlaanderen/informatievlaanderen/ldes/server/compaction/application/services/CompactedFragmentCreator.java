@@ -80,6 +80,7 @@ public class CompactedFragmentCreator {
 		predecessorFragments.forEach(predecessorFragment -> {
 			predecessorFragment
 					.addRelation(new TreeRelation("", fragment.getFragmentId(), "", "", GENERIC_TREE_RELATION));
+			predecessorFragment.removeRelationToIdentifier(firstFragment.getFragmentId());
 			fragmentRepository.saveFragment(predecessorFragment);
 		});
 	}

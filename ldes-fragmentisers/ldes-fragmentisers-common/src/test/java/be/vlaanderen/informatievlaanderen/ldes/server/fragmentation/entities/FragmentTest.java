@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.junit.jupiter.api.Test;
 
@@ -97,6 +98,22 @@ class FragmentTest {
 	}
 
 	@Test
+	void when_removeRelationToIdentifier_Then_ExpectItemToBeRemoved() {
+		Fragment a = new Fragment(LdesFragmentIdentifier.fromFragmentId("/c/v"));
+		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v1?k=1")));
+		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v1?k=2")));
+		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v1?k=3")));
+		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v2?k=1")));
+
+		LdesFragmentIdentifier toRemove = LdesFragmentIdentifier.fromFragmentId("/c/v1?k=2");
+
+		assertEquals(4, a.getRelations().size());
+		a.removeRelationToIdentifier(toRemove);
+		assertFalse(a.getRelations().stream().anyMatch(treeRelation -> treeRelation.treeNode().equals(toRemove)));
+		assertEquals(3, a.getRelations().size());
+	}
+
+	@Test
 	void testEquals() {
 		Fragment a = new Fragment(new LdesFragmentIdentifier(new ViewName("collectionName", "a"), List.of()));
 		Fragment a2 = new Fragment(new LdesFragmentIdentifier(new ViewName("collectionName", "a"), List.of()));
@@ -116,6 +133,10 @@ class FragmentTest {
 		assertEquals(a.hashCode(), a2.hashCode());
 		assertEquals(a2.hashCode(), a.hashCode());
 		assertNotEquals(a.hashCode(), c.hashCode());
+	}
+
+	private TreeRelation createEmptyRelationForFragment(LdesFragmentIdentifier fragmentIdentifier) {
+		return new TreeRelation(null, fragmentIdentifier, null, null, null);
 	}
 
 }

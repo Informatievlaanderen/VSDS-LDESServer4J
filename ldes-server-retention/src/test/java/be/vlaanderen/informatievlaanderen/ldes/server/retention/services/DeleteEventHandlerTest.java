@@ -14,7 +14,7 @@ import org.mockito.Captor;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class DeleteEventHandlerTest {
@@ -44,18 +44,19 @@ class DeleteEventHandlerTest {
 	}
 
 	@Test
-    void when_ViewDeleted_MemberRemovedFromView() {
-        when(memberPropertiesRepository.getMemberPropertiesWithViewReference(VIEW.asString())).thenReturn(Stream.of(member1, member2));
+	void when_ViewDeleted_MemberRemovedFromView() {
+		when(memberPropertiesRepository.getMemberPropertiesWithViewReference(VIEW.asString()))
+				.thenReturn(Stream.of(member1, member2));
 
-        eventHandler.handleViewDeletedEvent(event);
+		eventHandler.handleViewDeletedEvent(event);
 
-        verify(memberRemover, times(2)).removeMemberFromView(captor.capture(), viewCaptor.capture());
-        assertEquals("1", captor.getAllValues().get(0).getId());
-        assertEquals("2", captor.getAllValues().get(1).getId());
-        assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(0));
-        assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(1));
+		verify(memberRemover, times(2)).removeMemberFromView(captor.capture(), viewCaptor.capture());
+		assertEquals("1", captor.getAllValues().get(0).getId());
+		assertEquals("2", captor.getAllValues().get(1).getId());
+		assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(0));
+		assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(1));
 
-    }
+	}
 
 	@Test
 	void when_EventstreamDeleted_Then_CallMethod() {
