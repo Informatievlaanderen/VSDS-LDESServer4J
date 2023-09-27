@@ -6,7 +6,7 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server-infra-mongo</artifactId>
-        <version>2.0.2-SNAPSHOT</version>
+        <version>2.0.2</version>
     </parent>
 
     <artifactId>mongo-admin-repository</artifactId>
@@ -71,7 +71,7 @@
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>mongo-repository</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>2.0.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
