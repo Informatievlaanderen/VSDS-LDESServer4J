@@ -1,0 +1,55 @@
+name: 3. Approve Snapshot
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ldi-orchestrator
+
+jobs:
+  approve-snapshot:
+    if: github.ref == 'refs/heads/main'
+    name: Approve Snapshot and Promote
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up JDK 18
+        uses: actions/setup-java@v3
+        with:
+          distribution: zulu
+          java-version: 18
+      - name: Define docker variables
+        run: |
+          export VERSION=$(mvn help:evaluate -Dexpression="project.version" -q -DforceStdout)
+          
+          echo "current version: $VERSION"
+          if [[ $VERSION == *"-SNAPSHOT" ]]; then
+            echo "Dealing with a snapshot version. Current version: $VERSION"
+            export NEWVERSION=$(echo ${VERSION/"-SNAPSHOT"/""})
+            echo "New version: ${NEWVERSION}"
+            mvn -B versions:set -DnewVersion=${NEWVERSION} -DgenerateBackupPoms=false
+            git config user.name 'VSDS CI Pipeline'
+            git config user.email 'vsds-ci@users.noreply.github.com'
+            git add -A
+            git commit -am "ci: Promoted version to ${NEWVERSION}"
+            echo "NEW_VERSION=${NEWVERSION}" >> $GITHUB_ENV
+          else
+            echo "Already released. Current version: $VERSION"
+          fi
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        if: ${{ env.NEW_VERSION != '' }}
+        with:
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: ci/promote-snapshot
+          delete-branch: true
+          title: '[ci] Promote snapshot ${{ env.NEW_VERSION }}'
+          reviewers: xdxxxdx
+          body: |
+            As part of QA process, the snapshot version is being promoted to a release version.
+          labels: |
+            report
+            automated pr
