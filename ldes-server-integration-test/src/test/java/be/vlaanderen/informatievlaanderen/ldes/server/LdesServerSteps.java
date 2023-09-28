@@ -36,8 +36,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	private Model getResponseAsModel(String url, String contentType) throws Exception {
 		return RDFParser.fromString(mockMvc.perform(get(url)
-								.accept(contentType))
-						.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+				.accept(contentType))
+				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
 				.lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
@@ -45,13 +45,13 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
 			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/member_template.ttl")
-							.replace("ID", String.valueOf(i))
-							.replace("DATETIME", getCurrentTimestamp()))
+					.replace("ID", String.valueOf(i))
+					.replace("DATETIME", getCurrentTimestamp()))
 					.lang(Lang.TURTLE)
 					.toModel();
 			mockMvc.perform(post("/" + collectionName)
-							.contentType("text/turtle")
-							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+					.contentType("text/turtle")
+					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
 					.andExpect(status().isOk());
 		}
 	}
@@ -97,8 +97,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String member = readBodyFromFile(memberFileName);
 		ContentType contentType = RDFLanguages.guessContentType(memberFileName);
 		mockMvc.perform(post("/" + collectionName)
-						.contentType(contentType.getContentTypeStr())
-						.content(member))
+				.contentType(contentType.getContentTypeStr())
+				.content(member))
 				.andExpect(status().isOk());
 	}
 
@@ -114,8 +114,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
 				.replace("CURRENTTIME", getCurrentTimestamp());
 		mockMvc.perform(post("/admin/api/v1/eventstreams")
-						.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
-						.content(eventstream))
+				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
+				.content(eventstream))
 				.andExpect(status().isCreated());
 	}
 
@@ -136,8 +136,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("The response from requesting the url {string} has access control headers and an etag")
 	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) throws Exception {
 		MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
-						.header("Access-Control-Request-Method", "GET")
-						.header("Origin", "http://www.someurl.com"))
+				.header("Access-Control-Request-Method", "GET")
+				.header("Origin", "http://www.someurl.com"))
 				.andExpect(status().isOk()).andReturn().getResponse();
 		assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
 		assertNotNull(response.getHeader("ETag"));
