@@ -35,4 +35,4 @@ Feature: LDES Server Retention
     And I wait for the retention cycle to take effect
     # With the version based and timebased retention combined, only 5 members will remain even if they are more than 5s ago
     Then the collection "mobility-hindrances" contains 5 members
-    And I wait for the retention cycle to take effect
+    And I delete the eventstream "mobility-hindrances"
