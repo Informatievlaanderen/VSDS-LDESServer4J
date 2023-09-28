@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,4 +26,8 @@ public class LdesServerIntegrationTest {
 
 	@Autowired
 	MockMvc mockMvc;
+
+	@Autowired
+	MemberRepository memberRepository;
+
 }

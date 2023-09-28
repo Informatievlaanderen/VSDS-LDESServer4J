@@ -1,10 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -14,6 +16,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -26,10 +30,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
 
+	private String getCurrentTimestamp() {
+		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
+	}
+
 	private Model getResponseAsModel(String url, String contentType) throws Exception {
 		return RDFParser.fromString(mockMvc.perform(get(url)
-				.accept(contentType))
-				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+								.accept(contentType))
+						.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
 				.lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
@@ -37,12 +45,13 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
 			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/member_template.ttl")
-					.replace("ID", String.valueOf(i)))
+							.replace("ID", String.valueOf(i))
+							.replace("DATETIME", getCurrentTimestamp()))
 					.lang(Lang.TURTLE)
 					.toModel();
 			mockMvc.perform(post("/" + collectionName)
-					.contentType("text/turtle")
-					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+							.contentType("text/turtle")
+							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
 					.andExpect(status().isOk());
 		}
 	}
@@ -70,9 +79,16 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 							.size();
 					return size == expectedNumberOfMembers;
 				});
-		Model expectedModel = readModelFromFile(expectedOutputFile);
-		Model actualModel = getResponseAsModel(url, "text/turtle");
+		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
+
+		Model actualModel = stripGeneratedAtTimeOfModel(getResponseAsModel(url, "text/turtle"));
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
+	}
+
+	private Model stripGeneratedAtTimeOfModel(Model model) {
+		return model.remove(
+				model.listStatements(null, model.createProperty("http://www.w3.org/ns/prov#generatedAtTime"),
+						(Resource) null));
 	}
 
 	@When("I ingest the member described in {string} the collection {string}")
@@ -81,8 +97,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String member = readBodyFromFile(memberFileName);
 		ContentType contentType = RDFLanguages.guessContentType(memberFileName);
 		mockMvc.perform(post("/" + collectionName)
-				.contentType(contentType.getContentTypeStr())
-				.content(member))
+						.contentType(contentType.getContentTypeStr())
+						.content(member))
 				.andExpect(status().isOk());
 	}
 
@@ -95,10 +111,11 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Given("^I create the eventstream ([^ ]+)")
 	public void iCreateTheEventstreamEventStreamDescription(String eventStreamDescriptionFile) throws Exception {
 		String eventStreamDescriptionFileSanitized = eventStreamDescriptionFile.replace("\"", "");
-		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized);
+		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
+				.replace("CURRENTTIME", getCurrentTimestamp());
 		mockMvc.perform(post("/admin/api/v1/eventstreams")
-				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
-				.content(eventstream))
+						.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
+						.content(eventstream))
 				.andExpect(status().isCreated());
 	}
 
@@ -119,10 +136,22 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("The response from requesting the url {string} has access control headers and an etag")
 	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) throws Exception {
 		MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
-				.header("Access-Control-Request-Method", "GET")
-				.header("Origin", "http://www.someurl.com"))
+						.header("Access-Control-Request-Method", "GET")
+						.header("Origin", "http://www.someurl.com"))
 				.andExpect(status().isOk()).andReturn().getResponse();
 		assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
 		assertNotNull(response.getHeader("ETag"));
+	}
+
+	@Then("the collection {string} contains {long} members")
+	public void theCollectionContainsMembers(String collection, long expectedMemberCount) {
+		long memberCountForCollection = memberRepository.getMemberStreamOfCollection(collection).count();
+
+		assertEquals(expectedMemberCount, memberCountForCollection);
+	}
+
+	@And("I wait for the retention cycle to take effect")
+	public void iWaitForTheRetentionCycleToTakeEffect() throws InterruptedException {
+		Thread.sleep(25 * 1000L);
 	}
 }

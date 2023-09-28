@@ -16,7 +16,18 @@
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-server-retention</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>mongo-retention-repository</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>mongo-ingest-repository</artifactId>
