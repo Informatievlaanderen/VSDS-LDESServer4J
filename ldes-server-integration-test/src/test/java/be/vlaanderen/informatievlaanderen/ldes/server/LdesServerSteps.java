@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -16,6 +15,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -145,13 +145,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@Then("the collection {string} contains {long} members")
 	public void theCollectionContainsMembers(String collection, long expectedMemberCount) {
-		long memberCountForCollection = memberRepository.getMemberStreamOfCollection(collection).count();
-
-		assertEquals(expectedMemberCount, memberCountForCollection);
-	}
-
-	@And("I wait for the retention cycle to take effect")
-	public void iWaitForTheRetentionCycleToTakeEffect() throws InterruptedException {
-		Thread.sleep(25 * 1000L);
+		await().atMost(Duration.ofSeconds(20))
+				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
 	}
 }
