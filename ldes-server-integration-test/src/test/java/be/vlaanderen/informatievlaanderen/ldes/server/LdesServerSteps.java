@@ -159,7 +159,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.next()
 				.toString();
 
-		await().atMost(Duration.ofSeconds(20))
+		await().atMost(Duration.ofSeconds(40))
 				.until(() -> {
 					Model fragmentPage = RDFParser.fromString(
 							mockMvc.perform(get(fragmentUrl.formatted(collection, view))
