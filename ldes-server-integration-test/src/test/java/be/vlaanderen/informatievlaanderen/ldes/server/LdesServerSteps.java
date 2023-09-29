@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -14,17 +15,25 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
+
+	private String getCurrentTimestamp() {
+		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
+	}
 
 	private Model getResponseAsModel(String url, String contentType) throws Exception {
 		return RDFParser.fromString(mockMvc.perform(get(url)
@@ -37,7 +46,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
 			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/member_template.ttl")
-					.replace("ID", String.valueOf(i)))
+					.replace("ID", String.valueOf(i))
+					.replace("DATETIME", getCurrentTimestamp()))
 					.lang(Lang.TURTLE)
 					.toModel();
 			mockMvc.perform(post("/" + collectionName)
@@ -70,9 +80,16 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 							.size();
 					return size == expectedNumberOfMembers;
 				});
-		Model expectedModel = readModelFromFile(expectedOutputFile);
-		Model actualModel = getResponseAsModel(url, "text/turtle");
+		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
+
+		Model actualModel = stripGeneratedAtTimeOfModel(getResponseAsModel(url, "text/turtle"));
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
+	}
+
+	private Model stripGeneratedAtTimeOfModel(Model model) {
+		return model.remove(
+				model.listStatements(null, model.createProperty("http://www.w3.org/ns/prov#generatedAtTime"),
+						(Resource) null));
 	}
 
 	@When("I ingest the member described in {string} the collection {string}")
@@ -95,7 +112,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Given("^I create the eventstream ([^ ]+)")
 	public void iCreateTheEventstreamEventStreamDescription(String eventStreamDescriptionFile) throws Exception {
 		String eventStreamDescriptionFileSanitized = eventStreamDescriptionFile.replace("\"", "");
-		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized);
+		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
+				.replace("CURRENTTIME", getCurrentTimestamp());
 		mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
 				.content(eventstream))
@@ -124,5 +142,35 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.andExpect(status().isOk()).andReturn().getResponse();
 		assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
 		assertNotNull(response.getHeader("ETag"));
+	}
+
+	@Then("the first fragment of the {string} view in collection {string} contains {long} members")
+	public void firstFragmentOfViewContainsMembers(String view, String collection, long expectedMemberCount)
+			throws Exception {
+		// Get only relation from view
+		String fragmentUrl = RDFParser.fromString(mockMvc.perform(get("/%s/%s".formatted(collection, view))
+				.accept("text/turtle"))
+				.andReturn()
+				.getResponse()
+				.getContentAsString())
+				.lang(Lang.TURTLE)
+				.toModel()
+				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node"))
+				.next()
+				.toString();
+
+		await().atMost(Duration.ofSeconds(40))
+				.until(() -> {
+					Model fragmentPage = RDFParser.fromString(
+							mockMvc.perform(get(fragmentUrl.formatted(collection, view))
+									.accept("text/turtle"))
+									.andReturn()
+									.getResponse()
+									.getContentAsString())
+							.lang(Lang.TURTLE).toModel();
+
+					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
+							.toList().size() == expectedMemberCount;
+				});
 	}
 }
