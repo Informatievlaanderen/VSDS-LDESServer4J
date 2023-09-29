@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -143,9 +144,33 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		assertNotNull(response.getHeader("ETag"));
 	}
 
-	@Then("the collection {string} contains {long} members")
-	public void theCollectionContainsMembers(String collection, long expectedMemberCount) {
+	@Then("the first fragment of the {string} view in collection {string} contains {long} members")
+	public void firstFragmentOfViewContainsMembers(String view, String collection, long expectedMemberCount)
+			throws Exception {
+		// Get only relation from view
+		String fragmentUrl = RDFParser.fromString(mockMvc.perform(get("/%s/%s".formatted(collection, view))
+				.accept("text/turtle"))
+				.andReturn()
+				.getResponse()
+				.getContentAsString())
+				.lang(Lang.TURTLE)
+				.toModel()
+				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node"))
+				.next()
+				.toString();
+
 		await().atMost(Duration.ofSeconds(20))
-				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
+				.until(() -> {
+					Model fragmentPage = RDFParser.fromString(
+							mockMvc.perform(get(fragmentUrl.formatted(collection, view))
+									.accept("text/turtle"))
+									.andReturn()
+									.getResponse()
+									.getContentAsString())
+							.lang(Lang.TURTLE).toModel();
+
+					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
+							.toList().size() == expectedMemberCount;
+				});
 	}
 }
