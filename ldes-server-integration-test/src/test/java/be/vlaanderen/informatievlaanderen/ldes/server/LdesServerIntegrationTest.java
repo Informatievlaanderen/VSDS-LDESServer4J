@@ -22,7 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server" })
 @SuppressWarnings("java:S2187")
 public class LdesServerIntegrationTest {
-
 	@Autowired
 	MockMvc mockMvc;
+
 }
