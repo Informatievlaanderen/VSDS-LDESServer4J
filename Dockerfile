@@ -33,7 +33,6 @@ COPY --from=app-stage ldes-server-port-fetch-rest/target/ldes-server-port-fetch-
 COPY --from=app-stage ldes-server-admin/target/ldes-server-admin-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-common/target/ldes-fragmentisers-common-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-geospatial/target/ldes-fragmentisers-geospatial-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-timebased/target/ldes-fragmentisers-timebased-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-timebased-hierarchical/target/ldes-fragmentisers-timebased-hierarchical-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-substring/target/ldes-fragmentisers-substring-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-pagination/target/ldes-fragmentisers-pagination-jar-with-dependencies.jar ./lib/
