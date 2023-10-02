@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import io.cucumber.java.After;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -92,7 +94,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 						(Resource) null));
 	}
 
-	@When("I ingest the member described in {string} the collection {string}")
+	@When("I ingest the data described in {string} the collection {string}")
 	public void iIngestTheMemberDescribedInTheCollection(String memberFileName, String collectionName)
 			throws Exception {
 		String member = readBodyFromFile(memberFileName);
@@ -172,5 +174,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
 							.toList().size() == expectedMemberCount;
 				});
+	}
+
+	@And("the LDES {string} contains {int} members")
+	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
+		await().atMost(Duration.ofSeconds(20))
+				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
+	}
+
+	@After
+	public void cleanup() throws Exception {
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/mobility-hindrances"))
+				.andExpect(status().isOk());
 	}
 }
