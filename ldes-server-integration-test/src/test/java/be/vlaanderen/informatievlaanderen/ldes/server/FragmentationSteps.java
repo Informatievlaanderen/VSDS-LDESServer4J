@@ -12,7 +12,6 @@ import org.apache.jena.vocabulary.RDF;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
@@ -110,27 +109,4 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
 		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
 	}
-
-	@When("I fetch the timebased fragment {string} fragment of this month of {string}")
-	public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) throws Exception {
-		LocalDateTime now = LocalDateTime.now();
-		currentPath = "/%s/%s?year=%s&month=%s".formatted(collection, view, now.getYear(), now.getMonthValue());
-		String response = mockMvc.perform(get(currentPath).accept("text/turtle"))
-				.andReturn()
-				.getResponse()
-				.getContentAsString();
-
-		// Edge case for test being run at end of a day
-		if (response.contains("No fragment exists")) {
-			now = now.minusDays(1);
-			currentPath = "/%s/%s?year=%s&month=%s&day=%s"
-					.formatted(collection, view, now.getYear(), now.getMonthValue(), now.getDayOfMonth());
-			response = mockMvc.perform(get(currentPath).accept("text/turtle"))
-					.andReturn()
-					.getResponse()
-					.getContentAsString();
-		}
-		currentFragment = RDFParser.fromString(response).lang(Lang.TURTLE).toModel();
-	}
-
 }
