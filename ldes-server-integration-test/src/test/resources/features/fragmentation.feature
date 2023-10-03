@@ -18,7 +18,7 @@ Feature: LDES Server Fragmentation
     And this fragment has no relations
 
   @geospatial
-  Scenario: Server Can Multi-level Fragment an LDES
+  Scenario: Server Can Geospatially Fragment an LDES
     Given I create the eventstream "data/input/eventstreams/fragmentation/mobility-hindrances.by-loc.ttl"
     And I ingest 6 members to the collection "mobility-hindrances"
     And the LDES "mobility-hindrances" contains 6 members
@@ -39,6 +39,15 @@ Feature: LDES Server Fragmentation
     Then this fragment only has 1 "Relation" relation
     When I fetch the next fragment through the first "Relation"
     And this fragment contains 6 members
+
+  @timebased
+  Scenario: Server can do Timebased Fragmentation of an LDES
+    Given I create the eventstream "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl"
+    And I ingest 5 members to the collection "mobility-hindrances"
+    And the LDES "mobility-hindrances" contains 5 members
+    When I fetch the timebased fragment "by-time" fragment of this month of "mobility-hindrances"
+    And I fetch the next fragment through the first "InBetweenRelation"
+    And I fetch the next fragment through the first "Relation"
 
   @multi-view
   Scenario: Server Allows Multiple Views in an LDES
