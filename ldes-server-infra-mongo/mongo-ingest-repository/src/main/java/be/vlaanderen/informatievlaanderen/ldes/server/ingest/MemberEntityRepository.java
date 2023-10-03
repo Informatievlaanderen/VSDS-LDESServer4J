@@ -19,4 +19,6 @@ public interface MemberEntityRepository extends MongoRepository<MemberEntity, St
 	Optional<MemberEntity> findFirstByCollectionNameAndSequenceNrGreaterThanOrderBySequenceNrAsc(String collectionName,
 			long sequenceNr);
 
+	long countByCollectionName(String collectionName);
+
 }
