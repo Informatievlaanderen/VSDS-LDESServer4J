@@ -139,4 +139,9 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	public void theRetrievedMemberIsEmpty(String collectionName, int memberCount) {
 		assertEquals(memberCount, memberRepository.getMemberCountOfCollection(collectionName));
 	}
+
+	@Then("I delete all members from the {string} collection")
+	public void theRetrievedMemberIsEmpty(String collectionName) {
+		memberRepository.deleteMembersByCollection(collectionName);
+	}
 }
