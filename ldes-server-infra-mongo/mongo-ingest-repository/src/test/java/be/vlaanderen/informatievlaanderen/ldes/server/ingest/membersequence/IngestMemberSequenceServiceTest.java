@@ -47,13 +47,13 @@ class IngestMemberSequenceServiceTest {
 		IngestMemberSequenceEntity ingestMemberSequenceEntity = new IngestMemberSequenceEntity();
 		ingestMemberSequenceEntity.setId("collectionName");
 		ingestMemberSequenceEntity.setSeq(100);
-		when(mongoOperations.find(eq(query(where("_id").is("collectionName"))),
-				eq(IngestMemberSequenceEntity.class))).thenReturn(List.of(ingestMemberSequenceEntity));
+		when(mongoOperations.find(query(where("_id").is("collectionName")),
+				IngestMemberSequenceEntity.class)).thenReturn(List.of(ingestMemberSequenceEntity));
 		IngestMemberSequenceEntity ingestMemberSequenceEntity2 = new IngestMemberSequenceEntity();
 		ingestMemberSequenceEntity2.setId("otherCollectionName");
 		ingestMemberSequenceEntity2.setSeq(150);
-		when(mongoOperations.find(eq(query(where("_id").is("otherCollectionName"))),
-				eq(IngestMemberSequenceEntity.class))).thenReturn(List.of(ingestMemberSequenceEntity2));
+		when(mongoOperations.find(query(where("_id").is("otherCollectionName")),
+				IngestMemberSequenceEntity.class)).thenReturn(List.of(ingestMemberSequenceEntity2));
 		when(mongoOperations.findAll(IngestMemberSequenceEntity.class))
 				.thenReturn(List.of(ingestMemberSequenceEntity, ingestMemberSequenceEntity2));
 
