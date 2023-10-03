@@ -116,9 +116,9 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		LocalDateTime now = LocalDateTime.now();
 		currentPath = "/%s/%s?year=%s&month=%s".formatted(collection, view, now.getYear(), now.getMonthValue());
 		String response = mockMvc.perform(get(currentPath).accept("text/turtle"))
-			.andReturn()
-			.getResponse()
-			.getContentAsString();
+				.andReturn()
+				.getResponse()
+				.getContentAsString();
 
 		// Edge case for test being run at end of a day
 		if (response.contains("No fragment exists")) {
@@ -126,12 +126,11 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 			currentPath = "/%s/%s?year=%s&month=%s&day=%s"
 					.formatted(collection, view, now.getYear(), now.getMonthValue(), now.getDayOfMonth());
 			response = mockMvc.perform(get(currentPath).accept("text/turtle"))
-				.andReturn()
-				.getResponse()
-				.getContentAsString();
+					.andReturn()
+					.getResponse()
+					.getContentAsString();
 		}
 		currentFragment = RDFParser.fromString(response).lang(Lang.TURTLE).toModel();
 	}
-
 
 }
