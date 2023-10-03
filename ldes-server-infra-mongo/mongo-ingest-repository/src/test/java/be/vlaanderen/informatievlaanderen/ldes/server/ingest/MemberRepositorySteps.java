@@ -129,4 +129,14 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	public void theRetrievedMemberIsEmpty() {
 		assertTrue(retrievedMember.isEmpty());
 	}
+
+	@Then("The number of members is {int}")
+	public void theRetrievedMemberIsEmpty(int memberCount) {
+		assertEquals(memberCount, memberRepository.getMemberCount());
+	}
+
+	@Then("The number of members of the {string} collection is {int}")
+	public void theRetrievedMemberIsEmpty(String collectionName, int memberCount) {
+		assertEquals(memberCount, memberRepository.getMemberCountOfCollection(collectionName));
+	}
 }

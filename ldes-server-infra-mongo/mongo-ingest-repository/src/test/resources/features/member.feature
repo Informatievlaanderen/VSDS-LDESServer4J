@@ -111,3 +111,14 @@ Feature: MemberRepository
       Then The retrieved member has the same properties as the 1 member in the table and has sequenceNr 5
       When I search for the first member from collection "mobility-hindrances" and sequenceNr greater than 15
       Then The retrieved member is empty
+
+  Scenario: Get current number of members
+    Given The following members
+      | id                                      | collectionName      | sequenceNr | versionOf                             |
+      | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | 5          | http://test-data/mobility-hindrance/1 |
+      | http://test-data/mobility-hindrance/1/2 | mobility-hindrances | 12         | http://test-data/mobility-hindrance/1 |
+      | http://test-data/mobility-hindrance/1/3 | mobility-hindrances | 3          | http://test-data/mobility-hindrance/1 |
+      | http://test-data/other/1/1              | other               | 4          | http://test-data/mobility-hindrance/1 |
+    When I save the members using the MemberRepository
+    Then The number of members is 4
+    Then The number of members of the "mobility-hindrances" collection is 3
