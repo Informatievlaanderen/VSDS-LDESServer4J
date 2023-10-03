@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/admin/api/v1/statistics")
-public class StatisticsController {
+public class StatisticsController implements OpenApiStatisticsController {
 
 	private final StatisticsService statisticsService;
 
@@ -15,8 +15,8 @@ public class StatisticsController {
 		this.statisticsService = statisticsService;
 	}
 
-	@GetMapping
-	public String getEventStreams() {
+	@GetMapping(produces = { "application/json" })
+	public String getStatistics() {
 		return statisticsService.getMetrics().toString();
 	}
 }
