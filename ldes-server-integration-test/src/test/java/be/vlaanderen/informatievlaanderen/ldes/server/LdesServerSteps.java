@@ -202,7 +202,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void cleanup() {
 		interactedStreams.forEach(eventStream -> {
 			try {
-				mockMvc.perform(delete("/admin/api/v1/eventstreams/"+eventStream));
+				mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStream));
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
