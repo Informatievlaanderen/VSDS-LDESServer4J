@@ -9,9 +9,9 @@ public class StatisticsConstants {
 
 	public static final String SERVERNAME = "server name";
 
-	public static final String INGESTED_COUNT = "ingested member count";
+	public static final String INGESTED_COUNT = "member count";
 
-	public static final String CURRENT_COUNT = "current member count";
+	public static final String CURRENT_COUNT = "currently retained member count";
 
 	public static final String LDESES = "LDESes";
 
