@@ -1,0 +1,20 @@
+@prefix ldes:    <https://w3id.org/ldes#> .
+@prefix tree:    <https://w3id.org/tree#>.
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix as: <https://www.w3.org/ns/activitystreams#> .
+
+</activities> a ldes:EventStream ;
+    tree:view </activities/paged>  ;
+	tree:shape [ a sh:NodeShape ; sh:targetClass as:Create ] ;
+	ldes:timestampPath as:published ;
+	ldes:versionOfPath dcterms:isVersionOf .
+
+</activities/paged> a tree:Node ;
+  tree:viewDescription [
+    a tree:ViewDescription ;
+    tree:fragmentationStrategy () ;
+    tree:pageSize "10"^^xsd:integer ;
+  ] .

@@ -51,7 +51,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@When("I ingest {int} members to the collection {string}")
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/member_template.ttl")
+			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/mob-hind.template.ttl")
 					.replace("ID", String.valueOf(i))
 					.replace("DATETIME", getCurrentTimestamp()))
 					.lang(Lang.TURTLE)
@@ -59,6 +59,21 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			mockMvc.perform(post("/" + collectionName)
 					.contentType("text/turtle")
 					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+					.andExpect(status().isOk());
+		}
+	}
+
+	@When("I ingest {int} members of type {string} to the collection {string}")
+	public void iIngestMembersToTheCollection(int numberOfMembers, String memberType, String collectionName) throws Exception {
+		for (int i = 0; i < numberOfMembers; i++) {
+			Model member = RDFParser.fromString(readMemberTemplate(memberType)
+							.replace("ID", String.valueOf(i))
+							.replace("DATETIME", getCurrentTimestamp()))
+					.lang(Lang.TURTLE)
+					.toModel();
+			mockMvc.perform(post("/" + collectionName)
+							.contentType("text/turtle")
+							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
 					.andExpect(status().isOk());
 		}
 	}

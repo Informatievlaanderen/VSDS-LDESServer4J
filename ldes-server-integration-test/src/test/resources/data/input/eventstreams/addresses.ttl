@@ -1,0 +1,20 @@
+@prefix ldes:    <https://w3id.org/ldes#> .
+@prefix tree:    <https://w3id.org/tree#>.
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix addresses: <http://localhost:8080/addresses/> .
+@prefix server: <http://localhost:8080/> .
+
+server:addresses a ldes:EventStream ;
+	tree:shape [ a sh:NodeShape ; sh:targetClass <https://data.vlaanderen.be/ns/adres#Adres> ] ;
+	ldes:timestampPath prov:generatedAtTime ;
+	tree:view addresses:tiny-paged  ;
+	ldes:versionOfPath dcterms:isVersionOf .
+
+addresses:tiny-paged
+    a tree:Node ;
+    tree:viewDescription [
+		tree:fragmentationStrategy  () ;
+	    tree:pageSize "1"^^<http://www.w3.org/2001/XMLSchema#int> ;
+	] .
