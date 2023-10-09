@@ -72,4 +72,25 @@ public class MemberRepositoryImpl implements MemberRepository {
 				.findFirstByCollectionNameAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, sequenceNr)
 				.map(memberEntityMapper::toMember);
 	}
+
+	@Override
+	public long getMemberCount() {
+		return memberEntityRepository.count();
+	}
+
+	@Override
+	public long getMemberCountOfCollection(String collectionName) {
+		return memberEntityRepository.countByCollectionName(collectionName);
+	}
+
+	@Override
+	public long getTotalSequence() {
+		return sequenceService.getTotalSequence();
+	}
+
+	@Override
+	public long getSequenceForCollection(String collectionName) {
+		return sequenceService.getSequenceForCollection(collectionName);
+	}
+
 }

@@ -41,7 +41,7 @@ Example properties:
   
   tree:fragmentationStrategy [
         a tree:GeospatialFragmentation ;
-        tree:maxZoom "15" ;
+        tree:maxZoom 15 ;
         tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT> ;
     ] .
   ```
