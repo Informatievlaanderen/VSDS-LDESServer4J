@@ -15,19 +15,14 @@
 		<module>ldes-fragmentisers-common</module>
 		<module>ldes-fragmentisers-geospatial</module>
         <module>ldes-fragmentisers-substring</module>
-		<module>ldes-fragmentisers-timebased</module>
+		<module>ldes-fragmentisers-timebased-hierarchical</module>
 		<module>ldes-fragmentisers-pagination</module>
         <module>ldes-snapshot</module>
-        <module>ldes-fragmentisers-timebased-hierarchical</module>
+
     </modules>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>ldes-fragmentisers-timebased</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>ldes-fragmentisers-geospatial</artifactId>

@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import io.cucumber.java.After;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -7,6 +9,7 @@ import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
+import org.apache.jena.vocabulary.RDF;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
@@ -19,17 +22,20 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
+	Stack<String> interactedStreams = new Stack<>();
 
 	private String getCurrentTimestamp() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
@@ -92,7 +98,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 						(Resource) null));
 	}
 
-	@When("I ingest the member described in {string} the collection {string}")
+	@When("I ingest the data described in {string} the collection {string}")
 	public void iIngestTheMemberDescribedInTheCollection(String memberFileName, String collectionName)
 			throws Exception {
 		String member = readBodyFromFile(memberFileName);
@@ -114,10 +120,22 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String eventStreamDescriptionFileSanitized = eventStreamDescriptionFile.replace("\"", "");
 		String eventstream = readBodyFromFile(eventStreamDescriptionFileSanitized)
 				.replace("CURRENTTIME", getCurrentTimestamp());
-		mockMvc.perform(post("/admin/api/v1/eventstreams")
+
+		String eventStreamName = RDFParser.fromString(mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
 				.content(eventstream))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andReturn()
+				.getResponse()
+				.getContentAsString())
+				.lang(Lang.TURTLE)
+				.toModel()
+				.listStatements(null, RDF.type, createResource("https://w3id.org/ldes#EventStream"))
+				.next()
+				.getSubject()
+				.getLocalName();
+
+		interactedStreams.push(eventStreamName);
 	}
 
 	@Then("^I delete the eventstream ([^ ]+)")
@@ -172,5 +190,23 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
 							.toList().size() == expectedMemberCount;
 				});
+	}
+
+	@And("the LDES {string} contains {int} members")
+	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
+		await().atMost(Duration.ofSeconds(20))
+				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
+	}
+
+	@After
+	public void cleanup() {
+		interactedStreams.forEach(eventStream -> {
+			try {
+				mockMvc.perform(delete("/admin/api/v1/eventstreams/" + eventStream));
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		});
+
 	}
 }
