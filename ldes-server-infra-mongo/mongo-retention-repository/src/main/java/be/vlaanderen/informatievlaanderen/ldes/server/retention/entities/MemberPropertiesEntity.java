@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.entities;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,7 +9,7 @@ import java.util.Set;
 
 @Document("retention_member_properties")
 public class MemberPropertiesEntity {
-	@Indexed
+	@Id
 	private final String id;
 	@Indexed
 	private final String collectionName;
