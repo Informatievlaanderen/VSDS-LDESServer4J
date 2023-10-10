@@ -1,0 +1,17 @@
+@prefix as: <https://www.w3.org/ns/activitystreams#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+<acct:sally@example.org>
+  a as:Person ;
+  as:name "Sally" .
+
+<https://www.w3.org/ns/activitystreams#1/ID>
+  a as:Create ;
+  dcterms:isVersionOf as:1 ;
+  as:actor <acct:sally@example.org> ;
+  as:object [
+    a as:Note ;
+    as:content "This is a simple note"
+  ] ;
+  as:published "DATETIME"^^xsd:dateTime .
