@@ -10,8 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import org.apache.jena.atlas.json.JsonArray;
-import org.apache.jena.atlas.json.JsonObject;
+import org.apache.jena.atlas.json.*;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Statement;
 import org.springframework.stereotype.Service;
@@ -83,15 +82,16 @@ public class StatisticsServiceImpl implements StatisticsService {
 		view.getFragmentations().stream().map(this::fragmentationConfigToJson).forEach(fragmentationJsons::add);
 		viewJson.put(FRAGMENTATIONS, fragmentationJsons);
 
-		viewJson.put(FRAGMENT_PROGRESS, calculateFragmentationProgress(view.getName(), ingestedMembers));
+		viewJson.put(FRAGMENT_PROGRESS,
+				JsonNumber.value(calculateFragmentationProgress(view.getName(), ingestedMembers)));
 		return viewJson;
 	}
 
-	private long calculateFragmentationProgress(ViewName viewName, long ingestedMembers) {
+	private double calculateFragmentationProgress(ViewName viewName, long ingestedMembers) {
 		long lastProcessed = fragmentSequenceRepository.findLastProcessedSequence(viewName)
 				.map(FragmentSequence::sequenceNr).orElse(0L);
-		return ingestedMembers == 0 ? 0
-				: Math.round((1 - (ingestedMembers - (double) lastProcessed) / ingestedMembers) * 100);
+		return ingestedMembers == 0 ? 1
+				: 1 - (ingestedMembers - (double) lastProcessed) / ingestedMembers;
 	}
 
 	private JsonObject fragmentationConfigToJson(FragmentationConfig config) {
