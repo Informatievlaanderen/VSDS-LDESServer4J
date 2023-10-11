@@ -54,11 +54,11 @@ class StatisticsServiceImplTest {
         JsonObject json = statisticsService.getMetrics();
 
         assertEquals(List.of(), json.get(LDESES));
-        assertEquals('"'+"My LDES'es"+'"', json.get(SERVERNAME + " en").toString());
-        assertEquals('"'+"Mijn LDESen"+'"', json.get(SERVERNAME + " nl").toString());
-        assertEquals('"'+"LDES titel"+'"', json.get(SERVERNAME).toString());
-        assertEquals("100", json.get(INGESTED_COUNT).toString());
-        assertEquals("90", json.get(CURRENT_COUNT).toString());
+        assertEquals("My LDES'es", json.getString(SERVERNAME + " en"));
+        assertEquals("Mijn LDESen", json.getString(SERVERNAME + " nl"));
+        assertEquals("LDES titel", json.getString(SERVERNAME));
+        assertEquals(100, json.getNumber(INGESTED_COUNT).intValue());
+        assertEquals(90, json.getNumber(CURRENT_COUNT).intValue());
     }
 
 	@Test
@@ -80,15 +80,15 @@ class StatisticsServiceImplTest {
 		JsonObject json = statisticsService.getMetrics();
 
 		JsonObject ldesJson = json.get(LDESES).getAsArray().get(0).getAsObject();
-		assertEquals('"' + collectionName + '"', ldesJson.get(NAME).toString());
-		assertEquals("100", ldesJson.get(INGESTED_COUNT).toString());
-		assertEquals("90", ldesJson.get(CURRENT_COUNT).toString());
+		assertEquals(collectionName, ldesJson.getString(NAME));
+		assertEquals(100, ldesJson.getNumber(INGESTED_COUNT).intValue());
+		assertEquals(90, ldesJson.getNumber(CURRENT_COUNT).intValue());
 		assertEquals(List.of(), ldesJson.get(VIEWS));
 
 		JsonObject ldes2Json = json.get(LDESES).getAsArray().get(1).getAsObject();
-		assertEquals('"' + otherCollectionName + '"', ldes2Json.get(NAME).toString());
-		assertEquals("80", ldes2Json.get(INGESTED_COUNT).toString());
-		assertEquals("40", ldes2Json.get(CURRENT_COUNT).toString());
+		assertEquals(otherCollectionName, ldes2Json.getString(NAME));
+		assertEquals(80, ldes2Json.getNumber(INGESTED_COUNT).intValue());
+		assertEquals(40, ldes2Json.getNumber(CURRENT_COUNT).intValue());
 		assertEquals(List.of(), ldes2Json.get(VIEWS));
 	}
 
@@ -116,19 +116,19 @@ class StatisticsServiceImplTest {
 
 		JsonObject ldesJson = json.get(LDESES).getAsArray().get(0).getAsObject();
 		JsonObject viewJson = ldesJson.get(VIEWS).getAsArray().get(0).getAsObject();
-		assertEquals('"' + viewName.asString() + '"', viewJson.get(NAME).toString());
+		assertEquals(viewName.asString(), viewJson.getString(NAME));
 		assertEquals(List.of(), viewJson.get(FRAGMENTATIONS));
-		assertEquals("0", viewJson.get(FRAGMENT_PROGRESS).toString());
+		assertEquals(0, viewJson.getNumber(FRAGMENT_PROGRESS).intValue());
 
 		JsonObject view2Json = ldesJson.get(VIEWS).getAsArray().get(1).getAsObject();
-		assertEquals('"' + viewName2.asString() + '"', view2Json.get(NAME).toString());
+		assertEquals(viewName2.asString(), view2Json.getString(NAME));
 		assertEquals(List.of(), view2Json.get(FRAGMENTATIONS));
-		assertEquals("77", view2Json.get(FRAGMENT_PROGRESS).toString());
+		assertEquals(0.765, view2Json.getNumber(FRAGMENT_PROGRESS).doubleValue());
 
 		JsonObject view3Json = ldesJson.get(VIEWS).getAsArray().get(2).getAsObject();
-		assertEquals('"' + viewName3.asString() + '"', view3Json.get(NAME).toString());
+		assertEquals(viewName3.asString(), view3Json.getString(NAME));
 		assertEquals(List.of(), view3Json.get(FRAGMENTATIONS));
-		assertEquals("100", view3Json.get(FRAGMENT_PROGRESS).toString());
+		assertEquals(1, view3Json.getNumber(FRAGMENT_PROGRESS).intValue());
 	}
 
 	@Test
