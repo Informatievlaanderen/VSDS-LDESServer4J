@@ -30,10 +30,10 @@ public class IngestMemberSequenceService {
 	}
 
 	public long getSequenceForCollection(String collectionName) {
-		IngestMemberSequenceEntity counter = mongoOperations.find(
+		IngestMemberSequenceEntity counter = mongoOperations.findOne(
 				query(where("_id").is(collectionName)),
-				IngestMemberSequenceEntity.class).get(0);
-		return !Objects.isNull(counter) ? counter.getSeq() : 1;
+				IngestMemberSequenceEntity.class);
+		return !Objects.isNull(counter) ? counter.getSeq() : 0;
 	}
 
 	public long getTotalSequence() {
