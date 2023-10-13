@@ -29,6 +29,19 @@ public class IngestMemberSequenceService {
 		return !Objects.isNull(counter) ? counter.getSeq() : 1;
 	}
 
+	public long getSequenceForCollection(String collectionName) {
+		IngestMemberSequenceEntity counter = mongoOperations.findOne(
+				query(where("_id").is(collectionName)),
+				IngestMemberSequenceEntity.class);
+		return !Objects.isNull(counter) ? counter.getSeq() : 0;
+	}
+
+	public long getTotalSequence() {
+		return mongoOperations.findAll(
+				IngestMemberSequenceEntity.class).stream()
+				.reduce(0L, (subtotal, sequence) -> subtotal + sequence.getSeq(), Long::sum);
+	}
+
 	public void removeSequence(String collectionName) {
 		mongoOperations.findAndRemove(
 				query(where("_id").is(collectionName)),

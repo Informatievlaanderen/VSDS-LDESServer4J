@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.chang
 
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.valueobjects.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset9.valueobjects.ViewName;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Document("retention_member_properties")
 public class MemberPropertiesEntityV1 {
-	@Indexed
+	@Id
 	private final String id;
 	@Indexed
 	private final String collectionName;

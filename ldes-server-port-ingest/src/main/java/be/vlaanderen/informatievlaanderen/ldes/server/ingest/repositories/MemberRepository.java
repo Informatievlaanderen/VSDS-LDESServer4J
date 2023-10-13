@@ -23,4 +23,12 @@ public interface MemberRepository {
 	void deleteMember(String memberId);
 
 	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr);
+
+	long getMemberCount();
+
+	long getMemberCountOfCollection(String collectionName);
+
+	long getTotalSequence();
+
+	long getSequenceForCollection(String collectionName);
 }

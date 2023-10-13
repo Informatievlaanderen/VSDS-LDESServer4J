@@ -1,0 +1,28 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix server: <http://localhost:8080/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix mobility-hindrances: <http://localhost:8080/mobility-hindrances/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+server:mobility-hindrances a ldes:EventStream ;
+	ldes:timestampPath dcterms:created ;
+	ldes:versionOfPath dcterms:isVersionOf ;
+    tree:view mobility-hindrances:by-time  ;
+	tree:shape mobility-hindrances:shape .
+
+mobility-hindrances:by-time a tree:Node ;
+  tree:viewDescription [
+    a tree:ViewDescription ;
+    tree:fragmentationStrategy ([
+        a tree:HierarchicalTimeBasedFragmentation;
+        tree:fragmentationPath prov:generatedAtTime ;
+        tree:maxGranularity "day" ;
+    ]) ;
+    tree:pageSize "10"^^xsd:integer ;
+  ] .
+
+mobility-hindrances:shape a sh:NodeShape ;
+	sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .

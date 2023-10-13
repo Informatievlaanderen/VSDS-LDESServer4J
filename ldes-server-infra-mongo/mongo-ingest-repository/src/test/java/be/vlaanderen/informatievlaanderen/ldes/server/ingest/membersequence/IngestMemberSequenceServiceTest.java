@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Update;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -38,6 +40,27 @@ class IngestMemberSequenceServiceTest {
 		long sequence = ingestMemberSequenceService.generateSequence("collectionName");
 
 		assertEquals(1, sequence);
+	}
+
+	@Test
+	void when_MultipleLDESes_Then_getCorrectSequence() {
+		IngestMemberSequenceEntity ingestMemberSequenceEntity = new IngestMemberSequenceEntity();
+		ingestMemberSequenceEntity.setId("collectionName");
+		ingestMemberSequenceEntity.setSeq(100);
+		when(mongoOperations.findOne(query(where("_id").is("collectionName")),
+				IngestMemberSequenceEntity.class)).thenReturn(ingestMemberSequenceEntity);
+		IngestMemberSequenceEntity ingestMemberSequenceEntity2 = new IngestMemberSequenceEntity();
+		ingestMemberSequenceEntity2.setId("otherCollectionName");
+		ingestMemberSequenceEntity2.setSeq(150);
+		when(mongoOperations.findOne(query(where("_id").is("otherCollectionName")),
+				IngestMemberSequenceEntity.class)).thenReturn(ingestMemberSequenceEntity2);
+		when(mongoOperations.findAll(IngestMemberSequenceEntity.class))
+				.thenReturn(List.of(ingestMemberSequenceEntity, ingestMemberSequenceEntity2));
+
+		assertEquals(250, ingestMemberSequenceService.getTotalSequence());
+		assertEquals(100, ingestMemberSequenceService.getSequenceForCollection("collectionName"));
+		assertEquals(150, ingestMemberSequenceService.getSequenceForCollection("otherCollectionName"));
+
 	}
 
 }
