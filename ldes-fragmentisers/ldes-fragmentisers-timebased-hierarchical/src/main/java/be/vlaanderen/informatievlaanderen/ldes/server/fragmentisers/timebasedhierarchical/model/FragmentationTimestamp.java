@@ -26,6 +26,10 @@ public class FragmentationTimestamp {
 		return granularity.getGetTimeValue().format(time);
 	}
 
+	public String getType() {
+		return granularity.getType();
+	}
+
 	public String asString() {
 		return granularity.getFormatter().format(time);
 	}
