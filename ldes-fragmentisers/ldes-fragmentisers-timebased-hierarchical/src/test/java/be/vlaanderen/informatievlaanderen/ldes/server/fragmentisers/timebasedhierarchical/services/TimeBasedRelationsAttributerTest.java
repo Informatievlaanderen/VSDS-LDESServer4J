@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.DATETIME_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -41,7 +40,7 @@ class TimeBasedRelationsAttributerTest {
 		Fragment child = PARENT.createChild(monthPair);
 		TreeRelation expected = new TreeRelation(config.getFragmentationPath(),
 				child.getFragmentId(),
-				"2023-02", DATETIME_TYPE,
+				"2023-02", Granularity.MONTH.getType(),
 				TREE_INBETWEEN_RELATION);
 
 		relationsAttributer.addInBetweenRelation(PARENT, child);
