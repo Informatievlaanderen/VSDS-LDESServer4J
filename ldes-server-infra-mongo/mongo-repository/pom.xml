@@ -10,11 +10,6 @@
     <artifactId>mongo-repository</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <relative-formatter-path>../..</relative-formatter-path>
-    </properties>
-
-
     <dependencies>
         <!-- VSDS -->
         <dependency>

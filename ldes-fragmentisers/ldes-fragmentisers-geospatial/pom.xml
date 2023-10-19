@@ -10,10 +10,6 @@
     <artifactId>ldes-fragmentisers-geospatial</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <relative-formatter-path>../..</relative-formatter-path>
-    </properties>
-
     <dependencies>
         <!-- Spring Boot -->
         <dependency>

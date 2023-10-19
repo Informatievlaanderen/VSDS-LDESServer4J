@@ -7,14 +7,13 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public enum Granularity {
-	// @formatter:off
+
 	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss"), DateTimeFormatter.ofPattern("ss"), null),
 	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm"), DateTimeFormatter.ofPattern("mm"), Granularity.SECOND),
 	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh"), DateTimeFormatter.ofPattern("hh"), Granularity.MINUTE),
 	DAY("day", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"), Granularity.HOUR),
 	MONTH("month", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"), Granularity.DAY),
 	YEAR("year", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"), Granularity.MONTH);
-	// @formatter:on
 
 	private final String value;
 	private final DateTimeFormatter formatter;
