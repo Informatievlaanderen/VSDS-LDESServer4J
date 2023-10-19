@@ -9,7 +9,6 @@ public record LdesFragmentRequest(ViewName viewName, List<FragmentPair> fragment
         return new LdesFragmentRequest(viewName, List.of());
     }
 
-    // @formatter:off
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -23,6 +22,5 @@ public record LdesFragmentRequest(ViewName viewName, List<FragmentPair> fragment
             }
         }
     }
-    // @formatter:on
 
 }

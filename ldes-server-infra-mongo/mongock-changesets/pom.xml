@@ -11,11 +11,6 @@
 
     <artifactId>mongock-changesets</artifactId>
 
-
-    <properties>
-        <relative-formatter-path>../..</relative-formatter-path>
-    </properties>
-
     <dependencies>
 
         <dependency>

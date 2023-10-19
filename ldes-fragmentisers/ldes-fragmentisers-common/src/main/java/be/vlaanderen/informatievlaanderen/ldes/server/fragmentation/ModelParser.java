@@ -14,16 +14,13 @@ public class ModelParser {
 	}
 
 	public static Object getFragmentationObject(Model model, String subjectFilter, String fragmentationPredicate) {
-		// @formatter:off
 		return getFragmentationObjects(model, subjectFilter, fragmentationPredicate)
 				.stream()
 				.findFirst()
 				.orElse(null);
-		// @formatter:on
 	}
 
 	public static List<Object> getFragmentationObjects(Model model, String subjectFilter, String fragmentationPath) {
-		// @formatter:off
 		return model
 				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
 				.toList()
@@ -33,22 +30,18 @@ public class ModelParser {
 				.map(RDFNode::asLiteral)
 				.map(Literal::getValue)
 				.toList();
-		// @formatter:on
 	}
 
 	public static LocalDateTime getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
 			String fragmentationPredicate) {
-		// @formatter:off
 		return getFragmentationObjectsLocalDateTime(model, subjectFilter, fragmentationPredicate)
 				.stream()
 				.findFirst()
 				.orElse(null);
-		// @formatter:on
 	}
 
 	public static List<LocalDateTime> getFragmentationObjectsLocalDateTime(Model model, String subjectFilter,
 			String fragmentationPath) {
-		// @formatter:off
 		return model
 				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
 				.toList()
@@ -58,6 +51,5 @@ public class ModelParser {
 				.map(RDFNode::asLiteral)
 				.map(literal -> localDateTimeConverter.getLocalDateTime((LiteralImpl) literal))
 				.toList();
-		// @formatter:on
 	}
 }

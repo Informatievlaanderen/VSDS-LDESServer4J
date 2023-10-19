@@ -11,10 +11,6 @@
 
     <artifactId>mongo-admin-repository</artifactId>
 
-    <properties>
-        <relative-formatter-path>../..</relative-formatter-path>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
