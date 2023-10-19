@@ -16,14 +16,6 @@ public enum Granularity {
 	MONTH("month", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"), Granularity.DAY),
 	YEAR("year", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"), Granularity.MONTH);
 
-
-	public static void main(String[] args) {
-		String H = DateTimeFormatter.ofPattern("HH").format(LocalDateTime.of(2022, 2,21,14,21));
-		String G = DateTimeFormatter.ofPattern("HH").format(LocalDateTime.of(2022, 2,21,4,21));
-		System.out.println(H);
-		System.out.println(G);
-	}
-
 	private final String value;
 	private final DateTimeFormatter formatter;
 	private final DateTimeFormatter getTimeValue;
