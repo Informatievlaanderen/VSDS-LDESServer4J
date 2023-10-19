@@ -25,6 +25,7 @@ public class TimeBasedRelationsAttributer {
 		this.config = config;
 	}
 
+	// TODO TVB: 19/10/23 hier gewoon DT_TYPE vervangen door timestamp.getType
 	public void addInBetweenRelation(Fragment parentFragment, Fragment childFragment) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(config.getFragmentationPath(),
