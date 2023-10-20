@@ -3,10 +3,7 @@ services:
     env_file:
       - ./docker-compose/config.local.env
     container_name: ldes.server
-    image: ldes-server
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ldes/ldes-server:latest
     ports:
       - "8080:8080"
     volumes:

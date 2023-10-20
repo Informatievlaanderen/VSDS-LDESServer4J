@@ -2,17 +2,18 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.exceptions.FragmentiserConfigException;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 public enum Granularity {
 
-	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss"), DateTimeFormatter.ofPattern("ss"),
+	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"), DateTimeFormatter.ofPattern("ss"),
 			"http://www.w3.org/2001/XMLSchema#dateTime", null),
-	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm"), DateTimeFormatter.ofPattern("mm"),
+	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"), DateTimeFormatter.ofPattern("mm"),
 			"http://www.w3.org/2001/XMLSchema#string", Granularity.SECOND),
-	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh"), DateTimeFormatter.ofPattern("hh"),
+	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH"), DateTimeFormatter.ofPattern("HH"),
 			"http://www.w3.org/2001/XMLSchema#string", Granularity.MINUTE),
 	DAY("day", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"),
 			"http://www.w3.org/2001/XMLSchema#date", Granularity.HOUR),

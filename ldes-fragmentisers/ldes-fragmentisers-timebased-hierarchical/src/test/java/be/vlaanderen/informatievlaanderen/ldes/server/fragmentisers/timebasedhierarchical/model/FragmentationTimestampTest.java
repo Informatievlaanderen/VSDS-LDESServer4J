@@ -16,12 +16,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FragmentationTimestampTest {
 
-	private static final LocalDateTime TIME = LocalDateTime.of(2023, 1, 2, 6, 30, 40);
+	private static final LocalDateTime TIME6am = LocalDateTime.of(2023, 1, 2, 6, 30, 40);
+	private static final LocalDateTime TIME6pm = LocalDateTime.of(2023, 1, 2, 18, 30, 40);
 
 	@ParameterizedTest(name = "test asString for granularity {0}")
 	@ArgumentsSource(TimeArgumentProvider.class)
-	void when_AsStringForGranularity_Then_ReturnCorrectString(Granularity granularity, String expected) {
-		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, granularity);
+	void when_AsStringForGranularity_Then_ReturnCorrectString(LocalDateTime time,
+															  Granularity granularity,
+															  String expected) {
+		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(time, granularity);
 
 		assertEquals(expected, fragmentationTimestamp.asString());
 	}
@@ -39,14 +42,15 @@ class FragmentationTimestampTest {
 
 	static class TimeArgumentProvider implements ArgumentsProvider {
 		@Override
-		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
 			return Stream.of(
-					Arguments.of(Granularity.YEAR, "2023"),
-					Arguments.of(Granularity.MONTH, "2023-01"),
-					Arguments.of(Granularity.DAY, "2023-01-02"),
-					Arguments.of(Granularity.HOUR, "2023-01-02T06"),
-					Arguments.of(Granularity.MINUTE, "2023-01-02T06:30"),
-					Arguments.of(Granularity.SECOND, "2023-01-02T06:30:40"));
+					Arguments.of(TIME6am, Granularity.YEAR, "2023"),
+					Arguments.of(TIME6am, Granularity.MONTH, "2023-01"),
+					Arguments.of(TIME6am, Granularity.DAY, "2023-01-02"),
+					Arguments.of(TIME6am, Granularity.HOUR, "2023-01-02T06"),
+					Arguments.of(TIME6am, Granularity.MINUTE, "2023-01-02T06:30"),
+					Arguments.of(TIME6am, Granularity.SECOND, "2023-01-02T06:30:40"),
+					Arguments.of(TIME6pm, Granularity.SECOND, "2023-01-02T18:30:40"));
 		}
 	};
 
