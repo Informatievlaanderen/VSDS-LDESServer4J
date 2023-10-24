@@ -8,6 +8,5 @@ public class TimeBasedConstants {
 	}
 
 	public static final String TREE_INBETWEEN_RELATION = TREE + "InBetweenRelation";
-	public static final String DATETIME_TYPE = "http://www.w3.org/2001/XMLSchema#dateTime";
 
 }

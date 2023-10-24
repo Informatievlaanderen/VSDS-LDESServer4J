@@ -6,15 +6,10 @@
     <parent>
         <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
         <artifactId>ldes-server</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>2.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ldes-server-port-ingest-rest</artifactId>
-
-
-    <properties>
-        <relative-formatter-path>..</relative-formatter-path>
-    </properties>
 
     <dependencies>
         <!-- VSDS -->

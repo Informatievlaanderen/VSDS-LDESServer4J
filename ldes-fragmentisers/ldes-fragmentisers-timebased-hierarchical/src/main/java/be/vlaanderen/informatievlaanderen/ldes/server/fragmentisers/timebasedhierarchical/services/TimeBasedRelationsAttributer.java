@@ -8,9 +8,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.DATETIME_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
 
 public class TimeBasedRelationsAttributer {
@@ -29,7 +30,7 @@ public class TimeBasedRelationsAttributer {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(config.getFragmentationPath(),
 				childFragment.getFragmentId(),
-				timestamp.asString(), DATETIME_TYPE,
+				timestamp.asString(), timestamp.getType(),
 				TREE_INBETWEEN_RELATION);
 		if (!parentFragment.containsRelation(parentChildRelation)) {
 			parentFragment.addRelation(parentChildRelation);
