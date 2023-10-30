@@ -51,7 +51,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 				.findSingleDcatServer()
 				.ifPresent(dcatServer -> composedDcat.add(getStatementsForComposedDcat(dcatServer)));
 
-		dcatShaclValidator.validate(composedDcat, null);
+		dcatShaclValidator.validate(composedDcat);
 		return composedDcat;
 	}
 

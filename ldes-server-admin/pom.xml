@@ -50,6 +50,12 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite</artifactId>
         </dependency>
+
+        <!-- NULL ANNOTATIONS -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

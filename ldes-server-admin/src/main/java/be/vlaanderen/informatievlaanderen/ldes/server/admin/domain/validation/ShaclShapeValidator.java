@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.shacl.Shapes;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
@@ -14,14 +15,9 @@ public class ShaclShapeValidator extends AbstractShaclValidator {
 		shapes = Shapes.parse(FILE_NAME);
 	}
 
-	@Override
-	public boolean supports(Class<?> clazz) {
-		return Model.class.isAssignableFrom(clazz);
-	}
-
-	@Override
-	public void validate(Object target, Errors errors) {
+    @Override
+	public void validate(@NotNull Object target, @NotNull Errors errors) {
 		Model model = (Model) target;
-		validateShape(model);
+		validate(model);
 	}
 }
