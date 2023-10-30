@@ -46,7 +46,7 @@ class DcatDatasetValidatorTest {
 		Model dcat = RDFParser.fromString(dcatString).lang(Lang.TURTLE).toModel();
 
 		assertThatThrownBy(() -> validator.validate(dcat))
-				.isIn(IllegalArgumentException.class)
+				.isInstanceOf(IllegalArgumentException.class)
 				.hasMessage(expectedMessage);
 	}
 

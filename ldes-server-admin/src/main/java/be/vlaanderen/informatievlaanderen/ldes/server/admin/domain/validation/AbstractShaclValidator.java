@@ -10,7 +10,7 @@ import org.apache.jena.shacl.ValidationReport;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.Validator;
 
-public abstract class AbstractShaclValidator implements Validator {
+public abstract class AbstractShaclValidator implements Validator, ModelValidator {
 	private boolean initialized;
 	protected Shapes shapes;
 
@@ -21,6 +21,7 @@ public abstract class AbstractShaclValidator implements Validator {
 
 	protected abstract void initializeShapes();
 
+	@Override
 	public void validate(@NotNull Model target) {
 		if (!initialized) {
 			initializeShapes();
