@@ -8,16 +8,10 @@ import org.apache.jena.shacl.ShaclValidator;
 import org.apache.jena.shacl.Shapes;
 import org.apache.jena.shacl.ValidationReport;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.validation.Validator;
 
-public abstract class AbstractShaclValidator implements Validator, ModelValidator {
+public abstract class AbstractShaclValidator implements ModelValidator {
 	private boolean initialized;
 	protected Shapes shapes;
-
-	@Override
-	public boolean supports(@NotNull Class<?> clazz) {
-		return Model.class.isAssignableFrom(clazz);
-	}
 
 	protected abstract void initializeShapes();
 

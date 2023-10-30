@@ -6,13 +6,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.List;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-public abstract class DcatValidator implements Validator, ModelValidator {
+public abstract class DcatValidator implements ModelValidator {
 	public static final String DCAT = "http://www.w3.org/ns/dcat#";
 	public static final Property DCAT_DATA_SERVICE = createProperty(DCAT, "DataService");
 	public static final Property DCAT_DATASET = createProperty(DCAT, "Dataset");
@@ -34,11 +33,6 @@ public abstract class DcatValidator implements Validator, ModelValidator {
 	public void validate(@NotNull Object target, @NotNull Errors errors) {
 		final Model dcat = (Model) target;
 		validate(dcat);
-	}
-
-	@Override
-	public boolean supports(@NotNull Class<?> clazz) {
-		return Model.class.isAssignableFrom(clazz);
 	}
 
 	@Override
