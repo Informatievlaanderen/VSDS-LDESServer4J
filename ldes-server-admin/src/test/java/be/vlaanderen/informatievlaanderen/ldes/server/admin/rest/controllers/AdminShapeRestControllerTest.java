@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
@@ -102,7 +103,7 @@ class AdminShapeRestControllerTest {
 					.andExpect(status().isOk());
 
 			InOrder inOrder = inOrder(shaclShapeValidator, shaclShapeService);
-			inOrder.verify(shaclShapeValidator, times(1)).validateShape(any());
+			inOrder.verify(shaclShapeValidator, times(1)).validate(any());
 			inOrder.verify(shaclShapeService, times(1))
 					.updateShaclShape(new ShaclShape(collectionName, expectedShapeModel));
 			inOrder.verifyNoMoreInteractions();
@@ -117,7 +118,7 @@ class AdminShapeRestControllerTest {
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
 
-			verify(shaclShapeValidator).validateShape(any());
+			verify(shaclShapeValidator).validate(any());
 		}
 
 	}

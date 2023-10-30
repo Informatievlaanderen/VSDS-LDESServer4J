@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class DcatViewValidatorTest {
 	private DcatViewValidator validator;
@@ -30,22 +30,23 @@ class DcatViewValidatorTest {
 
 	@Test
 	void test_support() {
-		assertTrue(validator.supports(Model.class));
-		assertFalse(validator.supports(String.class));
+		assertThat(validator.supports(Model.class)).isTrue();
+		assertThat(validator.supports(String.class)).isFalse();
 	}
 
 	@Test
 	void should_NotThrowAnything_when_Valid() {
 		final Model model = RDFParser.source("validation/valid-dcat-service.ttl").lang(Lang.TURTLE).build().toModel();
-		assertDoesNotThrow(() -> validator.validate(model));
+
+		assertThatNoException().isThrownBy(() -> validator.validate(model));
 	}
 
 	@ParameterizedTest(name = "{0}")
 	@ArgumentsSource(InvalidModelProvider.class)
 	void should_ThrowIllegalArgumentException_when_Invalid(String name, String turtleDcatString) {
-		assertNotNull(name);
+		assertThat(name).isNotNull();
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
-		assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat));
+		assertThatThrownBy(() -> validator.validate(dcat)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	static class InvalidModelProvider implements ArgumentsProvider {

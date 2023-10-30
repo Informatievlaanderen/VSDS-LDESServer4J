@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class EventStreamValidatorTest {
 
@@ -19,22 +19,26 @@ class EventStreamValidatorTest {
 	@Test
 	void test_support() {
 		Model model = ModelFactory.createDefaultModel();
-		assertTrue(validator.supports(model.getClass()));
-		assertTrue(validator.supports(Model.class));
-		assertFalse(validator.supports(EventStream.class));
-		assertFalse(validator.supports(Integer.class));
+
+		assertThat(validator.supports(model.getClass())).isTrue();
+		assertThat(validator.supports(Model.class)).isTrue();
+
+		assertThat(validator.supports(EventStream.class)).isFalse();
+		assertThat(validator.supports(Integer.class)).isFalse();
 	}
 
 	@Test
 	void when_validLdesProvided_then_returnValid() throws URISyntaxException {
 		Model model = readModelFromFile("eventstream/streams/valid-ldes.ttl");
-		assertDoesNotThrow(() -> validator.validateShape(model));
+
+		assertThatNoException().isThrownBy(() -> validator.validate(model));
 	}
 
 	@Test
 	void when_invalidLdesProvided_then_returnInvalid() throws URISyntaxException {
 		Model model = readModelFromFile("eventstream/streams/invalid-shape.ttl");
-		assertThrows(LdesShaclValidationException.class, () -> validator.validateShape(model));
+
+		assertThatThrownBy(() -> validator.validate(model)).isInstanceOf(LdesShaclValidationException.class);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
