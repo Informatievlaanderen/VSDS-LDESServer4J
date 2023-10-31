@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -17,9 +17,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class ViewServiceImplTest {
@@ -62,10 +62,10 @@ class ViewServiceImplTest {
 		void when_ViewDoesExist_then_DuplicateViewExceptionIsThrown() {
 			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.of(view));
 
-			DuplicateViewException duplicateViewException = assertThrows(DuplicateViewException.class,
-					() -> viewService.addView(view));
+			assertThatThrownBy(() -> viewService.addView(view))
+					.isInstanceOf(ExistingResourceException.class)
+					.hasMessage("Resource of type: view with id: collection/view already exists.");
 
-			assertEquals("Collection collection already has a view: view", duplicateViewException.getMessage());
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).getViewByViewName(view.getName());
 			inOrder.verifyNoMoreInteractions();
@@ -122,7 +122,7 @@ class ViewServiceImplTest {
 
 			ViewSpecification actualViewSpecification = viewService.getViewByViewName(viewName);
 
-			assertEquals(expectedViewSpecification, actualViewSpecification);
+			assertThat(actualViewSpecification).isEqualTo(expectedViewSpecification);
 			InOrder inOrder = inOrder(viewRepository, eventPublisher);
 			inOrder.verify(viewRepository).getViewByViewName(viewName);
 			inOrder.verifyNoMoreInteractions();

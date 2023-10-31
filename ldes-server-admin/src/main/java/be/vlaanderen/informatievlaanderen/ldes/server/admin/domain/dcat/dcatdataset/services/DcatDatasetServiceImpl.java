@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdat
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
