@@ -10,7 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -57,7 +57,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@Override
 	public EventStreamResponse retrieveEventStream(String collectionName) {
 		EventStream eventStream = eventStreamRepository.retrieveEventStream(collectionName)
-				.orElseThrow(() -> new MissingEventStreamException(collectionName));
+				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
 		List<ViewSpecification> views = viewService.getViewsByCollectionName(collectionName);
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(collectionName);
@@ -70,7 +70,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@Override
 	public void deleteEventStream(String collectionName) {
 		if (eventStreamRepository.retrieveEventStream(collectionName).isEmpty()) {
-			throw new MissingEventStreamException(collectionName);
+			throw new MissingResourceException("eventstream", collectionName);
 		}
 
 		eventStreamRepository.deleteEventStream(collectionName);

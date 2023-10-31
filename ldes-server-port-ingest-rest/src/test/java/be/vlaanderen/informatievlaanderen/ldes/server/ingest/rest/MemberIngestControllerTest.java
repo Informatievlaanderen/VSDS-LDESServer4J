@@ -2,12 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.MemberConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -142,7 +142,7 @@ class MemberIngestControllerTest {
 	@Test
 	void whenIngestValidationExceptionIsThrown_thenStatus400IsReturned() throws Exception {
 		String modelString = readModelStringFromFile("menu-items/example-data-old.ttl");
-		doThrow(IngestValidationException.class).when(memberIngester).ingest(any(Member.class));
+		doThrow(ShaclValidationException.class).when(memberIngester).ingest(any(Member.class));
 
 		mockMvc.perform(post("/restaurant").contentType("text/turtle").content(modelString))
 				.andExpect(status().isBadRequest());

@@ -1,15 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.DcatAlreadyConfiguredException;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatCatalogValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -94,7 +94,7 @@ class AdminDcatServerControllerTest {
 
 		@Test
 		void when_ServerAlreadyHasDcatConfigured_and_PostDcat_then_Return400() throws Exception {
-			when(service.createDcatServer(any())).thenThrow(DcatAlreadyConfiguredException.class);
+			when(service.createDcatServer(any())).thenThrow(ExistingResourceException.class);
 
 			mockMvc.perform(post("/admin/api/v1/dcat")
 					.contentType(Lang.TURTLE.getHeaderString())
@@ -146,7 +146,7 @@ class AdminDcatServerControllerTest {
 		@Test
 		void when_ServerHasNoDcatYet_and_PutServerDcat_then_ReturnStatus404() throws Exception {
 			final Model model = readModelFromFile();
-			when(service.updateDcatServer(eq(ID), any())).thenThrow(MissingDcatServerException.class);
+			when(service.updateDcatServer(eq(ID), any())).thenThrow(MissingResourceException.class);
 
 			mockMvc.perform(put("/admin/api/v1/dcat/{id}", ID)
 					.contentType(Lang.TURTLE.getHeaderString())
@@ -164,7 +164,7 @@ class AdminDcatServerControllerTest {
 	class DeleteRequest {
 		@Test
 		void when_DeleteNonExistingDcat_then_ReturnStatus404() throws Exception {
-			doThrow(MissingDcatServerException.class).when(service).deleteDcatServer(ID);
+			doThrow(MissingResourceException.class).when(service).deleteDcatServer(ID);
 
 			mockMvc.perform(delete("/admin/api/v1/dcat/{id}", ID)).andExpect(status().isNotFound());
 
@@ -212,7 +212,7 @@ class AdminDcatServerControllerTest {
 
 		@Test
 		void should_ReturnValidationReport_when_Invalid() throws Exception {
-			doThrow(new LdesShaclValidationException("validation-report", null)).when(service).getComposedDcat();
+			doThrow(new ShaclValidationException("validation-report", null)).when(service).getComposedDcat();
 
 			mockMvc.perform(get("/admin/api/v1/dcat")
 					.accept(MediaType.ALL))

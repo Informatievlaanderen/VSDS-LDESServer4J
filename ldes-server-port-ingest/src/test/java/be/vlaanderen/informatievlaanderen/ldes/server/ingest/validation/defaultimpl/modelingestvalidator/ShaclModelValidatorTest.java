@@ -1,13 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl.modelingestvalidator;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.shacl.Shapes;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ShaclModelValidatorTest {
 
@@ -18,7 +18,8 @@ class ShaclModelValidatorTest {
 		var validator = new ShaclModelValidator(Shapes.parse(shape));
 
 		Model invalidModel = RDFParser.source("validation/example-data-invalid.ttl").build().toModel();
-		assertThrows(IngestValidationException.class, () -> validator.validate(invalidModel));
+
+		assertThatThrownBy(() -> validator.validate(invalidModel)).isInstanceOf(ShaclValidationException.class);
 	}
 
 	@Test
@@ -27,8 +28,8 @@ class ShaclModelValidatorTest {
 
 		var validator = new ShaclModelValidator(Shapes.parse(shape));
 
-		Model invalidModel = RDFParser.source("validation/example-data.ttl").build().toModel();
-		assertDoesNotThrow(() -> validator.validate(invalidModel));
+		Model validModel = RDFParser.source("validation/example-data.ttl").build().toModel();
+		assertThatNoException().isThrownBy(() -> validator.validate(validModel));
 	}
 
 }

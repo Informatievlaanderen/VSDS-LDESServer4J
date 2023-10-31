@@ -2,13 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class EventStreamCollectionImplTest {
 
@@ -23,9 +23,9 @@ class EventStreamCollectionImplTest {
 				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, "")));
 		eventStreamCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
-		MissingEventStreamException missingEventStreamException = assertThrows(MissingEventStreamException.class,
-				() -> eventStreamCollection.getEventStreamProperties(COLLECTION));
-		assertEquals("No event stream found for collection COLLECTION", missingEventStreamException.getMessage());
+		assertThatThrownBy(() -> eventStreamCollection.getEventStreamProperties(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
 	}
 
 	@Test
@@ -37,7 +37,8 @@ class EventStreamCollectionImplTest {
 
 		EventStreamProperties expectedEventStreamProperties = new EventStreamProperties(VERSION_OF_PATH,
 				TIMESTAMP_PATH);
-		assertEquals(expectedEventStreamProperties, actualEventStreamProperties);
+
+		assertThat(actualEventStreamProperties).isEqualTo(expectedEventStreamProperties);
 	}
 
 }

@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.MissingFragmentException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +19,7 @@ public class RestResponseEntityExceptionHandler
 
 	private static final Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
-	@ExceptionHandler(value = { MissingFragmentException.class })
+	@ExceptionHandler(value = { MissingResourceException.class })
 	protected ResponseEntity<Object> handleNotFoundException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
@@ -31,7 +31,7 @@ public class RestResponseEntityExceptionHandler
 		return handleException(ex, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
 	}
 
-	@ExceptionHandler(value = { LdesShaclValidationException.class })
+	@ExceptionHandler(value = { ShaclValidationException.class })
 	protected ResponseEntity<Object> handleInternalServerError(
 			RuntimeException ex, WebRequest request) {
 		return handleExceptionWithoutDetails(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);

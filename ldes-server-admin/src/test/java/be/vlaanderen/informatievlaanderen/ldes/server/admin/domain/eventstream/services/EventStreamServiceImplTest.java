@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -151,8 +151,10 @@ class EventStreamServiceImplTest {
 	void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 
-		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
-		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
+		assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
 	}
@@ -181,8 +183,11 @@ class EventStreamServiceImplTest {
 	@Test
 	void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
-		Exception e = assertThrows(MissingEventStreamException.class, () -> service.deleteEventStream(COLLECTION));
-		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
+
+		assertThatThrownBy(() -> service.deleteEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoMoreInteractions(eventStreamRepository);
 		verifyNoInteractions(viewService, shaclShapeService, eventPublisher);
@@ -199,7 +204,9 @@ class EventStreamServiceImplTest {
 		inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
 		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
 		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());
-		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
+		assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.exceptions;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.exceptions;
 
 public class ExistingResourceException extends RuntimeException {
 	private final String type;

@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatViewValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -109,7 +109,7 @@ class DcatViewsRestControllerTest {
 
 		@Test
 		void should_Return404_when_ResourceNotFound() throws Exception {
-			doThrow(MissingViewDcatException.class).when(dcatViewService).update(any(), any());
+			doThrow(MissingResourceException.class).when(dcatViewService).update(any(), any());
 
 			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)

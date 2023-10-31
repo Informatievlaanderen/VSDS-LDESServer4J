@@ -3,13 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcatserver.s
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.DcatAlreadyConfiguredException;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerServiceImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.DcatShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -71,12 +72,10 @@ class DcatServerServiceImplTest {
 	@Test
 	void when_ServerAlreadyHasDcatConfigured_then_ThrowException() {
 		when(repository.getServerDcat()).thenReturn(List.of(SERVER_DCAT));
-		final String expectedMessage = "The server can contain only one dcat configuration and there already has been configured one with id "
-				+ ID;
 
-		Exception e = assertThrows(DcatAlreadyConfiguredException.class, () -> service.createDcatServer(DCAT));
-
-		assertEquals(expectedMessage, e.getMessage());
+		assertThatThrownBy(() -> service.createDcatServer(DCAT))
+				.isInstanceOf(ExistingResourceException.class)
+				.hasMessage("Resource of type: dcat-catalog with id: %s already exists.", ID);
 		verify(repository).getServerDcat();
 		verifyNoMoreInteractions(repository);
 	}
@@ -98,11 +97,11 @@ class DcatServerServiceImplTest {
 	@Test
 	void when_UpdateNonExistingDcat_then_ThrowException() {
 		when(repository.getServerDcatById(ID)).thenReturn(Optional.empty());
-		String expectedMessage = String.format("No dcat is configured on the server with id %s", ID);
 
-		Exception e = assertThrows(MissingDcatServerException.class, () -> service.updateDcatServer(ID, DCAT));
+		assertThatThrownBy(() -> service.updateDcatServer(ID, DCAT))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: dcat-catalog with id: %s could not be found.", ID);
 
-		assertEquals(expectedMessage, e.getMessage());
 		verify(repository).getServerDcatById(ID);
 		verifyNoMoreInteractions(repository);
 	}

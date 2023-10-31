@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -128,8 +128,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_StreamNotPresent_Then_Returned404() throws Exception {
-			when(eventStreamService.retrieveEventStream(COLLECTION))
-					.thenThrow(new MissingEventStreamException(COLLECTION));
+			when(eventStreamService.retrieveEventStream(COLLECTION)).thenThrow(MissingResourceException.class);
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeTurtle))
 					.andExpect(status().isNotFound());
@@ -197,7 +196,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_deleteNotExistingCollection_then_expectStatus404() throws Exception {
-			doThrow(MissingEventStreamException.class).when(eventStreamService).deleteEventStream(COLLECTION);
+			doThrow(MissingResourceException.class).when(eventStreamService).deleteEventStream(COLLECTION);
 
 			mockMvc.perform(delete("/admin/api/v1/eventstreams/name1"))
 					.andExpect(status().isNotFound());

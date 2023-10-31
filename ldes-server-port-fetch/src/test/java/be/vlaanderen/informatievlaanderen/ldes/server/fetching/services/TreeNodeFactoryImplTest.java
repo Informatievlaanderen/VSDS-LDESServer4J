@@ -1,23 +1,24 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.exceptions.MissingFragmentException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -46,12 +47,9 @@ class TreeNodeFactoryImplTest {
 	void when_LdesFragmentDoesNotExist_ThrowMissingFragmentException() {
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.empty());
 
-		MissingFragmentException treeNodeId = Assertions.assertThrows(MissingFragmentException.class,
-				() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME));
-
-		Assertions.assertEquals(
-				"No fragment exists with fragment identifier: " + HOSTNAME + "/" + COLLECTION_NAME + "/treeNodeId",
-				treeNodeId.getMessage());
+		assertThatThrownBy(() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: fragment with id: %s/%s/%s could not be found.", HOSTNAME, COLLECTION_NAME, VIEW);
 	}
 
 	@Test
@@ -67,14 +65,14 @@ class TreeNodeFactoryImplTest {
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 
-		Assertions.assertEquals(HOSTNAME + fragment.getFragmentIdString(), treeNode.getFragmentId());
-		Assertions.assertEquals(fragment.isImmutable(), treeNode.isImmutable());
-		Assertions.assertEquals(List.of(member), treeNode.getMembers());
-		Assertions.assertEquals(
-				List.of(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
+		assertThat(treeNode.getFragmentId()).isEqualTo(HOSTNAME + fragment.getFragmentIdString());
+		assertThat(treeNode.isImmutable()).isEqualTo(fragment.isImmutable());
+		assertThat(treeNode.getMembers()).containsExactly(member);
+		assertThat(treeNode.getRelations()).containsExactly(
+				new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
 						"valueType",
-						"relation")),
-				treeNode.getRelations());
+						"relation")
+		);
 	}
 
 }

@@ -2,13 +2,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.default
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,25 +28,27 @@ class MemberIngestValidatorImplTest {
 	void validationShouldNotFail_whenThereAreNoValidators() {
 		Member member = createBasicMember();
 
-		assertDoesNotThrow(() -> validator.validate(member));
+		assertThatNoException().isThrownBy(() -> validator.validate(member));
 	}
 
 	@Test
 	void validationShouldThrowException_whenMemberIsInvalid() {
 		when(factory.createValidator(null)).thenReturn(model -> {
-			throw new IngestValidationException("invalid");
+			throw new ShaclValidationException("invalid", null);
 		});
 		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 
 		Member member = createBasicMember();
-		assertThrows(IngestValidationException.class, () -> validator.validate(member));
+		assertThatThrownBy(() -> validator.validate(member))
+				.isInstanceOf(ShaclValidationException.class)
+				.hasMessage("Shacl validation failed: \n\ninvalid");
 	}
 
 	@Test
 	void validatorShouldBeOverWritten_onChangedEvent() {
 		when(factory.createValidator(null))
 				.thenReturn(model -> {
-					throw new IngestValidationException("invalid");
+					throw new ShaclValidationException("invalid", null);
 				})
 				.thenReturn(model -> {
 				});
@@ -54,21 +56,21 @@ class MemberIngestValidatorImplTest {
 		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 
 		Member member = createBasicMember();
-		assertDoesNotThrow(() -> validator.validate(member));
+		assertThatNoException().isThrownBy(() -> validator.validate(member));
 	}
 
 	@Test
 	void validatorShouldBeRemoved_onDeleteEvent() {
 		when(factory.createValidator(null))
 				.thenReturn(model -> {
-					throw new IngestValidationException("invalid");
+					throw new ShaclValidationException("invalid", null);
 				});
 		validator.handleShaclChangedEvent(new ShaclChangedEvent("myCollection", null));
 		validator.handleShaclDeletedEvent(new ShaclDeletedEvent("myCollection"));
 
 		Member member = createBasicMember();
 
-		assertDoesNotThrow(() -> validator.validate(member));
+		assertThatNoException().isThrownBy(() -> validator.validate(member));
 	}
 
 	private Member createBasicMember() {

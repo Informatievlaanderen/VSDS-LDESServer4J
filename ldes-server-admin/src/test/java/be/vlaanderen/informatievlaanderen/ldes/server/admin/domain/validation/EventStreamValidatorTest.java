@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -38,7 +38,7 @@ class EventStreamValidatorTest {
 	void when_invalidLdesProvided_then_returnInvalid() throws URISyntaxException {
 		Model model = readModelFromFile("eventstream/streams/invalid-shape.ttl");
 
-		assertThatThrownBy(() -> validator.validate(model)).isInstanceOf(LdesShaclValidationException.class);
+		assertThatThrownBy(() -> validator.validate(model)).isInstanceOf(ShaclValidationException.class);
 	}
 
 	private Model readModelFromFile(String fileName) throws URISyntaxException {

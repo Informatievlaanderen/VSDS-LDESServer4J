@@ -1,10 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateViewException;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -36,7 +35,7 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public void addView(ViewSpecification viewSpecification) {
 		if (isEventStreamMissing(viewSpecification.getName().getCollectionName())) {
-			throw new MissingEventStreamException(viewSpecification.getName().getCollectionName());
+			throw new MissingResourceException("eventstream", viewSpecification.getName().getCollectionName());
 		}
 		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
 		if (view.isPresent()) {
@@ -54,7 +53,7 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public ViewSpecification getViewByViewName(ViewName viewName) {
 		ViewSpecification viewSpecification = viewRepository.getViewByViewName(viewName)
-				.orElseThrow(() -> new MissingViewException(viewName));
+				.orElseThrow(() -> new MissingResourceException("view", viewName.asString()));
 		addDcatToViewSpecification(viewSpecification);
 		return viewSpecification;
 	}
@@ -62,7 +61,7 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
 		if (isEventStreamMissing(collectionName)) {
-			throw new MissingEventStreamException(collectionName);
+			throw new MissingResourceException("eventstream", collectionName);
 		}
 		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
 		viewSpecifications.forEach(this::addDcatToViewSpecification);
@@ -76,7 +75,7 @@ public class ViewServiceImpl implements ViewService {
 	@Override
 	public void deleteViewByViewName(ViewName viewName) {
 		if (isEventStreamMissing(viewName.getCollectionName())) {
-			throw new MissingEventStreamException(viewName.getCollectionName());
+			throw new MissingResourceException("eventstream", viewName.getCollectionName());
 		}
 
 		deleteViews(List.of(viewName));

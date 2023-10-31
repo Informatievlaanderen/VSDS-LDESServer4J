@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatCatalogValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -39,7 +39,7 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 		setContentTypeHeader(language, response);
 		try {
 			return ResponseEntity.ok(service.getComposedDcat());
-		} catch (LdesShaclValidationException e) {
+		} catch (ShaclValidationException e) {
 			return ResponseEntity.internalServerError().body(e.getValidationReportModel());
 		}
 	}

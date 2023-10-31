@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ValidatorsConfig;
@@ -9,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -79,8 +79,7 @@ class AdminShapeRestControllerTest {
 		@Test
 		void when_ViewNotPresent_Then_Returned404() throws Exception {
 			String collectionName = "name1";
-			when(shaclShapeService.retrieveShaclShape(collectionName))
-					.thenThrow(new MissingShaclShapeException(collectionName));
+			when(shaclShapeService.retrieveShaclShape(collectionName)).thenThrow(MissingResourceException.class);
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 					.accept(contentTypeTurtle))

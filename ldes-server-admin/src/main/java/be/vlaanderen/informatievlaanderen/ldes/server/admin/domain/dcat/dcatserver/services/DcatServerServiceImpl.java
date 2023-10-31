@@ -3,12 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatser
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.DcatAlreadyConfiguredException;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.DcatShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -76,7 +76,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 	public DcatServer createDcatServer(Model dcat) {
 		List<DcatServer> dcatServers = dcatServerRepository.getServerDcat();
 		if (!dcatServers.isEmpty()) {
-			throw new DcatAlreadyConfiguredException(dcatServers.get(0).getId());
+			throw new ExistingResourceException("dcat-catalog", dcatServers.get(0).getId());
 		}
 		final DcatServer dcatServer = new DcatServer(UUID.randomUUID().toString(), dcat);
 		return dcatServerRepository.saveServerDcat(dcatServer);
@@ -85,7 +85,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 	@Override
 	public DcatServer updateDcatServer(String id, Model dcat) {
 		if (dcatServerRepository.getServerDcatById(id).isEmpty()) {
-			throw new MissingDcatServerException(id);
+			throw new MissingResourceException("dcat-catalog", id);
 		}
 		final DcatServer dcatServer = new DcatServer(id, dcat);
 		return dcatServerRepository.saveServerDcat(dcatServer);

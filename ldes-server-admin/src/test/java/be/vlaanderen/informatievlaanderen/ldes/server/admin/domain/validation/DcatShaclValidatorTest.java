@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -43,6 +43,6 @@ class DcatShaclValidatorTest {
 		Model dcat = RDFParser.source("dcat/invalid-to-provided-shape.ttl").lang(Lang.TURTLE).toModel();
 
 		assertThatThrownBy(() -> dcatShaclValidator.validate(dcat))
-				.isInstanceOf(LdesShaclValidationException.class);
+				.isInstanceOf(ShaclValidationException.class);
 	}
 }
