@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrate
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 	}
 
 	@GetMapping("/")
-	public Model getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language, HttpServletResponse response) {
+	public Model getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language, HttpServletResponse response) {
 		setContentTypeHeader(language, response);
 		return eventStreamService.getComposedDcat();
 	}
@@ -37,7 +38,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}")
 	public ResponseEntity<EventStreamResponse> retrieveLdesFragment(
-			@RequestHeader(HttpHeaders.ACCEPT) String language,
+			@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
 			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
 
