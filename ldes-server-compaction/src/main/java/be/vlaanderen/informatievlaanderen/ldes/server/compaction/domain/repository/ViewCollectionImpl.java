@@ -5,11 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class ViewCollectionImpl implements ViewCollection {
-	private final HashMap<ViewName, ViewCapacity> viewCapacities = new HashMap<>();
+	private final Map<ViewName, ViewCapacity> viewCapacities = new ConcurrentHashMap<>();
 
 	@Override
 	public void saveViewCapacity(ViewCapacity viewCapacity) {
