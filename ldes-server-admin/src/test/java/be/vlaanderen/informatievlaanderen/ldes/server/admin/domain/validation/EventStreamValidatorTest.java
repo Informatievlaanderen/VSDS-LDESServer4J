@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class EventStreamValidatorTest {
 
-	private final EventStreamValidator validator = new EventStreamValidator();
+	private final ModelValidator validator = new ShaclValidator("validator-shapes/eventstreamShaclShape.ttl");
 
 	@Test
 	void test_support() {

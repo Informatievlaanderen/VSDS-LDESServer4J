@@ -12,7 +12,7 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.*;
 
 class ShaclShapeValidatorTest {
-	private final ShaclShapeValidator validator = new ShaclShapeValidator();
+	private final ModelValidator validator = new ShaclValidator("validator-shapes/shapeShaclShape.ttl");
 
 	@Test
 	void test_classSupport() {

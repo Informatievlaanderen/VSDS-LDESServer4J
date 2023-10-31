@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ViewValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ValidatorsConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ListViewHttpConverter;
@@ -18,11 +19,11 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -48,23 +49,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminViewsRestController.class, PrefixAdderImpl.class,
 		HttpModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class,
-		ViewSpecificationConverter.class,
+		ViewSpecificationConverter.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
 		FragmentationConfigExtractor.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;
-	@MockBean
-	private ViewValidator validator;
+	@SpyBean(name = "viewShaclValidator")
+	private ModelValidator validator;
 	@Autowired
 	private ViewSpecificationConverter converter;
 	@Autowired
 	private MockMvc mockMvc;
 
-	@BeforeEach
-	void setUp() {
-		when(validator.supports(any())).thenReturn(true);
-	}
+//	@BeforeEach
+//	void setUp() {
+//		when(validator.supports(any())).thenReturn(true);
+//	}
 
 	@Test
 	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {

@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.DcatShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import org.apache.jena.rdf.model.Model;
@@ -28,14 +29,13 @@ public class DcatServerServiceImpl implements DcatServerService {
 	private final DcatViewService dcatViewService;
 	private final DcatDatasetService dcatDatasetService;
 	private final String hostName;
-
-	private final DcatShaclValidator dcatShaclValidator;
+	private final ModelValidator dcatShaclValidator;
 
 	public DcatServerServiceImpl(DcatServerRepository dcatServerRepository,
-			DcatViewService dcatViewService,
-			DcatDatasetService dcatDatasetService,
-			@Value(HOST_NAME_KEY) String hostName,
-			DcatShaclValidator dcatShaclValidator) {
+								 DcatViewService dcatViewService,
+								 DcatDatasetService dcatDatasetService,
+								 @Value(HOST_NAME_KEY) String hostName,
+								 DcatShaclValidator dcatShaclValidator) {
 		this.dcatServerRepository = dcatServerRepository;
 		this.dcatViewService = dcatViewService;
 		this.dcatDatasetService = dcatDatasetService;
