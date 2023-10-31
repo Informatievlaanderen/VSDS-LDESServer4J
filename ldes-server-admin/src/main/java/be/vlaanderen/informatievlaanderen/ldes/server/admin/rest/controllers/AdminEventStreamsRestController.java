@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.EventStreamValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -24,10 +25,11 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 
 	private final EventStreamService eventStreamService;
 	private final EventStreamResponseConverter eventStreamResponseConverter;
-	private final EventStreamValidator eventStreamValidator;
+	private final ModelValidator eventStreamValidator;
 
 	public AdminEventStreamsRestController(EventStreamService eventStreamService,
-			EventStreamValidator eventStreamValidator, EventStreamResponseConverter eventStreamResponseConverter) {
+										   @Qualifier("eventStreamShaclValidator") ModelValidator eventStreamValidator,
+										   EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamService = eventStreamService;
 		this.eventStreamValidator = eventStreamValidator;
 		this.eventStreamResponseConverter = eventStreamResponseConverter;
@@ -46,7 +48,7 @@ public class AdminEventStreamsRestController implements OpenApiEventStreamsContr
 
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Override
-	@PostMapping(consumes = { contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle })
+	@PostMapping(consumes = {contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle})
 	public EventStreamResponse createEventStream(@RequestBody @Validated Model eventStreamModel) {
 		EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
 		return eventStreamService.createEventStream(eventStreamResponse);

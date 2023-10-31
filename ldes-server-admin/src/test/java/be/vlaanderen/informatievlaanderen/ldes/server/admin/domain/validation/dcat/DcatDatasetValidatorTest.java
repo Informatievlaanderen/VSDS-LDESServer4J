@@ -14,11 +14,10 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class DcatDatasetValidatorTest {
 	private DcatDatasetValidator validator;
@@ -30,22 +29,25 @@ class DcatDatasetValidatorTest {
 
 	@Test
 	void test_support() {
-		assertTrue(validator.supports(Model.class));
-		assertFalse(validator.supports(String.class));
+		assertThat(validator.supports(Model.class)).isTrue();
+		assertThat(validator.supports(String.class)).isFalse();
 	}
 
 	@Test
-	void when_ValidModel_Then_Pass() throws URISyntaxException {
+	void when_ValidModel_Then_Pass() {
 		Model dcat = RDFParser.source("dcat-dataset/valid.ttl").lang(Lang.TURTLE).toModel();
-		assertDoesNotThrow(() -> validator.validate(dcat));
+
+		assertThatNoException().isThrownBy(() -> validator.validate(dcat));
 	}
 
 	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidArgumentsProvider.class)
 	void when_InvalidModel_Then_throwException(String expectedMessage, String dcatString) {
 		Model dcat = RDFParser.fromString(dcatString).lang(Lang.TURTLE).toModel();
-		Exception exception = assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat, null));
-		assertEquals(expectedMessage, exception.getMessage());
+
+		assertThatThrownBy(() -> validator.validate(dcat))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage(expectedMessage);
 	}
 
 	static class InvalidArgumentsProvider implements ArgumentsProvider {

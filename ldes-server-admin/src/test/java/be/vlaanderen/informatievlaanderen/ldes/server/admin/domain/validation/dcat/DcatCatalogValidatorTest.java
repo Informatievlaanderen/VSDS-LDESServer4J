@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +14,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 class DcatCatalogValidatorTest {
 	private final static String validServerDcat = """
@@ -34,22 +35,28 @@ class DcatCatalogValidatorTest {
 
 	@Test
 	void test_support() {
-		assertTrue(validator.supports(Model.class));
-		assertFalse(validator.supports(String.class));
+		Model model = ModelFactory.createDefaultModel();
+
+		assertThat(validator.supports(model.getClass())).isTrue();
+		assertThat(validator.supports(Model.class)).isTrue();
+
+		assertThat(validator.supports(String.class)).isFalse();
 	}
 
 	@Test
 	void when_Valid_then_ThrowNothing() {
 		final Model model = RDFParser.fromString(validServerDcat).lang(Lang.TURTLE).build().toModel();
-		assertDoesNotThrow(() -> validator.validate(model, null));
+		assertThatNoException().isThrownBy(() -> validator.validate(model));
 	}
 
 	@ParameterizedTest(name = "Expected message: {0}")
 	@ArgumentsSource(InvalidModelProvider.class)
 	void when_Invalid_then_ThrowIllegalArgumentException(String expectedMessage, String turtleDcatString) {
 		Model dcat = RDFParser.fromString(turtleDcatString).lang(Lang.TURTLE).build().toModel();
-		Exception e = assertThrows(IllegalArgumentException.class, () -> validator.validate(dcat));
-		assertEquals(expectedMessage, e.getMessage());
+
+		assertThatThrownBy(() -> validator.validate(dcat))
+				.isInstanceOf(IllegalArgumentException.class)
+				.hasMessage(expectedMessage);
 	}
 
 	static class InvalidModelProvider implements ArgumentsProvider {

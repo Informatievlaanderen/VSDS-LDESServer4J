@@ -129,7 +129,7 @@ class DcatServerServiceImplTest {
 			Model result = service.getComposedDcat();
 
 			assertTrue(result.isEmpty());
-			verify(dcatShaclValidator).validate(any(), any());
+			verify(dcatShaclValidator).validate(any());
 		}
 
 		@Test

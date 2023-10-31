@@ -89,6 +89,7 @@
         <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.14.0</cucumber.version>
+        <assertj-core.version>3.24.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>8.3.1</depencency-check-maven.version>
@@ -110,6 +111,9 @@
 
         <!-- HASHING -->
         <commons-codec.version>1.16.0</commons-codec.version>
+
+        <!-- NULL ANNOTATIONS -->
+        <jetbrains-annotations.version>24.0.1</jetbrains-annotations.version>
     </properties>
 
     <dependencyManagement>
@@ -255,12 +259,24 @@
                 <version>${junit-platform-suite.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj-core.version}</version>
+            </dependency>
 
             <!-- HASHING -->
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
+            </dependency>
+
+            <!-- NULL ANNOTATIONS -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${jetbrains-annotations.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

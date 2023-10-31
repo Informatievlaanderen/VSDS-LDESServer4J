@@ -1,16 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.blanknodevalidators.DcatBlankNodeValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 import java.util.List;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-public abstract class DcatValidator implements Validator {
+public abstract class DcatValidator implements ModelValidator {
 	public static final String DCAT = "http://www.w3.org/ns/dcat#";
 	public static final Property DCAT_DATA_SERVICE = createProperty(DCAT, "DataService");
 	public static final Property DCAT_DATASET = createProperty(DCAT, "Dataset");
@@ -29,17 +30,13 @@ public abstract class DcatValidator implements Validator {
 	}
 
 	@Override
-	public void validate(Object target, Errors errors) {
+	public void validate(@NotNull Object target, @NotNull Errors errors) {
 		final Model dcat = (Model) target;
 		validate(dcat);
 	}
 
 	@Override
-	public boolean supports(Class<?> clazz) {
-		return Model.class.isAssignableFrom(clazz);
-	}
-
-	public void validate(Model dcat) {
+	public void validate(@NotNull Model dcat) {
 		blankNodeValidator.validate(dcat);
 		cannotContainValidators.forEach(validator -> validator.validate(dcat));
 	}
