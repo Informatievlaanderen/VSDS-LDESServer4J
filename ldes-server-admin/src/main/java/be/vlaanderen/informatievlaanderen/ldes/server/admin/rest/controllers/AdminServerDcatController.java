@@ -34,7 +34,7 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 
 	@Override
 	@GetMapping
-	public ResponseEntity<Model> getDcat(@RequestHeader(HttpHeaders.ACCEPT) String language,
+	public ResponseEntity<Model> getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
 			HttpServletResponse response) {
 		setContentTypeHeader(language, response);
 		try {
