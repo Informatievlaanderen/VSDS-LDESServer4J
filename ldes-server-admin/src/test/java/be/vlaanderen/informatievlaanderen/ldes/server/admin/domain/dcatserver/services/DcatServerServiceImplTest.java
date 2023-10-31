@@ -60,9 +60,9 @@ class DcatServerServiceImplTest {
 		when(repository.getServerDcat()).thenReturn(List.of());
 		when(repository.saveServerDcat(any())).thenReturn(SERVER_DCAT);
 
-		final DcatServer createdDcat = assertDoesNotThrow(() -> service.createDcatServer(DCAT));
+		final DcatServer createdDcat = service.createDcatServer(DCAT);
 
-		assertEquals(SERVER_DCAT, createdDcat);
+		assertThat(createdDcat).isEqualTo(SERVER_DCAT);
 		InOrder inOrder = Mockito.inOrder(repository);
 		inOrder.verify(repository).getServerDcat();
 		inOrder.verify(repository).saveServerDcat(any());
@@ -85,9 +85,9 @@ class DcatServerServiceImplTest {
 		when(repository.getServerDcatById(ID)).thenReturn(Optional.of(SERVER_DCAT));
 		when(repository.saveServerDcat(SERVER_DCAT)).thenReturn(SERVER_DCAT);
 
-		DcatServer updatedDcatServer = assertDoesNotThrow(() -> service.updateDcatServer(ID, DCAT));
+		DcatServer updatedDcatServer = service.updateDcatServer(ID, DCAT);
 
-		assertEquals(SERVER_DCAT, updatedDcatServer);
+		assertThat(updatedDcatServer).isEqualTo(SERVER_DCAT);
 		InOrder inOrder = inOrder(repository);
 		inOrder.verify(repository).getServerDcatById(ID);
 		inOrder.verify(repository).saveServerDcat(SERVER_DCAT);
@@ -108,7 +108,7 @@ class DcatServerServiceImplTest {
 
 	@Test
 	void when_DeleteExistingDcat_then_ReturnVoid() {
-		assertDoesNotThrow(() -> service.deleteDcatServer(ID));
+		assertThatNoException().isThrownBy(() -> service.deleteDcatServer(ID));
 		verify(repository).deleteServerDcat(ID);
 		verifyNoMoreInteractions(repository);
 	}
@@ -127,8 +127,8 @@ class DcatServerServiceImplTest {
 
 			Model result = service.getComposedDcat();
 
-			assertTrue(result.isEmpty());
-			verify(dcatShaclValidator).validate(any());
+			assertThat(result).matches(Model::isEmpty);
+			verify(dcatShaclValidator).validate(any(), any());
 		}
 
 		@Test
@@ -141,7 +141,7 @@ class DcatServerServiceImplTest {
 
 			String path = "dcat/dcat-combined-without-views.ttl";
 			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
-			assertTrue(expectedResult.isIsomorphicWith(result));
+			assertThat(result).matches(expectedResult::isIsomorphicWith);
 		}
 
 		@Test
@@ -154,7 +154,7 @@ class DcatServerServiceImplTest {
 
 			String path = "dcat/dcat-combined-all.ttl";
 			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
-			assertTrue(expectedResult.isIsomorphicWith(result));
+			assertThat(result).matches(expectedResult::isIsomorphicWith);
 		}
 
 		private Optional<DcatServer> createServer() {

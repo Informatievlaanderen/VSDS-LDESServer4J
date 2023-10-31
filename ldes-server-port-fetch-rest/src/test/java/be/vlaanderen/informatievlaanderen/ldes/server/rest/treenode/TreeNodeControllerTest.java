@@ -41,6 +41,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -104,13 +105,11 @@ class TreeNodeControllerTest {
 				.andExpect(header().string("Etag", "\"" + expectedEtag + "\""));
 
 		MvcResult result = resultActions.andReturn();
-		Integer maxAge = extractMaxAge(result.getResponse().getHeader("Cache-Control"));
+		Optional<Integer> maxAge = extractMaxAge(result.getResponse().getHeader("Cache-Control"));
 		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
 				.toModel();
 
-		assertThat(maxAge)
-				.isNotNull()
-				.isEqualTo(immutable ? CONFIGURED_MAX_AGE_IMMUTABLE : CONFIGURED_MAX_AGE);
+		assertThat(maxAge).contains(immutable ? CONFIGURED_MAX_AGE_IMMUTABLE : CONFIGURED_MAX_AGE);
 		assertThat(getObjectURI(resultModel, RDF_SYNTAX_TYPE)).isEqualTo(TREE_NODE_RESOURCE);
 		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
 	}
@@ -126,14 +125,9 @@ class TreeNodeControllerTest {
 				.orElse(null);
 	}
 
-	private Integer extractMaxAge(String header) {
+	private Optional<Integer> extractMaxAge(String header) {
 		Matcher matcher = Pattern.compile("(.*,)?(max-age=([0-9]+))(,.*)?").matcher(header);
-
-		if (matcher.matches()) {
-			return Integer.valueOf(matcher.group(3));
-		}
-
-		return null;
+		return matcher.matches() ? Optional.of(Integer.valueOf(matcher.group(3))) : Optional.empty();
 	}
 
 	@Test
@@ -162,9 +156,8 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest))
 				.thenThrow(new MissingResourceException("fragment", "fragmentId"));
 
-		ResultActions resultActions = mockMvc
-				.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME,
-						VIEW_NAME).accept("application/n-quads"))
+		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
+						.accept("application/n-quads"))
 				.andExpect(status().isNotFound())
 				.andExpect(content().string("Resource of type: fragment with id: fragmentId could not be found."));
 	}
@@ -173,8 +166,7 @@ class TreeNodeControllerTest {
 	@DisplayName("Requesting using another collection name returns 404")
 	void when_GETRequestIsPerformedOnOtherCollectionName_ResponseIs404() throws Exception {
 		mockMvc.perform(get("/")
-						.param("generatedAtTime",
-								FRAGMENTATION_VALUE_1)
+						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
 						.accept("application/n-quads"))
 				.andExpect(status().isNotFound());
 	}
