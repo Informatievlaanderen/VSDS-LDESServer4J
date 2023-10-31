@@ -62,11 +62,6 @@ class AdminViewsRestControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-//	@BeforeEach
-//	void setUp() {
-//		when(validator.supports(any())).thenReturn(true);
-//	}
-
 	@Test
 	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
 		String collectionName = "name1";
