@@ -219,7 +219,7 @@ class TreeNodeControllerTest {
 					Arguments.of("*/*", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
 							"eb83737d75dc70fed31daf4846abb18f2787caa566f1e9af10f2520dc22b9e4f"),
 					Arguments.of("", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
-							"c7ea36907e9d946b78513ef4f5e30002a4d3be1b675589727a8516452e74fea8"),
+							"c6536f80ad110d5d365e84ae1398ff90b9afbc0a7d7bec8738bac9204d63f12f"),
 					Arguments.of("text/html", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
 							"eab5179ac011c835cb460a0bdc6a28a52491255197a1073d2b963675961e66f2"));
 		}
