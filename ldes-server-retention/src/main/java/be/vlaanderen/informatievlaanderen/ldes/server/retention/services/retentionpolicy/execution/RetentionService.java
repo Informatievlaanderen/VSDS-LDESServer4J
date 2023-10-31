@@ -24,7 +24,7 @@ public class RetentionService {
 		this.retentionPolicyCollection = retentionPolicyCollection;
 	}
 
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedDelayString = "${ldes-server.retention-interval:10000}")
 	public void executeRetentionPolicies() {
 		retentionPolicyCollection
 				.getRetentionPolicyMap()

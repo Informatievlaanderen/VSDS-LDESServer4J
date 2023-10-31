@@ -28,8 +28,12 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 public class RetentionServiceSteps extends RetentionIntegrationTest {
 
@@ -86,9 +90,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	@When("wait for {int} seconds until the scheduler has executed at least once")
 	public void wait_for_seconds_until_the_scheduler_has_executed_at_least_once(Integer secondsToWait) {
 		await()
-				.timeout(secondsToWait + 1, SECONDS)
-				.pollDelay(secondsToWait, SECONDS)
-				.untilAsserted(() -> assertTrue(true));
+				.atLeast(secondsToWait + 1, SECONDS)
+				.untilAsserted(() -> verify(memberPropertiesRepository, atLeastOnce()).getMemberPropertiesWithViewReference(anyString()));
 	}
 
 	@Then("the following members are deleted")
@@ -101,9 +104,13 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		// use the repository to verify on existence of the members.
 		deletedMembers.forEach(deletedMember -> {
 			if (deletedMember.deleted) {
-				assertTrue(memberPropertiesRepository.retrieve(deletedMember.id).isEmpty());
+				assertThat(memberPropertiesRepository.retrieve(deletedMember.id))
+						.as("Member with id %s should have been deleted", deletedMember.id)
+						.isEmpty();
 			} else {
-				assertTrue(memberPropertiesRepository.retrieve(deletedMember.id).isPresent());
+				assertThat(memberPropertiesRepository.retrieve(deletedMember.id))
+						.as("Member with id %s should be present", deletedMember.id)
+						.isPresent();
 			}
 		});
 	}

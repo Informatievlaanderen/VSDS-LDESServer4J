@@ -34,7 +34,7 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/3 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
-    And wait for 11 seconds until the scheduler has executed at least once
+    And wait for 5 seconds until the scheduler has executed at least once
     Then the following members are deleted
       | id                                       | deleted |
       | http://test-data/mobility-hindrances/1/1 | true    |
@@ -65,7 +65,7 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/3 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
-    And wait for 11 seconds until the scheduler has executed at least once
+    And wait for 5 seconds until the scheduler has executed at least once
     Then the following members are deleted
       | id                                       | deleted |
       | http://test-data/mobility-hindrances/1/1 | false   |
@@ -96,7 +96,7 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/3 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
-    And wait for 11 seconds until the scheduler has executed at least once
+    And wait for 5 seconds until the scheduler has executed at least once
     Then the following members are deleted
       | id                                       | deleted |
       | http://test-data/mobility-hindrances/1/1 | true    |
