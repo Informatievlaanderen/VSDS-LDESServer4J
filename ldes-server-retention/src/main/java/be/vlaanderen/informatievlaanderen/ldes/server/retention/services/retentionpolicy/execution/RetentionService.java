@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.RETENTION_INTERVAL_KEY;
+
 @Service
 public class RetentionService {
 
@@ -24,7 +26,7 @@ public class RetentionService {
 		this.retentionPolicyCollection = retentionPolicyCollection;
 	}
 
-	@Scheduled(fixedDelayString = "${ldes-server.retention-interval:10000}")
+	@Scheduled(fixedDelayString = RETENTION_INTERVAL_KEY)
 	public void executeRetentionPolicies() {
 		retentionPolicyCollection
 				.getRetentionPolicyMap()

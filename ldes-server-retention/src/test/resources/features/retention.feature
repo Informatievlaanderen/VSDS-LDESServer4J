@@ -35,19 +35,11 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
     And wait for 5 seconds until the scheduler has executed at least once
-    Then the following members are deleted
-      | id                                       | deleted |
-      | http://test-data/mobility-hindrances/1/1 | true    |
-      | http://test-data/mobility-hindrances/1/2 | false   |
-      | http://test-data/mobility-hindrances/2/1 | true    |
-      | http://test-data/mobility-hindrances/2/2 | true    |
-      | http://test-data/mobility-hindrances/2/3 | false   |
-      | http://test-data/mobility-hindrances/2/4 | false   |
-      | http://test-data/mobility-hindrances/3/1 | true    |
-      | http://test-data/mobility-hindrances/3/2 | true    |
-      | http://test-data/mobility-hindrances/3/3 | true    |
-      | http://test-data/mobility-hindrances/3/4 | true    |
-      | http://test-data/mobility-hindrances/3/5 | false   |
+    Then the view "mobility-hindrances/time-based" only contains following members
+      | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/2/3 |
+      | http://test-data/mobility-hindrances/2/4 |
+      | http://test-data/mobility-hindrances/3/5 |
 
   Scenario: VERSION-BASED RETENTION
     When a view with the following properties is created
@@ -66,19 +58,13 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
     And wait for 5 seconds until the scheduler has executed at least once
-    Then the following members are deleted
-      | id                                       | deleted |
-      | http://test-data/mobility-hindrances/1/1 | false   |
-      | http://test-data/mobility-hindrances/1/2 | false   |
-      | http://test-data/mobility-hindrances/2/1 | true    |
-      | http://test-data/mobility-hindrances/2/2 | true    |
-      | http://test-data/mobility-hindrances/2/3 | false   |
-      | http://test-data/mobility-hindrances/2/4 | false   |
-      | http://test-data/mobility-hindrances/3/1 | true    |
-      | http://test-data/mobility-hindrances/3/2 | true    |
-      | http://test-data/mobility-hindrances/3/3 | true    |
-      | http://test-data/mobility-hindrances/3/4 | false   |
-      | http://test-data/mobility-hindrances/3/5 | false   |
+    Then the view "mobility-hindrances/version-based" only contains following members
+      | http://test-data/mobility-hindrances/1/1 |
+      | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/2/3 |
+      | http://test-data/mobility-hindrances/2/4 |
+      | http://test-data/mobility-hindrances/3/4 |
+      | http://test-data/mobility-hindrances/3/5 |
 
   Scenario: POINT-IN-TIME RETENTION
     When a view with the following properties is created
@@ -97,16 +83,6 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
     And wait for 5 seconds until the scheduler has executed at least once
-    Then the following members are deleted
-      | id                                       | deleted |
-      | http://test-data/mobility-hindrances/1/1 | true    |
-      | http://test-data/mobility-hindrances/1/2 | true    |
-      | http://test-data/mobility-hindrances/2/1 | true    |
-      | http://test-data/mobility-hindrances/2/2 | true    |
-      | http://test-data/mobility-hindrances/2/3 | true    |
-      | http://test-data/mobility-hindrances/2/4 | false   |
-      | http://test-data/mobility-hindrances/3/1 | true    |
-      | http://test-data/mobility-hindrances/3/2 | true    |
-      | http://test-data/mobility-hindrances/3/3 | true    |
-      | http://test-data/mobility-hindrances/3/4 | true    |
-      | http://test-data/mobility-hindrances/3/5 | false   |
+    Then the view "mobility-hindrances/point-in-time" only contains following members
+      | http://test-data/mobility-hindrances/2/4 |
+      | http://test-data/mobility-hindrances/3/5 |
