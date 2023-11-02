@@ -29,8 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -128,7 +127,7 @@ class DcatServerServiceImplTest {
 			Model result = service.getComposedDcat();
 
 			assertThat(result).matches(Model::isEmpty);
-			verify(dcatShaclValidator).validate(any(), any());
+			verify(dcatShaclValidator).validate(any());
 		}
 
 		@Test

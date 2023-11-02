@@ -13,7 +13,7 @@ import java.util.Objects;
 public class ShaclValidator implements ModelValidator {
 	protected final String shapesFileUri;
 	private boolean initialized;
-	protected Shapes shapes;
+	private Shapes shapes;
 
 	public ShaclValidator(String shapesFileUri) {
 		this.shapesFileUri = shapesFileUri;
