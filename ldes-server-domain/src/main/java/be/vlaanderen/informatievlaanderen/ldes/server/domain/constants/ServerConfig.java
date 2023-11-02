@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "ldes-server")
 public class ServerConfig {
 	private static final String DEFAULT_COMPACTION_DURATION = "P7D";
+	private static final int DEFAULT_RETENTION_INTERVAL = 10000;
 	private String hostName;
 	private String compactionDuration;
 	private Integer retentionInterval;
@@ -20,10 +21,7 @@ public class ServerConfig {
 	}
 
 	public int getRetentionInterval() {
-		if(retentionInterval == null) {
-			retentionInterval = 10000;
-		}
-		return retentionInterval;
+		return retentionInterval != null ? retentionInterval : DEFAULT_RETENTION_INTERVAL;
 	}
 
 	public void setHostName(String hostName) {
@@ -39,6 +37,6 @@ public class ServerConfig {
 	}
 
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
-	public static final String RETENTION_INTERVAL_KEY = "${ldes-server.retention-interval:10000}";
+	public static final String RETENTION_INTERVAL_KEY = "${ldes-server.retention-interval:" + DEFAULT_RETENTION_INTERVAL + "}";
 
 }
