@@ -261,6 +261,18 @@ Currently, there are 3 possible retention policies each with a different type an
     ] .
   ```
 
+##### Retention polling interval
+By default, every 10 seconds, the server checks if there are members that can be deleted that are not conform to the retention policy anymore.
+If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set in milliseconds. 
+
+With the following config, the retention policy will be checked every 20 seconds.
+
+````yaml
+ldes-server:
+  retention-interval: 20000
+
+````
+
 ##### Fragmentation
 
 To configure a view with a certain fragmentation,
