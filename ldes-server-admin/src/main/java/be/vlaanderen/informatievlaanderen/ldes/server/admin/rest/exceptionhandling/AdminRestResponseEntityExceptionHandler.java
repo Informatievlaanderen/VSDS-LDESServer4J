@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.Existing
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.apache.jena.riot.RiotException;
-import org.apache.jena.shared.PropertyNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -34,13 +33,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = {PropertyNotFoundException.class})
-	protected ResponseEntity<Object> handlePropertyNotFoundException(
-			RuntimeException ex, WebRequest request) {
-		String message = "Could not find property of type: " + ex.getMessage();
-		return handleExceptionWithCustomMessage(ex, message, HttpStatus.BAD_REQUEST, request);
-	}
-
 	@ExceptionHandler(value = {Exception.class})
 	protected ResponseEntity<Object> fallbackHandleException(
 			RuntimeException ex, WebRequest request) {
@@ -52,13 +44,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		return handleExceptionInternal(ex, bodyOfResponse,
-				new HttpHeaders(), status, request);
-	}
-
-	private ResponseEntity<Object> handleExceptionWithCustomMessage(
-			RuntimeException ex, String body, HttpStatus status, WebRequest request) {
-		log.error(body);
-		return handleExceptionInternal(ex, body,
 				new HttpHeaders(), status, request);
 	}
 }
