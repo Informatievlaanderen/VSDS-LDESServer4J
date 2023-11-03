@@ -261,6 +261,22 @@ Currently, there are 3 possible retention policies each with a different type an
     ] .
   ```
 
+##### Retention polling interval
+By default, every 10 seconds, the server checks if there are members that can be deleted that are not conform to the retention policy anymore.
+If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set via a cron expression. 
+
+> **Note**: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation `@Scheduled` adds a 6th parameter to support seconds.
+>
+> More information about this can be found in the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+
+With the following config, the retention policy will be checked every 20 seconds.
+
+````yaml
+ldes-server:
+  retention-cron: "*/20 * * * * *"
+
+````
+
 ##### Fragmentation
 
 To configure a view with a certain fragmentation,

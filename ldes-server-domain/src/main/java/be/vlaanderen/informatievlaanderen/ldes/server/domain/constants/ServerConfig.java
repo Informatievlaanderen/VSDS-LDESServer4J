@@ -7,8 +7,12 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "ldes-server")
 public class ServerConfig {
 	private static final String DEFAULT_COMPACTION_DURATION = "P7D";
+	private static final String DEFAULT_RETENTION_CRON = "*/10 * * * * *";
+	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
+	public static final String RETENTION_CRON_KEY = "${ldes-server.retention-cron: " + DEFAULT_RETENTION_CRON + "}";
 	private String hostName;
 	private String compactionDuration;
+	private String retentionCron;
 
 	public String getHostName() {
 		return hostName;
@@ -16,6 +20,10 @@ public class ServerConfig {
 
 	public String getCompactionDuration() {
 		return compactionDuration != null ? compactionDuration : DEFAULT_COMPACTION_DURATION;
+	}
+
+	public String getRetentionCron() {
+		return retentionCron != null ? retentionCron : DEFAULT_RETENTION_CRON;
 	}
 
 	public void setHostName(String hostName) {
@@ -26,6 +34,8 @@ public class ServerConfig {
 		this.compactionDuration = compactionDuration;
 	}
 
-	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
+	public void setRetentionCron(String retentionCron) {
+		this.retentionCron = retentionCron;
+	}
 
 }

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.RETENTION_CRON_KEY;
+
 @Service
 public class RetentionService {
 
@@ -24,7 +26,7 @@ public class RetentionService {
 		this.retentionPolicyCollection = retentionPolicyCollection;
 	}
 
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(cron = RETENTION_CRON_KEY)
 	public void executeRetentionPolicies() {
 		retentionPolicyCollection
 				.getRetentionPolicyMap()
