@@ -26,6 +26,7 @@ open data.
                 * [Timebased retention](#timebased-retention)
                 * [Example versionbased retention](#example-versionbased-retention)
                 * [Example point in time retention](#example-point-in-time-retention)
+                * [Retention polling interval](#retention-polling-interval)
                 * [Fragmentation](#fragmentation)
                 * [Example Timebased Fragmentation](#example-timebased-fragmentation)
                 * [Example Geospatial Fragmentation](#example-geospatial-fragmentation)
