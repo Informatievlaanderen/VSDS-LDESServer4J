@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrate
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

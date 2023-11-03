@@ -10,11 +10,11 @@ class ServerConfigTest {
 		ServerConfig serverConfig = new ServerConfig();
 		serverConfig.setHostName("LOCALHOST");
 		serverConfig.setCompactionDuration("PT1M");
-		serverConfig.setRetentionInterval(20000);
+		serverConfig.setRetentionCron("*/20 * * * * *");
 
 		assertThat(serverConfig.getHostName()).isEqualTo("LOCALHOST");
 		assertThat(serverConfig.getCompactionDuration()).isEqualTo("PT1M");
-		assertThat(serverConfig.getRetentionInterval()).isEqualTo(20000);
+		assertThat(serverConfig.getRetentionCron()).isEqualTo("*/20 * * * * *");
 	}
 
 	@Test
@@ -23,7 +23,7 @@ class ServerConfigTest {
 
 		assertThat(serverConfig.getHostName()).isNull();
 		assertThat(serverConfig.getCompactionDuration()).isEqualTo("P7D");
-		assertThat(serverConfig.getRetentionInterval()).isEqualTo(10000);
+		assertThat(serverConfig.getRetentionCron()).isEqualTo("*/10 * * * * *");
 	}
 
 }
