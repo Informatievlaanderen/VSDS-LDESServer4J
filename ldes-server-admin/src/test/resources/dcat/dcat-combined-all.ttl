@@ -9,6 +9,7 @@
   dcat:dataset <http://localhost.dev/buildings>, <http://localhost.dev/parcels> ;
   dcat:service <http://localhost.dev/parcels/by-time/description>, <http://localhost.dev/parcels/by-page/description>, <http://localhost.dev/buildings/by-page/description> ;
   a dcat:Catalog ;
+  dc:identifier "2a896d35-8c72-4723-83b3-add9b1be96aa" ;
   dc:description "All LDES'es from publiser X"@en ;
   dc:publisher <http://sample.org/company/PublisherX> ;
   dc:title "My LDES'es"@en .

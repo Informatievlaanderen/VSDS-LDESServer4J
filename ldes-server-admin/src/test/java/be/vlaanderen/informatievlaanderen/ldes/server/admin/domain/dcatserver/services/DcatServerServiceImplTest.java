@@ -29,7 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -158,7 +159,7 @@ class DcatServerServiceImplTest {
 
 		private Optional<DcatServer> createServer() {
 			Model server = RDFParser.source("dcat/server.ttl").lang(Lang.TURTLE).build().toModel();
-			return Optional.of(new DcatServer("id1", server));
+			return Optional.of(new DcatServer(ID, server));
 		}
 
 		private List<DcatView> createViews() {

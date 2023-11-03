@@ -14,6 +14,7 @@
   dcat:dataset <http://localhost.dev/buildings>, <http://localhost.dev/parcels> ;
   a dcat:Catalog ;
   dc:description "All LDES'es from publiser X"@en ;
+  dc:identifier "2a896d35-8c72-4723-83b3-add9b1be96aa" ;
   dc:publisher <http://sample.org/company/PublisherX> ;
   dc:title "My LDES'es"@en .
 
