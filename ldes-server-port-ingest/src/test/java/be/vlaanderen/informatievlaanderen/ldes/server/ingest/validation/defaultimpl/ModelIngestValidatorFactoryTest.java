@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl.modelingestvalidator.ModelIngestValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ModelIngestValidatorFactoryTest {
 
@@ -27,14 +27,14 @@ class ModelIngestValidatorFactoryTest {
 		void shouldReturnEmpty_whenNoShapeProvided() {
 			ModelIngestValidator validator = factory.createValidator(null);
 
-			assertDoesNotThrow(() -> validator.validate(ModelFactory.createDefaultModel()));
+			assertThatNoException().isThrownBy(() -> validator.validate(ModelFactory.createDefaultModel()));
 		}
 
 		@Test
 		void shouldReturnEmpty_whenEmptyShapeProvided() {
 			ModelIngestValidator validator = factory.createValidator(ModelFactory.createDefaultModel());
 
-			assertDoesNotThrow(() -> validator.validate(ModelFactory.createDefaultModel()));
+			assertThatNoException().isThrownBy(() -> validator.validate(ModelFactory.createDefaultModel()));
 		}
 
 		@Test
@@ -44,7 +44,7 @@ class ModelIngestValidatorFactoryTest {
 			ModelIngestValidator validator = factory.createValidator(shape);
 
 			Model invalidModel = RDFParser.source("validation/example-data-invalid.ttl").build().toModel();
-			assertThrows(IngestValidationException.class, () -> validator.validate(invalidModel));
+			assertThatThrownBy(() -> validator.validate(invalidModel)).isInstanceOf(ShaclValidationException.class);
 		}
 	}
 

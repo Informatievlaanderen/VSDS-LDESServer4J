@@ -1,14 +1,12 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
+package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
 import org.apache.jena.rdf.model.Model;
 
-public class LdesShaclValidationException extends RuntimeException {
-
+public class ShaclValidationException extends RuntimeException {
 	private final String validationReport;
 	private final transient Model validationReportModel;
 
-	public LdesShaclValidationException(String validationReport, Model validationReportModel) {
-		super();
+	public ShaclValidationException(String validationReport, Model validationReportModel) {
 		this.validationReportModel = validationReportModel;
 		this.validationReport = validationReport;
 	}

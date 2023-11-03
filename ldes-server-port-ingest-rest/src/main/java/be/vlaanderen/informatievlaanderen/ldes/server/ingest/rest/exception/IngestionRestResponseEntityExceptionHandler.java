@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.IngestValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +11,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class IngestionRestResponseEntityExceptionHandler
-		extends ResponseEntityExceptionHandler {
+public class IngestionRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MalformedMemberIdException.class, IngestValidationException.class })
+	@ExceptionHandler(value = { MalformedMemberIdException.class, ShaclValidationException.class })
 	protected ResponseEntity<Object> handleGeneralException(
 			RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
@@ -22,7 +21,7 @@ public class IngestionRestResponseEntityExceptionHandler
 		return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { MissingEventStreamException.class })
+	@ExceptionHandler(value = { MissingResourceException.class })
 	protected ResponseEntity<Object> handleNotFoundException(RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();

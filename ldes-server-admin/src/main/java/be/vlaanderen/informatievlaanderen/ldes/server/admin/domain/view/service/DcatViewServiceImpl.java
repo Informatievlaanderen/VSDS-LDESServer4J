@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
@@ -42,7 +42,7 @@ public class DcatViewServiceImpl implements DcatViewService {
 	@Override
 	public void update(ViewName viewName, Model dcat) {
 		if (dcatViewRepository.findByViewName(viewName).isEmpty()) {
-			throw new MissingViewDcatException();
+			throw new MissingResourceException("dcat-data-service", viewName.asString());
 		}
 
 		DcatView dcatView = DcatView.from(viewName, dcat);

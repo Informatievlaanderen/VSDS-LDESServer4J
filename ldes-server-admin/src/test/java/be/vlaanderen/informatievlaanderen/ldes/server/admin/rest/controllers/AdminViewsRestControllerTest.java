@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ValidatorsConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ListViewHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.ViewHttpConverter;
@@ -13,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -40,7 +40,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,13 +102,14 @@ class AdminViewsRestControllerTest {
 		String collectionName = "name1";
 		String viewName = "view1";
 		when(viewService.getViewByViewName(new ViewName(collectionName, viewName)))
-				.thenThrow(new MissingViewException(new ViewName(collectionName, viewName)));
+				.thenThrow(new MissingResourceException("view", "%s/%s".formatted(collectionName, viewName)));
 		MvcResult mvcResult = mockMvc
 				.perform(get("/admin/api/v1/eventstreams/" + collectionName + "/views/" + viewName).accept(
 						contentTypeTurtle))
 				.andExpect(status().isNotFound()).andReturn();
 
-		assertEquals("Collection name1 does not have a view: view1", mvcResult.getResponse().getContentAsString());
+		assertThat(mvcResult.getResponse().getContentAsString())
+				.isEqualTo("Resource of type: view with id: %s/%s could not be found.", collectionName, viewName);
 	}
 
 	@Test
