@@ -6,9 +6,9 @@ import org.apache.jena.vocabulary.RDF;
 import java.util.List;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.DC_TERMS_IDENTIFIER;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatView {
@@ -45,6 +45,8 @@ public class DcatView {
 		dcatWithIdentity.add(getDcat());
 		dcatWithIdentity.listStatements(null, RDF.type, DCAT_DATA_SERVICE).nextOptional()
 				.ifPresent(statement -> renameResource(statement.getSubject(), viewDescriptionResource.getURI()));
+
+		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER, createStringLiteral(viewName.getViewNameIri(hostName)));
 
 		dcatWithIdentity.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
 		dcatWithIdentity.add(createServesDatasetStatement(viewDescriptionResource, hostName));

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -167,7 +168,7 @@ class EventStreamResponseConverterImplTest {
 					new DcatDataset("collectionName1", dataSetModel));
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
-			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
+			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
 	}
 

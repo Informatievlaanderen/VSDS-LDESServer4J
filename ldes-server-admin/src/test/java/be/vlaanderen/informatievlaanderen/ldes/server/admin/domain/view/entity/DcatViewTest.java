@@ -49,12 +49,12 @@ class DcatViewTest {
 
 		List<Statement> result = dcatView.getStatementsWithBase(host);
 
-		int nrOfAdditionalDcatStatements = 2; // servesDataset and endpointURL
+		int nrOfAdditionalDcatStatements = 3; // servesDataset and endpointURL + dcterms:identifier
 		assertEquals(anon.listStatements().toList().size() + nrOfAdditionalDcatStatements, result.size());
 		Model resultModel = ModelFactory.createDefaultModel();
 		resultModel.add(result);
 		Resource iri = ResourceFactory.createResource(host + "/" + COLLECTION_NAME + "/" + VIEW + "/description");
-		assertEquals(6, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
+		assertEquals(7, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
 		assertEquals(DCAT_DATA_SERVICE, resultModel.listObjectsOfProperty(iri, RDF.type).next());
 		assertTrue(resultModel.listObjectsOfProperty(createProperty("http://purl.org/dc/terms/license")).hasNext());
 		assertEquals("Geospatial fragmentation for my LDES",

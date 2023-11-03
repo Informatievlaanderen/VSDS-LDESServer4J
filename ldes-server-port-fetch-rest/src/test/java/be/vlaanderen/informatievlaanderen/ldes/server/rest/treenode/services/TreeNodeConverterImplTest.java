@@ -58,7 +58,7 @@ class TreeNodeConverterImplTest {
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		Assertions.assertEquals(20, getNumberOfStatements(model));
+		Assertions.assertEquals(21, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -128,7 +128,7 @@ class TreeNodeConverterImplTest {
 
 	private void verifyDcatStatements(Model model) {
 		Resource shapeResource = createResource("http://localhost:8080/mobility-hindrances/view/description");
-		Assertions.assertEquals(6, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
+		Assertions.assertEquals(7, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
 	}
 
 	private void verifyRelationStatements(Model model, Resource relationObject) {
@@ -201,7 +201,7 @@ class TreeNodeConverterImplTest {
 
 		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-		Assertions.assertEquals(20, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		Assertions.assertEquals(21, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
 		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 	}

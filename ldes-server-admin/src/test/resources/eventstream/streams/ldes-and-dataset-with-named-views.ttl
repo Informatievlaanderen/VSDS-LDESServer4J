@@ -24,6 +24,7 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    tree:view col:view2 ;
    dct:title "My LDES"@en ;
    dct:title "Mijn LDES"@nl ;
+   dct:identifier "http://localhost:8080/collectionName1" ;
    dct:description "LDES for my data collection"@en ;
    dct:description "LDES vir my data-insameling"@af ;
    dct:creator <http://sample.org/company/MyDataOwner> .

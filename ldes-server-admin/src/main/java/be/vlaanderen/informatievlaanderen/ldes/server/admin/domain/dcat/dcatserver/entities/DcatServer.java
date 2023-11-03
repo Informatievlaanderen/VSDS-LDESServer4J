@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.DC_TERMS_IDENTIFIER;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
@@ -17,7 +18,6 @@ public class DcatServer {
 	public static final Property DCAT_CATALOG = createProperty("http://www.w3.org/ns/dcat#Catalog");
 	public static final Property DCAT_SERVICE = createProperty("http://www.w3.org/ns/dcat#service");
 	public static final Property DCAT_DATASET = createProperty("http://www.w3.org/ns/dcat#dataset");
-	public static final Property DC_TERMS_IDENTIFIER = createProperty("http://purl.org/dc/terms/identifier");
 
 	private final String id;
 	private final Model dcat;

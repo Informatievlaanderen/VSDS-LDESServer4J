@@ -7,6 +7,7 @@
 
 <http://localhost.dev/buildings>
   dc:title "My LDES"@en ;
+  dc:identifier "http://localhost.dev/buildings" ;
   dc:description "LDES for my buildings data collection"@en ;
   a dcat:Dataset .
 
@@ -33,5 +34,6 @@
 
 <http://localhost.dev/parcels>
   dc:title "My LDES"@en ;
+  dc:identifier "http://localhost.dev/parcels" ;
   dc:description "LDES for my parcels data collection"@en ;
   a dcat:Dataset .

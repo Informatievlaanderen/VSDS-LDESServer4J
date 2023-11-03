@@ -30,6 +30,7 @@
 <http://localhost.dev/parcels>
   dc:title "My LDES"@en ;
   dc:description "LDES for my parcels data collection"@en ;
+  dc:identifier "http://localhost.dev/parcels" ;
   a dcat:Dataset .
 
 <http://localhost.dev/parcels/by-page/description>
@@ -37,6 +38,7 @@
   dcat:endpointURL <http://localhost.dev/parcels/by-page> ;
   a dcat:DataService ;
   dc:title "My view by page"@en ;
+  dc:identifier "http://localhost.dev/parcels/by-page" ;
   dc:description "By page fragmentation for my LDES"@en .
 
 <http://localhost.dev/parcels/by-time/description>
@@ -44,10 +46,12 @@
   dcat:endpointURL <http://localhost.dev/parcels/by-time> ;
   a dcat:DataService ;
   dc:title "My geo-spatial view"@en ;
+  dc:identifier "http://localhost.dev/parcels/by-time" ;
   dc:description "Geospatial fragmentation for my LDES"@en .
 
 <http://localhost.dev/buildings>
   dc:title "My LDES"@en ;
+  dc:identifier "http://localhost.dev/buildings" ;
   dc:description "LDES for my buildings data collection"@en ;
   a dcat:Dataset .
 
@@ -56,4 +60,5 @@
   dcat:endpointURL <http://localhost.dev/buildings/by-page> ;
   a dcat:DataService ;
   dc:title "My view by page"@en ;
+  dc:identifier "http://localhost.dev/buildings/by-page" ;
   dc:description "By page fragmentation for my LDES"@en .

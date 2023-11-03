@@ -29,6 +29,7 @@ public class RdfConstants {
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
 	public static final String GENERATED_AT_TIME = "generatedAtTime";
 	public static final Property IS_PART_OF_PROPERTY = createProperty("http://purl.org/dc/terms/isPartOf");
+	public static final Property DC_TERMS_IDENTIFIER = createProperty("http://purl.org/dc/terms/identifier");
 	public static final String PROV = "http://www.w3.org/ns/prov#";
 	public static final String PROV_GENERATED_AT_TIME = PROV + GENERATED_AT_TIME;
 

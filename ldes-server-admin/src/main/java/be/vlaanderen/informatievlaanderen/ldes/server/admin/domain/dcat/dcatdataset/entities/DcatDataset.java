@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Statement;
 
 import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverterImpl.DATASET_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.DC_TERMS_IDENTIFIER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
@@ -33,9 +36,11 @@ public class DcatDataset {
 	}
 
 	public Model getModelWithIdentity(String hostname) {
-		model.listStatements(null, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE)).nextOptional()
-				.ifPresent(statement -> renameResource(statement.getSubject(), getDatasetIriString(hostname)));
-		return model;
+		Model modelWithIdentity = ModelFactory.createDefaultModel();
+		modelWithIdentity.add(model);
+		modelWithIdentity.listStatements(null, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE)).nextOptional()
+				.ifPresent(statement -> addIdentityToModel(modelWithIdentity, statement, hostname));
+		return modelWithIdentity;
 	}
 
 	public String getDatasetIriString(String hostName) {
@@ -55,6 +60,12 @@ public class DcatDataset {
 	@Override
 	public int hashCode() {
 		return Objects.hash(collectionName);
+	}
+
+	private void addIdentityToModel(Model modelWithIdentity, Statement statement, String hostname) {
+		String datasetIriString = getDatasetIriString(hostname);
+		renameResource(statement.getSubject(), datasetIriString);
+		modelWithIdentity.add(createResource(datasetIriString), DC_TERMS_IDENTIFIER, datasetIriString);
 	}
 
 }
