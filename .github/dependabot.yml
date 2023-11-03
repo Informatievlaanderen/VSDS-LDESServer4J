@@ -5,3 +5,6 @@ updates:
     target-branch: "develop"
     schedule:
       interval: "daily"
+    ignore:
+      - dependency-name: maven-source-plugin
+        versions: [3.3.0]
