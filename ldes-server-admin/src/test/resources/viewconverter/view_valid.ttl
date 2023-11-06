@@ -33,5 +33,8 @@ viewName:description
             a ldes:DurationAgoPolicy  ;
             tree:value "PT2M"^^xsd:duration ;
         ] ;
+        dcat:endpointDescription <http://localhost:8080/swagger?urls.primaryName=base> ;
         dcat:endpointURL server:viewName ;
-        dcat:servesDataset host:collection ;
+        dcat:servesDataset host:collection .
+
+<http://localhost:8080/swagger?urls.primaryName=base> a <http://www.w3.org/2000/01/rdf-schema#Resource> .

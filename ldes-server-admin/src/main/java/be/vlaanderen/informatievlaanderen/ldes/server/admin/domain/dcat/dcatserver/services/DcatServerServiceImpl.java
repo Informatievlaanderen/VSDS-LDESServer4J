@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.SWAGGER_UI_PATH_KEY;
 
 @Service
 public class DcatServerServiceImpl implements DcatServerService {
@@ -29,17 +30,20 @@ public class DcatServerServiceImpl implements DcatServerService {
 	private final DcatViewService dcatViewService;
 	private final DcatDatasetService dcatDatasetService;
 	private final String hostName;
+	private final String swaggerUiPath;
 	private final ModelValidator dcatShaclValidator;
 
 	public DcatServerServiceImpl(DcatServerRepository dcatServerRepository,
 								 DcatViewService dcatViewService,
 								 DcatDatasetService dcatDatasetService,
 								 @Value(HOST_NAME_KEY) String hostName,
+								 @Value(SWAGGER_UI_PATH_KEY) String swaggerUiPath,
 								 DcatShaclValidator dcatShaclValidator) {
 		this.dcatServerRepository = dcatServerRepository;
 		this.dcatViewService = dcatViewService;
 		this.dcatDatasetService = dcatDatasetService;
 		this.hostName = hostName;
+		this.swaggerUiPath = swaggerUiPath;
 		this.dcatShaclValidator = dcatShaclValidator;
 	}
 
@@ -60,7 +64,7 @@ public class DcatServerServiceImpl implements DcatServerService {
 
 		final List<DcatView> views = dcatViewService.findAll();
 		statements.addAll(
-				views.stream().flatMap(dcatView -> dcatView.getStatementsWithBase(hostName).stream()).toList());
+				views.stream().flatMap(dcatView -> dcatView.getStatementsWithBase(hostName, swaggerUiPath).stream()).toList());
 
 		final List<DcatDataset> datasets = dcatDatasetService.findAll();
 		statements.addAll(

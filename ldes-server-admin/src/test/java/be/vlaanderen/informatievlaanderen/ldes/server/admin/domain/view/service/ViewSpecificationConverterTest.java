@@ -31,7 +31,7 @@ class ViewSpecificationConverterTest {
 
 	@BeforeEach
 	void setup() throws URISyntaxException {
-		viewSpecificationConverter = new ViewSpecificationConverter("http://localhost:8080",
+		viewSpecificationConverter = new ViewSpecificationConverter("http://localhost:8080", "swagger",
 				new RetentionModelExtractor(),
 				new FragmentationConfigExtractor());
 		Model retentionModel = readModelFromFile("viewconverter/retentionpolicies/example_timebased.ttl");

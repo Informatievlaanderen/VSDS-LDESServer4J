@@ -110,7 +110,7 @@ class AdminEventStreamsRestControllerTest {
 	class GetSingleEventStream {
 		@Test
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
-			Model model = readModelFromFile("ldes-1.ttl");
+			Model model = readModelFromFile("ldes-1-with-dcat.ttl");
 			Model shape = readModelFromFile("example-shape.ttl");
 			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
@@ -141,7 +141,7 @@ class AdminEventStreamsRestControllerTest {
 	class CreateEventStream {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
-			final Model expectedModel = readModelFromFile("ldes-1.ttl");
+			final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
 			final Model shape = readModelFromFile("example-shape.ttl");
 
 			EventStreamResponse eventStreamResponse = new EventStreamResponse(

@@ -9,6 +9,7 @@
   dc:title "My LDES"@en ;
   dc:identifier "http://localhost.dev/buildings" ;
   dc:description "LDES for my buildings data collection"@en ;
+  dc:conformsTo <https://w3id.org/tree/specification> , <https://w3id.org/ldes/specification> ;
   a dcat:Dataset .
 
 <http://localhost.dev>
@@ -36,4 +37,11 @@
   dc:title "My LDES"@en ;
   dc:identifier "http://localhost.dev/parcels" ;
   dc:description "LDES for my parcels data collection"@en ;
+  dc:conformsTo <https://w3id.org/tree/specification> , <https://w3id.org/ldes/specification> ;
   a dcat:Dataset .
+
+<https://w3id.org/tree/specification>
+  a <http://purl.org/dc/terms/Standard> .
+
+<https://w3id.org/ldes/specification>
+  a <http://purl.org/dc/terms/Standard> .

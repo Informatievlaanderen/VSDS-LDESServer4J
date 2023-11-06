@@ -28,8 +28,11 @@ public class RdfConstants {
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
 	public static final String GENERATED_AT_TIME = "generatedAtTime";
-	public static final Property IS_PART_OF_PROPERTY = createProperty("http://purl.org/dc/terms/isPartOf");
-	public static final Property DC_TERMS_IDENTIFIER = createProperty("http://purl.org/dc/terms/identifier");
+	public static final String DC_TERMS = "http://purl.org/dc/terms/";
+	public static final Property IS_PART_OF_PROPERTY = createProperty(DC_TERMS, "isPartOf");
+	public static final Property DC_TERMS_IDENTIFIER = createProperty(DC_TERMS, "identifier");
+	public static final Property DC_CONFORMS_TO = createProperty(DC_TERMS, "conformsTo");
+	public static final Property DC_STANDARD = createProperty(DC_TERMS, "Standard");
 	public static final String PROV = "http://www.w3.org/ns/prov#";
 	public static final String PROV_GENERATED_AT_TIME = PROV + GENERATED_AT_TIME;
 

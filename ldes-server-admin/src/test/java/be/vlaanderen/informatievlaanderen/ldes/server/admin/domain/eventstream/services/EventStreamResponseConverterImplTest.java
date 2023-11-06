@@ -27,7 +27,6 @@ import java.util.Objects;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class EventStreamResponseConverterImplTest {
 	private EventStreamResponseConverter eventStreamConverter;
@@ -37,7 +36,8 @@ class EventStreamResponseConverterImplTest {
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		String hostName = "http://localhost:8080";
-		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName,
+		String swaggerUiPath = "swagger";
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName, swaggerUiPath,
 				new RetentionModelExtractor(), new FragmentationConfigExtractor());
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder);
@@ -85,8 +85,10 @@ class EventStreamResponseConverterImplTest {
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					views, shacl);
+
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
-			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
+
+			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
 	}
 
@@ -116,7 +118,7 @@ class EventStreamResponseConverterImplTest {
 					"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder",
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
-			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
+			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
 
 		@Test
@@ -133,7 +135,7 @@ class EventStreamResponseConverterImplTest {
 
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
-			assertTrue(eventStreamModel.isIsomorphicWith(convertedModel));
+			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
 	}
 

@@ -50,7 +50,7 @@ class DcatServerServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		service = new DcatServerServiceImpl(repository, dcatViewService, dcatDatasetService, "http://localhost.dev",
+		service = new DcatServerServiceImpl(repository, dcatViewService, dcatDatasetService, "http://localhost.dev", "swagger",
 				dcatShaclValidator);
 	}
 
