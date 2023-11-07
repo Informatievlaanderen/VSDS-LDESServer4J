@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.DELETION_CRON_KEY;
+
 @Service
 public class FragmentDeletionScheduler {
 	private final FragmentRepository fragmentRepository;
@@ -18,7 +20,7 @@ public class FragmentDeletionScheduler {
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(cron = DELETION_CRON_KEY)
 	public void deleteFragments() {
 		fragmentRepository
 				.getDeletionCandidates()

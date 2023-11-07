@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.COMPACTION_CRON_KEY;
+
 @Service
 public class CompactionScheduler {
 	private final ViewCollection viewCollection;
@@ -25,7 +27,7 @@ public class CompactionScheduler {
 
 	}
 
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(cron = COMPACTION_CRON_KEY)
 	public void compactFragments() {
 		viewCollection.getAllViewCapacities()
 				.parallelStream()

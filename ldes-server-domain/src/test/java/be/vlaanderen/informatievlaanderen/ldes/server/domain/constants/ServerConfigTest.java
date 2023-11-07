@@ -11,10 +11,14 @@ class ServerConfigTest {
 		serverConfig.setHostName("LOCALHOST");
 		serverConfig.setCompactionDuration("PT1M");
 		serverConfig.setRetentionCron("*/20 * * * * *");
+		serverConfig.setDeletionCron("*/30 * * * * *");
+		serverConfig.setCompactionCron("*/45 * * * * *");
 
 		assertThat(serverConfig.getHostName()).isEqualTo("LOCALHOST");
 		assertThat(serverConfig.getCompactionDuration()).isEqualTo("PT1M");
 		assertThat(serverConfig.getRetentionCron()).isEqualTo("*/20 * * * * *");
+		assertThat(serverConfig.getDeletionCron()).isEqualTo("*/30 * * * * *");
+		assertThat(serverConfig.getCompactionCron()).isEqualTo("*/45 * * * * *");
 	}
 
 	@Test
@@ -24,6 +28,8 @@ class ServerConfigTest {
 		assertThat(serverConfig.getHostName()).isNull();
 		assertThat(serverConfig.getCompactionDuration()).isEqualTo("P7D");
 		assertThat(serverConfig.getRetentionCron()).isEqualTo("*/10 * * * * *");
+		assertThat(serverConfig.getDeletionCron()).isEqualTo("*/10 * * * * *");
+		assertThat(serverConfig.getCompactionCron()).isEqualTo("*/10 * * * * *");
 	}
 
 }
