@@ -18,7 +18,7 @@ public class FragmentDeletionScheduler {
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
-	@Scheduled(fixedDelay = 10000)
+//	@Scheduled(fixedDelay = 10000)
 	public void deleteFragments() {
 		fragmentRepository
 				.getDeletionCandidates()

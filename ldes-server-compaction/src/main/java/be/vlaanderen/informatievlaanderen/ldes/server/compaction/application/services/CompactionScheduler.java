@@ -25,7 +25,7 @@ public class CompactionScheduler {
 
 	}
 
-	@Scheduled(fixedDelay = 10000)
+//	@Scheduled(fixedDelay = 10000)
 	public void compactFragments() {
 		viewCollection.getAllViewCapacities()
 				.parallelStream()
