@@ -10,7 +10,7 @@
   dcat:dataset <http://localhost.dev/buildings>, <http://localhost.dev/parcels> ;
   dcat:service <http://localhost.dev/parcels/by-time/description>, <http://localhost.dev/parcels/by-page/description>, <http://localhost.dev/buildings/by-page/description> ;
   a dcat:Catalog ;
-  dc:identifier "2a896d35-8c72-4723-83b3-add9b1be96aa" ;
+  dc:identifier "2a896d35-8c72-4723-83b3-add9b1be96aa"^^rdfs:Literal ;
   dc:description "All LDES'es from publiser X"@en ;
   dc:publisher <http://sample.org/company/PublisherX> ;
   dc:title "My LDES'es"@en .
@@ -31,7 +31,7 @@
 <http://localhost.dev/parcels>
   dc:title "My LDES"@en ;
   dc:description "LDES for my parcels data collection"@en ;
-  dc:identifier "http://localhost.dev/parcels" ;
+  dc:identifier "http://localhost.dev/parcels"^^rdfs:Literal ;
   dc:conformsTo <https://w3id.org/tree/specification>, <https://w3id.org/ldes/specification> ;
   a dcat:Dataset .
 
@@ -41,7 +41,7 @@
   dcat:endpointDescription <http://localhost.dev/swagger?urls.primaryName=base> ;
   a dcat:DataService ;
   dc:title "My view by page"@en ;
-  dc:identifier "http://localhost.dev/parcels/by-page" ;
+  dc:identifier "http://localhost.dev/parcels/by-page"^^rdfs:Literal ;
   dc:description "By page fragmentation for my LDES"@en .
 
 <http://localhost.dev/parcels/by-time/description>
@@ -50,12 +50,12 @@
   dcat:endpointDescription <http://localhost.dev/swagger?urls.primaryName=base> ;
   a dcat:DataService ;
   dc:title "My geo-spatial view"@en ;
-  dc:identifier "http://localhost.dev/parcels/by-time" ;
+  dc:identifier "http://localhost.dev/parcels/by-time"^^rdfs:Literal ;
   dc:description "Geospatial fragmentation for my LDES"@en .
 
 <http://localhost.dev/buildings>
   dc:title "My LDES"@en ;
-  dc:identifier "http://localhost.dev/buildings" ;
+  dc:identifier "http://localhost.dev/buildings"^^rdfs:Literal ;
   dc:description "LDES for my buildings data collection"@en ;
   dc:conformsTo <https://w3id.org/tree/specification>, <https://w3id.org/ldes/specification> ;
   a dcat:Dataset .
@@ -66,7 +66,7 @@
   dcat:endpointURL <http://localhost.dev/buildings/by-page> ;
   a dcat:DataService ;
   dc:title "My view by page"@en ;
-  dc:identifier "http://localhost.dev/buildings/by-page" ;
+  dc:identifier "http://localhost.dev/buildings/by-page"^^rdfs:Literal ;
   dc:description "By page fragmentation for my LDES"@en .
 
 <https://w3id.org/tree/specification> a <http://purl.org/dc/terms/Standard> .

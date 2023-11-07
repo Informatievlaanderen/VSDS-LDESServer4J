@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
 
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
@@ -22,6 +24,7 @@ public class RdfConstants {
 	public static final String TREE_NODE_RESOURCE = TREE + "Node";
 	public static final String LDES = "https://w3id.org/ldes#";
 	public static final String SHACL = "http://www.w3.org/ns/shacl#";
+	public static final String RDF_SCHEMA = "http://www.w3.org/2000/01/rdf-schema#";
 	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOfPath");
 	public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
@@ -31,6 +34,7 @@ public class RdfConstants {
 	public static final String DC_TERMS = "http://purl.org/dc/terms/";
 	public static final Property IS_PART_OF_PROPERTY = createProperty(DC_TERMS, "isPartOf");
 	public static final Property DC_TERMS_IDENTIFIER = createProperty(DC_TERMS, "identifier");
+	public static final String RDF_LITERAL = RDF_SCHEMA + "Literal";
 	public static final Property DC_CONFORMS_TO = createProperty(DC_TERMS, "conformsTo");
 	public static final Property DC_STANDARD = createProperty(DC_TERMS, "Standard");
 	public static final String PROV = "http://www.w3.org/ns/prov#";
