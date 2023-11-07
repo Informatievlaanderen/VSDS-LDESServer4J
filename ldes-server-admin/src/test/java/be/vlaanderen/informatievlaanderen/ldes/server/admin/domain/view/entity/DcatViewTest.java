@@ -55,7 +55,6 @@ class DcatViewTest {
 		final Model resultModel = ModelFactory.createDefaultModel().add(result);
 
 		assertThat(result).hasSize(anon.listStatements().toList().size() + nrOfAdditionalDcatStatements);
-		assertEquals(anon.listStatements().toList().size() + nrOfAdditionalDcatStatements, result.size());
 		assertThat(resultModel.listStatements(iri, null, (RDFNode) null).toList()).hasSize(8);
 		assertThat(resultModel.listObjectsOfProperty(iri, RDF.type).next()).isEqualTo(DCAT_DATA_SERVICE);
 		assertThat(resultModel.listObjectsOfProperty(createProperty("http://purl.org/dc/terms/license"))).hasNext();
