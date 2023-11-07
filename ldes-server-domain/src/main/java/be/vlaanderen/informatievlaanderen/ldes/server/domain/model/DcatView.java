@@ -6,8 +6,7 @@ import org.apache.jena.vocabulary.RDF;
 import java.util.List;
 import java.util.Objects;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.DC_TERMS_IDENTIFIER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.commons.lang3.Validate.notNull;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.util.ResourceUtils.renameResource;
@@ -53,7 +52,8 @@ public class DcatView {
 				.ifPresent(statement -> renameResource(statement.getSubject(), viewDescriptionResource.getURI()));
 
 
-		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER, createStringLiteral(viewName.getViewNameIri(hostName)));
+		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER,
+				dcatWithIdentity.createTypedLiteral(viewName.getViewNameIri(hostName), RDF_LITERAL));
 		dcatWithIdentity.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
 		dcatWithIdentity.add(createEndpointDescriptionStatements(viewDescriptionResource));
 		dcatWithIdentity.add(createServesDatasetStatement(viewDescriptionResource, hostName));

@@ -21,7 +21,7 @@ viewName:description
                   tree:property  "example/property"
                 ]) ;
         dc:description "Geospatial fragmentation for my LDES"@en ;
-        dc:identifier "http://localhost:8080/collection/viewName" ;
+        dc:identifier "http://localhost:8080/collection/viewName"^^rdfs:Literal ;
         dc:title "My geo-spatial view"@en ;
         dc:license
                 [ a  dc:LicenseDocument ;
