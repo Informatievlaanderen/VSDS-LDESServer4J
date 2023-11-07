@@ -9,9 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
-import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.DC_TERMS_IDENTIFIER;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatServer {
@@ -39,10 +38,17 @@ public class DcatServer {
 	public List<Statement> getStatementsWithBase(String hostName, List<DcatView> dcatViews,
 			List<DcatDataset> datasets) {
 		final List<Statement> statements = new ArrayList<>();
+		statements.add(createIdentifierStatement(hostName));
 		statements.addAll(createCatalogStatements(hostName));
 		statements.addAll(createDcatServiceStatements(hostName, dcatViews));
 		statements.addAll(createDcatDataSetStatements(hostName, datasets));
 		return statements;
+	}
+
+	private Statement createIdentifierStatement(String hostName) {
+		Resource subject = getServerResource(hostName);
+		Literal object = createStringLiteral(id);
+		return createStatement(subject, DC_TERMS_IDENTIFIER, object);
 	}
 
 	private List<Statement> createCatalogStatements(String hostName) {

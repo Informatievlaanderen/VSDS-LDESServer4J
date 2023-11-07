@@ -17,6 +17,7 @@
 @prefix view2:           <http://localhost:8080/collectionName1/view2/> .
 
 server:collectionName1 a ldes:EventStream, dcat:Dataset ;
+   dct:conformsTo       <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    tree:shape col:shape ;
@@ -24,6 +25,7 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    tree:view col:view2 ;
    dct:title "My LDES"@en ;
    dct:title "Mijn LDES"@nl ;
+   dct:identifier "http://localhost:8080/collectionName1" ;
    dct:description "LDES for my data collection"@en ;
    dct:description "LDES vir my data-insameling"@af ;
    dct:creator <http://sample.org/company/MyDataOwner> .
@@ -63,3 +65,7 @@ view2:description  a  tree:ViewDescription ;
     a m8g:ContactPoint ;
     m8g:hasEmail "info@data-company.com"
   ] .
+
+<https://w3id.org/tree/specification> a dcterms:Standard .
+
+<https://w3id.org/ldes/specification> a dcterms:Standard .

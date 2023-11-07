@@ -19,6 +19,7 @@ import java.util.*;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.SWAGGER_UI_PATH_KEY;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
@@ -27,14 +28,16 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
 	private final PrefixAdder prefixAdder;
 	private final String hostName;
+	private final String swaggerUiPath;
 
 	private final Map<ViewName, DcatView> dcatViews = new HashMap<>();
 	private final Map<String, EventStream> eventStreams = new HashMap<>();
 	private final Map<String, Model> shaclShapes = new HashMap<>();
 
-	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName) {
+	public TreeNodeConverterImpl(PrefixAdder prefixAdder, @Value(HOST_NAME_KEY) String hostName, @Value(SWAGGER_UI_PATH_KEY) String swaggerUiPath) {
 		this.prefixAdder = prefixAdder;
 		this.hostName = hostName;
+		this.swaggerUiPath = swaggerUiPath;
 	}
 
 	@Override
@@ -92,7 +95,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		ViewName viewName = ViewName.fromString(currentFragmentId.substring(currentFragmentId.indexOf(collection)));
 		DcatView dcatView = dcatViews.get(viewName);
 		if (dcatView != null) {
-			statements.addAll(dcatView.getStatementsWithBase(hostName));
+			statements.addAll(dcatView.getStatementsWithBase(hostName, swaggerUiPath));
 		}
 	}
 

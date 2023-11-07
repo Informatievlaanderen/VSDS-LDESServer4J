@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DcatServerServiceImplTest {
-	private static final String ID = "id";
+	private static final String ID = "2a896d35-8c72-4723-83b3-add9b1be96aa";
 	private static final Model DCAT = ModelFactory.createDefaultModel();
 	private static final DcatServer SERVER_DCAT = new DcatServer(ID, DCAT);
 	private DcatServerService service;
@@ -50,7 +50,7 @@ class DcatServerServiceImplTest {
 
 	@BeforeEach
 	void setUp() {
-		service = new DcatServerServiceImpl(repository, dcatViewService, dcatDatasetService, "http://localhost.dev",
+		service = new DcatServerServiceImpl(repository, dcatViewService, dcatDatasetService, "http://localhost.dev", "swagger",
 				dcatShaclValidator);
 	}
 
@@ -158,7 +158,7 @@ class DcatServerServiceImplTest {
 
 		private Optional<DcatServer> createServer() {
 			Model server = RDFParser.source("dcat/server.ttl").lang(Lang.TURTLE).build().toModel();
-			return Optional.of(new DcatServer("id1", server));
+			return Optional.of(new DcatServer(ID, server));
 		}
 
 		private List<DcatView> createViews() {

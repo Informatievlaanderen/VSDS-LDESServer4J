@@ -51,12 +51,13 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	@Override
 	public Model toModel(EventStreamResponse eventStreamResponse) {
 		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection());
-		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE,
-				createResource(EVENT_STREAM_TYPE));
+		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE, createResource(EVENT_STREAM_TYPE));
+		final Statement dcatTypeStmt = createStatement(subject, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE));
 		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
 
 		Model eventStreamModel = createDefaultModel()
 				.add(collectionNameStmt)
+				.add(dcatTypeStmt)
 				.add(getVersionOfStatements(subject, eventStreamResponse))
 				.add(getTimestampPathStatements(subject, eventStreamResponse))
 				.add(eventStreamResponse.getShacl())

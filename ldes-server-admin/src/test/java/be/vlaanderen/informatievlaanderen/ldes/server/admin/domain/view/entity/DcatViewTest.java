@@ -20,9 +20,9 @@ import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DcatViewTest {
 
@@ -43,30 +43,29 @@ class DcatViewTest {
 
 	@Test
 	void should_ReturnNamedDcatStatements_when_GetStatementsWithBaseIsCalled() {
-		String host = "http://localhost.dev";
-		Model anon = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
-		DcatView dcatView = DcatView.from(VIEW_NAME, anon);
+		final int nrOfAdditionalDcatStatements = 5; // servesDataset and endpointURL + identifier + 2 x endpointDescription
+		final String host = "http://localhost.dev";
+		final String swaggerUiPath = "swagger";
+		final Model anon = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		final Resource iri = ResourceFactory.createResource(host + "/" + COLLECTION_NAME + "/" + VIEW + "/description");
 
-		List<Statement> result = dcatView.getStatementsWithBase(host);
+		final DcatView dcatView = DcatView.from(VIEW_NAME, anon);
 
-		int nrOfAdditionalDcatStatements = 2; // servesDataset and endpointURL
-		assertEquals(anon.listStatements().toList().size() + nrOfAdditionalDcatStatements, result.size());
-		Model resultModel = ModelFactory.createDefaultModel();
-		resultModel.add(result);
-		Resource iri = ResourceFactory.createResource(host + "/" + COLLECTION_NAME + "/" + VIEW + "/description");
-		assertEquals(6, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
-		assertEquals(DCAT_DATA_SERVICE, resultModel.listObjectsOfProperty(iri, RDF.type).next());
-		assertTrue(resultModel.listObjectsOfProperty(createProperty("http://purl.org/dc/terms/license")).hasNext());
-		assertEquals("Geospatial fragmentation for my LDES",
-				resultModel.listObjectsOfProperty(iri, createProperty("http://purl.org/dc/terms/description")).next()
-						.asLiteral().getString());
-		assertEquals("My geo-spatial view",
-				resultModel.listObjectsOfProperty(iri, createProperty("http://purl.org/dc/terms/title")).next()
-						.asLiteral().getString());
-		assertEquals("http://localhost.dev/collectionName/view",
-				resultModel.listObjectsOfProperty(iri, DCAT_ENDPOINT_URL).next().asResource().getURI());
-		assertEquals("http://localhost.dev/collectionName",
-				resultModel.listObjectsOfProperty(iri, DCAT_SERVES_DATASET).next().asResource().getURI());
+		final List<Statement> result = dcatView.getStatementsWithBase(host, swaggerUiPath);
+		final Model resultModel = ModelFactory.createDefaultModel().add(result);
+
+		assertThat(result).hasSize(anon.listStatements().toList().size() + nrOfAdditionalDcatStatements);
+		assertThat(resultModel.listStatements(iri, null, (RDFNode) null).toList()).hasSize(8);
+		assertThat(resultModel.listObjectsOfProperty(iri, RDF.type).next()).isEqualTo(DCAT_DATA_SERVICE);
+		assertThat(resultModel.listObjectsOfProperty(createProperty("http://purl.org/dc/terms/license"))).hasNext();
+		assertThat(resultModel.listObjectsOfProperty(iri, createProperty("http://purl.org/dc/terms/description")).next().asLiteral().getString())
+				.isEqualTo("Geospatial fragmentation for my LDES");
+		assertThat(resultModel.listObjectsOfProperty(iri, createProperty("http://purl.org/dc/terms/title")).next()
+				.asLiteral().getString()).isEqualTo("My geo-spatial view");
+		assertThat(resultModel.listObjectsOfProperty(iri, DCAT_ENDPOINT_URL).next().asResource().getURI())
+				.isEqualTo("http://localhost.dev/collectionName/view");
+		assertThat(resultModel.listObjectsOfProperty(iri, DCAT_SERVES_DATASET).next().asResource().getURI())
+				.isEqualTo("http://localhost.dev/collectionName");
 	}
 
 	@ParameterizedTest
@@ -82,6 +81,7 @@ class DcatViewTest {
 	static class EqualityTestProvider implements ArgumentsProvider {
 
 		private static final Model modelB = ModelFactory.createDefaultModel();
+
 		static {
 			modelB.add(ResourceFactory.createResource("http://example.org"), RDF.type, "type");
 		}
