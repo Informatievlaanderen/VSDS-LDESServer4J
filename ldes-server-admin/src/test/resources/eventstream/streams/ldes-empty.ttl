@@ -7,10 +7,11 @@
 @prefix server: <http://localhost:8080/> .
 @prefix col: <http://localhost:8080/collectionName1/> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    dcterms:conformsTo       <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
-   dcterms:identifier "http://localhost:8080/collectionName1" ;
+   dcterms:identifier "http://localhost:8080/collectionName1"^^rdfs:Literal ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    tree:shape col:shape .

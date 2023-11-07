@@ -41,7 +41,8 @@ public class DcatDataset {
 		modelWithIdentity.add(model);
 		modelWithIdentity.listStatements(null, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE)).nextOptional()
 				.ifPresent(statement -> renameResource(statement.getSubject(), datasetIriString));
-		modelWithIdentity.add(createResource(datasetIriString), DC_TERMS_IDENTIFIER, datasetIriString);
+		modelWithIdentity.add(createResource(datasetIriString), DC_TERMS_IDENTIFIER,
+				modelWithIdentity.createTypedLiteral(datasetIriString, RDF_LITERAL));
 		modelWithIdentity.add(createConformsToStatements(createResource(datasetIriString)));
 		return modelWithIdentity;
 	}

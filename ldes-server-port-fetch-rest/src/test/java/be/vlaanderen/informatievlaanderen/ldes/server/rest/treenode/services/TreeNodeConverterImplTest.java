@@ -28,7 +28,6 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 class TreeNodeConverterImplTest {
 
 	private static final String HOST_NAME = "http://localhost:8080";
-	private static final String SWAGGER_UI_PATH = "swagger";
 	private static final String COLLECTION_NAME = "mobility-hindrances";
 	private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
 	private static final String VIEW_NAME = "view";
@@ -43,7 +42,7 @@ class TreeNodeConverterImplTest {
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf", "memberType");
 
-		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, SWAGGER_UI_PATH);
+		treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
 		treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
 		treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
 	}
@@ -59,7 +58,7 @@ class TreeNodeConverterImplTest {
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		Assertions.assertEquals(23, getNumberOfStatements(model));
+		Assertions.assertEquals(24, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -202,7 +201,7 @@ class TreeNodeConverterImplTest {
 
 		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-		Assertions.assertEquals(23, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		Assertions.assertEquals(24, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
 		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 	}
