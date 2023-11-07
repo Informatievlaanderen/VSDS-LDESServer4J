@@ -73,4 +73,8 @@
 
 <https://w3id.org/ldes/specification> a <http://purl.org/dc/terms/Standard> .
 
-<http://localhost.dev/swagger?urls.primaryName=base> a <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://localhost.dev/swagger?urls.primaryName=base> a rdfs:Resource .
+
+<http://localhost.dev/parcels/by-page> a rdfs:Resource .
+<http://localhost.dev/parcels/by-time> a rdfs:Resource .
+<http://localhost.dev/buildings/by-page> a rdfs:Resource .

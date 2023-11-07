@@ -7,8 +7,9 @@
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-server:viewName a tree:Node ;
+server:viewName a tree:Node, rdfs:Resource ;
   tree:viewDescription viewName:description .
 
 viewName:description
@@ -37,4 +38,4 @@ viewName:description
         dcat:endpointURL server:viewName ;
         dcat:servesDataset host:collection .
 
-<http://localhost:8080/swagger?urls.primaryName=base> a <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<http://localhost:8080/swagger?urls.primaryName=base> a rdfs:Resource .

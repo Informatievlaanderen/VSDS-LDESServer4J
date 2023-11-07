@@ -43,9 +43,9 @@ class DcatViewTest {
 
 	@Test
 	void should_ReturnNamedDcatStatements_when_GetStatementsWithBaseIsCalled() {
-		final int nrOfAdditionalDcatStatements = 5; // servesDataset and endpointURL + identifier + 2 x endpointDescription
+		final int nrOfAdditionalDcatStatements = 6; // servesDataset, 2 x endpointURL + identifier + 2 x endpointDescription
 		final String host = "http://localhost.dev";
-		final String swaggerUiPath = "swagger";
+		final String swaggerUiPath = "/swagger";
 		final Model anon = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		final Resource iri = ResourceFactory.createResource(host + "/" + COLLECTION_NAME + "/" + VIEW + "/description");
 
