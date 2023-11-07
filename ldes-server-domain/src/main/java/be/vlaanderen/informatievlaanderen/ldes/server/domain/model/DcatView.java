@@ -21,6 +21,7 @@ public class DcatView {
 	public static final Property DCAT_SERVES_DATASET = createProperty("http://www.w3.org/ns/dcat#servesDataset");
 	public static final String RDF_SCHEMA = "http://www.w3.org/2000/01/rdf-schema#";
 	public static final Property RDFS_RESOURCE = createProperty(RDF_SCHEMA, "Resource");
+	private static final Property ENDPOINT_DESCRIPTION_OBJECT = createProperty("https://semiceu.github.io/LinkedDataEventStreams/");
 
 
 	private final ViewName viewName;
@@ -43,7 +44,7 @@ public class DcatView {
 		return dcat;
 	}
 
-	public List<Statement> getStatementsWithBase(String hostName, String swaggerUiPath) {
+	public List<Statement> getStatementsWithBase(String hostName) {
 		Resource viewDescriptionResource = getViewDescriptionResource(hostName);
 
 		final Model dcatWithIdentity = ModelFactory.createDefaultModel();
@@ -54,7 +55,7 @@ public class DcatView {
 
 		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER, createStringLiteral(viewName.getViewNameIri(hostName)));
 		dcatWithIdentity.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
-		dcatWithIdentity.add(createEndpointDescriptionStatements(viewDescriptionResource, hostName, swaggerUiPath));
+		dcatWithIdentity.add(createEndpointDescriptionStatements(viewDescriptionResource));
 		dcatWithIdentity.add(createServesDatasetStatement(viewDescriptionResource, hostName));
 
 		return dcatWithIdentity.listStatements().toList();
@@ -65,14 +66,13 @@ public class DcatView {
 		return List.of(
 				ResourceFactory.createStatement(dataServiceId, DCAT_ENDPOINT_URL, view),
 				ResourceFactory.createStatement(view, RDF_SYNTAX_TYPE, RDFS_RESOURCE)
-				);
+		);
 	}
 
-	private List<Statement> createEndpointDescriptionStatements(Resource dataServiceId, String hostName, String swaggerUiPath) {
-		String endpointDescription = "%s%s?urls.primaryName=base".formatted(hostName, swaggerUiPath);
+	private List<Statement> createEndpointDescriptionStatements(Resource dataServiceId) {
 		return List.of(
-				createStatement(dataServiceId, DCAT_ENDPOINT_DESCRIPTION, createProperty(endpointDescription)),
-				createStatement(createProperty(endpointDescription), RDF_SYNTAX_TYPE, RDFS_RESOURCE)
+				createStatement(dataServiceId, DCAT_ENDPOINT_DESCRIPTION, ENDPOINT_DESCRIPTION_OBJECT),
+				createStatement(ENDPOINT_DESCRIPTION_OBJECT, RDF_SYNTAX_TYPE, RDFS_RESOURCE)
 		);
 	}
 
