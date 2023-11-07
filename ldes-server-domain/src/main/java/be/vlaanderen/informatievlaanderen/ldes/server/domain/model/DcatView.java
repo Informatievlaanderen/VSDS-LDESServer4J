@@ -52,7 +52,6 @@ public class DcatView {
 				.ifPresent(statement -> renameResource(statement.getSubject(), viewDescriptionResource.getURI()));
 
 
-//		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER, createTypedLiteral(viewName.getViewNameIri(hostName), TypeMapper.getInstance().getTypeByName(RDF_SCHEMA + "Literal")));
 		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER, createStringLiteral(viewName.getViewNameIri(hostName)));
 		dcatWithIdentity.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
 		dcatWithIdentity.add(createEndpointDescriptionStatements(viewDescriptionResource, hostName, swaggerUiPath));
