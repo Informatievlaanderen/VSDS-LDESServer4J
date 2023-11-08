@@ -7,22 +7,24 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import com.github.andrewoma.dexx.collection.internal.redblack.Tree;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.micrometer.observation.Observation;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("java:S3415")
 public class CompactionServiceSteps extends CompactionIntegrationTest {
 
 	@DataTableType
@@ -53,10 +55,10 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 		return new Fragment(
 				LdesFragmentIdentifier.fromFragmentId(row.get("fragmentIdentifier")),
 				Boolean.parseBoolean(row.get("immutable")), Integer.parseInt(row.get("nrOfMembersAdded")),
-				row.get("relation").equals("") ? new ArrayList<>()
+				row.get("relation").isEmpty() ? new ArrayList<>()
 						: Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
-								.collect(Collectors.toList()),
+						.collect(Collectors.toList()),
 				null);
 	}
 
@@ -99,15 +101,16 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 		predecessorFragments.forEach(predecessorFragment -> {
 			verify(fragmentRepository)
 					.saveFragment(new Fragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment)));
-			assertEquals(1,
-					fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))
-							.orElseThrow()
-							.getRelations()
-							.stream()
-							.map(TreeRelation::treeNode)
-							.map(LdesFragmentIdentifier::asString)
-							.filter(identifier -> !identifier.contains("dummy"))
-							.count());
+
+			List<TreeRelation> treeRelations = fragmentRepository
+					.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(predecessorFragment))
+					.orElseThrow()
+					.getRelations();
+			assertThat(treeRelations)
+					.map(TreeRelation::treeNode)
+					.map(LdesFragmentIdentifier::asString)
+					.filteredOn(identifier -> !identifier.contains("dummy"))
+					.hasSize(1);
 		});
 	}
 
@@ -126,7 +129,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 		await()
 				.timeout(secondsToWait + 1, SECONDS)
 				.pollDelay(secondsToWait, SECONDS)
-				.untilAsserted(() -> assertTrue(true));
+				.untilAsserted(() -> assertThat(true).isTrue());
 	}
 
 	public record FragmentAllocations(String fragmentId, List<MemberAllocation> memberAllocations) {
