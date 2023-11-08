@@ -37,7 +37,7 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 						: Arrays.stream(row.get("relation").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
 						.collect(Collectors.toList()),
-				getDeleteTime(row.get("nrOfDaysInFuture")));
+				getDeleteTime(row.get("daysUntilDeletion")));
 	}
 
 	@Given("the following Fragments are present")
@@ -47,12 +47,9 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 		when(fragmentRepository.getDeletionCandidates()).thenReturn(deletionCandidates);
 	}
 
-	private LocalDateTime getDeleteTime(String nrOfDaysInFuture) {
-		if (nrOfDaysInFuture == null) {
-			return null;
-		}
-		int daysInFuture = Integer.parseInt(nrOfDaysInFuture);
-		return LocalDateTime.now().plusDays(daysInFuture);
+	private LocalDateTime getDeleteTime(String daysUntilDeletion) {
+		int daysUntilDeletionInteger = Integer.parseInt(daysUntilDeletion);
+		return LocalDateTime.now().plusDays(daysUntilDeletionInteger);
 	}
 
 	@Then("wait for {int} seconds until fragment deletion has executed at least once")
@@ -68,10 +65,5 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 		fragmentIds.forEach(fragmentId -> verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(
 				argThat(fragment -> fragment.getFragmentIdString().equals(fragmentId))
 		));
-	}
-
-	@And("verify the retrieval of the deletion candidates")
-	public void verifyTheRetrievalOfTheDeletionCandidates() {
-		verify(fragmentRepository).getDeletionCandidates();
 	}
 }

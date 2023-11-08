@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "ldes-server")
 public class ServerConfig {
 	private static final String DEFAULT_COMPACTION_DURATION = "P7D";
-	private static final String DEFAULT_BACKGROUND_CRON = "*/10 * * * * *";
+	private static final String DEFAULT_BACKGROUND_CRON = "0 0 0 * * *";
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
 	public static final String RETENTION_CRON_KEY = "${ldes-server.retention-cron: " + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String DELETION_CRON_KEY = "${ldes-server.deletion-cron:" + DEFAULT_BACKGROUND_CRON + "}";
