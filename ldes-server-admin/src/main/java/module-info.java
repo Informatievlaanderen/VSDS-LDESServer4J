@@ -22,5 +22,6 @@ open module ldes.admin {
     requires org.apache.jena.ext.com.google;
     requires org.slf4j;
     requires io.swagger.v3.oas.annotations;
+    requires org.jetbrains.annotations;
 
 }

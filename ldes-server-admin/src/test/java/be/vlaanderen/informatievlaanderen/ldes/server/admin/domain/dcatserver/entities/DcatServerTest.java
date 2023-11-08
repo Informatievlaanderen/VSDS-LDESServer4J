@@ -93,11 +93,11 @@ class DcatServerTest {
 		List<Statement> result = dcatServer.getStatementsWithBase(host, List.of(dcatView1, dcatView2),
 				List.of(dcatDataset));
 
-		assertEquals(4, result.size()); // 1 from catalog + 2 from views
+		assertEquals(5, result.size()); // 2 from catalog + 2 from views + 1 from dataset/eventstream
 		Model resultModel = ModelFactory.createDefaultModel();
 		resultModel.add(result);
 		Resource iri = ResourceFactory.createResource(host);
-		assertEquals(4, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
+		assertEquals(5, resultModel.listStatements(iri, null, (RDFNode) null).toList().size());
 		assertEquals(DCAT_CATALOG, resultModel.listObjectsOfProperty(iri, RDF.type).next());
 		assertDataserviceStatements(resultModel, iri);
 		assertDatasetStatements(resultModel, iri);

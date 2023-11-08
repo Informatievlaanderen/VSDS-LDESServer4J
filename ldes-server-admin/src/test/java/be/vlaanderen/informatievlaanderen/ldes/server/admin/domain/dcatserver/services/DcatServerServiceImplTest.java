@@ -3,13 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcatserver.s
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.DcatAlreadyConfiguredException;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.exceptions.MissingDcatServerException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.DcatShaclValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
@@ -29,13 +29,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DcatServerServiceImplTest {
-	private static final String ID = "id";
+	private static final String ID = "2a896d35-8c72-4723-83b3-add9b1be96aa";
 	private static final Model DCAT = ModelFactory.createDefaultModel();
 	private static final DcatServer SERVER_DCAT = new DcatServer(ID, DCAT);
 	private DcatServerService service;
@@ -59,9 +59,9 @@ class DcatServerServiceImplTest {
 		when(repository.getServerDcat()).thenReturn(List.of());
 		when(repository.saveServerDcat(any())).thenReturn(SERVER_DCAT);
 
-		final DcatServer createdDcat = assertDoesNotThrow(() -> service.createDcatServer(DCAT));
+		final DcatServer createdDcat = service.createDcatServer(DCAT);
 
-		assertEquals(SERVER_DCAT, createdDcat);
+		assertThat(createdDcat).isEqualTo(SERVER_DCAT);
 		InOrder inOrder = Mockito.inOrder(repository);
 		inOrder.verify(repository).getServerDcat();
 		inOrder.verify(repository).saveServerDcat(any());
@@ -71,12 +71,10 @@ class DcatServerServiceImplTest {
 	@Test
 	void when_ServerAlreadyHasDcatConfigured_then_ThrowException() {
 		when(repository.getServerDcat()).thenReturn(List.of(SERVER_DCAT));
-		final String expectedMessage = "The server can contain only one dcat configuration and there already has been configured one with id "
-				+ ID;
 
-		Exception e = assertThrows(DcatAlreadyConfiguredException.class, () -> service.createDcatServer(DCAT));
-
-		assertEquals(expectedMessage, e.getMessage());
+		assertThatThrownBy(() -> service.createDcatServer(DCAT))
+				.isInstanceOf(ExistingResourceException.class)
+				.hasMessage("Resource of type: dcat-catalog with id: %s already exists.", ID);
 		verify(repository).getServerDcat();
 		verifyNoMoreInteractions(repository);
 	}
@@ -86,9 +84,9 @@ class DcatServerServiceImplTest {
 		when(repository.getServerDcatById(ID)).thenReturn(Optional.of(SERVER_DCAT));
 		when(repository.saveServerDcat(SERVER_DCAT)).thenReturn(SERVER_DCAT);
 
-		DcatServer updatedDcatServer = assertDoesNotThrow(() -> service.updateDcatServer(ID, DCAT));
+		DcatServer updatedDcatServer = service.updateDcatServer(ID, DCAT);
 
-		assertEquals(SERVER_DCAT, updatedDcatServer);
+		assertThat(updatedDcatServer).isEqualTo(SERVER_DCAT);
 		InOrder inOrder = inOrder(repository);
 		inOrder.verify(repository).getServerDcatById(ID);
 		inOrder.verify(repository).saveServerDcat(SERVER_DCAT);
@@ -98,18 +96,18 @@ class DcatServerServiceImplTest {
 	@Test
 	void when_UpdateNonExistingDcat_then_ThrowException() {
 		when(repository.getServerDcatById(ID)).thenReturn(Optional.empty());
-		String expectedMessage = String.format("No dcat is configured on the server with id %s", ID);
 
-		Exception e = assertThrows(MissingDcatServerException.class, () -> service.updateDcatServer(ID, DCAT));
+		assertThatThrownBy(() -> service.updateDcatServer(ID, DCAT))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: dcat-catalog with id: %s could not be found.", ID);
 
-		assertEquals(expectedMessage, e.getMessage());
 		verify(repository).getServerDcatById(ID);
 		verifyNoMoreInteractions(repository);
 	}
 
 	@Test
 	void when_DeleteExistingDcat_then_ReturnVoid() {
-		assertDoesNotThrow(() -> service.deleteDcatServer(ID));
+		assertThatNoException().isThrownBy(() -> service.deleteDcatServer(ID));
 		verify(repository).deleteServerDcat(ID);
 		verifyNoMoreInteractions(repository);
 	}
@@ -128,8 +126,8 @@ class DcatServerServiceImplTest {
 
 			Model result = service.getComposedDcat();
 
-			assertTrue(result.isEmpty());
-			verify(dcatShaclValidator).validate(any(), any());
+			assertThat(result).matches(Model::isEmpty);
+			verify(dcatShaclValidator).validate(any());
 		}
 
 		@Test
@@ -142,7 +140,7 @@ class DcatServerServiceImplTest {
 
 			String path = "dcat/dcat-combined-without-views.ttl";
 			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
-			assertTrue(expectedResult.isIsomorphicWith(result));
+			assertThat(result).matches(expectedResult::isIsomorphicWith);
 		}
 
 		@Test
@@ -155,12 +153,12 @@ class DcatServerServiceImplTest {
 
 			String path = "dcat/dcat-combined-all.ttl";
 			Model expectedResult = RDFParser.source(path).lang(Lang.TURTLE).build().toModel();
-			assertTrue(expectedResult.isIsomorphicWith(result));
+			assertThat(result).matches(expectedResult::isIsomorphicWith);
 		}
 
 		private Optional<DcatServer> createServer() {
 			Model server = RDFParser.source("dcat/server.ttl").lang(Lang.TURTLE).build().toModel();
-			return Optional.of(new DcatServer("id1", server));
+			return Optional.of(new DcatServer(ID, server));
 		}
 
 		private List<DcatView> createViews() {

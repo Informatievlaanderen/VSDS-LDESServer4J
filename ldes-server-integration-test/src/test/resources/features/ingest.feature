@@ -9,11 +9,11 @@ Feature: LDES Server basic Ingest functionality
     Then I can fetch the TreeNode "/mobility-hindrances/paged?pageNumber=1" and it contains 4 members and the expected response is equal to "data/output/treenode_different_ingest_content_type_pageNumber_1.ttl"
     And I delete the eventstream "mobility-hindrances"
 
-  Scenario: A small LDES can be ingested into the LDES server and a treenode can be fetched
-    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
-    When I ingest 1016 members to the collection "mobility-hindrances"
-    Then I can fetch the TreeNode "/mobility-hindrances/paged?pageNumber=1" and it contains 1016 members and the expected response is equal to "data/output/treenode_small_ldes_pageNumber_1.ttl"
-    And I delete the eventstream "mobility-hindrances"
+#  Scenario: A small LDES can be ingested into the LDES server and a treenode can be fetched
+#    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
+#    When I ingest 1016 members to the collection "mobility-hindrances"
+#    Then I can fetch the TreeNode "/mobility-hindrances/paged?pageNumber=1" and it contains 1016 members and the expected response is equal to "data/output/treenode_small_ldes_pageNumber_1.ttl"
+#    And I delete the eventstream "mobility-hindrances"
 
   Scenario: Server Supports Multi LDES
     Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"

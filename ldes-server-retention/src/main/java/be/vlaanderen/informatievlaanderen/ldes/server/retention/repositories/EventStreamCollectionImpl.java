@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ public class EventStreamCollectionImpl implements EventStreamCollection {
 		if (eventStreamMap.containsKey(collectionName)) {
 			return eventStreamMap.get(collectionName);
 		}
-		throw new MissingEventStreamException(collectionName);
+		throw new MissingResourceException("eventstream", collectionName);
 	}
 
 	@EventListener

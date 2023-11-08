@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.Membe
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -26,8 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,13 +45,6 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				row.get("timestampPath"),
 				row.get("versionOfPath"),
 				row.get("memberType"));
-	}
-
-	@DataTableType
-	public DeletedMember DeletedMemberEntryTransformer(Map<String, String> row) {
-		return new DeletedMember(
-				row.get("id"),
-				Boolean.parseBoolean(row.get("deleted")));
 	}
 
 	@DataTableType
@@ -91,23 +87,6 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				.untilAsserted(() -> assertTrue(true));
 	}
 
-	@Then("the following members are deleted")
-	public void the_following_members_are_deleted(List<DeletedMember> deletedMembers) {
-		// Note: it's difficult to capture the MemberUnallocatedEvents and
-		// MemberDeletedEvents, since these are executed in a different thread due to
-		// the Scheduling. The ApplicationEventsApplicationListener from
-		// spring-boot-test is not registered to this thread. Hence, these events do not
-		// pop up in for example ApplicationEvents from spring-boot-test. Therefore, we
-		// use the repository to verify on existence of the members.
-		deletedMembers.forEach(deletedMember -> {
-			if (deletedMember.deleted) {
-				assertTrue(memberPropertiesRepository.retrieve(deletedMember.id).isEmpty());
-			} else {
-				assertTrue(memberPropertiesRepository.retrieve(deletedMember.id).isPresent());
-			}
-		});
-	}
-
 	private Model createModel(String versionOf, String timestamp) throws URISyntaxException, IOException {
 		String modelTemplate = readMemberTemplateFromFile();
 		String updatedModel = modelTemplate.replace("#VERSIONOF", versionOf).replace("#TIMESTAMP", timestamp);
@@ -134,6 +113,17 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				ViewName.fromString(viewName).getCollectionName(), ViewName.fromString(viewName).getViewName(), "")));
 	}
 
-	private record DeletedMember(String id, boolean deleted) {
+	@Then("the view {string} only contains following members")
+	public void theViewOnlyContainsFollowingMembers(String viewName, List<String> memberIds) {
+		// Note: it's difficult to capture the MemberUnallocatedEvents and
+		// MemberDeletedEvents, since these are executed in a different thread due to
+		// the Scheduling. The ApplicationEventsApplicationListener from
+		// spring-boot-test is not registered to this thread. Hence, these events do not
+		// pop up in for example ApplicationEvents from spring-boot-test. Therefore, we
+		// use the repository to verify on existence of the members.
+		Stream<String> members = memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
+				.map(MemberProperties::getId);
+
+		assertThat(members).containsExactlyInAnyOrder(memberIds.toArray(String[]::new));
 	}
 }

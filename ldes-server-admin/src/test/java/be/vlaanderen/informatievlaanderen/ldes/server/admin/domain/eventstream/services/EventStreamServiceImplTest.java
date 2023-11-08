@@ -9,7 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +46,7 @@ class EventStreamServiceImplTest {
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, MEMBER_TYPE, List.of(), ModelFactory.createDefaultModel());
 	private DcatDataset dataset;
-	private EventStreamResponse EVENT_STREAM_RESPONSEWITH_DATASET;
+	private EventStreamResponse EVENT_STREAM_RESPONSE_WITH_DATASET;
 	@Mock
 	private EventStreamRepository eventStreamRepository;
 	@Mock
@@ -72,7 +72,7 @@ class EventStreamServiceImplTest {
 				eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
-		EVENT_STREAM_RESPONSEWITH_DATASET = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
+		EVENT_STREAM_RESPONSE_WITH_DATASET = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 				VERSION_OF_PATH, MEMBER_TYPE, List.of(), ModelFactory.createDefaultModel(), dataset);
 	}
 
@@ -99,9 +99,8 @@ class EventStreamServiceImplTest {
 		when(dcatDatasetService.retrieveDataset(otherCollection)).thenReturn(Optional.of(dataset));
 
 		List<EventStreamResponse> eventStreams = service.retrieveAllEventStreams();
-		List<EventStreamResponse> expectedEventStreams = List.of(EVENT_STREAM_RESPONSE, otherEventStreamResponse);
-		assertEquals(expectedEventStreams, eventStreams);
 
+		assertThat(eventStreams).containsExactlyInAnyOrder(EVENT_STREAM_RESPONSE, otherEventStreamResponse);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveAllEventStreams();
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
@@ -121,8 +120,9 @@ class EventStreamServiceImplTest {
 				new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
 		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
 
-		assertEquals(EVENT_STREAM_RESPONSE, service.retrieveEventStream(COLLECTION));
+		EventStreamResponse eventStreamResponse = service.retrieveEventStream(COLLECTION);
 
+		assertThat(eventStreamResponse).isEqualTo(EVENT_STREAM_RESPONSE);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
@@ -138,8 +138,10 @@ class EventStreamServiceImplTest {
 				new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
 		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.of(dataset));
 
-		assertEquals(EVENT_STREAM_RESPONSEWITH_DATASET, service.retrieveEventStream(COLLECTION));
 
+		EventStreamResponse eventStreamResponse = service.retrieveEventStream(COLLECTION);
+
+		assertThat(eventStreamResponse).isEqualTo(EVENT_STREAM_RESPONSE_WITH_DATASET);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
@@ -151,8 +153,10 @@ class EventStreamServiceImplTest {
 	void when_collectionDoesNotExist_and_retrieveCollection_then_throwException() {
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 
-		Exception e = assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
-		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
+		assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
 	}
@@ -172,7 +176,7 @@ class EventStreamServiceImplTest {
 
 		EventStreamResponse updatedEventStream = service.createEventStream(eventStreamResponse);
 
-		assertEquals(eventStreamResponse, updatedEventStream);
+		assertThat(updatedEventStream).isEqualTo(eventStreamResponse);
 		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
 		inOrder.verify(eventStreamRepository).saveEventStream(eventStream);
 		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
@@ -181,8 +185,11 @@ class EventStreamServiceImplTest {
 	@Test
 	void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
-		Exception e = assertThrows(MissingEventStreamException.class, () -> service.deleteEventStream(COLLECTION));
-		assertEquals("No event stream found for collection " + COLLECTION, e.getMessage());
+
+		assertThatThrownBy(() -> service.deleteEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
+
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoMoreInteractions(eventStreamRepository);
 		verifyNoInteractions(viewService, shaclShapeService, eventPublisher);
@@ -198,8 +205,10 @@ class EventStreamServiceImplTest {
 		InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
 		inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
 		inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
-		assertEquals(new EventStreamDeletedEvent(COLLECTION), deletedEventArgumentCaptor.getValue());
-		assertThrows(MissingEventStreamException.class, () -> service.retrieveEventStream(COLLECTION));
+		assertThat(deletedEventArgumentCaptor.getValue()).isEqualTo(new EventStreamDeletedEvent(COLLECTION));
+		assertThatThrownBy(() -> service.retrieveEventStream(COLLECTION))
+				.isInstanceOf(MissingResourceException.class)
+				.hasMessage("Resource of type: eventstream with id: %s could not be found.", COLLECTION);
 	}
 
 	@Test

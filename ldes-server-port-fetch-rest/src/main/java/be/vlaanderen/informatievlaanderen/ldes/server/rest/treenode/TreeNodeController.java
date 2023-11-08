@@ -38,7 +38,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
 			@PathVariable("view") String view,
 			@RequestParam Map<String, String> requestParameters,
-			@RequestHeader(HttpHeaders.ACCEPT) String language,
+		    @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
 			@PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);

@@ -106,7 +106,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
-		Model expectedModel = readModelFromFile("ldes-1.ttl");
+		Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
@@ -149,7 +149,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("I verify the event stream in the response body")
 	public void iVerifyTheEventStreamInTheResponseBody() throws Exception {
-		final Model expectedModel = readModelFromFile("ldes-1.ttl");
+		final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
 		verify(eventStreamRepository).saveEventStream(any());

@@ -1,11 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.exceptions.MissingShaclShapeException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -71,10 +71,10 @@ class ShaclShapeServiceImplTest {
 		void when_collectionDoesNotExists_then_throwException() {
 			when(shaclShapeRepository.retrieveShaclShape(COLLECTION_NAME_1)).thenReturn(Optional.empty());
 
-			Exception e = assertThrows(MissingShaclShapeException.class,
-					() -> service.retrieveShaclShape(COLLECTION_NAME_1));
+			assertThatThrownBy(() -> service.retrieveShaclShape(COLLECTION_NAME_1))
+					.isInstanceOf(MissingResourceException.class)
+					.hasMessage("Resource of type: shacl-shape with id: %s could not be found.", COLLECTION_NAME_1);
 
-			assertEquals("No shacl shape configured for collection " + COLLECTION_NAME_1, e.getMessage());
 			InOrder inOrder = inOrder(shaclShapeRepository, eventPublisher);
 			inOrder.verify(shaclShapeRepository).retrieveShaclShape(COLLECTION_NAME_1);
 			inOrder.verifyNoMoreInteractions();

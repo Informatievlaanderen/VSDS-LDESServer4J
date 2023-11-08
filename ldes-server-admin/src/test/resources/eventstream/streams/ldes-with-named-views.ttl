@@ -2,6 +2,7 @@
 @prefix ldes:            <https://w3id.org/ldes#> .
 @prefix sh:              <http://www.w3.org/ns/shacl#> .
 @prefix dc:              <http://purl.org/dc/terms/> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
 @prefix col:             <http://localhost:8080/collectionName1/> .
 @prefix mobiliteit:      <https://data.vlaanderen.be/ns/mobiliteit#> .
 @prefix rdf:             <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
@@ -9,6 +10,7 @@
 @prefix view2:           <http://localhost:8080/collectionName1/view2/> .
 @prefix server:          <http://localhost:8080/> .
 @prefix xsd:             <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 col:view2 a tree:Node ;
   tree:viewDescription  view2:description .
@@ -16,7 +18,9 @@ col:view2 a tree:Node ;
 col:view1 a tree:Node ;
   tree:viewDescription  view1:description .
 
-server:collectionName1 a ldes:EventStream ;
+server:collectionName1 a ldes:EventStream, dcat:Dataset ;
+   dc:conformsTo  <https://w3id.org/tree/specification> , <https://w3id.org/ldes/specification> ;
+   dc:identifier "http://localhost:8080/collectionName1"^^rdfs:Literal ;
    ldes:timestampPath dc:created ;
    ldes:versionOfPath dc:isVersionOf ;
    tree:shape col:shape ;
@@ -40,3 +44,6 @@ view2:description  rdf:type  tree:ViewDescription ;
                 ([ a  tree:ExampleFragmentation ;
                   tree:property  "ldes:propertyPath"
                 ]) .
+
+<https://w3id.org/tree/specification> a dc:Standard .
+<https://w3id.org/ldes/specification> a dc:Standard .

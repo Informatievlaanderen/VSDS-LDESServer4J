@@ -4,16 +4,20 @@
 @prefix ns0: <http://data.europa.eu/m8g/> .
 @prefix ns1: <http://www.w3.org/ns/locn#> .
 @prefix ns2: <http://www.w3.org/ns/legal#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <http://localhost.dev/buildings>
   dc:title "My LDES"@en ;
+  dc:identifier "http://localhost.dev/buildings"^^rdfs:Literal ;
   dc:description "LDES for my buildings data collection"@en ;
+  dc:conformsTo <https://w3id.org/tree/specification> , <https://w3id.org/ldes/specification> ;
   a dcat:Dataset .
 
 <http://localhost.dev>
   dcat:dataset <http://localhost.dev/buildings>, <http://localhost.dev/parcels> ;
   a dcat:Catalog ;
   dc:description "All LDES'es from publiser X"@en ;
+  dc:identifier "2a896d35-8c72-4723-83b3-add9b1be96aa"^^rdfs:Literal ;
   dc:publisher <http://sample.org/company/PublisherX> ;
   dc:title "My LDES'es"@en .
 
@@ -32,5 +36,13 @@
 
 <http://localhost.dev/parcels>
   dc:title "My LDES"@en ;
+  dc:identifier "http://localhost.dev/parcels"^^rdfs:Literal ;
   dc:description "LDES for my parcels data collection"@en ;
+  dc:conformsTo <https://w3id.org/tree/specification> , <https://w3id.org/ldes/specification> ;
   a dcat:Dataset .
+
+<https://w3id.org/tree/specification>
+  a <http://purl.org/dc/terms/Standard> .
+
+<https://w3id.org/ldes/specification>
+  a <http://purl.org/dc/terms/Standard> .

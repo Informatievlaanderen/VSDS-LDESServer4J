@@ -4,13 +4,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamRespo
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.LdesShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
@@ -157,7 +157,7 @@ class EventStreamControllerTest {
 					Arguments.of("*/*", Lang.TURTLE,
 							"adb0e3a84b4ef0dd5356de5961f62a58b1f8a1541dffc62dc7c62644aaed7357"),
 					Arguments.of("", Lang.TURTLE,
-							"6e14b6fc44f9de48d1f07dd401c81ac5d0116fd26035627eeb2346dda94f60c2"),
+							"e05c986413efc584c7e9534dae550a242f26fd8164d8fff80d035caaa9f05573"),
 					Arguments.of("text/html", Lang.TURTLE,
 							"251bb000c5883ec25ff35cb340b9fae08b90ed94d4de89c585df4bf421a501f0"));
 		}
@@ -186,7 +186,7 @@ class EventStreamControllerTest {
 
 		@Test
 		void should_ReturnValidationReport_when_Invalid() throws Exception {
-			doThrow(new LdesShaclValidationException("validation-report", null)).when(eventStreamService)
+			doThrow(new ShaclValidationException("validation-report", null)).when(eventStreamService)
 					.getComposedDcat();
 
 			mockMvc.perform(get("/")

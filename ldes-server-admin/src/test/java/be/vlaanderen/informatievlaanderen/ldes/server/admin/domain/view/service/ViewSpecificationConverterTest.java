@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -64,7 +65,7 @@ class ViewSpecificationConverterTest {
 		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
 
-		assertTrue(viewModel.isIsomorphicWith(actualModel));
+		assertThat(viewModel).matches(actualModel::isIsomorphicWith);
 	}
 
 	@Test

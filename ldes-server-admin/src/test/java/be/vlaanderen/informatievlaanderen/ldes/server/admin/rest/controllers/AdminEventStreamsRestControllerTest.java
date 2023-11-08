@@ -1,19 +1,15 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.EventStreamValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ValidatorsConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters.EventStreamListHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingEventStreamException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -50,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, HttpModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
-		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamValidator.class,
+		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
 		FragmentationConfigExtractor.class })
 class AdminEventStreamsRestControllerTest {
@@ -114,7 +110,7 @@ class AdminEventStreamsRestControllerTest {
 	class GetSingleEventStream {
 		@Test
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
-			Model model = readModelFromFile("ldes-1.ttl");
+			Model model = readModelFromFile("ldes-1-with-dcat.ttl");
 			Model shape = readModelFromFile("example-shape.ttl");
 			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
@@ -132,8 +128,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_StreamNotPresent_Then_Returned404() throws Exception {
-			when(eventStreamService.retrieveEventStream(COLLECTION))
-					.thenThrow(new MissingEventStreamException(COLLECTION));
+			when(eventStreamService.retrieveEventStream(COLLECTION)).thenThrow(MissingResourceException.class);
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeTurtle))
 					.andExpect(status().isNotFound());
@@ -146,7 +141,7 @@ class AdminEventStreamsRestControllerTest {
 	class CreateEventStream {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
-			final Model expectedModel = readModelFromFile("ldes-1.ttl");
+			final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
 			final Model shape = readModelFromFile("example-shape.ttl");
 
 			EventStreamResponse eventStreamResponse = new EventStreamResponse(
@@ -201,7 +196,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_deleteNotExistingCollection_then_expectStatus404() throws Exception {
-			doThrow(MissingEventStreamException.class).when(eventStreamService).deleteEventStream(COLLECTION);
+			doThrow(MissingResourceException.class).when(eventStreamService).deleteEventStream(COLLECTION);
 
 			mockMvc.perform(delete("/admin/api/v1/eventstreams/name1"))
 					.andExpect(status().isNotFound());

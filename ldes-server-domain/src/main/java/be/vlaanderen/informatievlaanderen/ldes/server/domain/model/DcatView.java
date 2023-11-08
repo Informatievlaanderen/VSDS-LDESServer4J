@@ -6,9 +6,9 @@ import org.apache.jena.vocabulary.RDF;
 import java.util.List;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.commons.lang3.Validate.notNull;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
 public class DcatView {
@@ -16,7 +16,12 @@ public class DcatView {
 	public static final String VIEW_DESCRIPTION_SUFFIX = "/description";
 	public static final Property DCAT_DATA_SERVICE = createProperty("http://www.w3.org/ns/dcat#DataService");
 	public static final Property DCAT_ENDPOINT_URL = createProperty("http://www.w3.org/ns/dcat#endpointURL");
+	public static final Property DCAT_ENDPOINT_DESCRIPTION = createProperty("http://www.w3.org/ns/dcat#endpointDescription");
 	public static final Property DCAT_SERVES_DATASET = createProperty("http://www.w3.org/ns/dcat#servesDataset");
+	public static final String RDF_SCHEMA = "http://www.w3.org/2000/01/rdf-schema#";
+	public static final Property RDFS_RESOURCE = createProperty(RDF_SCHEMA, "Resource");
+	private static final Property ENDPOINT_DESCRIPTION_OBJECT = createProperty("https://semiceu.github.io/LinkedDataEventStreams/");
+
 
 	private final ViewName viewName;
 	private final Model dcat;
@@ -46,15 +51,29 @@ public class DcatView {
 		dcatWithIdentity.listStatements(null, RDF.type, DCAT_DATA_SERVICE).nextOptional()
 				.ifPresent(statement -> renameResource(statement.getSubject(), viewDescriptionResource.getURI()));
 
+
+		dcatWithIdentity.add(viewDescriptionResource, DC_TERMS_IDENTIFIER,
+				dcatWithIdentity.createTypedLiteral(viewName.getViewNameIri(hostName), RDF_LITERAL));
 		dcatWithIdentity.add(createEndpointUrlStatement(viewDescriptionResource, hostName));
+		dcatWithIdentity.add(createEndpointDescriptionStatements(viewDescriptionResource));
 		dcatWithIdentity.add(createServesDatasetStatement(viewDescriptionResource, hostName));
 
 		return dcatWithIdentity.listStatements().toList();
 	}
 
-	private Statement createEndpointUrlStatement(Resource dataServiceId, String hostName) {
+	private List<Statement> createEndpointUrlStatement(Resource dataServiceId, String hostName) {
 		Resource view = createResource(getViewName().getViewNameIri(hostName));
-		return ResourceFactory.createStatement(dataServiceId, DCAT_ENDPOINT_URL, view);
+		return List.of(
+				ResourceFactory.createStatement(dataServiceId, DCAT_ENDPOINT_URL, view),
+				ResourceFactory.createStatement(view, RDF_SYNTAX_TYPE, RDFS_RESOURCE)
+		);
+	}
+
+	private List<Statement> createEndpointDescriptionStatements(Resource dataServiceId) {
+		return List.of(
+				createStatement(dataServiceId, DCAT_ENDPOINT_DESCRIPTION, ENDPOINT_DESCRIPTION_OBJECT),
+				createStatement(ENDPOINT_DESCRIPTION_OBJECT, RDF_SYNTAX_TYPE, RDFS_RESOURCE)
+		);
 	}
 
 	private Statement createServesDatasetStatement(Resource dataServiceId, String hostName) {

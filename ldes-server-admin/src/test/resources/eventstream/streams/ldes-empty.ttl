@@ -2,12 +2,16 @@
 @prefix ldes: <https://w3id.org/ldes#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dcat:       <http://www.w3.org/ns/dcat#> .
 @prefix custom: <http://example.org/> .
 @prefix server: <http://localhost:8080/> .
 @prefix col: <http://localhost:8080/collectionName1/> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-server:collectionName1 a ldes:EventStream ;
+server:collectionName1 a ldes:EventStream, dcat:Dataset ;
+   dcterms:conformsTo       <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
+   dcterms:identifier "http://localhost:8080/collectionName1"^^rdfs:Literal ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    tree:shape col:shape .
@@ -15,3 +19,7 @@ server:collectionName1 a ldes:EventStream ;
 col:shape a sh:NodeShape ;
    sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
    sh:deactivated true .
+
+<https://w3id.org/tree/specification> a dcterms:Standard .
+
+<https://w3id.org/ldes/specification> a dcterms:Standard .

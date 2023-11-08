@@ -1,10 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.MissingViewDcatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatViewSavedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
@@ -20,7 +20,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,8 +57,7 @@ class DcatViewServiceImplTest {
 
 		Optional<DcatView> result = dcatViewService.findByViewName(VIEW_NAME);
 
-		assertTrue(result.isPresent());
-		assertEquals(dcatView, result.get());
+		assertThat(result).contains(dcatView);
 	}
 
 	@Test
@@ -110,7 +110,9 @@ class DcatViewServiceImplTest {
 		void should_ThrowException_when_EntityDoesNotExist() {
 			when(dcatViewRepository.findByViewName(VIEW_NAME)).thenReturn(Optional.empty());
 
-			assertThrows(MissingViewDcatException.class, () -> dcatViewService.update(VIEW_NAME, MODEL));
+			assertThatThrownBy(() -> dcatViewService.update(VIEW_NAME, MODEL))
+					.isInstanceOf(MissingResourceException.class)
+					.hasMessage("Resource of type: dcat-data-service with id: %s could not be found.", VIEW_NAME.asString());
 		}
 
 	}

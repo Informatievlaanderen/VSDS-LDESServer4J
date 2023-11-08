@@ -31,8 +31,8 @@ public class ViewSpecificationConverter {
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
 
 	public ViewSpecificationConverter(@Value(HOST_NAME_KEY) String hostName,
-			RetentionModelExtractor retentionModelExtractor,
-			FragmentationConfigExtractor fragmentationConfigExtractor) {
+									  RetentionModelExtractor retentionModelExtractor,
+									  FragmentationConfigExtractor fragmentationConfigExtractor) {
 		this.hostname = hostName;
 		this.retentionModelExtractor = retentionModelExtractor;
 		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
@@ -114,7 +114,7 @@ public class ViewSpecificationConverter {
 	}
 
 	private List<Statement> fragmentationStatementsFromList(Resource viewName,
-			List<FragmentationConfig> fragmentationList) {
+															List<FragmentationConfig> fragmentationList) {
 		List<Statement> statements = new ArrayList<>();
 		List<ResourceImpl> fragmentationResources = fragmentationList.stream().map(fragmentation -> {
 			Node blankNode = NodeFactory.createBlankNode();
