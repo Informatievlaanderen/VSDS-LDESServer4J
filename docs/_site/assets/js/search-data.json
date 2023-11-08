@@ -1,0 +1,170 @@
+{"0": {
+    "doc": "How To Run",
+    "title": "How to run",
+    "content": "We advise running the LDES Server as a Docker Image which we provide via Docker Hub: . | Latest Official version: | Latest Alpha version: | . To decide which version to take, visit the Release Management Advice and visit the LDES Server Github Release Page for an overview of all the releases. ",
+    "url": "/how-to-run.html#how-to-run",
+    
+    "relUrl": "/how-to-run.html#how-to-run"
+  },"1": {
+    "doc": "How To Run",
+    "title": "LDES Server Config",
+    "content": "The LDES Server provides a variety of tweaking options to configure it to your ideal use case: . | Type | Property | Description | . | Swagger Config | springdoc.swagger-ui.path | As the LDES Server provides an Swagger API to easily configure your Streams, a url needs to be configured that points to the swagger documentation. | . | Server URL | ldes-server.host-name | This is the url that will be used throughout the fragment names. This should therefor point to a publicly available url. | . | Mongo config |   | As of this moment the LDES Server only supports a MongoDB implementation. The following properties have to be set to provide connectivity between the server and the database | . |   | spring.data.mongodb.host | URL that points to the MongoDB server | . |   | spring.data.mongodb.port | Port on which the MongoDB server runs | . |   | spring.data.mongodb.database | Name for the existing or to be created database on the MongoDB server | . |   | spring.data.mongodb.auto-index-creation | Enablement of the automatic creation of indexes. We highly advise you to keep this on for performance reasons | . Based on the previous config options, we provide a basic config to use. ldes-server.yml: . springdoc: swagger-ui: path: /v1/swagger ldes-server: host-name: \"http://localhost:8080\" spring: data: mongodb: host: ldes-mongodb port: 27017 database: ldes auto-index-creation: true . ",
+    "url": "/how-to-run.html#ldes-server-config",
+    
+    "relUrl": "/how-to-run.html#ldes-server-config"
+  },"2": {
+    "doc": "How To Run",
+    "title": "Docker Compose",
+    "content": "version: \"3.3\" services: ldes-server: container_name: basic_ldes-server image: ldes/ldes-server environment: - SPRING_CONFIG_LOCATION=/config/ volumes: - ./ldes-server.yml:/config/application.yml:ro ports: - 8080:8080 networks: - ldes depends_on: - ldes-mongodb ldes-mongodb: container_name: ldes-mongodb image: mongo ports: - 27017:27017 networks: - ldes networks: ldes: name: quick_start_network . ",
+    "url": "/how-to-run.html#docker-compose",
+    
+    "relUrl": "/how-to-run.html#docker-compose"
+  },"3": {
+    "doc": "How To Run",
+    "title": "How To Run",
+    "content": " ",
+    "url": "/how-to-run.html",
+    
+    "relUrl": "/how-to-run.html"
+  },"4": {
+    "doc": "Home",
+    "title": "Linked Data Event Stream Server",
+    "content": " ",
+    "url": "/#linked-data-event-stream-server",
+    
+    "relUrl": "/#linked-data-event-stream-server"
+  },"5": {
+    "doc": "Home",
+    "title": "Introduction",
+    "content": "The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an LDES. The LDES server was built in the context of the VSDS project in order to easily exchange open data. The server can be configured to meet the organisation’s specific needs. Functionalities include retention policy, fragmentation, deletion, create a snapshot and pagination for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage. ",
+    "url": "/#introduction",
+    
+    "relUrl": "/#introduction"
+  },"6": {
+    "doc": "Home",
+    "title": "Home",
+    "content": " ",
+    "url": "/",
+    
+    "relUrl": "/"
+  },"7": {
+    "doc": "Configuring DCAT for an Event Stream",
+    "title": "Configuring DCAT for an Event Stream",
+    "content": " ",
+    "url": "/configuration/dcat/event-stream",
+    
+    "relUrl": "/configuration/dcat/event-stream"
+  },"8": {
+    "doc": "Configuring Data Catalog Vocabulary (DCAT)",
+    "title": "Configuring Data Catalog Vocabulary (DCAT)",
+    "content": "DCAT is an RDF vocabulary designed to facilitate interoperability between data catalogs published on the Web. This document defines the schema and provides examples for its use. DCAT enables a publisher to describe datasets and data services in a catalog using a standard model and vocabulary that facilitates the consumption and aggregation of metadata from multiple catalogs. This can increase the discoverability of datasets and data services. It also makes it possible to have a decentralized approach to publishing data catalogs and makes federated search for datasets across catalogs in multiple sites possible using the same query mechanism and structure. Aggregated DCAT metadata can serve as a manifest file as part of the digital preservation process. For more info on DCAT, visit the DCAT publication . ",
+    "url": "/configuration/dcat/index",
+    
+    "relUrl": "/configuration/dcat/index"
+  },"9": {
+    "doc": "Configuring DCAT for the LDES Server",
+    "title": "Configuring DCAT for the LDES Server",
+    "content": " ",
+    "url": "/configuration/dcat/server",
+    
+    "relUrl": "/configuration/dcat/server"
+  },"10": {
+    "doc": "Configuring DCAT for a View",
+    "title": "Configuring DCAT for a View",
+    "content": " ",
+    "url": "/configuration/dcat/view",
+    
+    "relUrl": "/configuration/dcat/view"
+  },"11": {
+    "doc": "Configuring a new Event Stream",
+    "title": "Configuring a new Event Stream",
+    "content": " ",
+    "url": "/configuration/event-stream",
+    
+    "relUrl": "/configuration/event-stream"
+  },"12": {
+    "doc": "Configuring a new Event Stream",
+    "title": "Configuring a Shape",
+    "content": " ",
+    "url": "/configuration/event-stream#configuring-a-shape",
+    
+    "relUrl": "/configuration/event-stream#configuring-a-shape"
+  },"13": {
+    "doc": "Configuring a new View",
+    "title": "Configuring a new View",
+    "content": " ",
+    "url": "/configuration/view",
+    
+    "relUrl": "/configuration/view"
+  },"14": {
+    "doc": "Ingest Members With HTTP",
+    "title": "Ingest Members With HTTP",
+    "content": " ",
+    "url": "/ingest/http",
+    
+    "relUrl": "/ingest/http"
+  },"15": {
+    "doc": "Read Linked Data Event Streams With HTTP",
+    "title": "Read Linked Data Event Streams With HTTP",
+    "content": " ",
+    "url": "/fetch/http",
+    
+    "relUrl": "/fetch/http"
+  },"16": {
+    "doc": "Home",
+    "title": "Linked Data Interactions Project",
+    "content": " ",
+    "url": "/fragmentations/index#linked-data-interactions-project",
+    
+    "relUrl": "/fragmentations/index#linked-data-interactions-project"
+  },"17": {
+    "doc": "Home",
+    "title": "Introduction",
+    "content": "The Linked Data Interactions project is an effort to make interactions with Linked Data more fluently by providing easy building blocks. This project was created in function of the VSDS project . ",
+    "url": "/fragmentations/index#introduction",
+    
+    "relUrl": "/fragmentations/index#introduction"
+  },"18": {
+    "doc": "Home",
+    "title": "Supported Frameworks",
+    "content": "Currently, we support 2 frameworks to use these building blocks in: . | Linked Data Interactions Orchestrator: A lightweight application maintained by the LDI team. | Apache Nifi: A powerful system to easily process and distribute data | . Component support over frameworks . As the LDI team is rather small and focused on supporting the VSDS project, we sometimes have to postpone full integration of our building blocks in all supported frameworks. However, since the LDI project is open source, feel free to contribute and/or create issues at our GitHub project . ",
+    "url": "/fragmentations/index#supported-frameworks",
+    
+    "relUrl": "/fragmentations/index#supported-frameworks"
+  },"19": {
+    "doc": "Home",
+    "title": "Home",
+    "content": " ",
+    "url": "/fragmentations/index",
+    
+    "relUrl": "/fragmentations/index"
+  },"20": {
+    "doc": "Home",
+    "title": "Linked Data Interactions Project",
+    "content": " ",
+    "url": "/features/index#linked-data-interactions-project",
+    
+    "relUrl": "/features/index#linked-data-interactions-project"
+  },"21": {
+    "doc": "Home",
+    "title": "Introduction",
+    "content": "The Linked Data Interactions project is an effort to make interactions with Linked Data more fluently by providing easy building blocks. This project was created in function of the VSDS project . ",
+    "url": "/features/index#introduction",
+    
+    "relUrl": "/features/index#introduction"
+  },"22": {
+    "doc": "Home",
+    "title": "Supported Frameworks",
+    "content": "Currently, we support 2 frameworks to use these building blocks in: . | Linked Data Interactions Orchestrator: A lightweight application maintained by the LDI team. | Apache Nifi: A powerful system to easily process and distribute data | . Component support over frameworks . As the LDI team is rather small and focused on supporting the VSDS project, we sometimes have to postpone full integration of our building blocks in all supported frameworks. However, since the LDI project is open source, feel free to contribute and/or create issues at our GitHub project . ",
+    "url": "/features/index#supported-frameworks",
+    
+    "relUrl": "/features/index#supported-frameworks"
+  },"23": {
+    "doc": "Home",
+    "title": "Home",
+    "content": " ",
+    "url": "/features/index",
+    
+    "relUrl": "/features/index"
+  }
+}

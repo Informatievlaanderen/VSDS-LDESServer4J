@@ -1,0 +1,228 @@
+// core
+@import "lib/material-design-lite/variables";
+@import "lib/material-design-lite/mixins";
+@import "lib/@primer/css/support";
+@import "variables";
+@import "root";
+
+@import "lib/@primer/css/base";
+@import "lib/@primer/css/breadcrumb";
+@import "lib/@primer/css/buttons";
+@import "lib/@primer/css/forms";
+@import "lib/@primer/css/loaders";
+@import "lib/@primer/css/markdown";
+@import "lib/rouge/github";
+
+// fonts
+@import "font-face";
+@import "lib/font-awesome/variables";
+@import "lib/font-awesome/icons";
+
+
+
+// theme
+@import "layout";
+@import "rest";
+@import "core/container";
+@import "core/sidebar";
+@import "core/addons";
+@import "core/content";
+@import "core/header";
+@import "core/title";
+@import "core/markdown";
+@import "core/toasts";
+
+// improved
+@import "direction";
+
+// utilities
+@import "lib/@primer/css/utilities";
+
+.container {
+
+    background: #fff;
+}
+
+.pb-1 {
+    color: #666
+}
+
+.addons-wrap .status {
+
+    background-color: #ccd2d8;
+}
+
+.addons-wrap .addons dd a {
+    color: #666
+}
+
+.addons-wrap .status .branch .name {
+    color: #05c
+}
+
+.side-bar {
+    background-color: white;
+    margin-top: 23px;
+}
+
+/*.site-header{
+        background-color: #ffe615;
+        color: #666;
+        text-decoration: none;
+        
+    }
+    */
+
+.sidebar-wrap .sidebar .header,
+.sidebar-wrap .sidebar .toctree {
+    width: 300px;
+}
+
+.nav-list-item {
+    color: #666;
+    text-decoration: none;
+}
+
+.scrollbar {
+    background-color: #F5F5F5;
+    float: left;
+    height: 300px;
+    margin-bottom: 25px;
+    margin-left: 22px;
+    margin-top: 40px;
+    width: 65px;
+    overflow-y: scroll;
+}
+
+.force-overflow {
+    min-height: 450px;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    //-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    //-webkit-border-radius: 10px;
+    //border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    //-webkit-border-radius: 10px;
+    //border-radius: 10px;
+    background: rgba(211, 224, 244, 0.8);
+    -webkit-box-shadow: inset 0 0 6px rgba(225, 223, 223, 0.5);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(245, 241, 241, 0.4);
+}
+
+
+#style-1::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+#style-1::-webkit-scrollbar-thumb {
+    background-color: #000000;
+}
+
+#style-1::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #F5F5F5;
+}
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    background: white !important;
+}
+
+.site-title:not(.active):hover {}
+
+
+/* Add a black background color to the top navigation */
+.topnav {
+    background-color: white;
+    overflow: hidden;
+    border-bottom: 1px solid lightgray;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+    float: left;
+    font-size: 14px;
+    font-weight: 500;
+    display: grid;
+    align-items: center;
+    color: #333332;
+    text-align: center;
+    text-decoration: none;
+    font-size: 17px;
+
+}
+
+
+.space {
+    background-color: white;
+    overflow: hidden;
+}
+
+.space a {
+    float: left;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 17px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {}
+
+/* Add a color to the active/current link */
+.topnav a.active {
+    background-color: white;
+    color: white;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+    display: grid;
+}
+
+.logo_img {
+    height: 60px;
+    width: auto;
+    display: grid;
+}
+
+
+a:link a:visited a:hover a:active {
+    color: #05c;
+}
+
+.side-bar {
+    height: 90%;
+
+}
+
+.main-content {
+    margin-top: 100px;
+}
+
+.main-header {
+    margin-top: 23px;
+    position: fixed;
+    width: 100%;
+    background: white;
+    z-index: 100;
+}
