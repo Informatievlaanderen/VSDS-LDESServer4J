@@ -24,7 +24,7 @@ Feature: Execute CompactionService
       | /mobility-hindrances/by-page?pageNumber=6 | member17                         |
 
   Scenario: Execution Compaction
-    Then wait for 11 seconds until compaction has executed at least once
+    Then wait for 5 seconds until compaction has executed at least once
     And verify creation of the following fragments
       | /mobility-hindrances/by-page?pageNumber=1/2 |
       | /mobility-hindrances/by-page?pageNumber=3/4 |

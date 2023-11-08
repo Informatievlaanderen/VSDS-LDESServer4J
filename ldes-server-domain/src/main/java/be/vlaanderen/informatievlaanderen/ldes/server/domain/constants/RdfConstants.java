@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
