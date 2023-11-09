@@ -199,7 +199,7 @@ class TreeNodeControllerTest {
 		@Bean
 		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
-			return new TreeNodeConverterImpl(prefixAdder, hostName, "swagger");
+			return new TreeNodeConverterImpl(prefixAdder, hostName);
 		}
 
 		@Bean

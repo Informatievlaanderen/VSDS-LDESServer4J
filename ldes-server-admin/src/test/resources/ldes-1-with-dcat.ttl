@@ -6,11 +6,12 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix server: <http://localhost:8080/> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 
 server:name1 a ldes:EventStream, dcat:Dataset ;
     dcterms:conformsTo <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
-    dcterms:identifier "http://localhost:8080/name1" ;
+    dcterms:identifier "http://localhost:8080/name1"^^rdfs:Literal ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
     tree:shape server:shape .

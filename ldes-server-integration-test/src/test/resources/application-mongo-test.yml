@@ -2,4 +2,5 @@ de.flapdoodle.mongodb.embedded.version: 4.0.2
 ldes-server:
   host-name: "http://localhost:8080"
   compaction-duration: "PT1M"
-springdoc.swaggerui.path: swagger
+  retention-cron: "*/10 * * * * *"
+springdoc.swaggerui.path: "/swagger"

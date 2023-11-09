@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.DC_TERMS_IDENTIFIER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_LITERAL;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.apache.jena.util.ResourceUtils.renameResource;
 
@@ -36,7 +37,7 @@ public class DcatServer {
 	}
 
 	public List<Statement> getStatementsWithBase(String hostName, List<DcatView> dcatViews,
-			List<DcatDataset> datasets) {
+	                                             List<DcatDataset> datasets) {
 		final List<Statement> statements = new ArrayList<>();
 		statements.add(createIdentifierStatement(hostName));
 		statements.addAll(createCatalogStatements(hostName));
@@ -47,8 +48,7 @@ public class DcatServer {
 
 	private Statement createIdentifierStatement(String hostName) {
 		Resource subject = getServerResource(hostName);
-		Literal object = createStringLiteral(id);
-		return createStatement(subject, DC_TERMS_IDENTIFIER, object);
+		return createStatement(subject, DC_TERMS_IDENTIFIER, dcat.createTypedLiteral(id, RDF_LITERAL));
 	}
 
 	private List<Statement> createCatalogStatements(String hostName) {

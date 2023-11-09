@@ -263,7 +263,7 @@ Currently, there are 3 possible retention policies each with a different type an
   ```
 
 ##### Retention polling interval
-By default, every 10 seconds, the server checks if there are members that can be deleted that are not conform to the retention policy anymore.
+By default, the server checks daily if there are members that can be deleted that are not conform to the retention policy anymore.
 If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set via a cron expression. 
 
 > **Note**: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation `@Scheduled` adds a 6th parameter to support seconds.
@@ -393,11 +393,35 @@ or on the [swagger endpoint](#example-swagger-configuration) if it is configured
 
 Compaction is a process that allows the server to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the `pageSize` of the view).
 Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be "copied" to the new fragment.
-This process runs entirely in the background. By default, the fragments that have been compacted will remain available for 7 days, `PD7`, but it can be configured differently. After that period they will be deleted.
+By default, the fragments that have been compacted will remain available for 7 days, `PD7`, but it can be configured differently. After that period they will be deleted.
 
+This process runs entirely in the background, which happens daily by default. If desired, for saving resources for example, another frequency can be configured by providing a cron expression.
+
+> **Note**: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation `@Scheduled` adds a 6th parameter to support seconds.
+>
+> More information about this can be found in the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+
+
+The following configuration triggers the compaction process hourly and keeps the compacted fragments for 1 minute
 ```yaml
 ldes-server:
   compaction-duration: "PT1M"
+  compaction-cron: "0 0 * * * *"
+```
+
+##### Example Fragment Deletion
+As mentioned previously, compacted fragments will be deleted when the compaction duration has expired. To check if there are any fragments that are expired, 
+a background process runs, which happen by default daily. If a higher accuracy is desired or resources must be saved, 
+a respectively lower or higher fragment deletion interval can be set via a cron expression. 
+
+> **Note**: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation `@Scheduled` adds a 6th parameter to support seconds.
+>
+> More information about this can be found in the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+
+In the following configuration, the fragment deletion background process will run every hour.
+```yaml
+ldes-server:
+  deletion-cron: "0 0 * * * *"
 ```
 
 ### Docker Setup

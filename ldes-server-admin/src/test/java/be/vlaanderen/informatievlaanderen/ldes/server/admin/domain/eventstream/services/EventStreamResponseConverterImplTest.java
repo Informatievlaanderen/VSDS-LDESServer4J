@@ -36,8 +36,7 @@ class EventStreamResponseConverterImplTest {
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		String hostName = "http://localhost:8080";
-		String swaggerUiPath = "swagger";
-		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName, swaggerUiPath,
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName,
 				new RetentionModelExtractor(), new FragmentationConfigExtractor());
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder);
