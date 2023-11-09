@@ -19,7 +19,6 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.SWAGGER_UI_PATH_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -28,16 +27,13 @@ public class ViewSpecificationConverter {
 
 	public static final int DEFAULT_PAGE_SIZE = 100;
 	private final String hostname;
-	private final String swaggerUiPath;
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
 
 	public ViewSpecificationConverter(@Value(HOST_NAME_KEY) String hostName,
-									  @Value(SWAGGER_UI_PATH_KEY) String swaggerUiPath,
 									  RetentionModelExtractor retentionModelExtractor,
 									  FragmentationConfigExtractor fragmentationConfigExtractor) {
 		this.hostname = hostName;
-		this.swaggerUiPath = swaggerUiPath;
 		this.retentionModelExtractor = retentionModelExtractor;
 		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
 	}
@@ -93,7 +89,7 @@ public class ViewSpecificationConverter {
 	}
 
 	private List<Statement> extractDcatStatements(ViewSpecification view) {
-		return view.getDcat() != null ? view.getDcat().getStatementsWithBase(hostname, swaggerUiPath) : List.of();
+		return view.getDcat() != null ? view.getDcat().getStatementsWithBase(hostname) : List.of();
 	}
 
 	private String getIRIString(ViewName viewName) {

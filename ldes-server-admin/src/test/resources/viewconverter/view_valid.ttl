@@ -7,8 +7,9 @@
 @prefix dcat: <http://www.w3.org/ns/dcat#> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-server:viewName a tree:Node ;
+server:viewName a tree:Node, rdfs:Resource ;
   tree:viewDescription viewName:description .
 
 viewName:description
@@ -20,7 +21,7 @@ viewName:description
                   tree:property  "example/property"
                 ]) ;
         dc:description "Geospatial fragmentation for my LDES"@en ;
-        dc:identifier "http://localhost:8080/collection/viewName" ;
+        dc:identifier "http://localhost:8080/collection/viewName"^^rdfs:Literal ;
         dc:title "My geo-spatial view"@en ;
         dc:license
                 [ a  dc:LicenseDocument ;
@@ -33,8 +34,8 @@ viewName:description
             a ldes:DurationAgoPolicy  ;
             tree:value "PT2M"^^xsd:duration ;
         ] ;
-        dcat:endpointDescription <http://localhost:8080/swagger?urls.primaryName=base> ;
+        dcat:endpointDescription <https://semiceu.github.io/LinkedDataEventStreams/> ;
         dcat:endpointURL server:viewName ;
         dcat:servesDataset host:collection .
 
-<http://localhost:8080/swagger?urls.primaryName=base> a <http://www.w3.org/2000/01/rdf-schema#Resource> .
+<https://semiceu.github.io/LinkedDataEventStreams/> a rdfs:Resource .

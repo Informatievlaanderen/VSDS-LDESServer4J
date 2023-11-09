@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
 import static org.mockito.Mockito.mock;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.mock;
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.compaction" }, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = {
 				"be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.FragmentationConfigCompaction" }))
+@TestPropertySource(properties = "ldes-server.compaction-cron=*/4 * * * * *")
 @SuppressWarnings("java:S2187")
 public class CompactionIntegrationTest {
 

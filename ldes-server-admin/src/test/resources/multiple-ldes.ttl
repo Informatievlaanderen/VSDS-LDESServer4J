@@ -12,6 +12,7 @@
 @prefix view2:      <http://localhost:8080/name1/view2/> .
 @prefix view3:      <http://localhost:8080/name1/view3/> .
 @prefix dcat:       <http://www.w3.org/ns/dcat#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 
 view3:description  rdf:type  tree:ViewDescription ;
         tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
@@ -29,7 +30,7 @@ view1:description  rdf:type  tree:ViewDescription ;
 
 server:name2  rdf:type      ldes:EventStream, dcat:Dataset ;
         terms:conformsTo  <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
-        terms:identifier  "http://localhost:8080/name2" ;
+        terms:identifier  "http://localhost:8080/name2"^^rdfs:Literal ;
         ldes:timestampPath  terms:created ;
         ldes:versionOfPath  terms:isVersionOf ;
         tree:view           name2:view1 ;
@@ -53,7 +54,7 @@ name1:view2 a tree:Node ;
 
 server:name1  rdf:type      ldes:EventStream, dcat:Dataset ;
         terms:conformsTo  <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
-        terms:identifier  "http://localhost:8080/name1" ;
+        terms:identifier  "http://localhost:8080/name1"^^rdfs:Literal ;
         ldes:timestampPath  terms:created ;
         ldes:versionOfPath  terms:isVersionOf ;
         tree:view           name1:view2 , name1:view3 ;
