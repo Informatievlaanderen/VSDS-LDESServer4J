@@ -13,6 +13,7 @@ public class TreeNode {
 	private final List<TreeRelation> relations;
 	private final List<Member> members;
 	private final String collectionName;
+	private long numberOfMembersInView;
 
 	public TreeNode(String fragmentId, boolean immutable, boolean isView,
 			List<TreeRelation> relations,
@@ -23,6 +24,7 @@ public class TreeNode {
 		this.relations = relations;
 		this.members = members;
 		this.collectionName = collectionName;
+		this.numberOfMembersInView = 0L;
 	}
 
 	public String getFragmentId() {
@@ -64,4 +66,11 @@ public class TreeNode {
 		return collectionName;
 	}
 
+	public long getNumberOfMembersInView() {
+		return numberOfMembersInView;
+	}
+
+	public void setNumberOfMembersInView(long numberOfMembersInView) {
+		this.numberOfMembersInView = numberOfMembersInView;
+	}
 }

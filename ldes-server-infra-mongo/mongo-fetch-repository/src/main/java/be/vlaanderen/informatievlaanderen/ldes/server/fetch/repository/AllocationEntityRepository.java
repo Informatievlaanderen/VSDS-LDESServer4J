@@ -16,4 +16,6 @@ public interface AllocationEntityRepository extends MongoRepository<MemberAlloca
 	void deleteAllByCollectionName(String collectionName);
 
 	void deleteAllByFragmentId(String fragmentId);
+
+    long countByCollectionNameAndViewName(String collectionName, String viewName);
 }

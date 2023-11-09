@@ -11,6 +11,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.impl.StatementImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -50,6 +51,9 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 			model.add(addEventStreamStatements(treeNode, baseUrl));
 			treeNode.getMembers().stream()
 					.map(Member::getModel).forEach(model::add);
+		} else {
+			Statement statement = new StatementImpl(createResource(hostName + "/" + treeNode.getFragmentId()), model.createProperty(TREE_REMAINING_ITEMS), model.createTypedLiteral(treeNode.getNumberOfMembersInView()));
+			model.add(statement);
 		}
 
 		return prefixAdder.addPrefixesToModel(model);

@@ -50,5 +50,5 @@ public class RdfConstants {
 
 	public static final String FRAGMENTATION_TYPE = TREE + "Fragmentation";
 	public static final String FRAGMENTATION_OBJECT = TREE + "fragmentationStrategy";
-
+	public static final String TREE_REMAINING_ITEMS = TREE + "remainingItems";
 }
