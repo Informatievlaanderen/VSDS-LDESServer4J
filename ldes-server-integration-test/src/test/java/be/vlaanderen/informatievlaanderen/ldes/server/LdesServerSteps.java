@@ -26,9 +26,11 @@ import java.util.Stack;
 import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -224,5 +226,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			}
 		});
 
+	}
+
+	@And("The response from requesting the url {string} contains {long} remaining items statements")
+	public void theResponseFromRequestingTheUrlDoesContainRemainingitemsStatement(String url, long statementCount) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
+						.header("Access-Control-Request-Method", "GET")
+						.header("Origin", "http://www.someurl.com"))
+				.andExpect(status().isOk()).andReturn().getResponse();
+		Model contentAsString = RDFParser.create().fromString(response.getContentAsString()).lang(Lang.TTL).toModel();
+        long size = contentAsString.listObjectsOfProperty(createProperty(TREE_REMAINING_ITEMS))
+				.toList().size();
+		assertThat(size).isEqualTo(statementCount);
 	}
 }
