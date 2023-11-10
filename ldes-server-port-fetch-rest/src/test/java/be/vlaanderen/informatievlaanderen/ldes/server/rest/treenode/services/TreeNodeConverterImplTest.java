@@ -58,7 +58,7 @@ class TreeNodeConverterImplTest {
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		Assertions.assertEquals(24, getNumberOfStatements(model));
+		Assertions.assertEquals(25, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -201,7 +201,7 @@ class TreeNodeConverterImplTest {
 
 		Assertions.assertEquals(11, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-		Assertions.assertEquals(24, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		Assertions.assertEquals(25, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
 		Assertions.assertEquals(11, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 	}
