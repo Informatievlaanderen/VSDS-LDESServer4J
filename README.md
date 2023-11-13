@@ -215,35 +215,11 @@ Currently, there are 3 possible retention policies each with a different type an
 
 ##### Timebased retention
 
-  ```ttl
-  @prefix ldes: <https://w3id.org/ldes#> .
-  @prefix tree: <https://w3id.org/tree#>.
-
-  <view1> a tree:Node ;
-    tree:viewDescription [
-      a tree:ViewDescription ;
-      ldes:retentionPolicy [
-        a ldes:DurationAgoPolicy ;
-        tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
-      ] ;
-    ] .
-  ```
+  
 
 ##### Example versionbased retention
 
-  ```ttl
-  @prefix ldes: <https://w3id.org/ldes#> .
-  @prefix tree: <https://w3id.org/tree#>.
-
-  <view1> a tree:Node ;
-    tree:viewDescription [
-      a tree:ViewDescription ;
-      ldes:retentionPolicy [
-        a ldes:LatestVersionSubset ;
-        tree:amount 2 ;
-      ] ;
-    ] .
-  ```
+  
 
 ##### Example point in time retention
 

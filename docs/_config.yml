@@ -31,6 +31,9 @@ collections:
   fragmentations:
     permalink: "/:collection/:path"
     output: true
+  retention-policies:
+    permalink: "/:collection/:path"
+    output: true
   features:
     permalink: "/:collection/:path"
     output: true
@@ -43,8 +46,6 @@ just_the_docs:
       name: Data Ingestion
     fetch:
       name: Data Retrieval
-    fragmentations:
-      name: Fragmentations
     features:
       name: Features
 
