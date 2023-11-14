@@ -14,7 +14,6 @@ RUN mvn install -DskipTests
 # RUN THE APPLICATION
 #
 FROM amazoncorretto:17-alpine-jdk
-RUN apk update & apk upgrade
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
 
