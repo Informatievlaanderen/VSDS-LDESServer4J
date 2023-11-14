@@ -7,6 +7,7 @@ FROM maven:3.8.5-amazoncorretto-17 AS builder
 
 # MAVEN: application
 FROM builder as app-stage
+USER root
 COPY . /
 RUN mvn install -DskipTests
 
@@ -14,6 +15,7 @@ RUN mvn install -DskipTests
 # RUN THE APPLICATION
 #
 FROM amazoncorretto:17-alpine-jdk
+USER root
 RUN apk update & apk upgrade
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
