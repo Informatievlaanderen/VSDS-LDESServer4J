@@ -6,7 +6,7 @@ nav_order: 0
 
 # Ingest Members With HTTP
 
-An Event Stream without its members is nothing. Therefor, new members can be ingested via 
+An Event Stream without its members is nothing. Therefore, new members can be ingested via 
 a `POST` HTTP Endpoint. This endpoint follows the following pattern: 
 `{ldes server hostname}/{event-stream}`.
 
@@ -25,4 +25,4 @@ For more details, please refer to the Swagger API under the `base` definition.
 
 Every Event Stream contains a shape that mentions a targetClass. 
 This is the type should be the same as the `rdf:type` of the root object you try to ingest.
-Otherwise it will be rejected
+Otherwise it will be rejected.
