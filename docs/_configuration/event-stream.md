@@ -9,9 +9,9 @@ nav_order: 1
 To house a new Event Stream on your server, it first needs to be configured.
 This can be done through the Admin API at the `/admin/api/v1/eventstreams` endpoint.
 
-A Event Stream config needs to contains a couple of items:
+An Event Stream config needs to contains a couple of items:
 
-* a ldes:EventStream object containing
+* a ldes:EventStream object containing:
   * ldes:timestampPath object that defines which object property it should parse to handle timebased fragmentations, retention policies, ...
   * ldes:versionOfPath object that defines which object property it should parse to handle version based retention policies. 
   This property also indicates which state object your version object is a snapshot of.
@@ -22,7 +22,7 @@ For more info, visit the Swagger API endpoint configured in [the run guide.](../
 
 ### Example
 
-Creating a generic Event Stream named "generic-eventstream" that contains members of type https://schema.org/Product
+Creating a generic Event Stream named "generic-eventstream" that contains members of type https://schema.org/Product.
 
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
@@ -47,7 +47,7 @@ genericES:shape a sh:NodeShape ;
 SHACL (Shapes Constraint Language) is a standard for validating RDF data and ensuring 
 that it conforms to a particular structure or shape. 
 In the context of the Linked Data Event Stream (LDES), SHACL shapes are used to provide 
-a machine-readble description of the expected structure of members in the stream.
+a machine-readable description of the expected structure of members in the stream.
 
 By incorporating SHACL shapes, LDES provides a powerful tool for ensuring data quality 
 and consistency, making it a reliable and trustworthy source of data for various 
@@ -56,7 +56,7 @@ By defining a SHACL shape for the LDES, data producers can ensure that the membe
 they add to the LDES adhere to the required structure, while data consumers can use 
 the shape to validate and reason about the data they receive.
 
-To defining a shape can be done through the `/admin/api/eventstreams/{event stream}/shape` endpoint.
+Defining a shape can be done through the `/admin/api/eventstreams/{event stream}/shape` endpoint.
 
 For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
 
