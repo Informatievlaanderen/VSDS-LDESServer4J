@@ -26,14 +26,14 @@ This allows you to fragment the data on geolocations.
 ## Algorithm
 
 1. The fragmentationObjects of the member are determined
-    - We filter the RDF statements where the predicate matches the `fragmentationPath`
+    - We filter the RDF statements where the predicate matches the `fragmentationPath`.
     - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
     - We select all the object that pass the above filters.
 2. A bucket of tiles is created using the coordinates and provided zoomLevel. [This is done using the Slippy Map algorithm.](https://wiki.openstreetmap.org/wiki/Slippy_map)
 3. The tiles are iterated. The member is added to every tile, or sub-fragmentations of these tiles. Taking into account:
     - A new fragment is created if no fragment exists for the given tile.
     - There is no `memberLimit` or max size for a fragment. They do not become immutable.
-    - The member is added to every related fragment
+    - The member is added to every related fragment.
 
 ````mermaid
 flowchart TD
@@ -41,7 +41,7 @@ flowchart TD
     predicate matches fragmenterProperty 
     AND subject matches fragmenterSubjectFilter] --> B
     B[Coordinates of this statement are selected] --> C
-    C[Bucker of tiles are
+    C[Bucket of tiles is
     created using the coordinates 
     and zoomLevel] --> D{Next tile?}
     
@@ -108,9 +108,7 @@ With following example input:
   geo:long 5.496610e+0 .
 ```
 
-The selected objects would be
-
-`"POINT (5.47236 50.9642)"^^ns2:wktLiteral` and `"POINT (5.49661 50.9667)"^^ns2:wktLiteral`
+The selected objects would be `"POINT (5.47236 50.9642)"^^ns2:wktLiteral` and `"POINT (5.49661 50.9667)"^^ns2:wktLiteral`
 
 When we convert these [coordinates to tiles](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers_2), the bucket of tiles would be:
 - "15/16884/10974"
