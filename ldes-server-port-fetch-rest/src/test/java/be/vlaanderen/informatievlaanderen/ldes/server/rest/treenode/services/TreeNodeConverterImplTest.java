@@ -58,7 +58,7 @@ class TreeNodeConverterImplTest {
 
 		Model model = treeNodeConverter.toModel(treeNode);
 
-		Assertions.assertEquals(24, getNumberOfStatements(model));
+		Assertions.assertEquals(25, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
 	}
@@ -199,11 +199,10 @@ class TreeNodeConverterImplTest {
 		Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
 
-		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		Assertions.assertEquals(11, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-		Assertions.assertEquals(24, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		Assertions.assertEquals(25, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 		treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-		Assertions.assertEquals(10, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+		Assertions.assertEquals(11, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
 	}
-
 }

@@ -30,3 +30,11 @@ Feature: Server basic fetching functionality
       | eventStreamDescription                                         | collectionEndpoint   | viewEndpoint                 | collectionName      |
       | data/input/eventstreams/mobility-hindrances_paginated_1500.ttl | /mobility-hindrances | /mobility-hindrances/paged   | mobility-hindrances |
       | data/input/eventstreams/cartoons_paginated_2.ttl               | /cartoons            | /cartoons/my-view            | cartoons            |
+
+  Scenario: The LDES server has access control headers and etag
+    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
+    When I ingest 1 members to the collection "mobility-hindrances"
+    Then The response from requesting the url "/mobility-hindrances" contains 0 remaining items statements
+    And The response from requesting the url "/mobility-hindrances/paged" contains 1 remaining items statements
+    And The response from requesting the url "/mobility-hindrances/paged?pageNumber=1" contains 0 remaining items statements
+    And I delete the eventstream "mobility-hindrances"

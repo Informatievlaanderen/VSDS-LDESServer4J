@@ -34,6 +34,11 @@ public class AllocationMongoRepository implements AllocationRepository {
 				.toList();
 	}
 
+	@Override
+	public long countByCollectionNameAndViewName(String collectionName, String viewName) {
+		return repository.countByCollectionNameAndViewName(collectionName, viewName);
+	}
+
 	public void deleteByCollectionNameAndViewName(String collectionName, String viewName) {
 		repository.deleteAllByCollectionNameAndViewName(collectionName, viewName);
 	}
