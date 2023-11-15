@@ -12,7 +12,7 @@ This can be done through the Admin API at the `/admin/api/v1/eventstreams/{event
 
 A view config needs to have the following structure:
 
-* A tree:viewDescription object with its subject referring to the event stream object
+* A `tree:viewDescription` object with its subject referring to the event stream object
   * a `tree:FragmentationStrategy` object that contains an ordered rdf list of fragmentations.
   * a `ldes:retentionPolicy` object that contains a set of retention policies.
   * a `tree:pageSize` object that marks how many members should be partitioned per fragment.
@@ -28,7 +28,7 @@ visit the [Fragmentations Subsection](./fragmentations).
 
 ### Retention Policies
 
-To reduce the amount historical of data kept in the LDES Server, one can configure 
+To reduce the amount of historical data kept in the LDES Server, one can configure 
 a set of retention policies. 
 
 For a more detailed explanation on retention policies, together with all the available options,
