@@ -21,14 +21,20 @@ Timebased fragmentation will create fragments based on a time selected from the 
         tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ;
     ] .
   ```
-For maxGranularity the following values are allowed: year, month, day, hour, minute, second.
+For maxGranularity the following values are allowed: 
+* year,
+* month,
+* day,
+* hour,
+* minute,
+* second.
 
 ## Algorithm
 
 1. The fragmentationObjects of the member are determined
-    - We filter the RDF statements where the predicate matches the `fragmentationPath`
+    - We filter the RDF statements where the predicate matches the `fragmentationPath`.
     - If an optional regex is provided through the `fragmenterSubjectFilter` property, we filter on subjects that match this regex.
-    - We select all the object that pass the above filters.
+    - We select all the objects that pass the above filters.
 2. The fragment of the member is determined. For each unit of time starting with year and ending with the chosen granularity from `maxGranularity` we do the following:
     - We take the value of this unit of time from the fragmentationObject. eg: the value of month for `2023-03-02T06:30:40` is `03`.
     - We check if the previous fragment has a child fragment with this value for the unit of time. (In the case of year, the previous fragment is the root fragment.)

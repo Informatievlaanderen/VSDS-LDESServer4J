@@ -15,6 +15,6 @@ A retention policy has to be added together with its view.
 By default, every day, the server checks if there are members that can be deleted that are not conform to the retention policy anymore.
 If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set via a cron expression.
 
-To configure this interval, please refer to the [Configuration Page](../../how-to-run#ldes-server-config)
+To configure this interval, please refer to the [Configuration Page.](../../how-to-run#ldes-server-config)
 
 ## Supported Retention Policies:
