@@ -28,8 +28,7 @@ visit the [Fragmentations Subsection](./fragmentations).
 
 ### Retention Policies
 
-To reduce the amount of historical data kept in the LDES Server, one can configure 
-a set of retention policies. 
+To reduce the amount of historical data kept in the LDES Server, one can configure a set of retention policies.
 
 For a more detailed explanation on retention policies, together with all the available options,
 visit the [Retention Policies Subsection](./retention-policies).
