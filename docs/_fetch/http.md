@@ -21,13 +21,13 @@ you are able to read the shape of the Event Stream, its views
 
 By following the previously mentioned views or by following the pattern `{hostname}/{event stream}/{view}`,
 the view page will be shown. This contains information about how many members are in this Event Stream,
-the configured DCAT information and the `tree:Relation` that point to the root fragment.
+the configured DCAT information and the `tree:Relation` that points to the root fragment.
 
 ## Retrieving a fragment
 
 Finally, by following the root fragment from a view or by following the pattern 
 `{hostname}/{event stream}/{view}?{fragmentation specific parameters}`, the fragment page will be shown.
-Depending on wether any fragmentations are defined, this either contains a partitioned fragment page
+Depending on whether any fragmentations are defined, this either contains a partitioned fragment page
 or one or multiple`tree:Relation` that point to partitioned fragment pages.
 
 These partitioned fragments contain the actual members.
