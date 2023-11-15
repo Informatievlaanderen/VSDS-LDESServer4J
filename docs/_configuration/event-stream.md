@@ -11,11 +11,11 @@ This can be done through the Admin API at the `/admin/api/v1/eventstreams` endpo
 
 An Event Stream config needs to contains a couple of items:
 
-* a ldes:EventStream object containing:
-  * ldes:timestampPath object that defines which object property it should parse to handle timebased fragmentations, retention policies, ...
-  * ldes:versionOfPath object that defines which object property it should parse to handle version based retention policies. 
+* a `ldes:EventStream` object containing:
+  * `ldes:timestampPath` object that defines which object property it should parse to handle timebased fragmentations, retention policies, ...
+  * `ldes:versionOfPath` object that defines which object property it should parse to handle version based retention policies. 
   This property also indicates which state object your version object is a snapshot of.
-  * a sh:NodeShape object that contains a sh:targetClass. 
+  * a `sh:NodeShape` object that contains a sh:targetClass. 
   This indicates what kind of objects your Event Stream will hold.
 
 For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
