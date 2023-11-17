@@ -1,20 +1,22 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("fetch_allocation")
+//@CompoundIndex(name = "collection_view", def = "{'collectionName' : 1, 'viewName': 1}")
+//@CompoundIndex(name = "member_id", def = "{'collectionName' : 1, 'viewName': 1, 'memberId' : 1}")
 public class MemberAllocationEntity {
 	@Id
 	private final String id;
 	@Indexed
 	private final String collectionName;
-	@Indexed
 	private final String viewName;
 	@Indexed
 	private final String fragmentId;
-	@Indexed
 	private final String memberId;
 
 	public MemberAllocationEntity(String id, String collectionName, String viewName, String fragmentId,

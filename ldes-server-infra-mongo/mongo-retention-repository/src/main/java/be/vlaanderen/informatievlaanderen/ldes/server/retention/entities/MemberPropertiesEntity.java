@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -8,6 +10,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Document("retention_member_properties")
+//@CompoundIndexes({
+//		@CompoundIndex(name = "version", def = "{'views' : 1, 'versionOf': 1}")
+//})
 public class MemberPropertiesEntity {
 	@Id
 	private final String id;
@@ -15,9 +20,7 @@ public class MemberPropertiesEntity {
 	private final String collectionName;
 	@Indexed
 	private final Set<String> views;
-	@Indexed
 	private final String versionOf;
-	@Indexed
 	private final LocalDateTime timestamp;
 
 	public MemberPropertiesEntity(String id, String collectionName, Set<String> views, String versionOf,

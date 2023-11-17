@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,15 +15,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("fragmentation_fragment")
+//@CompoundIndex(name = "root_of_view", def = "{'viewName' : 1, 'root': 1}")
 public class FragmentEntity {
 	@Id
 	private String id;
-	@Indexed
 	private Boolean root;
 	@Indexed
 	private String viewName;
 	private List<FragmentPair> fragmentPairs;
-	@Indexed
 	private Boolean immutable;
 	@Indexed
 	private String parentId;
@@ -29,6 +30,7 @@ public class FragmentEntity {
 	private List<TreeRelation> relations;
 	@Indexed
 	private String collectionName;
+	@Indexed
 	private LocalDateTime deleteTime;
 
 	public FragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
