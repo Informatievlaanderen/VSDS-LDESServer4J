@@ -11,7 +11,7 @@ import java.util.Set;
 public class FragmentUpdaterChange {
 	private final MongoTemplate mongoTemplate;
 
-	private final Set<String> indicesToDelete = Set.of("root", "immutable");
+	private final Set<String> indicesToDelete = Set.of("root", "immutable", "parentId");
 
 	public FragmentUpdaterChange(MongoTemplate mongoTemplate) {
 		this.mongoTemplate = mongoTemplate;
