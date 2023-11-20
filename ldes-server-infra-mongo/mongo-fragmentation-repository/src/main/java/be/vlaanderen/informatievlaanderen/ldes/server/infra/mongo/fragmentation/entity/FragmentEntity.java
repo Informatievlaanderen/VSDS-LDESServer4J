@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Document("fragmentation_fragment")
-//@CompoundIndex(name = "root_of_view", def = "{'viewName' : 1, 'root': 1}")
+@CompoundIndex(name = "root_of_view", def = "{'root' : 1, 'viewName': 1}")
 public class FragmentEntity {
 	@Id
 	private String id;
