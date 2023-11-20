@@ -11,7 +11,7 @@ mongock:
 
 Consequences of Changeset:
 * fragmentation_fragments:
-  * Removed index on `root` and `immutable`
+  * Removed index on `root`, `immutable` and `parentId`
 * fetch_allocation:
   * Removed index on `viewName` and `memberId`
 * retention_member_properties:

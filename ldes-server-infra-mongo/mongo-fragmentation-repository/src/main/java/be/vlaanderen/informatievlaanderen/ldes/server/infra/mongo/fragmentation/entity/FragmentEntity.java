@@ -15,6 +15,7 @@ import java.util.List;
 
 @Document("fragmentation_fragment")
 @CompoundIndex(name = "root_of_view", def = "{'root' : 1, 'viewName': 1}")
+@CompoundIndex(name = "immutable_with_parent", def = "{'immutable' : 1, 'parentId': 1}")
 public class FragmentEntity {
 	@Id
 	private String id;
@@ -23,7 +24,6 @@ public class FragmentEntity {
 	private String viewName;
 	private List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
-	@Indexed
 	private String parentId;
 	private Integer nrOfMembersAdded;
 	private List<TreeRelation> relations;
