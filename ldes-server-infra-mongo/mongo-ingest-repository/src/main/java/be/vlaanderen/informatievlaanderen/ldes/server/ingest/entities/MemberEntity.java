@@ -1,10 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("ingest_ldesmember")
+@CompoundIndex(name = "collection_seqNr", def = "{'collectionName' : 1, 'sequenceNr': 1}")
 public class MemberEntity {
 
 	@Id
@@ -13,7 +15,6 @@ public class MemberEntity {
 	@Indexed
 	private final String collectionName;
 
-	@Indexed
 	private Long sequenceNr;
 
 	private final String model;
