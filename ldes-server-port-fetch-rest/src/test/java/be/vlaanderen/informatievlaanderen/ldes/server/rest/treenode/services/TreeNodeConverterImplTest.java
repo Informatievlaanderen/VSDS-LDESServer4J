@@ -15,7 +15,6 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TreeNodeConverterImplTest {
 
@@ -59,7 +59,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        Assertions.assertEquals(25, getNumberOfStatements(model));
+        assertThat(model.listStatements().toList()).hasSize(25);
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
         verifyRemainingItemsStatement(model);
@@ -71,7 +71,7 @@ class TreeNodeConverterImplTest {
                 COLLECTION_NAME);
         Model model = treeNodeConverter.toModel(treeNode);
 
-        Assertions.assertEquals(2, getNumberOfStatements(model));
+        assertThat(model.listStatements().toList()).hasSize(2);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         verifyRemainingItemsStatementAbsent(model);
@@ -95,7 +95,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        Assertions.assertEquals(9, getNumberOfStatements(model));
+        assertThat(model.listStatements().toList()).hasSize(9);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         Resource relationObject = model.listStatements(null, TREE_RELATION,
@@ -109,16 +109,15 @@ class TreeNodeConverterImplTest {
     private void verifyLdesStatements(Model model) {
         String id = HOST_NAME + "/" + COLLECTION_NAME;
 
-        Assertions.assertEquals(
-                "[" + id + ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
-                model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
-        Assertions.assertEquals(
-                "[" + id + ", https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
-                model.listStatements(createResource(id), LDES_TIMESTAMP_PATH, (Resource) null).nextStatement()
-                        .toString());
-        Assertions.assertEquals(
-                "[" + id + ", https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
-                model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement().toString());
+        assertThat(model.listStatements(createResource(id), RDF_SYNTAX_TYPE, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/ldes#EventStream]",
+                        id));
+        assertThat(model.listStatements(createResource(id), LDES_TIMESTAMP_PATH, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/ldes#timestampPath, http://www.w3.org/ns/prov#generatedAtTime]",
+                        id));
+        assertThat(model.listStatements(createResource(id), LDES_VERSION_OF, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/ldes#versionOfPath, http://purl.org/dc/terms/isVersionOf]",
+                        id));
 
         verifyIsViewOfStatement(model);
         verifyShaclStatements(model);
@@ -127,42 +126,37 @@ class TreeNodeConverterImplTest {
 
     private void verifyShaclStatements(Model model) {
         Resource shapeResource = createResource("http://localhost:8080/collectionName1/shape");
-        Assertions.assertEquals(3, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
+        assertThat(model.listStatements(shapeResource, null, (RDFNode) null).toList()).hasSize(3);
     }
 
     private void verifyDcatStatements(Model model) {
         Resource shapeResource = createResource("http://localhost:8080/mobility-hindrances/view/description");
-        Assertions.assertEquals(8, model.listStatements(shapeResource, null, (RDFNode) null).toList().size());
+        assertThat(model.listStatements(shapeResource, null, (RDFNode) null).toList()).hasSize(8);
     }
 
     private void verifyRelationStatements(Model model, Resource relationObject) {
-        Assertions.assertEquals(
-                String.format(
-                        "[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
-                                + ", https://w3id.org/tree#relation, %s]",
-                        relationObject),
-                model.listStatements(createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME), TREE_RELATION,
-                                (Resource) null)
-                        .nextStatement().toString());
-        Assertions.assertEquals(
-                String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject),
-                model.listStatements(relationObject, RDF_SYNTAX_TYPE, (Resource) null).nextStatement().toString());
-        Assertions.assertEquals(String.format("[%s, https://w3id.org/tree#path, path]", relationObject),
-                model.listStatements(relationObject, TREE_PATH, (Resource) null).nextStatement().toString());
-        Assertions.assertEquals(
-                String.format("[%s, https://w3id.org/tree#node, http://localhost:8080/mobility-hindrances/node]",
-                        relationObject),
-                model.listStatements(relationObject, TREE_NODE, (Resource) null).nextStatement().toString());
-        Assertions.assertEquals(
-                String.format("[%s, https://w3id.org/tree#value, \"value\"^^http://www.w3.org/2001/XMLSchema#dateTime]",
-                        relationObject),
-                model.listStatements(relationObject, TREE_VALUE, (Resource) null).nextStatement().toString());
+        assertThat(model.listStatements(createResource(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME),
+                        TREE_RELATION,
+                        (Resource) null)
+                .nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/tree#relation, %s]",
+                        HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
+                        relationObject));
+        assertThat(model.listStatements(relationObject, RDF_SYNTAX_TYPE, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, relation]", relationObject));
+        assertThat(model.listStatements(relationObject, TREE_PATH, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/tree#path, path]", relationObject));
+        assertThat(model.listStatements(relationObject, TREE_NODE, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/tree#node, http://localhost:8080/mobility-hindrances/node]",
+                        relationObject));
+        assertThat(model.listStatements(relationObject, TREE_VALUE, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/tree#value, \"value\"^^http://www.w3.org/2001/XMLSchema#dateTime]",
+                        relationObject));
     }
 
     private void verifyMemberStatements(Model model) {
-        Assertions.assertEquals(
-                "[http://localhost:8080/mobility-hindrances, https://w3id.org/tree#member, https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165]",
-                model.listStatements(null, TREE_MEMBER, (Resource) null).nextStatement().toString());
+        assertThat(model.listStatements(null, TREE_MEMBER, (Resource) null).nextStatement())
+                .hasToString("[http://localhost:8080/mobility-hindrances, https://w3id.org/tree#member, https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165]");
     }
 
     private int getNumberOfStatements(Model model) {
@@ -172,42 +166,35 @@ class TreeNodeConverterImplTest {
     }
 
     private void verifyTreeNodeStatement(Model model) {
-        Assertions.assertEquals(
-                String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
-                        HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME),
-                model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement()
-                        .toString());
+        assertThat(model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement())
+                .hasToString(String.format("[%s, http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
+                        HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME));
     }
 
     private void verifyIsViewOfStatement(Model model) {
-        Assertions.assertEquals(
-                String.format("[%s, https://w3id.org/tree#view, %s]",
+        assertThat(model.listStatements(null, TREE_VIEW, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, https://w3id.org/tree#view, %s]",
                         HOST_NAME + "/" + COLLECTION_NAME,
-                        HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME),
-                model.listStatements(null, TREE_VIEW, (Resource) null).nextStatement()
-                        .toString());
+                        HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME));
     }
 
     private void verifyIsPartOfStatement(Model model) {
-        Assertions.assertEquals(
-                String.format("[%s, http://purl.org/dc/terms/isPartOf, %s]",
+        assertThat(model.listStatements(null, IS_PART_OF_PROPERTY, (Resource) null).nextStatement())
+                .hasToString(String.format("[%s, http://purl.org/dc/terms/isPartOf, %s]",
                         HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
-                        HOST_NAME + "/" + COLLECTION_NAME),
-                model.listStatements(null, IS_PART_OF_PROPERTY, (Resource) null).nextStatement()
-                        .toString());
+                        HOST_NAME + "/" + COLLECTION_NAME));
     }
 
     private void verifyRemainingItemsStatement(Model model) {
-        Assertions.assertEquals(
+        assertThat(model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).nextStatement()).hasToString(
                 String.format("[%s, %s, \"0\"^^http://www.w3.org/2001/XMLSchema#long]",
                         HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
-                        TREE_REMAINING_ITEMS),
-                model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).nextStatement()
-                        .toString());
+                        TREE_REMAINING_ITEMS)
+                );
     }
 
     private void verifyRemainingItemsStatementAbsent(Model model) {
-        Assertions.assertFalse(model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).hasNext());
+        assertThat(model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).hasNext()).isFalse();
     }
 
     @Test
@@ -218,10 +205,10 @@ class TreeNodeConverterImplTest {
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
 
-        Assertions.assertEquals(11, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(11);
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-        Assertions.assertEquals(25, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(25);
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-        Assertions.assertEquals(11, getNumberOfStatements(treeNodeConverter.toModel(treeNode)));
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(9);
     }
 }
