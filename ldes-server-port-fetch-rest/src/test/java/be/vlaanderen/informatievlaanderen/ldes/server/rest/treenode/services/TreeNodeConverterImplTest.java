@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 class TreeNodeConverterImplTest {
@@ -61,6 +62,7 @@ class TreeNodeConverterImplTest {
 		Assertions.assertEquals(25, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyLdesStatements(model);
+		verifyRemainingItemsStatement(model);
 	}
 
 	@Test
@@ -72,6 +74,7 @@ class TreeNodeConverterImplTest {
 		Assertions.assertEquals(2, getNumberOfStatements(model));
 		verifyTreeNodeStatement(model);
 		verifyIsPartOfStatement(model);
+		verifyRemainingItemsStatementAbsent(model);
 	}
 
 	@Test
@@ -100,6 +103,7 @@ class TreeNodeConverterImplTest {
 				.asResource();
 		verifyRelationStatements(model, relationObject);
 		verifyMemberStatements(model);
+		verifyRemainingItemsStatementAbsent(model);
 	}
 
 	private void verifyLdesStatements(Model model) {
@@ -173,6 +177,7 @@ class TreeNodeConverterImplTest {
 						+ ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
 				model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement()
 						.toString());
+		//Assertions.assertEquals();
 	}
 
 	private void verifyIsViewOfStatement(Model model) {
@@ -189,6 +194,18 @@ class TreeNodeConverterImplTest {
 						+ ", http://purl.org/dc/terms/isPartOf, " + HOST_NAME + "/" + COLLECTION_NAME + "]",
 				model.listStatements(null, IS_PART_OF_PROPERTY, (Resource) null).nextStatement()
 						.toString());
+	}
+
+	private void verifyRemainingItemsStatement(Model model) {
+		Assertions.assertEquals(
+				"[" + HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME
+						+ ", " + TREE + "remainingItems, \"0\"^^http://www.w3.org/2001/XMLSchema#long]",
+				model.listStatements(null, createProperty(TREE + "remainingItems"), (Resource) null).nextStatement()
+						.toString());
+	}
+
+	private void verifyRemainingItemsStatementAbsent(Model model) {
+		Assertions.assertFalse(model.listStatements(null, createProperty(TREE + "remainingItems"), (Resource) null).hasNext());
 	}
 
 	@Test
