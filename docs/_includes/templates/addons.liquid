@@ -1,0 +1,38 @@
+<div class="addons-wrap d-flex flex-column overflow-y-auto">
+    <div class="status d-flex flex-justify-between p-2">
+        <div class="title p-1">
+            <i class="fa fa-book"></i> {{ site.title }}
+        </div>
+        <div class="branch p-1">
+
+            <i class="fa fa-caret-down"></i>
+        </div>
+    </div>
+    <div class="addons d-flex flex-column height-full p-2 d-none">
+        <dl>
+            <dt>{{ __.github | default: "GitHub" }}</dt>
+            <dd>
+                <a href="https://github.com/Informatievlaanderen?q=VSDS&type=all&language=&sort=" title="">
+                    <i class="fa fa-github"></i>
+                    {{ __.homepage | default: "Github" }}
+                </a>
+            </dd>
+            <dd>
+                <a href="https://github.com/Informatievlaanderen/VSDS-Tech-Docs/issues" title="">
+                    <i class="fa fa-question-circle-o"></i>
+                    {{ __.issues | default: "Issues" }}
+                </a>
+            </dd>
+            <dt>{{ __.github | default: "VSDS Portal" }}</dt>
+            <dd>
+                <a href="https://www.vlaanderen.be/vlaamse-smart-data-space-portaal" title="">
+                    <i class="fa fa-home"></i>
+                    {{ __.homepage | default: "VSDS Portal" }}
+                </a>
+            </dd>
+
+        </dl>
+        <hr>
+
+    </div>
+</div>

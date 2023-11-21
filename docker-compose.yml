@@ -1,25 +1,25 @@
+version: "3.3"
 services:
   ldes-server:
-    env_file:
-      - ./docker-compose/config.local.env
-    container_name: ldes.server
-    image: ldes/ldes-server:latest
-    ports:
-      - "8080:8080"
+    container_name: basic_ldes-server
+    image: ldes/ldes-server
+    environment:
+      - SPRING_CONFIG_LOCATION=/config/
     volumes:
-      - ./content:/opt/content
+      - ./docker-compose/server.config.yml:/config/application.yml:ro
+    ports:
+      - 8080:8080
     networks:
       - ldes
     depends_on:
       - ldes-mongodb
   ldes-mongodb:
-    image: mongo
-    container_name: ldes.mongodb
+    container_name: ldes-mongodb
+    image: mongo:6.0.4
     ports:
-      - "27017:27017"
-    restart: always
+      - 27017:27017
     networks:
       - ldes
 networks:
   ldes:
-    driver: bridge
+    name: quick_start_network

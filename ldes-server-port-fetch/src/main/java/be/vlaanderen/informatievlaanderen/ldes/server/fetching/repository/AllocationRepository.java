@@ -9,6 +9,8 @@ public interface AllocationRepository {
 
 	List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
 
+	long countByCollectionNameAndViewName(String collectionName, String viewName);
+
 	void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName);
 
 	void deleteByCollectionName(String collectionName);

@@ -1,5 +1,5 @@
 spring.main.allow-bean-definition-overriding: true
-springdoc.swaggerui.path: "swagger"
+springdoc.swaggerui.path: "/swagger"
 ldes-server:
   hostname: "http://localhost:8080"
   dcat-shape: "dcat/dcat-ap_2.0.1_shacl_shapes.ttl"
