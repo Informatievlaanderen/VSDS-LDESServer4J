@@ -82,7 +82,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 			statements.addAll(shaclShape.listStatements().toList());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection());
-			statements.add(createStatement(createResource(hostName + "/" + currentFragmentId), createProperty(TREE_REMAINING_ITEMS), createTypedLiteral(numberOfMembersInView)));
+			statements.add(createStatement(createResource(currentFragmentId), createProperty(TREE_REMAINING_ITEMS), createTypedLiteral(numberOfMembersInView)));
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}
