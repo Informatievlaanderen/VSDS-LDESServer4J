@@ -177,7 +177,6 @@ class TreeNodeConverterImplTest {
 						+ ", http://www.w3.org/1999/02/22-rdf-syntax-ns#type, https://w3id.org/tree#Node]",
 				model.listStatements(null, RDF_SYNTAX_TYPE, createResource(TREE_NODE_RESOURCE)).nextStatement()
 						.toString());
-		//Assertions.assertEquals();
 	}
 
 	private void verifyIsViewOfStatement(Model model) {
