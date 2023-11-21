@@ -201,13 +201,13 @@ class TreeNodeConverterImplTest {
         Assertions.assertEquals(
                 String.format("[%s, %s, \"0\"^^http://www.w3.org/2001/XMLSchema#long]",
                         HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
-                        TREE + "remainingItems"),
-                model.listStatements(null, createProperty(TREE + "remainingItems"), (Resource) null).nextStatement()
+                        TREE_REMAINING_ITEMS),
+                model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).nextStatement()
                         .toString());
     }
 
     private void verifyRemainingItemsStatementAbsent(Model model) {
-        Assertions.assertFalse(model.listStatements(null, createProperty(TREE + "remainingItems"), (Resource) null).hasNext());
+        Assertions.assertFalse(model.listStatements(null, createProperty(TREE_REMAINING_ITEMS), (Resource) null).hasNext());
     }
 
     @Test
