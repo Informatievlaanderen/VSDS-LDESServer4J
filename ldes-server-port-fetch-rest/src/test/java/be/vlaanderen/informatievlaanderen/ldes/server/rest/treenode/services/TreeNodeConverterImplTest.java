@@ -209,6 +209,6 @@ class TreeNodeConverterImplTest {
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
         assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(25);
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(9);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(11);
     }
 }
