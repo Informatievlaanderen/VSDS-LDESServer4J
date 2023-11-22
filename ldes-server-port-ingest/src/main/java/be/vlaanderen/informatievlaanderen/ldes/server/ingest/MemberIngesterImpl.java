@@ -36,9 +36,9 @@ public class MemberIngesterImpl implements MemberIngester {
     }
 
     private void ingestNewMember(Member member, String memberId) {
-        Optional<Member> savedMemberOpt = insert(member);
-        if (savedMemberOpt.isPresent()) {
-            Member savedMember = savedMemberOpt.get();
+        Optional<Member> memberSaved = insert(member);
+        if (memberSaved.isPresent()) {
+            Member savedMember = memberSaved.get();
             Metrics.counter("ldes_server_ingested_members_count").increment();
             final var memberIngestedEvent = new MemberIngestedEvent(savedMember.getModel(), savedMember.getId(),
                     savedMember.getCollectionName(), savedMember.getSequenceNr());
