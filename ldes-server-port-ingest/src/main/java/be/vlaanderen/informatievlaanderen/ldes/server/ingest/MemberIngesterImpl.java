@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
@@ -26,30 +28,29 @@ public class MemberIngesterImpl implements MemberIngester {
 		this.eventPublisher = eventPublisher;
 	}
 
-	@Override
-	public void ingest(Member member) {
-		validator.validate(member);
-		final boolean isNewMember = !memberRepository.memberExists(member.getId());
-		final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
-		if (isNewMember) {
-			ingestNewMember(member, memberId);
-		} else {
-			log.warn("Duplicate member ingested. Member with id {} already exist", memberId);
-		}
-	}
+    @Override
+    public void ingest(Member member) {
+        validator.validate(member);
+        final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
+        ingestNewMember(member, memberId);
+    }
 
-	private void ingestNewMember(Member member, String memberId) {
-		Metrics.counter("ldes_server_ingested_members_count").increment();
-		final Member savedMember = save(member);
-		final var memberIngestedEvent = new MemberIngestedEvent(savedMember.getModel(), savedMember.getId(),
-				savedMember.getCollectionName(), savedMember.getSequenceNr());
-		eventPublisher.publishEvent(memberIngestedEvent);
-		log.debug("Member with id {} ingested.", memberId);
-	}
+    private void ingestNewMember(Member member, String memberId) {
+        Optional<Member> savedMemberOpt = insert(member);
+        if (savedMemberOpt.isPresent()) {
+            Member savedMember = savedMemberOpt.get();
+            Metrics.counter("ldes_server_ingested_members_count").increment();
+            final var memberIngestedEvent = new MemberIngestedEvent(savedMember.getModel(), savedMember.getId(),
+                    savedMember.getCollectionName(), savedMember.getSequenceNr());
+            eventPublisher.publishEvent(memberIngestedEvent);
+            log.debug("Member with id {} ingested.", memberId);
+        } else {
+            log.warn("Duplicate member ingested. Member with id {} already exist", member.getId());
+        }
+    }
 
-	private Member save(Member member) {
-		member.removeTreeMember();
-		return memberRepository.saveMember(member);
-	}
-
+    private Optional<Member> insert(Member member) {
+        member.removeTreeMember();
+        return memberRepository.insertMember(member);
+    }
 }

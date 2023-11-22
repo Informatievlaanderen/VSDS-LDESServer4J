@@ -138,3 +138,13 @@ Feature: MemberRepository
     And The number of members of the "mobility-hindrances" collection is 3
     And I delete all members from the "mobility-hindrances" collection
     And I delete all members from the "other" collection
+
+  Scenario: Members with the same id are not inserted in the MemberRepository
+    Given The following members
+      | id                                      | collectionName      | sequenceNr | versionOf                             |
+      | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 |
+      | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/2 |
+    When I save the members using the MemberRepository
+    Then The member with id "http://test-data/mobility-hindrance/1/1" will exist
+    And The number of members of the "mobility-hindrances" collection is 1
+    And I delete all members from the "mobility-hindrances" collection

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -30,10 +31,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.existsById(memberId);
 	}
 
-	public Member saveMember(Member member) {
+	public Optional<Member> insertMember(Member member) {
 		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
-		MemberEntity savedMemberEntity = memberEntityRepository.save(memberEntityToSave);
-		return memberEntityMapper.toMember(savedMemberEntity);
+		try {
+			MemberEntity savedMemberEntity = memberEntityRepository.insert(memberEntityToSave);
+			return Optional.of(memberEntityMapper.toMember(savedMemberEntity));
+		} catch (DuplicateKeyException e) {
+			return Optional.empty();
+		}
 	}
 
 	@Override
