@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberIngesterImplTest {
 
-	public static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXIST = "Duplicate member ingested. Member with id {} already exist";
+	public static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
 	@Mock
 	private MemberRepository memberRepository;
 
@@ -84,7 +84,7 @@ class MemberIngesterImplTest {
 
 		List<ILoggingEvent> logsList = listAppender.list;
 
-		assertEquals(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXIST, logsList.get(0).getMessage());
+		assertEquals(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, logsList.get(0).getMessage());
 		assertEquals(Level.WARN, logsList.get(0).getLevel());
 		verify(memberRepository, times(1)).insertMember(member);
 		verifyNoInteractions(eventPublisher);

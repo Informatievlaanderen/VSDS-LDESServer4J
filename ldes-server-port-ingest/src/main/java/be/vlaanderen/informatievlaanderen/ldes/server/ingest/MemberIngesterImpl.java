@@ -45,7 +45,7 @@ public class MemberIngesterImpl implements MemberIngester {
             eventPublisher.publishEvent(memberIngestedEvent);
             log.debug("Member with id {} ingested.", memberId);
         } else {
-            log.warn("Duplicate member ingested. Member with id {} already exist", member.getId());
+            log.warn("Duplicate member ingested. Member with id {} already exists", member.getId());
         }
     }
 
