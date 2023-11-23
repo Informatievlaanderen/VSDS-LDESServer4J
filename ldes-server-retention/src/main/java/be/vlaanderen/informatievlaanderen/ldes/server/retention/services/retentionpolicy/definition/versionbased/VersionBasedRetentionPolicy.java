@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retent
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicyType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,7 +31,7 @@ public class VersionBasedRetentionPolicy implements RetentionPolicy {
 		this.memberPropertiesRepository = memberPropertiesRepository;
 	}
 
-	@Override
+	// TODO TVB: 23/11/23 delete
 	public boolean matchesPolicyOfView(MemberProperties memberProperties, String viewName) {
 		String versionOf = memberProperties.getVersionOf();
 		LocalDateTime timestamp = memberProperties.getTimestamp();
@@ -48,4 +49,14 @@ public class VersionBasedRetentionPolicy implements RetentionPolicy {
 		}
 		return false;
 	}
+
+	@Override
+	public RetentionPolicyType getType() {
+		return RetentionPolicyType.VERSION_BASED;
+	}
+
+	public int getNumberOfMembersToKeep() {
+		return numberOfMembersToKeep;
+	}
+
 }

@@ -25,14 +25,14 @@ class RetentionPolicyCollectionImplTest {
 				List.of(), List.of(), 100);
 
 		assertFalse(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
+				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 		retentionPolicyCollection.handleViewAddedEvent(new ViewAddedEvent(viewSpecification));
 
 		assertTrue(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
+				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 		retentionPolicyCollection.handleViewDeletedEvent(new ViewDeletedEvent(viewSpecification.getName()));
 		assertFalse(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
+				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 	}
 
 	@Test
@@ -40,12 +40,12 @@ class RetentionPolicyCollectionImplTest {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
 				List.of(), List.of(), 100);
 		assertFalse(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
+				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 
 		retentionPolicyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
 
 		assertTrue(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName().asString()));
+				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 	}
 
 }

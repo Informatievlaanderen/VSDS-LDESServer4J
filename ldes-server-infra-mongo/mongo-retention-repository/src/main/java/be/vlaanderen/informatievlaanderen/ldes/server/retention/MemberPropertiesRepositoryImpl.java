@@ -1,15 +1,23 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberPropertiesEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.mapper.MemberPropertiesEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
+import org.apache.jena.riot.system.IteratorStreamRDFText;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -74,9 +82,9 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	}
 
 	@Override
-	public Stream<MemberProperties> getMemberPropertiesWithViewReference(String viewName) {
+	public Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where(VIEWS).is(viewName));
+		query.addCriteria(Criteria.where(VIEWS).is(viewName.asString()));
 		return mongoTemplate.stream(query, MemberPropertiesEntity.class)
 				.map(memberPropertiesEntityMapper::toMemberProperties);
 	}
@@ -101,4 +109,42 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	public void deleteById(String id) {
 		memberPropertiesEntityRepository.deleteById(id);
 	}
+
+	// TODO TVB: 23/11/23 test me
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+																TimeBasedRetentionPolicy policy) {
+		return memberPropertiesEntityRepository
+				.findMemberPropertiesEntitiesByTimestampBefore(LocalDateTime.now().minus(policy.getDuration()))
+				.map(memberPropertiesEntityMapper::toMemberProperties);
+	}
+
+	// TODO TVB: 23/11/23 cleanup and test
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+																VersionBasedRetentionPolicy policy) {
+		int versionsToKeep = policy.getNumberOfMembersToKeep();
+		String collectionName = viewName.getCollectionName();
+		String viewNameAsString = viewName.asString();
+
+		SortOperation sort = Aggregation.sort(Sort.Direction.DESC, "timestamp");
+		GroupOperation group = Aggregation.group("versionOf").push("$$ROOT").as("documents");
+		ProjectionOperation project = Aggregation.project().and("documents").slice(Integer.MAX_VALUE, versionsToKeep).as("documents");
+		UnwindOperation unwind = Aggregation.unwind("documents");
+		ReplaceRootOperation replaceRoot = Aggregation.replaceRoot("documents");
+		AggregationOptions aggregationOptions = AggregationOptions.builder().allowDiskUse(true).build();
+		MatchOperation match = Aggregation.match(Criteria.where("collectionName").is(collectionName).and("views").in(viewNameAsString));
+		Aggregation aggregation = Aggregation.newAggregation(sort, match, group, project, unwind, replaceRoot).withOptions(aggregationOptions);
+
+		return mongoTemplate.aggregateStream(aggregation, "retention_member_properties", MemberProperties.class);
+	}
+
+	// TODO TVB: 23/11/23 test moi
+	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+																Duration duration,
+																int versionsToKeep) {
+		// TODO TVB: 23/11/23 impl me, mongo query already ready
+		return Stream.empty();
+	}
+
 }

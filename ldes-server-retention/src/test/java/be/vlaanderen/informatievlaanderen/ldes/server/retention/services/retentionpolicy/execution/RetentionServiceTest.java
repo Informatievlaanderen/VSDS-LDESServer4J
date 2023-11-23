@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.execution;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
@@ -18,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 class RetentionServiceTest {
 
-	public static final String VIEW = "view";
+	public static final ViewName VIEW = new ViewName("collection", "view");
 
 	private final MemberPropertiesRepository memberPropertiesRepository = mock(MemberPropertiesRepository.class);
 	private final MemberRemover memberRemover = mock(MemberRemover.class);
@@ -46,8 +47,8 @@ class RetentionServiceTest {
 		InOrder inOrder = inOrder(retentionPolicyCollection, memberPropertiesRepository, memberRemover);
 		inOrder.verify(retentionPolicyCollection).getRetentionPolicyMap();
 		inOrder.verify(memberPropertiesRepository).getMemberPropertiesWithViewReference(VIEW);
-		inOrder.verify(memberRemover).removeMemberFromView(firstMember, VIEW);
-		inOrder.verify(memberRemover).removeMemberFromView(thirdMember, VIEW);
+		inOrder.verify(memberRemover).removeMemberFromView(firstMember, VIEW.asString());
+		inOrder.verify(memberRemover).removeMemberFromView(thirdMember, VIEW.asString());
 		inOrder.verifyNoMoreInteractions();
 	}
 

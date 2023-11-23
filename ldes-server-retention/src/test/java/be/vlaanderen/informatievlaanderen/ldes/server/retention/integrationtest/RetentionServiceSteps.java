@@ -121,7 +121,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		// spring-boot-test is not registered to this thread. Hence, these events do not
 		// pop up in for example ApplicationEvents from spring-boot-test. Therefore, we
 		// use the repository to verify on existence of the members.
-		Stream<String> members = memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
+		Stream<String> members = memberPropertiesRepository.getMemberPropertiesWithViewReference(ViewName.fromString(viewName))
 				.map(MemberProperties::getId);
 
 		assertThat(members).containsExactlyInAnyOrder(memberIds.toArray(String[]::new));

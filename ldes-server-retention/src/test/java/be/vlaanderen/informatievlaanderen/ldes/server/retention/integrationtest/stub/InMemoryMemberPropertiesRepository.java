@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest.stub;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import org.springframework.stereotype.Component;
@@ -52,11 +53,11 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
 	}
 
 	@Override
-	public Stream<MemberProperties> getMemberPropertiesWithViewReference(String viewName) {
+	public Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName) {
 		return memberPropertiesMap
 				.values()
 				.stream()
-				.filter(memberProperties -> memberProperties.getViewReferences().contains(viewName));
+				.filter(memberProperties -> memberProperties.getViewReferences().contains(viewName.asString()));
 	}
 
 	@Override

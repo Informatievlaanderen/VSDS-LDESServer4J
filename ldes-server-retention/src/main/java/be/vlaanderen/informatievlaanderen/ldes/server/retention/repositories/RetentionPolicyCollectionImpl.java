@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import org.springframework.context.event.EventListener;
@@ -15,7 +17,7 @@ import java.util.Map;
 @Component
 public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection {
 
-	private final Map<String, List<RetentionPolicy>> retentionPolicyMap;
+	private final Map<ViewName, RetentionPolicy> retentionPolicyMap;
 	private final RetentionPolicyFactory retentionPolicyFactory;
 
 	public RetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
@@ -23,24 +25,33 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 		this.retentionPolicyMap = new HashMap<>();
 	}
 
-	public Map<String, List<RetentionPolicy>> getRetentionPolicyMap() {
+	public Map<ViewName, RetentionPolicy> getRetentionPolicyMap() {
 		return Map.copyOf(retentionPolicyMap);
 	}
 
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
-		retentionPolicyMap.put(event.getViewName().asString(),
-				retentionPolicyFactory.getRetentionPolicyListForView(event.getViewSpecification()));
+		addToMap(event.getViewName(), event.getViewSpecification());
 	}
 
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
-		retentionPolicyMap.put(event.getViewName().asString(),
-				retentionPolicyFactory.getRetentionPolicyListForView(event.getViewSpecification()));
+		addToMap(event.getViewName(), event.getViewSpecification());
+	}
+
+	private void addToMap(ViewName viewName, ViewSpecification viewSpecification) {
+		final List<RetentionPolicy> retentionPolicyListForView =
+				retentionPolicyFactory.getRetentionPolicyListForView(viewSpecification);
+
+		if (!retentionPolicyListForView.isEmpty()) {
+			// TODO TVB: 23/11/23 convert to new policy
+			RetentionPolicy retentionPolicy = retentionPolicyListForView.get(0);
+			retentionPolicyMap.put(viewName, retentionPolicy);
+		}
 	}
 
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
-		retentionPolicyMap.remove(event.getViewName().asString());
+		retentionPolicyMap.remove(event.getViewName());
 	}
 }

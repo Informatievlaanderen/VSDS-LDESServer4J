@@ -1,19 +1,29 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.execution;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.RETENTION_CRON_KEY;
 
 @Service
 public class RetentionService {
+
+	private static final Logger log = LoggerFactory.getLogger(RetentionService.class);
 
 	private final MemberPropertiesRepository memberPropertiesRepository;
 	private final MemberRemover memberRemover;
@@ -28,32 +38,33 @@ public class RetentionService {
 
 	@Scheduled(cron = RETENTION_CRON_KEY)
 	public void executeRetentionPolicies() {
+		log.atDebug().log("Start retention");
 		retentionPolicyCollection
-				.getRetentionPolicyMap()
-				.entrySet()
-				.stream()
-				.filter(this::viewHasRetentionPolicies)
-				.forEach(viewWithRetentionPolicies -> removeMembersFromViewThatMatchRetentionPolicies(
-						viewWithRetentionPolicies.getKey(), viewWithRetentionPolicies.getValue()));
+                .getRetentionPolicyMap()
+                .forEach(this::removeMembersFromViewThatMatchRetentionPolicies);
+		log.atDebug().log("Finish retention");
 	}
 
-	private boolean viewHasRetentionPolicies(Map.Entry<String, List<RetentionPolicy>> entry) {
-		return !entry.getValue().isEmpty();
-	}
+	private void removeMembersFromViewThatMatchRetentionPolicies(ViewName viewName,
+																 RetentionPolicy retentionPolicy) {
 
-	private void removeMembersFromViewThatMatchRetentionPolicies(String viewName,
-			List<RetentionPolicy> retentionPoliciesOfView) {
-		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
-				.filter(memberProperties -> memberMatchesAllRetentionPoliciesOfView(retentionPoliciesOfView, viewName,
-						memberProperties))
-				.forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName));
-	}
+		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
+			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+					(TimeBasedRetentionPolicy) retentionPolicy);
+			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+					(VersionBasedRetentionPolicy) retentionPolicy);
+			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
+		};
 
-	private boolean memberMatchesAllRetentionPoliciesOfView(List<RetentionPolicy> retentionPolicies,
-			String viewName, MemberProperties memberProperties) {
-		return retentionPolicies
-				.stream()
-				.allMatch(retentionPolicy -> retentionPolicy.matchesPolicyOfView(memberProperties, viewName));
+		memberPropertiesStream.forEach(
+				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
+		);
+
+		// TODO TVB: 23/11/23 three lines below to be removed
+		AtomicInteger i = new AtomicInteger();
+		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName).forEach(x -> i.getAndIncrement());
+		log.atDebug().log("Processed {}: {}", viewName, i);
 	}
 
 }
