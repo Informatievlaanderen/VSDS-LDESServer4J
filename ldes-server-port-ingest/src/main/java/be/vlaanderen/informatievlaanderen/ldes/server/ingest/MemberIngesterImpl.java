@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
@@ -37,10 +39,12 @@ public class MemberIngesterImpl implements MemberIngester {
     }
 
     private void ingestNewMember(Member member, String memberId) {
-        if (insert(member)) {
+        Optional<Member> savedMember = insert(member);
+        if (savedMember.isPresent()) {
+            Member sMember = savedMember.get();
             Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-            final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), memberId,
-                    member.getCollectionName(), member.getSequenceNr());
+            final var memberIngestedEvent = new MemberIngestedEvent(sMember.getModel(), sMember.getId(),
+                    sMember.getCollectionName(), sMember.getSequenceNr());
             eventPublisher.publishEvent(memberIngestedEvent);
             log.debug(MEMBER_WITH_ID_INGESTED, memberId);
         } else {
@@ -48,7 +52,7 @@ public class MemberIngesterImpl implements MemberIngester {
         }
     }
 
-    private boolean insert(Member member) {
+    private Optional<Member> insert(Member member) {
         member.removeTreeMember();
         return memberRepository.insertMember(member);
     }

@@ -20,9 +20,8 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +66,7 @@ class MemberIngesterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(FALSE);
+		when(memberRepository.insertMember(member)).thenReturn(Optional.empty());
 
 		memberIngestService.ingest(member);
 
@@ -83,7 +82,7 @@ class MemberIngesterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(TRUE);
+		when(memberRepository.insertMember(member)).thenReturn(Optional.of(member));
 
 		memberIngestService.ingest(member);
 
