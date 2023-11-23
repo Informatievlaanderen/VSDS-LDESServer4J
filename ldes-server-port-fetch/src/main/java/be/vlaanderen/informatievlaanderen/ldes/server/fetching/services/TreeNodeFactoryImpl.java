@@ -29,10 +29,13 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 	@Override
 	public TreeNode getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
-		String extendedTreeNodeId = hostName + treeNodeId.asString();
+		String extendedTreeNodeId = treeNodeId.asString();
+		if (true){
+			extendedTreeNodeId = hostName + extendedTreeNodeId;
+		}
 		Fragment fragment = fragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
-						() -> new MissingResourceException("fragment", extendedTreeNodeId));
+						() -> new MissingResourceException("fragment", treeNodeId.asString()));
 
 		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asString());
 		List<Member> members = memberRepository
