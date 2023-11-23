@@ -4,10 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.Membe
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.read.ListAppender;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -19,15 +15,14 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Optional;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +31,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberIngesterImplTest {
 
-	public static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
 	@Mock
 	private MemberRepository memberRepository;
 
@@ -67,25 +61,16 @@ class MemberIngesterImplTest {
 
 	@Test
 	@DisplayName("Adding Member when there is a member with the same id that already exists")
-	void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
+	void when_TheMemberAlreadyExists_thenFalseIsReturned() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(Optional.empty());
-
-		Logger logger = (Logger) LoggerFactory.getLogger(MemberIngesterImpl.class);
-		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
-		listAppender.start();
-		logger.addAppender(listAppender);
+		when(memberRepository.insertMember(member)).thenReturn(FALSE);
 
 		memberIngestService.ingest(member);
 
-		List<ILoggingEvent> logsList = listAppender.list;
-
-		assertEquals(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, logsList.get(0).getMessage());
-		assertEquals(Level.WARN, logsList.get(0).getLevel());
 		verify(memberRepository, times(1)).insertMember(member);
 		verifyNoInteractions(eventPublisher);
 	}
@@ -98,7 +83,7 @@ class MemberIngesterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(Optional.of(member));
+		when(memberRepository.insertMember(member)).thenReturn(TRUE);
 
 		memberIngestService.ingest(member);
 
