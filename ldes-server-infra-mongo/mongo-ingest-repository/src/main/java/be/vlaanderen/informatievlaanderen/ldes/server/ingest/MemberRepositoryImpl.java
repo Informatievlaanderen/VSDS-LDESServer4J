@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
 
@@ -31,13 +34,13 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.existsById(memberId);
 	}
 
-	public Optional<Member> insertMember(Member member) {
+	public boolean insertMember(Member member) {
 		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
 		try {
-			MemberEntity savedMemberEntity = memberEntityRepository.insert(memberEntityToSave);
-			return Optional.of(memberEntityMapper.toMember(savedMemberEntity));
+			memberEntityRepository.insert(memberEntityToSave);
+			return TRUE;
 		} catch (DuplicateKeyException e) {
-			return Optional.empty();
+			return FALSE;
 		}
 	}
 
