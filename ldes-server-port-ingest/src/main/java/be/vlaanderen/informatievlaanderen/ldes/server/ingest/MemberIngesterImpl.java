@@ -10,12 +10,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
-	private final MemberIngestValidator validator;
+    public static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
+    public static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
+    public static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
+    private final MemberIngestValidator validator;
 	private final MemberRepository memberRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
@@ -36,20 +37,18 @@ public class MemberIngesterImpl implements MemberIngester {
     }
 
     private void ingestNewMember(Member member, String memberId) {
-        Optional<Member> memberSaved = insert(member);
-        if (memberSaved.isPresent()) {
-            Member savedMember = memberSaved.get();
-            Metrics.counter("ldes_server_ingested_members_count").increment();
-            final var memberIngestedEvent = new MemberIngestedEvent(savedMember.getModel(), savedMember.getId(),
-                    savedMember.getCollectionName(), savedMember.getSequenceNr());
+        if (insert(member)) {
+            Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
+            final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), memberId,
+                    member.getCollectionName(), member.getSequenceNr());
             eventPublisher.publishEvent(memberIngestedEvent);
-            log.debug("Member with id {} ingested.", memberId);
+            log.debug(MEMBER_WITH_ID_INGESTED, memberId);
         } else {
-            log.warn("Duplicate member ingested. Member with id {} already exists", memberId);
+            log.warn(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId);
         }
     }
 
-    private Optional<Member> insert(Member member) {
+    private boolean insert(Member member) {
         member.removeTreeMember();
         return memberRepository.insertMember(member);
     }

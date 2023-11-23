@@ -26,8 +26,9 @@ import org.springframework.util.ResourceUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,13 +68,13 @@ class MemberIngesterImplTest {
 
 	@Test
 	@DisplayName("Adding Member when there is a member with the same id that already exists")
-	void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
+	void when_TheMemberAlreadyExists_thenFalseIsReturned() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(Optional.empty());
+		when(memberRepository.insertMember(member)).thenReturn(FALSE);
 
 		Logger logger = (Logger) LoggerFactory.getLogger(MemberIngesterImpl.class);
 		ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
@@ -98,7 +99,7 @@ class MemberIngesterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(Optional.of(member));
+		when(memberRepository.insertMember(member)).thenReturn(TRUE);
 
 		memberIngestService.ingest(member);
 
