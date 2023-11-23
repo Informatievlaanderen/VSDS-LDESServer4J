@@ -90,8 +90,6 @@
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.14.0</cucumber.version>
         <assertj-core.version>3.24.2</assertj-core.version>
-        <logback-classic.version>1.4.11</logback-classic.version>
-        <logback-core.version>1.4.11</logback-core.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>8.3.1</depencency-check-maven.version>
