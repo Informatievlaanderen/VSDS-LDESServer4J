@@ -9,9 +9,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 
 @Component
 public class TreeNodeFactoryImpl implements TreeNodeFactory {
@@ -21,7 +24,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final MemberRepository memberRepository;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-			MemberRepository memberRepository) {
+							   MemberRepository memberRepository, @Value(HOST_NAME_KEY) Boolean useRelativeUrl) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.memberRepository = memberRepository;
