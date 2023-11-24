@@ -10,5 +10,4 @@ module ldes.ingest.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories;
     exports be.vlaanderen.informatievlaanderen.ldes.server.ingest;
-
 }
