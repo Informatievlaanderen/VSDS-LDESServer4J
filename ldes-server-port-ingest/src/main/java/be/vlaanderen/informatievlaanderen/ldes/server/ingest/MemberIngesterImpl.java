@@ -15,9 +15,9 @@ import java.util.Optional;
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
-    public static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
-    public static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
-    public static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
+    private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
+    private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
+    private static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
     private final MemberIngestValidator validator;
 	private final MemberRepository memberRepository;
 	private final ApplicationEventPublisher eventPublisher;
@@ -35,26 +35,23 @@ public class MemberIngesterImpl implements MemberIngester {
     public void ingest(Member member) {
         validator.validate(member);
         final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
-        ingestNewMember(member, memberId);
+        insertIntoRepo(member).ifPresentOrElse(
+                insertedMember -> handleSuccessfulMemberInsertion(insertedMember, memberId),
+                () -> log.debug(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId)
+        );
     }
 
-    private void ingestNewMember(Member member, String memberId) {
-        Optional<Member> savedMember = insert(member);
-        if (savedMember.isPresent()) {
-            Member sMember = savedMember.get();
+    private void handleSuccessfulMemberInsertion(Member member, String memberId) {
             Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-            final var memberIngestedEvent = new MemberIngestedEvent(sMember.getModel(), sMember.getId(),
-                    sMember.getCollectionName(), sMember.getSequenceNr());
+            final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
+                    member.getCollectionName(), member.getSequenceNr());
             eventPublisher.publishEvent(memberIngestedEvent);
             log.debug(MEMBER_WITH_ID_INGESTED, memberId);
-        } else {
-            log.warn(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId);
-        }
     }
 
-    private Optional<Member> insert(Member member) {
+    private Optional<Member> insertIntoRepo(Member member) {
         member.removeTreeMember();
-        return memberRepository.insertMember(member);
+        return memberRepository.insert(member);
     }
 
 }

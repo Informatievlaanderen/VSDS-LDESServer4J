@@ -31,7 +31,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.existsById(memberId);
 	}
 
-	public Optional<Member> insertMember(Member member) {
+	public Optional<Member> insert(Member member) {
 		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
 		try {
 			MemberEntity savedMember = memberEntityRepository.insert(memberEntityToSave);

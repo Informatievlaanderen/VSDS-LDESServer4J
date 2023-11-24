@@ -60,17 +60,17 @@ class MemberIngesterImplTest {
 
 	@Test
 	@DisplayName("Adding Member when there is a member with the same id that already exists")
-	void when_TheMemberAlreadyExists_thenFalseIsReturned() throws IOException {
+	void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(Optional.empty());
+		when(memberRepository.insert(member)).thenReturn(Optional.empty());
 
 		memberIngestService.ingest(member);
 
-		verify(memberRepository, times(1)).insertMember(member);
+		verify(memberRepository, times(1)).insert(member);
 		verifyNoInteractions(eventPublisher);
 	}
 
@@ -82,12 +82,12 @@ class MemberIngesterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insertMember(member)).thenReturn(Optional.of(member));
+		when(memberRepository.insert(member)).thenReturn(Optional.of(member));
 
 		memberIngestService.ingest(member);
 
 		InOrder inOrder = inOrder(memberRepository, eventPublisher);
-		inOrder.verify(memberRepository, times(1)).insertMember(member);
+		inOrder.verify(memberRepository, times(1)).insert(member);
 		inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
 		inOrder.verifyNoMoreInteractions();
 	}
