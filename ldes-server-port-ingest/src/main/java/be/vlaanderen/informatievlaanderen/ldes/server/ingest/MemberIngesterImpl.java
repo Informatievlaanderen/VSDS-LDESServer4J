@@ -42,11 +42,11 @@ public class MemberIngesterImpl implements MemberIngester {
     }
 
     private void handleSuccessfulMemberInsertion(Member member, String memberId) {
-            Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-            final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
-                    member.getCollectionName(), member.getSequenceNr());
-            eventPublisher.publishEvent(memberIngestedEvent);
-            log.debug(MEMBER_WITH_ID_INGESTED, memberId);
+        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
+        final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
+                member.getCollectionName(), member.getSequenceNr());
+        eventPublisher.publishEvent(memberIngestedEvent);
+        log.debug(MEMBER_WITH_ID_INGESTED, memberId);
     }
 
     private Optional<Member> insertIntoRepo(Member member) {
