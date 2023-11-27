@@ -8,12 +8,16 @@ FROM maven:3.8.5-amazoncorretto-17 AS builder
 # MAVEN: application
 FROM builder as app-stage
 COPY . /
-RUN mvn install -DskipTests
+ENV MAVEN_CONFIG=/var/maven/.m2
+RUN --mount=type=cache,target=/var/maven/.m2 mvn -T 1.5C -Duser.home=/var/maven -Dmaven.javadoc.skip=true -DskipTests -Dmaven.test.skip=true install
 
 #
 # RUN THE APPLICATION
 #
 FROM amazoncorretto:17-alpine-jdk
+
+# @todo Can we use latest version automatically?
+RUN wget https://github.com/grafana/pyroscope-java/releases/download/v0.12.2/pyroscope.jar -O pyroscope.jar
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
 
@@ -38,8 +42,10 @@ COPY --from=app-stage ldes-fragmentisers/ldes-fragmentisers-pagination/target/ld
 COPY --from=app-stage ldes-server-retention/target/ldes-server-retention-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-compaction/target/ldes-server-compaction-jar-with-dependencies.jar ./lib/
 
+# Dependency for pyroscope
+RUN apk add libstdc++
 
 RUN adduser -D -u 2000 ldes
 USER ldes
 
-CMD ["java", "-cp", "ldes-server-application.jar", "-Dloader.path=lib/", "org.springframework.boot.loader.PropertiesLauncher"]
+CMD ["java", "-javaagent:pyroscope.jar", "-cp", "ldes-server-application.jar", "-Dloader.path=lib/", "org.springframework.boot.loader.PropertiesLauncher"]
