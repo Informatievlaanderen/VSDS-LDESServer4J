@@ -6,12 +6,21 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
 
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class RetentionPolicyCollectionImplTest {
 
@@ -23,6 +32,8 @@ class RetentionPolicyCollectionImplTest {
 	void test_AddingAndDeletingViews() {
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
 				List.of(), List.of(), 100);
+		when(retentionPolicyFactory.extractRetentionPolicy(viewSpecification))
+				.thenReturn(Optional.of(mock(RetentionPolicy.class)));
 
 		assertFalse(
 				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
@@ -37,15 +48,15 @@ class RetentionPolicyCollectionImplTest {
 
 	@Test
 	void test_InitializingViews() {
+		List<Model> retentionPolicies = new ArrayList<>();
 		ViewSpecification viewSpecification = new ViewSpecification(new ViewName("collection", "additonalView"),
-				List.of(), List.of(), 100);
-		assertFalse(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
+				retentionPolicies, List.of(), 100);
+		when(retentionPolicyFactory.extractRetentionPolicy(viewSpecification))
+				.thenReturn(Optional.of(mock(RetentionPolicy.class)));
+		assertFalse(retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 
 		retentionPolicyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
-
-		assertTrue(
-				retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
+		assertTrue(retentionPolicyCollection.getRetentionPolicyMap().containsKey(viewSpecification.getName()));
 	}
 
 }

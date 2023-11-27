@@ -25,10 +25,6 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 		this.retentionPolicyMap = new HashMap<>();
 	}
 
-	public Map<ViewName, RetentionPolicy> getRetentionPolicyMap() {
-		return Map.copyOf(retentionPolicyMap);
-	}
-
 	@EventListener
 	public void handleViewAddedEvent(ViewAddedEvent event) {
 		addToMap(event.getViewName(), event.getViewSpecification());
@@ -40,21 +36,18 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 	}
 
 	@EventListener
-	public void foo(EventStreamCreatedEvent foo) {
-		boolean allow = true;
-		if (!allow)
-			throw new IllegalArgumentException("no no no");
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
+		retentionPolicyMap.remove(event.getViewName());
 	}
 
-	// TODO TVB: 27/11/23 test me
+	public Map<ViewName, RetentionPolicy> getRetentionPolicyMap() {
+		return Map.copyOf(retentionPolicyMap);
+	}
+
 	private void addToMap(ViewName viewName, ViewSpecification viewSpecification) {
 		retentionPolicyFactory
 				.extractRetentionPolicy(viewSpecification)
 				.ifPresent(policy -> retentionPolicyMap.put(viewName, policy));
 	}
 
-	@EventListener
-	public void handleViewDeletedEvent(ViewDeletedEvent event) {
-		retentionPolicyMap.remove(event.getViewName());
-	}
 }
