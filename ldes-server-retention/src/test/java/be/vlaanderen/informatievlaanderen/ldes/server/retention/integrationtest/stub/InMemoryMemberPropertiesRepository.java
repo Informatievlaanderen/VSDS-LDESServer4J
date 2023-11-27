@@ -16,86 +16,111 @@ import java.util.stream.Stream;
 @Component
 public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepository {
 
-	private final ConcurrentHashMap<String, MemberProperties> memberPropertiesMap;
+    private final ConcurrentHashMap<String, MemberProperties> memberPropertiesMap;
 
-	public InMemoryMemberPropertiesRepository() {
-		this.memberPropertiesMap = new ConcurrentHashMap<>();
-	}
+    public InMemoryMemberPropertiesRepository() {
+        this.memberPropertiesMap = new ConcurrentHashMap<>();
+    }
 
-	@Override
-	public void saveMemberPropertiesWithoutViews(MemberProperties memberProperties) {
-		memberPropertiesMap.put(memberProperties.getId(), memberProperties);
-	}
+    @Override
+    public void saveMemberPropertiesWithoutViews(MemberProperties memberProperties) {
+        memberPropertiesMap.put(memberProperties.getId(), memberProperties);
+    }
 
-	@Override
-	public void save(MemberProperties memberProperties) {
-		memberPropertiesMap.put(memberProperties.getId(), memberProperties);
-	}
+    @Override
+    public void save(MemberProperties memberProperties) {
+        memberPropertiesMap.put(memberProperties.getId(), memberProperties);
+    }
 
-	@Override
-	public Optional<MemberProperties> retrieve(String id) {
-		if (memberPropertiesMap.containsKey(id)) {
-			return Optional.of(memberPropertiesMap.get(id));
-		}
-		return Optional.empty();
-	}
+    @Override
+    public Optional<MemberProperties> retrieve(String id) {
+        if (memberPropertiesMap.containsKey(id)) {
+            return Optional.of(memberPropertiesMap.get(id));
+        }
+        return Optional.empty();
+    }
 
-	@Override
-	public void addViewReference(String id, String viewName) {
-		memberPropertiesMap.get(id).addViewReference(viewName);
-	}
+    @Override
+    public void addViewReference(String id, String viewName) {
+        memberPropertiesMap.get(id).addViewReference(viewName);
+    }
 
-	@Override
-	public List<MemberProperties> getMemberPropertiesOfVersionAndView(String versionOf, String viewName) {
-		return memberPropertiesMap
-				.values()
-				.stream()
-				.filter(memberProperties -> memberProperties.getVersionOf().equals(versionOf))
-				.filter(memberProperties -> memberProperties.getViewReferences().contains(viewName))
-				.toList();
-	}
+    @Override
+    public List<MemberProperties> getMemberPropertiesOfVersionAndView(String versionOf, String viewName) {
+        return memberPropertiesMap
+                .values()
+                .stream()
+                .filter(memberProperties -> memberProperties.getVersionOf().equals(versionOf))
+                .filter(memberProperties -> memberProperties.getViewReferences().contains(viewName))
+                .toList();
+    }
 
-	@Override
-	public Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName) {
-		return memberPropertiesMap
-				.values()
-				.stream()
-				.filter(memberProperties -> memberProperties.getViewReferences().contains(viewName.asString()));
-	}
+    @Override
+    public Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName) {
+        return memberPropertiesMap
+                .values()
+                .stream()
+                .filter(memberProperties -> memberProperties.getViewReferences().contains(viewName.asString()));
+    }
 
-	@Override
-	public void removeViewReference(String id, String viewName) {
-		memberPropertiesMap.get(id).deleteViewReference(viewName);
-	}
+    @Override
+    public void removeViewReference(String id, String viewName) {
+        memberPropertiesMap.get(id).deleteViewReference(viewName);
+    }
 
-	@Override
-	public void removeMemberPropertiesOfCollection(String collectionName) {
-		List<MemberProperties> properties = memberPropertiesMap
-				.values()
-				.stream()
-				.filter(memberProperties -> memberProperties.getCollectionName().equals(collectionName))
-				.toList();
-		properties.forEach(memberProperties -> memberPropertiesMap.remove(memberProperties.getId()));
-	}
+    @Override
+    public void removeMemberPropertiesOfCollection(String collectionName) {
+        List<MemberProperties> properties = memberPropertiesMap
+                .values()
+                .stream()
+                .filter(memberProperties -> memberProperties.getCollectionName().equals(collectionName))
+                .toList();
+        properties.forEach(memberProperties -> memberPropertiesMap.remove(memberProperties.getId()));
+    }
 
-	@Override
-	public void deleteById(String id) {
-		memberPropertiesMap.remove(id);
-	}
+    @Override
+    public void deleteById(String id) {
+        memberPropertiesMap.remove(id);
+    }
 
-	// TODO TVB: 27/11/23 test all below
-	@Override
-	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeBasedRetentionPolicy policy) {
-		return null;
-	}
+    @Override
+    public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+                                                                TimeBasedRetentionPolicy policy) {
+        return Stream.of(
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/4")
+        );
+    }
 
-	@Override
-	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, VersionBasedRetentionPolicy policy) {
-		return null;
-	}
+    @Override
+    public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+                                                                VersionBasedRetentionPolicy policy) {
+        return Stream.of(
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3")
+        );
+    }
 
-	@Override
-	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy) {
-		return null;
-	}
+    @Override
+    public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+                                                                TimeAndVersionBasedRetentionPolicy policy) {
+        return Stream.of(
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/4")
+        );
+    }
 }

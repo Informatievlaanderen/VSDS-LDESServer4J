@@ -14,6 +14,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -23,12 +26,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -51,7 +56,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	public ViewSpecification ViewSpecificationEntryTransformer(Map<String, String> row) throws URISyntaxException {
 		return new ViewSpecification(
 				ViewName.fromString(row.get("viewName")),
-				List.of(readRetentionPolicyFromFile(row.get("rdfDescriptionFileName"))), List.of(), 100);
+				readRetentionPolicyFromFile(row.get("rdfDescriptionFileName")), List.of(), 100);
 	}
 
 	@DataTableType
@@ -101,10 +106,39 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		return Files.lines(Paths.get(uri)).collect(Collectors.joining());
 	}
 
-	private Model readRetentionPolicyFromFile(String fileName) throws URISyntaxException {
+	private List<Model> readRetentionPolicyFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI().toString();
-		return RDFDataMgr.loadModel(uri);
+//		return RDFDataMgr.loadModel(uri);
+		return extractRetentionStatements(RDFDataMgr.loadModel(uri));
+	}
+
+	public List<Model> extractRetentionStatements(Model viewDescription) {
+		List<Statement> statements = viewDescription.listStatements().toList();
+		List<Model> retentionPolicies = new ArrayList<>();
+		for (RDFNode retention : statements.stream()
+				.filter(statement -> statement.getPredicate().toString().equals(RETENTION_TYPE))
+				.map(Statement::getObject).toList()) {
+			List<Statement> retentionStatements = retrieveAllRetentionStatements(retention, statements);
+			Model retentionModel = ModelFactory.createDefaultModel();
+			retentionModel.add(retentionStatements);
+			retentionPolicies.add(retentionModel);
+		}
+
+		return retentionPolicies;
+	}
+
+	private List<Statement> retrieveAllRetentionStatements(RDFNode resource, List<Statement> statements) {
+		List<Statement> statementList = new ArrayList<>();
+		statements.stream()
+				.filter(statement -> statement.getSubject().equals(resource))
+				.forEach(statement -> {
+					statementList.add(statement);
+					if (statement.getObject().isResource()) {
+						statementList.addAll(retrieveAllRetentionStatements(statement.getResource(), statements));
+					}
+				});
+		return statementList;
 	}
 
 	@And("the following members are allocated to the view {string}")
