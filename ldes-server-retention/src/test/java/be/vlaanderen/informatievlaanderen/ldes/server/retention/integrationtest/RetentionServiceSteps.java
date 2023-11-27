@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetentionServiceSteps extends RetentionIntegrationTest {
 
+	private RetentionConfigExtractor retentionConfigExtractor = new RetentionConfigExtractor();
 	public static final String MEMBER_TEMPLATE_FILENAME = "features/data/memberTemplate.ttl";
 
 	@DataTableType
@@ -56,7 +57,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	public ViewSpecification ViewSpecificationEntryTransformer(Map<String, String> row) throws URISyntaxException {
 		return new ViewSpecification(
 				ViewName.fromString(row.get("viewName")),
-				readRetentionPolicyFromFile(row.get("rdfDescriptionFileName")), List.of(), 100);
+				retentionConfigExtractor
+						.readRetentionPolicyFromFile(row.get("rdfDescriptionFileName")), List.of(), 100);
 	}
 
 	@DataTableType
@@ -104,41 +106,6 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = Objects.requireNonNull(classLoader.getResource(MEMBER_TEMPLATE_FILENAME)).toURI();
 		return Files.lines(Paths.get(uri)).collect(Collectors.joining());
-	}
-
-	private List<Model> readRetentionPolicyFromFile(String fileName) throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI().toString();
-//		return RDFDataMgr.loadModel(uri);
-		return extractRetentionStatements(RDFDataMgr.loadModel(uri));
-	}
-
-	public List<Model> extractRetentionStatements(Model viewDescription) {
-		List<Statement> statements = viewDescription.listStatements().toList();
-		List<Model> retentionPolicies = new ArrayList<>();
-		for (RDFNode retention : statements.stream()
-				.filter(statement -> statement.getPredicate().toString().equals(RETENTION_TYPE))
-				.map(Statement::getObject).toList()) {
-			List<Statement> retentionStatements = retrieveAllRetentionStatements(retention, statements);
-			Model retentionModel = ModelFactory.createDefaultModel();
-			retentionModel.add(retentionStatements);
-			retentionPolicies.add(retentionModel);
-		}
-
-		return retentionPolicies;
-	}
-
-	private List<Statement> retrieveAllRetentionStatements(RDFNode resource, List<Statement> statements) {
-		List<Statement> statementList = new ArrayList<>();
-		statements.stream()
-				.filter(statement -> statement.getSubject().equals(resource))
-				.forEach(statement -> {
-					statementList.add(statement);
-					if (statement.getObject().isResource()) {
-						statementList.addAll(retrieveAllRetentionStatements(statement.getResource(), statements));
-					}
-				});
-		return statementList;
 	}
 
 	@And("the following members are allocated to the view {string}")

@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.versionbased;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
@@ -17,8 +16,6 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class VersionBasedRetentionPolicyCreator implements RetentionPolicyCreator {
 	public static final Property LDES_AMOUNT = createProperty(LDES, "amount");
-
-	public VersionBasedRetentionPolicyCreator() {}
 
 	@Override
 	public RetentionPolicy createRetentionPolicy(Model model) {

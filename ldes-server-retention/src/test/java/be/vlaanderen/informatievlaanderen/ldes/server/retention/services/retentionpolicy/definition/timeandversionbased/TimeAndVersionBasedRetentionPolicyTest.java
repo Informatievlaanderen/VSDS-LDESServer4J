@@ -33,25 +33,27 @@ class TimeAndVersionBasedRetentionPolicyTest {
 
     @Test
     void should_ThrowException_when_RetentionPolicyIsNotVersionOrTimeBased() {
+        var timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(Duration.ZERO);
+        var timeAndVersionBasedRetentionPolicy = new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1);
         assertThatThrownBy(() -> TimeAndVersionBasedRetentionPolicy.from(
-                new TimeBasedRetentionPolicy(Duration.ZERO),
-                new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1)
+                timeBasedRetentionPolicy,
+                timeAndVersionBasedRetentionPolicy
         ))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TimeAndVersionBasedRetentionPolicy requires exactly one %s and one %s",
                         TIME_BASED_RETENTION_POLICY, VERSION_BASED_RETENTION_POLICY);
 
         assertThatThrownBy(() -> TimeAndVersionBasedRetentionPolicy.from(
-                new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1),
-                new TimeBasedRetentionPolicy(Duration.ZERO)
+                timeAndVersionBasedRetentionPolicy,
+                timeBasedRetentionPolicy
         ))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TimeAndVersionBasedRetentionPolicy requires exactly one %s and one %s",
                         TIME_BASED_RETENTION_POLICY, VERSION_BASED_RETENTION_POLICY);
 
         assertThatThrownBy(() -> TimeAndVersionBasedRetentionPolicy.from(
-                new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1),
-                new TimeAndVersionBasedRetentionPolicy(Duration.ZERO, 1)
+                timeAndVersionBasedRetentionPolicy,
+                timeAndVersionBasedRetentionPolicy
         ))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("TimeAndVersionBasedRetentionPolicy requires exactly one %s and one %s",
