@@ -113,20 +113,18 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		memberPropertiesEntityRepository.deleteById(id);
 	}
 
-	// TODO TVB: 23/11/23 test me
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 																TimeBasedRetentionPolicy policy) {
 		return memberPropertiesEntityRepository
 				.findMemberPropertiesEntitiesByCollectionNameAndViewsContainingAndTimestampBefore(
 						viewName.getCollectionName(),
-						viewName.getViewName(),
+						viewName.asString(),
 						LocalDateTime.now().minus(policy.getDuration())
 				)
 				.map(memberPropertiesEntityMapper::toMemberProperties);
 	}
 
-	// TODO TVB: 27/11/23 test me
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 																VersionBasedRetentionPolicy policy) {

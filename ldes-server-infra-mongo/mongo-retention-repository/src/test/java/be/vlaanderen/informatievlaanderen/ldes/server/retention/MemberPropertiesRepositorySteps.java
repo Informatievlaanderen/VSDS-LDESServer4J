@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
@@ -129,5 +130,14 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		TimeBasedRetentionPolicy timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(duration);
 		retrievedMemberProperties =
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, timeBasedRetentionPolicy).toList();
+	}
+
+	@And("I retrieve the expired MemberProperties for {string} using VersionBasedRetentionPolicy with {int} versions")
+	public void iRetrieveTheExpiredMemberPropertiesForVersionBasedRetentionPolicyWithVersions(String viewNameString,
+																							  int versionsToKeep) {
+		var viewName = ViewName.fromString(viewNameString);
+		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep, null);
+		retrievedMemberProperties =
+				memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).toList();
 	}
 }
