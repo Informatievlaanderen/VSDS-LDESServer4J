@@ -16,21 +16,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
  * It returns false for the N (numberOfMembersToKeep) most recent members and
  * true for the other members.
  */
-public class VersionBasedRetentionPolicy implements RetentionPolicy {
-
-	private final int numberOfMembersToKeep;
-
-	public VersionBasedRetentionPolicy(int numberOfMembersToKeep) {
-		this.numberOfMembersToKeep = numberOfMembersToKeep;
-	}
+public record VersionBasedRetentionPolicy(int numberOfMembersToKeep) implements RetentionPolicy {
 
 	@Override
 	public RetentionPolicyType getType() {
 		return RetentionPolicyType.VERSION_BASED;
-	}
-
-	public int getNumberOfMembersToKeep() {
-		return numberOfMembersToKeep;
 	}
 
 }

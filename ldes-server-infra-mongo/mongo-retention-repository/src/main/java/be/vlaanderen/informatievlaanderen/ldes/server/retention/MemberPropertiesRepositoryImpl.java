@@ -120,7 +120,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 				.findMemberPropertiesEntitiesByCollectionNameAndViewsContainingAndTimestampBefore(
 						viewName.getCollectionName(),
 						viewName.asString(),
-						LocalDateTime.now().minus(policy.getDuration())
+						LocalDateTime.now().minus(policy.duration())
 				)
 				.map(memberPropertiesEntityMapper::toMemberProperties);
 	}
@@ -128,7 +128,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 																VersionBasedRetentionPolicy policy) {
-		int versionsToKeep = policy.getNumberOfMembersToKeep();
+		int versionsToKeep = policy.numberOfMembersToKeep();
 		String collectionName = viewName.getCollectionName();
 		String viewNameAsString = viewName.asString();
 
@@ -154,13 +154,13 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 				match(Criteria
 						.where(COLLECTION).is(viewName.getCollectionName())
 						.and(VIEWS).in(viewName.asString())
-						.and(TIMESTAMP).lt(LocalDateTime.now().minus(policy.getDuration())));
+						.and(TIMESTAMP).lt(LocalDateTime.now().minus(policy.duration())));
 
 		final Aggregation aggregation = createAggregation(
 				sortTimestampDesc(),
 				match,
 				groupOnVersionOf(),
-				projectVersionsToKeep(policy.getNumberOfMembersToKeep()),
+				projectVersionsToKeep(policy.numberOfMembersToKeep()),
 				unwindDocuments(),
 				getReplaceRootDocuments()
 		);

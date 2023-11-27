@@ -5,22 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 
 import java.time.Duration;
 
-// TODO TVB: 23/11/23 test
-public class TimeBasedRetentionPolicy implements RetentionPolicy {
-
-	private final Duration duration;
-
-	public TimeBasedRetentionPolicy(Duration duration) {
-		this.duration = duration;
-	}
+public record TimeBasedRetentionPolicy(Duration duration) implements RetentionPolicy {
 
 	@Override
 	public RetentionPolicyType getType() {
 		return RetentionPolicyType.TIME_BASED;
-	}
-
-	public Duration getDuration() {
-		return duration;
 	}
 
 }
