@@ -147,7 +147,6 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
 	}
 
-	// TODO TVB: 27/11/23 test me
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 																TimeAndVersionBasedRetentionPolicy policy) {
@@ -155,7 +154,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 				match(Criteria
 						.where(COLLECTION).is(viewName.getCollectionName())
 						.and(VIEWS).in(viewName.asString())
-						.and(TIMESTAMP).gt(LocalDateTime.now().minus(policy.getDuration())));
+						.and(TIMESTAMP).lt(LocalDateTime.now().minus(policy.getDuration())));
 
 		final Aggregation aggregation = createAggregation(
 				sortTimestampDesc(),
@@ -165,7 +164,6 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 				unwindDocuments(),
 				getReplaceRootDocuments()
 		);
-
 
 		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
 	}
