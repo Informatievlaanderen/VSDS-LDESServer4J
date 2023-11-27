@@ -13,7 +13,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.retention.services.
 public record TimeAndVersionBasedRetentionPolicy(Duration duration,
                                                  int numberOfMembersToKeep) implements RetentionPolicy {
 
-    // TODO TVB: 27/11/23 test me
     public static TimeAndVersionBasedRetentionPolicy from(RetentionPolicy policyA, RetentionPolicy policyB) {
         if (policyA instanceof TimeBasedRetentionPolicy timeBasedPolicy) {
             verifyIsTypeVersionBased(policyB);

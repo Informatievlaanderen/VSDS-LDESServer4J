@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
