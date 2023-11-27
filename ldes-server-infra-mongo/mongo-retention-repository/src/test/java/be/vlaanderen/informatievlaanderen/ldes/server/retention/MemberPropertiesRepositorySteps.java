@@ -137,7 +137,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 	public void iRetrieveTheExpiredMemberPropertiesForWithVersions(String viewNameString,
 																   int versionsToKeep) {
 		var viewName = ViewName.fromString(viewNameString);
-		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep, null);
+		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep);
 		retrievedMemberProperties =
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).toList();
 	}

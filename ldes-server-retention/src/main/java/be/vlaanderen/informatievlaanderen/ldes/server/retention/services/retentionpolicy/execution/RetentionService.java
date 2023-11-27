@@ -13,9 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.RETENTION_CRON_KEY;
@@ -47,27 +44,18 @@ public class RetentionService {
 
 	private void removeMembersFromViewThatMatchRetentionPolicies(ViewName viewName,
 																 RetentionPolicy retentionPolicy) {
+		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
+			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+					(TimeBasedRetentionPolicy) retentionPolicy);
+			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+					(VersionBasedRetentionPolicy) retentionPolicy);
+			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
+		};
 
-		// TODO TVB: 23/11/23 remove
-		VersionBasedRetentionPolicy versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(20000, null);
-
-//		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
-//			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
-//					(TimeBasedRetentionPolicy) retentionPolicy);
-//			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
-//					(VersionBasedRetentionPolicy) retentionPolicy);
-//			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
-//					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
-//		};
-
-//		memberPropertiesStream.forEach(
-//				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
-//		);
-
-		// TODO TVB: 23/11/23 three lines below to be removed
-		AtomicInteger i = new AtomicInteger();
-		memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).forEach(x -> i.getAndIncrement());
-		log.atDebug().log("Processed {}: {}", viewName.asString(), i);
+		memberPropertiesStream.forEach(
+				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
+		);
 	}
 
 }

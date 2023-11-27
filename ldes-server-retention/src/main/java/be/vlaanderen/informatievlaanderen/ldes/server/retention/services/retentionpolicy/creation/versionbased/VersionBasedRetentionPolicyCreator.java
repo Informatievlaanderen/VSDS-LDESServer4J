@@ -17,11 +17,8 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class VersionBasedRetentionPolicyCreator implements RetentionPolicyCreator {
 	public static final Property LDES_AMOUNT = createProperty(LDES, "amount");
-	private final MemberPropertiesRepository memberPropertiesRepository;
 
-	public VersionBasedRetentionPolicyCreator(MemberPropertiesRepository memberPropertiesRepository) {
-		this.memberPropertiesRepository = memberPropertiesRepository;
-	}
+	public VersionBasedRetentionPolicyCreator() {}
 
 	@Override
 	public RetentionPolicy createRetentionPolicy(Model model) {
@@ -33,7 +30,6 @@ public class VersionBasedRetentionPolicyCreator implements RetentionPolicyCreato
 							+ " statement.\n Found " + ldesAmounts.size() + " statements in :\n"
 							+ RdfModelConverter.toString(model, Lang.TURTLE));
 		}
-		return new VersionBasedRetentionPolicy(ldesAmounts.get(0).asLiteral().getInt(),
-				memberPropertiesRepository);
+		return new VersionBasedRetentionPolicy(ldesAmounts.get(0).asLiteral().getInt());
 	}
 }

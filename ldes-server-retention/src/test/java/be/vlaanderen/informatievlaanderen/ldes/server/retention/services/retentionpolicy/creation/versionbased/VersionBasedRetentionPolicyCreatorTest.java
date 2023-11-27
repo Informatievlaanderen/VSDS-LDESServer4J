@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.versionbased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import org.apache.jena.rdf.model.Model;
@@ -8,7 +7,6 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URISyntaxException;
@@ -18,14 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class VersionBasedRetentionPolicyCreatorTest {
-	@Mock
-	private MemberPropertiesRepository memberPropertiesRepository;
 
 	private VersionBasedRetentionPolicyCreator versionBasedRetentionPolicyCreator;
 
 	@BeforeEach
 	void setUp() {
-		this.versionBasedRetentionPolicyCreator = new VersionBasedRetentionPolicyCreator(memberPropertiesRepository);
+		this.versionBasedRetentionPolicyCreator = new VersionBasedRetentionPolicyCreator();
 	}
 
 	@Test

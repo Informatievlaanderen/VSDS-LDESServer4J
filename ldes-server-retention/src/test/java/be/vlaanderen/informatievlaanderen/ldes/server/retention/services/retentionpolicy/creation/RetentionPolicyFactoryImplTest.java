@@ -2,22 +2,17 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retent
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -27,18 +22,9 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(MockitoExtension.class)
 class RetentionPolicyFactoryImplTest {
 
-	@Mock
-	private MemberPropertiesRepository memberPropertiesRepository;
-
-	private RetentionPolicyFactory retentionPolicyFactory;
-
-	@BeforeEach
-	void setUp() {
-		retentionPolicyFactory = new RetentionPolicyFactoryImpl(memberPropertiesRepository);
-	}
+	private final RetentionPolicyFactory retentionPolicyFactory = new RetentionPolicyFactoryImpl();
 
 	@ParameterizedTest
 	@ArgumentsSource(FileNameRetentionPolicyArgumentsProvider.class)

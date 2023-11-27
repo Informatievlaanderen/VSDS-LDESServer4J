@@ -1,12 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicyType;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * The VersionBasedRetentionPolicy has two arguments numberOfMembersToKeep and a
@@ -22,32 +17,11 @@ import java.util.List;
  * true for the other members.
  */
 public class VersionBasedRetentionPolicy implements RetentionPolicy {
+
 	private final int numberOfMembersToKeep;
-	private final MemberPropertiesRepository memberPropertiesRepository;
 
-	public VersionBasedRetentionPolicy(int numberOfMembersToKeep,
-			MemberPropertiesRepository memberPropertiesRepository) {
+	public VersionBasedRetentionPolicy(int numberOfMembersToKeep) {
 		this.numberOfMembersToKeep = numberOfMembersToKeep;
-		this.memberPropertiesRepository = memberPropertiesRepository;
-	}
-
-	// TODO TVB: 23/11/23 delete
-	public boolean matchesPolicyOfView(MemberProperties memberProperties, String viewName) {
-		String versionOf = memberProperties.getVersionOf();
-		LocalDateTime timestamp = memberProperties.getTimestamp();
-		if (versionOf != null && timestamp != null) {
-			List<MemberProperties> membersOfVersion = memberPropertiesRepository
-					.getMemberPropertiesOfVersionAndView(versionOf, viewName);
-			if (numberOfMembersToKeep >= membersOfVersion.size()) {
-				return false;
-			}
-			List<MemberProperties> sortedMembersByTimestampDescending = membersOfVersion.stream()
-					.sorted(new ReverseTimeStampComparator())
-					.toList();
-			List<MemberProperties> membersToKeep = sortedMembersByTimestampDescending.subList(0, numberOfMembersToKeep);
-			return !membersToKeep.contains(memberProperties);
-		}
-		return false;
 	}
 
 	@Override

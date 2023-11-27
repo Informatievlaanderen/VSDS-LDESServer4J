@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retent
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.pointintime.PointInTimeRetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.timebased.TimeBasedRetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.versionbased.VersionBasedRetentionPolicyCreator;
@@ -25,10 +24,10 @@ public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 
 	private final Map<String, RetentionPolicyCreator> retentionPolicyCreatorMap;
 
-	public RetentionPolicyFactoryImpl(MemberPropertiesRepository memberPropertiesRepository) {
+	public RetentionPolicyFactoryImpl() {
 		this.retentionPolicyCreatorMap = Map.of(
 				TIME_BASED_RETENTION_POLICY, new TimeBasedRetentionPolicyCreator(),
-				VERSION_BASED_RETENTION_POLICY, new VersionBasedRetentionPolicyCreator(memberPropertiesRepository),
+				VERSION_BASED_RETENTION_POLICY, new VersionBasedRetentionPolicyCreator(),
 				POINT_IN_TIME_RETENTION_POLICY, new PointInTimeRetentionPolicyCreator());
 	}
 
