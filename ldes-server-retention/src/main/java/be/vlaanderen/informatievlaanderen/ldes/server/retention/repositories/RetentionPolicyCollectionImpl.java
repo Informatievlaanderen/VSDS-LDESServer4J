@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
@@ -36,6 +37,13 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 	@EventListener
 	public void handleViewInitializationEvent(ViewInitializationEvent event) {
 		addToMap(event.getViewName(), event.getViewSpecification());
+	}
+
+	@EventListener
+	public void foo(EventStreamCreatedEvent foo) {
+		boolean allow = true;
+		if (!allow)
+			throw new IllegalArgumentException("no no no");
 	}
 
 	// TODO TVB: 27/11/23 test me

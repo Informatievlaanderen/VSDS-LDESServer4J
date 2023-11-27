@@ -7,6 +7,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 
 import java.time.Duration;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyConstants.TIME_BASED_RETENTION_POLICY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyConstants.VERSION_BASED_RETENTION_POLICY;
+
 public record TimeAndVersionBasedRetentionPolicy(Duration duration,
                                                  int numberOfMembersToKeep) implements RetentionPolicy {
 
@@ -23,14 +26,21 @@ public record TimeAndVersionBasedRetentionPolicy(Duration duration,
             final Duration duration = timeBasedPolicy.duration();
             return new TimeAndVersionBasedRetentionPolicy(duration, numberOfMembersToKeep);
         } else {
-            throw new IllegalArgumentException();
+            throw illegalArgumentException();
         }
     }
 
     private static void verifyIsTypeVersionBased(RetentionPolicy maybeVersionBasedPolicy) {
         if (!(maybeVersionBasedPolicy instanceof VersionBasedRetentionPolicy)) {
-            throw new IllegalArgumentException();
+            throw illegalArgumentException();
         }
+    }
+
+    private static IllegalArgumentException illegalArgumentException() {
+        return new IllegalArgumentException(
+                "TimeAndVersionBasedRetentionPolicy requires exactly one %s and one %s"
+                        .formatted(TIME_BASED_RETENTION_POLICY, VERSION_BASED_RETENTION_POLICY)
+        );
     }
 
     @Override

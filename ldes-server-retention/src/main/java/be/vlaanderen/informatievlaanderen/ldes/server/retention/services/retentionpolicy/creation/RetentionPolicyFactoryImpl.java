@@ -32,7 +32,6 @@ public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 		);
 	}
 
-	// TODO TVB: 27/11/23 test me
 	@Override
 	public Optional<RetentionPolicy> extractRetentionPolicy(ViewSpecification viewSpecification) {
 		List<RetentionPolicy> policies = getRetentionPolicyListForView(viewSpecification);
@@ -41,7 +40,7 @@ public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 			case 0 -> Optional.empty();
 			case 1 -> Optional.of(policies.get(0));
 			case 2 -> Optional.of(TimeAndVersionBasedRetentionPolicy.from(policies.get(0), policies.get(1)));
-			default -> throw new IllegalArgumentException();
+			default -> throw new IllegalArgumentException("A view cannot have more than 2 retention policies!");
 		};
 
 	}
