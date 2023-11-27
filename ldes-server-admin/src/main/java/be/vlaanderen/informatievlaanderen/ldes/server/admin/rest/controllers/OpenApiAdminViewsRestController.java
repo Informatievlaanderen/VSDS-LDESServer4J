@@ -87,21 +87,6 @@ public interface OpenApiAdminViewsRestController {
 									    ] ;
 									] .
 									"""),
-							@ExampleObject(name = "Point-In-Time Retention", description = "A point-in-time retention policy which is configured to only keep members whose ldes:timestamppath is after April 12, 2023.", value = """
-									@prefix ldes: <https://w3id.org/ldes#> .
-									@prefix tree: <https://w3id.org/tree#>.
-									@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
-
-									server:point-in-time-retention tree:viewDescription [
-									    ldes:retentionPolicy [
-									        a ldes:PointInTimePolicy ;
-									        ldes:pointInTime "2023-04-12T00:00:00"^^xsd:dateTime
-									    ] ;
-										tree:fragmentationStrategy  () ;
-									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
-									] .
-									"""),
 							@ExampleObject(name = "Pagination Fragmentation Strategy", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
