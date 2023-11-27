@@ -155,3 +155,6 @@ Feature: MemberRepository
     Then I have retrieved 2 MemberProperties
     And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
     And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/2"
+    When I retrieve the expired MemberProperties for "mobility-hindrances/by-page" with duration "P1D" and 2 versions
+    Then I have retrieved 1 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
