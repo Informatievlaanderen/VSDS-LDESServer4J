@@ -48,23 +48,26 @@ public class RetentionService {
 	private void removeMembersFromViewThatMatchRetentionPolicies(ViewName viewName,
 																 RetentionPolicy retentionPolicy) {
 
-		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
-			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
-					(TimeBasedRetentionPolicy) retentionPolicy);
-			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
-					(VersionBasedRetentionPolicy) retentionPolicy);
-			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
-					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
-		};
+		// TODO TVB: 23/11/23 remove
+		VersionBasedRetentionPolicy versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(20000, null);
 
-		memberPropertiesStream.forEach(
-				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
-		);
+//		final Stream<MemberProperties> memberPropertiesStream = switch (retentionPolicy.getType()) {
+//			case TIME_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+//					(TimeBasedRetentionPolicy) retentionPolicy);
+//			case VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+//					(VersionBasedRetentionPolicy) retentionPolicy);
+//			case TIME_AND_VERSION_BASED -> memberPropertiesRepository.findExpiredMemberProperties(viewName,
+//					(TimeAndVersionBasedRetentionPolicy) retentionPolicy);
+//		};
+
+//		memberPropertiesStream.forEach(
+//				memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString())
+//		);
 
 		// TODO TVB: 23/11/23 three lines below to be removed
 		AtomicInteger i = new AtomicInteger();
-		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName).forEach(x -> i.getAndIncrement());
-		log.atDebug().log("Processed {}: {}", viewName, i);
+		memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).forEach(x -> i.getAndIncrement());
+		log.atDebug().log("Processed {}: {}", viewName.asString(), i);
 	}
 
 }

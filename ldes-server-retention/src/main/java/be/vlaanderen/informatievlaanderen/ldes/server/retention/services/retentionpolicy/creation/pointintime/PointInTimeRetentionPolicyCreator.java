@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retent
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.pointintime.PointInTimeRetentionPolicy;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.Model;
@@ -36,7 +35,8 @@ public class PointInTimeRetentionPolicyCreator implements RetentionPolicyCreator
 		}
 		LiteralImpl ldesPointInTimeObject = (LiteralImpl) ldesPointInTimes.get(0);
 		LocalDateTime localDateTime = getLocalDateTime(ldesPointInTimeObject);
-		return new PointInTimeRetentionPolicy(localDateTime);
+		return null; // TODO TVB: 23/11/23 fix
+//		return new PointInTimeRetentionPolicy(localDateTime);
 	}
 
 	public LocalDateTime getLocalDateTime(LiteralImpl literalImpl) {

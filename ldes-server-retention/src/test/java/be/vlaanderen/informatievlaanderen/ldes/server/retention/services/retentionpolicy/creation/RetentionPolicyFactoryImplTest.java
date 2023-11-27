@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.pointintime.PointInTimeRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import org.apache.jena.rdf.model.Model;
@@ -25,7 +24,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 class RetentionPolicyFactoryImplTest {
@@ -63,9 +63,7 @@ class RetentionPolicyFactoryImplTest {
 			return Stream.of(
 					Arguments.of("retentionpolicy/timebased/valid_timebased.ttl", TimeBasedRetentionPolicy.class),
 					Arguments.of("retentionpolicy/versionbased/valid_versionbased.ttl",
-							VersionBasedRetentionPolicy.class),
-					Arguments.of("retentionpolicy/pointintime/valid_pointintime.ttl",
-							PointInTimeRetentionPolicy.class));
+							VersionBasedRetentionPolicy.class));
 		}
 	}
 

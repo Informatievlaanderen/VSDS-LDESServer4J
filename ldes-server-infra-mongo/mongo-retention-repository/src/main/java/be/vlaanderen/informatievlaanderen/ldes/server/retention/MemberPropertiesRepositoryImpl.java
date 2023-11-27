@@ -5,9 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberP
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberPropertiesEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.mapper.MemberPropertiesEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
-import org.apache.jena.riot.system.IteratorStreamRDFText;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -16,20 +16,23 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+
 @Component
 public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepository {
 
+	public static final String DOCUMENTS = "documents";
 	public static final String ID = "_id";
 	public static final String VIEWS = "views";
 	private static final String COLLECTION = "collectionName";
 	private static final String VERSION_OF = "versionOf";
 	private static final String TIMESTAMP = "timestamp";
+
 	private final MemberPropertiesEntityRepository memberPropertiesEntityRepository;
 	private final MemberPropertiesEntityMapper memberPropertiesEntityMapper;
 	private final MongoTemplate mongoTemplate;
@@ -115,11 +118,15 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 																TimeBasedRetentionPolicy policy) {
 		return memberPropertiesEntityRepository
-				.findMemberPropertiesEntitiesByTimestampBefore(LocalDateTime.now().minus(policy.getDuration()))
+				.findMemberPropertiesEntitiesByCollectionNameAndViewsContainingAndTimestampBefore(
+						viewName.getCollectionName(),
+						viewName.getViewName(),
+						LocalDateTime.now().minus(policy.getDuration())
+				)
 				.map(memberPropertiesEntityMapper::toMemberProperties);
 	}
 
-	// TODO TVB: 23/11/23 cleanup and test
+	// TODO TVB: 27/11/23 test me
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 																VersionBasedRetentionPolicy policy) {
@@ -127,24 +134,67 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		String collectionName = viewName.getCollectionName();
 		String viewNameAsString = viewName.asString();
 
-		SortOperation sort = Aggregation.sort(Sort.Direction.DESC, "timestamp");
-		GroupOperation group = Aggregation.group("versionOf").push("$$ROOT").as("documents");
-		ProjectionOperation project = Aggregation.project().and("documents").slice(Integer.MAX_VALUE, versionsToKeep).as("documents");
-		UnwindOperation unwind = Aggregation.unwind("documents");
-		ReplaceRootOperation replaceRoot = Aggregation.replaceRoot("documents");
-		AggregationOptions aggregationOptions = AggregationOptions.builder().allowDiskUse(true).build();
-		MatchOperation match = Aggregation.match(Criteria.where("collectionName").is(collectionName).and("views").in(viewNameAsString));
-		Aggregation aggregation = Aggregation.newAggregation(sort, match, group, project, unwind, replaceRoot).withOptions(aggregationOptions);
+		final SortOperation sort = sortTimestampDesc();
+		final MatchOperation match =
+				match(Criteria.where(COLLECTION).is(collectionName).and(VIEWS).in(viewNameAsString));
+		final GroupOperation group = groupOnVersionOf();
+		final ProjectionOperation project = projectVersionsToKeep(versionsToKeep);
+		final UnwindOperation unwind = unwindDocuments();
+		final ReplaceRootOperation replaceRoot = getReplaceRootDocuments();
 
-		return mongoTemplate.aggregateStream(aggregation, "retention_member_properties", MemberProperties.class);
+		final Aggregation aggregation = createAggregation(
+				sort, match, group, project, unwind, replaceRoot
+		);
+
+		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
 	}
 
-	// TODO TVB: 23/11/23 test moi
+	// TODO TVB: 27/11/23 test me
+	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
-																Duration duration,
-																int versionsToKeep) {
-		// TODO TVB: 23/11/23 impl me, mongo query already ready
-		return Stream.empty();
+																TimeAndVersionBasedRetentionPolicy policy) {
+		final MatchOperation match =
+				match(Criteria
+						.where(COLLECTION).is(viewName.getCollectionName())
+						.and(VIEWS).in(viewName.asString())
+						.and(TIMESTAMP).gt(LocalDateTime.now().minus(policy.getDuration())));
+
+		final Aggregation aggregation = createAggregation(
+				sortTimestampDesc(),
+				match,
+				groupOnVersionOf(),
+				projectVersionsToKeep(policy.getNumberOfMembersToKeep()),
+				unwindDocuments(),
+				getReplaceRootDocuments()
+		);
+
+
+		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
+	}
+
+	private Aggregation createAggregation(AggregationOperation... operations) {
+		final AggregationOptions aggregationOptions = AggregationOptions.builder().allowDiskUse(true).build();
+		return newAggregation(operations).withOptions(aggregationOptions);
+	}
+
+	private ReplaceRootOperation getReplaceRootDocuments() {
+		return replaceRoot(DOCUMENTS);
+	}
+
+	private UnwindOperation unwindDocuments() {
+		return unwind(DOCUMENTS);
+	}
+
+	private ProjectionOperation projectVersionsToKeep(int versionsToKeep) {
+		return project().and(DOCUMENTS).slice(Integer.MAX_VALUE, versionsToKeep).as(DOCUMENTS);
+	}
+
+	private GroupOperation groupOnVersionOf() {
+		return group(VERSION_OF).push("$$ROOT").as(DOCUMENTS);
+	}
+
+	private SortOperation sortTimestampDesc() {
+		return sort(Sort.Direction.DESC, TIMESTAMP);
 	}
 
 }

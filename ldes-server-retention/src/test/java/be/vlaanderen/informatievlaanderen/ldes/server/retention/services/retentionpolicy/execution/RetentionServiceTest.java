@@ -11,7 +11,6 @@ import org.mockito.InOrder;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -35,7 +34,7 @@ class RetentionServiceTest {
 	@Test
 	void when_MembersOfFragmentMatchRetentionPoliciesOfView_MembersAreDeleted() {
 		when(retentionPolicyCollection.getRetentionPolicyMap())
-				.thenReturn(Map.of(VIEW, List.of(new TimeBasedRetentionPolicy(Duration.ZERO))));
+				.thenReturn(Map.of(VIEW, new TimeBasedRetentionPolicy(Duration.ZERO)));
 		MemberProperties firstMember = getMemberProperties("1", 0);
 		MemberProperties secondMember = getMemberProperties("2", 1);
 		MemberProperties thirdMember = getMemberProperties("3", 0);

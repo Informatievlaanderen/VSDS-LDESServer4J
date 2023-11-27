@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.pointintime;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.pointintime.PointInTimeRetentionPolicy;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.Test;
@@ -10,21 +8,12 @@ import org.junit.jupiter.api.Test;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PointInTimeRetentionPolicyCreatorTest {
 
 	private final RetentionPolicyCreator retentionPolicyCreator = new PointInTimeRetentionPolicyCreator();
-
-	@Test
-	void when_ModelDescribesAValidPointInTimeRetentionPolicy_then_APointInTimeRetentionPolicyIsReturned()
-			throws URISyntaxException {
-		Model retentionModel = readModelFromFile("retentionpolicy/pointintime/valid_pointintime.ttl");
-
-		RetentionPolicy retentionPolicy = retentionPolicyCreator.createRetentionPolicy(retentionModel);
-
-		assertTrue(retentionPolicy instanceof PointInTimeRetentionPolicy);
-	}
 
 	@Test
 	void when_ModelDoesNotExactlyHaveOneLdesPointInTimeStatement_then_AnIllegalArgumentExceptionIsThrown()

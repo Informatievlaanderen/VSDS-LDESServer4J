@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesEntityRepository extends MongoRepository<MemberPropertiesEntity, String> {
 
-    Stream<MemberPropertiesEntity> findMemberPropertiesEntitiesByTimestampBefore(LocalDateTime timestamp);
+    Stream<MemberPropertiesEntity> findMemberPropertiesEntitiesByCollectionNameAndViewsContainingAndTimestampBefore(
+            String collectionName, String viewName, LocalDateTime timestamp);
 
 }

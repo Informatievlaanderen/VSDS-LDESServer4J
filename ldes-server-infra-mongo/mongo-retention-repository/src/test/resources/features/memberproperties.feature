@@ -105,3 +105,16 @@ Feature: MemberRepository
     And I remove the eventStream with name "mobility-hindrances"
     And I retrieve the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
     Then I have retrieved 0 MemberProperties
+
+  Scenario: Retrieving expired MemberProperties by TimeBasedRetentionPolicy
+    Given The following MemberProperties
+      | id                                    | collectionName      | versionOf             | timestamp               | viewReference |
+      | http://test-data/mh/expired-by-page/1 | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | by-page       |
+      | http://test-data/mh/expired-by-page/2 | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | by-page       |
+      | http://test-data/mh/other-view        | mobility-hindrances | http://test-data/mh/2 | 2023-07-05T15:28:49.665 | by-location   |
+      | http://test-data/mh/future-timestamp  | mobility-hindrances | http://test-data/mh/1 | 3023-07-05T15:28:49.665 | by-page       |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I retrieve the expired MemberProperties for "mobility-hindrances/by-page" using TimeBasedRetentionPolicy with duration "P2D"
+    Then I have retrieved 2 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/expired-by-page/1"
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/expired-by-page/2"

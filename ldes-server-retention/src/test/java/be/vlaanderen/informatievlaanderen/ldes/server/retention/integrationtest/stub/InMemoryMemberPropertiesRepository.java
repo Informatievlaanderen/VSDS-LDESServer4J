@@ -3,6 +3,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -78,5 +81,21 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
 	@Override
 	public void deleteById(String id) {
 		memberPropertiesMap.remove(id);
+	}
+
+	// TODO TVB: 27/11/23 test all below
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeBasedRetentionPolicy policy) {
+		return null;
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, VersionBasedRetentionPolicy policy) {
+		return null;
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy) {
+		return null;
 	}
 }
