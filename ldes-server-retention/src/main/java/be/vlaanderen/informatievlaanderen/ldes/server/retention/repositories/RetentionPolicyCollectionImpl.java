@@ -11,7 +11,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -39,15 +38,11 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 		addToMap(event.getViewName(), event.getViewSpecification());
 	}
 
+	// TODO TVB: 27/11/23 test me
 	private void addToMap(ViewName viewName, ViewSpecification viewSpecification) {
-		final List<RetentionPolicy> retentionPolicyListForView =
-				retentionPolicyFactory.getRetentionPolicyListForView(viewSpecification);
-
-		if (!retentionPolicyListForView.isEmpty()) {
-			// TODO TVB: 23/11/23 convert to new policy
-			RetentionPolicy retentionPolicy = retentionPolicyListForView.get(0);
-			retentionPolicyMap.put(viewName, retentionPolicy);
-		}
+		retentionPolicyFactory
+				.extractRetentionPolicy(viewSpecification)
+				.ifPresent(policy -> retentionPolicyMap.put(viewName, policy));
 	}
 
 	@EventListener

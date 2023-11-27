@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.timebased.TimeBasedRetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.versionbased.VersionBasedRetentionPolicyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Statement;
@@ -31,8 +32,21 @@ public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 		);
 	}
 
+	// TODO TVB: 27/11/23 test me
 	@Override
-	public List<RetentionPolicy> getRetentionPolicyListForView(ViewSpecification viewSpecification) {
+	public Optional<RetentionPolicy> extractRetentionPolicy(ViewSpecification viewSpecification) {
+		List<RetentionPolicy> policies = getRetentionPolicyListForView(viewSpecification);
+
+		return switch (policies.size()) {
+			case 0 -> Optional.empty();
+			case 1 -> Optional.of(policies.get(0));
+			case 2 -> Optional.of(TimeAndVersionBasedRetentionPolicy.from(policies.get(0), policies.get(1)));
+			default -> throw new IllegalArgumentException();
+		};
+
+	}
+
+	private List<RetentionPolicy> getRetentionPolicyListForView(ViewSpecification viewSpecification) {
 		return viewSpecification
 				.getRetentionConfigs()
 				.stream()
@@ -55,5 +69,4 @@ public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 		}
 		return retentionPolicyCreator.createRetentionPolicy(retentionModel);
 	}
-
 }
