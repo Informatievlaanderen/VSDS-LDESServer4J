@@ -14,6 +14,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -23,12 +26,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RETENTION_TYPE;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -36,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetentionServiceSteps extends RetentionIntegrationTest {
 
+	private RetentionConfigExtractor retentionConfigExtractor = new RetentionConfigExtractor();
 	public static final String MEMBER_TEMPLATE_FILENAME = "features/data/memberTemplate.ttl";
 
 	@DataTableType
@@ -51,7 +57,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	public ViewSpecification ViewSpecificationEntryTransformer(Map<String, String> row) throws URISyntaxException {
 		return new ViewSpecification(
 				ViewName.fromString(row.get("viewName")),
-				List.of(readRetentionPolicyFromFile(row.get("rdfDescriptionFileName"))), List.of(), 100);
+				retentionConfigExtractor
+						.readRetentionPolicyFromFile(row.get("rdfDescriptionFileName")), List.of(), 100);
 	}
 
 	@DataTableType
@@ -101,12 +108,6 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		return Files.lines(Paths.get(uri)).collect(Collectors.joining());
 	}
 
-	private Model readRetentionPolicyFromFile(String fileName) throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI().toString();
-		return RDFDataMgr.loadModel(uri);
-	}
-
 	@And("the following members are allocated to the view {string}")
 	public void theFollowingMembersAreAllocatedToTheView(String viewName, List<String> members) {
 		members.forEach(member -> applicationEventPublisher.publishEvent(new MemberAllocatedEvent(member,
@@ -121,7 +122,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		// spring-boot-test is not registered to this thread. Hence, these events do not
 		// pop up in for example ApplicationEvents from spring-boot-test. Therefore, we
 		// use the repository to verify on existence of the members.
-		Stream<String> members = memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
+		Stream<String> members = memberPropertiesRepository.getMemberPropertiesWithViewReference(ViewName.fromString(viewName))
 				.map(MemberProperties::getId);
 
 		assertThat(members).containsExactlyInAnyOrder(memberIds.toArray(String[]::new));

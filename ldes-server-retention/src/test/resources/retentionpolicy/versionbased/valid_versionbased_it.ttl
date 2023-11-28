@@ -3,12 +3,8 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix server: <http://localhost:8080/mobility-hindrances/> .
 
-server:multiple tree:viewDescription [
+server:version tree:viewDescription [
     ldes:retentionPolicy [
-        a ldes:DurationAgoPolicy  ;
-        tree:value "PT2M"^^xsd:duration ;
-    ],
-    [
         a ldes:LatestVersionSubset;
         ldes:amount 2 ;
     ] ;

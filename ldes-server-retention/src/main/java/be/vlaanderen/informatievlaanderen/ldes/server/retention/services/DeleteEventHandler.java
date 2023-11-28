@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.execution.MemberRemover;
 import org.springframework.context.event.EventListener;
@@ -19,9 +20,9 @@ public class DeleteEventHandler {
 
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
-		String viewName = event.getViewName().asString();
+		ViewName viewName = event.getViewName();
 		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
-				.forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName));
+				.forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString()));
 	}
 
 	@EventListener

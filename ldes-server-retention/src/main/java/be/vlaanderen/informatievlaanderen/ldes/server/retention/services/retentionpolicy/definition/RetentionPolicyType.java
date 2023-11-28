@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition;
 
-public interface RetentionPolicy {
-
-	RetentionPolicyType getType();
-
+public enum RetentionPolicyType {
+    VERSION_BASED,
+    TIME_BASED,
+    TIME_AND_VERSION_BASED
 }

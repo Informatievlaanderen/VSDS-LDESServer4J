@@ -3,9 +3,9 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix server: <http://localhost:8080/mobility-hindrances/> .
 
-server:time-based tree:viewDescription [
+server:time tree:viewDescription [
     ldes:retentionPolicy [
-        a ldes:PointInTimePolicy ;
-        ldes:pointInTime "2023-04-12T00:00:00"^^xsd:dateTime
+        a ldes:DurationAgoPolicy  ;
+        tree:value "P10Y"^^xsd:duration ;
     ] ;
 ] .

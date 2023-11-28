@@ -187,27 +187,6 @@
     "url": "/configuration/retention-policies/index#supported-retention-policies",
     
     "relUrl": "/configuration/retention-policies/index#supported-retention-policies"
-  },"27": {
-    "doc": "Point in Time Retention",
-    "title": "Point in Time Retention Policy",
-    "content": "https://w3id.org/ldes#PointInTimePolicy . As one of the most basic retention policies, the Point In Time Retention Policy will drop any members that have their ldes:timestampPath value before the set point in time value. gantt title Point in Time Retention (Point in Time: 11-11-2023) dateFormat YYYY-MM-DD todayMarker off Original Stream :active, 2023-10-27, 45d Point In Time :crit, milestone, 2023-11-11, 0d Stream After Retention :active, 2023-11-11, 30d . ",
-    "url": "/configuration/retention-policies/point-in-time#point-in-time-retention-policy",
-    
-    "relUrl": "/configuration/retention-policies/point-in-time#point-in-time-retention-policy"
-  },"28": {
-    "doc": "Point in Time Retention",
-    "title": "Example",
-    "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:PointInTimePolicy ; &lt;https://w3id.org/ldes#pointInTime&gt; \"2023-04-12T00:00:00\"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; ; ] ; ] . ",
-    "url": "/configuration/retention-policies/point-in-time#example",
-    
-    "relUrl": "/configuration/retention-policies/point-in-time#example"
-  },"29": {
-    "doc": "Point in Time Retention",
-    "title": "Point in Time Retention",
-    "content": " ",
-    "url": "/configuration/retention-policies/point-in-time",
-    
-    "relUrl": "/configuration/retention-policies/point-in-time"
   },"30": {
     "doc": "Timebased Retention",
     "title": "Timebased Retention Policy",
