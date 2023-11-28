@@ -25,17 +25,17 @@ public record TimeAndVersionBasedRetentionPolicy(Duration duration,
             final Duration duration = timeBasedPolicy.duration();
             return new TimeAndVersionBasedRetentionPolicy(duration, numberOfMembersToKeep);
         } else {
-            throw illegalArgumentException();
+            throw timebasedAndVersionBasedRequiredException();
         }
     }
 
     private static void verifyIsTypeVersionBased(RetentionPolicy maybeVersionBasedPolicy) {
         if (!(maybeVersionBasedPolicy instanceof VersionBasedRetentionPolicy)) {
-            throw illegalArgumentException();
+            throw timebasedAndVersionBasedRequiredException();
         }
     }
 
-    private static IllegalArgumentException illegalArgumentException() {
+    private static IllegalArgumentException timebasedAndVersionBasedRequiredException() {
         return new IllegalArgumentException(
                 "TimeAndVersionBasedRetentionPolicy requires exactly one %s and one %s"
                         .formatted(TIME_BASED_RETENTION_POLICY, VERSION_BASED_RETENTION_POLICY)
