@@ -92,7 +92,7 @@
         <assertj-core.version>3.24.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>8.3.1</depencency-check-maven.version>
+        <depencency-check-maven.version>9.0.1</depencency-check-maven.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.11</jacoco.version>
