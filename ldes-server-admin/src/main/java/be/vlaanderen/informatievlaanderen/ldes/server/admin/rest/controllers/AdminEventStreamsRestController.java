@@ -12,11 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import io.micrometer.observation.annotation.Observed;
 
 import java.util.List;
 
 import static org.apache.jena.riot.WebContent.*;
 
+@Observed
 @RestController
 @RequestMapping(value = "/admin/api/v1/eventstreams")
 public class AdminEventStreamsRestController implements OpenApiEventStreamsController {

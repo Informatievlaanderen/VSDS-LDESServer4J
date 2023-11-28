@@ -23,5 +23,6 @@ open module ldes.admin {
     requires org.slf4j;
     requires io.swagger.v3.oas.annotations;
     requires org.jetbrains.annotations;
+	requires micrometer.observation;
 
 }
