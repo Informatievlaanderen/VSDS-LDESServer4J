@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfForma
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.springframework.context.event.EventListener;
@@ -51,8 +52,9 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 		Model memberModel = RdfModelConverter
 				.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 
-		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-				.getRequest().getRequestURI().substring(1);
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+				.getRequest();
+		String collectionName = request.getRequestURI().replace(request.getContextPath() + "/", "");
 
 		String memberType = memberTypes.get(collectionName);
 		if (memberType == null) {
