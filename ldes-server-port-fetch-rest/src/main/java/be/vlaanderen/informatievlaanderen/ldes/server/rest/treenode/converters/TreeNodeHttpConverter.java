@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
 import org.apache.jena.rdf.model.Model;
@@ -13,7 +12,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
@@ -53,10 +51,8 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 	@Override
 	public void write(TreeNode treeNode, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		OutputStream body = outputMessage.getBody();
 		Lang rdfFormat = getLang(contentType, FETCH);
 		Model fragmentModel = treeNodeConverter.toModel(treeNode);
-		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
-		body.write(outputString.getBytes());
+		fragmentModel.write(outputMessage.getBody(), rdfFormat.getName(), "http://localhost:8087/mobility-hindrances/test");
 	}
 }

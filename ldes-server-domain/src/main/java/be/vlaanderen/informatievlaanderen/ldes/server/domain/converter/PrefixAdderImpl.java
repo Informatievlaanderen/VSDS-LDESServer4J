@@ -51,10 +51,12 @@ public class PrefixAdderImpl implements PrefixAdder {
 
 	private void addPotentialPrefixToNamespaceMap(Map<String, String> nameSpaceMap, Map<String, String> localNamesMap,
 			String predicateNameSpace, String localName) {
-		String candidateForPrefix = getPrefixCandidate(predicateNameSpace);
-		if (isValidPrefixCandidate(candidateForPrefix)) {
-			nameSpaceMap.put(candidateForPrefix, predicateNameSpace);
-			localNamesMap.put(localName, candidateForPrefix);
+		if (!predicateNameSpace.contains("http://localhost:8087/mobility-hindrances/")){
+			String candidateForPrefix = getPrefixCandidate(predicateNameSpace);
+			if (isValidPrefixCandidate(candidateForPrefix)) {
+				nameSpaceMap.put(candidateForPrefix, predicateNameSpace);
+				localNamesMap.put(localName, candidateForPrefix);
+			}
 		}
 	}
 

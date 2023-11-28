@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamRespo
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -52,6 +51,6 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 			throws IOException, HttpMessageNotWritableException {
 		Lang rdfFormat = getLang(contentType, FETCH);
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
-		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, rdfFormat);
+		eventStreamModel.write(outputMessage.getBody(), rdfFormat.getName(), "http://localhost:8087/mobility-hindrances");
 	}
 }
