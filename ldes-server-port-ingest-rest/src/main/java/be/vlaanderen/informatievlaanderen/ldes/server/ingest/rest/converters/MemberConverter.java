@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -32,10 +33,12 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
+	private final String contextPath;
 	private final Map<String, String> memberTypes = new HashMap<>();
 
-	public MemberConverter() {
+	public MemberConverter(@Value("${server.servlet.context-path:}") String contextPath) {
 		super(MediaType.ALL);
+		this.contextPath = contextPath;
 	}
 
 	@Override
@@ -52,7 +55,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 				.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
 
 		String collectionName = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
-				.getRequest().getRequestURI().substring(1);
+				.getRequest().getRequestURI().replace(contextPath + "/", "");
 
 		String memberType = memberTypes.get(collectionName);
 		if (memberType == null) {
