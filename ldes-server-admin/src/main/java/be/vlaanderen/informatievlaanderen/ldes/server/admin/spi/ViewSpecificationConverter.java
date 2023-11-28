@@ -19,6 +19,7 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -27,15 +28,18 @@ public class ViewSpecificationConverter {
 
 	public static final int DEFAULT_PAGE_SIZE = 100;
 	private final String hostname;
+	private final Boolean useRelativeUrl;
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
 
 	public ViewSpecificationConverter(@Value(HOST_NAME_KEY) String hostName,
 									  RetentionModelExtractor retentionModelExtractor,
-									  FragmentationConfigExtractor fragmentationConfigExtractor) {
-		this.hostname = hostName;
+									  FragmentationConfigExtractor fragmentationConfigExtractor,
+									  @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
+		this.hostname = useRelativeUrl ? "" : hostName;
 		this.retentionModelExtractor = retentionModelExtractor;
 		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
@@ -55,14 +59,17 @@ public class ViewSpecificationConverter {
 				.orElse(DEFAULT_PAGE_SIZE);
 	}
 
-	public Model modelFromView(ViewSpecification view) {
+	public Model modelFromView(ViewSpecification view){
+		return modelFromView(view, "../");
+	}
+	public Model modelFromView(ViewSpecification view, String base) {
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
-		Resource viewResource = getIRIFromViewName(viewName);
+		Resource viewResource = Boolean.TRUE.equals(useRelativeUrl) ? getRelativeIRIFromViewName(viewName, base) : getIRIFromViewName(viewName);
 		Statement viewDescription = createStatement(
 				viewResource,
 				createProperty(TREE_VIEW_DESCRIPTION),
-				getIRIDescription(viewName));
+				Boolean.TRUE.equals(useRelativeUrl) ? getRelativeIRIDescription(viewName, base) : getIRIDescription(viewName));
 		model.add(viewDescription);
 		model.add(createStatement(viewDescription.getResource(), createProperty(TREE_PAGESIZE),
 				createTypedLiteral(view.getPageSize())));
@@ -93,15 +100,22 @@ public class ViewSpecificationConverter {
 	}
 
 	private String getIRIString(ViewName viewName) {
-		return hostname + "/" + viewName.getCollectionName() + "/" + viewName.getViewName();
+		return hostname + "/" + viewName.asString();
 	}
 
 	public Resource getIRIFromViewName(ViewName viewName) {
 		return createResource(getIRIString(viewName));
 	}
 
+	public Resource getRelativeIRIFromViewName(ViewName viewName, String base) {
+		return createResource(base + viewName.asString());
+	}
+
 	private Resource getIRIDescription(ViewName viewName) {
 		return createResource(getIRIString(viewName) + VIEW_DESCRIPTION_SUFFIX);
+	}
+	public Resource getRelativeIRIDescription(ViewName viewName, String base) {
+		return createResource(base + viewName.asString() + VIEW_DESCRIPTION_SUFFIX);
 	}
 
 	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {

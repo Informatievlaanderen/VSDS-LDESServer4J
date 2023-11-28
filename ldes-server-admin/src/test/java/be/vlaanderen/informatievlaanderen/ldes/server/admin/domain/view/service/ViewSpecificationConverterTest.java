@@ -33,7 +33,8 @@ class ViewSpecificationConverterTest {
 	void setup() throws URISyntaxException {
 		viewSpecificationConverter = new ViewSpecificationConverter("http://localhost:8080",
 				new RetentionModelExtractor(),
-				new FragmentationConfigExtractor());
+				new FragmentationConfigExtractor(),
+				false);
 		Model retentionModel = readModelFromFile("viewconverter/retentionpolicies/example_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");

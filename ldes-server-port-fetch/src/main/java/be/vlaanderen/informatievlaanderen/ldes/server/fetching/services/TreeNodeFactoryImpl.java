@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 
 @Component
 public class TreeNodeFactoryImpl implements TreeNodeFactory {
@@ -22,20 +23,19 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final FragmentRepository fragmentRepository;
 	private final AllocationRepository allocationRepository;
 	private final MemberRepository memberRepository;
+	private final Boolean useRelativeUrl;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-							   MemberRepository memberRepository, @Value(HOST_NAME_KEY) Boolean useRelativeUrl) {
+							   MemberRepository memberRepository, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.memberRepository = memberRepository;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	@Override
 	public TreeNode getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
-		String extendedTreeNodeId = treeNodeId.asString();
-		if (true){
-			extendedTreeNodeId = hostName + extendedTreeNodeId;
-		}
+		String extendedTreeNodeId = hostName + treeNodeId.asString();
 		Fragment fragment = fragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
 						() -> new MissingResourceException("fragment", treeNodeId.asString()));

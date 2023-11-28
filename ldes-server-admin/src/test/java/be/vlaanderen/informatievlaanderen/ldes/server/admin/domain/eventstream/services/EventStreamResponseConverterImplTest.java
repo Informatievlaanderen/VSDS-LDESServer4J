@@ -39,7 +39,7 @@ class EventStreamResponseConverterImplTest {
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName,
 				new RetentionModelExtractor(), new FragmentationConfigExtractor());
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
-		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder);
+		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder, false);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
 	}

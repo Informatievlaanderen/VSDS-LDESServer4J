@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
@@ -24,15 +25,17 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 	public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
 	public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
 	private final String hostname;
+	private final Boolean useRelativeUrl;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
 
 	public EventStreamResponseConverterImpl(@Value(HOST_NAME_KEY) String hostName,
 			ViewSpecificationConverter viewSpecificationConverter,
-			PrefixAdder prefixAdder) {
+			PrefixAdder prefixAdder, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
-		this.hostname = hostName;
+		this.hostname  = Boolean.TRUE.equals(useRelativeUrl) ? ".." : hostName;
 		this.prefixAdder = prefixAdder;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	@Override

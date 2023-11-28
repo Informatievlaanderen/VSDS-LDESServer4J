@@ -29,7 +29,7 @@ class TreeNodeFetcherImplTest {
 	@BeforeEach
 	void setUp() {
 		treeNodeFactory = Mockito.mock(TreeNodeFactory.class);
-		treeNodeFetcher = new TreeNodeFetcherImpl(hostName, treeNodeFactory);
+		treeNodeFetcher = new TreeNodeFetcherImpl(hostName, treeNodeFactory, false);
 	}
 
 	@Test

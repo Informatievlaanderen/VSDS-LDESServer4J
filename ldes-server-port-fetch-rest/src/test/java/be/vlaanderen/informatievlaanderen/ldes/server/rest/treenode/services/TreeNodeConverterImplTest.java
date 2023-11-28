@@ -43,7 +43,7 @@ class TreeNodeConverterImplTest {
                 "http://www.w3.org/ns/prov#generatedAtTime",
                 "http://purl.org/dc/terms/isVersionOf", "memberType");
 
-        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
+        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME, false);
         treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
         treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
     }

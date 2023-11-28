@@ -40,7 +40,7 @@ class TreeNodeFactoryImplTest {
 		fragmentRepository = mock(FragmentRepository.class);
 		memberRepository = mock(MemberRepository.class);
 		allocationRepository = mock(AllocationRepository.class);
-		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository);
+		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository, false);
 	}
 
 	@Test
