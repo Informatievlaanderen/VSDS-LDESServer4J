@@ -10,5 +10,6 @@ module ldes.fetch.domain {
 
     requires spring.context;
     requires spring.beans;
+    requires micrometer.core;
 
 }

@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics.GaugeBuilder;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngesterImpl.LDES_SERVER_ACTUAL_MEMBERS_COUNT;
 
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
@@ -55,7 +58,8 @@ public class MemberRepositoryImpl implements MemberRepository {
 
 	@Override
 	public void deleteMembersByCollection(String collectionName) {
-		memberEntityRepository.deleteAllByCollectionName(collectionName);
+		long members = memberEntityRepository.deleteAllByCollectionName(collectionName);
+		GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).dec(members);
 		sequenceService.removeSequence(collectionName);
 	}
 
@@ -69,6 +73,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
+		GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).dec();
 	}
 
 	@Override

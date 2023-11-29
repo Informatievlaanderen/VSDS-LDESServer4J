@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface MemberEntityRepository extends MongoRepository<MemberEntity, String> {
-	void deleteAllByCollectionName(String collectionName);
+	long deleteAllByCollectionName(String collectionName);
 
 	Stream<MemberEntity> getAllByCollectionNameOrderBySequenceNrAsc(String collectionName);
 

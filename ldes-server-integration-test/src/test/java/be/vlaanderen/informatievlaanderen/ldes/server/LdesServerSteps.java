@@ -1,10 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -38,6 +40,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
 	Stack<String> interactedStreams = new Stack<>();
+
+	@Before("@clearRegistry")
+	public void clearRegistry() {
+		Metrics.globalRegistry.clear();
+	}
 
 	private String getCurrentTimestamp() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
@@ -238,5 +245,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
         long size = contentAsString.listObjectsOfProperty(createProperty(TREE_REMAINING_ITEMS))
 				.toList().size();
 		assertThat(size).isEqualTo(statementCount);
+	}
+
+	@And("The response from requesting the url {string} contains the message {string}")
+	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String url, String message) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(url).accept("application/openmetrics-text"))
+				.andReturn().getResponse();
+		assertTrue(response.getContentAsString().contains(message));
+	}
+
+	@When("I delete the collection {string}")
+	public void deleteCollection(String collectionName) throws Exception {
+		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName));
 	}
 }

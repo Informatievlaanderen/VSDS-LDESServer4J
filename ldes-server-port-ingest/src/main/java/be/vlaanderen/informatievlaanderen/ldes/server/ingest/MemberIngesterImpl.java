@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics.GaugeBuilder;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
     private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
+    static final String LDES_SERVER_ACTUAL_MEMBERS_COUNT = "ldes_server_actual_members_count";
     private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
     private static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
     private final MemberIngestValidator validator;
@@ -43,6 +46,7 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private void handleSuccessfulMemberInsertion(Member member, String memberId) {
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
+        GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).inc();
         final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
                 member.getCollectionName(), member.getSequenceNr());
         eventPublisher.publishEvent(memberIngestedEvent);
