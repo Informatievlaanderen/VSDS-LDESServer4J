@@ -2,8 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converte
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RequestContextExtracter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -14,15 +16,22 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import java.io.IOException;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
+	private final RequestContextExtracter requestContextExtracter;
+	private final boolean useRelativeUrl;
 
-	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter,
+											RequestContextExtracter requestContextExtracter,
+											Boolean useRelativeUrl) {
 		this.eventStreamResponseConverter = eventStreamResponseConverter;
+		this.requestContextExtracter = requestContextExtracter;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	@Override
@@ -51,6 +60,10 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 			throws IOException, HttpMessageNotWritableException {
 		Lang rdfFormat = getLang(contentType, FETCH);
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
-		eventStreamModel.write(outputMessage.getBody(), rdfFormat.getName(), "http://localhost:8087/mobility-hindrances");
+		if(useRelativeUrl) {
+			eventStreamModel.write(outputMessage.getBody(), rdfFormat.getName(), requestContextExtracter.extractRequestURL());
+		} else {
+			eventStreamModel.write(outputMessage.getBody(), rdfFormat.getName());
+		}
 	}
 }

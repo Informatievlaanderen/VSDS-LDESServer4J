@@ -5,11 +5,15 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.shared.PrefixMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 
 @Component
 public class PrefixAdderImpl implements PrefixAdder {
@@ -17,6 +21,13 @@ public class PrefixAdderImpl implements PrefixAdder {
 	private static final String VALID_LOCALNAME_REGEX = "([a-zA-Z][\\-_a-zA-Z0-9]*)$";
 	private static final String VALID_PREFIX_REGEX = "^[a-zA-Z_][\\w.-]*$"; // NCName regex
 	private static final Logger LOGGER = LoggerFactory.getLogger(PrefixAdderImpl.class);
+	private final String hostname;
+	private final boolean useRelativeUrl;
+
+	public PrefixAdderImpl(@Value(HOST_NAME_KEY) String hostname, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
+		this.hostname = hostname;
+		this.useRelativeUrl = useRelativeUrl;
+	}
 
 	@Override
 	public Model addPrefixesToModel(Model model) {
@@ -51,7 +62,7 @@ public class PrefixAdderImpl implements PrefixAdder {
 
 	private void addPotentialPrefixToNamespaceMap(Map<String, String> nameSpaceMap, Map<String, String> localNamesMap,
 			String predicateNameSpace, String localName) {
-		if (!predicateNameSpace.contains("http://localhost:8087/mobility-hindrances/")){
+		if (!useRelativeUrl || !predicateNameSpace.contains(hostname)){
 			String candidateForPrefix = getPrefixCandidate(predicateNameSpace);
 			if (isValidPrefixCandidate(candidateForPrefix)) {
 				nameSpaceMap.put(candidateForPrefix, predicateNameSpace);

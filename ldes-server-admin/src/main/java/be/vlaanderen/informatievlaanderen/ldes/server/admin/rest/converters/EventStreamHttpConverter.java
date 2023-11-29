@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RequestContextExtracter;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -20,9 +20,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
+	private final RequestContextExtracter requestContextExtracter;
+	private final boolean useRelativeUrl;
 
-	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RequestContextExtracter requestContextExtracter, Boolean useRelativeUrl) {
 		this.eventStreamResponseConverter = eventStreamResponseConverter;
+		this.requestContextExtracter = requestContextExtracter;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	@Override
@@ -51,6 +55,12 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
 
-		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, getLang(contentType, REST_ADMIN));
+		System.out.println(outputMessage.getHeaders().getHost());
+
+		if(useRelativeUrl) {
+			eventStreamModel.write(outputMessage.getBody(), getLang(contentType, REST_ADMIN).getName(), requestContextExtracter.extractRequestURL());
+		} else {
+			eventStreamModel.write(outputMessage.getBody(), getLang(contentType, REST_ADMIN).getName());
+		}
 	}
 }

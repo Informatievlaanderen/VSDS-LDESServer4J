@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RequestContextExtracter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -19,13 +20,18 @@ import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification> {
 
 	private final ViewSpecificationConverter viewSpecificationConverter;
+	private final RequestContextExtracter requestContextExtracter;
+	private final boolean useRelativeUrl;
 
-	public ViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
+	public ViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter, RequestContextExtracter requestContextExtracter, Boolean useRelativeUrl) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
+		this.requestContextExtracter = requestContextExtracter;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	@Override
@@ -53,12 +59,12 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	public void write(ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Lang rdfFormat = getLang(contentType, FETCH);
-		StringWriter outputStream = new StringWriter();
 		Model model = viewSpecificationConverter.modelFromView(view);
 
-		RDFDataMgr.write(outputStream, model, rdfFormat);
-
-		OutputStream body = outputMessage.getBody();
-		body.write(outputStream.toString().getBytes());
+		if(useRelativeUrl) {
+			model.write(outputMessage.getBody(), rdfFormat.getName(), requestContextExtracter.extractRequestURL());
+		} else {
+			model.write(outputMessage.getBody(), rdfFormat.getName());
+		}
 	}
 }

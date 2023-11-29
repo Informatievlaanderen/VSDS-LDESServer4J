@@ -32,7 +32,7 @@ class TreeNodeConverterImplTest {
     private static final String COLLECTION_NAME = "mobility-hindrances";
     private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
     private static final String VIEW_NAME = "view";
-    private final PrefixAdder prefixAdder = new PrefixAdderImpl();
+    private final PrefixAdder prefixAdder = new PrefixAdderImpl(HOST_NAME, false);
     private TreeNodeConverterImpl treeNodeConverter;
 
     @BeforeEach

@@ -2,11 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.RequestContextExtracter;
 import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -24,9 +24,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 public class ListViewHttpConverter implements GenericHttpMessageConverter<List<ViewSpecification>> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final ViewSpecificationConverter viewSpecificationConverter;
+	private final RequestContextExtracter requestContextExtracter;
+	private final boolean useRelativeUrl;
 
-	public ListViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
+	public ListViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter, RequestContextExtracter requestContextExtracter, Boolean useRelativeUrl) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
+		this.requestContextExtracter = requestContextExtracter;
+		this.useRelativeUrl = useRelativeUrl;
 	}
 
 	@Override
@@ -81,6 +85,10 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 		Model model = ModelFactory.createDefaultModel();
 		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
 
-		RDFDataMgr.write(outputMessage.getBody(), model, rdfFormat);
+		if(useRelativeUrl) {
+			model.write(outputMessage.getBody(), rdfFormat.getName(), requestContextExtracter.extractRequestURL());
+		} else {
+			model.write(outputMessage.getBody(), rdfFormat.getName());
+		}
 	}
 }

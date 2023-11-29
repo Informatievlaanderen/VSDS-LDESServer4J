@@ -11,6 +11,7 @@ module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.rest;
 
     requires spring.web;
     requires spring.context;
@@ -23,5 +24,6 @@ module ldes.domain {
     requires org.apache.commons.lang3;
     requires org.apache.jena.shacl;
     requires org.slf4j;
+    requires org.apache.tomcat.embed.core;
 
 }
