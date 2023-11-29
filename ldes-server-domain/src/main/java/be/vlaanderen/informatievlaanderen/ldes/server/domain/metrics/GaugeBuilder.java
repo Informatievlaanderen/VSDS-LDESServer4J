@@ -1,28 +1,46 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics;
 
-import io.prometheus.client.Gauge;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Metrics;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GaugeBuilder {
 
-    static Map<String, Gauge> countersList = new HashMap<>();
+    static Map<String, Count> countersList = new HashMap<>();
 
-    static Gauge buildGauge(String name) {
+    static Count buildGauge(String name) {
 
-        Gauge gauge = Gauge.build()
-                .name(name)
-                .labelNames(name)
-                .help("123")
-                .register();
+        Count counter = new Count(name);
+        countersList.put(name, counter);
 
-        countersList.put(name, gauge);
-
-        return gauge;
+        return counter;
     }
 
-    public static Gauge getGauge(String name) {
+    public static Count getGauge(String name) {
         return (countersList.containsKey(name)) ? countersList.get(name) : buildGauge(name);
+    }
+    public static class Count {
+        private double d = 0;
+        private Gauge gauge;
+        Count(String name) {
+            Gauge.builder(name, this::getCount).register(Metrics.globalRegistry);
+        }
+        public void inc(){
+            d += 1;
+        }
+        public void dec(){
+            d -= 1;
+        }
+        public void inc(long i){
+            d += i;
+        }
+        public void dec(long i){
+            d -= i;
+        }
+        double getCount() {
+            return d;
+        }
     }
 }
