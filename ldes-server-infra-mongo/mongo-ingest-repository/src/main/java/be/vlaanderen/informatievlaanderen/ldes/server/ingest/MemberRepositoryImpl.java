@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.Member
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -22,13 +23,15 @@ public class MemberRepositoryImpl implements MemberRepository {
 	private final MemberEntityRepository memberEntityRepository;
 	private final MemberEntityMapper memberEntityMapper;
 	private final IngestMemberSequenceService sequenceService;
+	private final MongoTemplate mongoTemplate;
 
 	public MemberRepositoryImpl(MemberEntityRepository memberEntityRepository,
 			MemberEntityMapper memberEntityMapper,
-			IngestMemberSequenceService sequenceService) {
+			IngestMemberSequenceService sequenceService, MongoTemplate mongoTemplate) {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
 		this.sequenceService = sequenceService;
+		this.mongoTemplate = mongoTemplate;
 		Gauge.builder(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this::estimatedCountMembers).register(Metrics.globalRegistry);
 	}
 
@@ -103,7 +106,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return sequenceService.getSequenceForCollection(collectionName);
 	}
 	private long estimatedCountMembers() {
-		return memberEntityRepository.count();
+		return mongoTemplate.estimatedCount("ingest_ldesmember");
 	}
 
 }
