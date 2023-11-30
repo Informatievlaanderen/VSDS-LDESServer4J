@@ -123,8 +123,7 @@ spring:
 
 Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
-A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-admin/README.md#dcat-endpoints)
-or on the [swagger endpoint](#example-swagger-configuration) if it is configured.
+A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-admin/README.md#dcat-endpoints).
 
 ### Docker Setup
 
