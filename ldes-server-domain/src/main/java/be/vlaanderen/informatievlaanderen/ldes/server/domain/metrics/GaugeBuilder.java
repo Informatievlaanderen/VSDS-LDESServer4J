@@ -10,9 +10,9 @@ public class GaugeBuilder {
 
     static Map<String, Count> countersList = new HashMap<>();
 
-    static Count buildGauge(String name) {
+    static Count buildGauge(String name, double d) {
 
-        Count counter = new Count(name);
+        Count counter = new Count(name, d);
         countersList.put(name, counter);
 
         return counter;
@@ -23,9 +23,10 @@ public class GaugeBuilder {
     }
 
     public static class Count {
-        private double d = 0;
+        private double d;
         private Gauge gauge;
-        public Count(String name) {
+        public Count(String name, double d) {
+            this.d = d;
             Gauge.builder(name, this::getCount).register(Metrics.globalRegistry);
         }
         public void inc(){
