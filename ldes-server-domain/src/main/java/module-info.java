@@ -1,4 +1,4 @@
-module ldes.domain {
+open module ldes.domain {
 
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
