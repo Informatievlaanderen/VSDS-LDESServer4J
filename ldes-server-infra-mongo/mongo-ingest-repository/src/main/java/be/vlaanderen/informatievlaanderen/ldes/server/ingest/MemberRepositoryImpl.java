@@ -29,7 +29,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
 		this.sequenceService = sequenceService;
-		Gauge.builder(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this::countMembers).register(Metrics.globalRegistry);
+		Gauge.builder(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this::estimatedCountMembers).register(Metrics.globalRegistry);
 	}
 
 	public boolean memberExists(String memberId) {
@@ -102,7 +102,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public long getSequenceForCollection(String collectionName) {
 		return sequenceService.getSequenceForCollection(collectionName);
 	}
-	private long countMembers() {
+	private long estimatedCountMembers() {
 		return memberEntityRepository.count();
 	}
 

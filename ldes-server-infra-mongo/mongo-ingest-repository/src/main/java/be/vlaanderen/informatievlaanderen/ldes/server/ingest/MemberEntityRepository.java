@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,5 +21,7 @@ public interface MemberEntityRepository extends MongoRepository<MemberEntity, St
 			long sequenceNr);
 
 	long countByCollectionName(String collectionName);
+	@Query("{ estimatedDocumentCount = true }")
+	long count();
 
 }
