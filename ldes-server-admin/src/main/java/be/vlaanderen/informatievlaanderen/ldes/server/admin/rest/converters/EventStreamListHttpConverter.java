@@ -7,7 +7,6 @@ import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -20,7 +19,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamResponse>> {

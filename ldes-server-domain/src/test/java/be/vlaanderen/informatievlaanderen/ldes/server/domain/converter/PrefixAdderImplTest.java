@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PrefixAdderImplTest {
-	PrefixAdder prefixAdder = new PrefixAdderImpl();
+	PrefixAdder prefixAdder = new PrefixAdderImpl("http://", false);
 
 	@Test
 	void when_PrefixesAndLocalNamesAreValid_TheyAreAddedToPrefixMap() throws URISyntaxException, IOException {

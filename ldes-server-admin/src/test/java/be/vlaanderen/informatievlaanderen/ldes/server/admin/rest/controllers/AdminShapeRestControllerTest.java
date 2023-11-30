@@ -133,7 +133,7 @@ class AdminShapeRestControllerTest {
 	static class AdminShapeRestControllerTestConfig {
 		@Bean
 		public HttpModelConverter modelConverter() {
-			return new HttpModelConverter(new PrefixAdderImpl());
+			return new HttpModelConverter(new PrefixAdderImpl("http://", false));
 		}
 	}
 }

@@ -38,7 +38,7 @@ class EventStreamResponseConverterImplTest {
 		String hostName = "http://localhost:8080";
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName,
 				new RetentionModelExtractor(), new FragmentationConfigExtractor());
-		PrefixAdder prefixAdder = new PrefixAdderImpl();
+		PrefixAdder prefixAdder = new PrefixAdderImpl("http://", false);
 		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
