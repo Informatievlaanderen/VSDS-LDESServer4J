@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics.GaugeBuilder;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.metrics.GaugeBuilder;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
@@ -37,7 +37,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 	public Optional<Member> insert(Member member) {
 		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
 		try {
+			GaugeBuilder.Count c = GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this);
 			MemberEntity savedMember = memberEntityRepository.insert(memberEntityToSave);
+			c.inc();
 			return Optional.of(memberEntityMapper.toMember(savedMember));
 		} catch (DuplicateKeyException e) {
 			return Optional.empty();
@@ -71,8 +73,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 
 	@Override
 	public void deleteMember(String memberId) {
+		GaugeBuilder.Count c = GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this);
 		memberEntityRepository.deleteById(memberId);
-		GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).dec();
+		c.dec();
 	}
 
 	@Override

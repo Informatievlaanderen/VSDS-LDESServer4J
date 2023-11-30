@@ -1,10 +1,13 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.metrics;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Metrics;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.springframework.boot.util.LambdaSafe.callback;
 
 public class GaugeBuilder {
 
@@ -18,9 +21,10 @@ public class GaugeBuilder {
         return counter;
     }
 
-    public static Count getGauge(String name) {
-        return (countersList.containsKey(name)) ? countersList.get(name) : buildGauge(name);
+    public static Count getGauge(String name,  MemberRepository repo) {
+        return (countersList.containsKey(name)) ? countersList.get(name) : buildGauge(name, repo.getMemberCount());
     }
+
 
     public static class Count {
         private double d;
@@ -44,5 +48,8 @@ public class GaugeBuilder {
         double getCount() {
             return d;
         }
+    }
+    public static void reset(){
+        countersList = new HashMap<>();
     }
 }

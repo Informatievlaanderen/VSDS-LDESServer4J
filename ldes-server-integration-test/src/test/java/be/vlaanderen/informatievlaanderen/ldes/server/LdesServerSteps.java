@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.metrics.GaugeBuilder;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
@@ -44,6 +46,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Before("@clearRegistry")
 	public void clearRegistry() {
 		Metrics.globalRegistry.clear();
+		GaugeBuilder.reset();
 	}
 
 	private String getCurrentTimestamp() {
