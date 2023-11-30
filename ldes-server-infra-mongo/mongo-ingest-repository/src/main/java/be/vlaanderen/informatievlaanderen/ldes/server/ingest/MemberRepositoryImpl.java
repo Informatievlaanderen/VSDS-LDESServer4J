@@ -58,8 +58,8 @@ public class MemberRepositoryImpl implements MemberRepository {
 
 	@Override
 	public void deleteMembersByCollection(String collectionName) {
-		long members = memberEntityRepository.deleteAllByCollectionName(collectionName);
-		GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).dec(members);
+		long numberOfMembers = memberEntityRepository.deleteAllByCollectionName(collectionName);
+		GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).dec(numberOfMembers);
 		sequenceService.removeSequence(collectionName);
 	}
 

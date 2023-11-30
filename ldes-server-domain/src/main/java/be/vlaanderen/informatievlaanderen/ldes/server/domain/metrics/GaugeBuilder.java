@@ -21,10 +21,11 @@ public class GaugeBuilder {
     public static Count getGauge(String name) {
         return (countersList.containsKey(name)) ? countersList.get(name) : buildGauge(name);
     }
+
     public static class Count {
         private double d = 0;
         private Gauge gauge;
-        Count(String name) {
+        public Count(String name) {
             Gauge.builder(name, this::getCount).register(Metrics.globalRegistry);
         }
         public void inc(){
