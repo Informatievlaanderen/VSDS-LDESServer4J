@@ -5,9 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
+import io.micrometer.core.instrument.Metrics;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
-import io.micrometer.core.instrument.Metrics;
 
 import java.util.Objects;
 import java.util.Optional;

@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics.GaugeBuilder;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
@@ -12,7 +11,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
 
 @Service
 public class MemberIngesterImpl implements MemberIngester {
@@ -46,7 +44,6 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private void handleSuccessfulMemberInsertion(Member member, String memberId) {
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-        GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).inc();
         final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
                 member.getCollectionName(), member.getSequenceNr());
         eventPublisher.publishEvent(memberIngestedEvent);

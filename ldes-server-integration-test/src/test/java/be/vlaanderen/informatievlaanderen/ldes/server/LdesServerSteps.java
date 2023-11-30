@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
@@ -43,7 +44,11 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@Before("@clearRegistry")
 	public void clearRegistry() {
-		Metrics.globalRegistry.clear();
+		Metrics.globalRegistry.getMeters().forEach(meter -> {
+			if(meter instanceof Counter){
+				Metrics.globalRegistry.remove(meter);
+			}
+		});
 	}
 
 	private String getCurrentTimestamp() {

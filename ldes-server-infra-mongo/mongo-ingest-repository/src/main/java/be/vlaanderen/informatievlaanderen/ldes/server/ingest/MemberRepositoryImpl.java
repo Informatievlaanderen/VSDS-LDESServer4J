@@ -1,11 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.metrics.GaugeBuilder;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Metrics;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +29,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
 		this.sequenceService = sequenceService;
+		Gauge.builder(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this::countMembers).register(Metrics.globalRegistry);
 	}
 
 	public boolean memberExists(String memberId) {
@@ -72,7 +74,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
-		GaugeBuilder.getGauge(LDES_SERVER_ACTUAL_MEMBERS_COUNT).dec();
 	}
 
 	@Override
@@ -100,6 +101,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public long getSequenceForCollection(String collectionName) {
 		return sequenceService.getSequenceForCollection(collectionName);
+	}
+	private long countMembers() {
+		return memberEntityRepository.count();
 	}
 
 }
