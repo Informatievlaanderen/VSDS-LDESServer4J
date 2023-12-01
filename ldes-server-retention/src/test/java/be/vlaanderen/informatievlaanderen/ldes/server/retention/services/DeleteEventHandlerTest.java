@@ -45,7 +45,7 @@ class DeleteEventHandlerTest {
 
 	@Test
 	void when_ViewDeleted_MemberRemovedFromView() {
-		when(memberPropertiesRepository.getMemberPropertiesWithViewReference(VIEW.asString()))
+		when(memberPropertiesRepository.getMemberPropertiesWithViewReference(VIEW))
 				.thenReturn(Stream.of(member1, member2));
 
 		eventHandler.handleViewDeletedEvent(event);

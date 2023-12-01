@@ -48,10 +48,9 @@ class RetentionModelExtractorTest {
 			return Stream.of(
 					Arguments.of("viewconverter/retentionpolicies/timebased_retentionpolicy.ttl", 1, List.of(2)),
 					Arguments.of("viewconverter/retentionpolicies/versionbased_retentionpolicy.ttl", 1, List.of(2)),
-					Arguments.of("viewconverter/retentionpolicies/pointintime_retentionpolicy.ttl", 1, List.of(2)),
 					Arguments.of("viewconverter/retentionpolicies/fictional_retentionpolicy.ttl", 1, List.of(6)),
-					Arguments.of("viewconverter/retentionpolicies/multiple_retentionpolicies.ttl", 3,
-							List.of(2, 2, 2)));
+					Arguments.of("viewconverter/retentionpolicies/multiple_retentionpolicies.ttl", 2,
+							List.of(2, 2)));
 		}
 	}
 }

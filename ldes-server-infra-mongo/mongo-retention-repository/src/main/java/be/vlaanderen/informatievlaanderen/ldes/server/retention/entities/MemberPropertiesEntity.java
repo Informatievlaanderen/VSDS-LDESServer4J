@@ -8,9 +8,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Document("retention_member_properties")
+@Document(MemberPropertiesEntity.NAME)
 @CompoundIndex(name = "versionOf_view", def = "{'views' : 1, 'versionOf': 1}")
 public class MemberPropertiesEntity {
+
+	public static final String NAME = "retention_member_properties";
+
 	@Id
 	private final String id;
 	@Indexed
