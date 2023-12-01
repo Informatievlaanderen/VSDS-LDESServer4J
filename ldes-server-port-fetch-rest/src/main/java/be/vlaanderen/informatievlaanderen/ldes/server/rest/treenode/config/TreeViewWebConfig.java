@@ -16,7 +16,7 @@ public class TreeViewWebConfig {
 
 	@Bean
 	public HttpMessageConverter<TreeNode> treeNodeHttpConverter(
-			final TreeNodeConverter treeNodeConverter, RequestContextExtracter RequestContextExtracter, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
-		return new TreeNodeHttpConverter(treeNodeConverter, RequestContextExtracter, useRelativeUrl);
+			final TreeNodeConverter treeNodeConverter, RequestContextExtracter requestContextExtracter, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
+		return new TreeNodeHttpConverter(treeNodeConverter, requestContextExtracter, useRelativeUrl);
 	}
 }

@@ -55,8 +55,6 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
 
-		System.out.println(outputMessage.getHeaders().getHost());
-
 		if(useRelativeUrl) {
 			eventStreamModel.write(outputMessage.getBody(), getLang(contentType, REST_ADMIN).getName(), requestContextExtracter.extractRequestURL());
 		} else {
