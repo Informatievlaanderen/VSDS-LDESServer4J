@@ -5,34 +5,27 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngesterImpl.LDES_SERVER_ACTUAL_MEMBERS_COUNT;
-
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
-
+	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
 	private final MemberEntityRepository memberEntityRepository;
 	private final MemberEntityMapper memberEntityMapper;
 	private final IngestMemberSequenceService sequenceService;
-	private final MongoTemplate mongoTemplate;
 
 	public MemberRepositoryImpl(MemberEntityRepository memberEntityRepository,
 			MemberEntityMapper memberEntityMapper,
-			IngestMemberSequenceService sequenceService, MongoTemplate mongoTemplate) {
+			IngestMemberSequenceService sequenceService) {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
 		this.sequenceService = sequenceService;
-		this.mongoTemplate = mongoTemplate;
-		Gauge.builder(LDES_SERVER_ACTUAL_MEMBERS_COUNT, this::estimatedCountMembers).register(Metrics.globalRegistry);
 	}
 
 	public boolean memberExists(String memberId) {
@@ -77,6 +70,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment();
 	}
 
 	@Override
@@ -104,9 +98,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public long getSequenceForCollection(String collectionName) {
 		return sequenceService.getSequenceForCollection(collectionName);
-	}
-	private long estimatedCountMembers() {
-		return mongoTemplate.estimatedCount("ingest_ldesmember");
 	}
 
 }

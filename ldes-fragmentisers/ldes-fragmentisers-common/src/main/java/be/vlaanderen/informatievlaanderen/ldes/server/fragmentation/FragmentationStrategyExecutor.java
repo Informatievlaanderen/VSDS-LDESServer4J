@@ -18,7 +18,7 @@ import static io.micrometer.observation.Observation.createNotStarted;
 
 public class FragmentationStrategyExecutor {
 
-	private static final String LDES_SERVER_FRAGMENTED_MEMBERS_COUNT = "ldes_server_fragmented_members_count for view: ";
+	private static final String LDES_SERVER_MEMBERS_ADDED_TO_FRAGMENT_COUNT = "ldes_server_members_added_to_fragment_count for view: ";
 
 	private final ExecutorService executorService;
 	private final FragmentationStrategy fragmentationStrategy;
@@ -55,7 +55,7 @@ public class FragmentationStrategyExecutor {
 
 			while (nextMemberToFragment.isPresent() && isExecutorActive) {
 				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
-				Metrics.counter(LDES_SERVER_FRAGMENTED_MEMBERS_COUNT, "view",  viewName.asString()).increment();
+				Metrics.counter(LDES_SERVER_MEMBERS_ADDED_TO_FRAGMENT_COUNT, "view",  viewName.asString()).increment();
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
 		};

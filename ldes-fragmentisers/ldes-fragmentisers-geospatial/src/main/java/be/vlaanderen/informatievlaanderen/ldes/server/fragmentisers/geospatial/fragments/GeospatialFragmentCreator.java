@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.relations.TileFragmentRelationsAttributer;
+import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialFragmentCreator {
 
+	private static final String LDES_SERVER_CREATED_FRAGMENTS_GEOSPATIAL_COUNT = "ldes_server_created_fragments_geospatial_count";
 	private final FragmentRepository fragmentRepository;
 	private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeospatialFragmentCreator.class);
@@ -30,6 +32,8 @@ public class GeospatialFragmentCreator {
 					fragmentRepository.saveFragment(child);
 					tileFragmentRelationsAttributer
 							.addRelationsFromRootToBottom(rootTileFragment, child);
+					String viewName = parentFragment.getViewName().asString();
+					Metrics.counter(LDES_SERVER_CREATED_FRAGMENTS_GEOSPATIAL_COUNT, "view",  viewName).increment();
 					LOGGER.debug("Geospatial fragment created with id: {}", child.getFragmentId());
 					return child;
 				});
@@ -41,6 +45,8 @@ public class GeospatialFragmentCreator {
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {
 					fragmentRepository.saveFragment(child);
+					String viewName = parentFragment.getViewName().asString();
+					Metrics.counter(LDES_SERVER_CREATED_FRAGMENTS_GEOSPATIAL_COUNT, "view",  viewName).increment();
 					LOGGER.debug("Geospatial rootfragment created with id: {}", child.getFragmentId());
 					return child;
 				});

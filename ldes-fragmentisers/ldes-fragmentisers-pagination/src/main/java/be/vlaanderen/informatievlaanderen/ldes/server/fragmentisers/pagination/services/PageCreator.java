@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,8 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagin
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
 
 public class PageCreator {
+	private static final String LDES_SERVER_CREATED_FRAGMENTS_PAGINATION_COUNT = "ldes_server_created_fragments_pagination_count";
+
 	private final FragmentRepository fragmentRepository;
 	private final boolean bidirectionalRelations;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
@@ -36,6 +39,8 @@ public class PageCreator {
 
 	private Fragment createFragment(Fragment parentFragment, String pageNumber) {
 		Fragment newFragment = parentFragment.createChild(new FragmentPair(PAGE_NUMBER, pageNumber));
+		String viewName = parentFragment.getViewName().asString();
+		Metrics.counter(LDES_SERVER_CREATED_FRAGMENTS_PAGINATION_COUNT, "view",  viewName).increment();
 		LOGGER.debug("Pagination fragment created with id: {}", newFragment.getFragmentId());
 		return newFragment;
 	}
