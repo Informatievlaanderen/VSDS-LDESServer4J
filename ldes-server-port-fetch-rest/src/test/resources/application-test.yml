@@ -1,5 +1,6 @@
 ldes-server:
   hostname: "http://localhost:8080"
+  use-relative-url: true
   collections:
     - hostname: "http://localhost:8080"
       collectionname: "mobility-hindrances"
