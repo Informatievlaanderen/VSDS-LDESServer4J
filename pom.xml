@@ -319,6 +319,14 @@
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains-annotations.version}</version>
             </dependency>
+
+            <!-- INSTRUMENTATION -->
+            <dependency>
+                <groupId>io.pyroscope</groupId>
+                <artifactId>agent</artifactId>
+                <version>0.12.2</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
