@@ -84,10 +84,5 @@
             <version>${spring-data.version}</version>
             <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>io.pyroscope</groupId>
-            <artifactId>agent</artifactId>
-        </dependency>
     </dependencies>
 </project>

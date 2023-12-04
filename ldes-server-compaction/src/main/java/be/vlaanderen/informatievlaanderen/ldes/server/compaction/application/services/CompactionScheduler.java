@@ -5,6 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import io.pyroscope.labels.LabelsSet;
+import io.pyroscope.labels.Pyroscope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -29,18 +31,19 @@ public class CompactionScheduler {
 
 	@Scheduled(cron = COMPACTION_CRON_KEY)
 	public void compactFragments() {
-		viewCollection.getAllViewCapacities()
-				.parallelStream()
-				.forEach(viewCapacity -> getRootFragment(viewCapacity)
-						.ifPresent(rootFragment -> {
-							PaginationStartingNodeIterator paginationStartingNodeIterator = new PaginationStartingNodeIteratorImpl(
-									fragmentRepository, rootFragment);
-							while (paginationStartingNodeIterator.hasNext()) {
-								Fragment next = paginationStartingNodeIterator.next();
-								paginationCompactionService
-										.applyCompactionStartingFromNode(next);
-							}
-						}));
+		Pyroscope.LabelsWrapper.run(new LabelsSet("service", "compaction"),
+				() -> viewCollection.getAllViewCapacities()
+						.parallelStream()
+						.forEach(viewCapacity -> getRootFragment(viewCapacity)
+								.ifPresent(rootFragment -> {
+									PaginationStartingNodeIterator paginationStartingNodeIterator = new PaginationStartingNodeIteratorImpl(
+											fragmentRepository, rootFragment);
+									while (paginationStartingNodeIterator.hasNext()) {
+										Fragment next = paginationStartingNodeIterator.next();
+										paginationCompactionService
+												.applyCompactionStartingFromNode(next);
+									}
+								})));
 	}
 
 	private Optional<Fragment> getRootFragment(ViewCapacity viewCapacity) {

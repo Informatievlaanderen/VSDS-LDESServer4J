@@ -2,20 +2,13 @@ version: "3.3"
 services:
   ldes-server:
     container_name: basic_ldes-server
-    image: ldes/ldes-server
+    image: 300765198237d66902600e6af689ad566e3e0d4648ffac346e6b4f7ddb56d717
     environment:
       - SPRING_CONFIG_LOCATION=/config/
-      - PYROSCOPE_APPLICATION_NAME=ldes-server
-      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
-      - PYROSCOPE_FORMAT=jfr
-      - PYROSCOPE_PROFILING_INTERVAL=10ms
-      - PYROSCOPE_PROFILER_EVENT=itimer
-      - PYROSCOPE_PROFILER_LOCK=10ms
-      - PYROSCOPE_PROFILER_ALLOC=512k
-      - PYROSCOPE_UPLOAD_INTERVAL=15s
-      - PYROSCOPE_LOG_LEVEL=debug
+      - PYROSCOPE_CONFIGURATION_FILE=/config/pyroscope.properties
     volumes:
       - ./docker-compose/server.config.yml:/config/application.yml:ro
+      - ./docker-compose/pyroscope.properties:/config/pyroscope.properties:ro
     ports:
       - 8080:8080
     networks:
