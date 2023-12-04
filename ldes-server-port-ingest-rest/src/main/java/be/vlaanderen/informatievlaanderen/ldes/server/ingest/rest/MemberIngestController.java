@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import io.pyroscope.labels.LabelsSet;
-import io.pyroscope.labels.Pyroscope;
 import io.micrometer.observation.annotation.Observed;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
