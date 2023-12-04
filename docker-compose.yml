@@ -28,24 +28,5 @@ services:
       - 4040:4040
     networks:
       - ldes
-
-  grafana:
-    image: grafana/grafana:main
-    ports:
-      - 3000:3000
-    environment:
-      - GF_FEATURE_TOGGLES_ENABLE=flameGraph
-    networks:
-      - ldes
-  jaeger:
-    image: jaegertracing/all-in-one:1.37
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    ports:
-      - "6831:6831/udp"
-      - "16686:16686"
-      - "4319:4317"
-      - "4320:4318"
-      - "14250:14250"
 networks:
   ldes:
