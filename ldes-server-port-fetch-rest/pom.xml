@@ -52,6 +52,12 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- LOGGING -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

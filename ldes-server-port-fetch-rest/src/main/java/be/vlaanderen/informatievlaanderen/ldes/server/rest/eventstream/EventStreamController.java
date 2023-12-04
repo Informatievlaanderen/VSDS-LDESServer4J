@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamRespo
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpHeaders.*;
 
+@Observed
 @RestController
 public class EventStreamController implements OpenApiEventStreamController {
 

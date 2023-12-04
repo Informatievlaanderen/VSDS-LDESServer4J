@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server;
+package be.vlaanderen.informatievlaanderen.ldes.server.logging;
 
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.aop.ObservedAspect;

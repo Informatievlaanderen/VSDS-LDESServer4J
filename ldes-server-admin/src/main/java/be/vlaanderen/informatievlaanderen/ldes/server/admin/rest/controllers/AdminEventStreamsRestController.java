@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.s
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import io.micrometer.observation.annotation.Observed;
 
 import java.util.List;
 

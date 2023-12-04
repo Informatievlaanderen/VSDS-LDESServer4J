@@ -36,6 +36,12 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
         </dependency>
+
+        <!-- NULL ANNOTATIONS -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

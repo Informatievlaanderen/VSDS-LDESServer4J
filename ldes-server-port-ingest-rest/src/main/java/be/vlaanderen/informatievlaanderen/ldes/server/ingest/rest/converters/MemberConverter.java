@@ -8,9 +8,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfForma
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
@@ -31,6 +33,7 @@ import java.util.Objects;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
+@Observed
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	private final Map<String, String> memberTypes = new HashMap<>();
@@ -45,7 +48,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	}
 
 	@Override
-	protected Member readInternal(Class<? extends Member> clazz, HttpInputMessage inputMessage)
+	protected Member readInternal(@NotNull Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = RdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
 				RdfFormatException.RdfFormatContext.INGEST);
@@ -66,7 +69,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	}
 
 	@Override
-	protected void writeInternal(Member member, HttpOutputMessage outputMessage)
+	protected void writeInternal(@NotNull Member member, @NotNull HttpOutputMessage outputMessage)
 			throws UnsupportedOperationException, HttpMessageNotWritableException {
 		throw new UnsupportedOperationException();
 	}

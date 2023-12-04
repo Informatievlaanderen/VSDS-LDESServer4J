@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatCatalogValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+@Observed
 @RestController
 @RequestMapping("/admin/api/v1/dcat")
 public class AdminServerDcatController implements OpenApiServerDcatController {

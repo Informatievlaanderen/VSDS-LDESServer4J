@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatDatasetValidator;
+import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatDatasetRestController.BASE_URL;
 import static org.apache.jena.riot.WebContent.*;
 
+@Observed
 @RestController
 @RequestMapping(value = BASE_URL)
 public class DcatDatasetRestController implements OpenApiDcatDatasetController {
