@@ -12,6 +12,6 @@ public class MetricsFragmentEventListener {
     @EventListener
     public void handleFragmentDeletedEvent(FragmentDeletedEvent event) {
         String viewName = event.ldesFragmentIdentifier().getViewName().asString();
-        Metrics.counter(LDES_SERVER_DELETED_FRAGMENTS_COUNT, "view",  viewName).increment();
+        Metrics.counter(LDES_SERVER_DELETED_FRAGMENTS_COUNT, "view",  viewName, "fragmentation-strategy", "pagination").increment();
     }
 }
