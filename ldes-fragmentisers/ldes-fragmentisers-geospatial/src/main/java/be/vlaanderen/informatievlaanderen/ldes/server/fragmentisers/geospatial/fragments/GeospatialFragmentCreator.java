@@ -8,11 +8,11 @@ import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.CounterConstants.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 
 public class GeospatialFragmentCreator {
 
-	private static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final FragmentRepository fragmentRepository;
 	private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeospatialFragmentCreator.class);

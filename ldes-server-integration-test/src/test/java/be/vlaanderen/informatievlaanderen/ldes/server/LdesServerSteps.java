@@ -259,8 +259,4 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		assertTrue(response.getContentAsString().contains(message));
 	}
 
-	@When("I delete the collection {string}")
-	public void deleteCollection(String collectionName) throws Exception {
-		mockMvc.perform(delete("/admin/api/v1/eventstreams/" + collectionName));
-	}
 }

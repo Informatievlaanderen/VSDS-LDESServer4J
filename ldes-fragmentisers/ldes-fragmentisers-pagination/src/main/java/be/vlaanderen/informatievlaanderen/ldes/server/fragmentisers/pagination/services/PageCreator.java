@@ -8,12 +8,11 @@ import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.CounterConstants.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.FIRST_PAGE_NUMBER;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.constants.PaginationConstants.*;
 
 public class PageCreator {
-	private static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final FragmentRepository fragmentRepository;
 	private final boolean bidirectionalRelations;
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
