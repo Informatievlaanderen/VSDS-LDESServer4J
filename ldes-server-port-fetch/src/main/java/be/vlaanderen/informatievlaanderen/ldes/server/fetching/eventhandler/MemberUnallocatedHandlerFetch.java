@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberUnallocatedHandlerFetch {
 
-	private static final String LDES_SERVER_MEMBERS_REMOVED_FROM_FRAGMENT_COUNT = "ldes_server_members_removed_from_fragment_count for view: ";
-
+	private static final String LDES_SERVER_MEMBERS_REMOVED_FROM_FRAGMENT_COUNT =
+			"ldes_server_members_removed_from_fragment_count";
 
 	private final AllocationRepository allocationRepository;
 
