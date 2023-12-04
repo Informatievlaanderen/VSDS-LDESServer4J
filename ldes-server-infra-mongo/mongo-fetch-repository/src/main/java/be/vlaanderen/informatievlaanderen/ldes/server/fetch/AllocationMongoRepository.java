@@ -36,7 +36,7 @@ public class AllocationMongoRepository implements AllocationRepository {
 
 	@Override
 	public long countByCollectionNameAndViewName(String collectionName, String viewName) {
-		// TODO: 04/12/23 Desactivated due to performance issues on the count query
+		// 04/12/23 Desactivated due to performance issues on the count query
 		// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
 		// Normally we do not query this anymore but this was disabled in a rush and I want to be really really sure.
 		return -1L;

@@ -43,7 +43,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				members, collectionName);
 
 		if(fragment.isRoot()) {
-			// TODO: 04/12/23 Desactivated due to performance issues on the count query
+			// 04/12/23 Desactivated due to performance issues on the count query
 			// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
 //			treeNode.setNumberOfMembersInView(allocationRepository.countByCollectionNameAndViewName(collectionName, treeNodeId.getViewName().getViewName()));
 		}

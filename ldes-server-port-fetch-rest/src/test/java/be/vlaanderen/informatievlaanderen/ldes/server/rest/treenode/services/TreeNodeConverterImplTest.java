@@ -63,7 +63,7 @@ class TreeNodeConverterImplTest {
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
 
-        // TODO: 04/12/23 Desactivated due to performance issues on the count query
+        // 04/12/23 Desactivated due to performance issues on the count query
         // refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
 //        verifyRemainingItemsStatement(model);
     }
