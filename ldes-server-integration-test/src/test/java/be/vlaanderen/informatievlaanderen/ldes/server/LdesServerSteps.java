@@ -40,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
+	public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
 	Stack<String> interactedStreams = new Stack<>();
 
 	@Before("@clearRegistry")
@@ -252,11 +253,11 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		assertThat(size).isEqualTo(statementCount);
 	}
 
-	@And("The response from requesting the url {string} contains the message {string}")
-	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String url, String message) throws Exception {
-		MockHttpServletResponse response = mockMvc.perform(get(url).accept("application/openmetrics-text"))
+	@And("The prometheus value for key {string} is 1")
+	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
 				.andReturn().getResponse();
-		assertTrue(response.getContentAsString().contains(message));
+		assertTrue(response.getContentAsString().contains(message + " 1.0"));
 	}
 
 }

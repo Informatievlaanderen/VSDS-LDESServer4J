@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.constants;
 
 public class CounterConstants {
 
