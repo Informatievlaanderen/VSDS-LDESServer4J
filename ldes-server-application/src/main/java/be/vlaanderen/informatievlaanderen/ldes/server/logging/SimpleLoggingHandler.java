@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.logging;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.aop.ObservedAspect;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class SimpleLoggingHandler implements ObservationHandler<ObservedAspect.O
 	}
 
 	private String getErrorInfo(@NotNull ObservedAspect.ObservedAspectContext context) {
-		var joinPoint = context.getProceedingJoinPoint();
+		ProceedingJoinPoint joinPoint = context.getProceedingJoinPoint();
 		String problem = Objects.requireNonNull(context.getError()).getMessage();
 		String source = joinPoint.getSignature().getDeclaringType().getSimpleName();
 		String when = joinPoint.getSignature().getName();
