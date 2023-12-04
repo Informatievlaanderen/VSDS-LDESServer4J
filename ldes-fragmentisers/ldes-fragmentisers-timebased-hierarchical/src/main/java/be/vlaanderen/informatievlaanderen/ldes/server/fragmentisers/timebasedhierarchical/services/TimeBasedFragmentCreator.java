@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class TimeBasedFragmentCreator {
 
-	private static final String LDES_SERVER_CREATED_FRAGMENTS_TIMEBASED_COUNT = "ldes_server_created_fragments_timebased_count";
+	private static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final FragmentRepository fragmentRepository;
 	private final TimeBasedRelationsAttributer relationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentCreator.class);
@@ -34,7 +34,7 @@ public class TimeBasedFragmentCreator {
 					relationsAttributer
 							.addInBetweenRelation(parentFragment, child);
 					String viewName = parentFragment.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATED_FRAGMENTS_TIMEBASED_COUNT, "view",  viewName).increment();
+					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, "view", viewName, "fragmentation-strategy", "timebased").increment();
 					LOGGER.debug("Timebased fragment created with id: {}", child.getFragmentId());
 					return child;
 				});

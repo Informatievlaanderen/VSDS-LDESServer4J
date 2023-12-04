@@ -12,7 +12,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 
 public class GeospatialFragmentCreator {
 
-	private static final String LDES_SERVER_CREATED_FRAGMENTS_GEOSPATIAL_COUNT = "ldes_server_created_fragments_geospatial_count";
+	private static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final FragmentRepository fragmentRepository;
 	private final TileFragmentRelationsAttributer tileFragmentRelationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GeospatialFragmentCreator.class);
@@ -33,7 +33,7 @@ public class GeospatialFragmentCreator {
 					tileFragmentRelationsAttributer
 							.addRelationsFromRootToBottom(rootTileFragment, child);
 					String viewName = parentFragment.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATED_FRAGMENTS_GEOSPATIAL_COUNT, "view",  viewName).increment();
+					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, "view", viewName, "fragmentation-strategy", "geospatial").increment();
 					LOGGER.debug("Geospatial fragment created with id: {}", child.getFragmentId());
 					return child;
 				});
@@ -46,7 +46,7 @@ public class GeospatialFragmentCreator {
 				.orElseGet(() -> {
 					fragmentRepository.saveFragment(child);
 					String viewName = parentFragment.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATED_FRAGMENTS_GEOSPATIAL_COUNT, "view",  viewName).increment();
+					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, "view", viewName, "fragmentation-strategy", "geospatial").increment();
 					LOGGER.debug("Geospatial rootfragment created with id: {}", child.getFragmentId());
 					return child;
 				});
