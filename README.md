@@ -314,11 +314,13 @@ The logging of this server is split over the different logging levels according 
 
 #### Logging configuration
 
-The following config allows you to output logging to the console. Further customization of the logging settings can be done using the logback properties.
+The following config allows you to output logging to the console. The trace id and span id can be included in the logging, 
+if enabled via the [tracing config](#tracing-and-metrics). 
+Further customization of the logging settings can be done using the logback properties. A use case for this can be sending the logs to Loki for example.
 ```yaml
 logging:
   pattern:
-    console: "%d %-5level %logger : %msg%n"
+    console: "%5p [${spring.application.name:LDESServer4J},%X{traceId:-},%X{spanId:-}]"
   level:
     root: INFO
 ```

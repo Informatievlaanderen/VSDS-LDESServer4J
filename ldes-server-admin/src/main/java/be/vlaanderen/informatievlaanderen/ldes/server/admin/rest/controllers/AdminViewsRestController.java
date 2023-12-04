@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.apache.jena.riot.WebContent.*;
 
+@Observed
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminViewsRestController implements OpenApiAdminViewsRestController {
