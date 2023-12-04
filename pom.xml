@@ -25,6 +25,7 @@
         <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-compaction</module>
         <module>ldes-server-integration-test</module>
+        <module>ldes-server-instrumentation</module>
     </modules>
 
     <developers>
@@ -61,6 +62,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <swagger-annotations.version>2.2.15</swagger-annotations.version>
+        <pyroscope.version>0.12.2</pyroscope.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -319,6 +321,14 @@
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains-annotations.version}</version>
             </dependency>
+
+            <!-- INSTRUMENTATION -->
+            <dependency>
+                <groupId>io.pyroscope</groupId>
+                <artifactId>agent</artifactId>
+                <version>${pyroscope.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
