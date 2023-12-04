@@ -94,7 +94,7 @@
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>9.0.1</depencency-check-maven.version>
 
-        <!-- LOGGING -->
+        <!-- Monitoring and Logging -->
         <spring.aop.version>3.2.0</spring.aop.version>
         <spring-boot.actuator.version>3.2.0</spring-boot.actuator.version>
         <micrometer-prometheus.version>1.12.0</micrometer-prometheus.version>
@@ -280,7 +280,7 @@
                 <version>${commons-codec.version}</version>
             </dependency>
 
-            <!-- LOGGING -->
+            <!-- Monitoring and Logging -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-aop</artifactId>

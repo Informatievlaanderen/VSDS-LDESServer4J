@@ -29,6 +29,6 @@ public class SimpleLoggingHandler implements ObservationHandler<ObservedAspect.O
 		String problem = Objects.requireNonNull(context.getError()).getMessage();
 		String source = joinPoint.getSignature().getDeclaringType().getSimpleName();
 		String when = joinPoint.getSignature().getName();
-		return "ERROR - problem='%s', source='%s', when='%s'".formatted(problem, source, when);
+		return "ERROR - source='%s', when='%s', problem='%s'".formatted(source, when, problem);
 	}
 }

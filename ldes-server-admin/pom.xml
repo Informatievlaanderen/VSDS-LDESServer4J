@@ -33,7 +33,7 @@
             <artifactId>swagger-annotations-jakarta</artifactId>
         </dependency>
 
-        <!-- LOGGING -->
+        <!-- Monitoring and Logging -->
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
