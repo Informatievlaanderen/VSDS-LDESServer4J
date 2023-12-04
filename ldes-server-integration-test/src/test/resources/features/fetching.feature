@@ -38,3 +38,12 @@ Feature: Server basic fetching functionality
     And The response from requesting the url "/mobility-hindrances/paged" contains 1 remaining items statements
     And The response from requesting the url "/mobility-hindrances/paged?pageNumber=1" contains 0 remaining items statements
     And I delete the eventstream "mobility-hindrances"
+
+  @clearRegistry
+  Scenario: Counter is created and returns number of inserted members
+    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
+    When I ingest 1 members to the collection "mobility-hindrances"
+    Then The prometheus value for key "ldes_server_ingested_members_count_total" is 1
+
+
+

@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Resource;
@@ -37,7 +40,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
+	public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
 	Stack<String> interactedStreams = new Stack<>();
+
+	@Before("@clearRegistry")
+	public void clearRegistry() {
+		Metrics.globalRegistry.getMeters().forEach(meter -> {
+			if(meter instanceof Counter){
+				Metrics.globalRegistry.remove(meter);
+			}
+		});
+	}
 
 	private String getCurrentTimestamp() {
 		return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.[SSS]'Z'"));
@@ -239,4 +252,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.toList().size();
 		assertThat(size).isEqualTo(statementCount);
 	}
+
+	@And("The prometheus value for key {string} is 1")
+	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message) throws Exception {
+		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
+				.andReturn().getResponse();
+		assertTrue(response.getContentAsString().contains(message + " 1.0"));
+	}
+
 }

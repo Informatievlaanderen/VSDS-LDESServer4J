@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import io.micrometer.core.instrument.Metrics;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
-
+	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
 	private final MemberEntityRepository memberEntityRepository;
 	private final MemberEntityMapper memberEntityMapper;
 	private final IngestMemberSequenceService sequenceService;
@@ -69,6 +70,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment();
 	}
 
 	@Override
