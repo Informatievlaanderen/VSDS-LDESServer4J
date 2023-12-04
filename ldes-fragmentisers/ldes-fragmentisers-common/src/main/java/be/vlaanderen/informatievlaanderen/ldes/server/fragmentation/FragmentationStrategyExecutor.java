@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
-import io.micrometer.core.instrument.Metrics;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
@@ -17,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 import static io.micrometer.observation.Observation.createNotStarted;
 
 public class FragmentationStrategyExecutor {
-
-	private static final String LDES_SERVER_MEMBERS_ADDED_TO_FRAGMENT_COUNT = "ldes_server_members_added_to_fragment_count for view: ";
 
 	private final ExecutorService executorService;
 	private final FragmentationStrategy fragmentationStrategy;
@@ -55,7 +52,6 @@ public class FragmentationStrategyExecutor {
 
 			while (nextMemberToFragment.isPresent() && isExecutorActive) {
 				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
-				Metrics.counter(LDES_SERVER_MEMBERS_ADDED_TO_FRAGMENT_COUNT, "view",  viewName.asString()).increment();
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
 		};
