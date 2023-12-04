@@ -9,9 +9,10 @@ import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.CounterConstants.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
+
 public class TimeBasedFragmentCreator {
 
-	private static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final FragmentRepository fragmentRepository;
 	private final TimeBasedRelationsAttributer relationsAttributer;
 	private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedFragmentCreator.class);
