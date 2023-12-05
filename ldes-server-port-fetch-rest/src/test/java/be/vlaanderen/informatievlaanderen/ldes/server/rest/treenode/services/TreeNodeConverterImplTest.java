@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatVi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -33,6 +34,7 @@ class TreeNodeConverterImplTest {
     private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
     private static final String VIEW_NAME = "view";
     private final PrefixAdder prefixAdder = new PrefixAdderImpl();
+    private final PrefixConstructor prefixConstructor = new PrefixConstructor(HOST_NAME, false);
     private TreeNodeConverterImpl treeNodeConverter;
 
     @BeforeEach
@@ -43,7 +45,7 @@ class TreeNodeConverterImplTest {
                 "http://www.w3.org/ns/prov#generatedAtTime",
                 "http://purl.org/dc/terms/isVersionOf", "memberType");
 
-        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
+        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor);
         treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
         treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
     }

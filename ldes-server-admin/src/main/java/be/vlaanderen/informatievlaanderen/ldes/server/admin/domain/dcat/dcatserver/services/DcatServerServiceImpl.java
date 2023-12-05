@@ -10,17 +10,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Statement;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
 
 @Service
 public class DcatServerServiceImpl implements DcatServerService {
@@ -28,19 +26,19 @@ public class DcatServerServiceImpl implements DcatServerService {
 	private final DcatServerRepository dcatServerRepository;
 	private final DcatViewService dcatViewService;
 	private final DcatDatasetService dcatDatasetService;
-	private final String hostName;
+	private final PrefixConstructor prefixConstructor;
 
 	private final ModelValidator dcatShaclValidator;
 
 	public DcatServerServiceImpl(DcatServerRepository dcatServerRepository,
 								 DcatViewService dcatViewService,
 								 DcatDatasetService dcatDatasetService,
-								 @Value(HOST_NAME_KEY) String hostName,
-								 DcatShaclValidator dcatShaclValidator) {
+								 DcatShaclValidator dcatShaclValidator,
+								 PrefixConstructor prefixConstructor) {
 		this.dcatServerRepository = dcatServerRepository;
 		this.dcatViewService = dcatViewService;
 		this.dcatDatasetService = dcatDatasetService;
-		this.hostName = hostName;
+		this.prefixConstructor = prefixConstructor;
 		this.dcatShaclValidator = dcatShaclValidator;
 	}
 
@@ -57,18 +55,19 @@ public class DcatServerServiceImpl implements DcatServerService {
 	}
 
 	private List<Statement> getStatementsForComposedDcat(DcatServer dcatServer) {
+		String prefix = prefixConstructor.buildPrefix();
 		final List<Statement> statements = new ArrayList<>();
 
 		final List<DcatView> views = dcatViewService.findAll();
 		statements.addAll(
-				views.stream().flatMap(dcatView -> dcatView.getStatementsWithBase(hostName).stream()).toList());
+				views.stream().flatMap(dcatView -> dcatView.getStatementsWithBase(prefix).stream()).toList());
 
 		final List<DcatDataset> datasets = dcatDatasetService.findAll();
 		statements.addAll(
-				datasets.stream().map(dataset -> dataset.getModelWithIdentity(hostName))
+				datasets.stream().map(dataset -> dataset.getModelWithIdentity(prefix))
 						.flatMap(model -> model.listStatements().toList().stream()).toList());
 
-		statements.addAll(dcatServer.getStatementsWithBase(hostName, views, datasets));
+		statements.addAll(dcatServer.getStatementsWithBase(prefix, views, datasets));
 
 		return statements;
 	}

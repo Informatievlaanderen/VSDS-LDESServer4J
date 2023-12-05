@@ -8,15 +8,18 @@ import org.springframework.context.annotation.Configuration;
 public class ServerConfig {
 	private static final String DEFAULT_COMPACTION_DURATION = "P7D";
 	private static final String DEFAULT_BACKGROUND_CRON = "0 0 0 * * *";
+	private static final String DEFAULT_USE_RELATIVE_URL = "false";
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
 	public static final String RETENTION_CRON_KEY = "${ldes-server.retention-cron: " + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String DELETION_CRON_KEY = "${ldes-server.deletion-cron:" + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String COMPACTION_CRON_KEY = "${ldes-server.compaction-cron:" + DEFAULT_BACKGROUND_CRON + "}";
+	public static final String USE_RELATIVE_URL_KEY = "#{new Boolean(\"${ldes-server.use-relative-url:" + DEFAULT_USE_RELATIVE_URL + "}\")}";
 	private String hostName;
 	private String compactionDuration;
 	private String retentionCron;
 	private String deletionCron;
 	private String compactionCron;
+	private Boolean useRelativeUrl;
 
 	public String getHostName() {
 		return hostName;
@@ -37,6 +40,9 @@ public class ServerConfig {
 	public String getCompactionCron() {
 		return compactionCron != null ? compactionCron : DEFAULT_BACKGROUND_CRON;
 	}
+	public Boolean getUseRelativeUrl() {
+		return useRelativeUrl != null ? useRelativeUrl : Boolean.getBoolean(DEFAULT_USE_RELATIVE_URL);
+	}
 
 	public void setHostName(String hostName) {
 		this.hostName = hostName;
@@ -56,5 +62,9 @@ public class ServerConfig {
 
 	public void setCompactionCron(String compactionCron) {
 		this.compactionCron = compactionCron;
+	}
+
+	public void setUseRelativeUrl(Boolean useRelativeUrl) {
+		this.useRelativeUrl = useRelativeUrl;
 	}
 }
