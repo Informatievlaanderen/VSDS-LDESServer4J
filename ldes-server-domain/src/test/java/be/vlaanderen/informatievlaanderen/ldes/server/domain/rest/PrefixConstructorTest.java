@@ -47,10 +47,11 @@ class PrefixConstructorTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                    Arguments.of("test/testing", ".."),
-                    Arguments.of("/test/testing", ".."),
+                    Arguments.of("test", ".."),
+                    Arguments.of("test/testing", "../.."),
+                    Arguments.of("/test/testing", "../.."),
                     Arguments.of("", ""),
-                    Arguments.of("test/testing/testing/testing", "...."));
+                    Arguments.of("test/testing/testing/testing", "../../../.."));
         }
     };
 }

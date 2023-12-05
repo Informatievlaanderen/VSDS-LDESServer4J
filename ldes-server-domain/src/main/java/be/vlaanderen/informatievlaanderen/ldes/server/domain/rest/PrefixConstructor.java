@@ -27,7 +27,10 @@ public class PrefixConstructor {
             return hostname;
         }
         StringBuilder prefix = new StringBuilder();
-        Arrays.stream(extractRequestURL().split("/")).filter(s->!s.isEmpty()).forEach(s-> prefix.append("."));
+        Arrays.stream(extractRequestURL().split("/")).filter(s->!s.isEmpty()).forEach(s-> prefix.append("/.."));
+        if(!prefix.isEmpty()) {
+            prefix.deleteCharAt(0);
+        }
         return prefix.toString();
     }
     private String extractRequestURL() {
