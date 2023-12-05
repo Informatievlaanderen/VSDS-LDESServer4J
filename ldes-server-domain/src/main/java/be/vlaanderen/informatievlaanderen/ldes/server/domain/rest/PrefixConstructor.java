@@ -17,7 +17,7 @@ public class PrefixConstructor {
 
     private final String hostname;
     private final boolean useRelativeUrl;
-    public PrefixConstructor(@Value(HOST_NAME_KEY) String hostname, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
+    public PrefixConstructor(@Value(HOST_NAME_KEY) String hostname, @Value(USE_RELATIVE_URL_KEY) boolean useRelativeUrl) {
         this.hostname = hostname;
         this.useRelativeUrl = useRelativeUrl;
     }
@@ -27,7 +27,7 @@ public class PrefixConstructor {
             return hostname;
         }
         StringBuilder prefix = new StringBuilder();
-        Arrays.stream(extractRequestURL().split("/")).filter(s->s.length()>0).forEach(s-> prefix.append("."));
+        Arrays.stream(extractRequestURL().split("/")).filter(s->!s.isEmpty()).forEach(s-> prefix.append("."));
         return prefix.toString();
     }
     private String extractRequestURL() {
