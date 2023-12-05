@@ -27,7 +27,7 @@ public class RdfModelConverter {
 	}
 
 	public static Model fromString(final String content, final Lang lang) {
-		return RDFParserBuilder.create().fromString(content).base("http://localhost:8087").lang(lang).toModel();
+		return RDFParserBuilder.create().fromString(content).lang(lang).toModel();
 	}
 
 	public static String toString(final Model model, final Lang lang) {
