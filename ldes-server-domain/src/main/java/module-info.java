@@ -1,9 +1,10 @@
-module ldes.domain {
+open module ldes.domain {
 
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.rest;
 
     // Events
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation;
@@ -25,5 +26,6 @@ module ldes.domain {
     requires org.slf4j;
     requires simpleclient;
     requires micrometer.core;
+    requires org.apache.tomcat.embed.core;
 
 }

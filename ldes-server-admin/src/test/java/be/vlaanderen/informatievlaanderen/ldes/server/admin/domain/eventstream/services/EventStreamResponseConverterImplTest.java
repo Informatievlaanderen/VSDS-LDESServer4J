@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdd
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.RDFDataMgr;
@@ -36,10 +37,11 @@ class EventStreamResponseConverterImplTest {
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		String hostName = "http://localhost:8080";
-		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(hostName,
-				new RetentionModelExtractor(), new FragmentationConfigExtractor());
+		PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
+				new FragmentationConfigExtractor(), prefixConstructor);
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
-		eventStreamConverter = new EventStreamResponseConverterImpl(hostName, viewSpecificationConverter, prefixAdder, false);
+		eventStreamConverter = new EventStreamResponseConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
 	}

@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exceptio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.graph.Factory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
@@ -11,15 +12,12 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.ModelCom;
 import org.apache.jena.rdf.model.impl.ResourceImpl;
 import org.apache.jena.vocabulary.RDF;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView.VIEW_DESCRIPTION_SUFFIX;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -27,19 +25,16 @@ import static org.apache.jena.rdf.model.ResourceFactory.*;
 public class ViewSpecificationConverter {
 
 	public static final int DEFAULT_PAGE_SIZE = 100;
-	private final String hostname;
-	private final Boolean useRelativeUrl;
 	private final RetentionModelExtractor retentionModelExtractor;
 	private final FragmentationConfigExtractor fragmentationConfigExtractor;
+	private final PrefixConstructor prefixConstructor;
 
-	public ViewSpecificationConverter(@Value(HOST_NAME_KEY) String hostName,
-									  RetentionModelExtractor retentionModelExtractor,
+	public ViewSpecificationConverter(RetentionModelExtractor retentionModelExtractor,
 									  FragmentationConfigExtractor fragmentationConfigExtractor,
-									  @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
-		this.hostname = useRelativeUrl ? "" : hostName;
+									  PrefixConstructor prefixConstructor) {
 		this.retentionModelExtractor = retentionModelExtractor;
 		this.fragmentationConfigExtractor = fragmentationConfigExtractor;
-		this.useRelativeUrl = useRelativeUrl;
+		this.prefixConstructor = prefixConstructor;
 	}
 
 	public ViewSpecification viewFromModel(Model viewModel, String collectionName) {
@@ -59,17 +54,15 @@ public class ViewSpecificationConverter {
 				.orElse(DEFAULT_PAGE_SIZE);
 	}
 
-	public Model modelFromView(ViewSpecification view){
-		return modelFromView(view, "../");
-	}
-	public Model modelFromView(ViewSpecification view, String base) {
+	public Model modelFromView(ViewSpecification view) {
+		String prefix = prefixConstructor.buildPrefix();
 		Model model = ModelFactory.createDefaultModel();
 		ViewName viewName = view.getName();
-		Resource viewResource = Boolean.TRUE.equals(useRelativeUrl) ? getRelativeIRIFromViewName(viewName, base) : getIRIFromViewName(viewName);
+		Resource viewResource = getIRIFromViewName(viewName, prefix);
 		Statement viewDescription = createStatement(
 				viewResource,
 				createProperty(TREE_VIEW_DESCRIPTION),
-				Boolean.TRUE.equals(useRelativeUrl) ? getRelativeIRIDescription(viewName, base) : getIRIDescription(viewName));
+				getIRIDescription(viewName, prefix));
 		model.add(viewDescription);
 		model.add(createStatement(viewDescription.getResource(), createProperty(TREE_PAGESIZE),
 				createTypedLiteral(view.getPageSize())));
@@ -77,7 +70,7 @@ public class ViewSpecificationConverter {
 
 		addRetentionPoliciesToModel(view.getRetentionConfigs(), model, viewDescription);
 		model.add(viewDescription.getResource(), RDF.type, createProperty(TREE_VIEW_DESCRIPTION_RESOURCE));
-		model.add(extractDcatStatements(view));
+		model.add(extractDcatStatements(view, prefix));
 		model.add(fragmentationStatementsFromList(viewDescription.getResource(), view.getFragmentations()));
 
 		return model;
@@ -95,27 +88,20 @@ public class ViewSpecificationConverter {
 		});
 	}
 
-	private List<Statement> extractDcatStatements(ViewSpecification view) {
-		return view.getDcat() != null ? view.getDcat().getStatementsWithBase(hostname) : List.of();
+	private List<Statement> extractDcatStatements(ViewSpecification view, String prefix) {
+		return view.getDcat() != null ? view.getDcat().getStatementsWithBase(prefix) : List.of();
 	}
 
-	private String getIRIString(ViewName viewName) {
-		return hostname + "/" + viewName.asString();
+	private String getIRIString(ViewName viewName, String prefix) {
+		return prefix + "/" + viewName.asString();
 	}
 
-	public Resource getIRIFromViewName(ViewName viewName) {
-		return createResource(getIRIString(viewName));
+	public Resource getIRIFromViewName(ViewName viewName, String prefix) {
+		return createResource(getIRIString(viewName, prefix));
 	}
 
-	public Resource getRelativeIRIFromViewName(ViewName viewName, String base) {
-		return createResource(base + viewName.asString());
-	}
-
-	private Resource getIRIDescription(ViewName viewName) {
-		return createResource(getIRIString(viewName) + VIEW_DESCRIPTION_SUFFIX);
-	}
-	public Resource getRelativeIRIDescription(ViewName viewName, String base) {
-		return createResource(base + viewName.asString() + VIEW_DESCRIPTION_SUFFIX);
+	private Resource getIRIDescription(ViewName viewName, String prefix) {
+		return createResource(getIRIString(viewName, prefix) + VIEW_DESCRIPTION_SUFFIX);
 	}
 
 	private ViewName viewNameFromStatements(List<Statement> statements, String collectionName) {

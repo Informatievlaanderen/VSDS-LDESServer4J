@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.spi;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.rdf.model.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
@@ -24,18 +22,15 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 
 	public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
 	public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
-	private final String hostname;
-	private final Boolean useRelativeUrl;
 	private final ViewSpecificationConverter viewSpecificationConverter;
 	private final PrefixAdder prefixAdder;
+	private final PrefixConstructor prefixConstructor;
 
-	public EventStreamResponseConverterImpl(@Value(HOST_NAME_KEY) String hostName,
-			ViewSpecificationConverter viewSpecificationConverter,
-			PrefixAdder prefixAdder, @Value(USE_RELATIVE_URL_KEY) Boolean useRelativeUrl) {
+	public EventStreamResponseConverterImpl(ViewSpecificationConverter viewSpecificationConverter,
+											PrefixAdder prefixAdder, PrefixConstructor prefixConstructor) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
-		this.hostname  = Boolean.TRUE.equals(useRelativeUrl) ? ".." : hostName;
 		this.prefixAdder = prefixAdder;
-		this.useRelativeUrl = useRelativeUrl;
+		this.prefixConstructor = prefixConstructor;
 	}
 
 	@Override
@@ -53,10 +48,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 
 	@Override
 	public Model toModel(EventStreamResponse eventStreamResponse) {
-		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection());
+		String prefix = prefixConstructor.buildPrefix();
+		final Resource subject = getIRIFromCollectionName(eventStreamResponse.getCollection(), prefix);
 		final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE, createResource(EVENT_STREAM_TYPE));
 		final Statement dcatTypeStmt = createStatement(subject, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE));
-		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(hostname);
+		final Model dataset = eventStreamResponse.getDcatDataset().getModelWithIdentity(prefix);
 
 		Model eventStreamModel = createDefaultModel()
 				.add(collectionNameStmt)
@@ -64,7 +60,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.add(getVersionOfStatements(subject, eventStreamResponse))
 				.add(getTimestampPathStatements(subject, eventStreamResponse))
 				.add(eventStreamResponse.getShacl())
-				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject))
+				.add(getViewReferenceStatements(eventStreamResponse.getViews(), subject, prefix))
 				.add(getViewStatements(eventStreamResponse.getViews()))
 				.add(dataset);
 
@@ -95,11 +91,11 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		}
 	}
 
-	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject) {
+	private List<Statement> getViewReferenceStatements(List<ViewSpecification> views, Resource subject, String prefix) {
 		return views.stream()
 				.map(ViewSpecification::getName)
 				.map(viewName -> createStatement(subject, createProperty(VIEW),
-						viewSpecificationConverter.getIRIFromViewName(viewName)))
+						viewSpecificationConverter.getIRIFromViewName(viewName, prefix)))
 				.toList();
 	}
 
@@ -116,8 +112,8 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 				.orElse(createStatement(subject, TREE_MEMBER, createResource()));
 	}
 
-	private Resource getIRIFromCollectionName(String name) {
-		return createResource(hostname + "/" + name);
+	private Resource getIRIFromCollectionName(String name, String prefix) {
+		return createResource(prefix + "/" + name);
 	}
 
 	private Optional<Resource> getIdentifier(Model model, Resource object) {
