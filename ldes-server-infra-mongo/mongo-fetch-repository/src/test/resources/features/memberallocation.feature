@@ -57,11 +57,11 @@ Feature: AllocationRepository
       | parcels             | /parcels/by-page?pageNumber=1                                                                                                 | 4                          |
 
   Scenario Outline: DELETE BY FRAGMENT ID
-    When Deleting by the fragment id <fragmentId>
+    When Deleting by the fragment ids <fragmentIds>
     Then There are <expectedCount> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
-      | fragmentId                                | expectedCount |
-      | /mobility-hindrances/by-page?pageNumber=1 | 5             |
-      | /mobility-hindrances/by-version?version=1 | 6             |
-      | /mobility-hindrances/by-version?version=2 | 6             |
-      | /parcels/by-page?pageNumber=1             | 4             |
+      | fragmentIds                                                                          | expectedCount |
+      | /mobility-hindrances/by-page?pageNumber=1                                            | 5             |
+      | /mobility-hindrances/by-version?version=1                                            | 6             |
+      | /mobility-hindrances/by-version?version=2,/mobility-hindrances/by-version?version=3  | 6             |
+      | /parcels/by-page?pageNumber=1                                                        | 4             |

@@ -122,23 +122,21 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public void removeRelationsPointingToFragmentAndDeleteFragment(Fragment readyForDeletionFragment) {
-		removeRelationsPointingToDeletedFragment(readyForDeletionFragment);
-		repository.delete(FragmentEntity.fromLdesFragment(readyForDeletionFragment));
+	public void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
+		removeRelationsPointingToDeletedFragment(readyForDeletionFragmentId);
+		repository.deleteById(readyForDeletionFragmentId.asString());
 	}
 
-	private void removeRelationsPointingToDeletedFragment(Fragment readyForDeletionFragment) {
-		List<FragmentEntity> fragments = repository
-				.findAllByRelations_TreeNode(readyForDeletionFragment.getFragmentId());
+	private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
+		List<FragmentEntity> fragments = repository.findAllByRelations_TreeNode(readyForDeletionFragmentId);
 		Set<FragmentEntity> updatedFragmentEntities = fragments
 				.stream()
-				.map(fragment -> {
+				.peek(fragment -> {
 					List<TreeRelation> relationsToRemove = fragment.getRelations().stream()
 							.filter(treeRelation -> treeRelation.treeNode()
-									.equals(readyForDeletionFragment.getFragmentId()))
+									.equals(readyForDeletionFragmentId))
 							.toList();
 					relationsToRemove.forEach(fragment::removeRelation);
-					return fragment;
 				}).collect(Collectors.toSet());
 		repository.saveAll(updatedFragmentEntities);
 	}

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.FragmentDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkFragmentDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.mockito.Mockito.*;
@@ -37,8 +38,8 @@ class FragmentDeletionSchedulerTest {
 		fragmentDeletionScheduler.deleteFragments();
 
 		verify(fragmentRepository).getDeletionCandidates();
-		verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(expiredFragment);
-		verify(applicationEventPublisher).publishEvent(new FragmentDeletedEvent(expiredFragment.getFragmentId()));
+		verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(expiredFragment.getFragmentId());
+		verify(applicationEventPublisher).publishEvent(new BulkFragmentDeletedEvent(Set.of(expiredFragment.getFragmentId())));
 		verifyNoMoreInteractions(fragmentRepository, applicationEventPublisher);
 	}
 

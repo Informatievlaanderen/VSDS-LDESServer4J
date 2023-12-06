@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.Alloca
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class AllocationMongoRepository implements AllocationRepository {
@@ -50,6 +51,11 @@ public class AllocationMongoRepository implements AllocationRepository {
 	@Override
 	public void deleteByFragmentId(String fragmentId) {
 		repository.deleteAllByFragmentId(fragmentId);
+	}
+
+	@Override
+	public void deleteAllByFragmentId(Set<String> fragmentIds) {
+		repository.deleteAllByFragmentIdIn(fragmentIds);
 	}
 
 	public void deleteByCollectionName(String collectionName) {

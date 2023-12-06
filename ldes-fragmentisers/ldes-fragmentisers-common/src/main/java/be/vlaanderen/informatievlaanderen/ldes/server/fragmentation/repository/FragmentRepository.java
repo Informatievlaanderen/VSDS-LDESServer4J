@@ -56,5 +56,5 @@ public interface FragmentRepository {
 
 	Stream<Fragment> getDeletionCandidates();
 
-	void removeRelationsPointingToFragmentAndDeleteFragment(Fragment readyForDeletionFragment);
+	void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragment);
 }

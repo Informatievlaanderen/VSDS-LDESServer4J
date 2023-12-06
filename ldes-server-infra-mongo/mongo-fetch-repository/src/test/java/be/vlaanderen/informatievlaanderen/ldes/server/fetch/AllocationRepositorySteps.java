@@ -7,9 +7,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -95,9 +94,9 @@ public class AllocationRepositorySteps extends MongoAllocationIntegrationTest {
 		allocationMongoRepository.deleteByCollectionName(collectionName);
 	}
 
-	@When("^Deleting by the fragment id ([^ ]+)")
-	public void deletingByTheFragmentIdFragmentId(String fragmentId) {
-		allocationMongoRepository.deleteByFragmentId(fragmentId);
+	@When("^Deleting by the fragment ids ([^ ]+)")
+	public void deletingByTheFragmentIdFragmentId(String fragmentIds) {
+		allocationMongoRepository.deleteAllByFragmentId(Set.of(fragmentIds.trim().split(",")));
 	}
 
 	private record RetrievedMemberAllocations(String fragmentId, List<String> expectedIds) {

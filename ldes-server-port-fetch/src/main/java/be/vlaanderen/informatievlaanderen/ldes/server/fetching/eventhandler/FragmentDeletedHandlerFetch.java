@@ -1,9 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.eventhandler;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.FragmentDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkFragmentDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class FragmentDeletedHandlerFetch {
@@ -15,8 +19,12 @@ public class FragmentDeletedHandlerFetch {
 	}
 
 	@EventListener
-	public void handleFragmentDeletedEvent(FragmentDeletedEvent event) {
-		allocationRepository.deleteByFragmentId(event.ldesFragmentIdentifier().asString());
+	public void handleBulkFragmentDeletedEvent(BulkFragmentDeletedEvent event) {
+		Set<String> fragmentIds = event.ldesFragmentIdentifiers()
+				.stream()
+				.map(LdesFragmentIdentifier::asString)
+				.collect(Collectors.toSet());
+		allocationRepository.deleteAllByFragmentId(fragmentIds);
 	}
 
 }

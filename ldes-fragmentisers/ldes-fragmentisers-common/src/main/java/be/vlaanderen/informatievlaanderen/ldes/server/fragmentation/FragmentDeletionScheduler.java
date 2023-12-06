@@ -1,11 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.FragmentDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkFragmentDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.DELETION_CRON_KEY;
 
@@ -15,21 +17,21 @@ public class FragmentDeletionScheduler {
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public FragmentDeletionScheduler(FragmentRepository fragmentRepository,
-			ApplicationEventPublisher applicationEventPublisher) {
+	                                 ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentRepository = fragmentRepository;
 		this.applicationEventPublisher = applicationEventPublisher;
 	}
 
 	@Scheduled(cron = DELETION_CRON_KEY)
 	public void deleteFragments() {
-		fragmentRepository
+		var deletedFragments = fragmentRepository
 				.getDeletionCandidates()
 				.filter(Fragment::isReadyForDeletion)
-				.forEach(readyForDeletionFragment -> {
-					fragmentRepository.removeRelationsPointingToFragmentAndDeleteFragment(readyForDeletionFragment);
-					applicationEventPublisher
-							.publishEvent(new FragmentDeletedEvent(readyForDeletionFragment.getFragmentId()));
-				});
+				.map(Fragment::getFragmentId)
+				.peek(fragmentRepository::removeRelationsPointingToFragmentAndDeleteFragment)
+				.collect(Collectors.toSet());
+
+		applicationEventPublisher.publishEvent(new BulkFragmentDeletedEvent(deletedFragments));
 	}
 
 }
