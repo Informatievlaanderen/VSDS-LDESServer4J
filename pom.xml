@@ -9,7 +9,7 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>2.4.1-SNAPSHOT</version>
+    <version>2.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -25,6 +25,7 @@
         <module>ldes-server-port-fetch-rest</module>
         <module>ldes-server-compaction</module>
         <module>ldes-server-integration-test</module>
+        <module>ldes-server-instrumentation</module>
     </modules>
 
     <developers>
@@ -61,6 +62,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.2.0</springdoc-openapi.version>
         <swagger-annotations.version>2.2.15</swagger-annotations.version>
+        <pyroscope.version>0.12.2</pyroscope.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -80,19 +82,27 @@
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.10.0</junit-platform-suite.version>
+        <junit-platform-suite.version>1.10.1</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.10.0</jupiter.version>
         <mockito.version>5.7.0</mockito.version>
-        <byte-buddy.version>1.14.9</byte-buddy.version>
-        <de.flapdoodle.embed.mongo.version>4.9.3</de.flapdoodle.embed.mongo.version>
+        <byte-buddy.version>1.14.10</byte-buddy.version>
+        <de.flapdoodle.embed.mongo.version>4.11.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.14.0</cucumber.version>
         <assertj-core.version>3.24.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>8.3.1</depencency-check-maven.version>
+        <depencency-check-maven.version>9.0.1</depencency-check-maven.version>
+
+        <!-- Monitoring and Logging -->
+        <spring.aop.version>3.2.0</spring.aop.version>
+        <spring-boot.actuator.version>3.2.0</spring-boot.actuator.version>
+        <micrometer-prometheus.version>1.12.0</micrometer-prometheus.version>
+        <micrometer-tracing.version>1.2.0</micrometer-tracing.version>
+        <zipkin-reporter.version>2.16.4</zipkin-reporter.version>
+        <loki.version>1.4.2</loki.version>
 
         <!-- JACOCO -->
         <jacoco.version>0.8.11</jacoco.version>
@@ -272,12 +282,53 @@
                 <version>${commons-codec.version}</version>
             </dependency>
 
+            <!-- Monitoring and Logging -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring.aop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+                <version>${spring-boot.actuator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+                <version>${micrometer-prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bridge-otel</artifactId>
+                <version>${micrometer-tracing.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.zipkin.reporter2</groupId>
+                <artifactId>zipkin-reporter-brave</artifactId>
+                <version>${zipkin-reporter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.loki4j</groupId>
+                <artifactId>loki-logback-appender</artifactId>
+                <version>${loki.version}</version>
+            </dependency>
+
+
             <!-- NULL ANNOTATIONS -->
             <dependency>
                 <groupId>org.jetbrains</groupId>
                 <artifactId>annotations</artifactId>
                 <version>${jetbrains-annotations.version}</version>
             </dependency>
+
+            <!-- INSTRUMENTATION -->
+            <dependency>
+                <groupId>io.pyroscope</groupId>
+                <artifactId>agent</artifactId>
+                <version>${pyroscope.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

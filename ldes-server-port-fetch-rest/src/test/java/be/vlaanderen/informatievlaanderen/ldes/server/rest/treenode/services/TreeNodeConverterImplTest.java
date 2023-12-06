@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DcatVi
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
@@ -33,6 +34,7 @@ class TreeNodeConverterImplTest {
     private static final String PREFIX = HOST_NAME + "/" + COLLECTION_NAME + "/";
     private static final String VIEW_NAME = "view";
     private final PrefixAdder prefixAdder = new PrefixAdderImpl();
+    private final PrefixConstructor prefixConstructor = new PrefixConstructor(HOST_NAME, false);
     private TreeNodeConverterImpl treeNodeConverter;
 
     @BeforeEach
@@ -43,7 +45,7 @@ class TreeNodeConverterImplTest {
                 "http://www.w3.org/ns/prov#generatedAtTime",
                 "http://purl.org/dc/terms/isVersionOf", "memberType");
 
-        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, HOST_NAME);
+        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor);
         treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
         treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
     }
@@ -59,10 +61,13 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(25);
+        assertThat(model.listStatements().toList()).hasSize(24);
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
-        verifyRemainingItemsStatement(model);
+
+        // 04/12/23 Desactivated due to performance issues on the count query
+        // refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
+//        verifyRemainingItemsStatement(model);
     }
 
     @Test
@@ -205,10 +210,10 @@ class TreeNodeConverterImplTest {
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
 
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(11);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(25);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(24);
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(11);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
     }
 }

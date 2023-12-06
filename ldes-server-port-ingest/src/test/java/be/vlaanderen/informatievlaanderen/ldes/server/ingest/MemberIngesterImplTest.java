@@ -20,6 +20,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -59,20 +60,18 @@ class MemberIngesterImplTest {
 
 	@Test
 	@DisplayName("Adding Member when there is a member with the same id that already exists")
-	void when_TheMemberAlreadyExists_thenMemberIsReturned() throws IOException {
+	void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
 		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
 				StandardCharsets.UTF_8);
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.memberExists(member.getId())).thenReturn(true);
+		when(memberRepository.insert(member)).thenReturn(Optional.empty());
 
 		memberIngestService.ingest(member);
 
-		InOrder inOrder = inOrder(memberRepository, eventPublisher);
-		inOrder.verify(memberRepository,
-				times(1)).memberExists(member.getId());
-		inOrder.verifyNoMoreInteractions();
+		verify(memberRepository, times(1)).insert(member);
+		verifyNoInteractions(eventPublisher);
 	}
 
 	@Test
@@ -83,14 +82,12 @@ class MemberIngesterImplTest {
 		Member member = new Member(
 				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.memberExists(member.getId())).thenReturn(false);
-		when(memberRepository.saveMember(member)).thenReturn(member);
+		when(memberRepository.insert(member)).thenReturn(Optional.of(member));
 
 		memberIngestService.ingest(member);
 
 		InOrder inOrder = inOrder(memberRepository, eventPublisher);
-		inOrder.verify(memberRepository, times(1)).memberExists(member.getId());
-		inOrder.verify(memberRepository, times(1)).saveMember(member);
+		inOrder.verify(memberRepository, times(1)).insert(member);
 		inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
 		inOrder.verifyNoMoreInteractions();
 	}

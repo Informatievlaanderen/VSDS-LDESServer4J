@@ -21,7 +21,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 	private final MemberRepository memberRepository;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-			MemberRepository memberRepository) {
+							   MemberRepository memberRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
 		this.memberRepository = memberRepository;
@@ -32,7 +32,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		String extendedTreeNodeId = hostName + treeNodeId.asString();
 		Fragment fragment = fragmentRepository.retrieveFragment(treeNodeId)
 				.orElseThrow(
-						() -> new MissingResourceException("fragment", extendedTreeNodeId));
+						() -> new MissingResourceException("fragment", treeNodeId.asString()));
 
 		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asString());
 		List<Member> members = memberRepository
@@ -43,7 +43,9 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				members, collectionName);
 
 		if(fragment.isRoot()) {
-			treeNode.setNumberOfMembersInView(allocationRepository.countByCollectionNameAndViewName(collectionName, treeNodeId.getViewName().getViewName()));
+			// 04/12/23 Desactivated due to performance issues on the count query
+			// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
+//			treeNode.setNumberOfMembersInView(allocationRepository.countByCollectionNameAndViewName(collectionName, treeNodeId.getViewName().getViewName()));
 		}
 
 		return treeNode;

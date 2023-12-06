@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -26,14 +27,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ViewSpecificationConverterTest {
 	private static final String COLLECTION_NAME = "collection";
 	private static final String VIEW_NAME = "viewName";
+	private static final String HOST_NAME = "http://localhost:8080";
 	private ViewSpecification view;
 	private ViewSpecificationConverter viewSpecificationConverter;
 
 	@BeforeEach
 	void setup() throws URISyntaxException {
-		viewSpecificationConverter = new ViewSpecificationConverter("http://localhost:8080",
-				new RetentionModelExtractor(),
-				new FragmentationConfigExtractor());
+		viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
+				new FragmentationConfigExtractor(),
+				new PrefixConstructor(HOST_NAME, false));
 		Model retentionModel = readModelFromFile("viewconverter/retentionpolicies/example_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");

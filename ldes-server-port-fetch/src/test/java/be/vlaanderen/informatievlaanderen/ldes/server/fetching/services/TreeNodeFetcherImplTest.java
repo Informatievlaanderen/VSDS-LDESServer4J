@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,14 +23,16 @@ class TreeNodeFetcherImplTest {
 	private static final String VIEW = "view";
 	private static final ViewName VIEW_NAME = new ViewName(COLLECTION, VIEW);
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
+	private PrefixConstructor prefixConstructor;
 	private TreeNodeFactory treeNodeFactory;
 	private TreeNodeFetcherImpl treeNodeFetcher;
 	private String hostName = "http://localhost:8089";
 
 	@BeforeEach
 	void setUp() {
+		prefixConstructor = new PrefixConstructor(hostName, false);
 		treeNodeFactory = Mockito.mock(TreeNodeFactory.class);
-		treeNodeFetcher = new TreeNodeFetcherImpl(hostName, treeNodeFactory);
+		treeNodeFetcher = new TreeNodeFetcherImpl(treeNodeFactory, prefixConstructor);
 	}
 
 	@Test

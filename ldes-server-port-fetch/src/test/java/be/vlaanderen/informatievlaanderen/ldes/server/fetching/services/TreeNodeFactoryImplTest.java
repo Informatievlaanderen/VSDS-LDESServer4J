@@ -49,7 +49,7 @@ class TreeNodeFactoryImplTest {
 
 		assertThatThrownBy(() -> treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME))
 				.isInstanceOf(MissingResourceException.class)
-				.hasMessage("Resource of type: fragment with id: %s/%s/%s could not be found.", HOSTNAME, COLLECTION_NAME, VIEW);
+				.hasMessage("Resource of type: fragment with id: /%s/%s could not be found.", COLLECTION_NAME, VIEW);
 	}
 
 	@Test

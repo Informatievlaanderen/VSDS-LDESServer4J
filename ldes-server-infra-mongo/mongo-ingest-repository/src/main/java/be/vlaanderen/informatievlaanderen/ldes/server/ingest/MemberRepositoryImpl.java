@@ -5,6 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import io.micrometer.core.instrument.Metrics;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -13,7 +15,7 @@ import java.util.stream.Stream;
 
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
-
+	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
 	private final MemberEntityRepository memberEntityRepository;
 	private final MemberEntityMapper memberEntityMapper;
 	private final IngestMemberSequenceService sequenceService;
@@ -30,10 +32,14 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.existsById(memberId);
 	}
 
-	public Member saveMember(Member member) {
+	public Optional<Member> insert(Member member) {
 		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
-		MemberEntity savedMemberEntity = memberEntityRepository.save(memberEntityToSave);
-		return memberEntityMapper.toMember(savedMemberEntity);
+		try {
+			MemberEntity savedMember = memberEntityRepository.insert(memberEntityToSave);
+			return Optional.of(memberEntityMapper.toMember(savedMember));
+		} catch (DuplicateKeyException e) {
+			return Optional.empty();
+		}
 	}
 
 	@Override
@@ -64,6 +70,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public void deleteMember(String memberId) {
 		memberEntityRepository.deleteById(memberId);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment();
 	}
 
 	@Override

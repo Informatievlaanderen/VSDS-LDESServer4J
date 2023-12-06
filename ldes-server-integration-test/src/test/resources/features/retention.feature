@@ -15,14 +15,7 @@ Feature: LDES Server Retention
     # Since all added members belong to the same version, only 10 are kept as defined by the retention policy
     Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 10 members
 
-  @point-in-time
-  Scenario: Server provides point in time retention
-    Given I create the eventstream "data/input/eventstreams/retention/mobility-hindrances_pointintime.ttl"
-    When I ingest 30 members to the collection "mobility-hindrances"
-    # Since all added members have a timestamp after the set point in time, all members are retained
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 30 members
-
-  @combined @version-based-and-point-in-time
+  @combined @version-based-and-time-based
   Scenario: Server combines multiple retention policies
     Given I create the eventstream "data/input/eventstreams/retention/mobility-hindrances_combined.ttl"
     When I ingest 30 members to the collection "mobility-hindrances"

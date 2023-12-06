@@ -8,6 +8,7 @@ Feature: Execute RetentionService
       | id                                       | collectionName      | versionOf                              | timestamp               | sequenceNumber |
       | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2013-07-01T00:00:00.000 | 1              |
       | http://test-data/mobility-hindrances/1/2 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-02T00:00:00.000 | 2              |
+      | http://test-data/mobility-hindrances/1/3 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-02T00:00:00.000 | 2              |
       | http://test-data/mobility-hindrances/2/1 | mobility-hindrances | http://test-data/mobility-hindrances/2 | 2013-07-01T00:00:00.000 | 3              |
       | http://test-data/mobility-hindrances/2/2 | mobility-hindrances | http://test-data/mobility-hindrances/2 | 2013-07-02T00:00:00.000 | 4              |
       | http://test-data/mobility-hindrances/2/3 | mobility-hindrances | http://test-data/mobility-hindrances/2 | 2023-07-03T00:00:00.000 | 5              |
@@ -20,11 +21,12 @@ Feature: Execute RetentionService
 
   Scenario: TIME-BASED RETENTION
     When a view with the following properties is created
-      | viewName                       | rdfDescriptionFileName                        |
-      | mobility-hindrances/time-based | retentionpolicy/timebased/valid_timebased.ttl |
+      | viewName                       | rdfDescriptionFileName                           |
+      | mobility-hindrances/time-based | retentionpolicy/timebased/valid_timebased_it.ttl |
     And the following members are allocated to the view "mobility-hindrances/time-based"
       | http://test-data/mobility-hindrances/1/1 |
       | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/1/3 |
       | http://test-data/mobility-hindrances/2/1 |
       | http://test-data/mobility-hindrances/2/2 |
       | http://test-data/mobility-hindrances/2/3 |
@@ -34,20 +36,22 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/3 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
-    And wait for 5 seconds until the scheduler has executed at least once
+    And wait for 3 seconds until the scheduler has executed at least once
     Then the view "mobility-hindrances/time-based" only contains following members
       | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/1/3 |
       | http://test-data/mobility-hindrances/2/3 |
       | http://test-data/mobility-hindrances/2/4 |
       | http://test-data/mobility-hindrances/3/5 |
 
   Scenario: VERSION-BASED RETENTION
     When a view with the following properties is created
-      | viewName                          | rdfDescriptionFileName                              |
-      | mobility-hindrances/version-based | retentionpolicy/versionbased/valid_versionbased.ttl |
+      | viewName                          | rdfDescriptionFileName                                 |
+      | mobility-hindrances/version-based | retentionpolicy/versionbased/valid_versionbased_it.ttl |
     And the following members are allocated to the view "mobility-hindrances/version-based"
       | http://test-data/mobility-hindrances/1/1 |
       | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/1/3 |
       | http://test-data/mobility-hindrances/2/1 |
       | http://test-data/mobility-hindrances/2/2 |
       | http://test-data/mobility-hindrances/2/3 |
@@ -57,22 +61,23 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/3 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
-    And wait for 5 seconds until the scheduler has executed at least once
+    And wait for 3 seconds until the scheduler has executed at least once
     Then the view "mobility-hindrances/version-based" only contains following members
-      | http://test-data/mobility-hindrances/1/1 |
       | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/1/3 |
       | http://test-data/mobility-hindrances/2/3 |
       | http://test-data/mobility-hindrances/2/4 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
 
-  Scenario: POINT-IN-TIME RETENTION
+  Scenario: TIME- AND VERSION_BASED RETENTION
     When a view with the following properties is created
-      | viewName                          | rdfDescriptionFileName                            |
-      | mobility-hindrances/point-in-time | retentionpolicy/pointintime/valid_pointintime.ttl |
-    And the following members are allocated to the view "mobility-hindrances/point-in-time"
+      | viewName                                  | rdfDescriptionFileName                                               |
+      | mobility-hindrances/time-and-versionbased | retentionpolicy/timeandversionbased/valid_timeandversionbased_it.ttl |
+    And the following members are allocated to the view "mobility-hindrances/time-and-versionbased"
       | http://test-data/mobility-hindrances/1/1 |
       | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/1/3 |
       | http://test-data/mobility-hindrances/2/1 |
       | http://test-data/mobility-hindrances/2/2 |
       | http://test-data/mobility-hindrances/2/3 |
@@ -82,7 +87,10 @@ Feature: Execute RetentionService
       | http://test-data/mobility-hindrances/3/3 |
       | http://test-data/mobility-hindrances/3/4 |
       | http://test-data/mobility-hindrances/3/5 |
-    And wait for 5 seconds until the scheduler has executed at least once
-    Then the view "mobility-hindrances/point-in-time" only contains following members
+    And wait for 3 seconds until the scheduler has executed at least once
+    Then the view "mobility-hindrances/time-and-versionbased" only contains following members
+      | http://test-data/mobility-hindrances/1/2 |
+      | http://test-data/mobility-hindrances/1/3 |
+      | http://test-data/mobility-hindrances/2/3 |
       | http://test-data/mobility-hindrances/2/4 |
       | http://test-data/mobility-hindrances/3/5 |

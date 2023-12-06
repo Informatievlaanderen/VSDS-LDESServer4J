@@ -9,12 +9,14 @@ class ServerConfigTest {
 	void when_PropertiesAreFilledIn_TheyCanBeConsulted() {
 		ServerConfig serverConfig = new ServerConfig();
 		serverConfig.setHostName("LOCALHOST");
+		serverConfig.setUseRelativeUrl(true);
 		serverConfig.setCompactionDuration("PT1M");
 		serverConfig.setRetentionCron("*/20 * * * * *");
 		serverConfig.setDeletionCron("*/30 * * * * *");
 		serverConfig.setCompactionCron("*/45 * * * * *");
 
 		assertThat(serverConfig.getHostName()).isEqualTo("LOCALHOST");
+		assertThat(serverConfig.getUseRelativeUrl()).isTrue();
 		assertThat(serverConfig.getCompactionDuration()).isEqualTo("PT1M");
 		assertThat(serverConfig.getRetentionCron()).isEqualTo("*/20 * * * * *");
 		assertThat(serverConfig.getDeletionCron()).isEqualTo("*/30 * * * * *");
@@ -27,6 +29,7 @@ class ServerConfigTest {
 		ServerConfig serverConfig = new ServerConfig();
 
 		assertThat(serverConfig.getHostName()).isNull();
+		assertThat(serverConfig.getUseRelativeUrl()).isFalse();
 		assertThat(serverConfig.getCompactionDuration()).isEqualTo("P7D");
 		assertThat(serverConfig.getRetentionCron()).isEqualTo(backgroundCron);
 		assertThat(serverConfig.getDeletionCron()).isEqualTo(backgroundCron);

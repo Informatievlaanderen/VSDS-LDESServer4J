@@ -16,6 +16,7 @@ open module ldes.fetch.rest {
     requires org.apache.jena.core;
     requires org.apache.commons.codec;
     requires io.swagger.v3.oas.annotations;
+    requires micrometer.observation;
     requires org.slf4j;
 
 }

@@ -102,6 +102,7 @@ To enrich the server, certain Maven profiles can be activated:
 | **Ldes-queues**                          | queue-none                           | Members are fragmented immediately.                                             | N/A activating the profile is enough                                                   |                                                                                                                                     |
 | **Ldes-queues**                          | queue-in-memory                      | Members are queued in memory before fragmentation.                              | N/A activating the profile is enough                                                   |                                                                                                                                     |
 | **HTTP Endpoints (Admin)**               | http-admin                           | Enables HTTP endpoints. These will be used later to configure different streams |                                                                                        |                                                                                                                                     |
+| **Instrumentation**                      | instrumentation                      | Enables pyroscope to collect data for instrumentation.                          | [Pyroscope configuration](#Pyroscope instrumentation)                                  |                                                                                                                                     |
 
 
 The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to function properly:
@@ -248,6 +249,19 @@ management:
     enabled: false
   ```
 
+#### Pyroscope instrumentation
+
+To enable pyroscope, add the following to the application.yml file:
+```yaml
+pyroscope:
+  agent:
+    enabled: true
+```
+Note that this does not work when running the server locally on a Windows device.
+
+The normal pyroscope properties can be found [here](https://grafana.com/docs/pyroscope/latest/configure-client/language-sdks/java/#java-client-configuration-options)
+These properties should be added to the env variables.
+
 #### Using Docker
 
 ```
@@ -313,11 +327,13 @@ The logging of this server is split over the different logging levels according 
 
 #### Logging configuration
 
-The following config allows you to output logging to the console. Further customization of the logging settings can be done using the logback properties.
+The following config allows you to output logging to the console. The trace id and span id can be included in the logging, 
+if enabled via the [tracing config](#tracing-and-metrics). 
+Further customization of the logging settings can be done using the logback properties. A use case for this can be sending the logs to Loki for example.
 ```yaml
 logging:
   pattern:
-    console: "%d %-5level %logger : %msg%n"
+    console: "%5p [${spring.application.name:LDESServer4J},%X{traceId:-},%X{spanId:-}]"
   level:
     root: INFO
 ```

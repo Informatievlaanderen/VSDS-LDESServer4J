@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.TreeNode
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreenodeUrlDecoder;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ import java.util.Map;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
+@Observed
 @RestController
 public class TreeNodeController implements OpenApiTreeNodeController {
 
