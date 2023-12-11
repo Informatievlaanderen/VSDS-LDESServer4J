@@ -44,8 +44,7 @@ public class PaginationCompactionService {
 
 	private void testAndApplyPossibleCompaction(Fragment firstFragmentOfCompaction,
 			Fragment secondFragmentOfCompaction) {
-		if (compactableRelationPredicate
-				.test(new CompactionCandidate(firstFragmentOfCompaction, secondFragmentOfCompaction))
+		if (compactableRelationPredicate.test(new CompactionCandidate(firstFragmentOfCompaction, secondFragmentOfCompaction))
 				&& compactableFragmentPredicate.test(secondFragmentOfCompaction)
 				&& compactableFragmentPredicate.test(firstFragmentOfCompaction)) {
 			fragmentCompactionService.compactFragments(firstFragmentOfCompaction, secondFragmentOfCompaction);

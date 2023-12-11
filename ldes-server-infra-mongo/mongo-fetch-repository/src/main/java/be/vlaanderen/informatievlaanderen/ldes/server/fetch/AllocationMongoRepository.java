@@ -1,9 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.mapper.MemberAllocationEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,10 +18,12 @@ public class AllocationMongoRepository implements AllocationRepository {
 
 	private final AllocationEntityRepository repository;
 	private final MemberAllocationEntityMapper mapper;
+	private final MongoTemplate mongoTemplate;
 
-	public AllocationMongoRepository(AllocationEntityRepository repository, MemberAllocationEntityMapper mapper) {
+	public AllocationMongoRepository(AllocationEntityRepository repository, MemberAllocationEntityMapper mapper, MongoTemplate mongoTemplate) {
 		this.repository = repository;
 		this.mapper = mapper;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	public void saveAllocation(MemberAllocation memberAllocation) {
@@ -32,6 +38,17 @@ public class AllocationMongoRepository implements AllocationRepository {
 		return repository.findAllByFragmentId(fragmentId)
 				.stream()
 				.map(mapper::toMemberAllocation)
+				.toList();
+	}
+
+	@Override
+	public List<String> getMemberAllocationIdsByFragmentIds(Set<String> fragmentIds) {
+		Query q = new Query();
+		q.addCriteria(Criteria.where("fragmentId").in(fragmentIds))
+				.fields().include("memberId");
+		return mongoTemplate.find(q, MemberAllocationEntity.class)
+				.stream()
+				.map(MemberAllocationEntity::getMemberId)
 				.toList();
 	}
 

@@ -5,6 +5,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +17,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 
 @Service
 public class CompactionScheduler {
+	private static final Logger LOGGER = LoggerFactory.getLogger(CompactionScheduler.class);
 	private final ViewCollection viewCollection;
 	private final FragmentRepository fragmentRepository;
 	private final PaginationCompactionService paginationCompactionService;
 
 	public CompactionScheduler(ViewCollection viewCollection, FragmentRepository fragmentRepository,
-			PaginationCompactionService paginationCompactionService) {
+	                           PaginationCompactionService paginationCompactionService) {
 		this.viewCollection = viewCollection;
 		this.fragmentRepository = fragmentRepository;
 		this.paginationCompactionService = paginationCompactionService;
@@ -35,12 +38,16 @@ public class CompactionScheduler {
 						.ifPresent(rootFragment -> {
 							PaginationStartingNodeIterator paginationStartingNodeIterator = new PaginationStartingNodeIteratorImpl(
 									fragmentRepository, rootFragment);
+							int c = 0;
 							while (paginationStartingNodeIterator.hasNext()) {
+								LOGGER.info("compaction: " + c++ + "/" + viewCapacity.getCapacityPerPage() + " " + viewCapacity.getViewName().getViewName());
 								Fragment next = paginationStartingNodeIterator.next();
 								paginationCompactionService
 										.applyCompactionStartingFromNode(next);
 							}
+							LOGGER.info("Finish compaction" + viewCapacity);
 						}));
+
 	}
 
 	private Optional<Fragment> getRootFragment(ViewCapacity viewCapacity) {

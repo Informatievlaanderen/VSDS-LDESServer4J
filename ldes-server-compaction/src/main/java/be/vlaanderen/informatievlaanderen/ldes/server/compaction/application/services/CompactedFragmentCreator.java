@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -16,7 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
@@ -30,9 +29,9 @@ public class CompactedFragmentCreator {
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public CompactedFragmentCreator(FragmentRepository fragmentRepository,
-			@Qualifier("compactionFragmentation") FragmentationStrategy fragmentationStrategy,
-			ObservationRegistry observationRegistry, AllocationRepository allocationRepository,
-			ViewCollection viewCollection, ApplicationEventPublisher applicationEventPublisher) {
+	                                @Qualifier("compactionFragmentation") FragmentationStrategy fragmentationStrategy,
+	                                ObservationRegistry observationRegistry, AllocationRepository allocationRepository,
+	                                ViewCollection viewCollection, ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.observationRegistry = observationRegistry;
@@ -42,7 +41,7 @@ public class CompactedFragmentCreator {
 	}
 
 	public void createCompactedFragment(Fragment firstFragment, Fragment secondFragment,
-			LdesFragmentIdentifier ldesFragmentIdentifier) {
+	                                    LdesFragmentIdentifier ldesFragmentIdentifier) {
 		List<String> membersOfCompactedFragments = getMembersOfCompactedFragments(firstFragment, secondFragment);
 		int pageCapacityOfView = viewCollection.getViewCapacityByViewName(ldesFragmentIdentifier.getViewName())
 				.getCapacityPerPage();
@@ -56,13 +55,10 @@ public class CompactedFragmentCreator {
 	}
 
 	private List<String> getMembersOfCompactedFragments(Fragment firstFragment, Fragment secondFragment) {
-		List<MemberAllocation> memberAllocationsByFragmentIdOne = allocationRepository
-				.getMemberAllocationsByFragmentId(firstFragment.getFragmentIdString());
-		List<MemberAllocation> memberAllocationsByFragmentIdTwo = allocationRepository
-				.getMemberAllocationsByFragmentId(secondFragment.getFragmentIdString());
-		return Stream.of(memberAllocationsByFragmentIdOne, memberAllocationsByFragmentIdTwo)
-				.flatMap(List::stream)
-				.map(MemberAllocation::getMemberId).toList();
+		return allocationRepository
+				.getMemberAllocationIdsByFragmentIds(
+						Set.of(firstFragment.getFragmentIdString(), secondFragment.getFragmentIdString())
+				);
 	}
 
 	private void addMembersOfFragmentsToCompactedFragment(List<String> membersOfCompactedFragments, Fragment fragment) {

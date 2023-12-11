@@ -12,6 +12,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.micrometer.observation.Observation;
+import org.mockito.ArgumentMatchers;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -82,10 +83,14 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 
 	@And("the following allocations are present")
 	public void theFollowingAllocationsArePresent(List<FragmentAllocations> fragmentAllocations) {
-		fragmentAllocations
-				.forEach(fragmentAllocation -> when(
-						allocationRepository.getMemberAllocationsByFragmentId(fragmentAllocation.fragmentId()))
-						.thenReturn(fragmentAllocation.memberAllocations()));
+		when(allocationRepository.getMemberAllocationIdsByFragmentIds(ArgumentMatchers.any()))
+				.thenAnswer(x -> {
+					Set<String> requested = x.getArgument(0);
+					return fragmentAllocations.stream()
+							.filter(fragmentAllocation -> requested.contains(fragmentAllocation.fragmentId))
+							.flatMap(fragmentAllocations1 -> fragmentAllocations1.memberAllocations.stream()
+									.map(MemberAllocation::getMemberId)).toList();
+				});
 	}
 
 	@And("verify creation of the following fragments")

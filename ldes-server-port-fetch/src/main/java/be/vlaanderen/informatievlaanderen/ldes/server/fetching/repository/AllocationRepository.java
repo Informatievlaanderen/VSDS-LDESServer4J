@@ -4,11 +4,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAl
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public interface AllocationRepository {
 	void saveAllocation(MemberAllocation memberAllocation);
 
 	List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
+
+	List<String> getMemberAllocationIdsByFragmentIds(Set<String> fragmentIds);
 
 	long countByCollectionNameAndViewName(String collectionName, String viewName);
 
