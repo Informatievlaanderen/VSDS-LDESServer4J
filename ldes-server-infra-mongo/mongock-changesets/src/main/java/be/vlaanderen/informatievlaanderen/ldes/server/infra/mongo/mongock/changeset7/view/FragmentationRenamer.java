@@ -8,9 +8,7 @@ public class FragmentationRenamer {
 
 	private static final Map<String, String> newFragmentationNameMap = Map.of(
 			"pagination", "PaginationFragmentation",
-			"geospatial", "GeospatialFragmentation",
-			"substring", "SubstringFragmentation",
-			"timebased", "TimebasedFragmentation");
+			"geospatial", "GeospatialFragmentation");
 
 	public static FragmentationConfig rename(FragmentationConfig fragmentationConfig) {
 		String fragmentationName = fragmentationConfig.getName();

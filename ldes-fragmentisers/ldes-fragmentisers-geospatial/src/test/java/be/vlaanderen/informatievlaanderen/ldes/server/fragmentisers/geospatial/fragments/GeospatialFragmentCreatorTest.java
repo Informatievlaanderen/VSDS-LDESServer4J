@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class GeospatialFragmentCreatorTest {
 
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
-	private static final FragmentPair substringPair = new FragmentPair("substring", "a");
+	private static final FragmentPair timebasedPair = new FragmentPair("year", "2023");
 	private static final FragmentPair geoRootPair = new FragmentPair(FRAGMENT_KEY_TILE, FRAGMENT_KEY_TILE_ROOT);
 	private static final FragmentPair geoPair = new FragmentPair(FRAGMENT_KEY_TILE, "15/101/202");
 
@@ -38,7 +38,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_TileFragmentDoesNotExist_NewTileFragmentIsCreatedAndSaved() {
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of(substringPair)));
+				VIEW_NAME, List.of(timebasedPair)));
 		Fragment rootFragment = fragment
 				.createChild(geoRootPair);
 		LdesFragmentIdentifier tileFragmentId = fragment
@@ -50,7 +50,7 @@ class GeospatialFragmentCreatorTest {
 		Fragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(fragment,
 				"15/101/202", rootFragment);
 
-		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoPair)),
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timebasedPair, geoPair)),
 				childFragment.getFragmentId());
 		verify(fragmentRepository,
 				times(1)).retrieveFragment(tileFragmentId);
@@ -61,7 +61,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_TileFragmentDoesNotExist_RetrievedTileFragmentIsReturned() {
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of(substringPair)));
+				VIEW_NAME, List.of(timebasedPair)));
 		Fragment rootFragment = fragment
 				.createChild(geoRootPair);
 		Fragment tileFragment = fragment.createChild(geoPair);
@@ -72,7 +72,7 @@ class GeospatialFragmentCreatorTest {
 		Fragment childFragment = geospatialFragmentCreator.getOrCreateTileFragment(fragment,
 				"15/101/202", rootFragment);
 
-		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoPair)),
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timebasedPair, geoPair)),
 				childFragment.getFragmentId());
 		verify(fragmentRepository,
 				times(1)).retrieveFragment(tileFragment.getFragmentId());
@@ -82,7 +82,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_RootFragmentDoesNotExist_NewRootFragmentIsCreatedAndSaved() {
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of(substringPair)));
+				VIEW_NAME, List.of(timebasedPair)));
 		Fragment rootFragment = fragment
 				.createChild(geoRootPair);
 
@@ -91,7 +91,7 @@ class GeospatialFragmentCreatorTest {
 		Fragment returnedFragment = geospatialFragmentCreator.getOrCreateRootFragment(fragment,
 				FRAGMENT_KEY_TILE_ROOT);
 
-		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoRootPair)),
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timebasedPair, geoRootPair)),
 				returnedFragment.getFragmentId());
 		verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
 		verify(fragmentRepository, times(1)).saveFragment(returnedFragment);
@@ -100,7 +100,7 @@ class GeospatialFragmentCreatorTest {
 	@Test
 	void when_RootFragmentDoesNotExist_RetrievedRootFragmentIsReturned() {
 		Fragment fragment = new Fragment(new LdesFragmentIdentifier(
-				VIEW_NAME, List.of(substringPair)));
+				VIEW_NAME, List.of(timebasedPair)));
 		Fragment rootFragment = fragment
 				.createChild(geoRootPair);
 		when(fragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
@@ -109,7 +109,7 @@ class GeospatialFragmentCreatorTest {
 		Fragment returnedFragment = geospatialFragmentCreator.getOrCreateTileFragment(fragment,
 				FRAGMENT_KEY_TILE_ROOT, rootFragment);
 
-		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(substringPair, geoRootPair)),
+		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timebasedPair, geoRootPair)),
 				returnedFragment.getFragmentId());
 		verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
 		verifyNoMoreInteractions(fragmentRepository);
