@@ -20,6 +20,7 @@ public class SubstringFragmentFinder {
 		this.substringRelationsAttributer = substringRelationsAttributer;
 	}
 
+	@SuppressWarnings("java:S135") // Substring is deprecated so no point in refactoring this code.
 	public Fragment getOpenOrLastPossibleFragment(Fragment parentFragment,
 			Fragment rootFragment, List<String> buckets) {
 

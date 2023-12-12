@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FragmentationConfigCompaction {
 
-	@Bean
-	@Qualifier("compaction-fragmentation")
+	@Bean("compactionFragmentation")
 	public FragmentationStrategy compactionFragmentationStrategy(FragmentRepository fragmentRepository,
 			ApplicationEventPublisher eventPublisher) {
 		return new FragmentationStrategyImpl(fragmentRepository,

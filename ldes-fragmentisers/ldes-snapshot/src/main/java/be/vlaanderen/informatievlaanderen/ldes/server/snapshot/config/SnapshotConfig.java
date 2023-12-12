@@ -21,8 +21,7 @@ public class SnapshotConfig {
 	public static final Map<String, String> DEFAULT_VIEW_FRAGMENTATION_PROPERTIES = Map.of("memberLimit", "100",
 			"bidirectionalRelations", "false");
 
-	@Bean
-	@Qualifier("snapshot-fragmentation")
+	@Bean("snapshotFragmentation")
 	public FragmentationStrategy snapshotFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentRepository fragmentRepository,
 			ApplicationEventPublisher eventPublisher) {
