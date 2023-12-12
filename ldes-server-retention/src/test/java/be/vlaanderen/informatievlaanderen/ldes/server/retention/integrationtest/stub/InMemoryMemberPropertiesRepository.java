@@ -23,12 +23,7 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
     }
 
     @Override
-    public void saveMemberPropertiesWithoutViews(MemberProperties memberProperties) {
-        memberPropertiesMap.put(memberProperties.getId(), memberProperties);
-    }
-
-    @Override
-    public void save(MemberProperties memberProperties) {
+    public void insert(MemberProperties memberProperties) {
         memberPropertiesMap.put(memberProperties.getId(), memberProperties);
     }
 
@@ -41,8 +36,8 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
     }
 
     @Override
-    public void addViewReference(String id, String viewName) {
-        memberPropertiesMap.get(id).addViewReference(viewName);
+    public void addViewToAll(ViewName viewName) {
+        memberPropertiesMap.forEach((key, val) -> val.addViewReference(viewName.asString()));
     }
 
     @Override
