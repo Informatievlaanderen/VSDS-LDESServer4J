@@ -4,8 +4,6 @@ open module ldes.admin {
 
     // LDES dependencies
     requires ldes.domain;
-    requires ldes.ingest.domain;
-    requires ldes.fragmentation.domain;
 
     // external dependencies
     requires spring.boot;

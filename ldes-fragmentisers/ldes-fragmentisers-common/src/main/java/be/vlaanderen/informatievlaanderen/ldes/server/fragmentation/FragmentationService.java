@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FragmentationService {
 
+	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
+
 	private final FragmentationStrategyCollection fragmentationStrategyCollection;
 
 	public FragmentationService(FragmentationStrategyCollection fragmentationStrategyCollection) {

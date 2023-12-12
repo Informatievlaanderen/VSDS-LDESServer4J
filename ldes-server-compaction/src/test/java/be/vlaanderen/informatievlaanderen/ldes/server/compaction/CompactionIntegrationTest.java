@@ -45,8 +45,7 @@ public class CompactionIntegrationTest {
 	@TestConfiguration
 	public static class CompactionIntegrationTestConfiguration {
 
-		@Bean
-		@Qualifier("compaction-fragmentation")
+		@Bean("compactionFragmentation")
 		public FragmentationStrategyImpl fragmentationStrategy() {
 			return mock(FragmentationStrategyImpl.class);
 		}

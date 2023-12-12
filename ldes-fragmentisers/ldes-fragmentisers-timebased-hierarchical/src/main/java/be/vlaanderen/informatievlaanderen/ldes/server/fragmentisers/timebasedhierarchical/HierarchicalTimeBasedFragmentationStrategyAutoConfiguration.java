@@ -12,6 +12,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timeb
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class HierarchicalTimeBasedFragmentationStrategyAutoConfiguration {
 
+	@SuppressWarnings("java:S6830")
 	@Bean(TIMEBASED_FRAGMENTATION_HIERARCHICAL)
 	public HierarchicalTimeBasedFragmentationStrategyWrapper timeBasedFragmentationStrategyWrapper() {
 		return new HierarchicalTimeBasedFragmentationStrategyWrapper();

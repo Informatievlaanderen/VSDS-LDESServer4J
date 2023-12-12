@@ -36,7 +36,7 @@
   },"5": {
     "doc": "Home",
     "title": "Introduction",
-    "content": "The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an LDES. The LDES server was built in the context of the VSDS project in order to easily exchange open data. The server can be configured to meet the organisation’s specific needs. Functionalities include retention policy, fragmentation, deletion, create a snapshot and pagination for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage. ",
+    "content": "The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an LDES. The LDES server was built in the context of the VSDS project in order to easily exchange open data. The server can be configured to meet the organisation’s specific needs. Functionalities include retention policy, fragmentation, deletion and pagination for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage. ",
     "url": "/#introduction",
     
     "relUrl": "/#introduction"

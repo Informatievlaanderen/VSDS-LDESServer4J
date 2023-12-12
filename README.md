@@ -96,7 +96,6 @@ To enrich the server, certain Maven profiles can be activated:
 | **Storage**                              | storage-mongo                        | Allows the LDES server to read and write from a mongo database.                 | [Mongo configuration](#example-mongo-configuration)                                    |                                                                                                                                     |
 | **Timebased Fragmentation[DEPRECATED]**  | fragmentation-timebased              | Supports timebased fragmentation.                                               | [Timebased fragmentation configuration](#example-timebased-fragmentation)              |                                                                                                                                     |
 | **Geospatial Fragmentation**             | fragmentation-geospatial             | Supports geospatial fragmentation.                                              | [Geospatial fragmentation configuration](#example-geospatial-fragmentation)            |                                                                                                                                     |
-| **Substring Fragmentation**              | fragmentation-substring              | Supports substring fragmentation.                                               | [Substring fragmentation configuration](#example-substring-fragmentation)              |                                                                                                                                     |
 | **Pagination Fragmentation**             | fragmentation-pagination             | Supports pagination.                                                            | [Pagination configuration](#example-pagination)                                        | The pagenumbers start with pagenumber 1                                                                                             |
 | **Hierarchical Timebased Fragmentation** | fragmentation-timebased-hierarchical | Supports hierarchical timebased fragmentation.                                  | [Timebased fragmentation configuration](#example-hierarchical-timebased-fragmentation) |                                                                                                                                     |
 | **Ldes-queues**                          | queue-none                           | Members are fragmented immediately.                                             | N/A activating the profile is enough                                                   |                                                                                                                                     |
@@ -207,10 +206,9 @@ mvn clean verify -Dunittestskip=true
 - ldes-server-infra-mongo
 - ldes-server-port-ingest
 - ldes-server-port-publication-rest
-- ldes-fragmentisers-timebased
+- ldes-fragmentisers-timebased-hierarchical
 - ldes-fragmentisers-geospatial
 - ldes-fragmentisers-pagination
-- ldes-fragmentisers-substring
 
 ### Tracing and Metrics
 

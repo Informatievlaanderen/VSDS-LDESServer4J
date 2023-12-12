@@ -30,7 +30,7 @@ public class CompactedFragmentCreator {
 	private final ApplicationEventPublisher applicationEventPublisher;
 
 	public CompactedFragmentCreator(FragmentRepository fragmentRepository,
-			@Qualifier("compaction-fragmentation") FragmentationStrategy fragmentationStrategy,
+			@Qualifier("compactionFragmentation") FragmentationStrategy fragmentationStrategy,
 			ObservationRegistry observationRegistry, AllocationRepository allocationRepository,
 			ViewCollection viewCollection, ApplicationEventPublisher applicationEventPublisher) {
 		this.fragmentRepository = fragmentRepository;

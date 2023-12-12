@@ -15,6 +15,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geosp
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class GeospatialFragmentationStrategyAutoConfiguration {
 
+	@SuppressWarnings("java:S6830")
 	@Bean(GEOSPATIAL_FRAGMENTATION)
 	public GeospatialFragmentationStrategyWrapper geospatialFragmentationStrategyWrapper() {
 		return new GeospatialFragmentationStrategyWrapper();

@@ -13,7 +13,7 @@ tree:ViewDescription
       	sh:path tree:fragmentationStrategy ;
 		sh:name "List of fragmentations";
         sh:description "Ordered list of fragmentations how a member for this view should be processed";
-    	sh:or (tree:GeospatialFragmentation tree:PaginationFragmentation tree:SubstringFragmentation tree:TimebasedFragmentation) ;
+    	sh:or (tree:GeospatialFragmentation tree:PaginationFragmentation tree:TimeBasedFragmentation) ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
     ];
@@ -40,13 +40,6 @@ tree:GeospatialFragmentation
         sh:maxCount 1 ;
     ] ;
     sh:property tree:FragmentationPath  .
-
-tree:SubstringFragmentation
-	sh:order 2;
-    a sh:NodeShape ;
-	sh:class tree:SubstringFragmentation ;
-	sh:targetClass tree:SubstringFragmentation ;
-    sh:property tree:FragmentationPath, tree:MemberLimit .
 
 tree:TimebasedFragmentation
 	sh:order 2;
