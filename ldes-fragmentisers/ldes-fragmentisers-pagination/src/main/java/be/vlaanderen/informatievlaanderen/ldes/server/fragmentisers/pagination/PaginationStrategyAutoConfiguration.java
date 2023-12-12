@@ -12,6 +12,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagin
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class PaginationStrategyAutoConfiguration {
 
+	@SuppressWarnings("java:S6830")
 	@Bean(PAGINATION_FRAGMENTATION)
 	public PaginationStrategyWrapper paginationStrategyWrapper() {
 		return new PaginationStrategyWrapper();

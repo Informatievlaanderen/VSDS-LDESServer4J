@@ -12,6 +12,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.subst
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class SubstringFragmentationStrategyAutoConfiguration {
 
+	@SuppressWarnings("java:S6830")
 	@Bean(SUBSTRING_FRAGMENTATION)
 	public SubstringFragmentationStrategyWrapper substringFragmentationStrategyWrapper() {
 		return new SubstringFragmentationStrategyWrapper();

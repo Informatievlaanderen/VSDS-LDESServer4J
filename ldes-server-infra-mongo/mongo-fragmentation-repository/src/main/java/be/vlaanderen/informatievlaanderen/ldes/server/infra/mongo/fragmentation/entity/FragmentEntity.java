@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@SuppressWarnings({"java:S1068", "java:S107"})
 @Document("fragmentation_fragment")
 @CompoundIndex(name = "root_of_view", def = "{'root' : 1, 'viewName': 1}")
 @CompoundIndex(name = "immutable_with_parent", def = "{'immutable' : 1, 'parentId': 1}")

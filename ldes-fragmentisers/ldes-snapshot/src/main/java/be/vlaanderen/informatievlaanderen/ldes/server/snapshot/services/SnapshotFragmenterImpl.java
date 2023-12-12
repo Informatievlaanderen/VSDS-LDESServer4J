@@ -16,7 +16,7 @@ public class SnapshotFragmenterImpl implements SnapshotFragmenter {
 	private final FragmentationStrategy fragmentationStrategy;
 	private final ObservationRegistry observationRegistry;
 
-	public SnapshotFragmenterImpl(@Qualifier("snapshot-fragmentation") FragmentationStrategy fragmentationStrategy,
+	public SnapshotFragmenterImpl(@Qualifier("snapshotFragmentation") FragmentationStrategy fragmentationStrategy,
 			ObservationRegistry observationRegistry) {
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.observationRegistry = observationRegistry;
