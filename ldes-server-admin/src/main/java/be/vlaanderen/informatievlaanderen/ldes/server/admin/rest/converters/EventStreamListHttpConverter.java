@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
@@ -20,7 +21,6 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 @Observed
@@ -28,9 +28,11 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamResponse>> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
+	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamListHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
+	public EventStreamListHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
 		this.eventStreamResponseConverter = eventStreamResponseConverter;
+		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -80,7 +82,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 				.map(eventStreamResponseConverter::toModel)
 				.forEach(model::add);
 
-		RDFDataMgr.write(outputMessage.getBody(), model, getLang(contentType, REST_ADMIN));
+		RDFDataMgr.write(outputMessage.getBody(), model, rdfModelConverter.getLang(contentType, REST_ADMIN));
 	}
 
 	@Override

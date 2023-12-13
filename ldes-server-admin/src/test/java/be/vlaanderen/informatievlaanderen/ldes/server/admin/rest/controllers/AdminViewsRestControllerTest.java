@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		HttpModelConverter.class, ViewHttpConverter.class, ListViewHttpConverter.class,
 		ViewSpecificationConverter.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class })
+		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class })
 class AdminViewsRestControllerTest {
 	@MockBean
 	private ViewService viewService;

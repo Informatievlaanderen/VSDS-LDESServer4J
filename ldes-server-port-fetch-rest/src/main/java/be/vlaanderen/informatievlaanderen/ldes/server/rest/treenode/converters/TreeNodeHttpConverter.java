@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
@@ -24,9 +23,11 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 
 	private final TreeNodeConverter treeNodeConverter;
+	private final RdfModelConverter rdfModelConverter;
 
-	public TreeNodeHttpConverter(TreeNodeConverter treeNodeConverter) {
+	public TreeNodeHttpConverter(TreeNodeConverter treeNodeConverter, RdfModelConverter rdfModelConverter) {
 		this.treeNodeConverter = treeNodeConverter;
+		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -54,7 +55,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 	public void write(TreeNode treeNode, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		OutputStream body = outputMessage.getBody();
-		Lang rdfFormat = getLang(contentType, FETCH);
+		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
 		Model fragmentModel = treeNodeConverter.toModel(treeNode);
 		String outputString = RdfModelConverter.toString(fragmentModel, rdfFormat);
 		body.write(outputString.getBytes());
