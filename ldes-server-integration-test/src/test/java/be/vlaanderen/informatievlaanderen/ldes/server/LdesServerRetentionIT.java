@@ -6,6 +6,6 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features")
-public class LdesServerIT extends LdesServerIntegrationTest {
+@SelectClasspathResource("features/retention")
+public class LdesServerRetentionIT extends LdesServerIntegrationTest {
 }
