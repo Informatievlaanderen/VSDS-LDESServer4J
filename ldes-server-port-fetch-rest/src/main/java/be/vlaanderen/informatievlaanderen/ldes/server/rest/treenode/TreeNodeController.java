@@ -41,7 +41,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
 														 @PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
-		TreeNode treeNode = returnRequestedTreeNode(viewName, requestParameters);
+		TreeNode treeNode = getFragment(viewName, requestParameters);
 		return ResponseEntity
 				.ok()
 				.header(CONTENT_TYPE, getContentTypeHeader(language))
@@ -51,7 +51,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 				.body(treeNode);
 	}
 
-	private TreeNode returnRequestedTreeNode(ViewName viewName, Map<String, String> fragmentationMap) {
+	private TreeNode getFragment(ViewName viewName, Map<String, String> fragmentationMap) {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(),
