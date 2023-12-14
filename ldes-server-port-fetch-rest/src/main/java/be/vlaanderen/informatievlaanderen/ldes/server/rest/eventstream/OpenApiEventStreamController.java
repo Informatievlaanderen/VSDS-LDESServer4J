@@ -155,7 +155,5 @@ public interface OpenApiEventStreamController {
 										"""))
 	})
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found", content = @Content)
-	ResponseEntity<EventStreamResponse> retrieveLdesFragment(@Parameter(hidden = true) String language,
-			HttpServletResponse response,
-			@Parameter(example = "parcels") String collectionName);
+	ResponseEntity<EventStreamResponse> retrieveLdesFragment(@Parameter(hidden = true) String language, @Parameter(example = "parcels") String collectionName);
 }
