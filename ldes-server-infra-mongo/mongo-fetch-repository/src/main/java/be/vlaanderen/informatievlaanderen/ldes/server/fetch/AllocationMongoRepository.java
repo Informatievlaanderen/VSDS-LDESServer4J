@@ -1,17 +1,23 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.mapper.MemberAllocationEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.AllocationAggregate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Component
 public class AllocationMongoRepository implements AllocationRepository {
@@ -73,6 +79,20 @@ public class AllocationMongoRepository implements AllocationRepository {
 	@Override
 	public void deleteAllByFragmentId(Set<String> fragmentIds) {
 		repository.deleteAllByFragmentIdIn(fragmentIds);
+	}
+
+	@Override
+	public Stream<AllocationAggregate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
+
+		MatchOperation filterViewName = match(Criteria.where("collectionName").is(viewName.getCollectionName()).and("viewName").is(viewName.getViewName()));
+		GroupOperation countMembersForFragmentId = group("fragmentId").count().as("size");
+		MatchOperation filterOutFullAggregates = match(Criteria.where("size").lt(capacityPerPage));
+
+		Aggregation aggregation =
+				newAggregation(filterViewName, countMembersForFragmentId, filterOutFullAggregates)
+						.withOptions(newAggregationOptions().allowDiskUse(true).build());
+
+		return mongoTemplate.aggregateStream(aggregation, "fetch_allocation", AllocationAggregate.class);
 	}
 
 	public void deleteByCollectionName(String collectionName) {

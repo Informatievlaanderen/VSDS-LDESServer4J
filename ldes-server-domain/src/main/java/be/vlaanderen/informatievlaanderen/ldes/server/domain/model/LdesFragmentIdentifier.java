@@ -97,4 +97,9 @@ public class LdesFragmentIdentifier {
 	public int hashCode() {
 		return Objects.hash(viewName, fragmentPairs);
 	}
+
+	@Override
+	public String toString() {
+		return asString();
+	}
 }

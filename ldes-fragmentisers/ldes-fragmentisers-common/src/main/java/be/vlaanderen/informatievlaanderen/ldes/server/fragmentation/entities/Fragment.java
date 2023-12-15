@@ -133,4 +133,22 @@ public class Fragment {
 	public void removeRelationToIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
 		relations.removeIf(treeRelation -> treeRelation.treeNode().equals(fragmentIdentifier));
 	}
+
+	public boolean isConnectedTo(Fragment otherFragment) {
+		return getRelations()
+				.stream()
+				.anyMatch(treeRelation -> treeRelation.treeNode()
+						.equals(otherFragment.getFragmentId()));
+	}
+
+	@Override
+	public String toString() {
+		return "Fragment{" +
+		       "identifier=" + identifier +
+		       ", immutable=" + immutable +
+		       ", nrOfMembersAdded=" + nrOfMembersAdded +
+		       ", relations=" + relations +
+		       ", deleteTime=" + deleteTime +
+		       '}';
+	}
 }

@@ -3,16 +3,22 @@ springdoc:
     path: /v1/swagger
 ldes-server:
   host-name: "http://localhost:8080"
+  compaction-cron: 0 * * * * *
 management:
   tracing:
     enabled: false
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
 pyroscope:
   agent:
     enabled: true
 spring:
   data:
     mongodb:
-      database: ldes
+      database: telraam
       host: ldes-mongodb
       port: 27017
       auto-index-creation: true

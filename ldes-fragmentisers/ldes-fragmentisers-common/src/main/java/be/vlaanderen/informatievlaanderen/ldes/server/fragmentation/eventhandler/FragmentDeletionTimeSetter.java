@@ -23,8 +23,7 @@ public class FragmentDeletionTimeSetter {
 
 	@EventListener
 	public void handleFragmentsCompactedEvent(FragmentsCompactedEvent event) {
-		setDeleteTimeOfFragment(event.firstFragment());
-		setDeleteTimeOfFragment(event.secondFragment());
+		event.compactedFragments().forEach(this::setDeleteTimeOfFragment);
 	}
 
 	private void setDeleteTimeOfFragment(LdesFragmentIdentifier event) {

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.AllocationAggregate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import io.cucumber.java.DataTableType;
@@ -16,6 +17,7 @@ import org.mockito.ArgumentMatchers;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -70,6 +72,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 	public void theFollowingFragmentsAreAvailable(List<Fragment> fragments) {
 		fragments.forEach(fragment -> {
 			when(fragmentRepository.retrieveFragment(fragment.getFragmentId())).thenReturn(Optional.of(fragment));
+			when(fragmentRepository.retrieveFragment(fragment.getFragmentId())).thenReturn(Optional.of(fragment));
 			if (fragment.getFragmentPairs().isEmpty()) {
 				when(fragmentRepository.retrieveRootFragment(fragment.getViewName().asString()))
 						.thenReturn(Optional.of(fragment));
@@ -83,6 +86,13 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 
 	@And("the following allocations are present")
 	public void theFollowingAllocationsArePresent(List<FragmentAllocations> fragmentAllocations) {
+		when(allocationRepository.getPossibleCompactionCandidates(any(ViewName.class), anyInt()))
+				.thenAnswer(i ->
+						getAllocationAggregates(fragmentAllocations,
+								i.getArgument(0, ViewName.class),
+								i.getArgument(1, Integer.class))
+				);
+
 		when(allocationRepository.getMemberAllocationIdsByFragmentIds(ArgumentMatchers.any()))
 				.thenAnswer(x -> {
 					Set<String> requested = x.getArgument(0);
@@ -91,6 +101,15 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 							.flatMap(fragmentAllocations1 -> fragmentAllocations1.memberAllocations.stream()
 									.map(MemberAllocation::getMemberId)).toList();
 				});
+	}
+
+	private Stream<AllocationAggregate> getAllocationAggregates(List<FragmentAllocations> fragmentAllocations, ViewName viewName, Integer viewCapacity) {
+		return fragmentAllocations.stream()
+				.filter(fragmentAllocation -> {
+					var fragmentId = LdesFragmentIdentifier.fromFragmentId(fragmentAllocation.fragmentId);
+					return fragmentId.getViewName().equals(viewName);
+				})
+				.map(fragmentAllocation -> new AllocationAggregate(fragmentAllocation.fragmentId, fragmentAllocation.memberAllocations.size()));
 	}
 
 	@And("verify creation of the following fragments")

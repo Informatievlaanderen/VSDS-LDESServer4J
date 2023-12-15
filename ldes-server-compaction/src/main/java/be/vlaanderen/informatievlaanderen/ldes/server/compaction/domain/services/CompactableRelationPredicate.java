@@ -18,6 +18,7 @@ public class CompactableRelationPredicate implements Predicate<CompactionCandida
 
 	@Override
 	public boolean test(CompactionCandidate compactionCandidate) {
+		System.out.println("testing relation for " + compactionCandidate.getFirstFragment().getFragmentIdString() + " and " + compactionCandidate.getSecondFragment().getFragmentIdString());
 		return firstFragmentHasExactlyOneRelationAndItIsToSecondFragment(compactionCandidate.getFirstFragment(),
 				compactionCandidate.getSecondFragment()) &&
 				secondFragmentIsReferencedInExactlyOneRelationAndItIsFromFirstFragment(

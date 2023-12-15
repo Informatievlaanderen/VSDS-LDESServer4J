@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.AllocationAggregate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 
 import java.util.List;
@@ -23,4 +25,6 @@ public interface AllocationRepository {
 
 	void deleteByFragmentId(String fragmentId);
 	void deleteAllByFragmentId(Set<String> fragmentIds);
+
+	Stream<AllocationAggregate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);
 }
