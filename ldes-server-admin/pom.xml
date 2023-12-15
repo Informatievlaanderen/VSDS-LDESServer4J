@@ -24,11 +24,6 @@
             <artifactId>ldes-server-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-snapshot</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
         </dependency>

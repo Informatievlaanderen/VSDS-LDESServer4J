@@ -1,10 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.SnapshotMongoRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.snapshot.repository.SnapshotEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.snapshot.repository.SnapshotRepository;
 import io.micrometer.observation.ObservationRegistry;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,13 +14,6 @@ import org.springframework.data.mongodb.observability.MongoObservationCommandLis
 @EnableConfigurationProperties()
 @ComponentScan("be.vlaanderen.informatievlaanderen.ldes.server")
 public class MongoAutoConfiguration {
-
-	@Bean
-	@ConditionalOnMissingBean
-	public SnapshotRepository snapshotMongoRepository(
-			final SnapshotEntityRepository snapshotEntityRepository) {
-		return new SnapshotMongoRepository(snapshotEntityRepository);
-	}
 
 	@Profile("monitoring") // This config can cause memory overflow issues when running large database
 	// migrations.

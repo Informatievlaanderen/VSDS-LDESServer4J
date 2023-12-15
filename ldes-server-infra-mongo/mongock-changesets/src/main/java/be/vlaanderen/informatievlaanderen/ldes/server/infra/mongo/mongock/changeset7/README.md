@@ -25,8 +25,6 @@ An example of this yaml config is included below.
 The following fragmentations were renamed:
     pagination => PaginationFragmentation
     geospatial => GeospatialFragmentation
-    substring => SubstringFragmentation
-    timebased => TimebasedFragmentation
 
 When the yaml config includes legacy naming (pagination, geospatial, etc.), these will be automatically converted
 to the new naming according to the above table.
