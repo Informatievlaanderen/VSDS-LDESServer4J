@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.se
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.entities.CompactedFragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction.FragmentsCompactedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.AllocationAggregate;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -39,7 +39,7 @@ public class PaginationCompactionService {
 
 	}
 
-	public void applyCompactionForFragments(Set<AllocationAggregate> toBeCompactedFragments) {
+	public void applyCompactionForFragments(Set<CompactionCandidate> toBeCompactedFragments) {
 		Observation compactionObservation = Observation.createNotStarted("compaction", observationRegistry).start();
 		CompactedFragment compacted = new CompactedFragment(toBeCompactedFragments);
 

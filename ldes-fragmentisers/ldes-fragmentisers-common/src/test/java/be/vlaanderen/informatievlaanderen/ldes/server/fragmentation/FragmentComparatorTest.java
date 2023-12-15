@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentComparator.sortFragments;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FragmentComparatorTest {
@@ -28,11 +29,25 @@ class FragmentComparatorTest {
 			/mobility-hindrances/by-page?pageNumber=3 | /mobility-hindrances/by-page?pageNumber=4
 			""";
 
+	private static final String SCENARIO_3 = """
+			/mobility-hindrances/by-page?pageNumber=2 | /mobility-hindrances/by-page?pageNumber=3,/dummy/dummy
+			/mobility-hindrances/by-page?pageNumber=3 | /mobility-hindrances/by-page?pageNumber=4/5
+			/mobility-hindrances/by-page?pageNumber=1 | /mobility-hindrances/by-page?pageNumber=2
+			/mobility-hindrances/by-page?pageNumber=0 | /mobility-hindrances/by-page?pageNumber=1
+			""";
+
+	private static final String SCENARIO_4 = """
+			/mobility-hindrances/by-page?pageNumber=2 | /mobility-hindrances/by-page?pageNumber=3,/dummy/dummy
+			/mobility-hindrances/by-page?pageNumber=3 | /mobility-hindrances/by-page?pageNumber=4
+			/mobility-hindrances/by-page?pageNumber=4 | /mobility-hindrances/by-page?pageNumber=5
+			/mobility-hindrances/by-page?pageNumber=1 | /mobility-hindrances/by-page?pageNumber=2
+			/mobility-hindrances/by-page?pageNumber=0 | /mobility-hindrances/by-page?pageNumber=1
+			""";
+
 	@ParameterizedTest
 	@MethodSource("provideStringsForIsBlank")
 	void compare(FragmentationComparerInput fragmentStream) {
-		var orderedList = fragmentStream.fragments()
-				.sorted(new FragmentComparator())
+		var orderedList = sortFragments(fragmentStream.fragments)
 				.map(Fragment::getFragmentIdString)
 				.toList();
 		assertEquals(fragmentStream.expectedOrderedList(), orderedList);
@@ -44,7 +59,7 @@ class FragmentComparatorTest {
 					var fragmentString = f.split("\\|");
 					String fragmentId = fragmentString[0].trim();
 					var fragmentsPointingTo = Arrays.stream(fragmentString[1].trim()
-							.split(","))
+									.split(","))
 							.map(String::trim).toList();
 					return createFragment(fragmentId, fragmentsPointingTo);
 				});
@@ -60,11 +75,16 @@ class FragmentComparatorTest {
 	private static Stream<FragmentationComparerInput> provideStringsForIsBlank() {
 		return Stream.of(
 				new FragmentationComparerInput(getFragmentsOfScenario(SCENARIO_1),
-						List.of(MOBHIND_PAGE+"1",MOBHIND_PAGE+"2",MOBHIND_PAGE+"3")),
+						List.of(MOBHIND_PAGE + "1", MOBHIND_PAGE + "2", MOBHIND_PAGE + "3")),
 				new FragmentationComparerInput(getFragmentsOfScenario(SCENARIO_2),
-						List.of(MOBHIND_PAGE+"1",MOBHIND_PAGE+"2",MOBHIND_PAGE+"3"))
+						List.of(MOBHIND_PAGE + "1", MOBHIND_PAGE + "2", MOBHIND_PAGE + "3")),
+				new FragmentationComparerInput(getFragmentsOfScenario(SCENARIO_3),
+						List.of(MOBHIND_PAGE + "0", MOBHIND_PAGE + "1", MOBHIND_PAGE + "2", MOBHIND_PAGE + "3")),
+				new FragmentationComparerInput(getFragmentsOfScenario(SCENARIO_4),
+						List.of(MOBHIND_PAGE + "0", MOBHIND_PAGE + "1", MOBHIND_PAGE + "2", MOBHIND_PAGE + "3", MOBHIND_PAGE + "4"))
 		);
 	}
 
-	record FragmentationComparerInput(Stream<Fragment> fragments, List<String> expectedOrderedList){};
+	record FragmentationComparerInput(Stream<Fragment> fragments, List<String> expectedOrderedList) {
+	}
 }

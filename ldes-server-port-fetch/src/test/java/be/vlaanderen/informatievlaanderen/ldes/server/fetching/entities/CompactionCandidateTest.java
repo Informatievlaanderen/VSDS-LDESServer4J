@@ -4,20 +4,21 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AllocationAggregateTest {
+class CompactionCandidateTest {
 
 	@Test
 	void getFragmentWhenNotInitialised() {
 		String fragmentId = "/event-stream/view";
-		AllocationAggregate allocationAggregate = new AllocationAggregate(fragmentId, 10);
-		assertThrows(RuntimeException.class, allocationAggregate::getFragment);
+		CompactionCandidate compactionCandidate = new CompactionCandidate(fragmentId, 10);
+		assertThrows(RuntimeException.class, compactionCandidate::getFragment);
 
 		Fragment fragment = new Fragment(LdesFragmentIdentifier.fromFragmentId(fragmentId));
 
-		allocationAggregate.setFragment(fragment);
-		assertEquals(fragment, allocationAggregate.getFragment());
+		compactionCandidate.setFragment(fragment);
+		assertEquals(fragment, compactionCandidate.getFragment());
 	}
 
 }

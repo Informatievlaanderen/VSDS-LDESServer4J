@@ -25,7 +25,7 @@ public class Fragment {
 	}
 
 	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int nrOfMembersAdded,
-			List<TreeRelation> relations, LocalDateTime deleteTime) {
+	                List<TreeRelation> relations, LocalDateTime deleteTime) {
 		this.identifier = identifier;
 		this.immutable = immutable;
 		this.nrOfMembersAdded = nrOfMembersAdded;

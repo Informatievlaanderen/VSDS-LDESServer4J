@@ -2,12 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 
-public class AllocationAggregate {
+public class CompactionCandidate {
 	private final String id;
 	private final Integer size;
 	private Fragment fragment;
 
-	public AllocationAggregate(String id, Integer size) {
+	public CompactionCandidate(String id, Integer size) {
 		this.id = id;
 		this.size = size;
 	}

@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.AllocationAggregate;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import io.cucumber.java.DataTableType;
@@ -103,13 +103,13 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 				});
 	}
 
-	private Stream<AllocationAggregate> getAllocationAggregates(List<FragmentAllocations> fragmentAllocations, ViewName viewName, Integer viewCapacity) {
+	private Stream<CompactionCandidate> getAllocationAggregates(List<FragmentAllocations> fragmentAllocations, ViewName viewName, Integer viewCapacity) {
 		return fragmentAllocations.stream()
 				.filter(fragmentAllocation -> {
 					var fragmentId = LdesFragmentIdentifier.fromFragmentId(fragmentAllocation.fragmentId);
 					return fragmentId.getViewName().equals(viewName);
 				})
-				.map(fragmentAllocation -> new AllocationAggregate(fragmentAllocation.fragmentId, fragmentAllocation.memberAllocations.size()));
+				.map(fragmentAllocation -> new CompactionCandidate(fragmentAllocation.fragmentId, fragmentAllocation.memberAllocations.size()));
 	}
 
 	@And("verify creation of the following fragments")
