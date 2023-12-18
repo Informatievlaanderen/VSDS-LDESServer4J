@@ -14,12 +14,6 @@ public class CompactionCandidate {
 		this.size = size;
 	}
 
-	public CompactionCandidate(String id, Integer size, Fragment fragment) {
-		this.id = id;
-		this.size = size;
-		this.fragment = fragment;
-	}
-
 	public Fragment getFragment() {
 		if (fragment == null) {
 			throw new RuntimeException("Fragment has not yet been initialized");

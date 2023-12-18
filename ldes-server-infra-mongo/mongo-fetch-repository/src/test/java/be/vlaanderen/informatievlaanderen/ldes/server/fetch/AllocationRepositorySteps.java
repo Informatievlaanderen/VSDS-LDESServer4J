@@ -35,7 +35,7 @@ public class AllocationRepositorySteps extends MongoAllocationIntegrationTest {
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public RetrievedMemberAllocations retrievedMemberAllocationsEntryTransformer(Map<String, String> row) {
 		return new RetrievedMemberAllocations(
-				row.get("fragmentIds"),
+				row.get("fragmentId"),
 				row.get("ids").isEmpty() ? List.of() : Arrays.stream(row.get("ids").split(",")).sorted().toList());
 	}
 

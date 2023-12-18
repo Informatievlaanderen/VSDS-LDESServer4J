@@ -57,6 +57,8 @@ class CompactionCandidateComparatorTest {
 	}
 
 	private CompactionCandidate deriveCandidate(Fragment fragment) {
-		return new CompactionCandidate(fragment.getFragmentIdString(), 0, fragment);
+		var cc = new CompactionCandidate(fragment.getFragmentIdString(), 0);
+		cc.setFragment(fragment);
+		return cc;
 	}
 }

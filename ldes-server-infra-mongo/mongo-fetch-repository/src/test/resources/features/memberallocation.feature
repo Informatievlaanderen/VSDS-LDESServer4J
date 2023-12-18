@@ -35,7 +35,7 @@ Feature: AllocationRepository
   Scenario Outline: DELETE BY MEMBER_ID AND COLLECTION_NAME AND VIEW_NAME
     When Deleting by the member id <memberId> and the collection name <collectionName> and the view name <viewName>
     Then Querying by the fragment id <fragmentId> has the following results <ids>
-    And There are 6 remaining MemberAllocations in the MemberAllocationRepository
+    And There are 8 remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | memberId | collectionName      | viewName   | fragmentId                                | ids                                                                       |
       | member-1 | mobility-hindrances | by-page    | /mobility-hindrances/by-page?pageNumber=1 | 8100886e-ab0f-4064-b3e1-ced75f07958a                                      |
@@ -52,8 +52,8 @@ Feature: AllocationRepository
     And There are <remainingMemberAllocations> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | collectionName      | viewName   | fragmentIds                                                                         | remainingMemberAllocations |
-      | mobility-hindrances | by-page    | /mobility-hindrances/by-page?pageNumber=1                                           | 5                          |
-      | mobility-hindrances | by-version | /mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 5                          |
+      | mobility-hindrances | by-page    | /mobility-hindrances/by-page?pageNumber=1                                           | 7                          |
+      | mobility-hindrances | by-version | /mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 7                          |
       | parcels             | by-page    | /parcels/by-page?pageNumber=1                                                       | 4                          |
 
   Scenario Outline: DELETE BY COLLECTION_NAME
@@ -62,7 +62,7 @@ Feature: AllocationRepository
     And There are <remainingMemberAllocations> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | collectionName      | fragmentIds                                                                                                                   | remainingMemberAllocations |
-      | mobility-hindrances | /mobility-hindrances/by-page?pageNumber=1,/mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 3                          |
+      | mobility-hindrances | /mobility-hindrances/by-page?pageNumber=1,/mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 5                          |
       | parcels             | /parcels/by-page?pageNumber=1                                                                                                 | 4                          |
 
   Scenario Outline: DELETE BY FRAGMENT ID
@@ -70,10 +70,10 @@ Feature: AllocationRepository
     Then There are <expectedCount> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | fragmentIds                                                                         | expectedCount |
-      | /mobility-hindrances/by-page?pageNumber=1                                           | 5             |
-      | /mobility-hindrances/by-version?version=1                                           | 6             |
-      | /mobility-hindrances/by-version?version=2,/mobility-hindrances/by-version?version=3 | 6             |
-      | /parcels/by-page?pageNumber=1                                                       | 4             |
+      | /mobility-hindrances/by-page?pageNumber=1                                           | 7             |
+      | /mobility-hindrances/by-version?version=1                                           | 8             |
+      | /mobility-hindrances/by-version?version=2,/mobility-hindrances/by-version?version=3 | 8             |
+      | /parcels/by-page?pageNumber=1                                                       | 6             |
 
   Scenario Outline: Compaction Candidates
     Then The compaction candidates for <viewName> with capacity of <capacity> contains <expectedFragments>
