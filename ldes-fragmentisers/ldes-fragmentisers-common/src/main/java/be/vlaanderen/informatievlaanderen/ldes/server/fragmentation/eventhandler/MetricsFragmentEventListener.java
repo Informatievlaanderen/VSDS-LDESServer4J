@@ -5,6 +5,8 @@ import io.micrometer.core.instrument.Metrics;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 public class MetricsFragmentEventListener {
 
@@ -14,9 +16,11 @@ public class MetricsFragmentEventListener {
 
 	@EventListener
 	public void handleBulkFragmentDeletedEvent(BulkFragmentDeletedEvent event) {
-		event.ldesFragmentIdentifiers().forEach(ldesFragmentIdentifier -> {
-			String viewName = ldesFragmentIdentifier.getViewName().asString();
-			Metrics.counter(LDES_SERVER_DELETED_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, "pagination").increment();
-		});
+		event.ldesFragmentIdentifiers()
+				.stream()
+				.collect(Collectors.groupingBy(id -> id.getViewName().asString(), Collectors.counting()))
+				.forEach((view, count) ->
+						Metrics.counter(LDES_SERVER_DELETED_FRAGMENTS_COUNT, VIEW, view, FRAGMENTATION_STRATEGY, "pagination")
+								.increment(count));
 	}
 }

@@ -28,8 +28,9 @@ public class FragmentDeletionScheduler {
 				.getDeletionCandidates()
 				.filter(Fragment::isReadyForDeletion)
 				.map(Fragment::getFragmentId)
-				.peek(fragmentRepository::removeRelationsPointingToFragmentAndDeleteFragment)
 				.collect(Collectors.toSet());
+
+		deletedFragments.forEach(fragmentRepository::removeRelationsPointingToFragmentAndDeleteFragment);
 
 		applicationEventPublisher.publishEvent(new BulkFragmentDeletedEvent(deletedFragments));
 	}

@@ -27,9 +27,9 @@ class CompactedFragmentTest {
 				AffectedAllocationAggregate.of(MOBHIND_PAGE + "1", List.of(MOBHIND_PAGE + "2")),
 				AffectedAllocationAggregate.of(MOBHIND_PAGE + "3", List.of(MOBHIND_PAGE + "4"))
 		).map(affectedAllocationAggregate -> {
-			var ag = affectedAllocationAggregate.compactionCandidate;
-			ag.setFragment(affectedAllocationAggregate.fragment);
-			return ag;
+			var cc = affectedAllocationAggregate.compactionCandidate;
+			cc.setFragment(affectedAllocationAggregate.fragment);
+			return cc;
 		}).collect(Collectors.toSet());
 
 		compactedFragment = new CompactedFragment(toBeCompactedFragments);

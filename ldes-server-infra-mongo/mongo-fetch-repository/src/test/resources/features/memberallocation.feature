@@ -12,6 +12,8 @@ Feature: AllocationRepository
       | 7deb5ce5-e57b-469b-9966-35150862d890 | parcels             | by-page    | /parcels/by-page?pageNumber=1             | member-1 |
       | 618019d0-b18c-4e2e-92d8-1e169baead6c | parcels             | by-page    | /parcels/by-page?pageNumber=1             | member-2 |
       | d6a71f1d-83f0-4987-b064-539314a43056 | parcels             | by-page    | /parcels/by-page?pageNumber=1             | member-3 |
+      | d6a71f1d-83f0-4987-b064-539314a43057 | parcels             | by-page    | /parcels/by-page?pageNumber=2             | member-4 |
+      | d6a71f1d-83f0-4987-b064-539314a43058 | parcels             | by-page    | /parcels/by-page?pageNumber=2             | member-5 |
     And They are ingested using the AllocationRepository
 
   Scenario: FIND ALL BY FRAGMENT_ID
@@ -22,6 +24,13 @@ Feature: AllocationRepository
       | /mobility-hindrances/by-version?version=2 | e9c89017-894d-4196-b2e8-ecb9ff98fda8                                                                           |
       | /parcels/by-page?pageNumber=1             | 7deb5ce5-e57b-469b-9966-35150862d890,618019d0-b18c-4e2e-92d8-1e169baead6c,d6a71f1d-83f0-4987-b064-539314a43056 |
       | /not-existing                             | [blank]                                                                                                        |
+
+
+  Scenario: FIND ALL BY FRAGMENT_IDS
+    Then Querying by the fragment ids have the following results
+      | fragmentIds                                                             | ids                        |
+      | /mobility-hindrances/by-page?pageNumber=1,/parcels/by-page?pageNumber=1 | member-1,member-2,member-3 |
+      | /not-existing                                                           | [blank]                    |
 
   Scenario Outline: DELETE BY MEMBER_ID AND COLLECTION_NAME AND VIEW_NAME
     When Deleting by the member id <memberId> and the collection name <collectionName> and the view name <viewName>
@@ -60,8 +69,15 @@ Feature: AllocationRepository
     When Deleting by the fragment ids <fragmentIds>
     Then There are <expectedCount> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
-      | fragmentIds                                                                          | expectedCount |
-      | /mobility-hindrances/by-page?pageNumber=1                                            | 5             |
-      | /mobility-hindrances/by-version?version=1                                            | 6             |
-      | /mobility-hindrances/by-version?version=2,/mobility-hindrances/by-version?version=3  | 6             |
-      | /parcels/by-page?pageNumber=1                                                        | 4             |
+      | fragmentIds                                                                         | expectedCount |
+      | /mobility-hindrances/by-page?pageNumber=1                                           | 5             |
+      | /mobility-hindrances/by-version?version=1                                           | 6             |
+      | /mobility-hindrances/by-version?version=2,/mobility-hindrances/by-version?version=3 | 6             |
+      | /parcels/by-page?pageNumber=1                                                       | 4             |
+
+  Scenario Outline: Compaction Candidates
+    Then The compaction candidates for <viewName> with capacity of <capacity> contains <expectedFragments>
+    Examples:
+      | viewName                       | capacity | expectedFragments                                                                   |
+      | mobility-hindrances/by-version | 2        | /mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 |
+      | parcels/by-page                | 3        | /parcels/by-page?pageNumber=2                                                       |

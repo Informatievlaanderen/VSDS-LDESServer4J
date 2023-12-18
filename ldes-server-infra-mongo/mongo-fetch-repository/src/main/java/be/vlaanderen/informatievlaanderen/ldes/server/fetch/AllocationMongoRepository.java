@@ -19,10 +19,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity.FETCH_ALLOCATION;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Component
 public class AllocationMongoRepository implements AllocationRepository {
+	private static final String COLLECTION_NAME = "collectionName";
+	private static final String VIEW_NAME = "viewName";
+	private static final String FRAGMENT_ID = "fragmentId";
+	private static final String MEMBER_ID = "memberId";
+	private static final String ID = "_id";
 
 	private final AllocationEntityRepository repository;
 	private final MemberAllocationEntityMapper mapper;
@@ -52,11 +58,12 @@ public class AllocationMongoRepository implements AllocationRepository {
 	@Override
 	public List<String> getMemberAllocationIdsByFragmentIds(Set<String> fragmentIds) {
 		Query q = new Query();
-		q.addCriteria(Criteria.where("fragmentId").in(fragmentIds))
-				.fields().include("memberId");
+		q.addCriteria(Criteria.where(FRAGMENT_ID).in(fragmentIds))
+				.fields().include(MEMBER_ID).exclude(ID);
 		return mongoTemplate.find(q, MemberAllocationEntity.class)
 				.stream()
 				.map(MemberAllocationEntity::getMemberId)
+				.distinct()
 				.toList();
 	}
 
@@ -85,16 +92,18 @@ public class AllocationMongoRepository implements AllocationRepository {
 
 	@Override
 	public Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
+		String SIZE = "size";
 
-		MatchOperation filterViewName = match(Criteria.where("collectionName").is(viewName.getCollectionName()).and("viewName").is(viewName.getViewName()));
-		GroupOperation countMembersForFragmentId = group("fragmentId").count().as("size");
-		MatchOperation filterOutFullAggregates = match(Criteria.where("size").lt(capacityPerPage));
+		MatchOperation filterViewName = match(Criteria.where(COLLECTION_NAME).is(viewName.getCollectionName())
+				.and(VIEW_NAME).is(viewName.getViewName()));
+		GroupOperation countMembersForFragmentId = group(FRAGMENT_ID).count().as(SIZE);
+		MatchOperation filterOutFullAggregates = match(Criteria.where(SIZE).lt(capacityPerPage));
 
 		Aggregation aggregation =
 				newAggregation(filterViewName, countMembersForFragmentId, filterOutFullAggregates)
 						.withOptions(newAggregationOptions().allowDiskUse(true).build());
 
-		return mongoTemplate.aggregateStream(aggregation, "fetch_allocation", CompactionCandidate.class);
+		return mongoTemplate.aggregateStream(aggregation, FETCH_ALLOCATION, CompactionCandidate.class);
 	}
 
 	public void deleteByCollectionName(String collectionName) {

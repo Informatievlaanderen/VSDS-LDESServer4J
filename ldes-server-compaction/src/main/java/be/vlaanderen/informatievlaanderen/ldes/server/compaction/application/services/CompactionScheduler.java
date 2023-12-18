@@ -42,11 +42,10 @@ public class CompactionScheduler {
 
 					if (compactionTaskList.isEmpty()) {
 						LOGGER.info("No compaction candidates available for " + viewCapacity.getViewName().getViewName());
-					}
-					else {
+					} else {
 						LOGGER.info("Processing " + compactionTaskList.size() + " compaction candidates available for " + viewCapacity.getViewName().getViewName());
 
-						compactionTaskList.values().forEach(paginationCompactionService::applyCompactionForFragments);
+						compactionTaskList.forEach(paginationCompactionService::applyCompactionForFragments);
 					}
 				}));
 

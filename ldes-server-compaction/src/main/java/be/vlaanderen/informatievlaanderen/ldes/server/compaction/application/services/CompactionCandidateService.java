@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateComparator.sortCompactionCandidates;
+
 @Component
 public class CompactionCandidateService {
 	private final AllocationRepository allocationRepository;
@@ -22,23 +24,32 @@ public class CompactionCandidateService {
 		this.fragmentRepository = fragmentRepository;
 	}
 
-	public Map<Integer, Set<CompactionCandidate>> getCompactionTaskList(ViewCapacity viewCapacity) {
+	/**
+	 * Preparation step for the Compaction Service.
+	 * Will retrieve an aggregated view of the allocation table where the size of members is lower than the
+	 * maximum view capacity.
+	 * If these fragments are connected, these will be returned in the same group.
+	 *
+	 * @param viewCapacity Contains the name and capacity for a view
+	 * @return a structured group of Fragments for a view that can be compacted
+	 */
+	public Collection<Set<CompactionCandidate>> getCompactionTaskList(ViewCapacity viewCapacity) {
 		AtomicInteger index = new AtomicInteger();
 		Map<Integer, Set<CompactionCandidate>> compactionDesign = new HashMap<>();
 		List<CompactionCandidate> possibleCompactionCandidates = getPossibleCompactionCandidates(viewCapacity);
 
 		if (possibleCompactionCandidates.isEmpty()) {
-			return Map.of();
+			return List.of();
 		}
 
-		StreamEx.of(possibleCompactionCandidates)
-				.forPairs((ag1, ag2) -> {
-					if (ag1.getFragment().isConnectedTo(ag2.getFragment())) {
+		StreamEx.of(possibleCompactionCandidates.stream())
+				.forPairs((cc1, cc2) -> {
+					if (cc1.getFragment().isConnectedTo(cc2.getFragment())) {
 						Set<CompactionCandidate> set = compactionDesign.getOrDefault(index.get(), new HashSet<>());
-						var totalSum = set.stream().map(CompactionCandidate::getSize).reduce(Integer::sum).orElse(0);
+						var totalSum = set.stream().map(CompactionCandidate::getSize).reduce(Integer::sum).orElse(cc1.getSize());
 
-						if (totalSum + ag2.getSize() <= viewCapacity.getCapacityPerPage()) {
-							set.addAll(Set.of(ag1, ag2));
+						if (totalSum + cc2.getSize() <= viewCapacity.getCapacityPerPage()) {
+							set.addAll(Set.of(cc1, cc2));
 							compactionDesign.put(index.get(), set);
 						} else {
 							index.incrementAndGet();
@@ -46,15 +57,17 @@ public class CompactionCandidateService {
 					}
 				});
 
-		return compactionDesign;
+		return compactionDesign.values();
 	}
 
 	private List<CompactionCandidate> getPossibleCompactionCandidates(ViewCapacity viewCapacity) {
-		return allocationRepository.getPossibleCompactionCandidates(viewCapacity.getViewName(), viewCapacity.getCapacityPerPage())
-				.peek(ag -> ag.setFragment(fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(ag.getId()))
-						.orElseThrow()))
-				.filter(ag -> ag.getFragment().isImmutable())
-				.filter(ag -> ag.getFragment().getDeleteTime() == null)
+		var compactionCandidates = allocationRepository.getPossibleCompactionCandidates(viewCapacity.getViewName(), viewCapacity.getCapacityPerPage())
+				.toList();
+		compactionCandidates.forEach(cc -> cc.setFragment(fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(cc.getId()))
+				.orElseThrow()));
+		return sortCompactionCandidates(compactionCandidates.stream()
+				.filter(cc -> cc.getFragment().isImmutable())
+				.filter(cc -> cc.getFragment().getDeleteTime() == null))
 				.toList();
 	}
 }

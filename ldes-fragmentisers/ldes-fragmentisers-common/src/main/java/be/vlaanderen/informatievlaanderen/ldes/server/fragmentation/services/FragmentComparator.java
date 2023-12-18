@@ -15,7 +15,7 @@ public class FragmentComparator {
 		List<Fragment> fragments = fragmentStream.toList();
 
 		var firstElement = fragments.stream()
-				.filter(fragment -> fragments.stream().noneMatch(fragment1 -> fragment1.isConnectedTo(fragment)))
+				.filter(fragment -> hasNoConnections(fragment, fragments))
 				.findFirst()
 				.orElseThrow();
 
@@ -48,5 +48,9 @@ public class FragmentComparator {
 
 
 		return fragmentList.stream();
+	}
+
+	public static boolean hasNoConnections(Fragment fragment, List<Fragment> fragments) {
+		return fragments.stream().noneMatch(fragment1 -> fragment1.isConnectedTo(fragment));
 	}
 }
