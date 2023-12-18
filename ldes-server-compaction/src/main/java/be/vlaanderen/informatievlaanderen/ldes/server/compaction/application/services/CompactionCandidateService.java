@@ -54,7 +54,7 @@ public class CompactionCandidateService {
 				.peek(ag -> ag.setFragment(fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(ag.getId()))
 						.orElseThrow()))
 				.filter(ag -> ag.getFragment().isImmutable())
-				.filter(ag -> ag.getFragment().getDeleteTime() != null)
+				.filter(ag -> ag.getFragment().getDeleteTime() == null)
 				.toList();
 	}
 }

@@ -29,7 +29,7 @@ public class PaginationCompactionService {
 
 	public PaginationCompactionService(FragmentRepository fragmentRepository,
 	                                   AllocationRepository allocationRepository,
-	                                   @Qualifier("compaction-fragmentation") FragmentationStrategy fragmentationStrategy,
+	                                   @Qualifier("compactionFragmentation") FragmentationStrategy fragmentationStrategy,
 	                                   ApplicationEventPublisher applicationEventPublisher, ObservationRegistry observationRegistry) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
