@@ -11,6 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.Adm
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatDatasetRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatViewsRestController;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminServerDcatController.class,
-		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class, PrefixConstructor.class })
+		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class, PrefixConstructor.class,
+		RdfModelConverter.class})
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.spi",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream",

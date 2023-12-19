@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpOutputMessage;
@@ -12,7 +13,7 @@ class MemberConverterTest {
 
 	@Test
 	void test_writeInternal_isNotSupported() {
-		MemberConverter memberConverter = new MemberConverter();
+		MemberConverter memberConverter = new MemberConverter(new RdfModelConverter());
 		Member member = mock();
 		HttpOutputMessage message = new MockHttpOutputMessage();
 		assertThrows(UnsupportedOperationException.class,
