@@ -7,6 +7,7 @@ import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpInputMessage;
@@ -81,8 +82,10 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 		eventStreamResponses.stream()
 				.map(eventStreamResponseConverter::toModel)
 				.forEach(model::add);
+		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
+		rdfModelConverter.checkLangForRelativeUrl(lang);
 
-		RDFDataMgr.write(outputMessage.getBody(), model, rdfModelConverter.getLang(contentType, REST_ADMIN));
+		RDFDataMgr.write(outputMessage.getBody(), model, lang);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamRespo
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +59,9 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	public void write(@NotNull EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
+		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
+		rdfModelConverter.checkLangForRelativeUrl(lang);
 
-		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, rdfModelConverter.getLang(contentType, REST_ADMIN));
+		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, lang);
 	}
 }

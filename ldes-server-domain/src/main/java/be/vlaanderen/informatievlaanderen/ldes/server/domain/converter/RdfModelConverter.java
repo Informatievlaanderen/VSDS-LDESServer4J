@@ -28,13 +28,15 @@ public class RdfModelConverter {
 		if (contentType.equals(MediaType.TEXT_HTML)) {
 			return TURTLE;
 		}
-		Lang lang = ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
+		return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))
 				.orElseGet(() -> ofNullable(nameToLang(contentType.getSubtype()))
 						.orElseThrow(() -> new RdfFormatException(contentType.toString(), rdfFormatContext)));
+	}
+
+	public void checkLangForRelativeUrl(Lang lang) {
 		if(useRelativeUrl && RELATIVE_URL_INCOMPATIBLE_LANGS.contains(lang)){
 			throw new RelativeUrlException(lang);
 		}
-		return lang;
 	}
 
 	public static Model fromString(final String content, final Lang lang) {

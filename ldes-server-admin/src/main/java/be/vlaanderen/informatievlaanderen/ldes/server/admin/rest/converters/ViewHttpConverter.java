@@ -59,6 +59,7 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	public void write(@NotNull ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
+		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
 		StringWriter outputStream = new StringWriter();
 		Model model = viewSpecificationConverter.modelFromView(view);
 
