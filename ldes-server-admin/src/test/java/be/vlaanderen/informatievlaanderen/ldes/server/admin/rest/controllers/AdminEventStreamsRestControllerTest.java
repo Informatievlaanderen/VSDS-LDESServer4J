@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandli
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class })
+		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class })
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	@MockBean

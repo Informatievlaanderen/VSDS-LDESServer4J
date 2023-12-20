@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -43,7 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { AdminShapeRestController.class, HttpModelConverter.class,
-		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class, ValidatorsConfig.class })
+		PrefixAdderImpl.class, AdminRestResponseEntityExceptionHandler.class, ValidatorsConfig.class,
+		RdfModelConverter.class })
 class AdminShapeRestControllerTest {
 	@MockBean
 	private ShaclShapeService shaclShapeService;
@@ -133,7 +135,7 @@ class AdminShapeRestControllerTest {
 	static class AdminShapeRestControllerTestConfig {
 		@Bean
 		public HttpModelConverter modelConverter() {
-			return new HttpModelConverter(new PrefixAdderImpl());
+			return new HttpModelConverter(new PrefixAdderImpl(), new RdfModelConverter());
 		}
 	}
 }
