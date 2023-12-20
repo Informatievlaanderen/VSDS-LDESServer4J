@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
@@ -20,17 +21,17 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 @Observed
 @Component
 public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification> {
-
 	private final ViewSpecificationConverter viewSpecificationConverter;
+	private final RdfModelConverter rdfModelConverter;
 
-	public ViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
+	public ViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter, RdfModelConverter rdfModelConverter) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
+		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -57,7 +58,8 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 	@Override
 	public void write(@NotNull ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Lang rdfFormat = getLang(contentType, FETCH);
+		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
+		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
 		StringWriter outputStream = new StringWriter();
 		Model model = viewSpecificationConverter.modelFromView(view);
 

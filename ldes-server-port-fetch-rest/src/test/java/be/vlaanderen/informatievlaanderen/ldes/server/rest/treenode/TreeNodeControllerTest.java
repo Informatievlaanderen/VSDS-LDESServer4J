@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
@@ -59,7 +60,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(TreeNodeControllerTest.TreeNodeControllerTestConfiguration.class)
 @ContextConfiguration(classes = {TreeNodeController.class,
 		RestConfig.class, TreeViewWebConfig.class,
-		RestResponseEntityExceptionHandler.class, PrefixConstructor.class})
+		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
+		RdfModelConverter.class})
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
