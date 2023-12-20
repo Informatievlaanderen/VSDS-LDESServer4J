@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.converters;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
 import org.apache.jena.rdf.model.Model;
@@ -52,7 +53,7 @@ public class TreeNodeHttpConverter implements HttpMessageConverter<TreeNode> {
 	@Override
 	public void write(TreeNode treeNode, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Lang rdfFormat = getLang(contentType, FETCH);
+		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
 		Model fragmentModel = treeNodeConverter.toModel(treeNode);
 		RDFWriter.source(fragmentModel).lang(rdfFormat).output(outputMessage.getBody());
 	}
