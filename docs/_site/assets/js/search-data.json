@@ -8,7 +8,7 @@
   },"1": {
     "doc": "How To Run",
     "title": "LDES Server Config",
-    "content": "The LDES Server provides a variety of tweaking options to configure it to your ideal use case: . | Feature | Property | Description | Default Value |   | . | Swagger Config | springdoc.swagger-ui.path | As the LDES Server provides an Swagger API to easily configure your Streams, a url needs to be configured that points to the swagger documentation. |   |   | . |   |   |   |   |   | . | URL Configuration | ldes-server.host-name | This is the url that will be used throughout the fragment names. This should therefor point to a publicly available url. |   |   | . |   |   |   |   |   | . | Ingest/Fetch |   |   |   |   | . |   | rest.max-age | Time in seconds that a mutable fragment can be considered up-to-date | 60 |   | . |   | rest.max-age-immutable | Time in seconds that an immutable fragment should not be refreshed | 604800 |   | . |   |   |   |   |   | . | MongoDB Storage |   | As of this moment the LDES Server only supports a MongoDB implementation. The following properties have to be set to provide connectivity between the server and the database |   |   | . |   | spring.data.mongodb.host | URL that points to the MongoDB server |   |   | . |   | spring.data.mongodb.port | Port on which the MongoDB server runs |   |   | . |   | spring.data.mongodb.database | Name for the existing or to be created database on the MongoDB server |   |   | . |   | spring.data.mongodb.auto-index-creation | Enables the server to automatically create indices in mongodb. If this property is not enabled, you have to manage the indices manually. This can have a significant impact on performance. We highly advise you to keep this on for performance reasons |   |   | . |   |   |   |   |   | . | Fragment Compaction |   | Fragment Compaction |   |   | . |   | ldes-server.compaction-cron | Defines how often the Compaction Service will check the fragments | 0 0 0 * * * |   | . |   | ldes-server.compaction-duration | Defines how long long the redundant compacted fragments will remain on the server | PD7 |   | . |   | ldes-server.deletion-cron | Defines how often the redundant compacted fragments will be checked for deletion | 0 0 0 * * * |   | . |   |   |   |   |   | . | Retention |   | Retention Policies |   |   | . |   | ldes-server.retention-cron | Defines how often the Retention Service will check the members | 0 0 0 * * * |   | . Note: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation @Scheduled adds a 6th parameter to support seconds. More information about this can be found in the spring documentation. Based on the previous config options, we provide a basic config to use. ldes-server.yml: . springdoc: swagger-ui: path: /v1/swagger ldes-server: host-name: \"http://localhost:8080\" spring: data: mongodb: host: ldes-mongodb port: 27017 database: ldes auto-index-creation: true . ",
+    "content": "The LDES Server provides a variety of tweaking options to configure it to your ideal use case: . | Feature | Property | Description | required | Default Value | . | Swagger Config | springdoc.swagger-ui.path | As the LDES Server provides an Swagger API to easily configure your Streams, a url needs to be configured that points to the swagger documentation. For more Swagger UI/Open-API configuration, visit the respective links. | No |   | . |   |   |   |   |   | . | URL Configuration |   |   |   |   | . |   | ldes-server.host-name | This is the url that will be used throughout the fragment names. This should therefor point to a publicly available url. | Yes |   | . |   | ldes-server.use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI. For more | No | false | . |   |   |   |   |   | . | Ingest/Fetch |   |   |   |   | . |   | rest.max-age | Time in seconds that a mutable fragment can be considered up-to-date | No | 60 | . |   | rest.max-age-immutable | Time in seconds that an immutable fragment should not be refreshed | No | 604800 | . |   |   |   |   |   | . | MongoDB Storage |   | As of this moment the LDES Server only supports a MongoDB implementation. The following properties have to be set to provide connectivity between the server and the database |   |   | . |   | spring.data.mongodb.host | URL that points to the MongoDB server |   |   | . |   | spring.data.mongodb.port | Port on which the MongoDB server runs |   |   | . |   | spring.data.mongodb.database | Name for the existing or to be created database on the MongoDB server |   |   | . |   | spring.data.mongodb.uri | Alternative to the previous 3 properties, allows passing the mongodb connection string. Note that when a MongoDB link needs to be configured with authentication, it is typically done with a uri, e.g. mongodb://myDatabaseUser:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin |   |   | . |   | spring.data.mongodb.auto-index-creation | Enables the server to automatically create indices in mongodb. If this property is not enabled, you have to manage the indices manually. This can have a significant impact on performance. We highly advise you to keep this on for performance reasons |   |   | . |   |   |   |   |   | . | Fragment Compaction |   | Fragment Compaction |   |   | . |   | ldes-server.compaction-cron | Defines how often the Compaction Service will check the fragments | No | 0 0 0 * * * | . |   | ldes-server.compaction-duration | Defines how long long the redundant compacted fragments will remain on the server | No | PD7 | . |   | ldes-server.deletion-cron | Defines how often the redundant compacted fragments will be checked for deletion | No | 0 0 0 * * * | . |   |   |   |   |   | . | Retention |   | Retention Policies |   |   | . |   | ldes-server.retention-cron | Defines how often the Retention Service will check the members | No | 0 0 0 * * * | . Note: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring annotation @Scheduled adds a 6th parameter to support seconds. More information about this can be found in the spring documentation. Based on the previous config options, we provide a basic config to use. ldes-server.yml: . springdoc: swagger-ui: path: /v1/swagger ldes-server: host-name: \"http://localhost:8080\" spring: data: mongodb: host: ldes-mongodb port: 27017 database: ldes auto-index-creation: true . ",
     "url": "/how-to-run.html#ldes-server-config",
     
     "relUrl": "/how-to-run.html#ldes-server-config"
@@ -36,7 +36,7 @@
   },"5": {
     "doc": "Home",
     "title": "Introduction",
-    "content": "The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an LDES. The LDES server was built in the context of the VSDS project in order to easily exchange open data. The server can be configured to meet the organisation’s specific needs. Functionalities include retention policy, fragmentation, deletion and pagination for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage. ",
+    "content": "The Linked Data Event Stream (LDES) server is a configurable component that can be used to ingest, store, transform and (re-)publish an LDES. The LDES server was built in the context of the VSDS project in order to easily exchange data. The server can be configured to meet the organisation’s specific needs. Functionalities include retention policy, fragmentation, deletion and pagination for managing and processing large amounts of data more efficiently and ensuring the efficient use of storage. ",
     "url": "/#introduction",
     
     "relUrl": "/#introduction"
@@ -57,14 +57,14 @@
   },"8": {
     "doc": "Configuring a new Event Stream",
     "title": "Configuring a new Event Stream",
-    "content": "To house a new Event Stream on your server, it first needs to be configured. This can be done through the Admin API at the /admin/api/v1/eventstreams endpoint. A Event Stream config needs to contains a couple of items: . | a ldes:EventStream object containing . | ldes:timestampPath object that defines which object property it should parse to handle timebased fragmentations, retention policies, … | ldes:versionOfPath object that defines which object property it should parse to handle version based retention policies. This property also indicates which state object your version object is a snapshot of. | a sh:NodeShape object that contains a sh:targetClass. This indicates what kind of objects your Event Stream will hold. | . | . For more info, visit the Swagger API endpoint configured in the run guide. Example . Creating a generic Event Stream named “generic-eventstream” that contains members of type https://schema.org/Product . @prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix dcterms: &lt;http://purl.org/dc/terms/&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix server: &lt;http://localhost:8080/&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix genericES: &lt;http://localhost:8080/generic-eventstream/&gt; . server:generic-eventstream a ldes:EventStream ; ldes:timestampPath dcterms:created ; ldes:versionOfPath dcterms:isVersionOf ; tree:shape genericES:shape . genericES:shape a sh:NodeShape ; sh:targetClass &lt;https://schema.org/Product&gt; . ",
+    "content": "To house a new Event Stream on your server, it first needs to be configured. This can be done through the Admin API at the /admin/api/v1/eventstreams endpoint. An Event Stream config needs to contains a couple of items: . | a ldes:EventStream object containing: . | ldes:timestampPath object that defines which object property it should parse to handle timebased fragmentations, retention policies, … | ldes:versionOfPath object that defines which object property it should parse to handle version based retention policies. This property also indicates which state object your version object is a snapshot of. | a sh:NodeShape object that contains a sh:targetClass. This indicates what kind of objects your Event Stream will hold. | . | . For more info, visit the Swagger API endpoint configured in the run guide. Example . Creating a generic Event Stream named “generic-eventstream” that contains members of type https://schema.org/Product. @prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix dcterms: &lt;http://purl.org/dc/terms/&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix server: &lt;http://localhost:8080/&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix genericES: &lt;http://localhost:8080/generic-eventstream/&gt; . server:generic-eventstream a ldes:EventStream ; ldes:timestampPath dcterms:created ; ldes:versionOfPath dcterms:isVersionOf ; tree:shape genericES:shape . genericES:shape a sh:NodeShape ; sh:targetClass &lt;https://schema.org/Product&gt; . ",
     "url": "/configuration/event-stream",
     
     "relUrl": "/configuration/event-stream"
   },"9": {
     "doc": "Configuring a new Event Stream",
     "title": "Configuring a SHACL Shape",
-    "content": "SHACL (Shapes Constraint Language) is a standard for validating RDF data and ensuring that it conforms to a particular structure or shape. In the context of the Linked Data Event Stream (LDES), SHACL shapes are used to provide a machine-readble description of the expected structure of members in the stream. By incorporating SHACL shapes, LDES provides a powerful tool for ensuring data quality and consistency, making it a reliable and trustworthy source of data for various applications. By defining a SHACL shape for the LDES, data producers can ensure that the members they add to the LDES adhere to the required structure, while data consumers can use the shape to validate and reason about the data they receive. To defining a shape can be done through the /admin/api/eventstreams/{event stream}/shape endpoint. For more info, visit the Swagger API endpoint configured in the run guide. Example . @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; . [] a sh:NodeShape; sh:targetClass &lt;https://w3id.org/ldes#EventStream&gt; ; sh:closed true; sh:ignoredProperties (rdf:type) ; sh:property [ sh:class sh:NodeShape; sh:description \"The schema all elements of the eventstream must conform to.\"@en; sh:maxCount 1; sh:minCount 1; sh:name \"shape\"@en; sh:path &lt;https://w3id.org/tree#shape&gt; ], [ sh:nodeKind sh:IRI ; sh:description \"The object property of the members that idicates how members relate to each other from the time perspective.\"@en; sh:maxCount 1; sh:name \"timestampPath\"@en; sh:path &lt;https://w3id.org/ldes#timestampPath&gt; ], [ sh:nodeKind sh:IRI ; sh:description \"The object property that indicates the object identifier in a version object.\"@en; sh:maxCount 1; sh:name \"versionOfPath\"@en; sh:path &lt;https://w3id.org/ldes#versionOfPath&gt; ] . ",
+    "content": "SHACL (Shapes Constraint Language) is a standard for validating RDF data and ensuring that it conforms to a particular structure or shape. In the context of the Linked Data Event Stream (LDES), SHACL shapes are used to provide a machine-readable description of the expected structure of members in the stream. By incorporating SHACL shapes, LDES provides a powerful tool for ensuring data quality and consistency, making it a reliable and trustworthy source of data for various applications. By defining a SHACL shape for the LDES, data producers can ensure that the members they add to the LDES adhere to the required structure, while data consumers can use the shape to validate and reason about the data they receive. Defining a shape can be done through the /admin/api/eventstreams/{event stream}/shape endpoint. For more info, visit the Swagger API endpoint configured in the run guide. Example . @prefix sh: &lt;http://www.w3.org/ns/shacl#&gt; . @prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; . [] a sh:NodeShape; sh:targetClass &lt;https://w3id.org/ldes#EventStream&gt; ; sh:closed true; sh:ignoredProperties (rdf:type) ; sh:property [ sh:class sh:NodeShape; sh:description \"The schema all elements of the eventstream must conform to.\"@en; sh:maxCount 1; sh:minCount 1; sh:name \"shape\"@en; sh:path &lt;https://w3id.org/tree#shape&gt; ], [ sh:nodeKind sh:IRI ; sh:description \"The object property of the members that idicates how members relate to each other from the time perspective.\"@en; sh:maxCount 1; sh:name \"timestampPath\"@en; sh:path &lt;https://w3id.org/ldes#timestampPath&gt; ], [ sh:nodeKind sh:IRI ; sh:description \"The object property that indicates the object identifier in a version object.\"@en; sh:maxCount 1; sh:name \"versionOfPath\"@en; sh:path &lt;https://w3id.org/ldes#versionOfPath&gt; ] . ",
     "url": "/configuration/event-stream#configuring-a-shacl-shape",
     
     "relUrl": "/configuration/event-stream#configuring-a-shacl-shape"
@@ -85,14 +85,14 @@
   },"12": {
     "doc": "Geospatial Fragmentation",
     "title": "Algorithm",
-    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the predicate matches the fragmentationPath | If an optional regex is provided through the fragmenterSubjectFilter property, we filter on subjects that match this regex. | We select all the object that pass the above filters. | . | A bucket of tiles is created using the coordinates and provided zoomLevel. This is done using the Slippy Map algorithm. | The tiles are iterated. The member is added to every tile, or sub-fragmentations of these tiles. Taking into account: . | A new fragment is created if no fragment exists for the given tile. | There is no memberLimit or max size for a fragment. They do not become immutable. | The member is added to every related fragment | . | . flowchart TD A[First statement is selected where the predicate matches fragmenterProperty AND subject matches fragmenterSubjectFilter] --&gt; B B[Coordinates of this statement are selected] --&gt; C C[Bucker of tiles are created using the coordinates and zoomLevel] --&gt; D{Next tile?} D --&gt; |true| E{Fragment for tile exists?} E ---&gt;|false| F[Create Fragment] E --&gt;|true| G[Add member to fragment] F ----&gt; G D -------&gt; |false| END(END) G --&gt; D . ",
+    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the predicate matches the fragmentationPath. | If an optional regex is provided through the fragmenterSubjectFilter property, we filter on subjects that match this regex. | We select all the object that pass the above filters. | . | A bucket of tiles is created using the coordinates and provided zoomLevel. This is done using the Slippy Map algorithm. | The tiles are iterated. The member is added to every tile, or sub-fragmentations of these tiles. Taking into account: . | A new fragment is created if no fragment exists for the given tile. | There is no memberLimit or max size for a fragment. They do not become immutable. | The member is added to every related fragment. | . | . flowchart TD A[First statement is selected where the predicate matches fragmenterProperty AND subject matches fragmenterSubjectFilter] --&gt; B B[Coordinates of this statement are selected] --&gt; C C[Bucket of tiles is created using the coordinates and zoomLevel] --&gt; D{Next tile?} D --&gt; |true| E{Fragment for tile exists?} E ---&gt;|false| F[Create Fragment] E --&gt;|true| G[Add member to fragment] F ----&gt; G D -------&gt; |false| END(END) G --&gt; D . ",
     "url": "/configuration/fragmentations/geospatial#algorithm",
     
     "relUrl": "/configuration/fragmentations/geospatial#algorithm"
   },"13": {
     "doc": "Geospatial Fragmentation",
     "title": "Example",
-    "content": "Example properties: . @prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:GeospatialFragmentation ; tree:maxZoom 15 ; tree:fragmentationPath &lt;http://www.opengis.net/ont/geosparql#asWKT&gt; ; ] . With following example input: . @prefix dc: &lt;http://purl.org/dc/terms/&gt; . @prefix ns0: &lt;http://semweb.mmlab.be/ns/linkedconnections#&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix ns1: &lt;http://vocab.gtfs.org/terms#&gt; . @prefix prov: &lt;http://www.w3.org/ns/prov#&gt; . @prefix ns2: &lt;http://www.opengis.net/ont/geosparql#&gt; . @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; . @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; . &lt;http://njh.me/original-id#2022-09-28T17:11:28.520Z&gt; dc:isVersionOf &lt;http://njh.me/original-id&gt; ; ns0:arrivalStop &lt;http://example.org/stops/402161&gt; ; ns0:arrivalTime \"2022-09-28T07:14:00.000Z\"^^xsd:dateTime ; ns0:departureStop &lt;http://example.org/stops/402303&gt; ; ns0:departureTime \"2022-09-28T07:09:00.000Z\"^^xsd:dateTime ; ns1:dropOffType ns1:Regular ; ns1:pickupType ns1:Regular ; ns1:route &lt;http://example.org/routes/Hasselt_-_Genk&gt; ; ns1:trip &lt;http://example.org/trips/Hasselt_-_Genk/Genk_-_Hasselt/20220928T0909&gt; ; a ns0:Connection ; prov:generatedAtTime \"2022-09-28T17:11:28.520Z\"^^xsd:dateTime . &lt;http://example.org/stops/402161&gt; ns2:asWKT \"POINT (5.47236 50.9642)\"^^ns2:wktLiteral ; a ns1:Stop ; rdfs:label \"Genk Brug\" ; geo:lat 5.096420e+1 ; geo:long 5.472360e+0 . &lt;http://example.org/stops/402303&gt; ns2:asWKT \"POINT (5.49661 50.9667)\"^^ns2:wktLiteral ; a ns1:Stop ; rdfs:label \"Genk Station perron 11\" ; geo:lat 5.096670e+1 ; geo:long 5.496610e+0 . The selected objects would be . \"POINT (5.47236 50.9642)\"^^ns2:wktLiteral and \"POINT (5.49661 50.9667)\"^^ns2:wktLiteral . When we convert these coordinates to tiles, the bucket of tiles would be: . | “15/16884/10974” | “15/16882/10975” | . When geospatial fragmentation is the lowest level . After ingestion the member will be part of the following two fragments . | http://localhost:8080/addresses/by-zone?tile=15/16884/10974&amp;pageNumber=1 | http://localhost:8080/addresses/by-zone?tile=15/16882/10975&amp;pageNumber=1 | . ",
+    "content": "Example properties: . @prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:GeospatialFragmentation ; tree:maxZoom 15 ; tree:fragmentationPath &lt;http://www.opengis.net/ont/geosparql#asWKT&gt; ; ] . With following example input: . @prefix dc: &lt;http://purl.org/dc/terms/&gt; . @prefix ns0: &lt;http://semweb.mmlab.be/ns/linkedconnections#&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix ns1: &lt;http://vocab.gtfs.org/terms#&gt; . @prefix prov: &lt;http://www.w3.org/ns/prov#&gt; . @prefix ns2: &lt;http://www.opengis.net/ont/geosparql#&gt; . @prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; . @prefix geo: &lt;http://www.w3.org/2003/01/geo/wgs84_pos#&gt; . &lt;http://njh.me/original-id#2022-09-28T17:11:28.520Z&gt; dc:isVersionOf &lt;http://njh.me/original-id&gt; ; ns0:arrivalStop &lt;http://example.org/stops/402161&gt; ; ns0:arrivalTime \"2022-09-28T07:14:00.000Z\"^^xsd:dateTime ; ns0:departureStop &lt;http://example.org/stops/402303&gt; ; ns0:departureTime \"2022-09-28T07:09:00.000Z\"^^xsd:dateTime ; ns1:dropOffType ns1:Regular ; ns1:pickupType ns1:Regular ; ns1:route &lt;http://example.org/routes/Hasselt_-_Genk&gt; ; ns1:trip &lt;http://example.org/trips/Hasselt_-_Genk/Genk_-_Hasselt/20220928T0909&gt; ; a ns0:Connection ; prov:generatedAtTime \"2022-09-28T17:11:28.520Z\"^^xsd:dateTime . &lt;http://example.org/stops/402161&gt; ns2:asWKT \"POINT (5.47236 50.9642)\"^^ns2:wktLiteral ; a ns1:Stop ; rdfs:label \"Genk Brug\" ; geo:lat 5.096420e+1 ; geo:long 5.472360e+0 . &lt;http://example.org/stops/402303&gt; ns2:asWKT \"POINT (5.49661 50.9667)\"^^ns2:wktLiteral ; a ns1:Stop ; rdfs:label \"Genk Station perron 11\" ; geo:lat 5.096670e+1 ; geo:long 5.496610e+0 . The selected objects would be \"POINT (5.47236 50.9642)\"^^ns2:wktLiteral and \"POINT (5.49661 50.9667)\"^^ns2:wktLiteral . When we convert these coordinates to tiles, the bucket of tiles would be: . | “15/16884/10974” | “15/16882/10975” | . When geospatial fragmentation is the lowest level . After ingestion the member will be part of the following two fragments . | http://localhost:8080/addresses/by-zone?tile=15/16884/10974&amp;pageNumber=1 | http://localhost:8080/addresses/by-zone?tile=15/16882/10975&amp;pageNumber=1 | . ",
     "url": "/configuration/fragmentations/geospatial#example",
     
     "relUrl": "/configuration/fragmentations/geospatial#example"
@@ -141,14 +141,14 @@
   },"20": {
     "doc": "Timebased Fragmentation",
     "title": "Properties",
-    "content": "@prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:HierarchicalTimeBasedFragmentation ; tree:maxGranularity { Mandatory: defines the depth level of the fragments } ; tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ; tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ; ] . For maxGranularity the following values are allowed: year, month, day, hour, minute, second. ",
+    "content": "@prefix tree: &lt;https://w3id.org/tree#&gt; . tree:fragmentationStrategy [ a tree:HierarchicalTimeBasedFragmentation ; tree:maxGranularity { Mandatory: defines the depth level of the fragments } ; tree:fragmentationPath { Mandatory: defines which property will be used for bucketizing } ; tree:fragmenterSubjectFilter { Optional: regex to filter the subjects matching the fragmentationPath } ; ] . For maxGranularity the following values are allowed: . | year, | month, | day, | hour, | minute, | second. | . ",
     "url": "/configuration/fragmentations/timebased#properties",
     
     "relUrl": "/configuration/fragmentations/timebased#properties"
   },"21": {
     "doc": "Timebased Fragmentation",
     "title": "Algorithm",
-    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the predicate matches the fragmentationPath | If an optional regex is provided through the fragmenterSubjectFilter property, we filter on subjects that match this regex. | We select all the object that pass the above filters. | . | The fragment of the member is determined. For each unit of time starting with year and ending with the chosen granularity from maxGranularity we do the following: . | We take the value of this unit of time from the fragmentationObject. eg: the value of month for 2023-03-02T06:30:40 is 03. | We check if the previous fragment has a child fragment with this value for the unit of time. (In the case of year, the previous fragment is the root fragment.) | If no such fragment exists, a new one is created. | . | The member is added to the last fragment. | . ",
+    "content": ". | The fragmentationObjects of the member are determined . | We filter the RDF statements where the predicate matches the fragmentationPath. | If an optional regex is provided through the fragmenterSubjectFilter property, we filter on subjects that match this regex. | We select all the objects that pass the above filters. | . | The fragment of the member is determined. For each unit of time starting with year and ending with the chosen granularity from maxGranularity we do the following: . | We take the value of this unit of time from the fragmentationObject. eg: the value of month for 2023-03-02T06:30:40 is 03. | We check if the previous fragment has a child fragment with this value for the unit of time. (In the case of year, the previous fragment is the root fragment.) | If no such fragment exists, a new one is created. | . | The member is added to the last fragment. | . ",
     "url": "/configuration/fragmentations/timebased#algorithm",
     
     "relUrl": "/configuration/fragmentations/timebased#algorithm"
@@ -176,7 +176,7 @@
   },"25": {
     "doc": "Retention Policies",
     "title": "Retention polling interval",
-    "content": "By default, every day, the server checks if there are members that can be deleted that are not conform to the retention policy anymore. If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set via a cron expression. To configure this interval, please refer to the Configuration Page . ",
+    "content": "By default, every day, the server checks if there are members that can be deleted that are not conform to the retention policy anymore. If a higher retention accuracy is desired, or a lower one if resources are limited for example, then a respectively lower or higher retention polling interval can be set via a cron expression. To configure this interval, please refer to the Configuration Page. ",
     "url": "/configuration/retention-policies/index#retention-polling-interval",
     
     "relUrl": "/configuration/retention-policies/index#retention-polling-interval"
@@ -187,131 +187,145 @@
     "url": "/configuration/retention-policies/index#supported-retention-policies",
     
     "relUrl": "/configuration/retention-policies/index#supported-retention-policies"
-  },"30": {
+  },"27": {
     "doc": "Timebased Retention",
     "title": "Timebased Retention Policy",
     "content": "https://w3id.org/ldes#DurationAgoPolicy . Similar to the Point in Time Retention Policy, the Timebased Retention Policy will filter out members based on their ldes:timestampPath. The difference between the previous retention policy is that the Timebased one works with a sliding window, rather than a hard-set value. The sliding window can be defined with a ISO 8601 Temporal Duration. Any members’ ldes:timestampPath that falls outside of this range will be removed. gantt title Timebased Retention (Range: P2D) dateFormat YYYY-MM-DD todayMarker off section Day 1 Current Day: crit, milestone, 2023-11-11, 0d Original Stream: active, 2023-11-08, 3d Sliding Window (Current Day -2 days): 2023-11-9, 2d Stream After Retention Day 1: active, 2023-11-9, 2d section Day 2 Current Day: crit, milestone, 2023-11-12, 0d Original Stream: active, 2023-11-9, 3d Sliding Window (Current Day -2 days): 2023-11-10, 2d Stream After Retention Day 2: active, 2023-11-10, 2d . ",
     "url": "/configuration/retention-policies/timebased#timebased-retention-policy",
     
     "relUrl": "/configuration/retention-policies/timebased#timebased-retention-policy"
-  },"31": {
+  },"28": {
     "doc": "Timebased Retention",
     "title": "Example",
     "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:DurationAgoPolicy ; tree:value \"PT10M\"^^&lt;http://www.w3.org/2001/XMLSchema#duration&gt; ; ] ; ] . ",
     "url": "/configuration/retention-policies/timebased#example",
     
     "relUrl": "/configuration/retention-policies/timebased#example"
-  },"32": {
+  },"29": {
     "doc": "Timebased Retention",
     "title": "Timebased Retention",
     "content": " ",
     "url": "/configuration/retention-policies/timebased",
     
     "relUrl": "/configuration/retention-policies/timebased"
-  },"33": {
+  },"30": {
     "doc": "Version Based Retention",
     "title": "Version Based Retention Policy",
     "content": "https://w3id.org/ldes#LatestVersionSubset . To keep the Event Stream clean with less history, the Version Based Retention Policy allows to only keep a certain amount of versions of a state object (referenced through ldes:versionOfPath). The amount of version to retain can be set as a number (higher than 0). ",
     "url": "/configuration/retention-policies/version-based#version-based-retention-policy",
     
     "relUrl": "/configuration/retention-policies/version-based#version-based-retention-policy"
-  },"34": {
+  },"31": {
     "doc": "Version Based Retention",
     "title": "Example",
     "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:LatestVersionSubset ; tree:amount 2 ; ] ; ] . ",
     "url": "/configuration/retention-policies/version-based#example",
     
     "relUrl": "/configuration/retention-policies/version-based#example"
-  },"35": {
+  },"32": {
     "doc": "Version Based Retention",
     "title": "Version Based Retention",
     "content": " ",
     "url": "/configuration/retention-policies/version-based",
     
     "relUrl": "/configuration/retention-policies/version-based"
-  },"36": {
+  },"33": {
     "doc": "Configuring a new View",
     "title": "Configuring a new View for an Event Stream",
-    "content": "After having created an Event Stream, a view needs to be defined to be able to retrieve the data. This can be done through the Admin API at the /admin/api/v1/eventstreams/{event stream}/views endpoint. A view config needs to have the following structure: . | A tree:viewDescription object with its subject referring to the event stream object . | a tree:FragmentationStrategy object that contains an ordered rdf list of fragmentations. | a ldes:retentionPolicy object that contains a set of retention policies. | a tree:pageSize object that marks how many members should be partitioned per fragment. | . | . For more info, visit the Swagger API endpoint configured in the run guide. Fragmentations . To provide a more structured overview of the data, a fragmentation list can be defined. For a more detailed explanation on fragmentation, together with all the available options, visit the Fragmentations Subsection. Retention Policies . To reduce the amount historical of data kept in the LDES Server, one can configure a set of retention policies. For a more detailed explanation on retention policies, together with all the available options, visit the Retention Policies Subsection. ",
+    "content": "After having created an Event Stream, a view needs to be defined to be able to retrieve the data. This can be done through the Admin API at the /admin/api/v1/eventstreams/{event stream}/views endpoint. A view config needs to have the following structure: . | A tree:viewDescription object with its subject referring to the event stream object . | a tree:FragmentationStrategy object that contains an ordered rdf list of fragmentations. | a ldes:retentionPolicy object that contains a set of retention policies. | a tree:pageSize object that marks how many members should be partitioned per fragment. | . | . For more info, visit the Swagger API endpoint configured in the run guide. Fragmentations . To provide a more structured overview of the data, a fragmentation list can be defined. For a more detailed explanation on fragmentation, together with all the available options, visit the Fragmentations Subsection. Retention Policies . To reduce the amount of historical data kept in the LDES Server, one can configure a set of retention policies. For a more detailed explanation on retention policies, together with all the available options, visit the Retention Policies Subsection. ",
     "url": "/configuration/view#configuring-a-new-view-for-an-event-stream",
     
     "relUrl": "/configuration/view#configuring-a-new-view-for-an-event-stream"
-  },"37": {
+  },"34": {
     "doc": "Configuring a new View",
     "title": "Example",
     "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt; . @prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; . @prefix server: &lt;http://localhost:8080/generic-eventstream/&gt; . server:view-name tree:viewDescription [ a tree:fragmentationStrategy; tree:fragmentationStrategy () ; ldes:retentionPolicy [] ; tree:pageSize \"10\"^^&lt;http://www.w3.org/2001/XMLSchema#int&gt; ; ] . ",
     "url": "/configuration/view#example",
     
     "relUrl": "/configuration/view#example"
-  },"38": {
+  },"35": {
     "doc": "Configuring a new View",
     "title": "Configuring a new View",
     "content": " ",
     "url": "/configuration/view",
     
     "relUrl": "/configuration/view"
-  },"39": {
+  },"36": {
     "doc": "Ingest Members With HTTP",
     "title": "Ingest Members With HTTP",
-    "content": "An Event Stream without its members is nothing. Therefor, new members can be ingested via a POST HTTP Endpoint. This endpoint follows the following pattern: {ldes server hostname}/{event-stream}. Note that this event stream should already be configured. (Read Configuring a Event Stream for more details) . ",
+    "content": "An Event Stream without its members is nothing. Therefore, new members can be ingested via a POST HTTP Endpoint. This endpoint follows the following pattern: {ldes server hostname}/{event-stream}. Note that this event stream should already be configured. (Read Configuring a Event Stream for more details) . ",
     "url": "/ingest/http",
     
     "relUrl": "/ingest/http"
-  },"40": {
+  },"37": {
     "doc": "Ingest Members With HTTP",
     "title": "Accepted formats",
     "content": "The LDES Server accepts every RDF type supported by Apache JENA. When sending the RDF data, make sure this is specified in the Content-Type header. The most common types to use are application/n-quads, text/turtle and application/ld+json. For more details, please refer to the Swagger API under the base definition. ",
     "url": "/ingest/http#accepted-formats",
     
     "relUrl": "/ingest/http#accepted-formats"
-  },"41": {
+  },"38": {
     "doc": "Ingest Members With HTTP",
     "title": "Member Conformity",
-    "content": "Every Event Stream contains a shape that mentions a targetClass. This is the type should be the same as the rdf:type of the root object you try to ingest. Otherwise it will be rejected . ",
+    "content": "Every Event Stream contains a shape that mentions a targetClass. This is the type should be the same as the rdf:type of the root object you try to ingest. Otherwise it will be rejected. ",
     "url": "/ingest/http#member-conformity",
     
     "relUrl": "/ingest/http#member-conformity"
-  },"42": {
+  },"39": {
     "doc": "Read Linked Data Event Streams With HTTP",
     "title": "Read Linked Data Event Streams With HTTP",
     "content": "Although the Linked Data Event Streams are advised to read with an LDES Client, an Event Stream can also be retrieved via HTTP. When manually retrieving an LDES, we can make a distinction into 3 categories: . ",
     "url": "/fetch/http",
     
     "relUrl": "/fetch/http"
-  },"43": {
+  },"40": {
     "doc": "Read Linked Data Event Streams With HTTP",
     "title": "Retrieving an Event Stream",
     "content": "By browsing to an Event Stream following the pattern {hostname}/{event stream}, you are able to read the shape of the Event Stream, its views (along with its configured fragmentations) and configured DCAT information. ",
     "url": "/fetch/http#retrieving-an-event-stream",
     
     "relUrl": "/fetch/http#retrieving-an-event-stream"
-  },"44": {
+  },"41": {
     "doc": "Read Linked Data Event Streams With HTTP",
     "title": "Retrieving a View",
-    "content": "By following the previously mentioned views or by following the pattern {hostname}/{event stream}/{view}, the view page will be shown. This contains information about how many members are in this Event Stream, the configured DCAT information and the tree:Relation that point to the root fragment. ",
+    "content": "By following the previously mentioned views or by following the pattern {hostname}/{event stream}/{view}, the view page will be shown. This contains information about how many members are in this Event Stream, the configured DCAT information and the tree:Relation that points to the root fragment. ",
     "url": "/fetch/http#retrieving-a-view",
     
     "relUrl": "/fetch/http#retrieving-a-view"
-  },"45": {
+  },"42": {
     "doc": "Read Linked Data Event Streams With HTTP",
     "title": "Retrieving a fragment",
-    "content": "Finally, by following the root fragment from a view or by following the pattern {hostname}/{event stream}/{view}?{fragmentation specific parameters}, the fragment page will be shown. Depending on wether any fragmentations are defined, this either contains a partitioned fragment page or one or multipletree:Relation that point to partitioned fragment pages. These partitioned fragments contain the actual members. ",
+    "content": "Finally, by following the root fragment from a view or by following the pattern {hostname}/{event stream}/{view}?{fragmentation specific parameters}, the fragment page will be shown. Depending on whether any fragmentations are defined, this either contains a partitioned fragment page or one or multipletree:Relation that point to partitioned fragment pages. These partitioned fragments contain the actual members. ",
     "url": "/fetch/http#retrieving-a-fragment",
     
     "relUrl": "/fetch/http#retrieving-a-fragment"
-  },"46": {
+  },"43": {
     "doc": "Read Linked Data Event Streams with the LDES Client",
     "title": "Read Linked Data Event Streams with the LDES Client",
     "content": "As a Linked Data Event Stream is mainly built to be read by machines, the LDES Client can take on a LDES endpoint. The LDES Client will replicate the Event Stream and then synchronise with it to listen for new updates. To use this component, please refer to the LDIO LDES Client Documentation . ",
     "url": "/fetch/ldes-client",
     
     "relUrl": "/fetch/ldes-client"
-  },"47": {
+  },"44": {
     "doc": "Fragment Compaction",
     "title": "Fragment Compaction",
-    "content": "Compaction is a process that allows the server to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the pageSize of the view). Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be “copied” to the new fragment. This process runs entirely in the background. By default, the fragments that have been compacted will remain available for 7 days, PD7, but it can be configured differently. After that period they will be deleted. To configure this interval, please refer to the Configuration Page . %%{init: { 'gitGraph': {'mainBranchName': 'stream'}}}%% gitGraph commit id: \"Fragment 1: 100%\" commit id: \"Fragment 2: 100%\" branch compaction checkout stream commit id: \"Fragment 3: 25%\" type: REVERSE commit id: \"Fragment 4: 25%\" type: REVERSE commit id: \"Fragment 5: 25%\" type: REVERSE checkout compaction commit id: \"Fragment 3/5: 75%\" type: REVERSE checkout stream merge compaction tag: \"compacted Stream\" type: HIGHLIGHT commit id: \"Fragment 6: 75% (Open)\" . ",
+    "content": "Compaction is a process that allows the server to merge immutable fragments that are underutilized (i.e. there are fewer members in the fragment than indicated in the pageSize of the view). Merging the fragments will result in a new fragment and the members and relations of the compacted fragments will be “copied” to the new fragment. This process runs entirely in the background. By default, the fragments that have been compacted will remain available for 7 days, PD7, but it can be configured differently. This to make sure that clients who are in the process of consuming the fragments have the time to continue consumption and get to the end of the Event Stream. When the period expires, the compacted fragments will be deleted. To configure this interval, please refer to the Configuration Page. %%{init: { 'gitGraph': {'mainBranchName': 'stream'}}}%% gitGraph commit id: \"Fragment 1: 100%\" commit id: \"Fragment 2: 100%\" branch compaction checkout stream commit id: \"Fragment 3: 25%\" type: REVERSE commit id: \"Fragment 4: 25%\" type: REVERSE commit id: \"Fragment 5: 25%\" type: REVERSE checkout compaction commit id: \"Fragment 3/5: 75%\" type: REVERSE checkout stream merge compaction tag: \"compacted Stream\" type: HIGHLIGHT commit id: \"Fragment 6: 75% (Open)\" . ",
     "url": "/features/compaction",
     
     "relUrl": "/features/compaction"
+  },"45": {
+    "doc": "Using relative URI's",
+    "title": "Using relative URI’s",
+    "content": "When using the server with relative URI’s, all resources hosted on the server will have a URI relative to the page on which they are found. Note: When using relative urls, requests can not be performed with application/n-quads or application/n-triples as accept-type. This is because these types don’t support resolving the relative URI’s. Some alternatives that do support this are: text/turtle, application/trig, application/ld+json, etc. ",
+    "url": "/features/relative-urls#using-relative-uris",
+    
+    "relUrl": "/features/relative-urls#using-relative-uris"
+  },"46": {
+    "doc": "Using relative URI's",
+    "title": "Using relative URI's",
+    "content": " ",
+    "url": "/features/relative-urls",
+    
+    "relUrl": "/features/relative-urls"
   }
 }

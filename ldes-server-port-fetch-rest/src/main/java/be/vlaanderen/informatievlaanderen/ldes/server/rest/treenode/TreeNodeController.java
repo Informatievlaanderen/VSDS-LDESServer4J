@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrate
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreenodeUrlDecoder;
 import io.micrometer.observation.annotation.Observed;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,48 +36,42 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}/{view}")
-	public ResponseEntity<TreeNode> retrieveLdesFragment(HttpServletResponse response,
-			@PathVariable("view") String view,
-			@RequestParam Map<String, String> requestParameters,
-		    @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
-			@PathVariable("collectionname") String collectionName) {
+	public ResponseEntity<TreeNode> retrieveLdesFragment(@PathVariable("view") String view,
+														 @RequestParam Map<String, String> requestParameters,
+														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
+														 @PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
-		TreeNode treeNode = returnRequestedTreeNode(response, viewName, requestParameters);
-		setContentTypeHeader(language, response);
-		response.setHeader(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE);
+		TreeNode treeNode = getFragment(viewName, requestParameters);
 		return ResponseEntity
 				.ok()
+				.header(CONTENT_TYPE, getContentTypeHeader(language))
+				.header(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE)
+				.header(CACHE_CONTROL, getCacheControlHeader(treeNode))
 				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(treeNode);
 	}
 
-	private TreeNode returnRequestedTreeNode(HttpServletResponse response, ViewName viewName,
-			Map<String, String> fragmentationMap) {
+	private TreeNode getFragment(ViewName viewName, Map<String, String> fragmentationMap) {
 		LdesFragmentRequest ldesFragmentRequest = new LdesFragmentRequest(viewName,
 				fragmentationMap.entrySet()
 						.stream().map(entry -> new FragmentPair(entry.getKey(),
 								TreenodeUrlDecoder.decode(entry.getValue())))
 						.toList());
 
-		TreeNode treeNode = treeNodeFetcher.getFragment(ldesFragmentRequest);
-		setCacheControlHeader(response, treeNode);
-		return treeNode;
-
+		return treeNodeFetcher.getFragment(ldesFragmentRequest);
 	}
 
-	private void setCacheControlHeader(HttpServletResponse response, TreeNode treeNode) {
-		if (treeNode.isImmutable()) {
-			response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
-		} else {
-			response.setHeader(CACHE_CONTROL, restConfig.generateMutableCacheControl());
-		}
+	private String getCacheControlHeader(TreeNode treeNode) {
+		return treeNode.isImmutable()
+				? restConfig.generateImmutableCacheControl()
+				: restConfig.generateMutableCacheControl();
 	}
 
-	private void setContentTypeHeader(String language, HttpServletResponse response) {
+	private String getContentTypeHeader(String language) {
 		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE))
-			response.setHeader(CONTENT_TYPE, RestConfig.TEXT_TURTLE);
+			return RestConfig.TEXT_TURTLE;
 		else
-			response.setHeader(CONTENT_TYPE, language.split(",")[0]);
+			return language.split(",")[0];
 	}
 
 }
