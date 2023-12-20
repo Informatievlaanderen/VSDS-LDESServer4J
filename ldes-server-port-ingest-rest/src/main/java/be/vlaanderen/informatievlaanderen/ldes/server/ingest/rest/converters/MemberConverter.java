@@ -37,11 +37,9 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	private final Map<String, String> memberTypes = new HashMap<>();
-	private final RdfModelConverter rdfModelConverter;
 
-	public MemberConverter(RdfModelConverter rdfModelConverter) {
+	public MemberConverter() {
 		super(MediaType.ALL);
-		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -52,7 +50,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	@Override
 	protected Member readInternal(@NotNull Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
+		Lang lang = RdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
 				RdfFormatException.RdfFormatContext.INGEST);
 		Model memberModel = RdfModelConverter
 				.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);

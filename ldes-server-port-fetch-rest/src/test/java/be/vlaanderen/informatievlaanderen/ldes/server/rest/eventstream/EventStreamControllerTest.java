@@ -65,8 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = { EventStreamController.class, RestConfig.class,
 		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
-		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
-		PrefixConstructor.class, RdfModelConverter.class
+		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class, PrefixConstructor.class
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";

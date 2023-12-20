@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.IsIsomorphic;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling.AdminRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
@@ -33,8 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({ "test", "rest" })
 @ContextConfiguration(classes = { DcatViewsRestController.class, PrefixAdderImpl.class,
-		HttpModelConverter.class, AdminRestResponseEntityExceptionHandler.class, PrefixConstructor.class,
-		RdfModelConverter.class})
+		HttpModelConverter.class, AdminRestResponseEntityExceptionHandler.class, PrefixConstructor.class })
 class DcatViewsRestControllerTest {
 
 	private final static String COLLECTION_NAME = "collectionName";

@@ -39,7 +39,7 @@ COPY --from=app-stage ldes-server-compaction/target/ldes-server-compaction-jar-w
 COPY --from=app-stage ldes-server-instrumentation/target/ldes-server-instrumentation-jar-with-dependencies.jar ./lib/
 
 ## Dependency for pyroscope
-RUN apk --no-cache add libstdc++
+RUN apk add libstdc++
 
 RUN adduser -D -u 2000 ldes
 USER ldes

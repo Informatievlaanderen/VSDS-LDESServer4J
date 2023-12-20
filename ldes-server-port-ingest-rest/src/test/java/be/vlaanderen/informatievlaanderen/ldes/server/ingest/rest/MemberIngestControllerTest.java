@@ -46,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { MemberConverter.class, MemberIngestController.class,
-		IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class })
+		IngestionRestResponseEntityExceptionHandler.class })
 class MemberIngestControllerTest {
 
 	@Autowired

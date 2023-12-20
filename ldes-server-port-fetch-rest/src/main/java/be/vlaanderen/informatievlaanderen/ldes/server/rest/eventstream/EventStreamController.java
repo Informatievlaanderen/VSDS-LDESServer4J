@@ -23,7 +23,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 	private final EventStreamServiceSpi eventStreamService;
 
 	public EventStreamController(RestConfig restConfig, CachingStrategy cachingStrategy,
-								 EventStreamServiceSpi eventStreamService) {
+			EventStreamServiceSpi eventStreamService) {
 		this.restConfig = restConfig;
 		this.cachingStrategy = cachingStrategy;
 		this.eventStreamService = eventStreamService;
@@ -31,7 +31,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 
 	@GetMapping("/")
 	public Model getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language, HttpServletResponse response) {
-		response.setContentType(getContentTypeHeader(language));
+		setContentTypeHeader(language, response);
 		return eventStreamService.getComposedDcat();
 	}
 
@@ -40,23 +40,24 @@ public class EventStreamController implements OpenApiEventStreamController {
 	@GetMapping(value = "{collectionname}")
 	public ResponseEntity<EventStreamResponse> retrieveLdesFragment(
 			@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
-			@PathVariable("collectionname") String collectionName) {
+			HttpServletResponse response, @PathVariable("collectionname") String collectionName) {
 		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
+
+		response.setHeader(CACHE_CONTROL, restConfig.generateImmutableCacheControl());
+		response.setHeader(CONTENT_DISPOSITION, RestConfig.INLINE);
+		setContentTypeHeader(language, response);
 
 		return ResponseEntity
 				.ok()
-				.header(CONTENT_TYPE, getContentTypeHeader(language))
-				.header(CACHE_CONTROL, restConfig.generateImmutableCacheControl())
-				.header(CONTENT_DISPOSITION, RestConfig.INLINE)
 				.eTag(cachingStrategy.generateCacheIdentifier(eventStream.getCollection(), language))
 				.body(eventStream);
 	}
 
-	private String getContentTypeHeader(String language) {
+	private void setContentTypeHeader(String language, HttpServletResponse response) {
 		if (language.equals(MediaType.ALL_VALUE) || language.contains(MediaType.TEXT_HTML_VALUE)) {
-			return RestConfig.TEXT_TURTLE;
+			response.setHeader(CONTENT_TYPE, RestConfig.TEXT_TURTLE);
 		} else {
-			return language.split(",")[0];
+			response.setHeader(CONTENT_TYPE, language.split(",")[0]);
 		}
 	}
 }

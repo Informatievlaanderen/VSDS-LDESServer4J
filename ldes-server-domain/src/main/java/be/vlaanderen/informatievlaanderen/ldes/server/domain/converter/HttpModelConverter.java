@@ -15,17 +15,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 public class HttpModelConverter implements HttpMessageConverter<Model> {
 
 	private final PrefixAdder prefixAdder;
-	private final RdfModelConverter rdfModelConverter;
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 
-	public HttpModelConverter(PrefixAdder prefixAdder, RdfModelConverter rdfModelConverter) {
+	public HttpModelConverter(PrefixAdder prefixAdder) {
 		this.prefixAdder = prefixAdder;
-		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -46,16 +45,15 @@ public class HttpModelConverter implements HttpMessageConverter<Model> {
 	@Override
 	public void write(Model model, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
-		rdfModelConverter.checkLangForRelativeUrl(lang);
 
-		RDFDataMgr.write(outputMessage.getBody(), prefixAdder.addPrefixesToModel(model), lang);
+		RDFDataMgr.write(outputMessage.getBody(), prefixAdder.addPrefixesToModel(model),
+				getLang(contentType, REST_ADMIN));
 	}
 
 	@Override
 	public Model read(Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
+		Lang lang = getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
 		return RdfModelConverter.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8),
 				lang);
 	}

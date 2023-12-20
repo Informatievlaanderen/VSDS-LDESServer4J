@@ -2,10 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 @Observed
@@ -27,11 +26,9 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
-	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
+	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamResponseConverter = eventStreamResponseConverter;
-		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -59,9 +56,7 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	public void write(@NotNull EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
-		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
-		rdfModelConverter.checkLangForRelativeUrl(lang);
 
-		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, lang);
+		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, getLang(contentType, REST_ADMIN));
 	}
 }

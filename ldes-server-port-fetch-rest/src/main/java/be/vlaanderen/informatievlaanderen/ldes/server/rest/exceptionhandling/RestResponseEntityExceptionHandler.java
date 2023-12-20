@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RelativeUrlException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,7 @@ public class RestResponseEntityExceptionHandler
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
-	@ExceptionHandler(value = { RdfFormatException.class, RelativeUrlException.class })
+	@ExceptionHandler(value = { RdfFormatException.class })
 	protected ResponseEntity<Object> handleRdfFormatException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);

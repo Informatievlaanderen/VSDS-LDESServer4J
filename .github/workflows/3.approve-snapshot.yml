@@ -5,7 +5,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ldes-server
+  IMAGE_NAME: ldi-orchestrator
 
 jobs:
   approve-snapshot:

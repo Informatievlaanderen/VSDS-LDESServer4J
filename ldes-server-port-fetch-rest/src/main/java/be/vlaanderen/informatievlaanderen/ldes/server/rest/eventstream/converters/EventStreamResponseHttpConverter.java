@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converte
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
@@ -16,16 +15,15 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import java.io.IOException;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
-	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
+	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter) {
 		this.eventStreamResponseConverter = eventStreamResponseConverter;
-		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -52,8 +50,7 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 	@Override
 	public void write(EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
-		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
+		Lang rdfFormat = getLang(contentType, FETCH);
 		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
 		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, rdfFormat);
 	}

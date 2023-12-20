@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.converters.TreeNodeHttpConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
@@ -13,7 +12,7 @@ public class TreeViewWebConfig {
 
 	@Bean
 	public HttpMessageConverter<TreeNode> treeNodeHttpConverter(
-			final TreeNodeConverter treeNodeConverter, final RdfModelConverter rdfModelConverter) {
-		return new TreeNodeHttpConverter(treeNodeConverter, rdfModelConverter);
+			final TreeNodeConverter treeNodeConverter) {
+		return new TreeNodeHttpConverter(treeNodeConverter);
 	}
 }

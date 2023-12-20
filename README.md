@@ -108,23 +108,6 @@ The main functionalities of the server are ingesting and fetching, these profile
 - http-ingest: requires at least one queue, one fragmentation and one storage profile.
 - http-fetch: requires at least one storage profile
 
-#### Config
-
-To run the server, some properties must be configured. The minimal config can be found [here](ldes-server-application/examples/minimal-config-application.yml)
-
-##### Overview server config
-
-  ```yaml
-ldes-server:
-  host-name: "http://localhost:8080"
-  use-relative-url: true
-  ```
-| Property              | Description                                                                          | Required | Default | Example                      | Supported values    |
-|:----------------------|:-------------------------------------------------------------------------------------|:---------|:--------|:-----------------------------|:--------------------|
-| host-name             | The host name of the server, used as a prefix for resources hosted on the server.    | Yes      | N/A     | http://localhost:8080        | HTTP and HTTPS urls |
-| use-relative-url      | Determines if the resources hosted on the server are constructed with a relative URI | No       | false   | true, false                  | true, false         |
-
-
 ##### Example Serving Static Content
 
   ```yaml
@@ -141,18 +124,6 @@ spring:
 Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
 A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-admin/README.md#dcat-endpoints).
-
-##### Relative urls
-
-To enable relative urls on the server, set the following property:
-  ```yaml
-ldes-server:
-  use-relative-url: true
-  ```
-When fetching any page using relative urls, any resource hosted on the server will have a URI relative to the requested page.
-
-> **Note**: When using relative urls, GET requests can not be performed with N-quads or triples as accept-type.
-> This is because these types don't support resolving the relative URI's
 
 ### Docker Setup
 

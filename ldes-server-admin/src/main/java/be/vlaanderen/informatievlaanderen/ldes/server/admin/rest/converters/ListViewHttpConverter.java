@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.ext.com.google.common.reflect.TypeToken;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter.getLang;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 
 @Observed
@@ -29,11 +29,9 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 public class ListViewHttpConverter implements GenericHttpMessageConverter<List<ViewSpecification>> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final ViewSpecificationConverter viewSpecificationConverter;
-	private final RdfModelConverter rdfModelConverter;
 
-	public ListViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter, RdfModelConverter rdfModelConverter) {
+	public ListViewHttpConverter(ViewSpecificationConverter viewSpecificationConverter) {
 		this.viewSpecificationConverter = viewSpecificationConverter;
-		this.rdfModelConverter = rdfModelConverter;
 	}
 
 	@Override
@@ -84,8 +82,7 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 	@Override
 	public void write(List<ViewSpecification> views, MediaType contentType,
 					  HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
-		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
+		Lang rdfFormat = getLang(contentType, FETCH);
 		Model model = ModelFactory.createDefaultModel();
 		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
 

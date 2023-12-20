@@ -84,7 +84,7 @@
         <junit.version>4.13.2</junit.version>
         <junit-platform-suite.version>1.10.1</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.10.1</jupiter.version>
+        <jupiter.version>5.10.0</jupiter.version>
         <mockito.version>5.7.0</mockito.version>
         <byte-buddy.version>1.14.10</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.11.0</de.flapdoodle.embed.mongo.version>
@@ -100,7 +100,7 @@
         <spring.aop.version>3.2.0</spring.aop.version>
         <spring-boot.actuator.version>3.2.0</spring-boot.actuator.version>
         <micrometer-prometheus.version>1.12.0</micrometer-prometheus.version>
-        <micrometer-tracing.version>1.2.1</micrometer-tracing.version>
+        <micrometer-tracing.version>1.2.0</micrometer-tracing.version>
         <zipkin-reporter.version>2.16.4</zipkin-reporter.version>
         <loki.version>1.4.2</loki.version>
 
