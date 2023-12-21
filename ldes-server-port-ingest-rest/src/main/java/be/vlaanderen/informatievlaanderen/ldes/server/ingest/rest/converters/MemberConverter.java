@@ -12,6 +12,7 @@ import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpInputMessage;
@@ -25,7 +26,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -54,8 +54,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
 				RdfFormatException.RdfFormatContext.INGEST);
-		Model memberModel = RdfModelConverter
-				.fromString(new String(inputMessage.getBody().readAllBytes(), StandardCharsets.UTF_8), lang);
+		Model memberModel = RDFParser.source(inputMessage.getBody()).lang(lang).toModel();
 
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest();
