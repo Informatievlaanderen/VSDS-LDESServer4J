@@ -59,7 +59,6 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		return memberPropertiesEntityRepository.findById(id).map(memberPropertiesEntityMapper::toMemberProperties);
 	}
 
-	// TODO TVB: 21/12/23 test
 	@Override
 	public void addViewToAll(ViewName viewName) {
 		final var query = new Query();

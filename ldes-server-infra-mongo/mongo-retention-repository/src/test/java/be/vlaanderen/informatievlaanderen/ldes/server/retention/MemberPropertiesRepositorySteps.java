@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTest {
@@ -141,5 +142,24 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		var retentionPolicy = new TimeAndVersionBasedRetentionPolicy(duration, versionsToKeep);
 		retrievedMemberProperties =
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, retentionPolicy).toList();
+	}
+
+	@And("I add the view with name {string} to the MemberProperties with id {string}")
+	public void iAddTheViewWithNameToTheMemberPropertiesWithId(String viewName, String id) {
+		memberProperties
+				.stream()
+				.filter(prop -> id.equals(prop.getId()))
+				.findFirst()
+				.ifPresent(prop -> prop.addViewReference(viewName));
+	}
+
+	@And("I bulk add the view with name {string} to the MemberProperties")
+	public void iBulkAddTheViewWithNameToTheMemberProperties(String viewName) {
+		memberPropertiesRepository.addViewToAll(ViewName.fromString(viewName));
+	}
+
+	@Then("the MemberProperties all contain a reference to view {string}")
+	public void theMemberPropertiesAllContainAReferenceToView(String viewName) {
+		assertThat(retrievedMemberProperties).allMatch(prop -> prop.containsViewReference(viewName));
 	}
 }
