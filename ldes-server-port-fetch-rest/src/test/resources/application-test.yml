@@ -1,9 +1,2 @@
 ldes-server:
   hostname: "http://localhost:8080"
-  collections:
-    - hostname: "http://localhost:8080"
-      collectionname: "mobility-hindrances"
-      shape: "https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"
-      membertype: "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
-      versionOf: "http://purl.org/dc/terms/isVersionOf"
-      timestampPath: "http://www.w3.org/ns/prov#generatedAtTime"
