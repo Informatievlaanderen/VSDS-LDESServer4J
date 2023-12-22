@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 
 @Configuration
 public class EventStreamWebConfig {
+	public static final String DEFAULT_RDF_MEDIA_TYPE = "text/turtle";
 
 	@Bean
 	public HttpMessageConverter<EventStreamResponse> eventStreamResponseHttpMessageConverter(
