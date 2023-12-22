@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTest {
@@ -48,17 +49,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@When("I save the MemberProperties using the MemberPropertiesRepository")
 	public void iSaveTheMemberPropertiesUsingTheMemberPropertiesRepository() {
-		memberProperties.forEach(memberPropertiesRepository::save);
-	}
-
-	@When("I save the MemberProperties without view using the MemberPropertiesRepository")
-	public void iSaveTheMemberPropertiesWithoutViewUsingTheMemberPropertiesRepository() {
-		memberProperties.forEach(memberPropertiesRepository::saveMemberPropertiesWithoutViews);
-	}
-
-	@And("I add the view with name {string} to the MemberProperties with id {string}")
-	public void addViewToMember(String viewName, String memberId) {
-		memberPropertiesRepository.addViewReference(memberId, viewName);
+		memberProperties.forEach(memberPropertiesRepository::insert);
 	}
 
 	@And("I retrieve the MemberProperties with id {string}")
@@ -151,5 +142,29 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		var retentionPolicy = new TimeAndVersionBasedRetentionPolicy(duration, versionsToKeep);
 		retrievedMemberProperties =
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, retentionPolicy).toList();
+	}
+
+	@And("I add the view with name {string} to the MemberProperties with id {string}")
+	public void iAddTheViewWithNameToTheMemberPropertiesWithId(String viewName, String id) {
+		memberProperties
+				.stream()
+				.filter(prop -> id.equals(prop.getId()))
+				.findFirst()
+				.ifPresent(prop -> prop.addViewReference(viewName));
+	}
+
+	@And("I bulk add the view with name {string} to the MemberProperties")
+	public void iBulkAddTheViewWithNameToTheMemberProperties(String viewName) {
+		memberPropertiesRepository.addViewToAll(ViewName.fromString(viewName));
+	}
+
+	@Then("the MemberProperties all contain a reference to view {string}")
+	public void theMemberPropertiesAllContainAReferenceToView(String viewName) {
+		assertThat(retrievedMemberProperties).allMatch(prop -> prop.containsViewReference(viewName));
+	}
+
+	@Then("the MemberProperties do not contain a reference to view {string}")
+	public void theMemberPropertiesDoNotContainAReferenceToView(String viewName) {
+		assertThat(retrievedMemberProperties).noneMatch(prop -> prop.containsViewReference(viewName));
 	}
 }
