@@ -2,8 +2,8 @@ Feature: Execute RetentionService
 
   Background:
     Given an EventStream with the following properties
-      | collection          | memberType                                                 | timestampPath                             | versionOfPath                        |
-      | mobility-hindrances | https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder | http://www.w3.org/ns/prov#generatedAtTime | http://purl.org/dc/terms/isVersionOf |
+      | collection          |  | timestampPath                             | versionOfPath                        |
+      | mobility-hindrances |  | http://www.w3.org/ns/prov#generatedAtTime | http://purl.org/dc/terms/isVersionOf |
     And the following Members are ingested
       | id                                       | collectionName      | versionOf                              | timestamp               | sequenceNumber |
       | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2013-07-01T00:00:00.000 | 1              |

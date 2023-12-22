@@ -61,10 +61,10 @@ class MemberIngestControllerTest {
 	@BeforeEach
 	void setUp() {
 		Stream.of(
-				new EventStream("mobility-hindrances", "timestampPath", "versionOfPath",
-						"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"),
-				new EventStream("restaurant", "timestampPath", "versionOfPath",
-						"http://example.com/restaurant#MenuItem"))
+				new EventStream("mobility-hindrances", "timestampPath", "versionOfPath"
+                ),
+				new EventStream("restaurant", "timestampPath", "versionOfPath"
+                ))
 				.map(EventStreamCreatedEvent::new)
 				.forEach(eventPublisher::publishEvent);
 	}

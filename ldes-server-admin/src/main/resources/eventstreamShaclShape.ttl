@@ -116,11 +116,6 @@ shsh:ShapeShape
 		sh:nodeKind	sh:IRIOrLiteral ;   # targetNode-nodeKind
 	] ;
 	sh:property [
-      	sh:minCount 1;
-		sh:path sh:targetClass ;
-		sh:nodeKind sh:IRI ;            # targetClass-nodeKind
-	] ;
-	sh:property [
 		sh:path sh:targetSubjectsOf ;
 		sh:nodeKind sh:IRI ;            # targetSubjectsOf-nodeKind
 	] ;

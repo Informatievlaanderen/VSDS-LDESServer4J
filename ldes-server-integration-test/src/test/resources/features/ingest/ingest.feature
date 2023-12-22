@@ -18,8 +18,8 @@ Feature: LDES Server basic Ingest functionality
   Scenario: Server Supports Multi LDES
     Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
     And I create the eventstream "data/input/eventstreams/activity.ttl"
-    When I ingest 2 members of type "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
-    And I ingest 5 members of type "data/input/members/activity.template.ttl" to the collection "activities"
+    When I ingest 2 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
+    And I ingest 5 members of template "data/input/members/activity.template.ttl" to the collection "activities"
     Then the LDES "mobility-hindrances" contains 2 members
     And the LDES "activities" contains 5 members
     When I fetch the root "paged" fragment of "mobility-hindrances"

@@ -14,27 +14,25 @@ public class EventStreamResponse {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final String memberType;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
 	private final DcatDataset dcatDataset;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-			String memberType, List<ViewSpecification> views,
+							   List<ViewSpecification> views,
 			Model shacl, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-		this.memberType = memberType;
 		this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
 		this.dcatDataset = dcatDataset != null ? dcatDataset : new DcatDataset(collection);
 	}
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-			String memberType, List<ViewSpecification> views,
+							   List<ViewSpecification> views,
 			Model shacl) {
-		this(collection, timestampPath, versionOfPath, memberType, views, shacl, null);
+		this(collection, timestampPath, versionOfPath, views, shacl, null);
 	}
 
 	public String getCollection() {
@@ -47,10 +45,6 @@ public class EventStreamResponse {
 
 	public String getVersionOfPath() {
 		return versionOfPath;
-	}
-
-	public String getMemberType() {
-		return memberType;
 	}
 
 	public List<ViewSpecification> getViews() {
@@ -74,7 +68,6 @@ public class EventStreamResponse {
 		EventStreamResponse that = (EventStreamResponse) o;
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
-				&& Objects.equals(memberType, that.memberType)
 				&& shacl.isIsomorphicWith(that.shacl)
 				&& new HashSet<>(views).containsAll(that.views)
 				&& new HashSet<>(that.views).containsAll(views)
@@ -83,6 +76,6 @@ public class EventStreamResponse {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, memberType, views, shacl, dcatDataset);
+		return Objects.hash(collection, timestampPath, versionOfPath, views, shacl, dcatDataset);
 	}
 }
