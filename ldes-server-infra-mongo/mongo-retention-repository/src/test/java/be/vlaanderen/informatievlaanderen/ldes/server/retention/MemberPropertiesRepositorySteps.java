@@ -162,4 +162,9 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 	public void theMemberPropertiesAllContainAReferenceToView(String viewName) {
 		assertThat(retrievedMemberProperties).allMatch(prop -> prop.containsViewReference(viewName));
 	}
+
+	@Then("the MemberProperties do not contain a reference to view {string}")
+	public void theMemberPropertiesDoNotContainAReferenceToView(String viewName) {
+		assertThat(retrievedMemberProperties).noneMatch(prop -> prop.containsViewReference(viewName));
+	}
 }

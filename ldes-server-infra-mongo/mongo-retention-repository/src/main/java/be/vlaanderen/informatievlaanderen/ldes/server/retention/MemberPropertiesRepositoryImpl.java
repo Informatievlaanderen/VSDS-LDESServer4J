@@ -62,6 +62,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public void addViewToAll(ViewName viewName) {
 		final var query = new Query();
+		query.addCriteria(Criteria.where(COLLECTION).is(viewName.getCollectionName()));
 		final var update = new Update().addToSet(VIEWS, viewName.asString());
 		final var bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MemberPropertiesEntity.class);
 		bulkOps.updateMulti(query, update);
