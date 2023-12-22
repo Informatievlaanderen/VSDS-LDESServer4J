@@ -27,6 +27,7 @@ import java.util.Objects;
 @Observed
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
+
 	private final RdfModelConverter rdfModelConverter;
 
 	public MemberConverter(RdfModelConverter rdfModelConverter) {

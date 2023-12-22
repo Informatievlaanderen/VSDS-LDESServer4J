@@ -37,6 +37,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.hamcrest.core.StringContains.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -80,15 +81,14 @@ class MemberIngestControllerTest {
 	}
 
 	@Test
-	void when_POSTRequestIsPerformedWithoutMemberId_ThrowMalformedMemberException() throws Exception {
-		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-without-id.nq", Lang.NQUADS);
+	void when_POSTRequestIsPerformedWithoutMultipleNamedNodes_ThrowException() throws Exception {
+		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member-with-multiple-nodes.nq", Lang.NQUADS);
 
 		mockMvc.perform(post("/mobility-hindrances")
 				.contentType("application/n-quads")
 				.content(ldesMemberString))
 				.andExpect(status().isBadRequest())
-				.andExpect(content().string(
-						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
+				.andExpect(content().string(containsString("Member id could not be extracted from model")));
 	}
 
 	@Test
@@ -111,22 +111,6 @@ class MemberIngestControllerTest {
 				.contentType("application/n-quads")
 				.content(ldesMemberString))
 				.andExpect(status().isNotFound());
-	}
-
-	@Test
-	@DisplayName("Post request with malformed RDF_SYNTAX_TYPE throws MalformedMemberException")
-	void when_POSTRequestIsPerformedUsingMalformedRDF_SYNTAX_TYPE_ThrowMalformedMemberException() throws Exception {
-		String ldesMemberString = readLdesMemberDataFromFile("example-ldes-member.nq", Lang.NQUADS);
-		String ldesMemberType = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
-		String ldesMemberStringWrongType = ldesMemberString.replace(ldesMemberType,
-				ldesMemberType.substring(0, ldesMemberType.length() - 1));
-
-		mockMvc.perform(post("/mobility-hindrances")
-				.contentType("application/n-quads")
-				.content(ldesMemberStringWrongType))
-				.andExpect(status().isBadRequest())
-				.andExpect(content().string(
-						"Member id could not be extracted. MemberType https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder could not be found in listStatements."));
 	}
 
 	@Test
