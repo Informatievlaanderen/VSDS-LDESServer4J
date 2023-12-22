@@ -28,3 +28,12 @@ Feature: LDES Server basic Ingest functionality
     When I fetch the root "paged" fragment of "activities"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 5 members
+
+  Scenario: Server supports multiple member types
+    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
+    When I ingest 2 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
+    And I ingest 5 members of template "data/input/members/activity.template.ttl" to the collection "mobility-hindrances"
+    Then the LDES "mobility-hindrances" contains 7 members
+    When I fetch the root "paged" fragment of "mobility-hindrances"
+    And I fetch the next fragment through the first "Relation"
+    Then this fragment contains 7 members
