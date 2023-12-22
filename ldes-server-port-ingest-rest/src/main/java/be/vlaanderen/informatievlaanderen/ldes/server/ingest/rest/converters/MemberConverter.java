@@ -62,7 +62,6 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 		throw new UnsupportedOperationException();
 	}
 
-	// TODO TVB: 22/12/23 test
 	private String extractMemberId(Model model, String collectionName) {
 		final var ids = model.listSubjects().filterKeep(RDFNode::isURIResource).toSet();
 		if (ids.size() != 1) {

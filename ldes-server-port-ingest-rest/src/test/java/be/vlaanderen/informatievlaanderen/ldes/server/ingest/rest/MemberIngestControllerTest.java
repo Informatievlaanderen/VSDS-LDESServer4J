@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.MemberConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.CollectionNameValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParserBuilder;
@@ -47,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { MemberConverter.class, MemberIngestController.class,
-		IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class })
+		IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, CollectionNameValidator.class})
 class MemberIngestControllerTest {
 
 	@Autowired
@@ -58,6 +59,9 @@ class MemberIngestControllerTest {
 
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
+
+	@Autowired
+	private CollectionNameValidator collectionNameValidator;
 
 	@BeforeEach
 	void setUp() {
