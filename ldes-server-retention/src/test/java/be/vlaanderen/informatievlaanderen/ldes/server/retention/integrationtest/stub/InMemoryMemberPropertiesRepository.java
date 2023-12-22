@@ -24,6 +24,9 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
 
     @Override
     public void insert(MemberProperties memberProperties) {
+        if (memberPropertiesMap.containsKey(memberProperties.getId())) {
+            throw new IllegalArgumentException("MemberProperties already inserted!");
+        }
         memberPropertiesMap.put(memberProperties.getId(), memberProperties);
     }
 
