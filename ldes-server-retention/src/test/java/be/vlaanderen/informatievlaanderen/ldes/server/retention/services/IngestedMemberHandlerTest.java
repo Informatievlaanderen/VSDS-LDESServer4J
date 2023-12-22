@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.Membe
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.EventStreamCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.ViewCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -32,6 +33,7 @@ class IngestedMemberHandlerTest {
 	private IngestedMemberHandler ingestedMemberHandler;
 	private MemberPropertiesRepository memberPropertiesRepository;
 	private EventStreamCollection eventStreamCollection;
+	private ViewCollection viewCollection;
 	@Captor
 	ArgumentCaptor<MemberProperties> captor;
 
@@ -40,7 +42,8 @@ class IngestedMemberHandlerTest {
 		captor = ArgumentCaptor.forClass(MemberProperties.class);
 		memberPropertiesRepository = mock(MemberPropertiesRepository.class);
 		eventStreamCollection = mock(EventStreamCollection.class);
-		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, eventStreamCollection);
+		viewCollection = mock(ViewCollection.class);
+		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, eventStreamCollection, viewCollection);
 		event = new MemberIngestedEvent(readModelFromFile("member.ttl"), MEMBER_ID, COLLECTION, 0L);
 	}
 
@@ -50,7 +53,7 @@ class IngestedMemberHandlerTest {
 
 		ingestedMemberHandler.handleMemberIngestedEvent(event);
 
-		verify(memberPropertiesRepository).saveMemberPropertiesWithoutViews(captor.capture());
+		verify(memberPropertiesRepository).insert(captor.capture());
 		assertEquals("version", captor.getValue().getVersionOf());
 		assertEquals(LocalDateTime.parse("2022-09-28T07:14:00.000"), captor.getValue().getTimestamp());
 	}
@@ -62,7 +65,7 @@ class IngestedMemberHandlerTest {
 
 		ingestedMemberHandler.handleMemberIngestedEvent(event);
 
-		verify(memberPropertiesRepository).saveMemberPropertiesWithoutViews(captor.capture());
+		verify(memberPropertiesRepository).insert(captor.capture());
 		assertNull(captor.getValue().getVersionOf());
 		assertNull(captor.getValue().getTimestamp());
 	}

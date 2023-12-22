@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
+import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -37,6 +38,11 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 
 	private final RetentionConfigExtractor retentionConfigExtractor = new RetentionConfigExtractor();
 	public static final String MEMBER_TEMPLATE_FILENAME = "features/data/memberTemplate.ttl";
+
+	@Before
+	public void initialization() {
+		memberPropertiesRepository.removeMemberPropertiesOfCollection("mobility-hindrances");
+	}
 
 	@DataTableType
 	public EventStream EventStreamEntryTransformer(Map<String, String> row) {
