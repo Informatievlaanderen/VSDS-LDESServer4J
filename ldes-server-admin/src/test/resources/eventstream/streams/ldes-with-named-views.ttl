@@ -28,7 +28,6 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    tree:view col:view2 .
 
 col:shape a sh:NodeShape ;
-   sh:targetClass mobiliteit:Mobiliteitshinder ;
    sh:deactivated true .
 
 view1:description  rdf:type  tree:ViewDescription ;

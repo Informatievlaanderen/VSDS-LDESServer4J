@@ -23,6 +23,6 @@ For more details, please refer to the Swagger API under the `base` definition.
 
 ## Member Conformity
 
-Every Event Stream contains a shape that mentions a targetClass. 
-This is the type should be the same as the `rdf:type` of the root object you try to ingest.
+Only one member can be ingested at a time. Bulk ingest is (not yet) supported.
+Every model that is sent for ingestion, should contain exactly one named node.
 Otherwise it will be rejected.
