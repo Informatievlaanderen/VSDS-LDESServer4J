@@ -83,7 +83,7 @@ class EventStreamControllerTest {
 		hostname = "http://localhost:8080";
 		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", "memberType", List.of(),
+				"http://purl.org/dc/terms/isVersionOf", List.of(),
 				ModelFactory.createDefaultModel());
 
 		Model shacl = createDefaultModel().add(createResource(hostname + "/" + COLLECTION),

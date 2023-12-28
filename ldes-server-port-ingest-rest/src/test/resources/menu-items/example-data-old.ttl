@@ -7,16 +7,3 @@
     :category :mainDish ;
     :price "6.99"^^xsd:decimal ;
     :ingredients "Spaghetti, ground beef, tomatoes, onions, garlic, herbs" .
-
-:menuItem2 a :MenuItem ;
-    :name "Caprese Salad" ;
-    :category :starter;
-    :price "5.99"^^xsd:decimal ;
-    :ingredients "Mozzarella, tomatoes, basil, olive oil, balsamic vinegar" .
-
-:menuItem3 a :MenuItem ;
-    :name "Tiramisu" ;
-    :category :dessert;
-    :price "4.99"^^xsd:decimal ;
-    :ingredients "Mascarpone, heavy cream, eggs, sugar, espresso, ladyfingers" .
-

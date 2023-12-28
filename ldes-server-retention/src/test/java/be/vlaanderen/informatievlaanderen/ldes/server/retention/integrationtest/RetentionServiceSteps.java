@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RetentionServiceSteps extends RetentionIntegrationTest {
 
-	private RetentionConfigExtractor retentionConfigExtractor = new RetentionConfigExtractor();
+	private final RetentionConfigExtractor retentionConfigExtractor = new RetentionConfigExtractor();
 	public static final String MEMBER_TEMPLATE_FILENAME = "features/data/memberTemplate.ttl";
 
 	@Before
@@ -49,8 +49,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 		return new EventStream(
 				row.get("collection"),
 				row.get("timestampPath"),
-				row.get("versionOfPath"),
-				row.get("memberType"));
+				row.get("versionOfPath")
+        );
 	}
 
 	@DataTableType

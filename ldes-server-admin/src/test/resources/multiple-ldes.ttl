@@ -36,8 +36,7 @@ server:name2  rdf:type      ldes:EventStream, dcat:Dataset ;
         tree:view           name2:view1 ;
         tree:shape          name2:shape .
 
-name2:shape a sh:NodeShape ;
-    sh:targetClass mobiliteit:Mobiliteitshinder .
+name2:shape a sh:NodeShape .
 
 view2:description  rdf:type  tree:ViewDescription ;
         tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int>;
@@ -60,8 +59,7 @@ server:name1  rdf:type      ldes:EventStream, dcat:Dataset ;
         tree:view           name1:view2 , name1:view3 ;
         tree:shape          name1:shape .
 
-name1:shape a sh:NodeShape ;
-    sh:targetClass mobiliteit:Mobiliteitshinder .
+name1:shape a sh:NodeShape .
 
 name1:view3 a tree:Node ;
   tree:viewDescription  view3:description .

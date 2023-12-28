@@ -1,20 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MalformedMemberIdException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -26,17 +22,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
-import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
 @Observed
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
-	private final Map<String, String> memberTypes = new HashMap<>();
+
 	private final RdfModelConverter rdfModelConverter;
 
 	public MemberConverter(RdfModelConverter rdfModelConverter) {
@@ -60,12 +51,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 				.getRequest();
 		String collectionName = request.getRequestURI().replace(request.getContextPath() + "/", "");
 
-		String memberType = memberTypes.get(collectionName);
-		if (memberType == null) {
-			throw new MissingResourceException("eventstream", collectionName);
-		}
-
-		String memberId = extractMemberId(memberModel, memberType, collectionName);
+		String memberId = extractMemberId(memberModel, collectionName);
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 
@@ -75,23 +61,13 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 		throw new UnsupportedOperationException();
 	}
 
-	@EventListener
-	public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
-		EventStream eventStream = event.eventStream();
-		memberTypes.put(eventStream.getCollection(), eventStream.getMemberType());
-	}
-
-	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		memberTypes.remove(event.collectionName());
-	}
-
-	private String extractMemberId(Model model, String memberType, String collectionName) {
-		return model
-				.listStatements(null, RDF_SYNTAX_TYPE, createResource(memberType))
-				.nextOptional()
-				.map(statement -> collectionName + "/" + statement.getSubject().toString())
-				.orElseThrow(() -> new MalformedMemberIdException(memberType));
+	private String extractMemberId(Model model, String collectionName) {
+		final var ids = model.listSubjects().filterKeep(RDFNode::isURIResource).toSet();
+		if (ids.size() != 1) {
+			throw new MemberIdNotFoundException(model);
+		} else {
+			return collectionName + "/" + ids.iterator().next().toString();
+		}
 	}
 
 }
