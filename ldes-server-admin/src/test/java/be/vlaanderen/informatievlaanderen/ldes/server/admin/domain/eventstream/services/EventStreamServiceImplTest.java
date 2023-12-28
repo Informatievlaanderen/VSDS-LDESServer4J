@@ -44,7 +44,7 @@ class EventStreamServiceImplTest {
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel());
 	private DcatDataset dataset;
-	private EventStreamResponse EVENT_STREAM_RESPONSE_WITH_DATASET;
+	private EventStreamResponse eventStreamResponseWithDataset;
 	@Mock
 	private EventStreamRepository eventStreamRepository;
 	@Mock
@@ -70,7 +70,7 @@ class EventStreamServiceImplTest {
 				eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
-		EVENT_STREAM_RESPONSE_WITH_DATASET = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
+		eventStreamResponseWithDataset = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 				VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel(), dataset);
 	}
 
@@ -139,7 +139,7 @@ class EventStreamServiceImplTest {
 
 		EventStreamResponse eventStreamResponse = service.retrieveEventStream(COLLECTION);
 
-		assertThat(eventStreamResponse).isEqualTo(EVENT_STREAM_RESPONSE_WITH_DATASET);
+		assertThat(eventStreamResponse).isEqualTo(eventStreamResponseWithDataset);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);

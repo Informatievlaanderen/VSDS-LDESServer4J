@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFWriter;
 
 public class MemberIdNotFoundException extends RuntimeException {
 
@@ -12,7 +14,8 @@ public class MemberIdNotFoundException extends RuntimeException {
 
 	@Override
 	public String getMessage() {
-		return "Member id could not be extracted from model: %n%n%s".formatted(model.listStatements().toList());
+		final String modelAsString = RDFWriter.source(model).lang(Lang.TURTLE).asString();
+		return "Member id could not be extracted from model: %n%n%s".formatted(modelAsString);
 	}
 
 }

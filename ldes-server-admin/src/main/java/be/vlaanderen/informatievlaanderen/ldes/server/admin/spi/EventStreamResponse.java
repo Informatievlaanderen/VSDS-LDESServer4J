@@ -19,8 +19,7 @@ public class EventStreamResponse {
 	private final DcatDataset dcatDataset;
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-							   List<ViewSpecification> views,
-			Model shacl, DcatDataset dcatDataset) {
+							   List<ViewSpecification> views, Model shacl, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
@@ -30,8 +29,7 @@ public class EventStreamResponse {
 	}
 
 	public EventStreamResponse(String collection, String timestampPath, String versionOfPath,
-							   List<ViewSpecification> views,
-			Model shacl) {
+							   List<ViewSpecification> views, Model shacl) {
 		this(collection, timestampPath, versionOfPath, views, shacl, null);
 	}
 

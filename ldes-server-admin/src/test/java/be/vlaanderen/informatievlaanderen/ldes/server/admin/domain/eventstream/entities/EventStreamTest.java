@@ -45,7 +45,6 @@ class EventStreamTest {
 					new EventStream(COLLECTION, TIMESTAMP_PATH, "other"),
 					new EventStream(COLLECTION, "other", VERSION_OF_PATH),
 					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH),
-					new EventStream(COLLECTION, "other", "other"),
 					new EventStream(COLLECTION, "other", "other"))
 					.map(Arguments::of);
 		}

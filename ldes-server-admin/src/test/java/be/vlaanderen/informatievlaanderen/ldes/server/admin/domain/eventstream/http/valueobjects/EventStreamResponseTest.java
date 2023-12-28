@@ -24,7 +24,6 @@ class EventStreamResponseTest {
 	private static final String COLLECTION = "collection";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
-	private static final boolean HAS_DEFAULT_VIEW = false;
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel());
 	private static final EventStreamResponse EVENT_STREAM_RESPONSE_WITH_DATASET = new EventStreamResponse(COLLECTION,
