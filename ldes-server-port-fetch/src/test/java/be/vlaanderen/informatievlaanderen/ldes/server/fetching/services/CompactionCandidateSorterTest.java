@@ -51,6 +51,7 @@ class CompactionCandidateSorterTest {
 	}
 
 	@Test
+	@SuppressWarnings("java:S5778")
 	void sortChaoticallyOrdered() {
 		assertThrows(IllegalArgumentException.class, () -> sortCompactionCandidates(
 				Stream.of(deriveCandidate(f3), deriveCandidate(f5), deriveCandidate(f1), deriveCandidate(f4), deriveCandidate(f2))));
