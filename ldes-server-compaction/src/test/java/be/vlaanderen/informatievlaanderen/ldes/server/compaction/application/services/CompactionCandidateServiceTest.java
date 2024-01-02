@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CompactionCandidateServiceTest {
+class CompactionCandidateServiceTest {
 	AllocationRepository allocationRepository = mock(AllocationRepository.class);
 	FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	CompactionCandidateService service = new CompactionCandidateService(allocationRepository, fragmentRepository);

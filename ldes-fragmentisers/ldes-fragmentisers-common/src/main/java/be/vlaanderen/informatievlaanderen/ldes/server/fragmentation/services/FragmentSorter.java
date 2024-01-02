@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FragmentSorter {
+	private FragmentSorter() {}
 
 	public static Stream<Fragment> sortFragments(Stream<Fragment> fragmentStream) {
 		List<Fragment> fragments = fragmentStream.toList();

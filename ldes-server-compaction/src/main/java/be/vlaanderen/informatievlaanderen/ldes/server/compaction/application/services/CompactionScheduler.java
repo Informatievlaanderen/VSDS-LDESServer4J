@@ -41,9 +41,9 @@ public class CompactionScheduler {
 					var compactionTaskList = compactionCandidateService.getCompactionTaskList(viewCapacity);
 
 					if (compactionTaskList.isEmpty()) {
-						LOGGER.info("No compaction candidates available for " + viewCapacity.getViewName().getViewName());
+						LOGGER.info("No compaction candidates available for {}", viewCapacity.getViewName().getViewName());
 					} else {
-						LOGGER.info("Processing " + compactionTaskList.size() + " compaction candidates available for " + viewCapacity.getViewName().getViewName());
+						LOGGER.info("Processing {} compaction candidates available for {}", compactionTaskList.size(), viewCapacity.getViewName().getViewName());
 
 						compactionTaskList.forEach(paginationCompactionService::applyCompactionForFragments);
 					}

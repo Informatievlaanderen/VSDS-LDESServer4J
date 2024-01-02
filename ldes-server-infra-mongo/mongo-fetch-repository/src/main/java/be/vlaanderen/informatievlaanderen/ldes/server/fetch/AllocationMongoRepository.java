@@ -29,6 +29,7 @@ public class AllocationMongoRepository implements AllocationRepository {
 	private static final String FRAGMENT_ID = "fragmentId";
 	private static final String MEMBER_ID = "memberId";
 	private static final String ID = "_id";
+	private static final String SIZE = "size";
 
 	private final AllocationEntityRepository repository;
 	private final MemberAllocationEntityMapper mapper;
@@ -83,8 +84,6 @@ public class AllocationMongoRepository implements AllocationRepository {
 
 	@Override
 	public Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
-		String SIZE = "size";
-
 		MatchOperation filterViewName = match(Criteria.where(COLLECTION_NAME).is(viewName.getCollectionName())
 				.and(VIEW_NAME).is(viewName.getViewName()));
 		GroupOperation countMembersForFragmentId = group(FRAGMENT_ID).count().as(SIZE);

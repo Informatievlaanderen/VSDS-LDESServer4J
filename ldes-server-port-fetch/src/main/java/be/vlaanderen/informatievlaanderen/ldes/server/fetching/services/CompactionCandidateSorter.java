@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentSorter.hasNoConnections;
 
 public class CompactionCandidateSorter {
+	private CompactionCandidateSorter() {}
 	public static Stream<CompactionCandidate> sortCompactionCandidates(Stream<CompactionCandidate> compactionCandidates) {
 		List<CompactionCandidate> candidatesList = compactionCandidates.toList();
 
