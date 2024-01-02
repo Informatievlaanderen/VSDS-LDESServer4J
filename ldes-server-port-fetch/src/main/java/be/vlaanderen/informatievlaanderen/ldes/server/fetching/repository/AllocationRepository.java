@@ -10,12 +10,11 @@ import java.util.stream.Stream;
 
 public interface AllocationRepository {
 	void saveAllocation(MemberAllocation memberAllocation);
+	void saveAllocations(List<MemberAllocation> memberAllocations);
 
 	List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
 
 	List<String> getMemberAllocationIdsByFragmentIds(Set<String> fragmentIds);
-
-	long countByCollectionNameAndViewName(String collectionName, String viewName);
 
 	void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName);
 
@@ -23,7 +22,6 @@ public interface AllocationRepository {
 
 	void deleteByCollectionNameAndViewName(String collectionName, String viewName);
 
-	void deleteByFragmentId(String fragmentId);
 	void deleteAllByFragmentId(Set<String> fragmentIds);
 
 	Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage);

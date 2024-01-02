@@ -35,7 +35,7 @@ public class CompactionCandidate {
 
 	@Override
 	public String toString() {
-		return "CompactionCandidate{ id='" + id +'}';
+		return "CompactionCandidate{ id='" + id +"'}";
 	}
 
 	@Override

@@ -86,6 +86,16 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
+	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId, int size) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragmentId.asString()));
+
+		Update update = new Update().inc("nrOfMembersAdded", size);
+		UpdateResult result = mongoTemplate.updateFirst(query, update, FragmentEntity.class);
+		ResultChecker.expect(result, 1);
+	}
+
+	@Override
 	public Stream<Fragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)

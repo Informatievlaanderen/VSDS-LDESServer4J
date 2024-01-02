@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.compaction;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -12,7 +13,6 @@ import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import io.micrometer.observation.Observation;
 import org.mockito.ArgumentMatchers;
 
 import java.util.*;
@@ -138,12 +138,10 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 
 	@And("verify fragmentation of members")
 	public void verifyFragmentationOfMembers(List<MemberFragmentations> memberFragmentations) {
-		memberFragmentations.forEach(memberFragmentation -> memberFragmentation.memberIds().forEach(memberId -> {
-			verify(fragmentationStrategy).addMemberToFragment(
-					eq(new Fragment(LdesFragmentIdentifier.fromFragmentId(memberFragmentation.fragmentId))),
-					eq(memberId), eq(null), any(Observation.class));
-		}));
-		verifyNoMoreInteractions(fragmentationStrategy);
+		verify(eventConsumer, times(memberFragmentations.size())).consumeEvent(any(BulkMemberAllocatedEvent.class));
+		memberFragmentations.forEach(memberFragmentation -> {
+			verify(fragmentRepository).incrementNrOfMembersAdded(LdesFragmentIdentifier.fromFragmentId(memberFragmentation.fragmentId), memberFragmentation.memberIds.size());
+		});
 	}
 
 	@Then("wait for {int} seconds until compaction has executed at least once")

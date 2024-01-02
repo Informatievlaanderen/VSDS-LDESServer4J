@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentComparator.sortFragments;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentSorter.sortFragments;
 
 public class CompactedFragment {
 	public static final String PAGE_NUMBER_KEY = "pageNumber";
@@ -25,7 +25,7 @@ public class CompactedFragment {
 
 	public Fragment getFragment() {
 		return new Fragment(getLdesFragmentIdentifier(), true,
-				getFirstImpactedFragment().getNrOfMembersAdded(), getOutgoingRelations(), null);
+				getMemberCount(), getOutgoingRelations(), null);
 	}
 
 	public Set<String> getImpactedFragmentIds() {
@@ -76,5 +76,9 @@ public class CompactedFragment {
 	private Stream<Fragment> getImpactedFragments() {
 		return sortFragments(toBeCompactedFragments.stream()
 				.map(CompactionCandidate::getFragment));
+	}
+
+	private Integer getMemberCount() {
+		return toBeCompactedFragments.stream().map(CompactionCandidate::getSize).reduce(Integer::sum).orElse(0);
 	}
 }

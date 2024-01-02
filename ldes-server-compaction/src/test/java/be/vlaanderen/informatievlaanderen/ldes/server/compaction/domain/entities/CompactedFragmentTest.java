@@ -41,7 +41,7 @@ class CompactedFragmentTest {
 
 		assertEquals(MOBHIND_PAGE + "1/2/3", fragment.getFragmentIdString());
 		assertTrue(fragment.isImmutable());
-		assertEquals(10, fragment.getNrOfMembersAdded());
+		assertEquals(6, fragment.getNrOfMembersAdded());
 		assertNull(fragment.getDeleteTime());
 		assertEquals(1, fragment.getRelations().size());
 		assertEquals(MOBHIND_PAGE + "4", fragment.getRelations().get(0).treeNode().asString());
@@ -78,7 +78,7 @@ class CompactedFragmentTest {
 
 	record AffectedAllocationAggregate(CompactionCandidate compactionCandidate, Fragment fragment) {
 		static AffectedAllocationAggregate of(String fragmentId, List<String> fragmentsPointingTo) {
-			return new AffectedAllocationAggregate(new CompactionCandidate(fragmentId, 0),
+			return new AffectedAllocationAggregate(new CompactionCandidate(fragmentId, 2),
 					createFragment(fragmentId, fragmentsPointingTo));
 		}
 	}

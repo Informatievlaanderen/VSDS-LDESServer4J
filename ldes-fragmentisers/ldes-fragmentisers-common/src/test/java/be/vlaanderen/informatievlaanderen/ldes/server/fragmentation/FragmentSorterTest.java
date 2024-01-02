@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentComparator.sortFragments;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentSorter.sortFragments;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FragmentComparatorTest {
+class FragmentSorterTest {
 
 	private static final String MOBHIND_PAGE = "/mobility-hindrances/by-page?pageNumber=";
 

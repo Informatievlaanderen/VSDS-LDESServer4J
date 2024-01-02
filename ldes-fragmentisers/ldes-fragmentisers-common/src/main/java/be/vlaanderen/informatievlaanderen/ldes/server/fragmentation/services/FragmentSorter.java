@@ -10,7 +10,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FragmentComparator {
+public class FragmentSorter {
+
 	public static Stream<Fragment> sortFragments(Stream<Fragment> fragmentStream) {
 		List<Fragment> fragments = fragmentStream.toList();
 
@@ -29,22 +30,21 @@ public class FragmentComparator {
 
 		List<Fragment> fragmentList = new LinkedList<>(List.of(firstElement));
 		String currentFragment = firstElement.getFragmentIdString();
+		Optional<Fragment> foundFragment;
 
 		do {
 			LdesFragmentIdentifier fragmentId = map.get(currentFragment);
 
-			Optional<Fragment> foundFragment = fragments.stream()
+			foundFragment = fragments.stream()
 					.filter(fragment -> fragment.getFragmentId().equals(fragmentId))
 					.findFirst();
 
 			if (foundFragment.isPresent()) {
 				fragmentList.add(foundFragment.get());
 				currentFragment = fragmentId.asString();
-			} else {
-				break;
 			}
 
-		} while (true);
+		} while (foundFragment.isPresent());
 
 
 		return fragmentList.stream();

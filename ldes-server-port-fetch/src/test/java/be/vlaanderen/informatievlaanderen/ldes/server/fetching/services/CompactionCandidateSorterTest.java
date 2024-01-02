@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateComparator.sortCompactionCandidates;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateSorter.sortCompactionCandidates;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class CompactionCandidateComparatorTest {
+class CompactionCandidateSorterTest {
 
 	Fragment f5 = new Fragment(fromFragmentId("/collection/5"), true, 0,
 			List.of(), null);
@@ -34,7 +34,7 @@ class CompactionCandidateComparatorTest {
 
 	@Test
 	void sortAlreadyOrdered() {
-		var sorted = CompactionCandidateComparator.sortCompactionCandidates(
+		var sorted = CompactionCandidateSorter.sortCompactionCandidates(
 						Stream.of(deriveCandidate(f1), deriveCandidate(f2), deriveCandidate(f3), deriveCandidate(f4)))
 				.toList();
 
@@ -43,7 +43,7 @@ class CompactionCandidateComparatorTest {
 
 	@Test
 	void sortReverseOrdered() {
-		var sorted = CompactionCandidateComparator.sortCompactionCandidates(
+		var sorted = CompactionCandidateSorter.sortCompactionCandidates(
 						Stream.of(deriveCandidate(f4), deriveCandidate(f3), deriveCandidate(f2), deriveCandidate(f1)))
 				.toList();
 

@@ -44,6 +44,11 @@ public class AllocationMongoRepository implements AllocationRepository {
 		repository.save(mapper.toMemberAllocationEntity(memberAllocation));
 	}
 
+	@Override
+	public void saveAllocations(List<MemberAllocation> memberAllocations) {
+		repository.saveAll(memberAllocations.stream().map(mapper::toMemberAllocationEntity).toList());
+	}
+
 	public void deleteByMemberIdAndCollectionNameAndViewName(String memberId, String collectionName, String viewName) {
 		repository.deleteByMemberIdAndCollectionNameAndViewName(memberId, collectionName, viewName);
 	}
@@ -67,22 +72,8 @@ public class AllocationMongoRepository implements AllocationRepository {
 				.toList();
 	}
 
-	@Override
-	public long countByCollectionNameAndViewName(String collectionName, String viewName) {
-		// 04/12/23 Desactivated due to performance issues on the count query
-		// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-		// Normally we do not query this anymore but this was disabled in a rush and I want to be really really sure.
-		return -1L;
-//		return repository.countByCollectionNameAndViewName(collectionName, viewName);
-	}
-
 	public void deleteByCollectionNameAndViewName(String collectionName, String viewName) {
 		repository.deleteAllByCollectionNameAndViewName(collectionName, viewName);
-	}
-
-	@Override
-	public void deleteByFragmentId(String fragmentId) {
-		repository.deleteAllByFragmentId(fragmentId);
 	}
 
 	@Override

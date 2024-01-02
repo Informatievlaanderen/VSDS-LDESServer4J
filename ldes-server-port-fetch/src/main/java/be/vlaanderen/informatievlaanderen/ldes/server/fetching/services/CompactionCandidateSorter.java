@@ -10,9 +10,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentComparator.hasNoConnections;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.FragmentSorter.hasNoConnections;
 
-public class CompactionCandidateComparator {
+public class CompactionCandidateSorter {
 	public static Stream<CompactionCandidate> sortCompactionCandidates(Stream<CompactionCandidate> compactionCandidates) {
 		List<CompactionCandidate> candidatesList = compactionCandidates.toList();
 
@@ -35,21 +35,20 @@ public class CompactionCandidateComparator {
 		List<CompactionCandidate> orderedCandidates = new LinkedList<>(List.of(firstElement));
 		String currentFragment = firstElement.getId();
 
+		Optional<CompactionCandidate> foundFragment;
+
 		do {
 			String fragmentId = map.get(currentFragment);
 
-			Optional<CompactionCandidate> foundFragment = candidatesList.stream()
+			foundFragment = candidatesList.stream()
 					.filter(candidate -> candidate.getId().equals(fragmentId))
 					.findFirst();
 
 			if (foundFragment.isPresent()) {
 				orderedCandidates.add(foundFragment.get());
 				currentFragment = fragmentId;
-			} else {
-				break;
 			}
-
-		} while (true);
+		} while (foundFragment.isPresent());
 
 		if(orderedCandidates.size() < candidatesList.size()) {
 			throw new IllegalArgumentException("Not all compaction candidates are linked. Candidates: " + candidatesList);

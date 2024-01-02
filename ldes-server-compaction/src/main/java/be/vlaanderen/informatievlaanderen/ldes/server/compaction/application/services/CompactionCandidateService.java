@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateComparator.sortCompactionCandidates;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.CompactionCandidateSorter.sortCompactionCandidates;
 
 @Component
 public class CompactionCandidateService {
@@ -60,7 +60,7 @@ public class CompactionCandidateService {
 		return compactionDesign.values();
 	}
 
-	private List<CompactionCandidate> getPossibleCompactionCandidates(ViewCapacity viewCapacity) {
+	protected List<CompactionCandidate> getPossibleCompactionCandidates(ViewCapacity viewCapacity) {
 		var compactionCandidates = allocationRepository.getPossibleCompactionCandidates(viewCapacity.getViewName(), viewCapacity.getCapacityPerPage())
 				.toList();
 		compactionCandidates.forEach(cc -> cc.setFragment(fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(cc.getId()))
