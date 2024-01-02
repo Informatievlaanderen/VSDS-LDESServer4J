@@ -159,6 +159,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	@When("I delete the fragment {string}")
 	public void iDeleteTheFragment(String fragmentId) {
 		fragmentRepository.retrieveFragment(LdesFragmentIdentifier.fromFragmentId(fragmentId))
+				.map(Fragment::getFragmentId)
 				.ifPresent(fragmentRepository::removeRelationsPointingToFragmentAndDeleteFragment);
 	}
 

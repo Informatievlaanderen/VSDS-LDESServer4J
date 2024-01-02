@@ -25,7 +25,7 @@ public class Fragment {
 	}
 
 	public Fragment(LdesFragmentIdentifier identifier, Boolean immutable, int nrOfMembersAdded,
-			List<TreeRelation> relations, LocalDateTime deleteTime) {
+	                List<TreeRelation> relations, LocalDateTime deleteTime) {
 		this.identifier = identifier;
 		this.immutable = immutable;
 		this.nrOfMembersAdded = nrOfMembersAdded;
@@ -132,5 +132,23 @@ public class Fragment {
 
 	public void removeRelationToIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
 		relations.removeIf(treeRelation -> treeRelation.treeNode().equals(fragmentIdentifier));
+	}
+
+	public boolean isConnectedTo(Fragment otherFragment) {
+		return getRelations()
+				.stream()
+				.anyMatch(treeRelation -> treeRelation.treeNode()
+						.equals(otherFragment.getFragmentId()));
+	}
+
+	@Override
+	public String toString() {
+		return "Fragment{" +
+		       "identifier=" + identifier +
+		       ", immutable=" + immutable +
+		       ", nrOfMembersAdded=" + nrOfMembersAdded +
+		       ", relations=" + relations +
+		       ", deleteTime=" + deleteTime +
+		       '}';
 	}
 }
