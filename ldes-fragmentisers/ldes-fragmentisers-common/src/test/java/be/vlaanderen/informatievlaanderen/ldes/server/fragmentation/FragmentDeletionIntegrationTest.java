@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -23,5 +24,9 @@ public class FragmentDeletionIntegrationTest {
 	@Autowired
 	@MockBean
 	FragmentRepository fragmentRepository;
+
+	@Autowired
+	@MockBean
+	RetentionPolicyCollection retentionPolicyCollection;
 
 }
