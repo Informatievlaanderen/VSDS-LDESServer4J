@@ -72,7 +72,9 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 				.getLocalName();
 
 		if (PAGINATION_FRAGMENTATION.equals(fragmentationName)) {
-			throw new IllegalArgumentException("Pagination cannot be chosen as fragmentation strategy.");
+			throw new IllegalArgumentException("Pagination cannot be chosen as fragmentation strategy." +
+					"We paginate every view by default. " +
+					"To create a view that only has pagination, create it without fragmentation strategies.");
 		}
 
 		return fragmentationName;
