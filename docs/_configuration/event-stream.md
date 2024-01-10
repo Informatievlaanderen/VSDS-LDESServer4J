@@ -9,20 +9,18 @@ nav_order: 1
 To house a new Event Stream on your server, it first needs to be configured.
 This can be done through the Admin API at the `/admin/api/v1/eventstreams` endpoint.
 
-An Event Stream config needs to contains a couple of items:
+An Event Stream config needs to contain a couple of items:
 
 * a `ldes:EventStream` object containing:
   * `ldes:timestampPath` object that defines which object property it should parse to handle timebased fragmentations, retention policies, ...
   * `ldes:versionOfPath` object that defines which object property it should parse to handle version based retention policies. 
   This property also indicates which state object your version object is a snapshot of.
-  * a `sh:NodeShape` object that contains a sh:targetClass. 
-  This indicates what kind of objects your Event Stream will hold.
 
 For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
 
 ### Example
 
-Creating a generic Event Stream named "generic-eventstream" that contains members of type https://schema.org/Product.
+Creating a generic Event Stream named "generic-eventstream"
 
 ````turtle
 @prefix ldes: <https://w3id.org/ldes#> .
@@ -38,8 +36,7 @@ server:generic-eventstream a ldes:EventStream ;
     ldes:versionOfPath dcterms:isVersionOf ;
     tree:shape genericES:shape .
 
-genericES:shape a sh:NodeShape ;
-    sh:targetClass <https://schema.org/Product> .
+genericES:shape a sh:NodeShape .
 ````
 
 ## Configuring a SHACL Shape

@@ -12,6 +12,8 @@ Feature: AllocationRepository
       | 7deb5ce5-e57b-469b-9966-35150862d890 | parcels             | by-page    | /parcels/by-page?pageNumber=1             | member-1 |
       | 618019d0-b18c-4e2e-92d8-1e169baead6c | parcels             | by-page    | /parcels/by-page?pageNumber=1             | member-2 |
       | d6a71f1d-83f0-4987-b064-539314a43056 | parcels             | by-page    | /parcels/by-page?pageNumber=1             | member-3 |
+      | d6a71f1d-83f0-4987-b064-539314a43057 | parcels             | by-page    | /parcels/by-page?pageNumber=2             | member-4 |
+      | d6a71f1d-83f0-4987-b064-539314a43058 | parcels             | by-page    | /parcels/by-page?pageNumber=2             | member-5 |
     And They are ingested using the AllocationRepository
 
   Scenario: FIND ALL BY FRAGMENT_ID
@@ -23,10 +25,17 @@ Feature: AllocationRepository
       | /parcels/by-page?pageNumber=1             | 7deb5ce5-e57b-469b-9966-35150862d890,618019d0-b18c-4e2e-92d8-1e169baead6c,d6a71f1d-83f0-4987-b064-539314a43056 |
       | /not-existing                             | [blank]                                                                                                        |
 
+
+  Scenario: FIND ALL BY FRAGMENT_IDS
+    Then Querying by the fragment ids have the following results
+      | fragmentIds                                                             | ids                        |
+      | /mobility-hindrances/by-page?pageNumber=1,/parcels/by-page?pageNumber=1 | member-1,member-2,member-3 |
+      | /not-existing                                                           | [blank]                    |
+
   Scenario Outline: DELETE BY MEMBER_ID AND COLLECTION_NAME AND VIEW_NAME
     When Deleting by the member id <memberId> and the collection name <collectionName> and the view name <viewName>
     Then Querying by the fragment id <fragmentId> has the following results <ids>
-    And There are 6 remaining MemberAllocations in the MemberAllocationRepository
+    And There are 8 remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | memberId | collectionName      | viewName   | fragmentId                                | ids                                                                       |
       | member-1 | mobility-hindrances | by-page    | /mobility-hindrances/by-page?pageNumber=1 | 8100886e-ab0f-4064-b3e1-ced75f07958a                                      |
@@ -43,8 +52,8 @@ Feature: AllocationRepository
     And There are <remainingMemberAllocations> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | collectionName      | viewName   | fragmentIds                                                                         | remainingMemberAllocations |
-      | mobility-hindrances | by-page    | /mobility-hindrances/by-page?pageNumber=1                                           | 5                          |
-      | mobility-hindrances | by-version | /mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 5                          |
+      | mobility-hindrances | by-page    | /mobility-hindrances/by-page?pageNumber=1                                           | 7                          |
+      | mobility-hindrances | by-version | /mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 7                          |
       | parcels             | by-page    | /parcels/by-page?pageNumber=1                                                       | 4                          |
 
   Scenario Outline: DELETE BY COLLECTION_NAME
@@ -53,15 +62,22 @@ Feature: AllocationRepository
     And There are <remainingMemberAllocations> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
       | collectionName      | fragmentIds                                                                                                                   | remainingMemberAllocations |
-      | mobility-hindrances | /mobility-hindrances/by-page?pageNumber=1,/mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 3                          |
+      | mobility-hindrances | /mobility-hindrances/by-page?pageNumber=1,/mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 | 5                          |
       | parcels             | /parcels/by-page?pageNumber=1                                                                                                 | 4                          |
 
   Scenario Outline: DELETE BY FRAGMENT ID
-    When Deleting by the fragment id <fragmentId>
+    When Deleting by the fragment ids <fragmentIds>
     Then There are <expectedCount> remaining MemberAllocations in the MemberAllocationRepository
     Examples:
-      | fragmentId                                | expectedCount |
-      | /mobility-hindrances/by-page?pageNumber=1 | 5             |
-      | /mobility-hindrances/by-version?version=1 | 6             |
-      | /mobility-hindrances/by-version?version=2 | 6             |
-      | /parcels/by-page?pageNumber=1             | 4             |
+      | fragmentIds                                                                         | expectedCount |
+      | /mobility-hindrances/by-page?pageNumber=1                                           | 7             |
+      | /mobility-hindrances/by-version?version=1                                           | 8             |
+      | /mobility-hindrances/by-version?version=2,/mobility-hindrances/by-version?version=3 | 8             |
+      | /parcels/by-page?pageNumber=1                                                       | 6             |
+
+  Scenario Outline: Compaction Candidates
+    Then The compaction candidates for <viewName> with capacity of <capacity> contains <expectedFragments>
+    Examples:
+      | viewName                       | capacity | expectedFragments                                                                   |
+      | mobility-hindrances/by-version | 2        | /mobility-hindrances/by-version?version=1,/mobility-hindrances/by-version?version=2 |
+      | parcels/by-page                | 3        | /parcels/by-page?pageNumber=2                                                       |

@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 import static org.springframework.http.HttpHeaders.*;
 
 @Observed
@@ -30,7 +31,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 	}
 
 	@GetMapping("/")
-	public Model getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language, HttpServletResponse response) {
+	public Model getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language, HttpServletResponse response) {
 		response.setContentType(getContentTypeHeader(language));
 		return eventStreamService.getComposedDcat();
 	}
@@ -39,7 +40,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 	@CrossOrigin(origins = "*", allowedHeaders = "")
 	@GetMapping(value = "{collectionname}")
 	public ResponseEntity<EventStreamResponse> retrieveLdesFragment(
-			@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
+			@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language,
 			@PathVariable("collectionname") String collectionName) {
 		EventStreamResponse eventStream = eventStreamService.retrieveEventStream(collectionName);
 

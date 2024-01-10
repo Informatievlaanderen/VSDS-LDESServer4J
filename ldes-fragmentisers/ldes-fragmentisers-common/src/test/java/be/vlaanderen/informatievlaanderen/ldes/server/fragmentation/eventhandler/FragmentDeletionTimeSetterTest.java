@@ -42,7 +42,7 @@ class FragmentDeletionTimeSetterTest {
 				.thenReturn(Optional.of(secondFragment));
 
 		fragmentDeletionTimeSetter.handleFragmentsCompactedEvent(
-				new FragmentsCompactedEvent(firstFragment.getFragmentId(), secondFragment.getFragmentId()));
+				new FragmentsCompactedEvent(List.of(firstFragment.getFragmentId(), secondFragment.getFragmentId())));
 
 		assertNotNull(firstFragment.getDeleteTime());
 		assertNotNull(secondFragment.getDeleteTime());

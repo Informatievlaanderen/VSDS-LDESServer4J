@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 
 public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
-	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
 	private final EventStreamResponseConverter eventStreamResponseConverter;
 	private final RdfModelConverter rdfModelConverter;
 
@@ -40,7 +40,7 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 
 	@Override
 	public List<MediaType> getSupportedMediaTypes() {
-		return List.of(DEFAULT_MEDIA_TYPE, MediaType.ALL);
+		return List.of(MediaType.valueOf(DEFAULT_RDF_MEDIA_TYPE), MediaType.ALL);
 	}
 
 	@Override

@@ -21,6 +21,7 @@ public interface FragmentRepository {
 	Optional<Fragment> retrieveRootFragment(String viewName);
 
 	void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId);
+	void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId, int size);
 
 	Stream<Fragment> retrieveFragmentsOfView(String defaultViewName);
 
@@ -56,5 +57,5 @@ public interface FragmentRepository {
 
 	Stream<Fragment> getDeletionCandidates();
 
-	void removeRelationsPointingToFragmentAndDeleteFragment(Fragment readyForDeletionFragment);
+	void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragment);
 }

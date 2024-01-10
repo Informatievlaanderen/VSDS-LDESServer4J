@@ -17,7 +17,6 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    tree:shape col:shape .
 
 col:shape a sh:NodeShape ;
-   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
    sh:deactivated true .
 
 <https://w3id.org/tree/specification> a dcterms:Standard .

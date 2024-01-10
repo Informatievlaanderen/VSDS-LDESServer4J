@@ -35,7 +35,6 @@
    ],
    "@id":"https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape",
    "@type":"NodeShape",
-   "sh:targetClass":"MobilityHindrance",
    "sh:property":[
       {
          "sh:path":"gipod:gipodId",

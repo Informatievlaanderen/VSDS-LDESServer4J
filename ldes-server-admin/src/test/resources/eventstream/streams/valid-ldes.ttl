@@ -10,6 +10,5 @@
     ldes:versionOfPath dcterms:isVersionOf ;
     tree:shape [
         sh:closed true;
-        sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder>;
         a sh:NodeShape ;
     ] .

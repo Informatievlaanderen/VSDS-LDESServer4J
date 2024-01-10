@@ -78,11 +78,11 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		}
 	}
 
-	@When("I ingest {int} members of type {string} to the collection {string}")
-	public void iIngestMembersToTheCollection(int numberOfMembers, String memberType, String collectionName)
+	@When("I ingest {int} members of template {string} to the collection {string}")
+	public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
 			throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate(memberType)
+			Model member = RDFParser.fromString(readMemberTemplate(memberTemplate)
 					.replace("ID", String.valueOf(i))
 					.replace("DATETIME", getCurrentTimestamp()))
 					.lang(Lang.TURTLE)

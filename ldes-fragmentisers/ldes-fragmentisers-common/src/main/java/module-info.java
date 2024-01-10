@@ -8,5 +8,6 @@ open module ldes.fragmentation.domain {
     requires micrometer.core;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
 
 }

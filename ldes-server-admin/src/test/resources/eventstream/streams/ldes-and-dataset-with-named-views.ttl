@@ -32,7 +32,6 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    dct:creator <http://sample.org/company/MyDataOwner> .
 
 col:shape a sh:NodeShape ;
-   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
    sh:deactivated true .
 
 col:view1 a tree:Node ;

@@ -12,13 +12,11 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
-	void saveMemberPropertiesWithoutViews(MemberProperties memberProperties);
-
-	void save(MemberProperties memberProperties);
+	void insert(MemberProperties memberProperties);
 
 	Optional<MemberProperties> retrieve(String id);
 
-	void addViewReference(String id, String viewName);
+	void addViewToAll(ViewName viewName);
 
 	List<MemberProperties> getMemberPropertiesOfVersionAndView(String versionOf, String viewName);
 

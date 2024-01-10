@@ -4,5 +4,4 @@
 @prefix col: <http://localhost:8080/collectionName1/> .
 
 col:shape a sh:NodeShape ;
-   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
    sh:deactivated true .

@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.eventhandler;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.FragmentDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkFragmentDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import org.junit.jupiter.api.Test;
@@ -8,6 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Set;
 
 import static org.mockito.Mockito.verify;
 
@@ -21,12 +23,12 @@ class FragmentDeletedHandlerFetchTest {
 	@Test
 	void when_FragmentIsDeleted_AllAllocationsRelatedToThatFragmentAreDeleted() {
 		String fragmentId = "/mobility-hindrances/view?a=b";
-		FragmentDeletedEvent fragmentDeletedEvent = new FragmentDeletedEvent(
-				LdesFragmentIdentifier.fromFragmentId(fragmentId));
+		BulkFragmentDeletedEvent fragmentDeletedEvent = new BulkFragmentDeletedEvent(
+				Set.of(LdesFragmentIdentifier.fromFragmentId(fragmentId)));
 
-		fragmentDeletedHandlerFetch.handleFragmentDeletedEvent(fragmentDeletedEvent);
+		fragmentDeletedHandlerFetch.handleBulkFragmentDeletedEvent(fragmentDeletedEvent);
 
-		verify(allocationRepository).deleteByFragmentId(fragmentId);
+		verify(allocationRepository).deleteAllByFragmentId(Set.of(fragmentId));
 	}
 
 }

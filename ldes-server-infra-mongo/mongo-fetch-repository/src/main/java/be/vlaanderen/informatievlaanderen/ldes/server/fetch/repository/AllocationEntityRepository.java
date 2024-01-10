@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocat
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AllocationEntityRepository extends MongoRepository<MemberAllocationEntity, String> {
 
@@ -17,5 +18,7 @@ public interface AllocationEntityRepository extends MongoRepository<MemberAlloca
 
 	void deleteAllByFragmentId(String fragmentId);
 
-    long countByCollectionNameAndViewName(String collectionName, String viewName);
+	void deleteAllByFragmentIdIn(Set<String> fragmentIds);
+
+	long countByCollectionNameAndViewName(String collectionName, String viewName);
 }

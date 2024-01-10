@@ -2,5 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentati
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 
-public record FragmentDeletedEvent(LdesFragmentIdentifier ldesFragmentIdentifier) {
+import java.util.Set;
+
+public record BulkFragmentDeletedEvent(Set<LdesFragmentIdentifier> ldesFragmentIdentifiers) {
 }

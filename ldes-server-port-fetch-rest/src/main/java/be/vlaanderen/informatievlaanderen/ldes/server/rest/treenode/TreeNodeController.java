@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
@@ -38,7 +39,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 	@GetMapping(value = "{collectionname}/{view}")
 	public ResponseEntity<TreeNode> retrieveLdesFragment(@PathVariable("view") String view,
 														 @RequestParam Map<String, String> requestParameters,
-														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
+														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language,
 														 @PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
 		TreeNode treeNode = getFragment(viewName, requestParameters);
