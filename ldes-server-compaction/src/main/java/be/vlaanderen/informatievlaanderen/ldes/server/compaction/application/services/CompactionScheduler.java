@@ -39,7 +39,7 @@ public class CompactionScheduler {
 	@Scheduled(cron = COMPACTION_CRON_KEY)
 	public void compactFragments() {
 		if(retentionPolicyCollection.isEmpty()) {
-			LOGGER.info("No retention policies found, so the compaction process won't run.");
+			LOGGER.info("Compaction skipped: no retention policies found.");
 			return;
 		}
 		viewCollection.getAllViewCapacities()

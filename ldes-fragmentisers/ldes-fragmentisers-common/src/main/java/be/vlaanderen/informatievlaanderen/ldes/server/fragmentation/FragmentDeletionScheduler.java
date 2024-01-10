@@ -31,7 +31,7 @@ public class FragmentDeletionScheduler {
 	@Scheduled(cron = DELETION_CRON_KEY)
 	public void deleteFragments() {
 		if(retentionPolicyCollection.isEmpty()) {
-			LOGGER.atDebug().log("No retention policies found, so fragment deletion process won't run.");
+			LOGGER.atDebug().log("Fragment deletion skipped: no retention policies found.");
 			return;
 		}
 		var deletedFragments = fragmentRepository
