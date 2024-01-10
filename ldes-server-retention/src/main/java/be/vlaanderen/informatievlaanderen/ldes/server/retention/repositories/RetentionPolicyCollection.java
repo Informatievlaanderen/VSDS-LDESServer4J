@@ -9,4 +9,6 @@ public interface RetentionPolicyCollection {
 
 	Map<ViewName, RetentionPolicy> getRetentionPolicyMap();
 
+	boolean isEmpty();
+
 }

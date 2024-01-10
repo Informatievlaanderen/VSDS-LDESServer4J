@@ -39,8 +39,14 @@ public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection 
 		retentionPolicyMap.remove(event.getViewName());
 	}
 
+	@Override
 	public Map<ViewName, RetentionPolicy> getRetentionPolicyMap() {
 		return Map.copyOf(retentionPolicyMap);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return retentionPolicyMap.isEmpty();
 	}
 
 	private void addToMap(ViewName viewName, ViewSpecification viewSpecification) {

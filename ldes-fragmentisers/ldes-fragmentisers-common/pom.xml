@@ -13,8 +13,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>ldes-server-port-ingest</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>ldes-server-retention</artifactId>
             <version>${project.version}</version>
         </dependency>
 
