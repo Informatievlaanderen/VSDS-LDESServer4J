@@ -1,4 +1,4 @@
-module ldes.server.retention {
+open module ldes.server.retention {
 	requires ldes.domain;
 	requires spring.context;
 	requires org.slf4j;
