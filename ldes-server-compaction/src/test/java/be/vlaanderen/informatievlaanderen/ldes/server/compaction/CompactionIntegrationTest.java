@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -25,41 +26,46 @@ import static org.mockito.Mockito.mock;
 @CucumberContextConfiguration
 @EnableAutoConfiguration
 @RecordApplicationEvents
-@ContextConfiguration(classes = { SchedulingConfigCompaction.class })
-@ComponentScan(value = {
-		"be.vlaanderen.informatievlaanderen.ldes.server.compaction" }, excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = {
-				"be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.FragmentationConfigCompaction" }))
+@ContextConfiguration(classes = {SchedulingConfigCompaction.class})
+@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.compaction"},
+        excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = {
+                "be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.FragmentationConfigCompaction"}))
 @TestPropertySource(properties = "ldes-server.compaction-cron=*/4 * * * * *")
 @SuppressWarnings("java:S2187")
 public class CompactionIntegrationTest {
 
-	@Autowired
-	ApplicationEventPublisher applicationEventPublisher;
-	@Autowired
-	@MockBean
-	EventConsumer eventConsumer;
-	@Autowired
-	@MockBean
-	FragmentRepository fragmentRepository;
-	@Autowired
-	@MockBean
-	AllocationRepository allocationRepository;
-	@Autowired
-	FragmentationStrategyImpl fragmentationStrategy;
+    @Autowired
+    ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
+    @MockBean
+    EventConsumer eventConsumer;
+    @Autowired
+    @MockBean
+    FragmentRepository fragmentRepository;
+    @Autowired
+    @MockBean
+    AllocationRepository allocationRepository;
+    @Autowired
+    FragmentationStrategyImpl fragmentationStrategy;
 
-	@TestComponent
-	protected static class EventConsumer {
-		@EventListener
-		public void consumeEvent(BulkMemberAllocatedEvent testEvent) {
-		}
-	}
+    @TestComponent
+    protected static class EventConsumer {
+        @EventListener
+        public void consumeEvent(BulkMemberAllocatedEvent testEvent) {
+        }
+    }
 
-	@TestConfiguration
-	public static class CompactionIntegrationTestConfiguration {
+    @TestConfiguration
+    public static class CompactionIntegrationTestConfiguration {
 
-		@Bean("compactionFragmentation")
-		public FragmentationStrategyImpl fragmentationStrategy() {
-			return mock(FragmentationStrategyImpl.class);
-		}
-	}
+        @Bean("compactionFragmentation")
+        public FragmentationStrategyImpl fragmentationStrategy() {
+            return mock(FragmentationStrategyImpl.class);
+        }
+
+        @Bean
+        public RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker() {
+            return mock(RetentionPolicyEmptinessChecker.class);
+        }
+    }
 }
