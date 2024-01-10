@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FragmentDeletionSchedulerTest {
 	@Mock
-	private RetentionPolicyCollection retentionPolicyCollection;
+	private RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 	@Mock
 	private ApplicationEventPublisher applicationEventPublisher;
 	@Mock
@@ -35,7 +35,7 @@ class FragmentDeletionSchedulerTest {
 		Fragment expiredFragment = createFragment("mobility-hindrances/expired", LocalDateTime.now().minusDays(1));
 		Fragment notExpiredFragment = createFragment("mobility-hindrances/not-expired",
 				LocalDateTime.now().plusDays(1));
-		when(retentionPolicyCollection.isEmpty()).thenReturn(false);
+		when(retentionPolicyEmptinessChecker.isEmpty()).thenReturn(false);
 		when(fragmentRepository.getDeletionCandidates()).thenReturn(Stream.of(expiredFragment, notExpiredFragment));
 
 		fragmentDeletionScheduler.deleteFragments();
@@ -48,12 +48,12 @@ class FragmentDeletionSchedulerTest {
 
 	@Test
 	void given_RetentionPolicyCollectionIsEmpty_when_CompactFragments_then_DoNotRun() {
-		when(retentionPolicyCollection.isEmpty()).thenReturn(true);
+		when(retentionPolicyEmptinessChecker.isEmpty()).thenReturn(true);
 
 		fragmentDeletionScheduler.deleteFragments();
 
-		verify(retentionPolicyCollection).isEmpty();
-		verifyNoMoreInteractions(retentionPolicyCollection, applicationEventPublisher, fragmentRepository);
+		verify(retentionPolicyEmptinessChecker).isEmpty();
+		verifyNoMoreInteractions(retentionPolicyEmptinessChecker, applicationEventPublisher, fragmentRepository);
 	}
 
 	private static Fragment createFragment(String viewName, LocalDateTime deleteTime) {

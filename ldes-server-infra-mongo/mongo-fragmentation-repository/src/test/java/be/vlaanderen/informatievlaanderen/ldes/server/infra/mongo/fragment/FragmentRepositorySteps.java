@@ -29,7 +29,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	public Fragment ldesFragmentEntryTransformer(Map<String, String> row) {
 		return new Fragment(new LdesFragmentIdentifier(
 				ViewName.fromString(row.get("viewName")),
-				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
+                row.get("fragmentPairs").isEmpty() ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				Boolean.parseBoolean(row.get("immutable")),
 				Integer.parseInt(row.get("nrOfMembersAdded")),
 				List.of(), null);
@@ -39,10 +39,10 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	public FragmentWithRelation fragmentWithRelationsEntryTransformer(Map<String, String> row) {
 		return new FragmentWithRelation(new Fragment(new LdesFragmentIdentifier(
 				ViewName.fromString(row.get("viewName")),
-				row.get("fragmentPairs").equals("") ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
+                row.get("fragmentPairs").isEmpty() ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
 				false,
 				0,
-				row.get("relations").equals("") ? List.of()
+                row.get("relations").isEmpty() ? List.of()
 						: Arrays.stream(row.get("relations").split(",")).map(treeNode -> new TreeRelation("",
 								LdesFragmentIdentifier.fromFragmentId(treeNode), "", "", GENERIC_TREE_RELATION))
 								.toList(),
@@ -52,7 +52,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 	@DataTableType(replaceWithEmptyString = "[blank]")
 	public OutgoingRelationResult outgoingRelationResultEntryTransformer(Map<String, String> row) {
 		return new OutgoingRelationResult(LdesFragmentIdentifier.fromFragmentId(row.get("outgoingRelation")),
-				row.get("fragmentIds").equals("") ? Set.of()
+                row.get("fragmentIds").isEmpty() ? Set.of()
 						: Arrays.stream(row.get("fragmentIds").split(",")).map(LdesFragmentIdentifier::fromFragmentId)
 								.collect(Collectors.toSet()));
 	}

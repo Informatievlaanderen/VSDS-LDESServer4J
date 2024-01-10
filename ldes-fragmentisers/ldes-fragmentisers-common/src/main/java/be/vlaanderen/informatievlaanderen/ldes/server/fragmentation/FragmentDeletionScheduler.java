@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkFragmentDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -19,18 +19,18 @@ public class FragmentDeletionScheduler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FragmentDeletionScheduler.class);
 	private final FragmentRepository fragmentRepository;
 	private final ApplicationEventPublisher applicationEventPublisher;
-	private final RetentionPolicyCollection retentionPolicyCollection;
+	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
 	public FragmentDeletionScheduler(FragmentRepository fragmentRepository,
-									 ApplicationEventPublisher applicationEventPublisher, RetentionPolicyCollection retentionPolicyCollection) {
+									 ApplicationEventPublisher applicationEventPublisher, RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.fragmentRepository = fragmentRepository;
 		this.applicationEventPublisher = applicationEventPublisher;
-		this.retentionPolicyCollection = retentionPolicyCollection;
+		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}
 
 	@Scheduled(cron = DELETION_CRON_KEY)
 	public void deleteFragments() {
-		if(retentionPolicyCollection.isEmpty()) {
+		if(retentionPolicyEmptinessChecker.isEmpty()) {
 			LOGGER.atDebug().log("Fragment deletion skipped: no retention policies found.");
 			return;
 		}

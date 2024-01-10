@@ -7,8 +7,8 @@ open module ldes.fragmentation.domain {
     requires org.apache.jena.core;
     requires spring.beans;
     requires micrometer.core;
-	requires org.slf4j;
-	exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
+    requires org.slf4j;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
 

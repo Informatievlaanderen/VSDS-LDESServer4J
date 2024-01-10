@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.compaction.domain.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.RetentionPolicyCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,22 +23,22 @@ public class CompactionScheduler {
 	private final FragmentRepository fragmentRepository;
 	private final PaginationCompactionService paginationCompactionService;
 	private final CompactionCandidateService compactionCandidateService;
-	private final RetentionPolicyCollection retentionPolicyCollection;
+	private final RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker;
 
 	public CompactionScheduler(ViewCollection viewCollection, FragmentRepository fragmentRepository,
 							   PaginationCompactionService paginationCompactionService,
 							   CompactionCandidateService compactionCandidateService,
-							   RetentionPolicyCollection retentionPolicyCollection) {
+							   RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker) {
 		this.viewCollection = viewCollection;
 		this.fragmentRepository = fragmentRepository;
 		this.paginationCompactionService = paginationCompactionService;
 		this.compactionCandidateService = compactionCandidateService;
-		this.retentionPolicyCollection = retentionPolicyCollection;
+		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}
 
 	@Scheduled(cron = COMPACTION_CRON_KEY)
 	public void compactFragments() {
-		if(retentionPolicyCollection.isEmpty()) {
+		if(retentionPolicyEmptinessChecker.isEmpty()) {
 			LOGGER.info("Compaction skipped: no retention policies found.");
 			return;
 		}
