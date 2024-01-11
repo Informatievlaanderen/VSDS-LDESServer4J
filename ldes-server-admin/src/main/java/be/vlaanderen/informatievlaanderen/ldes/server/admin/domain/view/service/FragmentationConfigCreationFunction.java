@@ -39,7 +39,7 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 		return fragmentationConfig;
 	}
 
-	private static void validateFragmentationStatements(List<Statement> fragmentationStatements) {
+	private void validateFragmentationStatements(List<Statement> fragmentationStatements) {
 		if (fragmentationStatements.size() != 1) {
 			throw new IllegalArgumentException(
 					"Cannot Create Fragmentation Config. Expected exactly 1 " + FRAGMENTATION_TYPE
