@@ -171,7 +171,7 @@ public interface OpenApiTreeNodeController {
 	})
 	@ApiResponse(responseCode = "404", content = @Content, description = "No Linked Data Event Stream found with provided collection name")
 	ResponseEntity<TreeNode> retrieveLdesFragment(
-			@Parameter(example = "PaginationFragmentation") String view,
+			@Parameter(example = "by-time") String view,
 			@Parameter(examples = @ExampleObject(value = """
 					{
 						"fragment": "1"

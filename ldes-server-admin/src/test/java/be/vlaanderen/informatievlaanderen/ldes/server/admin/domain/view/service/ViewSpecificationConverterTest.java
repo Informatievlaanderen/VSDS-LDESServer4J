@@ -12,6 +12,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFParser;
+import org.apache.jena.riot.RDFWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -90,11 +91,11 @@ class ViewSpecificationConverterTest {
 		geospatialConfig.setName("GeospatialFragmentation");
 		geospatialConfig.setConfig(
 				Map.of("maxZoom", "15", "fragmentationPath", "http://www.opengis.net/ont/geosparql#asWKT"));
-		FragmentationConfig paginationConfig = new FragmentationConfig();
-		paginationConfig.setName("PaginationFragmentation");
-		paginationConfig.setConfig(
-				Map.of("memberLimit", "100"));
-		List<FragmentationConfig> fragmentations = List.of(geospatialConfig, paginationConfig);
+		FragmentationConfig hierarchicalTimeBasedFragmentation = new FragmentationConfig();
+		hierarchicalTimeBasedFragmentation.setName("HierarchicalTimeBasedFragmentation");
+		hierarchicalTimeBasedFragmentation.setConfig(
+				Map.of("maxGranularity", "day", "fragmentationPath", "http://www.w3.org/ns/prov#generatedAtTime"));
+		List<FragmentationConfig> fragmentations = List.of(geospatialConfig, hierarchicalTimeBasedFragmentation);
 		return new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), fragmentations, 100);
 	}
 
