@@ -13,8 +13,9 @@ viewName:description
             a tree:GeospatialFragmentation ;
             tree:maxZoom "15";
             tree:fragmentationPath "http://www.opengis.net/ont/geosparql#asWKT"
-        ][
-            a tree:PaginationFragmentation ;
-            tree:memberLimit "100"
-        ]) .
+        ] [
+            a tree:HierarchicalTimeBasedFragmentation ;
+            tree:maxGranularity "day"  ;
+            tree:fragmentationPath "http://www.w3.org/ns/prov#generatedAtTime" ;
+        ] ) .
 
