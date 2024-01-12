@@ -1,9 +1,11 @@
 @prefix :      <http://example.com/restaurant#> .
 @prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix terms:  <http://purl.org/dc/terms/> .
 
 :menuItem1 a :MenuItem ;
     :name "Spaghetti Bolognese" ;
     :category :mainDish ;
     :price "6.99"^^xsd:decimal ;
+    terms:isVersionOf :menuItemA ;
     :ingredients "Spaghetti, ground beef, tomatoes, onions, garlic, herbs" .
