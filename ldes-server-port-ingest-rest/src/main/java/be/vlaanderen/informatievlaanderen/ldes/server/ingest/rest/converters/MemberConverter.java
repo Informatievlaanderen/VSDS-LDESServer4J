@@ -6,7 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.jetbrains.annotations.NotNull;
@@ -22,13 +23,13 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Set;
 
+@SuppressWarnings("java:S1075")
 @Observed
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 
-	private final static String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
+	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 
 	private final RdfModelConverter rdfModelConverter;
 
