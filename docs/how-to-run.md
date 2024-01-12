@@ -21,45 +21,9 @@ an overview of all the releases.
 
 ## LDES Server Config
 
-The LDES Server provides a variety of tweaking options to configure it to your ideal use case:
+The LDES Server provides a variety of tweaking options to configure it to your ideal use case.
 
-| Feature             | Property                                | Description                                                                                                                                                                                                                                                                                                      | required | Default Value |
-|---------------------|-----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|---------------|
-| Open-API            | springdoc.api-docs.enabled              | Set `springdoc.api-docs.enabled: true` to enable Open API documentation. [More Open-API documentation](https://springdoc.org/#properties) |               |
-| Open-API            | springdoc.api-docs.path                 | When enabled, a url needs to be configured that points to the Open API documentation, i.e. `springdoc.api-docs.path: /v1/api-docs`. Note that this will be prefixed by an optional `server.servlet.context-path`. [More Open-API documentation](https://springdoc.org/#properties)  |               |
-| Swagger Config      | springdoc.swagger-ui.enabled            | Set `springdoc.swagger-ui.enabled: true` to enable a Swagger API to easily configure your Streams. [More Swagger UI documentation](https://springdoc.org/#swagger-ui-properties) |               |
-| Swagger Config      | springdoc.swagger-ui.path               | When enabled, a url needs to be configured that points to the Swagger documentation, i.e. `springdoc.swagger-ui.path: /v1/api-docs`. Note that this will be prefixed by an optional `server.servlet.context-path`. [More Swagger UI documentation](https://springdoc.org/#swagger-ui-properties)  |               |
-|                     |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-| URL Configuration   |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-|                     | ldes-server.host-name                   | This is the url that will be used throughout the fragment names. <br>This should therefor point to a publicly available url.                                                                                                                                                                                     | Yes      |               |
-|                     | ldes-server.use-relative-url            | Determines if the resources hosted on the server are constructed with a relative URI. For [more](./features/relative-urls)                                                                                                                                                                                       | No       | false         |
-|                     |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-| Ingest/Fetch        |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-|                     | rest.max-age                            | Time in seconds that a mutable fragment can be considered up-to-date                                                                                                                                                                                                                                             | No       | 60            |
-|                     | rest.max-age-immutable                  | Time in seconds that an immutable fragment should not be refreshed                                                                                                                                                                                                                                               | No       | 604800        |
-|                     |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-| MongoDB Storage     |                                         | As of this moment the LDES Server only supports a MongoDB implementation. <br> The following properties have to be set to provide connectivity between the server and the database                                                                                                                               |          |               |
-|                     | spring.data.mongodb.host                | URL that points to the MongoDB server                                                                                                                                                                                                                                                                            |          |               |
-|                     | spring.data.mongodb.port                | Port on which the MongoDB server runs                                                                                                                                                                                                                                                                            |          |               |
-|                     | spring.data.mongodb.database            | Name for the existing or to be created database on the MongoDB server                                                                                                                                                                                                                                            |          |               |
-|                     | spring.data.mongodb.uri                 | Alternative to the previous 3 properties, allows passing the mongodb connection string. Note that when a MongoDB link needs to be configured with authentication, it is typically done with a uri, e.g. `mongodb://myDatabaseUser:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin`              |          |               |
-|                     | spring.data.mongodb.auto-index-creation | Enables the server to automatically create indices in mongodb. If this property is not enabled, you have to manage the indices manually. This can have a significant impact on performance. <br> We highly advise you to keep this on for performance reasons                                                    |          |               |
-|                     |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-| Fragment Compaction |                                         | [Fragment Compaction](./features/compaction)                                                                                                                                                                                                                                                                     |          |               |
-|                     | ldes-server.compaction-cron             | Defines how often the Compaction Service will check the fragments                                                                                                                                                                                                                                                | No       | 0 0 0 * * *   |
-|                     | ldes-server.compaction-duration         | Defines how long long the redundant compacted fragments will remain on the server                                                                                                                                                                                                                                | No       | PD7           |
-|                     | ldes-server.deletion-cron               | Defines how often the redundant compacted fragments will be checked for deletion                                                                                                                                                                                                                                 | No       | 0 0 0 * * *   |
-|                     |                                         |                                                                                                                                                                                                                                                                                                                  |          |               |
-| Retention           |                                         | [Retention Policies](./configuration/retention-policies)                                                                                                                                                                                                                                                         |          |               |
-|                     | ldes-server.retention-cron              | Defines how often the Retention Service will check the members                                                                                                                                                                                                                                                   | No       | 0 0 0 * * *   |
-
-> **Note**: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
-> annotation `@Scheduled` adds a 6th parameter to support seconds.
->
-> More information about this can be found in
-> the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
-
-Based on the previous config options, we provide a basic config to use.
+An example basic config can be found here:
 
 ***ldes-server.yml***:
 
@@ -78,10 +42,143 @@ spring:
       auto-index-creation: true
 ````
 
+Here is an explanation provided for all the possibilities on how to tweak and configure your LDES Server:
+
+<table>
+<thead>
+  <tr><th colspan="4">Feature</th></tr>
+  <tr><th>Property</th><th>Description</th><th>Required</th><th>Default value</th></tr>
+</thead>
+<tbody>
+  <tr><td colspan="4"><b>Open-API</b></td></tr>
+  <tr>
+    <td>springdoc.api-docs.enabled</td>
+    <td>This boolean indicates whether Open API documentation is enabld. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
+    <td>No</td>
+    <td>true</td>
+  </tr>
+  <tr>
+    <td>springdoc.api-docs.path</td>
+    <td>When enabled, an url* needs to be configured that points to the Open API documentation. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
+    <td>No</td>
+  </tr>
+  <tr><td colspan="4"><b>Swagger UI</b></td></tr>
+  <tr>
+    <td>springdoc.swagger-ui.enabled</td>
+    <td>This boolean indicates whether Swagger API is enabled. This can be used to easily configure your Streams. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
+    <td>No</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>springdoc.swagger-ui.path</td>
+    <td>When enabled, an url* needs to be configured that points to the Swagger documentation. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
+    <td>No</td>
+    <td>true</td>
+  </tr>
+  <tr><td colspan="4"><b>URL Configuration</b></td></tr>
+  <tr>
+    <td>ldes-server.host-name</td>
+    <td>This is the url that will be used throughout the fragment names. This should therefor point to a resolvable url.</td>
+    <td>Yes</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>ldes-server.use-relative-url</td>
+    <td>Determines if the resources hosted on the server are constructed with a relative URI. For <a href="./features/relative-urls">more</a></td>
+    <td>No</td>
+    <td>false</td>
+  </tr>
+  <tr><td colspan="4"><b>Ingest/Fetch</b></td></tr>
+  <tr>
+    <td>rest.max-age</td>
+    <td>Time in seconds that a mutable fragment can be considered up-to-date</td>
+    <td>No</td>
+    <td>60</td>
+  </tr>
+  <tr>
+    <td>rest.max-age-immutable</td>
+    <td>Time in seconds that an immutable fragment should not be refreshed</td>
+    <td>No</td>
+    <td>604800</td>
+  </tr>
+  <tr><td colspan="4"><b>MongoDB Storage</b>**</td></tr>
+  <tr>
+    <td>spring.data.mongodb.host</td>
+    <td>URL that points to the MongoDB server</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>spring.data.mongodb.port</td>
+    <td>Port on which the MongoDB server runs</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>spring.data.mongodb.database</td>
+    <td>Name for the existing or to be created database on the MongoDB server</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>spring.data.mongodb.uri</td>
+    <td>
+      Alternative to the previous 3 properties, allows passing the mongodb connection string. Note that when a MongoDB link needs to be configured with authentication, it is typically done with an uri, e.g. <code>mongodb://myDatabaseUser:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin</code>
+    </td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>spring.data.mongodb.auto-index-creation</td>
+    <td>Enables the server to automatically create indices in mongodb. If this property is not enabled, you have to manage the indices manually. This can have a significant impact on performance. <br> We highly advise you to keep this on for performance reasons</td>
+    <td></td>
+    <td></td>
+  </tr>
+  <tr><td colspan="4"><b><a href="./features/compaction">Fragment Compaction</a></b></td></tr>
+  <tr>
+    <td>ldes-server.compaction-cron</td>
+    <td>Defines how often the Compaction Service will check the fragments ***</td>
+    <td>No</td>
+    <td>0 0 0 * * *</td>
+  </tr>
+  <tr>
+    <td>ldes-server.compaction-duration</td>
+    <td>Defines how long the redundant compacted fragments will remain on the server</td>
+    <td>No</td>
+    <td>PD7</td>
+  </tr>
+  <tr>
+    <td>ldes-server.deletion-cron</td>
+    <td>Defines how often the redundant compacted fragments will be checked for deletion ***</td>
+    <td>No</td>
+    <td>0 0 0 * * *</td>
+  </tr>
+  <tr><td colspan="4"><b>Retention (<a href="./configuration/retention-policies">Retention Policies</a>)</b></td></tr>
+  <tr>
+    <td>ldes-server.retention-cron</td>
+    <td>Defines how often the Retention Service will check the members ***</td>
+    <td>No</td>
+    <td>0 0 0 * * *</td>
+  </tr>
+</tbody>
+</table>
+
+> **Note** *: The specified url will be prefixed by an optional `server.servlet.context-path`
+
+> **Note** **: As of this moment the LDES Server only supports a MongoDB implementation. The following properties have
+> to be set to provide connectivity between the server and the database
+
+
+> **Note** ***: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
+> annotation `@Scheduled` adds a 6th parameter to support seconds.
+>
+> More information about this can be found in
+>
+the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+
 ## Docker Compose
 
 ````yaml
-version: "3.3"
 services:
   ldes-server:
     container_name: basic_ldes-server

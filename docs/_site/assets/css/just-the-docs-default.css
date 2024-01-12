@@ -17144,3 +17144,6 @@ a:link a:visited a:hover a:active {
 
 .addons-wrap .status .branch .name {
   color: #0055CC; }
+
+table, th, td, tr {
+  border-color: rgba(102, 102, 102, 0.33) !important; }
