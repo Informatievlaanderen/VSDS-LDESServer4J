@@ -66,6 +66,7 @@
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
+        <sis-embedded-db.version>1.4</sis-embedded-db.version>
 
         <!-- VSDS -->
         <project.base.groupId>be.vlaanderen.informatievlaanderen.vsds</project.base.groupId>
