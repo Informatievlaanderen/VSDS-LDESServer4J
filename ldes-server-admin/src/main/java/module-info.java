@@ -17,7 +17,7 @@ open module ldes.admin {
     requires org.apache.jena.arq;
     requires org.apache.jena.core;
     requires org.apache.jena.shacl;
-    requires org.apache.jena.ext.com.google;
+    requires com.google.common;
     requires org.slf4j;
     requires io.swagger.v3.oas.annotations;
     requires org.jetbrains.annotations;
