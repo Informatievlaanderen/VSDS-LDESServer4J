@@ -17,6 +17,9 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.RDF_SYNTAX_TYPE;
 
 public class FragmentationConfigCreationFunction implements Function<RDFNode, FragmentationConfig> {
+
+	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
+
 	@Override
 	public FragmentationConfig apply(RDFNode rdfNode) {
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
@@ -26,13 +29,7 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 				.toList();
 		List<Statement> fragmentationStatements = statements.stream()
 				.filter(statement -> statement.getPredicate().equals(RDF_SYNTAX_TYPE)).toList();
-		if (fragmentationStatements.size() != 1) {
-			throw new IllegalArgumentException(
-					"Cannot Create Fragmentation Config. Expected exactly 1 " + FRAGMENTATION_TYPE
-							+ " statement.\n Found no or multiple statements in :\n"
-							+ RdfModelConverter.toString(ModelFactory.createDefaultModel().add(fragmentationStatements),
-									Lang.TURTLE));
-		}
+		validateFragmentationStatements(fragmentationStatements);
 		Map<String, String> fragmentationPropertiesMap = extractFragmentationProperties(statements,
 				fragmentationStatements);
 		String fragmentationName = computeFragmentationName(statements);
@@ -40,6 +37,16 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 		fragmentationConfig.setName(fragmentationName);
 		fragmentationConfig.setConfig(fragmentationPropertiesMap);
 		return fragmentationConfig;
+	}
+
+	private void validateFragmentationStatements(List<Statement> fragmentationStatements) {
+		if (fragmentationStatements.size() != 1) {
+			throw new IllegalArgumentException(
+					"Cannot Create Fragmentation Config. Expected exactly 1 " + FRAGMENTATION_TYPE
+							+ " statement.\n Found no or multiple statements in :\n"
+							+ RdfModelConverter.toString(ModelFactory.createDefaultModel().add(fragmentationStatements),
+									Lang.TURTLE));
+		}
 	}
 
 	private Map<String, String> extractFragmentationProperties(List<Statement> statements,
@@ -57,11 +64,19 @@ public class FragmentationConfigCreationFunction implements Function<RDFNode, Fr
 	}
 
 	private String computeFragmentationName(List<Statement> statements) {
-		return statements.stream()
+		final String fragmentationName = statements.stream()
 				.filter(statement -> statement.getPredicate().equals(RDF_SYNTAX_TYPE))
 				.findFirst()
 				.orElseThrow(() -> new ModelToViewConverterException("Unable to find fragmentation type"))
 				.getResource()
 				.getLocalName();
+
+		if (PAGINATION_FRAGMENTATION.equals(fragmentationName)) {
+			throw new IllegalArgumentException("Pagination cannot be chosen as fragmentation strategy." +
+					"We paginate every view by default. " +
+					"To create a view that only has pagination, create it without fragmentation strategies.");
+		}
+
+		return fragmentationName;
 	}
 }
