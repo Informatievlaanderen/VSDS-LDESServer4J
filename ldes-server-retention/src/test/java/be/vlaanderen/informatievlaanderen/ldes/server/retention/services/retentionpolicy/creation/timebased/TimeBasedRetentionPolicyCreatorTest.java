@@ -22,7 +22,7 @@ class TimeBasedRetentionPolicyCreatorTest {
 
 		RetentionPolicy retentionPolicy = timeBasedRetentionPolicyCreator.createRetentionPolicy(retentionModel);
 
-		assertTrue(retentionPolicy instanceof TimeBasedRetentionPolicy);
+        assertInstanceOf(TimeBasedRetentionPolicy.class, retentionPolicy);
 	}
 
 	@Test
@@ -36,7 +36,7 @@ class TimeBasedRetentionPolicyCreatorTest {
 				"Cannot Create Time Based Retention Policy in which there is not exactly 1 https://w3id.org/tree#value statement.\n"
 						+
 						" Found 2 statements in :\n" +
-						"[ a                              <https://w3id.org/ldes#DurationAgoPolicy> ;\n" +
+						"[ a                              <https://w3id.org/ldes#DurationAgoPolicy>;\n" +
 						"  <https://w3id.org/tree#value>  \"PT3M\"^^<http://www.w3.org/2001/XMLSchema#duration> , \"PT2M\"^^<http://www.w3.org/2001/XMLSchema#duration>\n"
 						+
 						"] .\n",
