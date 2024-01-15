@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.eventhandler;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.mapper.MemberAllocatedMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
@@ -19,8 +20,11 @@ public class AllocatedMemberHandlerFetch {
 
 	@EventListener
 	public void handleMemberAllocatedEvent(MemberAllocatedEvent event) {
-
 		allocationRepository.saveAllocation(memberAllocatedMapper.toEntity(event));
 	}
 
+	@EventListener
+	public void handleBulkMemberAllocatedEvent(BulkMemberAllocatedEvent event) {
+		allocationRepository.saveAllocations(memberAllocatedMapper.toEntities(event));
+	}
 }

@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.repository.FragmentEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,32 +23,37 @@ import static org.mockito.Mockito.mock;
 @EnableAutoConfiguration
 @DataMongoTest
 @ActiveProfiles("mongo-test")
-@ContextConfiguration(classes = { FragmentEntityRepository.class })
-@ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.fragmentation",
-		"be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo" })
+@ContextConfiguration(classes = {FragmentEntityRepository.class})
+@ComponentScan(value = {"be.vlaanderen.informatievlaanderen.ldes.server.fragmentation",
+        "be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo"})
 @Import(MongoFragmentationIntegrationTest.EventStreamControllerTestConfiguration.class)
 @SuppressWarnings("java:S2187")
 public class MongoFragmentationIntegrationTest {
 
-	@Autowired
-	public FragmentRepository fragmentRepository;
+    @Autowired
+    public FragmentRepository fragmentRepository;
 
-	@Autowired
-	public FragmentSequenceRepository fragmentSequenceRepository;
+    @Autowired
+    public FragmentSequenceRepository fragmentSequenceRepository;
 
-	@TestConfiguration
-	public static class EventStreamControllerTestConfiguration {
+    @TestConfiguration
+    public static class EventStreamControllerTestConfiguration {
 
-		@Bean
-		public ObservationRegistry observationRegistry() {
-			return ObservationRegistry.NOOP;
-		}
+        @Bean
+        public ObservationRegistry observationRegistry() {
+            return ObservationRegistry.NOOP;
+        }
 
-		@Bean
-		public MemberRepository memberRepository() {
-			return mock(MemberRepository.class);
-		}
+        @Bean
+        public MemberRepository memberRepository() {
+            return mock(MemberRepository.class);
+        }
 
-	}
+        @Bean
+        public MemberPropertiesRepository memberPropertiesRepository() {
+            return mock(MemberPropertiesRepository.class);
+        }
+
+    }
 
 }

@@ -8,11 +8,7 @@ This is meant to be a standard way of fragmentation.
   ```ttl
   @prefix tree: <https://w3id.org/tree#> .
   
-  tree:fragmentationStrategy ([
-        a tree:PaginationFragmentation ;
-        tree:memberLimit { Mandatory:member limit > 0 } ;
-        tree:bidirectionalRelations { Optional: true or false (true is default) } ;
-    ]) .
+  tree:fragmentationStrategy () .
   ```
 
 ## Algorithm
@@ -39,8 +35,5 @@ from the previous fragment to the new fragment.
   ```ttl
   @prefix tree: <https://w3id.org/tree#> .
   
-  tree:fragmentationStrategy ([
-        a tree:PaginationFragmentation ;
-        tree:memberLimit 10 ;
-    ]) .
+  tree:fragmentationStrategy () .
   ```

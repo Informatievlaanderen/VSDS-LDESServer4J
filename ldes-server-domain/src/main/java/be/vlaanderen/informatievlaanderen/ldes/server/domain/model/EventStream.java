@@ -7,13 +7,11 @@ public class EventStream {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
-	private final String memberType;
 
-	public EventStream(String collection, String timestampPath, String versionOfPath, String memberType) {
+	public EventStream(String collection, String timestampPath, String versionOfPath) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-		this.memberType = memberType;
 	}
 
 	public String getCollection() {
@@ -26,10 +24,6 @@ public class EventStream {
 
 	public String getVersionOfPath() {
 		return versionOfPath;
-	}
-
-	public String getMemberType() {
-		return memberType;
 	}
 
 	@Override

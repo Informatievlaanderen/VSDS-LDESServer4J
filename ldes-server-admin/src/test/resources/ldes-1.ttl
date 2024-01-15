@@ -12,5 +12,4 @@ server:name1 a ldes:EventStream ;
     ldes:versionOfPath dcterms:isVersionOf ;
     tree:shape server:shape .
 
-server:shape a sh:NodeShape ;
-   sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> ;
+server:shape a sh:NodeShape .

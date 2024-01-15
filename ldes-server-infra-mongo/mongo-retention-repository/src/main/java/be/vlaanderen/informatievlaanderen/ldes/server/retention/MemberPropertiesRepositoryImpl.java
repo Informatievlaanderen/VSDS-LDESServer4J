@@ -8,7 +8,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.Mem
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timeandversionbased.TimeAndVersionBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,6 +28,8 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Component
 public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepository {
+
+	private static final Logger log = LoggerFactory.getLogger(MemberPropertiesRepositoryImpl.class);
 
 	public static final String DOCUMENTS = "documents";
 	public static final String ID = "_id";
@@ -45,19 +50,8 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	}
 
 	@Override
-	public void saveMemberPropertiesWithoutViews(MemberProperties memberProperties) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where(ID).is(memberProperties.getId()));
-		Update update = new Update();
-		update.set(COLLECTION, memberProperties.getCollectionName());
-		update.set(VERSION_OF, memberProperties.getVersionOf());
-		update.set(TIMESTAMP, memberProperties.getTimestamp());
-		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
-	}
-
-	@Override
-	public void save(MemberProperties memberProperties) {
-		memberPropertiesEntityRepository.save(memberPropertiesEntityMapper.toMemberPropertiesEntity(memberProperties));
+	public void insert(MemberProperties memberProperties) {
+		memberPropertiesEntityRepository.insert(memberPropertiesEntityMapper.toMemberPropertiesEntity(memberProperties));
 	}
 
 	@Override
@@ -66,12 +60,15 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	}
 
 	@Override
-	public synchronized void addViewReference(String id, String viewName) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where(ID).is(id));
-		Update update = new Update();
-		update.addToSet(VIEWS, viewName);
-		mongoTemplate.upsert(query, update, MemberPropertiesEntity.class);
+	public void addViewToAll(ViewName viewName) {
+		final var query = new Query();
+		query.addCriteria(Criteria.where(COLLECTION).is(viewName.getCollectionName()));
+		final var update = new Update().addToSet(VIEWS, viewName.asString());
+		final var bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MemberPropertiesEntity.class);
+		bulkOps.updateMulti(query, update);
+
+		final var result = bulkOps.execute();
+		log.atInfo().log("View {} added to {} MemberProperties", viewName.asString(), result.getModifiedCount());
 	}
 
 	@Override

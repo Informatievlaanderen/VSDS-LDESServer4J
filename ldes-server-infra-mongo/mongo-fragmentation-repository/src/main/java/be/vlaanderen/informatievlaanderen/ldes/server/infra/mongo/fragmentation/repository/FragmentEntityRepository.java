@@ -25,5 +25,7 @@ public interface FragmentEntityRepository extends MongoRepository<FragmentEntity
 
 	List<FragmentEntity> findAllByRelations_TreeNode(LdesFragmentIdentifier fragmentId);
 
+	int countByRelations_TreeNode(LdesFragmentIdentifier fragmentId);
+
 	Stream<FragmentEntity> findByDeleteTimeNotNull();
 }

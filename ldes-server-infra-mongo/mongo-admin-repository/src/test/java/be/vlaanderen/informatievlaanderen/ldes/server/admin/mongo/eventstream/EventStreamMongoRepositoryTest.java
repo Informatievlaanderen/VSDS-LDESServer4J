@@ -23,9 +23,9 @@ import static org.mockito.Mockito.when;
 class EventStreamMongoRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
 	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
-			"isVersionOf", "memberType");
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf",
-			"memberType");
+			"isVersionOf");
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf"
+    );
 	private EventStreamMongoRepository mongoRepository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
@@ -40,12 +40,12 @@ class EventStreamMongoRepositoryTest {
 	void when_dbHasEntities_then_returnAll() {
 		when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
 				EVENT_STREAM_ENTITY,
-				new EventStreamEntity("other_collection", "created", "version", "memberType")));
+				new EventStreamEntity("other_collection", "created", "version")));
 
 		List<EventStream> eventStreams = mongoRepository.retrieveAllEventStreams();
 		List<EventStream> expectedEventStreams = List.of(
 				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version", "memberType"));
+				new EventStream("other_collection", "created", "version"));
 		verify(eventStreamEntityRepository).findAll();
 		assertEquals(expectedEventStreams, eventStreams);
 	}

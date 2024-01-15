@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment.ROOT;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,13 +100,13 @@ class FragmentTest {
 
 	@Test
 	void when_removeRelationToIdentifier_Then_ExpectItemToBeRemoved() {
-		Fragment a = new Fragment(LdesFragmentIdentifier.fromFragmentId("/c/v"));
-		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v1?k=1")));
-		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v1?k=2")));
-		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v1?k=3")));
-		a.addRelation(createEmptyRelationForFragment(LdesFragmentIdentifier.fromFragmentId("/c/v2?k=1")));
+		Fragment a = new Fragment(fromFragmentId("/c/v"));
+		a.addRelation(createEmptyRelationForFragment(fromFragmentId("/c/v1?k=1")));
+		a.addRelation(createEmptyRelationForFragment(fromFragmentId("/c/v1?k=2")));
+		a.addRelation(createEmptyRelationForFragment(fromFragmentId("/c/v1?k=3")));
+		a.addRelation(createEmptyRelationForFragment(fromFragmentId("/c/v2?k=1")));
 
-		LdesFragmentIdentifier toRemove = LdesFragmentIdentifier.fromFragmentId("/c/v1?k=2");
+		LdesFragmentIdentifier toRemove = fromFragmentId("/c/v1?k=2");
 
 		assertEquals(4, a.getRelations().size());
 		a.removeRelationToIdentifier(toRemove);
@@ -133,6 +134,22 @@ class FragmentTest {
 		assertEquals(a.hashCode(), a2.hashCode());
 		assertEquals(a2.hashCode(), a.hashCode());
 		assertNotEquals(a.hashCode(), c.hashCode());
+	}
+
+	@Test
+	void isConnectedTo() {
+		Fragment f3 = new Fragment(fromFragmentId("collection/3"), true, 0, List.of(),
+				null);
+		Fragment f2 = new Fragment(fromFragmentId("collection/1"), true, 0, List.of(),
+				null);
+		Fragment f1 = new Fragment(fromFragmentId("collection/2"), true, 0,
+				List.of(new TreeRelation(null, f2.getFragmentId(), null, null, null)),
+				null);
+
+		assertFalse(f2.isConnectedTo(f1));
+		assertTrue(f1.isConnectedTo(f2));
+		assertFalse(f3.isConnectedTo(f2));
+		assertFalse(f3.isConnectedTo(f1));
 	}
 
 	private TreeRelation createEmptyRelationForFragment(LdesFragmentIdentifier fragmentIdentifier) {

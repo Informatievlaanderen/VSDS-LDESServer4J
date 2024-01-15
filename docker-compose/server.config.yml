@@ -6,6 +6,11 @@ ldes-server:
 management:
   tracing:
     enabled: false
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
 pyroscope:
   agent:
     enabled: true

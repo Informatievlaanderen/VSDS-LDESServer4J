@@ -5,10 +5,13 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("fetch_allocation")
+import static be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity.FETCH_ALLOCATION;
+
+@Document(FETCH_ALLOCATION)
 @CompoundIndex(name = "collection_view", def = "{'collectionName' : 1, 'viewName': 1}")
 @CompoundIndex(name = "memberId_view", def = "{'collectionName' : 1, 'viewName': 1, 'memberId' : 1}")
 public class MemberAllocationEntity {
+	public static final String FETCH_ALLOCATION = "fetch_allocation";
 	@Id
 	private final String id;
 	@Indexed

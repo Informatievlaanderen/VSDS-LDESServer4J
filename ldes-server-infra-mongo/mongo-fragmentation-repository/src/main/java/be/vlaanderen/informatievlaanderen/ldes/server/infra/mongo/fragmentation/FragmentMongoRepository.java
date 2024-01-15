@@ -16,10 +16,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.mongodb.client.result.UpdateResult;
@@ -88,6 +87,16 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
+	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId, int size) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("_id").is(fragmentId.asString()));
+
+		Update update = new Update().inc("nrOfMembersAdded", size);
+		UpdateResult result = mongoTemplate.updateFirst(query, update, FragmentEntity.class);
+		ResultChecker.expect(result, 1);
+	}
+
+	@Override
 	public Stream<Fragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)
@@ -122,25 +131,21 @@ public class FragmentMongoRepository implements FragmentRepository {
 	}
 
 	@Override
-	public void removeRelationsPointingToFragmentAndDeleteFragment(Fragment readyForDeletionFragment) {
-		removeRelationsPointingToDeletedFragment(readyForDeletionFragment);
-		repository.delete(FragmentEntity.fromLdesFragment(readyForDeletionFragment));
+	public void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
+		removeRelationsPointingToDeletedFragment(readyForDeletionFragmentId);
+		repository.deleteById(readyForDeletionFragmentId.asString());
 	}
 
-	private void removeRelationsPointingToDeletedFragment(Fragment readyForDeletionFragment) {
-		List<FragmentEntity> fragments = repository
-				.findAllByRelations_TreeNode(readyForDeletionFragment.getFragmentId());
-		Set<FragmentEntity> updatedFragmentEntities = fragments
-				.stream()
-				.map(fragment -> {
-					List<TreeRelation> relationsToRemove = fragment.getRelations().stream()
-							.filter(treeRelation -> treeRelation.treeNode()
-									.equals(readyForDeletionFragment.getFragmentId()))
-							.toList();
-					relationsToRemove.forEach(fragment::removeRelation);
-					return fragment;
-				}).collect(Collectors.toSet());
-		repository.saveAll(updatedFragmentEntities);
+	private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
+		List<FragmentEntity> fragments = repository.findAllByRelations_TreeNode(readyForDeletionFragmentId);
+		fragments.forEach(fragment -> {
+			List<TreeRelation> relationsToRemove = fragment.getRelations().stream()
+					.filter(treeRelation -> treeRelation.treeNode()
+							.equals(readyForDeletionFragmentId))
+					.toList();
+			relationsToRemove.forEach(fragment::removeRelation);
+		});
+		repository.saveAll(new HashSet<>(fragments));
 	}
 
 }

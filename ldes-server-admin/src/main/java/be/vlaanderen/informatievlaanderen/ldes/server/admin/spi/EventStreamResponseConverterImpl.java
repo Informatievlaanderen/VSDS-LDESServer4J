@@ -15,7 +15,6 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
-import static org.apache.jena.shacl.vocabulary.SHACL.targetClass;
 
 @Component
 public class EventStreamResponseConverterImpl implements EventStreamResponseConverter {
@@ -41,9 +40,7 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		final String versionOfPath = getResource(model, LDES_VERSION_OF);
 		final List<ViewSpecification> views = getViews(model, collection);
 		final Model shacl = getShaclFromModel(model);
-		final String memberType = extractMemberType(shacl);
-		return new EventStreamResponse(collection, timestampPath, versionOfPath, memberType, views,
-				shacl);
+		return new EventStreamResponse(collection, timestampPath, versionOfPath, views, shacl);
 	}
 
 	@Override
@@ -67,8 +64,6 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		Statement shaclStatement = getShaclReferenceStatement(eventStreamResponse.getShacl(), subject);
 
 		eventStreamModel.add(shaclStatement);
-		eventStreamModel.add(createStatement(shaclStatement.getResource(), createProperty(targetClass.getURI()),
-				createProperty(eventStreamResponse.getMemberType())));
 
 		return prefixAdder.addPrefixesToModel(eventStreamModel);
 	}
@@ -169,14 +164,4 @@ public class EventStreamResponseConverterImpl implements EventStreamResponseConv
 		return statements;
 	}
 
-	private String extractMemberType(Model shacl) {
-		return shacl.listObjectsOfProperty(null, shacl.createProperty(targetClass.getURI()))
-				.nextOptional()
-				.map(RDFNode::toString)
-				.orElseThrow(() -> {
-					throw new IllegalArgumentException(
-							"Could not find a targetClass in provided shape. Missing statement: "
-									+ targetClass.getURI());
-				});
-	}
 }

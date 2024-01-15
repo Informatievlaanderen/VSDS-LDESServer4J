@@ -2,16 +2,6 @@ Feature: MemberRepository
   As a user
   I want to interact with the MemberRepository to save and retrieve MemberProperties
 
-  Scenario: Saving a MemberProperties without view
-    Given The following MemberProperties
-      | id                                      | collectionName      | versionOf                             | timestamp               | viewReference |
-      | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 | by-page |
-    When I save the MemberProperties without view using the MemberPropertiesRepository
-    And I retrieve the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
-    Then I have retrieved 1 MemberProperties
-    And The retrieved MemberProperties contains MemberProperties 1 of the table
-    And The retrieved MemberProperties does not have the view "by-page" as a property
-
   Scenario: Saving a MemberProperties with view
     Given The following MemberProperties
       | id                                      | collectionName      | versionOf                             | timestamp               | viewReference |
@@ -25,8 +15,8 @@ Feature: MemberRepository
     Given The following MemberProperties
       | id                                      | collectionName      | versionOf                             | timestamp               |
       | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
-    When I save the MemberProperties using the MemberPropertiesRepository
     And I add the view with name "mobility-hindrances/by-page" to the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
+    When I save the MemberProperties using the MemberPropertiesRepository
     And I retrieve the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
     Then I have retrieved 1 MemberProperties
     And The retrieved MemberProperties contains MemberProperties 1 of the table
@@ -52,11 +42,11 @@ Feature: MemberRepository
       | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
       | http://test-data/mobility-hindrances/1/2 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
       | http://test-data/mobility-hindrances/1/3 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
-    When I save the MemberProperties using the MemberPropertiesRepository
     And I add the view with name "mobility-hindrances/by-page" to the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
     And I add the view with name "mobility-hindrances/by-page" to the MemberProperties with id "http://test-data/mobility-hindrances/1/2"
     And I add the view with name "mobility-hindrances/by-version" to the MemberProperties with id "http://test-data/mobility-hindrances/1/2"
     And I add the view with name "mobility-hindrances/by-version" to the MemberProperties with id "http://test-data/mobility-hindrances/1/3"
+    When I save the MemberProperties using the MemberPropertiesRepository
     And I retrieve all MemberProperties with view "mobility-hindrances/by-page"
     Then I have retrieved 2 MemberProperties
     And The retrieved MemberProperties contains MemberProperties 1 of the table
@@ -70,8 +60,8 @@ Feature: MemberRepository
     Given The following MemberProperties
       | id                                      | collectionName      | versionOf                             | timestamp               |
       | http://test-data/mobility-hindrances/1/1 | mobility-hindrances | http://test-data/mobility-hindrances/1 | 2023-07-05T15:28:49.665 |
-    When I save the MemberProperties using the MemberPropertiesRepository
     And I add the view with name "mobility-hindrances/by-page" to the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
+    When I save the MemberProperties using the MemberPropertiesRepository
     And I retrieve the MemberProperties with id "http://test-data/mobility-hindrances/1/1"
     Then I have retrieved 1 MemberProperties
     And The retrieved MemberProperties contains MemberProperties 1 of the table
@@ -158,3 +148,18 @@ Feature: MemberRepository
     When I retrieve the expired MemberProperties for "mobility-hindrances/by-page" with duration "P1D" and 2 versions
     Then I have retrieved 1 MemberProperties
     And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
+
+  Scenario: Adding a new view to the MemberProperties in bulk
+    Given The following MemberProperties
+      | id                         | collectionName      | versionOf             | timestamp               | viewReference               |
+      | http://test-data/mh/1      | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page |
+      | http://test-data/mh/2      | mobility-hindrances | http://test-data/mh/1 | 2023-08-05T15:28:49.665 | mobility-hindrances/by-page |
+      | http://test-data/mh/3      | mobility-hindrances | http://test-data/mh/1 | 2023-09-05T15:28:49.665 | mobility-hindrances/by-page |
+      | http://test-data/mh/4      | mobility-hindrances | http://test-data/mh/2 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page |
+      | http://test-data/parcels/1 | parcels             | http://test-data/mh/2 | 2023-07-05T15:28:49.665 | parcels/by-page             |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I bulk add the view with name "mobility-hindrances/by-location" to the MemberProperties
+    And I retrieve all MemberProperties with view "mobility-hindrances/by-page"
+    Then the MemberProperties all contain a reference to view "mobility-hindrances/by-location"
+    When I retrieve all MemberProperties with view "parcels/by-page"
+    Then the MemberProperties do not contain a reference to view "mobility-hindrances/by-location"
