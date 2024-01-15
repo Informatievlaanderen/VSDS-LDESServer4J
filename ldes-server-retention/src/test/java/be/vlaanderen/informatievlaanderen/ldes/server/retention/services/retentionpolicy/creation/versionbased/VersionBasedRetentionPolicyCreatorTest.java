@@ -31,7 +31,7 @@ class VersionBasedRetentionPolicyCreatorTest {
 
 		RetentionPolicy retentionPolicy = versionBasedRetentionPolicyCreator.createRetentionPolicy(retentionModel);
 
-		assertTrue(retentionPolicy instanceof VersionBasedRetentionPolicy);
+        assertInstanceOf(VersionBasedRetentionPolicy.class, retentionPolicy);
 	}
 
 	@Test
@@ -45,7 +45,7 @@ class VersionBasedRetentionPolicyCreatorTest {
 				"Cannot Create Version Based Retention Policy in which there is not exactly 1 https://w3id.org/ldes#amount statement.\n"
 						+
 						" Found 2 statements in :\n" +
-						"[ a                               <https://w3id.org/ldes#LatestVersionSubset> ;\n" +
+						"[ a                               <https://w3id.org/ldes#LatestVersionSubset>;\n" +
 						"  <https://w3id.org/ldes#amount>  3 , 2\n" +
 						"] .\n",
 				illegalArgumentException.getMessage());
