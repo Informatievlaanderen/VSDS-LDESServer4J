@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.Memb
 import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.jetbrains.annotations.NotNull;
@@ -24,9 +24,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.io.IOException;
 import java.util.Objects;
 
+@SuppressWarnings("java:S1075")
 @Observed
 @Component
 public class MemberConverter extends AbstractHttpMessageConverter<Member> {
+
+	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 
 	private final RdfModelConverter rdfModelConverter;
 
@@ -62,7 +65,7 @@ public class MemberConverter extends AbstractHttpMessageConverter<Member> {
 	}
 
 	private String extractMemberId(Model model, String collectionName) {
-		final var ids = model.listSubjects().filterKeep(RDFNode::isURIResource).toSet();
+		final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(VERSION_OF_PATH)).toSet();
 		if (ids.size() != 1) {
 			throw new MemberIdNotFoundException(model);
 		} else {

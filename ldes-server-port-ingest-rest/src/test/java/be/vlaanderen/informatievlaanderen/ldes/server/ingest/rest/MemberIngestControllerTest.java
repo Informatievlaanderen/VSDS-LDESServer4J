@@ -93,13 +93,23 @@ class MemberIngestControllerTest {
 	}
 
 	@Test
-	void when_POSTRequestIsPerformed_LDesMemberIsSavedWithoutVersionOfAndTimestamp() throws Exception {
-		byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-without-version-of-timestamp.nq",
+	void when_POSTRequestIsPerformed_LdesMemberIsSavedWithoutTimestamp() throws Exception {
+		byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-without-timestamp.nq",
 				Lang.NQUADS);
 
 		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
 				.andExpect(status().isOk());
 		verify(memberIngester, times(1)).ingest(any(Member.class));
+	}
+
+	@Test
+	void when_POSTRequestIsPerformed_WithoutVersionOf_ThenTheRequestFails() throws Exception {
+		byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-without-version-of.nq",
+				Lang.NQUADS);
+
+		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
+				.andExpect(status().isBadRequest())
+				.andExpect(content().string(containsString("Member id could not be extracted from model")));
 	}
 
 	@Test

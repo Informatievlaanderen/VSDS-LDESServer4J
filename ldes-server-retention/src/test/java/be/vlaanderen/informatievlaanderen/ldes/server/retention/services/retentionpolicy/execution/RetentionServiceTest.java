@@ -66,6 +66,15 @@ class RetentionServiceTest {
 		verify(memberRemover).removeMemberFromView(thirdMember, VIEW_C.asString());
 	}
 
+	@Test
+	void given_NoRetentionPolicies_when_RetentionPoliciesExecuted_then_DeleteNoMembers() {
+		when(retentionPolicyCollection.getRetentionPolicyMap()).thenReturn(Map.of());
+
+		retentionService.executeRetentionPolicies();
+
+		verifyNoInteractions(memberRemover);
+	}
+
 	private MemberProperties getMemberProperties(String memberId, int plusDays) {
 		return new MemberProperties(memberId, null, null, LocalDateTime.now().plusDays(plusDays));
 	}

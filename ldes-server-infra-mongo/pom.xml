@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <mongock-bom.version>5.3.4</mongock-bom.version>
+        <mongock-bom.version>5.4.0</mongock-bom.version>
     </properties>
 
     <dependencyManagement>
