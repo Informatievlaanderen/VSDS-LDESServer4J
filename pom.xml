@@ -96,11 +96,11 @@
         <assertj-core.version>3.24.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>9.0.4</depencency-check-maven.version>
+        <depencency-check-maven.version>9.0.8</depencency-check-maven.version>
 
         <!-- Monitoring and Logging -->
         <spring.aop.version>3.2.1</spring.aop.version>
-        <spring-boot.actuator.version>3.2.0</spring-boot.actuator.version>
+        <spring-boot.actuator.version>3.2.1</spring-boot.actuator.version>
         <micrometer-prometheus.version>1.12.0</micrometer-prometheus.version>
         <micrometer-tracing.version>1.2.1</micrometer-tracing.version>
         <zipkin-reporter.version>3.1.1</zipkin-reporter.version>
