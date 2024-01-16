@@ -39,7 +39,7 @@ public class PageCreator {
 		Fragment newFragment = parentFragment.createChild(new FragmentPair(PAGE_NUMBER, pageNumber));
 		String viewName = parentFragment.getViewName().asString();
 		Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, "view", viewName, "fragmentation-strategy", "pagination").increment();
-		LOGGER.debug("Pagination fragment created with id: {}", newFragment.getFragmentId());
+		LOGGER.debug("Page created with id: {}", newFragment.getFragmentId());
 		return newFragment;
 	}
 

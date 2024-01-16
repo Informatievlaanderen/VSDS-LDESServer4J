@@ -87,7 +87,7 @@ public interface OpenApiAdminViewsRestController {
 									    ] ;
 									] .
 									"""),
-							@ExampleObject(name = "Pagination Fragmentation Strategy", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
+							@ExampleObject(name = "Pagination View", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
