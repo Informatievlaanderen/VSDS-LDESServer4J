@@ -35,6 +35,10 @@ public class RetentionService {
 
 	@Scheduled(cron = RETENTION_CRON_KEY)
 	public void executeRetentionPolicies() {
+		if(retentionPolicyCollection.isEmpty()) {
+			log.atDebug().log("Retention skipped: no retention policies found");
+			return;
+		}
 		log.atDebug().log("Start retention");
 		retentionPolicyCollection
                 .getRetentionPolicyMap()
