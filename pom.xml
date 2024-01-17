@@ -125,7 +125,7 @@
         <commons-codec.version>1.16.0</commons-codec.version>
 
         <!-- NULL ANNOTATIONS -->
-        <jetbrains-annotations.version>24.0.1</jetbrains-annotations.version>
+        <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
     </properties>
 
     <dependencyManagement>
