@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,8 +69,9 @@ class MemberIngesterImplTest {
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
 		when(memberRepository.insert(member)).thenReturn(Optional.empty());
 
-		memberIngestService.ingest(member);
+		boolean memberIngested = memberIngestService.ingest(member);
 
+		assertThat(memberIngested).isFalse();
 		verify(memberRepository, times(1)).insert(member);
 		verifyNoInteractions(eventPublisher);
 	}
@@ -84,8 +86,9 @@ class MemberIngesterImplTest {
 				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
 		when(memberRepository.insert(member)).thenReturn(Optional.of(member));
 
-		memberIngestService.ingest(member);
+		boolean memberIngested = memberIngestService.ingest(member);
 
+		assertThat(memberIngested).isTrue();
 		InOrder inOrder = inOrder(memberRepository, eventPublisher);
 		inOrder.verify(memberRepository, times(1)).insert(member);
 		inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
