@@ -37,7 +37,7 @@ public class MemberIngesterImpl implements MemberIngester {
         final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
         Optional<Member> ingestedMember = insertIntoRepo(member);
         ingestedMember.ifPresentOrElse(insertedMember -> handleSuccessfulMemberInsertion(insertedMember, memberId),
-                () -> log.debug(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId)
+                () -> log.warn(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId)
         );
         return ingestedMember.isPresent();
     }
