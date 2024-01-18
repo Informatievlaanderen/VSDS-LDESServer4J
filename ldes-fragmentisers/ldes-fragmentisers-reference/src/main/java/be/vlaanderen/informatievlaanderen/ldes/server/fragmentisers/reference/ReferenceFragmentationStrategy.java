@@ -31,6 +31,8 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     @Override
     public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
                                     Observation parentObservation) {
+        // TODO TVB: 18/01/24 een root nodig die naar alle references een relatie heeft
+        // TODO TVB: 18/01/24 root configureerbaar?
         final var fragmentationObservation = startObservation(parentObservation);
         referenceBucketiser.bucketise(memberModel)
                 .parallelStream()

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.b
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.propertypath.PropertyPathExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.config.ReferenceConfig;
+import com.github.jsonldjava.shaded.com.google.common.util.concurrent.AtomicDouble;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
@@ -21,12 +22,14 @@ public class ReferenceBucketiser {
 	}
 
 	public Set<String> bucketise(Model memberModel) {
+		// TODO TVB: 18/01/24 add default rdf:type
 		return propertyPathExtractor
 				.getProperties(memberModel)
 				.stream()
-				.map(RDFNode::asLiteral)
-				.map(Literal::getValue)
-				.map(Objects::toString)
+				.map(RDFNode::toString)
+//				.map(RDFNode::asLiteral)
+//				.map(Literal::getValue)
+//				.map(Objects::toString)
 				.collect(Collectors.toSet());
 	}
 }
