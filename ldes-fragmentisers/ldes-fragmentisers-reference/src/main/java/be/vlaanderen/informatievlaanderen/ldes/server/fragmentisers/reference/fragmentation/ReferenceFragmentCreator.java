@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.f
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
 import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,14 +13,30 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragm
 public class ReferenceFragmentCreator {
 
 	public static final String FRAGMENT_KEY_REFERENCE = "reference";
-	private final FragmentRepository fragmentRepository;
+	public static final String FRAGMENT_KEY_REFERENCE_ROOT = "root";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReferenceFragmentCreator.class);
+	private final FragmentRepository fragmentRepository;
+	private final ReferenceFragmentRelationsAttributer relationsAttributer;
 
-	public ReferenceFragmentCreator(FragmentRepository fragmentRepository) {
+	public ReferenceFragmentCreator(FragmentRepository fragmentRepository,
+									ReferenceFragmentRelationsAttributer relationsAttributer) {
 		this.fragmentRepository = fragmentRepository;
+        this.relationsAttributer = relationsAttributer;
+    }
+
+	public Fragment getOrCreateFragment(Fragment parentFragment, String reference, Fragment rootFragment) {
+		Fragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, reference));
+		return fragmentRepository
+				.retrieveFragment(child.getFragmentId())
+				.orElseGet(() -> {
+					fragmentRepository.saveFragment(child);
+					relationsAttributer.addRelationsFromRootToBottom(rootFragment, child);
+					logFragmentation(parentFragment, child);
+					return child;
+				});
 	}
 
-	public Fragment getOrCreateFragment(Fragment parentFragment, String reference) {
+	public Fragment getOrCreateRootFragment(Fragment parentFragment, String reference) {
 		Fragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, reference));
 		return fragmentRepository
 				.retrieveFragment(child.getFragmentId())

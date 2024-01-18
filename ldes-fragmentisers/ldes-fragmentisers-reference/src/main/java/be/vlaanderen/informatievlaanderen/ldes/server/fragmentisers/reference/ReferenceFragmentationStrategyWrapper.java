@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bucketising.ReferenceBucketiser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.config.ReferenceConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
 import io.micrometer.observation.ObservationRegistry;
 import org.springframework.context.ApplicationContext;
 
@@ -20,7 +21,8 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 		final var observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		final var referenceConfig = createReferenceConfig(fragmentationProperties);
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
-		final var referenceFragmentCreator = new ReferenceFragmentCreator(fragmentRepository);
+		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentRepository);
+		final var referenceFragmentCreator = new ReferenceFragmentCreator(fragmentRepository, relationsAttributer);
 		return new ReferenceFragmentationStrategy(fragmentationStrategy, referenceBucketiser,
 				referenceFragmentCreator, observationRegistry, fragmentRepository);
 	}
