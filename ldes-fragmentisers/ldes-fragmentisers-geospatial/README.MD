@@ -99,11 +99,3 @@ When we convert these [coordinates to tiles](https://wiki.openstreetmap.org/wiki
 After ingestion the member will be part of the following two fragments
 - http://localhost:8080/addresses/by-zone?tile=15/16884/10974
 - http://localhost:8080/addresses/by-zone?tile=15/16882/10975
-
-### When we have a timebased sub-fragmentation below geospatial fragmentation
-
-After ingestion the member will be part of the following two fragments
-- http://localhost:8080/addresses/by-zone-and-time?tile=15/16884/10974&generatedAtTime=2023-02-15T10:14:28.262Z
-- http://localhost:8080/addresses/by-zone-and-time?tile=15/16882/10975&generatedAtTime=2023-02-15T10:14:28.262Z
-
-Note that the `generatedAtTime=2023-02-15T10:14:28.262Z` is an example, this can be any other fragmentation.
