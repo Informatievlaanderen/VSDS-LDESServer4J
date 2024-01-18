@@ -41,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
 	public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
+	private int lastStatusCode;
 	Stack<String> interactedStreams = new Stack<>();
 
 	@Before("@clearRegistry")
@@ -50,6 +51,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				Metrics.globalRegistry.remove(meter);
 			}
 		});
+		lastStatusCode = 0;
 	}
 
 	private String getCurrentTimestamp() {
@@ -74,7 +76,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			mockMvc.perform(post("/" + collectionName)
 					.contentType("text/turtle")
 					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
-					.andExpect(status().isOk());
+					.andExpect(status().is2xxSuccessful());
 		}
 	}
 
@@ -90,7 +92,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			mockMvc.perform(post("/" + collectionName)
 					.contentType("text/turtle")
 					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
-					.andExpect(status().isOk());
+					.andExpect(status().is2xxSuccessful());
 		}
 	}
 
@@ -137,7 +139,13 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		mockMvc.perform(post("/" + collectionName)
 				.contentType(contentType.getContentTypeStr())
 				.content(member))
-				.andExpect(status().isOk());
+				.andExpect(status().is2xxSuccessful())
+				.andDo(result -> lastStatusCode = result.getResponse().getStatus());
+	}
+
+	@Then("The returned status code is {int}")
+	public void checkStatusCode(int statusCode) {
+		assertThat(lastStatusCode).isEqualTo(statusCode);
 	}
 
 	private String readBodyFromFile(String fileName) throws URISyntaxException, IOException {
