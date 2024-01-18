@@ -17,7 +17,7 @@ services:
       - ldes-mongodb
   ldes-mongodb:
     container_name: ldes-mongodb
-    image: mongo:latest
+    image: mongo
     ports:
       - 27017:27017
     networks:
