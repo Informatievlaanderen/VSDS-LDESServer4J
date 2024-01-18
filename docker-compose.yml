@@ -22,8 +22,6 @@ services:
       - 27017:27017
     networks:
       - ldes
-    volumes:
-      - C:\Users\janro\Downloads\db\telraam:/data/db:rw
   pyroscope:
     image: grafana/pyroscope:latest
     ports:

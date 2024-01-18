@@ -47,7 +47,7 @@ public class MemberIngesterImpl implements MemberIngester {
                 member.getCollectionName(), member.getSequenceNr());
         eventPublisher.publishEvent(memberIngestedEvent);
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-        log.debug(MEMBER_WITH_ID_INGESTED, memberId);
+        log.warn(MEMBER_WITH_ID_INGESTED, memberId);
     }
 
     private Optional<Member> insertIntoRepo(Member member) {
