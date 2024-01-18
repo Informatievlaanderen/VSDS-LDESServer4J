@@ -2,7 +2,7 @@ version: "3.3"
 services:
   ldes-server:
     container_name: basic_ldes-server
-    image: server-local
+    image: ldes/ldes-server
     environment:
       - SPRING_CONFIG_LOCATION=/config/
       - PYROSCOPE_CONFIGURATION_FILE=/config/pyroscope.properties
@@ -17,7 +17,7 @@ services:
       - ldes-mongodb
   ldes-mongodb:
     container_name: ldes-mongodb
-    image: mongo:4.4
+    image: mongo:latest
     ports:
       - 27017:27017
     networks:
