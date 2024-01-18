@@ -96,7 +96,7 @@
         <assertj-core.version>3.25.1</assertj-core.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>9.0.8</depencency-check-maven.version>
+        <depencency-check-maven.version>9.0.9</depencency-check-maven.version>
 
         <!-- Monitoring and Logging -->
         <spring.aop.version>3.2.1</spring.aop.version>
