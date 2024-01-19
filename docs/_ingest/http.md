@@ -30,5 +30,5 @@ Otherwise it will be rejected.
 ## Duplicate Members
 
 When a member is ingested normally, it is saved in the server and a 201 ACCEPTED status is returned.
-Sometimes a member can be send twice to the ingest endpoint.
+Sometimes a member with the same ID as an existing member can be send to the ingest endpoint.
 In this case, the second member will be ignored, a warning will be logged and a 200 OK status will be returned.
