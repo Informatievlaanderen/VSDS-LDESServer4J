@@ -39,9 +39,14 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
                                     Observation parentObservation) {
         final var fragmentationObservation = startObservation(parentObservation);
         getRootFragment(parentFragment);
-        referenceBucketiser.bucketise(memberModel)
-                .parallelStream()
-                .map(reference -> fragmentCreator.getOrCreateFragment(parentFragment, reference, rootFragment))
+        var fragments =
+                referenceBucketiser
+                        .bucketise(memberModel)
+                        .stream()
+                        .map(reference -> fragmentCreator.getOrCreateFragment(parentFragment, reference, rootFragment))
+                        .toList();
+
+        fragments.parallelStream()
                 .forEach(ldesFragment -> super.addMemberToFragment(ldesFragment, memberId, memberModel, fragmentationObservation));
         fragmentationObservation.stop();
     }
