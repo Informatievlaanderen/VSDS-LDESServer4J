@@ -19,19 +19,16 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
-			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
+			FragmentationStrategy fragmentationStrategy, ConfigProperties properties) {
+		final var fragmentationPath = properties.getOrDefault(FRAGMENTATION_PATH, DEFAULT_FRAGMENTATION_PATH);
 		final var fragmentRepository = applicationContext.getBean(FragmentRepository.class);
 		final var observationRegistry = applicationContext.getBean(ObservationRegistry.class);
-		final var referenceConfig = createReferenceConfig(fragmentationProperties);
+		final var referenceConfig = new ReferenceConfig(fragmentationPath);
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
-		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentRepository);
+		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath);
 		final var referenceFragmentCreator = new ReferenceFragmentCreator(fragmentRepository, relationsAttributer);
 		return new ReferenceFragmentationStrategy(fragmentationStrategy, referenceBucketiser,
 				referenceFragmentCreator, observationRegistry, fragmentRepository);
-	}
-
-	private ReferenceConfig createReferenceConfig(ConfigProperties properties) {
-		return new ReferenceConfig(properties.getOrDefault(FRAGMENTATION_PATH, DEFAULT_FRAGMENTATION_PATH));
 	}
 
 }

@@ -37,7 +37,6 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     @Override
     public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
                                     Observation parentObservation) {
-        // TODO TVB: 18/01/24 https://telraam-api.net/ldes/observations/by-location?tile=0/0/0
         final var fragmentationObservation = startObservation(parentObservation);
         getRootFragment(parentFragment);
         referenceBucketiser.bucketise(memberModel)
