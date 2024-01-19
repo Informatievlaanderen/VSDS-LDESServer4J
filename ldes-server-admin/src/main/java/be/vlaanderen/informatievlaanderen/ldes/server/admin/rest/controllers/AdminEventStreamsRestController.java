@@ -21,7 +21,7 @@ import static org.apache.jena.riot.WebContent.*;
 @Observed
 @RestController
 @RequestMapping(value = "/admin/api/v1/eventstreams")
-public class AdminEventStreamsRestController implements OpenApiEventStreamsController {
+public class AdminEventStreamsRestController implements OpenApiAdminEventStreamsController {
 
 	private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
 

@@ -133,7 +133,6 @@ public interface OpenApiEventStreamController {
 					] .
 
 					parcels:shape a sh:NodeShape ;
-						sh:targetClass <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> ;
 						sh:deactivated true .
 					""")),
 			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
@@ -147,7 +146,6 @@ public interface OpenApiEventStreamController {
 					_:genid2 <https://w3id.org/tree#memberLimit> "100" .
 					_:genid1 <https://w3id.org/tree#fragmentationStrategy> _:genid2 .
 					<http://localhost:8080/parcels/pagination> <https://w3id.org/tree#viewDescription> _:genid1 .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/ns/shacl#targetClass> <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel> .
 					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 					""")),
 			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
