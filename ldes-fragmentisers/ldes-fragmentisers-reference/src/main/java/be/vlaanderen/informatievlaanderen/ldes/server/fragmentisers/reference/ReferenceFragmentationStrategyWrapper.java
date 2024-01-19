@@ -9,11 +9,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.co
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer;
 import io.micrometer.observation.ObservationRegistry;
+import org.apache.jena.vocabulary.RDF;
 import org.springframework.context.ApplicationContext;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.config.ReferenceProperties.FRAGMENTATION_PROPERTY;
 
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
+
+	public static final String DEFAULT_FRAGMENTATION_PATH = "<" + RDF.type.getURI() + ">";
+	public static final String FRAGMENTATION_PATH = "fragmentationPath";
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties fragmentationProperties) {
@@ -28,7 +31,7 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 	}
 
 	private ReferenceConfig createReferenceConfig(ConfigProperties properties) {
-		return new ReferenceConfig(properties.get(FRAGMENTATION_PROPERTY));
+		return new ReferenceConfig(properties.getOrDefault(FRAGMENTATION_PATH, DEFAULT_FRAGMENTATION_PATH));
 	}
 
 }
