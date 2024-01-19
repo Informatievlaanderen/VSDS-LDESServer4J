@@ -13,7 +13,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Fragm
 public class ReferenceFragmentCreator {
 
 	public static final String FRAGMENT_KEY_REFERENCE = "reference";
-	public static final String FRAGMENT_KEY_REFERENCE_ROOT = "root";
+	public static final String FRAGMENT_KEY_REFERENCE_ROOT = "";
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReferenceFragmentCreator.class);
 	private final FragmentRepository fragmentRepository;
 	private final ReferenceFragmentRelationsAttributer relationsAttributer;

@@ -56,7 +56,6 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
 
     private void getRootFragment(Fragment parentFragment) {
         if (rootFragment == null) {
-            // TODO TVB: 18/01/24 root configureerbaar?
             Fragment referenceRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment, FRAGMENT_KEY_REFERENCE_ROOT);
             super.addRelationFromParentToChild(parentFragment, referenceRootFragment);
             rootFragment = referenceRootFragment;
