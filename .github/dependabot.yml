@@ -9,4 +9,4 @@ updates:
       - dependency-name: maven-source-plugin
         versions: [3.3.0]
       - dependency-name: org.springframework.boot
-        versions: [3.2.*]
+        versions: [3.2.0, 3.3)
