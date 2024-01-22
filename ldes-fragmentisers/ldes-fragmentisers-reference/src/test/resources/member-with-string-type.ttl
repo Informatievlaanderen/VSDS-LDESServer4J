@@ -1,0 +1,19 @@
+@prefix conceptscheme:    <https://data.vlaanderen.be/id/conceptscheme/> .
+@prefix gebouwenregister: <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#> .
+@prefix generiek:         <https://data.vlaanderen.be/ns/generiek#> .
+@prefix ldes:             <https://w3id.org/ldes#> .
+@prefix prov:             <http://www.w3.org/ns/prov#> .
+@prefix rdf:              <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix terms:            <http://purl.org/dc/terms/> .
+@prefix tree:             <https://w3id.org/tree#> .
+
+<https://data.vlaanderen.be/id/perceel/13374D0779-00D003/2022-11-29T11:37:27+01:00>
+        rdf:type                      "Perceel";
+        terms:isVersionOf             <https://data.vlaanderen.be/id/perceel/13374D0779-00D003>;
+        prov:generatedAtTime          "2022-11-29T11:37:27+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+        <https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel%3Astatus>
+                conceptscheme:gerealiseerd;
+        generiek:lokaleIdentificator  "13374D0779-00D003";
+        generiek:naamruimte           "https://data.vlaanderen.be/id/perceel";
+        generiek:versieIdentificator  "2022-11-29T11:37:27+01:00";
+        ldes:timestampPath            "2022-11-29T11:37:27+01:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .

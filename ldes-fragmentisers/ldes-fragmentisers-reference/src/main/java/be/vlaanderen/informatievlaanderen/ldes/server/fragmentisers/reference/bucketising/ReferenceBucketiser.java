@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.co
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
@@ -20,7 +21,8 @@ public class ReferenceBucketiser {
 		this.fragmentationPath = referenceConfig.fragmentationPath();
 	}
 
-	public Set<String> bucketise(String memberId, Model memberModel) {
+	public Set<String> bucketise(@NotNull String memberId,
+								 @NotNull Model memberModel) {
 		final String memberSubject = memberId.substring(memberId.indexOf("/") + 1);
 		return memberModel
 				.listObjectsOfProperty(createResource(memberSubject), createProperty(fragmentationPath))

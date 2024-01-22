@@ -20,14 +20,18 @@
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-fragmentisers-common</artifactId>
-            <version>2.8.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-fragmentisers-common</artifactId>
-            <version>2.8.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
     </dependencies>
 
