@@ -93,7 +93,7 @@ class TreeNodeControllerTest {
 				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
-				.asString();
+				.asDecodedFragmentId();
 		TreeNode treeNode = new TreeNode(fragmentId, immutable, false, List.of(),
 				List.of(), COLLECTION_NAME);
 
@@ -141,7 +141,7 @@ class TreeNodeControllerTest {
 				ViewName.fromString(fullViewName), List.of());
 		final String fragmentId = new LdesFragmentIdentifier(ldesFragmentRequest.viewName(),
 				ldesFragmentRequest.fragmentPairs())
-				.asString();
+				.asDecodedFragmentId();
 		TreeNode treeNode = new TreeNode(fragmentId, false, false, List.of(),
 				List.of(), COLLECTION_NAME);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
