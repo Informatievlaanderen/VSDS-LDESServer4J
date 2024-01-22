@@ -24,7 +24,6 @@ public class ReferenceFragmentCreator {
         this.relationsAttributer = relationsAttributer;
     }
 
-	// TODO TVB: 22/01/24 test
 	public Fragment getOrCreateFragment(Fragment parentFragment, String reference, Fragment rootFragment) {
 		Fragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, reference));
 		return fragmentRepository
@@ -37,7 +36,6 @@ public class ReferenceFragmentCreator {
 				});
 	}
 
-	// TODO TVB: 22/01/24 test
 	public Fragment getOrCreateRootFragment(Fragment parentFragment, String reference) {
 		Fragment child = parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, reference));
 		return fragmentRepository
