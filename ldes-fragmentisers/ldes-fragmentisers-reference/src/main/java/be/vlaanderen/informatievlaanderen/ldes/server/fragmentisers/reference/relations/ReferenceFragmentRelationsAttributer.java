@@ -21,7 +21,6 @@ public class ReferenceFragmentRelationsAttributer {
 		this.fragmentationPath = fragmentationPath;
 	}
 
-	// TODO TVB: 22/01/24 test
 	public void addRelationsFromRootToBottom(Fragment rootFragment, Fragment referenceFragments) {
 		TreeRelation relationToParentFragment = getRelationToParentFragment(referenceFragments);
 		if (!rootFragment.containsRelation(relationToParentFragment)) {
