@@ -6,6 +6,9 @@ import org.springframework.data.annotation.PersistenceCreator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.net.URLEncoder.encode;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class LdesFragmentIdentifier {
 
 	private final ViewName viewName;
@@ -56,14 +59,24 @@ public class LdesFragmentIdentifier {
 
 	}
 
-	public String asString() {
+	public String asDecodedFragmentId() {
+		return getFragmentId(false);
+	}
+
+	public String asEncodedFragmentId() {
+		return getFragmentId(true);
+	}
+
+	private String getFragmentId(boolean encoded) {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("/").append(viewName.asString());
 
 		if (!fragmentPairs.isEmpty()) {
 			stringBuilder.append("?");
 			stringBuilder.append(fragmentPairs.stream()
-					.map(fragmentPair -> fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
+					.map(fragmentPair -> encoded
+                            ? fragmentPair.fragmentKey() + "=" + encode(fragmentPair.fragmentValue(), UTF_8)
+                            : fragmentPair.fragmentKey() + "=" + fragmentPair.fragmentValue())
 					.collect(Collectors.joining("&")));
 		}
 
@@ -100,6 +113,6 @@ public class LdesFragmentIdentifier {
 
 	@Override
 	public String toString() {
-		return asString();
+		return asDecodedFragmentId();
 	}
 }

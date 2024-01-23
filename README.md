@@ -238,6 +238,7 @@ mvn clean verify -Dunittestskip=true
 - ldes-fragmentisers-timebased-hierarchical
 - ldes-fragmentisers-geospatial
 - ldes-fragmentisers-pagination
+- ldes-fragmentisers-reference
 
 ### Tracing and Metrics
 

@@ -30,7 +30,7 @@ public class CompactionCandidateSorter {
 						.stream()
 						.findFirst()
 						.map(TreeRelation::treeNode)
-						.map(LdesFragmentIdentifier::asString)
+						.map(LdesFragmentIdentifier::asDecodedFragmentId)
 						.orElseThrow()));
 
 		List<CompactionCandidate> orderedCandidates = new LinkedList<>(List.of(firstElement));

@@ -42,7 +42,7 @@ public class FragmentSorter {
 
 			if (foundFragment.isPresent()) {
 				fragmentList.add(foundFragment.get());
-				currentFragment = fragmentId.asString();
+				currentFragment = fragmentId.asDecodedFragmentId();
 			}
 
 		} while (foundFragment.isPresent());

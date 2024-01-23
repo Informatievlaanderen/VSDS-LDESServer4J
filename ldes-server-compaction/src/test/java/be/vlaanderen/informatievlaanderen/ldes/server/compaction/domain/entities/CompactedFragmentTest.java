@@ -44,7 +44,7 @@ class CompactedFragmentTest {
 		assertEquals(6, fragment.getNrOfMembersAdded());
 		assertNull(fragment.getDeleteTime());
 		assertEquals(1, fragment.getRelations().size());
-		assertEquals(MOBHIND_PAGE + "4", fragment.getRelations().get(0).treeNode().asString());
+		assertEquals(MOBHIND_PAGE + "4", fragment.getRelations().get(0).treeNode().asDecodedFragmentId());
 	}
 
 	@Test
@@ -66,7 +66,7 @@ class CompactedFragmentTest {
 	@Test
 	void getFirstImpactedFragment() {
 		assertEquals(MOBHIND_PAGE + "1",
-				compactedFragment.getFirstImpactedFragment().getFragmentId().asString());
+				compactedFragment.getFirstImpactedFragment().getFragmentId().asDecodedFragmentId());
 	}
 
 	private static Fragment createFragment(String fragmentId, List<String> fragmentsPointingTo) {

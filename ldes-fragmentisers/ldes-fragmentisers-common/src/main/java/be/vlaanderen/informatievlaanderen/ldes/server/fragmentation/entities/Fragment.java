@@ -38,7 +38,7 @@ public class Fragment {
 	}
 
 	public String getFragmentIdString() {
-		return identifier.asString();
+		return identifier.asDecodedFragmentId();
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
@@ -77,7 +77,7 @@ public class Fragment {
 	}
 
 	public String getParentIdAsString() {
-		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElse(ROOT);
+		return identifier.getParentId().map(LdesFragmentIdentifier::asDecodedFragmentId).orElse(ROOT);
 	}
 
 	public boolean isReadyForDeletion() {

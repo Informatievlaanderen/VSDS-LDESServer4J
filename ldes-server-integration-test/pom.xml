@@ -80,6 +80,12 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>ldes-fragmentisers-reference</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>mongo-fragmentation-repository</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

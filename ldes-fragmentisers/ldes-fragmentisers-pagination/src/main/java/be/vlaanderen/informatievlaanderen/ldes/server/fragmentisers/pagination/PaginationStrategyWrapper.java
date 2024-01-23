@@ -30,9 +30,9 @@ public class PaginationStrategyWrapper implements FragmentationStrategyWrapper {
 	private OpenPageProvider getOpenPageProvider(ConfigProperties properties,
 			FragmentRepository fragmentRepository) {
 		PaginationConfig paginationConfig = createPaginationConfig(properties);
-		PageCreator timeBasedFragmentCreator = getPageCreator(
+		PageCreator pageFragmentCreator = getPageCreator(
 				fragmentRepository, paginationConfig.bidirectionalRelations());
-		return new OpenPageProvider(timeBasedFragmentCreator, fragmentRepository,
+		return new OpenPageProvider(pageFragmentCreator, fragmentRepository,
 				paginationConfig.memberLimit());
 	}
 

@@ -31,7 +31,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 		return sha256Hex(treeNode.getFragmentId()
 				+ treeNode.getRelations().stream()
 						.map(TreeRelation::treeNode)
-						.map(LdesFragmentIdentifier::asString)
+						.map(LdesFragmentIdentifier::asDecodedFragmentId)
 						.collect(Collectors.joining(""))
 				+ treeNode.getMembers().stream()
 						.map(Member::getId)

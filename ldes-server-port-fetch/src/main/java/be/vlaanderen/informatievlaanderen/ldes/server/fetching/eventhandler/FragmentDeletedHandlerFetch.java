@@ -22,7 +22,7 @@ public class FragmentDeletedHandlerFetch {
 	public void handleBulkFragmentDeletedEvent(BulkFragmentDeletedEvent event) {
 		Set<String> fragmentIds = event.ldesFragmentIdentifiers()
 				.stream()
-				.map(LdesFragmentIdentifier::asString)
+				.map(LdesFragmentIdentifier::asDecodedFragmentId)
 				.collect(Collectors.toSet());
 		allocationRepository.deleteAllByFragmentId(fragmentIds);
 	}
