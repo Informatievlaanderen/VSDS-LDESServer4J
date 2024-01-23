@@ -4,9 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelC
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpOutputMessage;
+import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpOutputMessage;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 class MemberConverterTest {
@@ -16,8 +17,8 @@ class MemberConverterTest {
 		MemberConverter memberConverter = new MemberConverter(new RdfModelConverter());
 		Member member = mock();
 		HttpOutputMessage message = new MockHttpOutputMessage();
-		assertThrows(UnsupportedOperationException.class,
-				() -> memberConverter.writeInternal(member, message));
+		assertThatThrownBy(() -> memberConverter.write(member, MediaType.ALL, message))
+				.isNotInstanceOf(UnsupportedOperationException.class);
 	}
 
 }
