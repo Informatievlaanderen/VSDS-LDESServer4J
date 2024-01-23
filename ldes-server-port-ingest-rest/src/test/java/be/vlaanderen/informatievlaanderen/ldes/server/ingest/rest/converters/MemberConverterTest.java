@@ -18,7 +18,7 @@ class MemberConverterTest {
 		Member member = mock();
 		HttpOutputMessage message = new MockHttpOutputMessage();
 		assertThatThrownBy(() -> memberConverter.write(member, MediaType.ALL, message))
-				.isNotInstanceOf(UnsupportedOperationException.class);
+				.isInstanceOf(UnsupportedOperationException.class);
 	}
 
 }
