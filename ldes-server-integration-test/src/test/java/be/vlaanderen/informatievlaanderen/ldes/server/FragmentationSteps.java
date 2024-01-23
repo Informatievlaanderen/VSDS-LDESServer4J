@@ -101,10 +101,10 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		});
 	}
 
-	@When("I fetch the geo-spatial fragment for tile {string} from the {string} view of {string}")
-	public void iFetchTheGeoSpatialFragmentForTileFromTheViewOf(String tile, String view, String collection)
+	@When("I fetch the {string} fragment for {string} from the {string} view of {string}")
+	public void iFetchTheFragmentOf(String foo, String tile, String view, String collection)
 			throws Exception {
-		currentPath = "/%s/%s?tile=%s".formatted(collection, view, tile);
+		currentPath = "/%s/%s?%s=%s".formatted(collection, view, foo, tile);
 		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
