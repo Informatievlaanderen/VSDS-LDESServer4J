@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,6 +24,7 @@ import static org.mockito.Mockito.*;
 
 class ReferenceFragmentationStrategyTest {
 
+    private static final String FRAGMENT_KEY_REFERENCE = "reference";
     private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
     private static final Fragment PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
     private static final Fragment ROOT_TILE_FRAGMENT =

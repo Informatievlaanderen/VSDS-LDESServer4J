@@ -54,8 +54,8 @@ public class Fragment {
 	}
 
 	public Fragment createChild(FragmentPair fragmentPair) {
-		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(
-				this.identifier.getFragmentPairs().stream().toList());
+		// TODO TVB: 23/01/24 add check for duplicate fragmentPair keys!
+		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.identifier.getFragmentPairs().stream().toList());
 		childFragmentPairs.add(fragmentPair);
 		return new Fragment(new LdesFragmentIdentifier(getViewName(), childFragmentPairs));
 	}

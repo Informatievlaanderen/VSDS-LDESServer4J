@@ -17,17 +17,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer.TREE_REFERENCE_EQUALS_RELATION;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ReferenceFragmentRelationsAttributerTest {
 
+    private static final String FRAGMENT_KEY_REFERENCE = "reference";
     private static final String fragmentReference =
             "https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel";
     private static final ViewName viewName = new ViewName("collectionName", "view");
@@ -42,7 +41,8 @@ class ReferenceFragmentRelationsAttributerTest {
 
     @BeforeEach
     void setUp() {
-        relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath);
+        relationsAttributer =
+                new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath, FRAGMENT_KEY_REFERENCE);
     }
 
     @Test

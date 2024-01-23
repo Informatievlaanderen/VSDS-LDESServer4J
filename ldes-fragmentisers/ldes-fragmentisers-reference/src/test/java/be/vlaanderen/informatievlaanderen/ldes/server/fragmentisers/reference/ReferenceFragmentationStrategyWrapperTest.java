@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.FRAGMENTATION_PATH;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
@@ -26,7 +27,8 @@ class ReferenceFragmentationStrategyWrapperTest {
 
     @Test
     void when_FragmentationStrategyIsUpdated_GeospatialFragmentationStrategyIsReturned() {
-        ConfigProperties properties = new ConfigProperties(Map.of(FRAGMENTATION_PATH, RDF.type.getURI()));
+        ConfigProperties properties = new ConfigProperties(
+                Map.of(FRAGMENTATION_PATH, RDF.type.getURI(), FRAGMENTATION_KEY, "reference"));
         FragmentationStrategy decoratedFragmentationStrategy = referenceFragmentationStrategyWrapper
                 .wrapFragmentationStrategy(applicationContext, fragmentationStrategy, properties);
         assertInstanceOf(ReferenceFragmentationStrategy.class, decoratedFragmentationStrategy);
