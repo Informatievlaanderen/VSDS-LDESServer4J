@@ -9,6 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.FRAGMENTATION_STRATEGY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.VIEW;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategy.REFERENCE_FRAGMENTATION;
 
 public class ReferenceFragmentCreator {
 
@@ -50,7 +53,7 @@ public class ReferenceFragmentCreator {
 	private void logFragmentation(Fragment parentFragment, Fragment child) {
 		String viewName = parentFragment.getViewName().asString();
 		Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT,
-				"view", viewName, "fragmentation-strategy", FRAGMENT_KEY_REFERENCE).increment();
+				VIEW, viewName, FRAGMENTATION_STRATEGY, REFERENCE_FRAGMENTATION).increment();
 		LOGGER.debug("Reference fragment created with id: {}", child.getFragmentId());
 	}
 
