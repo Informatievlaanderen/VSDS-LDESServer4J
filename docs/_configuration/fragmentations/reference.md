@@ -9,6 +9,8 @@ parent: Fragmentations
 
 Reference fragmentation will create fragments based on a provided property path defined as `tree:fragmentationPath`.
 When no fragmentationPath is defined, "rdf:type" is used by default.
+A `tree:fragmentationKey` can be used to customize the request parameter key. This is useful when nesting multiple reference fragmentations. 
+You can have a fragment that looks like this http://{hostname}/{collection}/{view}?type={a-type}&version={a-version}.
 This allows you to fragment the data on references.
 
 ## Properties
@@ -19,6 +21,7 @@ This allows you to fragment the data on references.
   tree:fragmentationStrategy [
         a tree:ReferenceFragmentation ;
         tree:fragmentationPath { Optional: defines which property will be used for bucketizing } ;
+        tree:fragmentationKey { Optional: defines the request parameter that will be used in the uri } ;
     ] .
   ```
 
@@ -44,6 +47,7 @@ Example properties:
   tree:fragmentationStrategy [
         a tree:ReferenceFragmentation ;
         tree:fragmentationPath "<http://purl.org/dc/terms/isVersionOf>" ;
+        tree:fragmentationKey "version" ;
     ] .
   ```
 
@@ -78,4 +82,6 @@ The selected object would be
 `<http://njh.me/original-id/123>`
 
 After ingestion the member will be part of the following fragment
-- http://localhost:8080/addresses/by-version?reference=<http://njh.me/original-id/123>
+- http://localhost:8080/addresses/by-version?version=<http://njh.me/original-id/123>
+
+NOTE: "version" is based on the configuration property "tree:fragmentationKey".

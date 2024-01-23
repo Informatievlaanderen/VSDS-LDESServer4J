@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,11 +25,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ReferenceFragmentCreatorTest {
 
-    private static final String FRAGMENT_KEY_REFERENCE = "reference";
     private static final ViewName viewName = new ViewName("collectionName", "view");
     private static final FragmentPair timebasedPair = new FragmentPair("year", "2023");
-    private static final FragmentPair referenceRootPair = new FragmentPair(FRAGMENT_KEY_REFERENCE, FRAGMENT_KEY_REFERENCE_ROOT);
-    private static final FragmentPair referencePair = new FragmentPair(FRAGMENT_KEY_REFERENCE, RDF.type.getURI());
+    private static final FragmentPair referenceRootPair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT);
+    private static final FragmentPair referencePair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, RDF.type.getURI());
 
     private ReferenceFragmentCreator referenceFragmentCreator;
 
@@ -41,7 +41,7 @@ class ReferenceFragmentCreatorTest {
     @BeforeEach
     void setUp() {
         referenceFragmentCreator =
-                new ReferenceFragmentCreator(fragmentRepository, relationsAttributer, FRAGMENT_KEY_REFERENCE);
+                new ReferenceFragmentCreator(fragmentRepository, relationsAttributer, DEFAULT_FRAGMENTATION_KEY);
     }
 
     @Test

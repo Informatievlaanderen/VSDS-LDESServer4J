@@ -15,11 +15,12 @@ import org.springframework.context.ApplicationContext;
 
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
-	// TODO TVB: 23/01/24 update docs + openapi docs
 	// TODO TVB: 23/01/24 add integration test with multi level
-	public static final String DEFAULT_FRAGMENTATION_PATH = RDF.type.getURI();
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
+	public static final String DEFAULT_FRAGMENTATION_PATH = RDF.type.getURI();
+
 	public static final String FRAGMENTATION_KEY = "fragmentationKey";
+	public static final String DEFAULT_FRAGMENTATION_KEY = "reference";
 
 	public FragmentationStrategy wrapFragmentationStrategy(ApplicationContext applicationContext,
 			FragmentationStrategy fragmentationStrategy, ConfigProperties properties) {
@@ -28,7 +29,7 @@ public class ReferenceFragmentationStrategyWrapper implements FragmentationStrat
 		final var observationRegistry = applicationContext.getBean(ObservationRegistry.class);
 		final var referenceConfig = new ReferenceConfig(fragmentationPath);
 		final var referenceBucketiser = new ReferenceBucketiser(referenceConfig);
-		final var fragmentationKey = properties.get(FRAGMENTATION_KEY);
+		final var fragmentationKey = properties.getOrDefault(FRAGMENTATION_KEY, DEFAULT_FRAGMENTATION_KEY);
 		final var relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath, fragmentationKey);
 		final var referenceFragmentCreator = new ReferenceFragmentCreator(fragmentRepository, relationsAttributer, fragmentationKey);
 		return new ReferenceFragmentationStrategy(fragmentationStrategy, referenceBucketiser,
