@@ -63,7 +63,7 @@ public class FragmentDeletionSteps extends FragmentDeletionIntegrationTest {
 	@And("verify the deletion of the following fragments")
 	public void verifyTheDeletionOfTheFollowingFragments(List<String> fragmentIds) {
 		fragmentIds.forEach(fragmentId -> verify(fragmentRepository).removeRelationsPointingToFragmentAndDeleteFragment(
-				argThat(fragment -> fragment.asString().equals(fragmentId))
+				argThat(fragment -> fragment.asDecodedFragmentId().equals(fragmentId))
 		));
 	}
 }

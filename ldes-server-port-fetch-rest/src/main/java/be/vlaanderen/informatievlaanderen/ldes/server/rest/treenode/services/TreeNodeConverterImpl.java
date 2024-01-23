@@ -18,7 +18,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.*;
-import static org.apache.jena.rdf.model.ResourceFactory.*;
+import static org.apache.jena.rdf.model.ResourceFactory.createResource;
+import static org.apache.jena.rdf.model.ResourceFactory.createStatement;
 
 @Component
 public class TreeNodeConverterImpl implements TreeNodeConverter {
@@ -56,7 +57,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		Model shaclShape = shaclShapes.get(collectionName);
 		List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
 				.map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),
-						prefix + treeRelation.treeNode().asString(),
+						prefix + treeRelation.treeNode().asEncodedFragmentId(),
 						treeRelation.treeValue(), treeRelation.treeValueType(), treeRelation.relation()))
 				.toList();
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),

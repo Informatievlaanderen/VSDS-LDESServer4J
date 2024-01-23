@@ -130,7 +130,7 @@ public class CompactionServiceSteps extends CompactionIntegrationTest {
 					.getRelations();
 			assertThat(treeRelations)
 					.map(TreeRelation::treeNode)
-					.map(LdesFragmentIdentifier::asString)
+					.map(LdesFragmentIdentifier::asDecodedFragmentId)
 					.filteredOn(identifier -> !identifier.contains("dummy"))
 					.hasSize(1);
 		});
