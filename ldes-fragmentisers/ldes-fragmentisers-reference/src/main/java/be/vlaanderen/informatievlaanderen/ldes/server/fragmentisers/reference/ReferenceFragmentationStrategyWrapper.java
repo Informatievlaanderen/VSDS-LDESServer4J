@@ -12,7 +12,6 @@ import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.context.ApplicationContext;
 
-
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";

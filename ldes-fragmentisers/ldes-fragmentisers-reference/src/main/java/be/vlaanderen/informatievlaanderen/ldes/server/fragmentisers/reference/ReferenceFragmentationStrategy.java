@@ -12,7 +12,6 @@ import org.apache.jena.rdf.model.Model;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 
-
 public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorator {
 
     public static final String REFERENCE_FRAGMENTATION = "ReferenceFragmentation";
