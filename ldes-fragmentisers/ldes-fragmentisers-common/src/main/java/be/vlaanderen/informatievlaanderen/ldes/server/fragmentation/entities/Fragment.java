@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -54,8 +55,10 @@ public class Fragment {
 	}
 
 	public Fragment createChild(FragmentPair fragmentPair) {
-		// TODO TVB: 23/01/24 add check for duplicate fragmentPair keys!
-		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(this.identifier.getFragmentPairs().stream().toList());
+		List<FragmentPair> childFragmentPairs = new ArrayList<>(this.identifier.getFragmentPairs().stream().toList());
+		if (childFragmentPairs.contains(fragmentPair)) {
+			throw new DuplicateFragmentPairException(identifier.asDecodedFragmentId(), fragmentPair.fragmentKey());
+		}
 		childFragmentPairs.add(fragmentPair);
 		return new Fragment(new LdesFragmentIdentifier(getViewName(), childFragmentPairs));
 	}
@@ -124,10 +127,6 @@ public class Fragment {
 
 	public LocalDateTime getDeleteTime() {
 		return deleteTime;
-	}
-
-	public void removeRelation(TreeRelation treeRelation) {
-		relations.remove(treeRelation);
 	}
 
 	public void removeRelationToIdentifier(LdesFragmentIdentifier fragmentIdentifier) {
