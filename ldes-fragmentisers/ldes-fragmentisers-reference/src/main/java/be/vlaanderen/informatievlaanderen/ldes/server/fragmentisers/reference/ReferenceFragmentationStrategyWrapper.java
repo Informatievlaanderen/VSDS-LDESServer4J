@@ -15,7 +15,6 @@ import org.springframework.context.ApplicationContext;
 
 public class ReferenceFragmentationStrategyWrapper implements FragmentationStrategyWrapper {
 
-	// TODO TVB: 23/01/24 add integration test with multi level
 	public static final String FRAGMENTATION_PATH = "fragmentationPath";
 	public static final String DEFAULT_FRAGMENTATION_PATH = RDF.type.getURI();
 

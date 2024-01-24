@@ -64,6 +64,27 @@ Feature: LDES Server Fragmentation
     When I fetch the next fragment through the first "Relation"
     And this fragment contains 6 members
 
+  @nested-reference
+  Scenario: Server Can Fragment an LDES using nested Reference Fragmentation strategies
+    Given I create the eventstream "data/input/eventstreams/fragmentation/mobility-hindrances.by-nested-ref.ttl"
+    When I ingest 2 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
+    And I ingest 5 members of template "data/input/members/activity.template.ttl" to the collection "mobility-hindrances"
+    Then the LDES "mobility-hindrances" contains 7 members
+    When I fetch the root "by-nested-ref" fragment of "mobility-hindrances"
+    Then this fragment only has 1 "Relation" relation
+    When I fetch the next fragment through the first "Relation"
+    Then this fragment only has 2 "EqualToRelation" relation
+    And this fragment is mutable
+    When I fetch the "type" fragment for 'https%3A%2F%2Fdata.vlaanderen.be%2Fns%2Fmobiliteit%23Mobiliteitshinder' from the "by-nested-ref" view of "mobility-hindrances"
+    Then this fragment only has 1 "Relation" relation
+    When I fetch the next fragment through the first "Relation"
+    Then this fragment only has 1 "EqualToRelation" relation
+    And this fragment is mutable
+    When I fetch the "/mobility-hindrances/by-nested-ref?type=https%3A%2F%2Fdata.vlaanderen.be%2Fns%2Fmobiliteit%23Mobiliteitshinder&version=http%3A%2F%2Ftest-data%2Fmobility-hindrance%2F1" fragment
+    Then this fragment only has 1 "Relation" relation
+    When I fetch the next fragment through the first "Relation"
+    And this fragment contains 2 members
+
   @multi-view
   Scenario: Server Allows Multiple Views in an LDES
     Given I create the eventstream "data/input/eventstreams/fragmentation/mobility-hindrances.by-loc.ttl"

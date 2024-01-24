@@ -71,6 +71,8 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 			fetchFragment(currentPath);
 			int relationCount = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 					.toList().size();
+			System.out.println(currentPath);
+			System.out.println("relationcounts: " + relationCount);
 			return relationCount == expectedRelationCount;
 		});
 	}
@@ -102,9 +104,16 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	}
 
 	@When("I fetch the {string} fragment for {string} from the {string} view of {string}")
-	public void iFetchTheFragmentOf(String foo, String tile, String view, String collection)
+	public void iFetchTheFragmentOf(String fragmentKey, String fragmentValue, String view, String collection)
 			throws Exception {
-		currentPath = "/%s/%s?%s=%s".formatted(collection, view, foo, tile);
+		currentPath = "/%s/%s?%s=%s".formatted(collection, view, fragmentKey, fragmentValue);
+		iFetchTheFragmentOf(currentPath);
+	}
+
+	@When("I fetch the {string} fragment")
+	public void iFetchTheFragmentOf(String path)
+			throws Exception {
+		currentPath = path;
 		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
