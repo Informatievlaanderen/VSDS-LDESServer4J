@@ -84,6 +84,15 @@ Feature: LDES Server Fragmentation
     Then this fragment only has 1 "Relation" relation
     When I fetch the next fragment through the first "Relation"
     And this fragment contains 2 members
+    When I fetch the "type" fragment for 'https%3A%2F%2Fwww.w3.org%2Fns%2Factivitystreams%23Create' from the "by-nested-ref" view of "mobility-hindrances"
+    Then this fragment only has 1 "Relation" relation
+    When I fetch the next fragment through the first "Relation"
+    Then this fragment only has 1 "EqualToRelation" relation
+    And this fragment is mutable
+    When I fetch the "/mobility-hindrances/by-nested-ref?type=https%3A%2F%2Fwww.w3.org%2Fns%2Factivitystreams%23Create&version=https%3A%2F%2Fwww.w3.org%2Fns%2Factivitystreams%231" fragment
+    Then this fragment only has 1 "Relation" relation
+    When I fetch the next fragment through the first "Relation"
+    And this fragment contains 5 members
 
   @multi-view
   Scenario: Server Allows Multiple Views in an LDES
