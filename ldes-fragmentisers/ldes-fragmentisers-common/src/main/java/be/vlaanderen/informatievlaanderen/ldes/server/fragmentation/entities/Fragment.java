@@ -56,11 +56,18 @@ public class Fragment {
 
 	public Fragment createChild(FragmentPair fragmentPair) {
 		List<FragmentPair> childFragmentPairs = new ArrayList<>(this.identifier.getFragmentPairs().stream().toList());
-		if (childFragmentPairs.contains(fragmentPair)) {
+		if (hasChildWithSameFragmentKey(fragmentPair, childFragmentPairs)) {
 			throw new DuplicateFragmentPairException(identifier.asDecodedFragmentId(), fragmentPair.fragmentKey());
 		}
 		childFragmentPairs.add(fragmentPair);
 		return new Fragment(new LdesFragmentIdentifier(getViewName(), childFragmentPairs));
+	}
+
+	private static boolean hasChildWithSameFragmentKey(FragmentPair fragmentPair, List<FragmentPair> childFragmentPairs) {
+		return childFragmentPairs
+				.stream()
+				.map(FragmentPair::fragmentKey)
+				.anyMatch(key -> key.equals(fragmentPair.fragmentKey()));
 	}
 
 	public Optional<String> getValueOfKey(String key) {
