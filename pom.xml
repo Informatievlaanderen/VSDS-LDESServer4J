@@ -93,7 +93,7 @@
         <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.15.0</cucumber.version>
-        <assertj-core.version>3.25.1</assertj-core.version>
+        <assertj-core.version>3.25.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>9.0.9</depencency-check-maven.version>
