@@ -1,0 +1,17 @@
+management:
+  endpoint:
+    health:
+      status:
+        http-mapping:
+          invalid: 500
+          unknown: 500
+      group:
+        dcat-validity:
+          show-components: always
+          show-details: always
+          include: dcat
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
