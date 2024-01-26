@@ -120,7 +120,7 @@ class AdminViewsRestControllerTest {
 		Model viewModel = RDFDataMgr.loadModel("views/view-with-duplicate-retention.ttl");
 		ViewSpecification view = converter.viewFromModel(viewModel, COLLECTION_NAME);
 
-		doThrow(DuplicateRetentionException.class).when(viewService).addView(view);
+		doThrow(new DuplicateRetentionException()).when(viewService).addView(view);
 
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
 						.content(RDFWriter.source(viewModel).lang(Lang.NQUADS).asString())

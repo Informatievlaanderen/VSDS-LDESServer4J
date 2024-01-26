@@ -9,8 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -20,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,16 +55,18 @@ public class ViewServiceImpl implements ViewService {
 	}
 
 	private void checkViewForDuplicateRetentionPolicies(ViewSpecification viewSpecification) {
-		viewSpecification.getRetentionConfigs().stream()
-				.map(retentionPolicy -> retentionPolicy.listStatements(null, RdfConstants.RDF_SYNTAX_TYPE, (Resource) null).nextStatement())
-				.collect(Collectors.groupingBy(Statement::getObject, Collectors.counting()))
+		List<String> duplicateRetentionPolicies = viewSpecification.getRetentionConfigs().stream()
+				.map(retentionPolicy -> retentionPolicy.listObjectsOfProperty(RdfConstants.RDF_SYNTAX_TYPE).nextNode())
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
 				.entrySet().stream()
 				.filter(entry -> entry.getValue() > 1)
 				.map(Map.Entry::getKey)
-				.findFirst()
-				.ifPresent(retentionPolicy -> {
-					throw new DuplicateRetentionException(retentionPolicy.toString());
-				});
+				.map(Object::toString)
+				.toList();
+
+		if (!duplicateRetentionPolicies.isEmpty()) {
+			throw new DuplicateRetentionException(duplicateRetentionPolicies);
+		}
 	}
 
 	private boolean isEventStreamMissing(String collectionName) {
