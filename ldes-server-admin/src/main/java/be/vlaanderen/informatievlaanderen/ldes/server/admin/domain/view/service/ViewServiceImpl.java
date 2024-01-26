@@ -1,12 +1,16 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -14,7 +18,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ViewServiceImpl implements ViewService {
@@ -43,8 +49,23 @@ public class ViewServiceImpl implements ViewService {
 			throw new ExistingResourceException(VIEW_TYPE, viewSpecification.getName().asString());
 		}
 
+		checkViewForDuplicateRetentionPolicies(viewSpecification);
+
 		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
 		viewRepository.saveView(viewSpecification);
+	}
+
+	private void checkViewForDuplicateRetentionPolicies(ViewSpecification viewSpecification) {
+		viewSpecification.getRetentionConfigs().stream()
+				.map(retentionPolicy -> retentionPolicy.listStatements(null, RdfConstants.RDF_SYNTAX_TYPE, (Resource) null).nextStatement())
+				.collect(Collectors.groupingBy(Statement::getObject, Collectors.counting()))
+				.entrySet().stream()
+				.filter(entry -> entry.getValue() > 1)
+				.map(Map.Entry::getKey)
+				.findFirst()
+				.ifPresent(retentionPolicy -> {
+					throw new DuplicateRetentionException(retentionPolicy.toString());
+				});
 	}
 
 	private boolean isEventStreamMissing(String collectionName) {
