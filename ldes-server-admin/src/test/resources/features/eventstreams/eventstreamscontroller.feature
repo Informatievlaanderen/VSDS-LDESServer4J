@@ -1,4 +1,5 @@
 Feature: event streams can be configured at runtime
+
   Scenario: get all event streams
     Given a db containing multiple eventstreams
     When the client calls "/admin/api/v1/eventstreams"
@@ -29,15 +30,16 @@ Feature: event streams can be configured at runtime
     Then the client receives HTTP status 400
     And I verify the absent of interactions
     Examples:
-      | fileName              |
-      | ldes-without-type.ttl |
-      | malformed-ldes.ttl    |
+      | fileName                          |
+      | ldes-without-type.ttl             |
+      | malformed-ldes.ttl                |
+      | ldes-with-duplicate-retention.ttl |
 
-    Scenario: delete an existing event stream
-      Given a db containing one event stream
-      When the client deletes the event stream
-      Then the client receives HTTP status 200
-      And I verify the db interactions
+  Scenario: delete an existing event stream
+    Given a db containing one event stream
+    When the client deletes the event stream
+    Then the client receives HTTP status 200
+    And I verify the db interactions
 
   Scenario: delete an non-existing event stream
     Given an empty db

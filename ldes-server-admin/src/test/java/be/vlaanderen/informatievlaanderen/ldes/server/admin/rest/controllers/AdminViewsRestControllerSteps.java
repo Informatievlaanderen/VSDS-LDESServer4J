@@ -121,7 +121,13 @@ public class AdminViewsRestControllerSteps extends SpringIntegrationTest {
 
 	@And("I check if there were no interactions with the db")
 	public void iCheckIfThereWereNoInteractionsWithTheDb() {
-		verify(viewRepository).retrieveAllViews();
+		/*
+		 * If the test with this step is ran as very first test, there will always be one interaction with the db,
+		 * due to the initialization of the views in the service. Therefor, when no interactions are expected,
+		 * there could be at most one interaction to retrieve all the views.
+		 * Otherwise, no interactions are expected
+		 */
+		verify(viewRepository, atMostOnce()).retrieveAllViews();
 		verifyNoMoreInteractions(viewRepository);
 	}
 }

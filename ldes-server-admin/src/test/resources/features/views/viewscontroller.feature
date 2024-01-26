@@ -13,7 +13,7 @@ Feature: AdminViewsRestController
 
   Scenario: Add a view to a non-existing event stream
     Given an LDES server with an event stream
-    When I POST a view from file "views/view-1.ttl" to "/admin/api/v1/eventstreams/name2/views"
+    When I POST a view from file "views/view-1.ttl" to "/admin/api/v1/eventstreams/an-unique-and-non-existing-event-stream/views"
     Then I obtain an HTTP status 404
     And I check if there were no interactions with the db
 
