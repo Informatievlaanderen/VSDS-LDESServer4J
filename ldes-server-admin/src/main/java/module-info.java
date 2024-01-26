@@ -12,6 +12,8 @@ open module ldes.admin {
     requires spring.web;
     requires spring.webmvc;
     requires spring.boot.autoconfigure;
+    requires spring.boot.actuator;
+    requires spring.boot.actuator.autoconfigure;
     requires org.apache.commons.lang3;
     requires org.apache.tomcat.embed.core;
     requires org.apache.jena.arq;

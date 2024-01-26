@@ -20,8 +20,6 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     private final ReferenceFragmentCreator fragmentCreator;
     private final ObservationRegistry observationRegistry;
 
-    private Fragment rootFragment = null;
-
     public ReferenceFragmentationStrategy(FragmentationStrategy fragmentationStrategy,
                                           ReferenceBucketiser referenceBucketiser,
                                           ReferenceFragmentCreator fragmentCreator,
@@ -37,7 +35,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
                                     Observation parentObservation) {
         final var fragmentationObservation = startObservation(parentObservation);
-        getRootFragment(parentFragment);
+        final var rootFragment = getOrCreateRootFragment(parentFragment);
         var fragments =
                 referenceBucketiser
                         .bucketise(memberId, memberModel)
@@ -57,12 +55,10 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
                 .start();
     }
 
-    private void getRootFragment(Fragment parentFragment) {
-        if (rootFragment == null) {
-            Fragment referenceRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment, FRAGMENT_KEY_REFERENCE_ROOT);
-            super.addRelationFromParentToChild(parentFragment, referenceRootFragment);
-            rootFragment = referenceRootFragment;
-        }
+    private Fragment getOrCreateRootFragment(Fragment parentFragment) {
+        Fragment referenceRootFragment = fragmentCreator.getOrCreateRootFragment(parentFragment, FRAGMENT_KEY_REFERENCE_ROOT);
+        super.addRelationFromParentToChild(parentFragment, referenceRootFragment);
+        return referenceRootFragment;
     }
 
 }

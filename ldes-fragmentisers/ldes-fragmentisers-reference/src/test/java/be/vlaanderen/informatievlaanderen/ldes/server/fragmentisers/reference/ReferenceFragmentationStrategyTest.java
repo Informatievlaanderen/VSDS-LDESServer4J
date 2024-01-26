@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,7 +28,7 @@ class ReferenceFragmentationStrategyTest {
     private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
     private static final Fragment PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
     private static final Fragment ROOT_TILE_FRAGMENT =
-            PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, FRAGMENT_KEY_REFERENCE_ROOT));
+            PARENT_FRAGMENT.createChild(new FragmentPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT));
 
     private ReferenceBucketiser referenceBucketiser;
     private ReferenceFragmentCreator fragmentCreator;
@@ -78,7 +78,7 @@ class ReferenceFragmentationStrategyTest {
     }
 
     private Fragment mockCreationReferenceFragment(String tile) {
-        Fragment referenceFragment = PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, tile));
+        Fragment referenceFragment = PARENT_FRAGMENT.createChild(new FragmentPair(DEFAULT_FRAGMENTATION_KEY, tile));
         when(fragmentCreator.getOrCreateFragment(PARENT_FRAGMENT, tile, ROOT_TILE_FRAGMENT))
                 .thenReturn(referenceFragment);
         return referenceFragment;

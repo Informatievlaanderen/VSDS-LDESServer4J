@@ -131,6 +131,7 @@ public interface OpenApiAdminViewsRestController {
 										tree:fragmentationStrategy ([
 											a tree:ReferenceFragmentation ;
 											tree:fragmentationPath <http://purl.org/dc/terms/isVersionOf>
+											tree:fragmentationKey "version" ;
 										]) ;
 										tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									] .
