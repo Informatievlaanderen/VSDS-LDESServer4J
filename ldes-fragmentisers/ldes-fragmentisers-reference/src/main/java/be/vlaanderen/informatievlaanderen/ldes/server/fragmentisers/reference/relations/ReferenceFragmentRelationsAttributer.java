@@ -7,7 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE;
 
 public class ReferenceFragmentRelationsAttributer {
 
@@ -15,10 +14,14 @@ public class ReferenceFragmentRelationsAttributer {
 
 	private final FragmentRepository fragmentRepository;
 	private final String fragmentationPath;
+	private final String fragmentKeyReference;
 
-	public ReferenceFragmentRelationsAttributer(FragmentRepository fragmentRepository, String fragmentationPath) {
+	public ReferenceFragmentRelationsAttributer(FragmentRepository fragmentRepository,
+												String fragmentationPath,
+												String fragmentKeyReference) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationPath = fragmentationPath;
+		this.fragmentKeyReference = fragmentKeyReference;
 	}
 
 	public void addRelationsFromRootToBottom(Fragment rootFragment, Fragment referenceFragments) {
@@ -36,9 +39,9 @@ public class ReferenceFragmentRelationsAttributer {
 
 	private String getTreeValue(Fragment currentFragment) {
 		return currentFragment
-				.getValueOfKey(FRAGMENT_KEY_REFERENCE)
+				.getValueOfKey(fragmentKeyReference)
 				.orElseThrow(
-						() -> new MissingFragmentValueException(currentFragment.getFragmentIdString(), FRAGMENT_KEY_REFERENCE)
+						() -> new MissingFragmentValueException(currentFragment.getFragmentIdString(), fragmentKeyReference)
 				);
 	}
 }

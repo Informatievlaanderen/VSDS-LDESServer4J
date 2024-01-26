@@ -17,10 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.relations.ReferenceFragmentRelationsAttributer.TREE_REFERENCE_EQUALS_RELATION;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -41,7 +41,8 @@ class ReferenceFragmentRelationsAttributerTest {
 
     @BeforeEach
     void setUp() {
-        relationsAttributer = new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath);
+        relationsAttributer =
+                new ReferenceFragmentRelationsAttributer(fragmentRepository, fragmentationPath, DEFAULT_FRAGMENTATION_KEY);
     }
 
     @Test
@@ -71,7 +72,7 @@ class ReferenceFragmentRelationsAttributerTest {
     }
 
     private Fragment createReferenceFragment(String reference) {
-        return parentFragment.createChild(new FragmentPair(FRAGMENT_KEY_REFERENCE, reference));
+        return parentFragment.createChild(new FragmentPair(DEFAULT_FRAGMENTATION_KEY, reference));
     }
 
 }

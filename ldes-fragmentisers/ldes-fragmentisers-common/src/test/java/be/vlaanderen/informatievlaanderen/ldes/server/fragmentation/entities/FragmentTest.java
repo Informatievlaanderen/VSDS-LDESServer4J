@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier.fromFragmentId;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment.ROOT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FragmentTest {
@@ -87,8 +90,16 @@ class FragmentTest {
 	void when_ParentExists_Then_ReturnIdParent() {
 		Fragment parent = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(PARENT_FRAGMENT_PAIR)));
 		Fragment child = parent.createChild(CHILD_FRAGMENT_PAIR);
-		assertEquals(parent.getFragmentId(), child.getParentId().get());
-		assertEquals(parent.getFragmentIdString(), child.getParentIdAsString());
+		assertThat(child.getParentId()).contains(parent.getFragmentId());
+		assertThat(parent.getFragmentIdString()).isEqualTo(child.getParentIdAsString());
+	}
+
+	@Test
+	void when_FragmentPairExists_Then_ThrowError() {
+		Fragment parent = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(PARENT_FRAGMENT_PAIR, CHILD_FRAGMENT_PAIR)));
+		assertThatExceptionOfType(DuplicateFragmentPairException.class)
+				.isThrownBy(() -> parent.createChild(CHILD_FRAGMENT_PAIR))
+				.withMessage("FragmentId /collectionName/mobility-hindrances?a=b&c=d already contains fragmentkey c");
 	}
 
 	@Test
