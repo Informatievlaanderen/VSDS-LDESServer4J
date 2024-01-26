@@ -71,7 +71,7 @@ management:
 This config will first enable the `/actuator/health` endpoints. \
 Secondly, a mapping is provided, so when an `UNKNOWN`
 or `INVALID` status is returned, a http status 500 is associated with it. \
-As last, a group is defined, this ensures that only the details of the DCAT and its validity are exposed and the rest of
+At last, a group is defined, this ensures that only the details of the DCAT and its validity are exposed and the rest of
 the health info is still
 hidden.
 
