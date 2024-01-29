@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.collection.VersionOfPathCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
 import io.micrometer.observation.annotation.Observed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,31 +31,30 @@ import java.util.Objects;
 @Observed
 @Component
 public class MemberConverter implements HttpMessageConverter<Member> {
+	private final RdfModelConverter rdfModelConverter;
+	private final VersionOfPathCollection versionOfPathCollection;
 
-    private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
+	public MemberConverter(RdfModelConverter rdfModelConverter, VersionOfPathCollection versionOfPathCollection) {
+		this.rdfModelConverter = rdfModelConverter;
+		this.versionOfPathCollection = versionOfPathCollection;
+	}
 
-    private final RdfModelConverter rdfModelConverter;
+	@Override
+	public List<MediaType> getSupportedMediaTypes() {
+		return List.of(MediaType.ALL);
+	}
 
-    public MemberConverter(RdfModelConverter rdfModelConverter) {
-        this.rdfModelConverter = rdfModelConverter;
-    }
+	@Override
+	public boolean canRead(Class<?> clazz, @Nullable MediaType mediaType) {
+		return clazz.isAssignableFrom(Member.class);
+	}
 
-    @Override
-    public List<MediaType> getSupportedMediaTypes() {
-        return List.of(MediaType.ALL);
-    }
+	@Override
+	public boolean canWrite(@NotNull Class<?> clazz, MediaType mediaType) {
+		return false;
+	}
 
-    @Override
-    public boolean canRead(Class<?> clazz, @Nullable MediaType mediaType) {
-        return clazz.isAssignableFrom(Member.class);
-    }
-
-    @Override
-    public boolean canWrite(@NotNull Class<?> clazz, MediaType mediaType) {
-        return false;
-    }
-
-    @Override
+	@Override
 	public Member read(@NotNull Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
@@ -69,19 +69,20 @@ public class MemberConverter implements HttpMessageConverter<Member> {
 		return new Member(memberId, collectionName, null, memberModel);
 	}
 
-    @Override
-    public void write(@NotNull Member member, @Nullable MediaType contentType, @NotNull HttpOutputMessage outputMessage)
-            throws UnsupportedOperationException, HttpMessageNotWritableException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void write(@NotNull Member member, @Nullable MediaType contentType, @NotNull HttpOutputMessage outputMessage)
+			throws UnsupportedOperationException, HttpMessageNotWritableException {
+		throw new UnsupportedOperationException();
+	}
 
-    private String extractMemberId(Model model, String collectionName) {
-        final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(VERSION_OF_PATH)).toSet();
-        if (ids.size() != 1) {
-            throw new MemberIdNotFoundException(model);
-        } else {
-            return collectionName + "/" + ids.iterator().next().toString();
-        }
-    }
+	private String extractMemberId(Model model, String collectionName) {
+		final String versionOfPath = versionOfPathCollection.getVersionOfPath(collectionName);
+		final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath)).toSet();
+		if (ids.size() != 1) {
+			throw new MemberIdNotFoundException(model);
+		} else {
+			return collectionName + "/" + ids.iterator().next().toString();
+		}
+	}
 
 }
