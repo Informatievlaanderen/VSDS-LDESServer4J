@@ -123,10 +123,13 @@ ldes-server:
   use-relative-url: true
   ```
 
-| Property         | Description                                                                          | Required | Default | Example               | Supported values    |
-|:-----------------|:-------------------------------------------------------------------------------------|:---------|:--------|:----------------------|:--------------------|
-| host-name        | The host name of the server, used as a prefix for resources hosted on the server.    | Yes      | N/A     | http://localhost:8080 | HTTP and HTTPS urls |
-| use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI | No       | false   | true, false           | true, false         |
+| Property         | Description                                                                          | Required | Default              | Example               | Supported values          |
+|:-----------------|:-------------------------------------------------------------------------------------|:---------|:---------------------|:----------------------|:--------------------------|
+| host-name        | The host name of the server, used as a prefix for resources hosted on the server.    | Yes      | N/A                  | http://localhost:8080 | HTTP and HTTPS urls       |
+| use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI | No       | false                | true, false           | true, false               |
+| admin.port       | Determines the port on which the admin api will be available                         | No       | value of server.port | 8080                  | any available port number |
+| fetch.port       | Determines the port on which the fetch api will be available                         | No       | value of server.port | 8080                  | any available port number |
+| ingest.port      | Determines the port on which the ingest api will be available                        | No       | value of server.port | 8080                  | any available port number |
 
 ##### Example Serving Static Content
 
@@ -160,6 +163,22 @@ page.
 
 > **Note**: When using relative urls, GET requests can not be performed with N-quads or triples as accept-type.
 > This is because these types don't support resolving the relative URI's
+
+##### Port bindings
+
+To change the ports of the diffrent API's, use the following config:
+  ```yaml
+ldes-server:
+  admin:
+    port: 8080
+  fetch:
+    port: 8081
+  ingest:
+    port: 8082
+  ```
+
+Any combination of these ports can be the same of completely omitted.
+When no port number is given, the default server port will be used.
 
 ### Docker Setup
 
