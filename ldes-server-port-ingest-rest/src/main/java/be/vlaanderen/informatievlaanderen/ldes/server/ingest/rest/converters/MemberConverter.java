@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.collection.VersionOfPathCollection;
@@ -76,7 +77,9 @@ public class MemberConverter implements HttpMessageConverter<Member> {
 	}
 
 	private String extractMemberId(Model model, String collectionName) {
-		final String versionOfPath = versionOfPathCollection.getVersionOfPath(collectionName);
+		final String versionOfPath = versionOfPathCollection
+				.getVersionOfPath(collectionName)
+				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
 		final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath)).toSet();
 		if (ids.size() != 1) {
 			throw new MemberIdNotFoundException(model);
