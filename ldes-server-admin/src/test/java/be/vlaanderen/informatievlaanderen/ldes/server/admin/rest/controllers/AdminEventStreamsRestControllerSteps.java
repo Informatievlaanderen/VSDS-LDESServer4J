@@ -166,7 +166,14 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("I verify the absent of interactions")
 	public void iVerifyTheAbsentOfInteractions() {
-		verifyNoInteractions(eventStreamRepository);
+		/*
+		 * If the test with this step is ran as very first test, there will always be one interaction with the db,
+		 * due to the initialization of the event streams in the service. Therefor, when no interactions are expected,
+		 * there could be at most one interaction to retrieve all the event streams.
+		 * Otherwise, no interactions are expected
+		 */
+		verify(eventStreamRepository, atMostOnce()).retrieveAllEventStreams();
+		verifyNoMoreInteractions(eventStreamRepository);
 	}
 
 	@When("the client deletes the event stream")

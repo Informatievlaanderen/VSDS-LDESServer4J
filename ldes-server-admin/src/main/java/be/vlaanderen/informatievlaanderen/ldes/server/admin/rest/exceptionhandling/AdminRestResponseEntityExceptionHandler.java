@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.MissingStatementException;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
 import org.apache.jena.riot.RiotException;
 import org.slf4j.Logger;
@@ -25,13 +26,13 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	}
 
 	@ExceptionHandler(value = {ShaclValidationException.class, RiotException.class, ExistingResourceException.class,
-			IllegalArgumentException.class, MissingStatementException.class})
+			IllegalArgumentException.class, MissingStatementException.class, DuplicateRetentionException.class})
 	protected ResponseEntity<Object> handleBadRequest(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { RdfFormatException.class, RelativeUrlException.class })
+	@ExceptionHandler(value = {RdfFormatException.class, RelativeUrlException.class})
 	protected ResponseEntity<Object> handleUnsupportedMediaTypeException(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
