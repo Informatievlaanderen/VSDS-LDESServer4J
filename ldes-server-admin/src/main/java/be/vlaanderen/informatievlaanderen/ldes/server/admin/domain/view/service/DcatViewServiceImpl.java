@@ -62,7 +62,7 @@ public class DcatViewServiceImpl implements DcatViewService {
 	}
 
 	@EventListener
-	public void handleEventStreamInitEvent(ViewDeletedEvent event) {
+	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		delete(event.getViewName());
 	}
 

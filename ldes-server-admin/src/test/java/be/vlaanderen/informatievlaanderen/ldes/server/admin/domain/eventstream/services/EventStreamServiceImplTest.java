@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
@@ -17,6 +18,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -31,8 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,7 +83,7 @@ class EventStreamServiceImplTest {
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
 		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
-                views, ModelFactory.createDefaultModel(), dataset);
+				views, ModelFactory.createDefaultModel(), dataset);
 
 		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
@@ -159,25 +160,76 @@ class EventStreamServiceImplTest {
 		verifyNoInteractions(viewService, shaclShapeService);
 	}
 
-	@Test
-	void when_updateExistingEventStream_and_defaultViewEnabled_then_expectUpdatedEventStream() {
-		final String timeStampPath = "generatedAt";
-		final String versionOfPath = "versionOf";
-		ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
-		EventStream eventStream = new EventStream(COLLECTION, timeStampPath, versionOfPath);
+	@Nested
+	class CreateEventStream {
+		private static final String TIMESTAMP_PATH = "generatedAt";
+		private static final String VERSION_OF_PATH = "versionOf";
+		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
 
-		when(eventStreamRepository.saveEventStream(eventStream)).thenReturn(eventStream);
-		when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
-		EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, timeStampPath, versionOfPath,
-				List.of(), ModelFactory.createDefaultModel());
+		@Test
+		void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
+			ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
+			when(eventStreamRepository.saveEventStream(EVENT_STREAM)).thenReturn(EVENT_STREAM);
+			when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
+			EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+					List.of(), ModelFactory.createDefaultModel());
 
-		EventStreamResponse updatedEventStream = service.createEventStream(eventStreamResponse);
+			EventStreamResponse createdEventStream = service.createEventStream(eventStreamResponse);
 
-		assertThat(updatedEventStream).isEqualTo(eventStreamResponse);
-		InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
-		inOrder.verify(eventStreamRepository).saveEventStream(eventStream);
-		inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
+			assertThat(createdEventStream).isEqualTo(eventStreamResponse);
+			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+			inOrder.verify(eventStreamRepository).saveEventStream(EVENT_STREAM);
+			inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
+		}
+
+		@Test
+		void given_ExistingEventStream_when_createEventStreamWithSameName_then_throwException() {
+			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
+			EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+					List.of(), ModelFactory.createDefaultModel());
+
+			assertThatThrownBy(() -> service.createEventStream(eventStreamResponse))
+					.isInstanceOf(IllegalArgumentException.class)
+					.hasMessage("This collection already exists!");
+
+			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void given_NonExistingEventStream_when_errorOccursWhileCreation_then_DeleteAgainAndThrowException() {
+			final String byPage = "by-page";
+			final String byLocation = "by-location";
+			ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
+			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
+			ViewSpecification byPageView = new ViewSpecification(new ViewName(COLLECTION, byPage), List.of(), List.of(), 100);
+			ViewSpecification byLocationView = new ViewSpecification(new ViewName(COLLECTION, byLocation), List.of(), List.of(), 100);
+			EventStreamResponse eventStreamResponse = new EventStreamResponse(
+					COLLECTION,
+					TIMESTAMP_PATH,
+					VERSION_OF_PATH,
+					List.of(byPageView, byLocationView),
+					ModelFactory.createDefaultModel());
+
+
+			doNothing().when(viewService).addView(byPageView);
+			doThrow(new DuplicateRetentionException()).when(viewService).addView(byLocationView);
+
+			assertThatThrownBy(() -> service.createEventStream(eventStreamResponse))
+					.isInstanceOf(DuplicateRetentionException.class);
+			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
+			inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
+			inOrder.verify(viewService).addView(byPageView);
+			inOrder.verify(viewService).addView(byLocationView);
+			inOrder.verify(viewService).deleteAllViewsByViewName(List.of(new ViewName(COLLECTION, byPage), new ViewName(COLLECTION, byLocation)));
+			inOrder.verify(shaclShapeService).deleteShaclShape(COLLECTION);
+			inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
+		}
 	}
+
 
 	@Test
 	void when_collectionDoesNotExists_and_triesToDelete_then_throwException() {

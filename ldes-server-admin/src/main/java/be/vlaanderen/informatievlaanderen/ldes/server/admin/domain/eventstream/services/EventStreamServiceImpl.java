@@ -84,10 +84,18 @@ public class EventStreamServiceImpl implements EventStreamService {
 
 		checkCollectionDoesNotYetExist(eventStream.getCollection());
 
-		eventStreamRepository.saveEventStream(eventStream);
-		shaclShapeService.updateShaclShape(shaclShape);
-		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
-		eventStreamResponse.getViews().forEach(viewService::addView);
+		try {
+			eventStreamRepository.saveEventStream(eventStream);
+			shaclShapeService.updateShaclShape(shaclShape);
+			eventStreamResponse.getViews().forEach(viewService::addView);
+			eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+		} catch (RuntimeException e) {
+			viewService.deleteAllViewsByViewName(eventStreamResponse.getViews().stream().map(ViewSpecification::getName).toList());
+			shaclShapeService.deleteShaclShape(eventStream.getCollection());
+			eventStreamRepository.deleteEventStream(eventStream.getCollection());
+			throw e;
+		}
+
 		return eventStreamResponse;
 	}
 
