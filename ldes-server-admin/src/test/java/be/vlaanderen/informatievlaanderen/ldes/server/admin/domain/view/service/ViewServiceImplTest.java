@@ -74,7 +74,7 @@ class ViewServiceImplTest {
 
 			assertThatThrownBy(() -> viewService.addView(view))
 					.isInstanceOf(DuplicateRetentionException.class)
-					.hasMessage("More then one retention policy of type <https://w3id.org/ldes#DurationAgoPolicy> found");
+					.hasMessage("More than one retention policy of type <https://w3id.org/ldes#DurationAgoPolicy> found");
 
 			verify(viewRepository).getViewByViewName(view.getName());
 			verifyNoMoreInteractions(viewRepository, eventPublisher);
