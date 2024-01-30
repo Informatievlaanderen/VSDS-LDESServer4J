@@ -73,8 +73,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 			throw new MissingResourceException("eventstream", collectionName);
 		}
 
-		eventStreamRepository.deleteEventStream(collectionName);
-		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
+		delete(collectionName);
 	}
 
 	@Override
@@ -90,12 +89,16 @@ public class EventStreamServiceImpl implements EventStreamService {
 			eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 			eventStreamResponse.getViews().forEach(viewService::addView);
 		} catch (RuntimeException e) {
-			eventStreamRepository.deleteEventStream(eventStreamResponse.getCollection());
-			eventPublisher.publishEvent(new EventStreamDeletedEvent(eventStreamResponse.getCollection()));
+			delete(eventStreamResponse.getCollection());
 			throw e;
 		}
 
 		return eventStreamResponse;
+	}
+
+	private void delete(String collectionName) {
+		eventStreamRepository.deleteEventStream(collectionName);
+		eventPublisher.publishEvent(new EventStreamDeletedEvent(collectionName));
 	}
 
 	private void checkCollectionDoesNotYetExist(String collectionName) {
