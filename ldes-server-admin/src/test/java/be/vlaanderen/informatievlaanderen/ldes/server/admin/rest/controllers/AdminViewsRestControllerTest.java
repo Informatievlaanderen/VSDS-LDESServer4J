@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -74,8 +76,9 @@ class AdminViewsRestControllerTest {
 		when(viewService.getViewsByCollectionName(COLLECTION_NAME)).thenReturn(List.of(view1, view2));
 
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
-						.accept(contentTypeTurtle))
+						.accept(contentTypeNQuads))
 				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentTypeNQuads))
 				.andExpect(IsIsomorphic.with(expectedViewModel1.add(expectedViewModel2)));
 	}
 
@@ -88,6 +91,7 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept(contentTypeTurtle))
 				.andExpect(status().isOk())
+				.andExpect(content().contentType(contentTypeTurtle))
 				.andExpect(IsIsomorphic.with(expectedViewModel));
 	}
 
@@ -99,6 +103,7 @@ class AdminViewsRestControllerTest {
 		mockMvc.perform(get("/admin/api/v1/eventstreams/{collectionName}/views/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept(contentTypeTurtle))
 				.andExpect(status().isNotFound())
+				.andExpect(content().contentType(MediaType.TEXT_PLAIN))
 				.andExpect(content().string("Resource of type: view with id: %s/%s could not be found.".formatted(COLLECTION_NAME, VIEW_NAME)));
 
 	}
@@ -110,8 +115,9 @@ class AdminViewsRestControllerTest {
 
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
 						.content(readDataFromFile("views/view-1.ttl"))
-						.contentType(Lang.TURTLE.getHeaderString()))
-				.andExpect(status().isCreated());
+						.contentType(contentTypeTurtle))
+				.andExpect(status().isCreated())
+				.andExpect(content().bytes(new byte[]{}));
 		verify(viewService).addView(view);
 	}
 
@@ -124,7 +130,7 @@ class AdminViewsRestControllerTest {
 
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
 						.content(RDFWriter.source(viewModel).lang(Lang.NQUADS).asString())
-						.contentType(Lang.NQUADS.getHeaderString()))
+						.contentType(contentTypeNQuads))
 				.andExpect(status().isBadRequest());
 
 		verify(viewService).addView(view);
@@ -134,7 +140,7 @@ class AdminViewsRestControllerTest {
 	void when_PostView_then_ViewIsValidated() throws Exception {
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
 				.content(readDataFromFile("views/view-1.ttl"))
-				.contentType(Lang.TURTLE.getHeaderString()));
+				.contentType(contentTypeTurtle));
 		verify(validator).validate(any(), any());
 	}
 
