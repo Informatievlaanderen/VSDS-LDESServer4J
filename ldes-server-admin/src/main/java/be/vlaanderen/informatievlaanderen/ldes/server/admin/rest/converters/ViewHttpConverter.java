@@ -17,11 +17,9 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
 @Observed
 @Component
@@ -51,21 +49,17 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 
 	@Override
 	public ViewSpecification read(@NotNull Class<? extends ViewSpecification> clazz, @NotNull HttpInputMessage inputMessage)
-			throws IOException, HttpMessageNotReadableException {
+			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a viewSpecification");
 	}
 
 	@Override
 	public void write(@NotNull ViewSpecification view, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
+		Lang rdfFormat = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
-		StringWriter outputStream = new StringWriter();
 		Model model = viewSpecificationConverter.modelFromView(view);
-
-		RDFDataMgr.write(outputStream, model, rdfFormat);
-
-		OutputStream body = outputMessage.getBody();
-		body.write(outputStream.toString().getBytes());
+		outputMessage.getHeaders().setContentType(MediaType.valueOf(rdfFormat.getHeaderString()));
+		RDFDataMgr.write(outputMessage.getBody(), model, rdfFormat);
 	}
 }

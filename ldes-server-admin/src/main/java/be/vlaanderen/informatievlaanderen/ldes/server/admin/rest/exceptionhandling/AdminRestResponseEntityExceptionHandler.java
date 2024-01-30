@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,7 +49,8 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 			RuntimeException ex, HttpStatus status, WebRequest request) {
 		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
-		return handleExceptionInternal(ex, bodyOfResponse,
-				new HttpHeaders(), status, request);
+		var httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.TEXT_PLAIN);
+		return handleExceptionInternal(ex, bodyOfResponse, httpHeaders, status, request);
 	}
 }

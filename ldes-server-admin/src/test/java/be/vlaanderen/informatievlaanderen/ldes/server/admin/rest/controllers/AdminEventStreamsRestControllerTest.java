@@ -16,7 +16,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -24,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -38,19 +38,21 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.apache.jena.riot.WebContent.contentTypeNQuads;
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ActiveProfiles({ "test", "rest" })
-@ContextConfiguration(classes = { AdminEventStreamsRestController.class, HttpModelConverter.class,
+@ActiveProfiles({"test", "rest"})
+@ContextConfiguration(classes = {AdminEventStreamsRestController.class, HttpModelConverter.class,
 		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
-		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class })
+		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
 class AdminEventStreamsRestControllerTest {
 	private static final String COLLECTION = "name1";
 	@MockBean
@@ -87,10 +89,10 @@ class AdminEventStreamsRestControllerTest {
 			eventStreams = List.of(
 					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-                            views, shape1),
+							views, shape1),
 					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf",
-                            List.of(singleView),
+							List.of(singleView),
 							shape2));
 		}
 
@@ -100,8 +102,9 @@ class AdminEventStreamsRestControllerTest {
 
 			when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 
-			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeTurtle))
+			mockMvc.perform(get("/admin/api/v1/eventstreams").accept(contentTypeNQuads))
 					.andExpect(status().isOk())
+					.andExpect(content().contentType(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedEventStreamsModel));
 
 			verify(eventStreamService).retrieveAllEventStreams();
@@ -116,12 +119,13 @@ class AdminEventStreamsRestControllerTest {
 			Model shape = readModelFromFile("example-shape.ttl");
 			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
-                    List.of(), shape);
+					List.of(), shape);
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 
-			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeTurtle))
+			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeNQuads))
 					.andExpect(status().isOk())
+					.andExpect(content().contentType(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(model));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
@@ -132,7 +136,8 @@ class AdminEventStreamsRestControllerTest {
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenThrow(MissingResourceException.class);
 
 			mockMvc.perform(get("/admin/api/v1/eventstreams/" + COLLECTION).accept(contentTypeTurtle))
-					.andExpect(status().isNotFound());
+					.andExpect(status().isNotFound())
+					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
 
 			verify(eventStreamService).retrieveEventStream(COLLECTION);
 		}
@@ -149,15 +154,16 @@ class AdminEventStreamsRestControllerTest {
 					"name1",
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
-                    List.of(), shape);
+					List.of(), shape);
 
 			when(eventStreamService.createEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
-					.accept(contentTypeTurtle)
-					.content(readDataFromFile("ldes-1.ttl"))
-					.contentType(Lang.TURTLE.getHeaderString()))
+							.accept(contentTypeNQuads)
+							.content(readDataFromFile("ldes-1.ttl"))
+							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
+					.andExpect(content().contentType(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
 			verify(eventStreamService).createEventStream(any(EventStreamResponse.class));
@@ -166,9 +172,10 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
-					.content(readDataFromFile("ldes-without-type.ttl"))
-					.contentType(Lang.TURTLE.getHeaderString()))
-					.andExpect(status().isBadRequest());
+							.content(readDataFromFile("ldes-without-type.ttl"))
+							.contentType(contentTypeTurtle))
+					.andExpect(status().isBadRequest())
+					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
 
 			verifyNoInteractions(eventStreamService);
 		}
@@ -176,9 +183,10 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
-					.content(readDataFromFile("malformed-ldes.ttl"))
-					.contentType(Lang.TURTLE.getHeaderString()))
-					.andExpect(status().isBadRequest());
+							.content(readDataFromFile("malformed-ldes.ttl"))
+							.contentType(contentTypeTurtle))
+					.andExpect(status().isBadRequest())
+					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
 
 			verifyNoInteractions(eventStreamService);
 		}
@@ -199,7 +207,8 @@ class AdminEventStreamsRestControllerTest {
 			doThrow(MissingResourceException.class).when(eventStreamService).deleteEventStream(COLLECTION);
 
 			mockMvc.perform(delete("/admin/api/v1/eventstreams/name1"))
-					.andExpect(status().isNotFound());
+					.andExpect(status().isNotFound())
+					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
 
 			verify(eventStreamService).deleteEventStream(COLLECTION);
 		}
