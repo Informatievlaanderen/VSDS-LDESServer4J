@@ -160,6 +160,25 @@ Here is an explanation provided for all the possibilities on how to tweak and co
     <td>No</td>
     <td>0 0 0 * * *</td>
   </tr>
+  <tr><td colspan="4"><b>Ports</b></td></tr>
+  <tr>
+    <td>ldes-server.ingest.port</td>
+    <td>Defines on which port the ingest endpoint is available</td>
+    <td>No</td>
+    <td>8080</td>
+  </tr>
+  <tr>
+    <td>ldes-server.fetch.port</td>
+    <td>Defines on which port the fetch endpoints are available</td>
+    <td>No</td>
+    <td>8080</td>
+  </tr>
+  <tr>
+    <td>ldes-server.admin.port</td>
+    <td>Defines on which port the admin endpoints are available ****</td>
+    <td>No</td>
+    <td>8080</td>
+  </tr>
 </tbody>
 </table>
 
@@ -175,6 +194,8 @@ Here is an explanation provided for all the possibilities on how to tweak and co
 > More information about this can be found in
 >
 the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+
+> **Note** ****: When using the swagger API with separate port bindings, the swagger API will always be available under the admin port.
 
 ## Docker Compose
 
