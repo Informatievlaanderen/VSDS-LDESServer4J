@@ -22,6 +22,6 @@ public class DuplicateRetentionException extends RuntimeException {
 			return "More then one retention policy of the same type found";
 		}
 		var formattedDuplicates = duplicateRetentionPolicies.stream().map("<%s>"::formatted).collect(Collectors.joining(", "));
-		return "More then one retention policy of type %s found".formatted(formattedDuplicates);
+		return "More than one retention policy of type %s found".formatted(formattedDuplicates);
 	}
 }
