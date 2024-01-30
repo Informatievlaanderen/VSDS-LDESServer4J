@@ -12,21 +12,21 @@ import java.util.Optional;
 
 @Component
 public class VersionOfPathCollection {
-	private final Map<String, String> collectionNames = new HashMap<>();
+	private final Map<String, String> versionOfPaths = new HashMap<>();
 
 	@EventListener
 	public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
 		EventStream eventStream = event.eventStream();
-		collectionNames.put(eventStream.getCollection(), eventStream.getVersionOfPath());
+		versionOfPaths.put(eventStream.getCollection(), eventStream.getVersionOfPath());
 	}
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		collectionNames.remove(event.collectionName());
+		versionOfPaths.remove(event.collectionName());
 	}
 
 	public Optional<String> getVersionOfPath(String collectionName) {
-		return Optional.ofNullable(collectionNames.get(collectionName));
+		return Optional.ofNullable(versionOfPaths.get(collectionName));
 	}
 }
 
