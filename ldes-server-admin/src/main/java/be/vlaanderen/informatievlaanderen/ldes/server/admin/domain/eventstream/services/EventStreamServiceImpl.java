@@ -90,7 +90,8 @@ public class EventStreamServiceImpl implements EventStreamService {
 			eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 			eventStreamResponse.getViews().forEach(viewService::addView);
 		} catch (RuntimeException e) {
-			deleteEventStream(eventStreamResponse.getCollection());
+			eventStreamRepository.deleteEventStream(eventStreamResponse.getCollection());
+			eventPublisher.publishEvent(new EventStreamDeletedEvent(eventStreamResponse.getCollection()));
 			throw e;
 		}
 

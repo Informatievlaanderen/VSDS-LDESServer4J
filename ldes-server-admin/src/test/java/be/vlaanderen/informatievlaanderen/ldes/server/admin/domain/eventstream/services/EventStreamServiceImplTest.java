@@ -58,7 +58,6 @@ class EventStreamServiceImplTest {
 	private ShaclShapeService shaclShapeService;
 	@Mock
 	private DcatDatasetService dcatDatasetService;
-
 	@Mock
 	private DcatServerService dcatServerService;
 
@@ -219,14 +218,14 @@ class EventStreamServiceImplTest {
 
 			assertThatThrownBy(() -> service.createEventStream(eventStreamResponse))
 					.isInstanceOf(DuplicateRetentionException.class);
-			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
+			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService, eventPublisher);
 			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 			inOrder.verify(shaclShapeService).updateShaclShape(shaclShape);
 			inOrder.verify(viewService).addView(byPageView);
 			inOrder.verify(viewService).addView(byLocationView);
-			inOrder.verify(viewService).deleteAllViewsByViewName(List.of(new ViewName(COLLECTION, byPage), new ViewName(COLLECTION, byLocation)));
-			inOrder.verify(shaclShapeService).deleteShaclShape(COLLECTION);
 			inOrder.verify(eventStreamRepository).deleteEventStream(COLLECTION);
+			inOrder.verify(eventPublisher).publishEvent(deletedEventArgumentCaptor.capture());
+			assertThat(deletedEventArgumentCaptor.getValue()).isEqualTo(new EventStreamDeletedEvent(COLLECTION));
 		}
 	}
 
