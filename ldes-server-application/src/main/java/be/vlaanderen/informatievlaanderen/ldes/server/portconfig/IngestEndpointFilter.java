@@ -20,8 +20,9 @@ public class IngestEndpointFilter extends UrlExcludingFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getLocalPort() != Integer.parseInt(ingestPort) && request.getMethod().equalsIgnoreCase("POST")) {
-            LOGGER.warn("Denying request from {} intended for ingest endpoint on port {} received on port {}", request.getRemoteHost(), ingestPort, request.getLocalPort());
+        int requestPort = request.getLocalPort();
+        if (requestPort != Integer.parseInt(ingestPort) && request.getMethod().equalsIgnoreCase("POST")) {
+            LOGGER.warn("Denying request from {} intended for ingest endpoint on port {} received on port {}", request.getRemoteHost(), ingestPort, requestPort);
             response.setStatus(404);
             response.getOutputStream().close();
             return;

@@ -17,8 +17,9 @@ public class AdminEndpointFilter extends OncePerRequestFilter {
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getLocalPort() != Integer.parseInt(adminPort)) {
-            LOGGER.warn("Denying request from {} intended for admin API on port {} received on port {}", request.getRemoteHost(), adminPort, request.getLocalPort());
+        int requestPort = request.getLocalPort();
+        if (requestPort != Integer.parseInt(adminPort)) {
+            LOGGER.warn("Denying request from {} intended for admin API on port {} received on port {}", request.getRemoteHost(), adminPort, requestPort);
             response.setStatus(404);
             response.getOutputStream().close();
             return;
