@@ -3,11 +3,14 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandl
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.exceptions.MissingStatementException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.*;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFWriter;
 import org.apache.jena.riot.RiotException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,11 +28,20 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
-	@ExceptionHandler(value = {ShaclValidationException.class, RiotException.class, ExistingResourceException.class,
+	@ExceptionHandler(value = {RiotException.class, ExistingResourceException.class,
 			IllegalArgumentException.class, MissingStatementException.class, DuplicateRetentionException.class})
 	protected ResponseEntity<Object> handleBadRequest(
 			RuntimeException ex, WebRequest request) {
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
+	}
+
+	@ExceptionHandler(value = {ShaclValidationException.class})
+	protected ResponseEntity<Object> handleShaclValidationException(
+			ShaclValidationException ex, WebRequest request) {
+		String validationReport = RDFWriter.source(ex.getValidationReportModel()).lang(Lang.TURTLE).asString();
+		var httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.valueOf(Lang.TURTLE.getHeaderString()));
+		return handleExceptionInternal(ex, validationReport, httpHeaders, HttpStatus.BAD_REQUEST, request);
 	}
 
 	@ExceptionHandler(value = {RdfFormatException.class, RelativeUrlException.class})
@@ -48,7 +60,8 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 			RuntimeException ex, HttpStatus status, WebRequest request) {
 		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
-		return handleExceptionInternal(ex, bodyOfResponse,
-				new HttpHeaders(), status, request);
+		var httpHeaders = new HttpHeaders();
+		httpHeaders.setContentType(MediaType.TEXT_PLAIN);
+		return handleExceptionInternal(ex, bodyOfResponse, httpHeaders, status, request);
 	}
 }
