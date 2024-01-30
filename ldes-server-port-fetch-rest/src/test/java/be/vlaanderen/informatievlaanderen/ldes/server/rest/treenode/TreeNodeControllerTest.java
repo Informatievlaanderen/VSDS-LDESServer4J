@@ -101,7 +101,7 @@ class TreeNodeControllerTest {
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
 		var expectedContentType = switch (mediaType) {
-			case MediaType.ALL_VALUE, "", "application/turtle", "text/html" -> contentTypeTurtle;
+			case MediaType.ALL_VALUE, "", "text/html" -> contentTypeTurtle;
 			default -> mediaType;
 		};
 

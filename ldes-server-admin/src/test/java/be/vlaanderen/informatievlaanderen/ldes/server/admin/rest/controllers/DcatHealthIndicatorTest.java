@@ -17,7 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,7 +46,6 @@ class DcatHealthIndicatorTest {
 		when(dcatServerService.getComposedDcat()).thenThrow(ShaclValidationException.class);
 
 		mockMvc.perform(get("/actuator/health/dcat-validity").accept(MediaType.APPLICATION_JSON))
-				.andDo(print())
 				.andExpect(status().isInternalServerError())
 				.andExpect(jsonPath("$.status").value(Status.UNKNOWN.getCode()))
 				.andExpect(jsonPath("$.components.dcat.status").value("INVALID"))
