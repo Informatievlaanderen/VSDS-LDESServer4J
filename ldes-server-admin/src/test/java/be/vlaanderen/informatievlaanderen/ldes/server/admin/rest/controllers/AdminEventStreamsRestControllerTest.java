@@ -175,7 +175,7 @@ class AdminEventStreamsRestControllerTest {
 							.content(readDataFromFile("ldes-without-type.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
+					.andExpect(content().contentType(contentTypeTurtle));
 
 			verifyNoInteractions(eventStreamService);
 		}

@@ -59,7 +59,7 @@ public class ViewHttpConverter implements HttpMessageConverter<ViewSpecification
 		Lang rdfFormat = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
 		Model model = viewSpecificationConverter.modelFromView(view);
-		outputMessage.getHeaders().setContentType(MediaType.valueOf(rdfFormat.getHeaderString()));
+		outputMessage.getHeaders().setContentType(contentType);
 		RDFDataMgr.write(outputMessage.getBody(), model, rdfFormat);
 	}
 }

@@ -48,7 +48,7 @@ public class HttpModelConverter implements HttpMessageConverter<Model> {
 			throws IOException, HttpMessageNotWritableException {
 		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
-		outputMessage.getHeaders().setContentType(MediaType.valueOf(lang.getHeaderString()));
+		outputMessage.getHeaders().setContentType(contentType);
 		RDFDataMgr.write(outputMessage.getBody(), prefixAdder.addPrefixesToModel(model), lang);
 	}
 

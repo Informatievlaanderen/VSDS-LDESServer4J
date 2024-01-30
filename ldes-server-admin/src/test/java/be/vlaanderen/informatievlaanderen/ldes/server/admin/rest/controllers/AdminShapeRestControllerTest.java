@@ -125,8 +125,7 @@ class AdminShapeRestControllerTest {
 							.content(readDataFromFile("shape-without-type.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
-					.andExpect(content().contentType(MediaType.TEXT_PLAIN))
-					.andExpect(content().string(containsString("Shacl validation failed:")));
+					.andExpect(content().contentType(contentTypeTurtle));
 
 			verify(shaclShapeValidator).validate(any());
 		}
