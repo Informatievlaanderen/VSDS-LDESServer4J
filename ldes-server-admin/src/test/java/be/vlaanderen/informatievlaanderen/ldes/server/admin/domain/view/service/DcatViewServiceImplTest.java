@@ -71,7 +71,7 @@ class DcatViewServiceImplTest {
 
 	@Test
 	void should_CallRepositoryWithDcatView_when_ViewDeletedEventIsPublished() {
-		dcatViewService.handleEventStreamInitEvent(new ViewDeletedEvent(VIEW_NAME));
+		dcatViewService.handleViewDeletedEvent(new ViewDeletedEvent(VIEW_NAME));
 
 		verify(eventPublisher).publishEvent(new DcatViewDeletedEvent(VIEW_NAME));
 		verify(dcatViewRepository).delete(VIEW_NAME);

@@ -15,4 +15,5 @@ public interface ViewService {
 
 	void deleteViewByViewName(ViewName viewName);
 
+	void deleteAllViewsByViewName(List<ViewName> viewNames);
 }

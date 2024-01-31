@@ -33,13 +33,13 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest {
 	private static final String COLLECTION = "name1";
 	private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
-	private static final String MEMBER_TYPE = "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder";
 	private ResultActions resultActions;
 
 	@Given("a db containing multiple eventstreams")
@@ -164,8 +164,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 				.content(readDataFromFile(fileName)));
 	}
 
-	@And("I verify the absent of interactions")
-	public void iVerifyTheAbsentOfInteractions() {
+	@And("I verify the absence of interactions")
+	public void iVerifyTheAbsenceOfInteractions() {
 		/*
 		 * If the test with this step is ran as very first test, there will always be one interaction with the db,
 		 * due to the initialization of the event streams in the service. Therefor, when no interactions are expected,
@@ -200,5 +200,13 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		ClassLoader classLoader = getClass().getClassLoader();
 		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
 		return Files.lines(path).collect(Collectors.joining());
+	}
+
+	@And("I verify the absence of the event stream")
+	public void iVerifyTheAbsenceOfTheEventStream() throws Exception {
+		mockMvc.perform(get("/admin/api/v1/eventstreams/{collection}", COLLECTION).accept(Lang.NQUADS.getHeaderString()))
+				.andExpect(content().string("Resource of type: eventstream with id: %s could not be found.".formatted(COLLECTION)))
+				.andExpect(status().isNotFound());
+
 	}
 }
