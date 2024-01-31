@@ -17,7 +17,7 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
     private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
-    private static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists";
+    private static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists. Duplicate member is ignored";
     private final MemberIngestValidator validator;
 	private final MemberRepository memberRepository;
 	private final ApplicationEventPublisher eventPublisher;
@@ -32,13 +32,14 @@ public class MemberIngesterImpl implements MemberIngester {
 	}
 
     @Override
-    public void ingest(Member member) {
+    public boolean ingest(Member member) {
         validator.validate(member);
         final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
-        insertIntoRepo(member).ifPresentOrElse(
-                insertedMember -> handleSuccessfulMemberInsertion(insertedMember, memberId),
-                () -> log.debug(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId)
+        Optional<Member> ingestedMember = insertIntoRepo(member);
+        ingestedMember.ifPresentOrElse(insertedMember -> handleSuccessfulMemberInsertion(insertedMember, memberId),
+                () -> log.warn(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId)
         );
+        return ingestedMember.isPresent();
     }
 
 
@@ -47,7 +48,7 @@ public class MemberIngesterImpl implements MemberIngester {
                 member.getCollectionName(), member.getSequenceNr());
         eventPublisher.publishEvent(memberIngestedEvent);
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-        log.debug(MEMBER_WITH_ID_INGESTED, memberId);
+        log.warn(MEMBER_WITH_ID_INGESTED, memberId);
     }
 
     private Optional<Member> insertIntoRepo(Member member) {

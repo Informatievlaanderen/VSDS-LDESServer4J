@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class Fragment {
 	}
 
 	public String getFragmentIdString() {
-		return identifier.asString();
+		return identifier.asDecodedFragmentId();
 	}
 
 	public List<FragmentPair> getFragmentPairs() {
@@ -54,10 +55,19 @@ public class Fragment {
 	}
 
 	public Fragment createChild(FragmentPair fragmentPair) {
-		ArrayList<FragmentPair> childFragmentPairs = new ArrayList<>(
-				this.identifier.getFragmentPairs().stream().toList());
+		List<FragmentPair> childFragmentPairs = new ArrayList<>(this.identifier.getFragmentPairs().stream().toList());
+		if (hasChildWithSameFragmentKey(fragmentPair, childFragmentPairs)) {
+			throw new DuplicateFragmentPairException(identifier.asDecodedFragmentId(), fragmentPair.fragmentKey());
+		}
 		childFragmentPairs.add(fragmentPair);
 		return new Fragment(new LdesFragmentIdentifier(getViewName(), childFragmentPairs));
+	}
+
+	private static boolean hasChildWithSameFragmentKey(FragmentPair fragmentPair, List<FragmentPair> childFragmentPairs) {
+		return childFragmentPairs
+				.stream()
+				.map(FragmentPair::fragmentKey)
+				.anyMatch(key -> key.equals(fragmentPair.fragmentKey()));
 	}
 
 	public Optional<String> getValueOfKey(String key) {
@@ -77,7 +87,7 @@ public class Fragment {
 	}
 
 	public String getParentIdAsString() {
-		return identifier.getParentId().map(LdesFragmentIdentifier::asString).orElse(ROOT);
+		return identifier.getParentId().map(LdesFragmentIdentifier::asDecodedFragmentId).orElse(ROOT);
 	}
 
 	public boolean isReadyForDeletion() {
@@ -124,10 +134,6 @@ public class Fragment {
 
 	public LocalDateTime getDeleteTime() {
 		return deleteTime;
-	}
-
-	public void removeRelation(TreeRelation treeRelation) {
-		relations.remove(treeRelation);
 	}
 
 	public void removeRelationToIdentifier(LdesFragmentIdentifier fragmentIdentifier) {

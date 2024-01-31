@@ -13,10 +13,8 @@ public class TileFragmentRelationsAttributer {
 		this.fragmentRepository = fragmentRepository;
 	}
 
-	public void addRelationsFromRootToBottom(Fragment rootFragment,
-			Fragment tileFragments) {
-		TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(
-				tileFragments);
+	public void addRelationsFromRootToBottom(Fragment rootFragment, Fragment tileFragments) {
+		TreeRelation relationToParentFragment = relationsAttributer.getRelationToParentFragment(tileFragments);
 		if (!rootFragment.containsRelation(relationToParentFragment)) {
 			rootFragment.addRelation(relationToParentFragment);
 			fragmentRepository.saveFragment(rootFragment);

@@ -10,6 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.FRAGMENTATION_STRATEGY;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.VIEW;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.HierarchicalTimeBasedFragmentationStrategy.TIMEBASED_FRAGMENTATION_HIERARCHICAL;
 
 public class TimeBasedFragmentCreator {
 
@@ -35,7 +38,7 @@ public class TimeBasedFragmentCreator {
 					relationsAttributer
 							.addInBetweenRelation(parentFragment, child);
 					String viewName = parentFragment.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, "view", viewName, "fragmentation-strategy", "timebased").increment();
+					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, TIMEBASED_FRAGMENTATION_HIERARCHICAL).increment();
 					LOGGER.debug("Timebased fragment created with id: {}", child.getFragmentId());
 					return child;
 				});

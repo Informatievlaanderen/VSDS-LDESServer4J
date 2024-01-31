@@ -7,14 +7,21 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.ResponseEntity;
 
 import static org.apache.jena.riot.WebContent.*;
 
 @Tag(name = "Ingest")
 public interface OpenApiMemberIngestController {
 	@Operation(summary = "Ingest version object to collection")
-	void ingestLdesMember(
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "201", description = "Member was ingested."),
+			@ApiResponse(responseCode = "200", description = "Member with the same ID was found, this duplicate member is ignored.")
+					})
+    ResponseEntity<Object> ingestLdesMember(
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							@prefix dc11: <http://purl.org/dc/elements/1.1/> .

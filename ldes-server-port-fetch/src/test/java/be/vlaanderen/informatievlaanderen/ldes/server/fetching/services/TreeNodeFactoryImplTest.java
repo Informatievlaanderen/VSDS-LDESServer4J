@@ -59,7 +59,7 @@ class TreeNodeFactoryImplTest {
 				"valueType", "relation"));
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
 		Member member = new Member("member", COLLECTION_NAME, 0L, null);
-		when(allocationRepository.getMemberAllocationsByFragmentId(TREE_NODE_ID.asString()))
+		when(allocationRepository.getMemberAllocationsByFragmentId(TREE_NODE_ID.asDecodedFragmentId()))
 				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
 		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
 

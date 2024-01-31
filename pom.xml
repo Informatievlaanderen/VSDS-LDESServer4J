@@ -9,7 +9,7 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>2.7.0-SNAPSHOT</version>
+    <version>2.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -51,7 +51,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.release>17</maven.compiler.release>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
@@ -75,34 +75,35 @@
         <spring-boot.version>3.1.5</spring-boot.version>
 
         <!-- SPRING DATA -->
-        <spring-data.version>3.2.1</spring-data.version>
+        <spring-data.version>3.2.2</spring-data.version>
 
         <!-- JSON & RDF -->
-        <apache-jena.version>4.8.0</apache-jena.version>
+        <apache-jena.version>4.10.0</apache-jena.version>
         <json-simple.version>1.1.1</json-simple.version>
+        <google-guava.version>33.0.0-jre</google-guava.version>
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
         <junit-platform-suite.version>1.10.1</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
         <jupiter.version>5.10.1</jupiter.version>
-        <mockito.version>5.8.0</mockito.version>
-        <byte-buddy.version>1.14.10</byte-buddy.version>
+        <mockito.version>5.10.0</mockito.version>
+        <byte-buddy.version>1.14.11</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.11.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.15.0</cucumber.version>
-        <assertj-core.version>3.24.2</assertj-core.version>
+        <assertj-core.version>3.25.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
-        <depencency-check-maven.version>9.0.6</depencency-check-maven.version>
+        <depencency-check-maven.version>9.0.9</depencency-check-maven.version>
 
         <!-- Monitoring and Logging -->
-        <spring.aop.version>3.2.1</spring.aop.version>
-        <spring-boot.actuator.version>3.2.0</spring-boot.actuator.version>
-        <micrometer-prometheus.version>1.12.0</micrometer-prometheus.version>
-        <micrometer-tracing.version>1.2.1</micrometer-tracing.version>
-        <zipkin-reporter.version>3.1.1</zipkin-reporter.version>
+        <spring.aop.version>3.2.2</spring.aop.version>
+        <spring-boot.actuator.version>3.2.2</spring-boot.actuator.version>
+        <micrometer-prometheus.version>1.12.2</micrometer-prometheus.version>
+        <micrometer-tracing.version>1.2.2</micrometer-tracing.version>
+        <zipkin-reporter.version>3.2.1</zipkin-reporter.version>
         <loki.version>1.4.2</loki.version>
 
         <!-- JACOCO -->
@@ -124,7 +125,7 @@
         <commons-codec.version>1.16.0</commons-codec.version>
 
         <!-- NULL ANNOTATIONS -->
-        <jetbrains-annotations.version>24.0.1</jetbrains-annotations.version>
+        <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
     </properties>
 
     <dependencyManagement>

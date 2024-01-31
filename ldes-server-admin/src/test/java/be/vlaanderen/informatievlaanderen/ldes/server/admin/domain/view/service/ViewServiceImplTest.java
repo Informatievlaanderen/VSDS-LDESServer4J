@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
@@ -7,6 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,6 +18,7 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +44,10 @@ class ViewServiceImplTest {
 
 	@Nested
 	class AddView {
-		private final ViewSpecification view = new ViewSpecification(new ViewName(COLLECTION, "view"), List.of(),
+		private final Model oneYearDurationRetention = RDFParser.source("retention/one-year-timebased-policy.ttl").lang(Lang.TURTLE).toModel();
+		private final Model sixMonthDurationRetention = RDFParser.source("retention/ten-minutes-timebased-policy.ttl").lang(Lang.TURTLE).toModel();
+		private final Model versionBasedRetention = RDFParser.source("retention/versionbased-policy.ttl").lang(Lang.TURTLE).toModel();
+		private final ViewSpecification view = new ViewSpecification(new ViewName(COLLECTION, "view"), new ArrayList<>(List.of(oneYearDurationRetention)),
 				List.of(), 100);
 		private final ViewSpecification viewOfNotExistingCollection = new ViewSpecification(
 				new ViewName(NOT_EXISTING_COLLECTION, "view"), List.of(),
@@ -48,6 +56,35 @@ class ViewServiceImplTest {
 		@Test
 		void when_ViewDoesNotExist_then_ViewIsAdded() {
 			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+
+			viewService.addView(view);
+
+			InOrder inOrder = inOrder(viewRepository, eventPublisher);
+			inOrder.verify(viewRepository).getViewByViewName(view.getName());
+			inOrder.verify(eventPublisher).publishEvent(any(ViewAddedEvent.class));
+			inOrder.verify(viewRepository).saveView(view);
+			inOrder.verifyNoMoreInteractions();
+		}
+
+		@Test
+		void given_ViewWithDuplicateRetentionPolicy_when_AddView_then_ThrowException() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+
+			view.getRetentionConfigs().add(sixMonthDurationRetention);
+
+			assertThatThrownBy(() -> viewService.addView(view))
+					.isInstanceOf(DuplicateRetentionException.class)
+					.hasMessage("More than one retention policy of type <https://w3id.org/ldes#DurationAgoPolicy> found");
+
+			verify(viewRepository).getViewByViewName(view.getName());
+			verifyNoMoreInteractions(viewRepository, eventPublisher);
+		}
+
+		@Test
+		void given_ViewWithTwoDifferentRetentionPolicies_when_AddView_then_ViewIsAdded() {
+			when(viewRepository.getViewByViewName(view.getName())).thenReturn(Optional.empty());
+
+			view.getRetentionConfigs().add(versionBasedRetention);
 
 			viewService.addView(view);
 
@@ -104,8 +141,8 @@ class ViewServiceImplTest {
 			viewService.deleteViewByViewName(viewName);
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
-			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
+			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}

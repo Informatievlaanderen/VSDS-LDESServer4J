@@ -11,6 +11,7 @@ import org.apache.jena.riot.RDFParser;
 import org.apache.jena.vocabulary.RDF;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -32,7 +33,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	@When("I fetch the root {string} fragment of {string}")
 	public void iFetchTheRootFragment(String view, String collection) throws Exception {
 		currentPath = "/%s/%s".formatted(collection, view);
-		MockHttpServletResponse response = mockMvc.perform(get(currentPath).accept("text/turtle"))
+		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
@@ -41,7 +42,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	private void fetchFragment(String path) throws Exception {
 		currentPath = path;
-		MockHttpServletResponse response = mockMvc.perform(get(path)
+		MockHttpServletResponse response = mockMvc.perform(get(new URI(path))
 				.accept("text/turtle"))
 				.andReturn()
 				.getResponse();
@@ -57,7 +58,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
 				.next().getObject().toString();
 
-		MockHttpServletResponse response = mockMvc.perform(get(currentPath).accept("text/turtle"))
+		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
@@ -70,6 +71,8 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 			fetchFragment(currentPath);
 			int relationCount = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 					.toList().size();
+			System.out.println(currentPath);
+			System.out.println("relationcounts: " + relationCount);
 			return relationCount == expectedRelationCount;
 		});
 	}
@@ -100,11 +103,18 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		});
 	}
 
-	@When("I fetch the geo-spatial fragment for tile {string} from the {string} view of {string}")
-	public void iFetchTheGeoSpatialFragmentForTileFromTheViewOf(String tile, String view, String collection)
+	@When("I fetch the {string} fragment for {string} from the {string} view of {string}")
+	public void iFetchTheFragmentOf(String fragmentKey, String fragmentValue, String view, String collection)
 			throws Exception {
-		currentPath = "/%s/%s?tile=%s".formatted(collection, view, tile);
-		MockHttpServletResponse response = mockMvc.perform(get(currentPath).accept("text/turtle"))
+		currentPath = "/%s/%s?%s=%s".formatted(collection, view, fragmentKey, fragmentValue);
+		iFetchTheFragmentOf(currentPath);
+	}
+
+	@When("I fetch the {string} fragment")
+	public void iFetchTheFragmentOf(String path)
+			throws Exception {
+		currentPath = path;
+		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
@@ -115,7 +125,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) throws Exception {
 		LocalDateTime now = LocalDateTime.now();
 		currentPath = "/%s/%s?year=%s&month=%s".formatted(collection, view, now.getYear(), formatDateValue(now.getMonthValue()));
-		String response = mockMvc.perform(get(currentPath).accept("text/turtle"))
+		String response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse()
 				.getContentAsString();

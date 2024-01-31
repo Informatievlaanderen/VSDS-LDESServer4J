@@ -2,7 +2,7 @@ version: "3.3"
 services:
   ldes-server:
     container_name: basic_ldes-server
-    image: server-local
+    image: ldes/ldes-server
     environment:
       - SPRING_CONFIG_LOCATION=/config/
       - PYROSCOPE_CONFIGURATION_FILE=/config/pyroscope.properties
@@ -11,19 +11,20 @@ services:
       - ./docker-compose/pyroscope.properties:/config/pyroscope.properties:ro
     ports:
       - "8080:8080"
+      - "8087:8087"
+      - "8088:8088"
+      - "8089:8089"
     networks:
       - ldes
     depends_on:
       - ldes-mongodb
   ldes-mongodb:
     container_name: ldes-mongodb
-    image: mongo:4.4
+    image: mongo
     ports:
       - 27017:27017
     networks:
       - ldes
-    volumes:
-      - C:\Users\janro\Downloads\db\telraam:/data/db:rw
   pyroscope:
     image: grafana/pyroscope:latest
     ports:

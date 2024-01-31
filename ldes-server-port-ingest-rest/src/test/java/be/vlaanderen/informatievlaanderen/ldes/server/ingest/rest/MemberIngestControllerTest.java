@@ -6,9 +6,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclVal
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.collection.VersionOfPathCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.MemberConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.CollectionNameValidator;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFWriter;
@@ -46,8 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { MemberConverter.class, MemberIngestController.class,
-		IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, CollectionNameValidator.class})
+@ContextConfiguration(classes = {MemberConverter.class, MemberIngestController.class,
+		IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, VersionOfPathCollection.class})
 class MemberIngestControllerTest {
 
 	@Autowired
@@ -59,15 +59,12 @@ class MemberIngestControllerTest {
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 
-	@Autowired
-	private CollectionNameValidator collectionNameValidator;
-
 	@BeforeEach
 	void setUp() {
 		Stream.of(
-						new EventStream("mobility-hindrances", "timestampPath", "versionOfPath"),
-				new EventStream("restaurant", "timestampPath", "versionOfPath")
-				).map(EventStreamCreatedEvent::new)
+						new EventStream("mobility-hindrances", "timestampPath", "http://purl.org/dc/terms/isVersionOf"),
+						new EventStream("restaurant", "timestampPath", "https://vocabulary.uncefact.org/elementVersionId"))
+				.map(EventStreamCreatedEvent::new)
 				.forEach(eventPublisher::publishEvent);
 	}
 

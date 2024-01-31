@@ -4,6 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 
 public interface MemberIngester {
 
-	void ingest(Member member);
+	boolean ingest(Member member);
 
 }

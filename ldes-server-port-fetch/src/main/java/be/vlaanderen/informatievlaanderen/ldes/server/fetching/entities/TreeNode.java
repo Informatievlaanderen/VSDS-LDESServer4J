@@ -15,10 +15,10 @@ public class TreeNode {
 	private final String collectionName;
 	private long numberOfMembersInView;
 
-	public TreeNode(String fragmentId, boolean immutable, boolean isView,
+	public TreeNode(String encodedFragmentId, boolean immutable, boolean isView,
 			List<TreeRelation> relations,
 			List<Member> members, String collectionName) {
-		this.fragmentId = fragmentId;
+		this.fragmentId = encodedFragmentId;
 		this.immutable = immutable;
 		this.isView = isView;
 		this.relations = relations;

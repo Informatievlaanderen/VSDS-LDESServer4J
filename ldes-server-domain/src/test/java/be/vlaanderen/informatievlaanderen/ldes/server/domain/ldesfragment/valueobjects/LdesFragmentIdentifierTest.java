@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,11 +22,15 @@ class LdesFragmentIdentifierTest {
 	final String fragmentPairKey1 = "key1";
 	final String fragmentPairValue1 = "value1";
 	final String fragmentPairKey2 = "key2";
-	final String fragmentPairValue2 = "value2";
+	final String fragmentPairValue2 = "value#2";
 
-	final String fragmentIdString = "/" + fullViewName
+	final String decodedFragmentIdString = "/" + fullViewName
 			+ "?" + fragmentPairKey1 + "=" + fragmentPairValue1
 			+ "&" + fragmentPairKey2 + "=" + fragmentPairValue2;
+	final String encodedFragmentIdString = "/" + fullViewName
+			+ "?" + fragmentPairKey1 + "=" + fragmentPairValue1
+			+ "&" + fragmentPairKey2 + "=" + URLEncoder.encode(fragmentPairValue2, StandardCharsets.UTF_8);
+
 	final String fragmentIdStringWithEmpty = "/" + fullViewName
 			+ "?" + fragmentPairKey1 + "="
 			+ "&" + fragmentPairKey2 + "=" + fragmentPairValue2;
@@ -47,7 +53,7 @@ class LdesFragmentIdentifierTest {
 
 	@Test
 	void when_NonRootFragmentIdString_Then_CreateFragmentIdentifier() {
-		assertEquals(fragmentId, LdesFragmentIdentifier.fromFragmentId(fragmentIdString));
+		assertEquals(fragmentId, LdesFragmentIdentifier.fromFragmentId(decodedFragmentIdString));
 	}
 
 	@Test
@@ -72,12 +78,17 @@ class LdesFragmentIdentifierTest {
 
 	@Test
 	void when_RootFragmentIdentifier_Then_CreateFragmentIdString() {
-		assertEquals(rootIdString, rootFragmentId.asString());
+		assertEquals(rootIdString, rootFragmentId.asDecodedFragmentId());
 	}
 
 	@Test
-	void when_NonRootFragmentIdentifier_Then_CreateFragmentIdString() {
-		assertEquals(fragmentIdString, fragmentId.asString());
+	void when_NonRootFragmentIdentifier_Then_CreateDecodedFragmentIdString() {
+		assertEquals(decodedFragmentIdString, fragmentId.asDecodedFragmentId());
+	}
+
+	@Test
+	void when_NonRootFragmentIdentifier_Then_CreateEncodedFragmentIdString_withOnlyTheParametersBeingEncoded() {
+		assertEquals(encodedFragmentIdString, fragmentId.asEncodedFragmentId());
 	}
 
 	@Test

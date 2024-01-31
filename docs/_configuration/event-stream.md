@@ -6,7 +6,7 @@ nav_order: 1
 
 # Configuring a new Event Stream
 
-To house a new Event Stream on your server, it first needs to be configured.
+To host a new Event Stream on your server, it first needs to be configured.
 This can be done through the Admin API at the `/admin/api/v1/eventstreams` endpoint.
 
 An Event Stream config needs to contain a couple of items:
@@ -41,7 +41,7 @@ genericES:shape a sh:NodeShape .
 
 ## Configuring a SHACL Shape
 
-SHACL (Shapes Constraint Language) is a standard for validating RDF data and ensuring 
+[SHACL (Shapes Constraint Language)](https://www.w3.org./TR/shacl/) is a standard for validating RDF data and ensuring 
 that it conforms to a particular structure or shape. 
 In the context of the Linked Data Event Stream (LDES), SHACL shapes are used to provide 
 a machine-readable description of the expected structure of members in the stream.
@@ -53,7 +53,7 @@ By defining a SHACL shape for the LDES, data producers can ensure that the membe
 they add to the LDES adhere to the required structure, while data consumers can use 
 the shape to validate and reason about the data they receive.
 
-Defining a shape can be done through the `/admin/api/eventstreams/{event stream}/shape` endpoint.
+Defining a shape can be done through the `/admin/api/eventstreams/{collectionName}/shape` endpoint.
 
 For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
 

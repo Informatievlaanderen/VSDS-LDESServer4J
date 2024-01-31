@@ -8,10 +8,8 @@ parent: Retention Policies
 # Timebased Retention Policy
 [https://w3id.org/ldes#DurationAgoPolicy]()
 
-Similar to the [Point in Time Retention Policy](./point-in-time), 
-the Timebased Retention Policy will filter out members based on their `ldes:timestampPath`.
-The difference between the previous retention policy is that the Timebased one works with a 
-sliding window, rather than a hard-set value.
+Timebased Retention Policy will filter out members based on their `ldes:timestampPath`.
+This retention policy works with a sliding window and not with a hard-set value.
 
 The sliding window can be defined with a [ISO 8601 Temporal Duration](https://tc39.es/proposal-temporal/docs/duration.html).
 Any members' `ldes:timestampPath` that falls outside of this range will be removed.

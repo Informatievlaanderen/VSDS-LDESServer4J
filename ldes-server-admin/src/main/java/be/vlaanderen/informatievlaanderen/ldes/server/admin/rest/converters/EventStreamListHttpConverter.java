@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamRespo
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
-import org.apache.jena.ext.com.google.common.reflect.TypeToken;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -21,6 +20,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+
+import com.google.common.reflect.TypeToken;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.REST_ADMIN;
 
@@ -84,7 +85,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 				.forEach(model::add);
 		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
-
+		outputMessage.getHeaders().setContentType(contentType);
 		RDFDataMgr.write(outputMessage.getBody(), model, lang);
 	}
 

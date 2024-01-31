@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.ViewRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -14,7 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ViewServiceImpl implements ViewService {
@@ -43,8 +48,25 @@ public class ViewServiceImpl implements ViewService {
 			throw new ExistingResourceException(VIEW_TYPE, viewSpecification.getName().asString());
 		}
 
+		checkViewForDuplicateRetentionPolicies(viewSpecification);
+
 		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
 		viewRepository.saveView(viewSpecification);
+	}
+
+	private void checkViewForDuplicateRetentionPolicies(ViewSpecification viewSpecification) {
+		List<String> duplicateRetentionPolicies = viewSpecification.getRetentionConfigs().stream()
+				.map(retentionPolicy -> retentionPolicy.listObjectsOfProperty(RdfConstants.RDF_SYNTAX_TYPE).nextNode())
+				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+				.entrySet().stream()
+				.filter(entry -> entry.getValue() > 1)
+				.map(Map.Entry::getKey)
+				.map(Object::toString)
+				.toList();
+
+		if (!duplicateRetentionPolicies.isEmpty()) {
+			throw new DuplicateRetentionException(duplicateRetentionPolicies);
+		}
 	}
 
 	private boolean isEventStreamMissing(String collectionName) {
@@ -79,13 +101,14 @@ public class ViewServiceImpl implements ViewService {
 			throw new MissingResourceException(EVENT_STREAM_TYPE, viewName.getCollectionName());
 		}
 
-		deleteViews(List.of(viewName));
+		deleteAllViewsByViewName(List.of(viewName));
 	}
 
-	private void deleteViews(List<ViewName> viewNames) {
+	@Override
+	public void deleteAllViewsByViewName(List<ViewName> viewNames) {
 		viewNames.forEach(viewName -> {
-			eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
 			viewRepository.deleteViewByViewName(viewName);
+			eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
 		});
 	}
 
@@ -112,7 +135,7 @@ public class ViewServiceImpl implements ViewService {
 		String collectionName = event.collectionName();
 		eventStreams.remove(collectionName);
 		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
-		deleteViews(viewSpecifications.stream().map(ViewSpecification::getName).toList());
+		deleteAllViewsByViewName(viewSpecifications.stream().map(ViewSpecification::getName).toList());
 	}
 
 }

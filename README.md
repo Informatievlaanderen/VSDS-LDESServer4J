@@ -81,6 +81,7 @@ mvn spring-boot:run -P{profiles (comma separated with no spaces) }
 ```
 
 for example:
+
 ```mvn
 mvn spring-boot:run -P{fragmentation-pagination,http-fetch,http-ingest,queue-none,storage-mongo}
 ```
@@ -103,14 +104,16 @@ To enrich the server, certain Maven profiles can be activated:
 | **HTTP Endpoints (Admin)**               | http-admin                           | Enables HTTP endpoints. These will be used later to configure different streams |                                                                                        |                                                                                                                                     |
 | **Instrumentation**                      | instrumentation                      | Enables pyroscope to collect data for instrumentation.                          | [Pyroscope configuration](#Pyroscope instrumentation)                                  |                                                                                                                                     |
 
+The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to
+function properly:
 
-The main functionalities of the server are ingesting and fetching, these profiles depend on other supporting profiles to function properly:
 - http-ingest: requires at least one queue, one fragmentation and one storage profile.
 - http-fetch: requires at least one storage profile
 
 #### Config
 
-To run the server, some properties must be configured. The minimal config can be found [here](ldes-server-application/examples/minimal-config-application.yml)
+To run the server, some properties must be configured. The minimal config can be
+found [here](ldes-server-application/examples/minimal-config-application.yml)
 
 ##### Overview server config
 
@@ -119,11 +122,14 @@ ldes-server:
   host-name: "http://localhost:8080"
   use-relative-url: true
   ```
-| Property              | Description                                                                          | Required | Default | Example                      | Supported values    |
-|:----------------------|:-------------------------------------------------------------------------------------|:---------|:--------|:-----------------------------|:--------------------|
-| host-name             | The host name of the server, used as a prefix for resources hosted on the server.    | Yes      | N/A     | http://localhost:8080        | HTTP and HTTPS urls |
-| use-relative-url      | Determines if the resources hosted on the server are constructed with a relative URI | No       | false   | true, false                  | true, false         |
 
+| Property         | Description                                                                          | Required | Default              | Example               | Supported values          |
+|:-----------------|:-------------------------------------------------------------------------------------|:---------|:---------------------|:----------------------|:--------------------------|
+| host-name        | The host name of the server, used as a prefix for resources hosted on the server.    | Yes      | N/A                  | http://localhost:8080 | HTTP and HTTPS urls       |
+| use-relative-url | Determines if the resources hosted on the server are constructed with a relative URI | No       | false                | true, false           | true, false               |
+| admin.port       | Determines the port on which the admin api will be available                         | No       | value of server.port | 8080                  | any available port number |
+| fetch.port       | Determines the port on which the fetch api will be available                         | No       | value of server.port | 8080                  | any available port number |
+| ingest.port      | Determines the port on which the ingest api will be available                        | No       | value of server.port | 8080                  | any available port number |
 
 ##### Example Serving Static Content
 
@@ -140,19 +146,39 @@ spring:
 
 Supported file formats: .ttl, .rdf, .nq and .jsonld
 Templates for configuring the DCAT metadata can be found [here](templates/dcat)
-A detailed explanation on how to manage and retrieve the DCAT metadata can be found [here](ldes-server-admin/README.md#dcat-endpoints).
+A detailed explanation on how to manage and retrieve the DCAT metadata can be
+found [here](ldes-server-admin/README.md#dcat-endpoints).
 
 ##### Relative urls
 
 To enable relative urls on the server, set the following property:
+
   ```yaml
 ldes-server:
   use-relative-url: true
   ```
-When fetching any page using relative urls, any resource hosted on the server will have a URI relative to the requested page.
+
+When fetching any page using relative urls, any resource hosted on the server will have a URI relative to the requested
+page.
 
 > **Note**: When using relative urls, GET requests can not be performed with N-quads or triples as accept-type.
 > This is because these types don't support resolving the relative URI's
+
+##### Port bindings
+
+To change the ports of the diffrent API's, use the following config:
+  ```yaml
+ldes-server:
+  admin:
+    port: 8080
+  fetch:
+    port: 8081
+  ingest:
+    port: 8082
+  ```
+
+Any combination of these ports can be the same of completely omitted.
+When no port number is given, the default server port will be used.
 
 ### Docker Setup
 
@@ -184,9 +210,8 @@ docker-compose up
 ```
 
 > **Note**: Using Docker Desktop might fail because of incorrect environment variable interpretation.
-> 
+>
 > ```unexpected character "-" in variable name near ...```
-
 
 ## Developer Information
 
@@ -238,6 +263,7 @@ mvn clean verify -Dunittestskip=true
 - ldes-fragmentisers-timebased-hierarchical
 - ldes-fragmentisers-geospatial
 - ldes-fragmentisers-pagination
+- ldes-fragmentisers-reference
 
 ### Tracing and Metrics
 
@@ -246,8 +272,8 @@ This will be done through a Zipkin exporter for traces and a Prometheus endpoint
 
 The exposed metrics can be found at `/actuator/metrics`.
 
-Both traces and metrics are based on [OpenTelemetry standard](https://opentelemetry.io/docs/concepts/what-is-opentelemetry/)
-
+Both traces and metrics are based
+on [OpenTelemetry standard](https://opentelemetry.io/docs/concepts/what-is-opentelemetry/)
 
 To achieve this, the following properties are expected
 
@@ -264,7 +290,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: 
+        include:
           - prometheus
 ```
 
@@ -279,14 +305,17 @@ management:
 #### Pyroscope instrumentation
 
 To enable pyroscope, add the following to the application.yml file:
+
 ```yaml
 pyroscope:
   agent:
     enabled: true
 ```
+
 Note that this does not work when running the server locally on a Windows device.
 
-The normal pyroscope properties can be found [here](https://grafana.com/docs/pyroscope/latest/configure-client/language-sdks/java/#java-client-configuration-options)
+The normal pyroscope properties can be
+found [here](https://grafana.com/docs/pyroscope/latest/configure-client/language-sdks/java/#java-client-configuration-options)
 These properties should be added to the env variables.
 
 #### Using Docker
@@ -297,6 +326,7 @@ MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="prometheus"
 MANAGEMENT_TRACING_SAMPLING_PROBABILITY="1.0"
 MANAGEMENT_ZIPKIN_TRACING_ENDPOINT="zipkin endpoint of collector"
 ```
+
 The export of traces can be disabled with the following parameter:
 
 ```
@@ -307,13 +337,16 @@ MANAGEMENT_TRACING_ENABLED=false
 
 To allow more visibility for the application, it is possible to enable a health and info endpoint.
 
-This health endpoint provides a basic JSON output that can be found at `/actuator/health` that provides a summary of the status of all needed services.
+This health endpoint provides a basic JSON output that can be found at `/actuator/health` that provides a summary of the
+status of all needed services.
 
-An additional info endpoint is also available which shows which version of the application running and its deployment date.
+An additional info endpoint is also available which shows which version of the application running and its deployment
+date.
 
 #### Local Health and Info
 
 The following config allows you to enable both the info and health endpoints.
+
 ```yaml
 management:
   endpoints:
@@ -327,6 +360,8 @@ management:
       enabled: false
     mongo:
       enabled: true
+    dcat:
+      enabled: true
   endpoint:
     health:
       show-details: always
@@ -338,11 +373,35 @@ management:
 MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE="health, info"
 MANAGEMENT_HEALTH_DEFAULTS_ENABLED=false
 MANAGEMENT_HEALTH_MONGO_ENABLED=true
+MANAGEMENT_HEALTH_DCAT_ENABLED=true
 MANAGEMENT_ENDPOINT_HEALTH_SHOW-DETAILS="always"
 ```
 
-### Logging
+#### Exposing of details
 
+With the above config, where `management.endpoint.health.show-details=true`, all the details of the declared health
+components are exposed. The details that should not be exposed, can be hidden by two ways.
+
+1. Disabling unnecessary details \
+   The details that should not be exposed, can be disabled. This can be achieved by disabling all the defaults and
+   enabling the required details only, just like the above config, or by enabling the required details only.
+   This can be done with the following property: `management.endpoints.<component-name>.enabled=<true/false>`
+
+2. Declaring a group and include there all the desired details \
+   With the following config, a group is created that exposes all its details of the components within this group. This
+   ensures that other details that are not part of this group are not exposed.
+    ```yaml
+    management:
+      endpoint:
+        health:
+          show-details: always
+          group:
+            dcat-validity:
+              show-details: always
+              include: dcat
+    ```
+
+### Logging
 
 The logging of this server is split over the different logging levels according to the following guidelines.
 
@@ -354,9 +413,12 @@ The logging of this server is split over the different logging levels according 
 
 #### Logging configuration
 
-The following config allows you to output logging to the console. The trace id and span id can be included in the logging, 
-if enabled via the [tracing config](#tracing-and-metrics). 
-Further customization of the logging settings can be done using the logback properties. A use case for this can be sending the logs to Loki for example.
+The following config allows you to output logging to the console. The trace id and span id can be included in the
+logging,
+if enabled via the [tracing config](#tracing-and-metrics).
+Further customization of the logging settings can be done using the logback properties. A use case for this can be
+sending the logs to Loki for example.
+
 ```yaml
 logging:
   pattern:
@@ -366,6 +428,7 @@ logging:
 ```
 
 The following config enables and exposes the loggers endpoint.
+
 ```yaml
 management:
   endpoint:
@@ -378,8 +441,10 @@ management:
           - loggers
 ```
 
-To change the logging level of the application at runtime, you can send the following POST request to the loggers endpoint.
+To change the logging level of the application at runtime, you can send the following POST request to the loggers
+endpoint.
 Replace [LOGGING LEVEL] with the desired logging level from among: TRACE, DEBUG, INFO, WARN, ERROR.
+
 ```
 curl -i -X POST -H 'Content-Type: application/json' -d '{"configuredLevel": "[LOGGING LEVEL]"}'
   http://localhost:8080/actuator/loggers/ROOT

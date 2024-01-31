@@ -87,7 +87,7 @@ public interface OpenApiAdminViewsRestController {
 									    ] ;
 									] .
 									"""),
-							@ExampleObject(name = "Pagination Fragmentation Strategy", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
+							@ExampleObject(name = "Pagination View", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
@@ -110,7 +110,7 @@ public interface OpenApiAdminViewsRestController {
 									    tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									 ] .
 									"""),
-							@ExampleObject(name = "Geospatial-Pagination Fragmentation Strategy", description = "A combined geospatial-pagination fragmentation strategy which is configured to first partition the data on zoom level 15 and within this zoom level create pages with at most 100 members.", value = """
+							@ExampleObject(name = "Geospatial Fragmentation Strategy", description = "A geospatial fragmentation strategy which is configured to partition the data on zoom level 15.", value = """
 									@prefix server: <http://localhost:8080/mobility-hindrances/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
@@ -119,6 +119,19 @@ public interface OpenApiAdminViewsRestController {
 											a tree:GeospatialFragmentation ;
 											tree:maxZoom 15 ;
 											tree:fragmentationPath <http://www.opengis.net/ont/geosparql#asWKT>
+										]) ;
+										tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
+									] .
+									"""),
+							@ExampleObject(name = "Reference Fragmentation Strategy", description = "A reference fragmentation strategy which is configured to partition the data on the provided property path (fragmentationPath).", value = """
+									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix tree: <https://w3id.org/tree#> .
+
+									server:reference tree:viewDescription [
+										tree:fragmentationStrategy ([
+											a tree:ReferenceFragmentation ;
+											tree:fragmentationPath <http://purl.org/dc/terms/isVersionOf>
+											tree:fragmentationKey "version" ;
 										]) ;
 										tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 									] .

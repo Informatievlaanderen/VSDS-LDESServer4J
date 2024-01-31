@@ -44,7 +44,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	@Override
 	public Optional<Fragment> retrieveFragment(LdesFragmentIdentifier fragmentId) {
 		return repository
-				.findById(fragmentId.asString())
+				.findById(fragmentId.asDecodedFragmentId())
 				.map(FragmentEntity::toLdesFragment);
 	}
 
@@ -63,7 +63,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
 				.findAllByImmutableAndParentId(false,
-						parentId.asString())
+						parentId.asDecodedFragmentId())
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(Fragment::getFragmentIdString));
@@ -79,7 +79,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	@Override
 	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(fragmentId.asString()));
+		query.addCriteria(Criteria.where("_id").is(fragmentId.asDecodedFragmentId()));
 
 		Update update = new Update().inc("nrOfMembersAdded", 1);
 		UpdateResult result = mongoTemplate.updateFirst(query, update, FragmentEntity.class);
@@ -89,7 +89,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	@Override
 	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId, int size) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("_id").is(fragmentId.asString()));
+		query.addCriteria(Criteria.where("_id").is(fragmentId.asDecodedFragmentId()));
 
 		Update update = new Update().inc("nrOfMembersAdded", size);
 		UpdateResult result = mongoTemplate.updateFirst(query, update, FragmentEntity.class);
@@ -133,7 +133,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 	@Override
 	public void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
 		removeRelationsPointingToDeletedFragment(readyForDeletionFragmentId);
-		repository.deleteById(readyForDeletionFragmentId.asString());
+		repository.deleteById(readyForDeletionFragmentId.asDecodedFragmentId());
 	}
 
 	private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {

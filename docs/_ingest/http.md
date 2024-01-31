@@ -26,3 +26,9 @@ For more details, please refer to the Swagger API under the `base` definition.
 Only one member can be ingested at a time. Bulk ingest is (not yet) supported.
 Every model that is sent for ingestion, should contain exactly one named node.
 Otherwise it will be rejected.
+
+## Duplicate Members
+
+When a member is ingested normally, it is saved in the server and a 201 ACCEPTED status is returned.
+Sometimes a member with the same ID as an existing member can be send to the ingest endpoint.
+In this case, the second member will be ignored, a warning will be logged and a 200 OK status will be returned.

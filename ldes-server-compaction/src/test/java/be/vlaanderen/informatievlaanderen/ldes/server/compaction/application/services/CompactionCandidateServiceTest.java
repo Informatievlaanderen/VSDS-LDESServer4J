@@ -54,7 +54,7 @@ class CompactionCandidateServiceTest {
 
 		ArgumentCaptor<LdesFragmentIdentifier> argument = ArgumentCaptor.forClass(LdesFragmentIdentifier.class);
 		Mockito.when(fragmentRepository.retrieveFragment(argument.capture()))
-				.thenAnswer(invocation -> Optional.of(fragments.get(argument.getValue().asString())));
+				.thenAnswer(invocation -> Optional.of(fragments.get(argument.getValue().asDecodedFragmentId())));
 	}
 
 	@Test
