@@ -4,10 +4,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.shaclshape.entity.ShaclShapeEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.shaclshape.repository.ShaclShapeEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,7 +77,7 @@ class ShaclShapeMongoRepositoryTest {
 
 		final List<ShaclShape> expectedShapes = List.of(
 				new ShaclShape("c1", ModelFactory.createDefaultModel()),
-				new ShaclShape("c2", RdfModelConverter.fromString(shaclShapeString, Lang.TURTLE)));
+				new ShaclShape("c2", RDFParser.fromString(shaclShapeString).lang(Lang.TURTLE).toModel()));
 
 		final List<ShaclShape> shaclShapes = repository.retrieveAllShaclShapes();
 
@@ -88,7 +88,7 @@ class ShaclShapeMongoRepositoryTest {
 	@Test
 	void when_saveShacl_then_shaclIsReturned() throws URISyntaxException, IOException {
 		final String shaclShapeString = loadShaclString();
-		final Model shaclModel = RdfModelConverter.fromString(shaclShapeString, Lang.TURTLE);
+		final Model shaclModel = RDFParser.fromString(shaclShapeString).lang(Lang.TURTLE).toModel();
 		final ShaclShape shaclShape = new ShaclShape(COLLECTION, shaclModel);
 
 		final ShaclShape savedShaclShape = repository.saveShaclShape(shaclShape);

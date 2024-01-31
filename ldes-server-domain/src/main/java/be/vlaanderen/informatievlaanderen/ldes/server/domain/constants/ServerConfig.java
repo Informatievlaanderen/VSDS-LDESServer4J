@@ -9,11 +9,15 @@ public class ServerConfig {
 	private static final String DEFAULT_COMPACTION_DURATION = "P7D";
 	private static final String DEFAULT_BACKGROUND_CRON = "0 0 0 * * *";
 	private static final String DEFAULT_USE_RELATIVE_URL = "false";
+	private static final String DEFAULT_MAX_JSONLD_CACHE_CAPACITY = "100";
 	public static final String HOST_NAME_KEY = "${ldes-server.host-name}";
 	public static final String RETENTION_CRON_KEY = "${ldes-server.retention-cron: " + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String DELETION_CRON_KEY = "${ldes-server.deletion-cron:" + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String COMPACTION_CRON_KEY = "${ldes-server.compaction-cron:" + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String USE_RELATIVE_URL_KEY = "#{new Boolean(\"${ldes-server.use-relative-url:" + DEFAULT_USE_RELATIVE_URL + "}\")}";
+	public static final String MAX_JSONLD_CACHE_CAPACITY =
+			"#{new Integer(\"${ldes-server.max-jsonld-cache-capacity:" + DEFAULT_MAX_JSONLD_CACHE_CAPACITY + "}\")}";
+
 	private String hostName;
 	private String compactionDuration;
 	private String retentionCron;

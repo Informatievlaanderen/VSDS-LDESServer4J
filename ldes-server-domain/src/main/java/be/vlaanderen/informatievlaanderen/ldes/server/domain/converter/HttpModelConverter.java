@@ -56,6 +56,6 @@ public class HttpModelConverter implements HttpMessageConverter<Model> {
 	public Model read(Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
-		return RDFParser.source(inputMessage.getBody()).lang(lang).toModel();
+		return RDFParser.source(inputMessage.getBody()).context(rdfModelConverter.getContext()).lang(lang).toModel();
 	}
 }
