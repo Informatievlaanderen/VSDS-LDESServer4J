@@ -31,6 +31,8 @@ public class RdfModelConverter {
     @Value(MAX_JSONLD_CACHE_CAPACITY)
     private int maxJsonLdCacheCapacity;
 
+    private Context context;
+
     public Lang getLang(MediaType contentType, RdfFormatException.RdfFormatContext rdfFormatContext) {
         if (contentType.equals(MediaType.TEXT_HTML)) {
             return TURTLE;
@@ -56,7 +58,14 @@ public class RdfModelConverter {
         return stringWriter.toString();
     }
 
-    public Context getContext() {
+    public synchronized Context getContext() {
+        if (context == null) {
+            context = createContext();
+        }
+        return context;
+    }
+
+    private Context createContext() {
         final var options = new JsonLdOptions();
         options.setDocumentCache(new LruCache<>(maxJsonLdCacheCapacity));
         return ContextAccumulator.newBuilder(RIOT::getContext).context().set(JSONLD_OPTIONS, options);
