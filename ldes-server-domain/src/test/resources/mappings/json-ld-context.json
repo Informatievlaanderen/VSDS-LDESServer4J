@@ -1,0 +1,43 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/context.jsonld"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/ld+json"
+    },
+    "jsonBody": {
+      "@context": {
+        "name": "http://schema.org/name",
+        "author": {
+          "@id": "http://schema.org/author",
+          "@type": "@id"
+        },
+        "datePublished": "http://schema.org/datePublished",
+        "headline": "http://schema.org/headline",
+        "image": {
+          "@id": "http://schema.org/image",
+          "@type": "@id"
+        },
+        "Article": "http://schema.org/Article",
+        "Person": "http://schema.org/Person",
+        "Organization": "http://schema.org/Organization",
+        "ImageObject": "http://schema.org/ImageObject",
+        "url": {
+          "@id": "http://schema.org/url",
+          "@type": "@id"
+        },
+        "logo": {
+          "@id": "http://schema.org/logo",
+          "@type": "@id"
+        },
+        "publisher": {
+          "@id": "http://schema.org/publisher",
+          "@type": "@id"
+        }
+      }
+    }
+  }
+}

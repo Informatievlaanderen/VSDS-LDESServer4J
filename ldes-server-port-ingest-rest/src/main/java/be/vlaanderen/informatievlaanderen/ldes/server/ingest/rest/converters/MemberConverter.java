@@ -26,12 +26,14 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
+
+import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("java:S1075")
 @Observed
 @Component
 public class MemberConverter implements HttpMessageConverter<Member> {
+
 	private final RdfModelConverter rdfModelConverter;
 	private final VersionOfPathCollection versionOfPathCollection;
 
@@ -58,9 +60,13 @@ public class MemberConverter implements HttpMessageConverter<Member> {
 	@Override
 	public Member read(@NotNull Class<? extends Member> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()),
-				RdfFormatException.RdfFormatContext.INGEST);
-		Model memberModel = RDFParser.source(inputMessage.getBody()).lang(lang).toModel();
+		final Lang lang =
+				rdfModelConverter.getLang(
+						requireNonNull(inputMessage.getHeaders().getContentType()),
+						RdfFormatException.RdfFormatContext.INGEST
+				);
+		final Model memberModel =
+				RDFParser.source(inputMessage.getBody()).context(rdfModelConverter.getContext()).lang(lang).toModel();
 
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
 				.getRequest();

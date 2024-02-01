@@ -1,11 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
@@ -112,7 +107,7 @@ class EventStreamControllerTest {
 		assertNotNull(maxAge);
 		assertEquals(CONFIGURED_MAX_AGE_IMMUTABLE, maxAge);
 
-		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), lang);
+		Model actualModel = RDFParser.fromString(result.getResponse().getContentAsString()).lang(lang).toModel();
 		assertEquals(LDES_EVENT_STREAM_URI, getObjectURI(actualModel, RdfConstants.RDF_SYNTAX_TYPE));
 	}
 
@@ -179,7 +174,7 @@ class EventStreamControllerTest {
 					.andExpect(status().isOk())
 					.andExpect(result -> {
 						String contentAsString = result.getResponse().getContentAsString();
-						Model actualModel = RdfModelConverter.fromString(contentAsString, Lang.TURTLE);
+						Model actualModel = RDFParser.fromString(contentAsString).lang(Lang.TURTLE).toModel();
 						actualModel.isIsomorphicWith(model);
 					});
 
