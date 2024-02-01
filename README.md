@@ -123,14 +123,14 @@ ldes-server:
   use-relative-url: true
   ```
 
-| Property                   | Description                                                                                                   | Required | Default              | Example               | Supported values          |
-|:---------------------------|:--------------------------------------------------------------------------------------------------------------|:---------|:---------------------|:----------------------|:--------------------------|
-| host-name                  | The host name of the server, used as a prefix for resources hosted on the server.                             | Yes      | N/A                  | http://localhost:8080 | HTTP and HTTPS urls       |
-| use-relative-url           | Determines if the resources hosted on the server are constructed with a relative URI                          | No       | false                | true, false           | true, false               |
-| max-jsonld-cache-capacity  | A cache is used when fetching json-ld contexts. The size of this cache can be configured with this property.  | No       | 100                  | 50                    | Integer                   |
-| admin.port                 | Determines the port on which the admin api will be available                                                  | No       | value of server.port | 8080                  | any available port number |
-| fetch.port                 | Determines the port on which the fetch api will be available                                                  | No       | value of server.port | 8080                  | any available port number |
-| ingest.port                | Determines the port on which the ingest api will be available                                                 | No       | value of server.port | 8080                  | any available port number |
+| Property                   | Description                                                                                                         | Required | Default              | Example               | Supported values          |
+|:---------------------------|:--------------------------------------------------------------------------------------------------------------------|:---------|:---------------------|:----------------------|:--------------------------|
+| host-name                  | The host name of the server, used as a prefix for resources hosted on the server.                                   | Yes      | N/A                  | http://localhost:8080 | HTTP and HTTPS urls       |
+| use-relative-url           | Determines if the resources hosted on the server are constructed with a relative URI                                | No       | false                | true, false           | true, false               |
+| max-jsonld-cache-capacity  | A cache is used when fetching json-ld contexts. The number of cached contexts can be configured with this property. | No       | 100                  | 50                    | Integer                   |
+| admin.port                 | Determines the port on which the admin api will be available                                                        | No       | value of server.port | 8080                  | any available port number |
+| fetch.port                 | Determines the port on which the fetch api will be available                                                        | No       | value of server.port | 8080                  | any available port number |
+| ingest.port                | Determines the port on which the ingest api will be available                                                       | No       | value of server.port | 8080                  | any available port number |
 
 ##### Example Serving Static Content
 
