@@ -14,9 +14,8 @@ public class ServerConfig {
 	public static final String RETENTION_CRON_KEY = "${ldes-server.retention-cron: " + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String DELETION_CRON_KEY = "${ldes-server.deletion-cron:" + DEFAULT_BACKGROUND_CRON + "}";
 	public static final String COMPACTION_CRON_KEY = "${ldes-server.compaction-cron:" + DEFAULT_BACKGROUND_CRON + "}";
-	public static final String USE_RELATIVE_URL_KEY = "#{new Boolean(\"${ldes-server.use-relative-url:" + DEFAULT_USE_RELATIVE_URL + "}\")}";
-	public static final String MAX_JSONLD_CACHE_CAPACITY =
-			"#{new Integer(\"${ldes-server.max-jsonld-cache-capacity:" + DEFAULT_MAX_JSONLD_CACHE_CAPACITY + "}\")}";
+	public static final String USE_RELATIVE_URL_KEY = "${ldes-server.use-relative-url:" + DEFAULT_USE_RELATIVE_URL + "}";
+	public static final String MAX_JSONLD_CACHE_CAPACITY = "${ldes-server.max-jsonld-cache-capacity:" + DEFAULT_MAX_JSONLD_CACHE_CAPACITY + "}";
 
 	private String hostName;
 	private String compactionDuration;
@@ -24,6 +23,7 @@ public class ServerConfig {
 	private String deletionCron;
 	private String compactionCron;
 	private Boolean useRelativeUrl;
+	private Integer maxJsonldCacheCapacity;
 
 	public String getHostName() {
 		return hostName;
@@ -44,8 +44,13 @@ public class ServerConfig {
 	public String getCompactionCron() {
 		return compactionCron != null ? compactionCron : DEFAULT_BACKGROUND_CRON;
 	}
+
 	public Boolean getUseRelativeUrl() {
 		return useRelativeUrl != null ? useRelativeUrl : Boolean.getBoolean(DEFAULT_USE_RELATIVE_URL);
+	}
+
+	public int getMaxJsonldCacheCapacity() {
+		return maxJsonldCacheCapacity != null ? maxJsonldCacheCapacity : Integer.valueOf(DEFAULT_MAX_JSONLD_CACHE_CAPACITY);
 	}
 
 	public void setHostName(String hostName) {
@@ -71,4 +76,9 @@ public class ServerConfig {
 	public void setUseRelativeUrl(Boolean useRelativeUrl) {
 		this.useRelativeUrl = useRelativeUrl;
 	}
+
+	public void setMaxJsonldCacheCapacity(int maxJsonldCacheCapacity) {
+		this.maxJsonldCacheCapacity = maxJsonldCacheCapacity;
+	}
+
 }
