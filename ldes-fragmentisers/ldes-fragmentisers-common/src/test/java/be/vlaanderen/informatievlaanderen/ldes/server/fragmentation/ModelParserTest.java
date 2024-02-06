@@ -25,7 +25,7 @@ class ModelParserTest {
 	@Test
 	void when_MemberHasXMLDateTime_Then_ReturnLocalDateTime() {
 		LocalDateTime actual = ModelParser.getFragmentationObjectLocalDateTime(memberModel, ".*",
-				"http://purl.org/dc/terms/created");
+				"http://purl.org/dc/terms/created").get();
 
 		assertEquals(time, actual);
 	}

@@ -12,6 +12,9 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser.getFragmentationObjectLocalDateTime;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
@@ -38,17 +41,25 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 			Observation parentObservation) {
 
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
-		FragmentationTimestamp fragmentationTimestamp = getFragmentationTimestamp(memberModel);
+		Optional<FragmentationTimestamp> fragmentationTimestamp = getFragmentationTimestamp(memberModel);
 
-		Fragment fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp, Granularity.YEAR);
+		Fragment fragment;
+
+		if(fragmentationTimestamp.isEmpty()) {
+			fragment = fragmentFinder.getDefaultFragment(parentFragment);
+		} else {
+			fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp.get(), Granularity.YEAR);
+		}
+
 		super.addMemberToFragment(fragment, memberId, memberModel, fragmentationObservation);
 		fragmentationObservation.stop();
 	}
 
-	private FragmentationTimestamp getFragmentationTimestamp(Model memberModel) {
-		return new FragmentationTimestamp(getFragmentationObjectLocalDateTime(memberModel,
+	private Optional<FragmentationTimestamp> getFragmentationTimestamp(Model memberModel) {
+		Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
 				config.getFragmenterSubjectFilter(),
-				config.getFragmentationPath()), config.getMaxGranularity());
+				config.getFragmentationPath());
+		return timeStamp.map(localDateTime -> new FragmentationTimestamp(localDateTime, config.getMaxGranularity()));
 	}
 
 	private Observation startFragmentationObservation(Observation parentObservation) {
