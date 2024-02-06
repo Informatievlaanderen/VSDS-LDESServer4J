@@ -1,15 +1,20 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
+import org.apache.jena.datatypes.DatatypeFormatException;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ModelParser {
 	private static final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
+	private static final Logger LOGGER = LoggerFactory.getLogger(ModelParser.class);
 
 	private ModelParser() {
 	}
@@ -49,7 +54,15 @@ public class ModelParser {
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
 				.map(Statement::getObject)
 				.map(RDFNode::asLiteral)
-				.map(literal -> localDateTimeConverter.getLocalDateTime((LiteralImpl) literal))
+				.map(literal -> {
+					try{
+						return localDateTimeConverter.getLocalDateTime((LiteralImpl) literal);
+					} catch (DatatypeFormatException exception) {
+						LOGGER.warn("Malformed datetime found: {}", exception.getMessage());
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
 				.toList();
 	}
 }
