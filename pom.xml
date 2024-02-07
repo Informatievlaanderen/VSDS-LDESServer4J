@@ -62,7 +62,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
         <swagger-annotations.version>2.2.20</swagger-annotations.version>
-        <pyroscope.version>0.12.2</pyroscope.version>
+        <pyroscope.version>0.13.0</pyroscope.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -84,16 +84,16 @@
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.10.1</junit-platform-suite.version>
+        <junit-platform-suite.version>1.10.2</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.10.1</jupiter.version>
+        <jupiter.version>5.10.2</jupiter.version>
         <mockito.version>5.10.0</mockito.version>
         <byte-buddy.version>1.14.11</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.11.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.15.0</cucumber.version>
-        <assertj-core.version>3.25.2</assertj-core.version>
+        <assertj-core.version>3.25.3</assertj-core.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>9.0.9</depencency-check-maven.version>
