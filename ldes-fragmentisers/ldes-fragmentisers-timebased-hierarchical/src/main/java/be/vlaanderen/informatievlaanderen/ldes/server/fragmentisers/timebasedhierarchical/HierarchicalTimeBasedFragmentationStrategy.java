@@ -12,6 +12,9 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser.getFragmentationObjectLocalDateTime;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
@@ -36,19 +39,21 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	@Override
 	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
 			Observation parentObservation) {
-
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
-		FragmentationTimestamp fragmentationTimestamp = getFragmentationTimestamp(memberModel);
 
-		Fragment fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp, Granularity.YEAR);
+		Fragment fragment = getFragmentationTimestamp(memberModel)
+				.map(timestamp -> fragmentFinder.getLowestFragment(parentFragment, timestamp, Granularity.YEAR))
+				.orElseGet(() -> fragmentFinder.getDefaultFragment(parentFragment));
+
 		super.addMemberToFragment(fragment, memberId, memberModel, fragmentationObservation);
 		fragmentationObservation.stop();
 	}
 
-	private FragmentationTimestamp getFragmentationTimestamp(Model memberModel) {
-		return new FragmentationTimestamp(getFragmentationObjectLocalDateTime(memberModel,
+	private Optional<FragmentationTimestamp> getFragmentationTimestamp(Model memberModel) {
+		Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
 				config.getFragmenterSubjectFilter(),
-				config.getFragmentationPath()), config.getMaxGranularity());
+				config.getFragmentationPath());
+		return timeStamp.map(localDateTime -> new FragmentationTimestamp(localDateTime, config.getMaxGranularity()));
 	}
 
 	private Observation startFragmentationObservation(Observation parentObservation) {

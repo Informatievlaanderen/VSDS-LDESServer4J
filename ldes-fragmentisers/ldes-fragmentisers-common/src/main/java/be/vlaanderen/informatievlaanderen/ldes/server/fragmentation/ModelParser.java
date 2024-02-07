@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.impl.LiteralImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class ModelParser {
 	private static final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
@@ -32,12 +33,11 @@ public class ModelParser {
 				.toList();
 	}
 
-	public static LocalDateTime getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
-			String fragmentationPredicate) {
+	public static Optional<LocalDateTime> getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
+																			  String fragmentationPredicate) {
 		return getFragmentationObjectsLocalDateTime(model, subjectFilter, fragmentationPredicate)
 				.stream()
-				.findFirst()
-				.orElse(null);
+				.findFirst();
 	}
 
 	public static List<LocalDateTime> getFragmentationObjectsLocalDateTime(Model model, String subjectFilter,
