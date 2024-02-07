@@ -189,7 +189,7 @@ Here is an explanation provided for all the possibilities on how to tweak and co
 
 
 > **Note** ***: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
-> annotation `@Scheduled` adds a 6th parameter to support seconds.
+> annotation `@Scheduled` adds a 6th parameter to support seconds. Note that the cron schedules are in timezone 'UTC'.
 >
 > More information about this can be found in
 >
