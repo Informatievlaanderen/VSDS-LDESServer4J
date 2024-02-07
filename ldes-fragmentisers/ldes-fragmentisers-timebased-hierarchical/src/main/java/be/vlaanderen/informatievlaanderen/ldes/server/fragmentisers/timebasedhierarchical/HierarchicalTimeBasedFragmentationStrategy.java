@@ -39,17 +39,11 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	@Override
 	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
 			Observation parentObservation) {
-
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
-		Optional<FragmentationTimestamp> fragmentationTimestamp = getFragmentationTimestamp(memberModel);
 
-		Fragment fragment;
-
-		if(fragmentationTimestamp.isEmpty()) {
-			fragment = fragmentFinder.getDefaultFragment(parentFragment);
-		} else {
-			fragment = fragmentFinder.getLowestFragment(parentFragment, fragmentationTimestamp.get(), Granularity.YEAR);
-		}
+		Fragment fragment = getFragmentationTimestamp(memberModel)
+				.map(timestamp -> fragmentFinder.getLowestFragment(parentFragment, timestamp, Granularity.YEAR))
+				.orElseGet(() -> fragmentFinder.getDefaultFragment(parentFragment));
 
 		super.addMemberToFragment(fragment, memberId, memberModel, fragmentationObservation);
 		fragmentationObservation.stop();
