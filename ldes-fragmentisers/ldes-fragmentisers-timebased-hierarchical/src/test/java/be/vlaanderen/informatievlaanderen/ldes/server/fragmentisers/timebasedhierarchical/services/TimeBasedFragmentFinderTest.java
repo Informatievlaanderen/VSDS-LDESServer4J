@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TimeBasedFragmentFinderTest {
 
@@ -50,5 +50,12 @@ class TimeBasedFragmentFinderTest {
 		Fragment actual = fragmentFinder.getLowestFragment(PARENT, TIME, Granularity.YEAR);
 
 		assertEquals(expected, actual);
+	}
+
+	@Test
+	void when_GetDefaultIsCalled_Then_ReturnExpectedFragment() {
+		Fragment actual = fragmentFinder.getDefaultFragment(PARENT);
+
+		verify(fragmentCreator, times(1)).getOrCreateFragment(PARENT, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 	}
 }

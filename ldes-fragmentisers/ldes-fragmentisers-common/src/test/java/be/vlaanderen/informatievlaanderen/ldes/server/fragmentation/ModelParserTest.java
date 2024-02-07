@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ModelParserTest {
@@ -24,10 +26,10 @@ class ModelParserTest {
 
 	@Test
 	void when_MemberHasXMLDateTime_Then_ReturnLocalDateTime() {
-		LocalDateTime actual = ModelParser.getFragmentationObjectLocalDateTime(memberModel, ".*",
+		Optional<LocalDateTime> actual = ModelParser.getFragmentationObjectLocalDateTime(memberModel, ".*",
 				"http://purl.org/dc/terms/created");
 
-		assertEquals(time, actual);
+		assertThat(actual).hasValue(time);
 	}
 
 	@Test
