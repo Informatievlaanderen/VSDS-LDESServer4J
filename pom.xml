@@ -118,9 +118,6 @@
         <sonar.projectKey>Informatievlaanderen_VSDS-LDESServer4J-${project.groupId}:${project.artifactId}
         </sonar.projectKey>
 
-        <!--suppress UnresolvedMavenProperty -->
-        <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
-
         <!-- HASHING -->
         <commons-codec.version>1.16.0</commons-codec.version>
 
@@ -433,26 +430,6 @@
         </pluginManagement>
 
         <plugins>
-
-            <plugin>
-                <groupId>net.revelc.code</groupId>
-                <artifactId>impsort-maven-plugin</artifactId>
-                <version>${impsort-maven-plugin.version}</version>
-                <configuration>
-                    <removeUnused>true</removeUnused>
-                    <groups>*, java.,javax.,com.</groups>
-                    <staticGroups>*</staticGroups>
-                    <staticAfter>true</staticAfter>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>sort-imports</id>
-                        <goals>
-                            <goal>sort</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
