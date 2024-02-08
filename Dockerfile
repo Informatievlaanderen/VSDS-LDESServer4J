@@ -3,10 +3,10 @@
 #
 # INSTALL MAVEN DEPENDENCIES
 #
-FROM maven:3.8.5-amazoncorretto-21 AS builder
+FROM maven:3.9.6-amazoncorretto-21 AS builder
 
 # MAVEN: application
-FROM builder as app-stage
+FROM builder AS app-stage
 COPY . /
 RUN mvn install -DskipTests
 
