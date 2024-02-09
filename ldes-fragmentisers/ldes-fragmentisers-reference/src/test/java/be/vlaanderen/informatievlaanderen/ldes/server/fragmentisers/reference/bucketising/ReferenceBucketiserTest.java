@@ -42,6 +42,15 @@ class ReferenceBucketiserTest {
     }
 
     @Test
+    void when_MemberHasInvalidURI_Then_ReturnOnlyCorrectBucket() {
+        Model model = RDFParser.source("member-with-two-types-faulty.ttl").toModel();
+
+        assertThat(referenceBucketiser.bucketise(memberId, model))
+                .hasSize(1)
+                .contains("https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel");
+    }
+
+    @Test
     void shouldSkipResultsThatAreNotUris() {
         Model model = RDFParser.source("member-with-string-type.ttl").toModel();
 
