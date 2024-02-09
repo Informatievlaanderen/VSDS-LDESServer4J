@@ -31,7 +31,7 @@ public class GeospatialBucketiser {
 			ModelParser.getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(),
 							geospatialConfig.fragmentationPath())
 					.stream()
-					.map(this::toCoordinate)
+					.map(this::toCoordinates)
 					.forEach(coordinates::addAll);
 			Set<String> tiles = coordinates.stream()
 					.map(coordinate -> CoordinateToTileStringConverter.convertCoordinate(coordinate,
@@ -47,11 +47,12 @@ public class GeospatialBucketiser {
 		}
 	}
 
-	private List<Coordinate> toCoordinate(Object geoObject) {
+	private List<Coordinate> toCoordinates(Object geoObject) {
 		try {
 			GeometryWrapper geometryWrapper = ((GeometryWrapper) geoObject).convertSRS(SRS_URI.WGS84_CRS);
 			return List.of(geometryWrapper.getXYGeometry().getCoordinates());
-		} catch (Exception e) {
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract coordinates from statement Reason: {}", exception.getMessage());
 			return List.of();
 		}
 	}

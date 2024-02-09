@@ -92,6 +92,21 @@ class GeospatialBucketiserTest {
 		assertEquals(expectedBuckets, actualBuckets);
 	}
 
+	@Test
+	@DisplayName("Bucketising of LdesMember with invalid coordinates")
+	void when_MemberHasInvalidCoordinates_DefaultBucketIsReturned() throws URISyntaxException, IOException {
+		bucketiser = new GeospatialBucketiser(geospatialConfig);
+
+		Set<String> expectedBuckets = Set.of(DEFAULT_BUCKET_STRING);
+		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
+				"examples/ldes-member-bucketising-invalid-coordinates.nq");
+
+		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+
+		assertEquals(1, actualBuckets.size());
+		assertEquals(expectedBuckets, actualBuckets);
+	}
+
 	private Member readLdesMemberFromFile(ClassLoader classLoader, String fileName)
 			throws URISyntaxException, IOException {
 		File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).toURI());
