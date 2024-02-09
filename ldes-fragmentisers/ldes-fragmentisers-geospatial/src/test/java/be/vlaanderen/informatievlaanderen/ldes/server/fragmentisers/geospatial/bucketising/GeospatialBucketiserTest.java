@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GeospatialBucketiserTest {
@@ -37,7 +38,7 @@ class GeospatialBucketiserTest {
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
 
 		assertEquals(4, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
@@ -53,9 +54,41 @@ class GeospatialBucketiserTest {
 		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
 				"examples/ldes-member-2-geo-props-bucketising.nq");
 
-		Set<String> actualBuckets = bucketiser.bucketise(member.model());
+		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
 
 		assertEquals(2, actualBuckets.size());
+		assertEquals(expectedBuckets, actualBuckets);
+	}
+
+	@Test
+	@DisplayName("Bucketising of LdesMember with faulty geo property")
+	void when_MemberWithIncorrectGeospatialProperty_Then_DefaultBucketIsReturned()
+			throws URISyntaxException, IOException {
+		bucketiser = new GeospatialBucketiser(geospatialConfig);
+
+		Set<String> expectedBuckets = Set.of(DEFAULT_BUCKET_STRING);
+		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
+				"examples/ldes-member-bucketising-faulty.nq");
+
+		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+
+		assertEquals(1, actualBuckets.size());
+		assertEquals(expectedBuckets, actualBuckets);
+	}
+
+	@Test
+	@DisplayName("Bucketising of LdesMember with 1 of 2 faulty geo properties")
+	void when_MemberWith1FaultyGeoPropertyIsBucketized_CorrectBucketsAreReturned()
+			throws URISyntaxException, IOException {
+		bucketiser = new GeospatialBucketiser(geospatialConfig);
+
+		Set<String> expectedBuckets = Set.of("15/16882/10975");
+		Member member = readLdesMemberFromFile(getClass().getClassLoader(),
+				"examples/ldes-member-2-geo-props-bucketising-faulty.nq");
+
+		Set<String> actualBuckets = bucketiser.bucketise(member.id(), member.model());
+
+		assertEquals(1, actualBuckets.size());
 		assertEquals(expectedBuckets, actualBuckets);
 	}
 

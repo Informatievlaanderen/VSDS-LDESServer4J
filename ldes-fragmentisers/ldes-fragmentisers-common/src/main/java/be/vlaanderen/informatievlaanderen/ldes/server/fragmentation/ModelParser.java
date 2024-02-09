@@ -30,10 +30,19 @@ public class ModelParser {
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(Statement::getObject)
-				.map(RDFNode::asLiteral)
-				.map(Literal::getValue)
+				.map(ModelParser::getValue)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
 				.toList();
+	}
+
+	private static Optional<Object> getValue(Statement statement) {
+		try {
+			return Optional.of(statement.getObject().asLiteral().getValue());
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract literal from {} Reason: {}", statement, exception.getMessage());
+			return Optional.empty();
+		}
 	}
 
 	public static Optional<LocalDateTime> getFragmentationObjectLocalDateTime(Model model, String subjectFilter,

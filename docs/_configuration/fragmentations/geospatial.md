@@ -34,6 +34,7 @@ This allows you to fragment the data on geolocations.
     - A new fragment is created if no fragment exists for the given tile.
     - There is no `memberLimit` or max size for a fragment. They do not become immutable.
     - The member is added to every related fragment.
+4. When the member could not be added to any tile (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket `tile=unknown`.
 
 ````mermaid
 flowchart TD
