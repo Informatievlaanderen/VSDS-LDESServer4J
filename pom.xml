@@ -120,7 +120,7 @@
         </sonar.projectKey>
 
         <!-- HASHING -->
-        <commons-codec.version>1.16.0</commons-codec.version>
+        <commons-codec.version>1.16.1</commons-codec.version>
 
         <!-- NULL ANNOTATIONS -->
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
