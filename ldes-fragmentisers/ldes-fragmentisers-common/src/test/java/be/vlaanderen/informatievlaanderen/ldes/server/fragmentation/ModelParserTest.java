@@ -14,8 +14,7 @@ import java.util.Optional;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ModelParserTest {
 	private Model memberModel;
@@ -66,6 +65,12 @@ class ModelParserTest {
 		assertEquals(string, actual);
 	}
 
+	@Test
+	void when_ObjectIsNotLiteral_Then_ReturnNull() {
+		Object actual = ModelParser.getFragmentationObject(memberModel, ".*", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+
+		assertNull(actual);
+	}
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()

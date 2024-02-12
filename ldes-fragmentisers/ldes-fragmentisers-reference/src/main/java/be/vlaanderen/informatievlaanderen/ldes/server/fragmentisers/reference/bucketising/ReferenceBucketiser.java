@@ -5,9 +5,12 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 
@@ -16,6 +19,7 @@ import static org.apache.jena.rdf.model.ResourceFactory.createResource;
  */
 public class ReferenceBucketiser {
 	private final String fragmentationPath;
+	private static final Logger LOGGER = LoggerFactory.getLogger(ReferenceBucketiser.class);
 
 	public ReferenceBucketiser(ReferenceConfig referenceConfig) {
 		this.fragmentationPath = referenceConfig.fragmentationPath();
@@ -23,12 +27,21 @@ public class ReferenceBucketiser {
 
 	public Set<String> bucketise(@NotNull String memberId,
 								 @NotNull Model memberModel) {
-		final String memberSubject = memberId.substring(memberId.indexOf("/") + 1);
-		return memberModel
-				.listObjectsOfProperty(createResource(memberSubject), createProperty(fragmentationPath))
-				.filterKeep(RDFNode::isURIResource)
-				.mapWith(RDFNode::asResource)
-				.mapWith(Resource::getURI)
-				.toSet();
+		try {
+			final String memberSubject = memberId.substring(memberId.indexOf("/") + 1);
+			Set<String> references = memberModel
+					.listObjectsOfProperty(createResource(memberSubject), createProperty(fragmentationPath))
+					.filterKeep(RDFNode::isURIResource)
+					.mapWith(RDFNode::asResource)
+					.mapWith(Resource::getURI)
+					.toSet();
+			if (references.isEmpty()){
+				references.add(DEFAULT_BUCKET_STRING);
+			}
+			return references;
+		} catch (Exception exception) {
+			LOGGER.warn("Could not fragment member {} Reason: {}", memberId, exception.getMessage());
+			return Set.of(DEFAULT_BUCKET_STRING);
+		}
 	}
 }

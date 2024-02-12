@@ -34,6 +34,8 @@ tree:fragmentationStrategy [
 3. The buckets are iterated. The member is added to every bucket. Taking into account:
    - A new fragment is created if no fragment exists for the given reference.
    - The member is added to every related fragment
+4. When the member could not be added to any bucket (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket `key=unknown`.
+
 
 ![](../../../ldes-fragmentisers/ldes-fragmentisers-reference/content/reference_algorithm.svg)
 
