@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RelativeUrlException;
-import com.apicatalog.jsonld.JsonLdOptions;
-import com.apicatalog.jsonld.context.cache.LruCache;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.*;
 import org.apache.jena.sparql.util.Context;
@@ -13,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
+
+import com.apicatalog.jsonld.JsonLdOptions;
+import com.apicatalog.jsonld.context.cache.LruCache;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.MAX_JSONLD_CACHE_CAPACITY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;

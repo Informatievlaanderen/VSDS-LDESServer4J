@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Optional;
 
 public class ModelParser {
 	private static final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
+	private static final Logger LOGGER = LoggerFactory.getLogger(ModelParser.class);
 
 	private ModelParser() {
 	}
@@ -47,9 +50,19 @@ public class ModelParser {
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(Statement::getObject)
-				.map(RDFNode::asLiteral)
-				.map(literal -> localDateTimeConverter.getLocalDateTime((LiteralImpl) literal))
+				.map(ModelParser::getDateTimeValue)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
 				.toList();
+	}
+
+	private static Optional<LocalDateTime> getDateTimeValue(Statement statement) {
+		try {
+			LiteralImpl literal = (LiteralImpl) statement.getObject().asLiteral();
+			return Optional.of(localDateTimeConverter.getLocalDateTime(literal));
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract datetime from: {} Reason: {}", statement, exception.getMessage());
+			return Optional.empty();
+		}
 	}
 }

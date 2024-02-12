@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +12,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ModelParserTest {
 	private Model memberModel;
@@ -30,6 +34,28 @@ class ModelParserTest {
 				"http://purl.org/dc/terms/created");
 
 		assertThat(actual).hasValue(time);
+	}
+
+	@Test
+	void when_MemberHasNoXMLDateTime_Then_ReturnEmpty() {
+		String propertyString = "http://purl.org/dc/terms/created";
+		memberModel.remove(memberModel.listStatements(null, createProperty(propertyString), (RDFNode) null).nextStatement());
+		Optional<LocalDateTime> actual = ModelParser.getFragmentationObjectLocalDateTime(memberModel, ".*",
+				propertyString);
+
+		assertThat(actual).isEmpty();
+	}
+
+	@Test
+	void when_MemberHasMalformedXMLDateTime_Then_ReturnEmpty() {
+		String propertyString = "http://purl.org/dc/terms/created";
+		Statement statement = memberModel.listStatements(null, createProperty(propertyString), (RDFNode) null).nextStatement();
+		memberModel.remove(statement);
+		memberModel.add(statement.getSubject(), statement.getPredicate(), "faulty");
+		Optional<LocalDateTime> actual = ModelParser.getFragmentationObjectLocalDateTime(memberModel, ".*",
+				propertyString);
+
+		assertThat(actual).isEmpty();
 	}
 
 	@Test

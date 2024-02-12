@@ -1,8 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RelativeUrlException;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +13,9 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
+
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;

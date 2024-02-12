@@ -11,6 +11,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -20,6 +22,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.Model
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
 	public static final String TIMEBASED_FRAGMENTATION_HIERARCHICAL = "HierarchicalTimeBasedFragmentation";
+	private static final Logger LOGGER = LoggerFactory.getLogger(HierarchicalTimeBasedFragmentationStrategy.class);
 
 	private final ObservationRegistry observationRegistry;
 	private final TimeBasedFragmentFinder fragmentFinder;
@@ -41,7 +44,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 			Observation parentObservation) {
 		final Observation fragmentationObservation = startFragmentationObservation(parentObservation);
 
-		Fragment fragment = getFragmentationTimestamp(memberModel)
+		Fragment fragment = getFragmentationTimestamp(memberId, memberModel)
 				.map(timestamp -> fragmentFinder.getLowestFragment(parentFragment, timestamp, Granularity.YEAR))
 				.orElseGet(() -> fragmentFinder.getDefaultFragment(parentFragment));
 
@@ -49,11 +52,16 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 		fragmentationObservation.stop();
 	}
 
-	private Optional<FragmentationTimestamp> getFragmentationTimestamp(Model memberModel) {
-		Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
-				config.getFragmenterSubjectFilter(),
-				config.getFragmentationPath());
-		return timeStamp.map(localDateTime -> new FragmentationTimestamp(localDateTime, config.getMaxGranularity()));
+	private Optional<FragmentationTimestamp> getFragmentationTimestamp(String memberId, Model memberModel) {
+		try{
+			Optional<LocalDateTime> timeStamp = getFragmentationObjectLocalDateTime(memberModel,
+					config.getFragmenterSubjectFilter(),
+					config.getFragmentationPath());
+			return timeStamp.map(localDateTime -> new FragmentationTimestamp(localDateTime, config.getMaxGranularity()));
+		} catch (Exception exception) {
+			LOGGER.warn("Could not fragment member: {} Reason: {}", memberId, exception.getMessage());
+			return Optional.empty();
+		}
 	}
 
 	private Observation startFragmentationObservation(Observation parentObservation) {
