@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
 
 public class TimeBasedRelationsAttributer implements RelationsAttributer {
