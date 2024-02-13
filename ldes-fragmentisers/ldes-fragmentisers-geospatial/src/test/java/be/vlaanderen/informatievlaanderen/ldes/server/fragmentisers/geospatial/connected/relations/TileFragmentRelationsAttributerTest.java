@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -48,6 +50,19 @@ class TileFragmentRelationsAttributerTest {
 				times(1)).saveFragment(rootFragment);
 	}
 
+	@Test
+	void when_DefaultFragmentIsCreated_RelationsBetweenRootAndCreatedFragmentIsAdded() {
+		Fragment rootFragment = createTileFragment("0/0/0");
+		Fragment tileFragment = createTileFragment(DEFAULT_BUCKET_STRING);
+		TreeRelation expectedRelation = new TreeRelation("", tileFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
+
+		tileFragmentRelationsAttributer.addRelationsFromRootToBottom(
+				rootFragment, tileFragment);
+
+		assertTrue(rootFragment.containsRelation(expectedRelation));
+		verify(fragmentRepository,
+				times(1)).saveFragment(rootFragment);
+	}
 	private Fragment createTileFragment(String tile) {
 		return PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_TILE,
 				tile));

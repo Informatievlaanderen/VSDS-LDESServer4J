@@ -13,6 +13,7 @@ import org.apache.jena.rdf.model.Model;
 import java.util.List;
 import java.util.Set;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 
 public class GeospatialFragmentationStrategy extends FragmentationStrategyDecorator {
@@ -45,7 +46,13 @@ public class GeospatialFragmentationStrategy extends FragmentationStrategyDecora
 
 		List<Fragment> fragments = tiles
 				.stream()
-				.map(tile -> fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment)).toList();
+				.map(tile -> {
+					if (tile.equals(DEFAULT_BUCKET_STRING)) {
+						return fragmentCreator.getOrCreateTileFragment(parentFragment, tile, parentFragment);
+					} else {
+						return fragmentCreator.getOrCreateTileFragment(parentFragment, tile, rootTileFragment);
+					}
+				}).toList();
 
 		fragments
 				.parallelStream()

@@ -8,6 +8,7 @@ import io.micrometer.core.instrument.Metrics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationService.LDES_SERVER_CREATE_FRAGMENTS_COUNT;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.FRAGMENTATION_STRATEGY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.metrics.MetricsConstants.VIEW;
@@ -35,7 +36,11 @@ public class ReferenceFragmentCreator {
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {
 					fragmentRepository.saveFragment(child);
-					relationsAttributer.addRelationsFromRootToBottom(rootFragment, child);
+					if (reference.equals(DEFAULT_BUCKET_STRING)) {
+						relationsAttributer.addDefaultRelation(parentFragment, child);
+					} else {
+						relationsAttributer.addRelationsFromRootToBottom(rootFragment, child);
+					}
 					logFragmentation(parentFragment, child);
 					return child;
 				});

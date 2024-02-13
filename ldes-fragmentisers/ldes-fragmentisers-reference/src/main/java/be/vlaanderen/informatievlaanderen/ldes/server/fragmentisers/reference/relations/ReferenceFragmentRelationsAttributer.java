@@ -3,12 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.r
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE;
 
-public class ReferenceFragmentRelationsAttributer {
+public class ReferenceFragmentRelationsAttributer implements RelationsAttributer {
 
 	public static final String TREE_REFERENCE_EQUALS_RELATION = TREE + "EqualToRelation";
 
@@ -25,10 +26,17 @@ public class ReferenceFragmentRelationsAttributer {
 	}
 
 	public void addRelationsFromRootToBottom(Fragment rootFragment, Fragment referenceFragments) {
-		TreeRelation relationToParentFragment = getRelationToParentFragment(referenceFragments);
-		if (!rootFragment.containsRelation(relationToParentFragment)) {
-			rootFragment.addRelation(relationToParentFragment);
-			fragmentRepository.saveFragment(rootFragment);
+		saveRelation(rootFragment, getRelationToParentFragment(referenceFragments));
+	}
+
+	public void addDefaultRelation(Fragment rootFragment, Fragment fragment) {
+		saveRelation(rootFragment, getDefaultRelation(fragment));
+	}
+
+	private void saveRelation(Fragment fragment, TreeRelation relation) {
+		if (!fragment.containsRelation(relation)) {
+			fragment.addRelation(relation);
+			fragmentRepository.saveFragment(fragment);
 		}
 	}
 

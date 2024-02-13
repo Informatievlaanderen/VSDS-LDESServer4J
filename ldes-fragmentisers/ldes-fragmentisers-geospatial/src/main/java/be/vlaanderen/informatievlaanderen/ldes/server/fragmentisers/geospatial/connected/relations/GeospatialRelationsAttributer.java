@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.MissingFragmentValueException;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.relations.RelationsAttributer;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.connected.BoundingBox;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.BoundingBoxConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.converter.TileConverter;
@@ -10,7 +11,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.m
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.*;
 
-public class GeospatialRelationsAttributer {
+public class GeospatialRelationsAttributer implements RelationsAttributer {
 
 	public TreeRelation getRelationToParentFragment(Fragment childFragment) {
 		String targetWKT = getWKT(childFragment);
@@ -27,4 +28,5 @@ public class GeospatialRelationsAttributer {
 		BoundingBox currentBoundingBox = new BoundingBox(currentTile);
 		return BoundingBoxConverter.toWKT(currentBoundingBox);
 	}
+
 }
