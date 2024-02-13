@@ -105,13 +105,11 @@ class GeospatialFragmentCreatorTest {
 				VIEW_NAME, List.of(timebasedPair)));
 		Fragment rootFragment = fragment
 				.createChild(geoRootPair);
-		Fragment defaultFragment = fragment
-				.createChild(defaultPair);
-		when(fragmentRepository.retrieveFragment(defaultFragment.getFragmentId()))
-				.thenReturn(Optional.of(defaultFragment));
+		when(fragmentRepository.retrieveFragment(rootFragment.getFragmentId()))
+				.thenReturn(Optional.of(rootFragment));
 
-		Fragment returnedFragment = geospatialFragmentCreator.getOrCreateTileFragment(fragment,
-				FRAGMENT_KEY_TILE_ROOT, rootFragment);
+		Fragment returnedFragment = geospatialFragmentCreator.getOrCreateRootFragment(fragment,
+				FRAGMENT_KEY_TILE_ROOT);
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timebasedPair, geoRootPair)),
 				returnedFragment.getFragmentId());
@@ -128,8 +126,8 @@ class GeospatialFragmentCreatorTest {
 				.createChild(defaultPair);
 		when(fragmentRepository.retrieveFragment(defaultFragment.getFragmentId())).thenReturn(Optional.empty());
 
-		Fragment returnedFragment = geospatialFragmentCreator.getOrCreateRootFragment(fragment,
-				DEFAULT_BUCKET_STRING);
+		Fragment returnedFragment = geospatialFragmentCreator.getOrCreateTileFragment(fragment,
+				DEFAULT_BUCKET_STRING, rootFragment);
 
 		assertEquals(new LdesFragmentIdentifier(VIEW_NAME, List.of(timebasedPair, defaultPair)),
 				returnedFragment.getFragmentId());
