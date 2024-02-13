@@ -15,15 +15,15 @@ This allows you to fragment the data on references.
 
 ## Properties
 
-```turtle
-@prefix tree: <https://w3id.org/tree#> .
-
-tree:fragmentationStrategy [
-     a tree:ReferenceFragmentation ;
-     tree:fragmentationPath { Optional: defines which property will be used for bucketizing } ;
-     tree:fragmentationKey { Optional: defines the request parameter that will be used in the uri } ;
- ] .
-```
+  ```ttl
+  @prefix tree: <https://w3id.org/tree#> .
+  
+  tree:fragmentationStrategy [
+        a tree:ReferenceFragmentation ;
+        tree:fragmentationPath { Optional: defines which property will be used for bucketizing } ;
+        tree:fragmentationKey { Optional: defines the request parameter that will be used in the uri } ;
+    ] .
+  ```
 
 ## Algorithm
 
@@ -34,8 +34,6 @@ tree:fragmentationStrategy [
 3. The buckets are iterated. The member is added to every bucket. Taking into account:
    - A new fragment is created if no fragment exists for the given reference.
    - The member is added to every related fragment
-4. When the member could not be added to any bucket (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket `key=unknown`.
-
 
 ![](../../../ldes-fragmentisers/ldes-fragmentisers-reference/content/reference_algorithm.svg)
 
@@ -43,19 +41,19 @@ tree:fragmentationStrategy [
 
 Example properties:
 
-```turtle
-@prefix tree: <https://w3id.org/tree#> .
-
-tree:fragmentationStrategy [
-     a tree:ReferenceFragmentation ;
-     tree:fragmentationPath "<http://purl.org/dc/terms/isVersionOf>" ;
-     tree:fragmentationKey "version" ;
- ] .
-```
+  ```ttl
+  @prefix tree: <https://w3id.org/tree#> .
+  
+  tree:fragmentationStrategy [
+        a tree:ReferenceFragmentation ;
+        tree:fragmentationPath "<http://purl.org/dc/terms/isVersionOf>" ;
+        tree:fragmentationKey "version" ;
+    ] .
+  ```
 
 With following example input:
 
-```turtle
+```ttl
 @prefix dc: <http://purl.org/dc/terms/> .
 @prefix ns0: <http://semweb.mmlab.be/ns/linkedconnections#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .

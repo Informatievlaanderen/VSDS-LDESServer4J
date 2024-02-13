@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -45,20 +44,6 @@ class TimeBasedRelationsAttributerTest {
 				TREE_INBETWEEN_RELATION);
 
 		relationsAttributer.addInBetweenRelation(PARENT, child);
-
-		assertTrue(PARENT.containsRelation(expected));
-		verify(fragmentRepository).saveFragment(PARENT);
-	}
-
-
-	@Test
-	void when_RelationNotPresent_Then_AddDefaultRelation() {
-		Fragment child = PARENT.createChild(monthPair);
-		TreeRelation expected = new TreeRelation("",
-				child.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION);
-
-		relationsAttributer.addDefaultRelation(PARENT, child);
 
 		assertTrue(PARENT.containsRelation(expected));
 		verify(fragmentRepository).saveFragment(PARENT);

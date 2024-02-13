@@ -3,16 +3,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdf.model.impl.LiteralImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public class ModelParser {
 	private static final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
-	private static final Logger LOGGER = LoggerFactory.getLogger(ModelParser.class);
 
 	private ModelParser() {
 	}
@@ -30,26 +26,18 @@ public class ModelParser {
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(ModelParser::getValue)
-				.filter(Optional::isPresent)
-				.map(Optional::get)
+				.map(Statement::getObject)
+				.map(RDFNode::asLiteral)
+				.map(Literal::getValue)
 				.toList();
 	}
 
-	private static Optional<Object> getValue(Statement statement) {
-		try {
-			return Optional.of(statement.getObject().asLiteral().getValue());
-		} catch (Exception exception) {
-			LOGGER.warn("Could not extract literal from {} Reason: {}", statement, exception.getMessage());
-			return Optional.empty();
-		}
-	}
-
-	public static Optional<LocalDateTime> getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
-																			  String fragmentationPredicate) {
+	public static LocalDateTime getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
+			String fragmentationPredicate) {
 		return getFragmentationObjectsLocalDateTime(model, subjectFilter, fragmentationPredicate)
 				.stream()
-				.findFirst();
+				.findFirst()
+				.orElse(null);
 	}
 
 	public static List<LocalDateTime> getFragmentationObjectsLocalDateTime(Model model, String subjectFilter,
@@ -59,19 +47,9 @@ public class ModelParser {
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(ModelParser::getDateTimeValue)
-				.filter(Optional::isPresent)
-				.map(Optional::get)
+				.map(Statement::getObject)
+				.map(RDFNode::asLiteral)
+				.map(literal -> localDateTimeConverter.getLocalDateTime((LiteralImpl) literal))
 				.toList();
-	}
-
-	private static Optional<LocalDateTime> getDateTimeValue(Statement statement) {
-		try {
-			LiteralImpl literal = (LiteralImpl) statement.getObject().asLiteral();
-			return Optional.of(localDateTimeConverter.getLocalDateTime(literal));
-		} catch (Exception exception) {
-			LOGGER.warn("Could not extract datetime from: {} Reason: {}", statement, exception.getMessage());
-			return Optional.empty();
-		}
 	}
 }

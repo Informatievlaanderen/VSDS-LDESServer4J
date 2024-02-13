@@ -12,12 +12,11 @@ import java.util.Optional;
 public class ViewMongoRepository implements ViewRepository {
 
 	private final ViewEntityRepository repository;
-	private final ViewEntityConverter converter;
+	private final ViewEntityConverter converter = new ViewEntityConverter();
 
-	public ViewMongoRepository(ViewEntityRepository repository, ViewEntityConverter converter) {
+	public ViewMongoRepository(ViewEntityRepository repository) {
 		this.repository = repository;
-        this.converter = converter;
-    }
+	}
 
 	@Override
 	public List<ViewSpecification> retrieveAllViews() {

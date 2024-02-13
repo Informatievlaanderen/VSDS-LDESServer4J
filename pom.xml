@@ -48,10 +48,9 @@
         <!-- MAVEN -->
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
         <maven-assembly-plugin.version>3.6.0</maven-assembly-plugin.version>
         <maven-release-plugin.version>3.0.1</maven-release-plugin.version>
@@ -63,7 +62,7 @@
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <springdoc-openapi.version>2.3.0</springdoc-openapi.version>
         <swagger-annotations.version>2.2.20</swagger-annotations.version>
-        <pyroscope.version>0.13.0</pyroscope.version>
+        <pyroscope.version>0.12.2</pyroscope.version>
         <unittestskip>false</unittestskip>
         <integrationtestskip>false</integrationtestskip>
         <skipdeploy>false</skipdeploy>
@@ -85,16 +84,16 @@
 
         <!-- TESTING -->
         <junit.version>4.13.2</junit.version>
-        <junit-platform-suite.version>1.10.2</junit-platform-suite.version>
+        <junit-platform-suite.version>1.10.1</junit-platform-suite.version>
         <junit-jupiter-api.version>5.8.2</junit-jupiter-api.version>
-        <jupiter.version>5.10.2</jupiter.version>
+        <jupiter.version>5.10.1</jupiter.version>
         <mockito.version>5.10.0</mockito.version>
         <byte-buddy.version>1.14.11</byte-buddy.version>
         <de.flapdoodle.embed.mongo.version>4.11.0</de.flapdoodle.embed.mongo.version>
         <wiremock-jre8.version>2.35.1</wiremock-jre8.version>
         <awaitility.version>4.2.0</awaitility.version>
         <cucumber.version>7.15.0</cucumber.version>
-        <assertj-core.version>3.25.3</assertj-core.version>
+        <assertj-core.version>3.25.2</assertj-core.version>
 
         <!-- VULNERABILITY -->
         <depencency-check-maven.version>9.0.9</depencency-check-maven.version>
@@ -119,8 +118,11 @@
         <sonar.projectKey>Informatievlaanderen_VSDS-LDESServer4J-${project.groupId}:${project.artifactId}
         </sonar.projectKey>
 
+        <!--suppress UnresolvedMavenProperty -->
+        <impsort-maven-plugin.version>1.9.0</impsort-maven-plugin.version>
+
         <!-- HASHING -->
-        <commons-codec.version>1.16.1</commons-codec.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
 
         <!-- NULL ANNOTATIONS -->
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
@@ -431,6 +433,26 @@
         </pluginManagement>
 
         <plugins>
+
+            <plugin>
+                <groupId>net.revelc.code</groupId>
+                <artifactId>impsort-maven-plugin</artifactId>
+                <version>${impsort-maven-plugin.version}</version>
+                <configuration>
+                    <removeUnused>true</removeUnused>
+                    <groups>*, java.,javax.,com.</groups>
+                    <staticGroups>*</staticGroups>
+                    <staticAfter>true</staticAfter>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>sort-imports</id>
+                        <goals>
+                            <goal>sort</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
