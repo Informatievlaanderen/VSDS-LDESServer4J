@@ -38,7 +38,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EventStreamServiceImplTest {
-
 	private static final String COLLECTION = "collection";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
@@ -47,7 +46,6 @@ class EventStreamServiceImplTest {
 			VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel());
 	private DcatDataset dataset;
 	private EventStreamResponse eventStreamResponseWithDataset;
-
 	@Mock
 	private EventStreamRepository eventStreamRepository;
 	@Mock

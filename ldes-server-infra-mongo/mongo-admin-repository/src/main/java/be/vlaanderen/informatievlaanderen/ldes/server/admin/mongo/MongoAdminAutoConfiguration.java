@@ -19,7 +19,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.ViewMongo
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.service.DcatServiceEntityConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.service.ViewEntityConverter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -45,9 +44,8 @@ public class MongoAdminAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ViewRepository viewMongoRepository(final ViewEntityRepository viewEntityRepository,
-											  final ViewEntityConverter viewEntityConverter) {
-		return new ViewMongoRepository(viewEntityRepository, viewEntityConverter);
+	public ViewRepository viewMongoRepository(final ViewEntityRepository viewEntityRepository) {
+		return new ViewMongoRepository(viewEntityRepository);
 	}
 
 	@Bean

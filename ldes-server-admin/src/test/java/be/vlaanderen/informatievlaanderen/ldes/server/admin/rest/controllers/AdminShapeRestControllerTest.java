@@ -35,6 +35,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.apache.jena.riot.WebContent.contentTypeTurtle;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;

@@ -34,9 +34,4 @@ The members arriving on the LDES server are added to the first page, while the l
 
 <sup>1</sup> In case of the first fragment, a previous fragment does not exist so these steps are skipped.
 
-## Default Fragment
-
-If a member is fragmented that can not be added to any fragment (ex. the fragmentation property is missing or not valid), then the member will be added to a default fragment.
-This is a responsibility of the individual fragmentation strategy so if a custom fragmentation strategy is created it must also implement this logic.
-
 ## Supported Fragmentations:

@@ -40,7 +40,6 @@ For maxGranularity the following values are allowed:
     - We check if the previous fragment has a child fragment with this value for the unit of time. (In the case of year, the previous fragment is the root fragment.)
     - If no such fragment exists, a new one is created.
 3. The member is added to the last fragment.
-4. When the member could not be added to any bucket (ex. the fragmentation property is missing or not valid), then the member will be added to a default bucket `year=unknown`.
 
 ## Example
 

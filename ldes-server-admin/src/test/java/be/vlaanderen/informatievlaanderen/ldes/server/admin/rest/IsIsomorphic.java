@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParser;
 import org.mockito.ArgumentMatcher;
 import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.MvcResult;
@@ -21,7 +21,7 @@ public class IsIsomorphic implements ResultMatcher, ArgumentMatcher<Model> {
 
 	@Override
 	public void match(MvcResult result) throws Exception {
-		Model actualModel = RDFParser.fromString(result.getResponse().getContentAsString()).lang(Lang.TURTLE).toModel();
+		Model actualModel = RdfModelConverter.fromString(result.getResponse().getContentAsString(), Lang.TURTLE);
 		AssertionErrors.assertTrue("Result should be isomorphic with provided model",
 				actualModel.isIsomorphicWith(model));
 	}

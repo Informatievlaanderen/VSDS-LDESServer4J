@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
 
 public class TimeBasedRelationsAttributer {
@@ -33,14 +32,6 @@ public class TimeBasedRelationsAttributer {
 				childFragment.getFragmentId(),
 				timestamp.asString(), timestamp.getType(),
 				TREE_INBETWEEN_RELATION);
-		if (!parentFragment.containsRelation(parentChildRelation)) {
-			parentFragment.addRelation(parentChildRelation);
-			fragmentRepository.saveFragment(parentFragment);
-		}
-	}
-
-	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {
-		TreeRelation parentChildRelation = new TreeRelation("", childFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
 		if (!parentFragment.containsRelation(parentChildRelation)) {
 			parentFragment.addRelation(parentChildRelation);
 			fragmentRepository.saveFragment(parentFragment);
