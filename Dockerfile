@@ -3,17 +3,17 @@
 #
 # INSTALL MAVEN DEPENDENCIES
 #
-FROM maven:3.8.5-amazoncorretto-17 AS builder
+FROM maven:3.9.6-amazoncorretto-21 AS builder
 
 # MAVEN: application
-FROM builder as app-stage
+FROM builder AS app-stage
 COPY . /
 RUN mvn install -DskipTests
 
 #
 # RUN THE APPLICATION
 #
-FROM amazoncorretto:17-alpine-jdk
+FROM amazoncorretto:21-alpine-jdk
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
 

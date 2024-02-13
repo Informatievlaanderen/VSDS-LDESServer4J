@@ -27,5 +27,6 @@ open module ldes.domain {
     requires simpleclient;
     requires micrometer.core;
     requires org.apache.tomcat.embed.core;
+    requires titanium.json.ld;
 
 }

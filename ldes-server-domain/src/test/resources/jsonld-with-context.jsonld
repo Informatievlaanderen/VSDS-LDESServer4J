@@ -1,0 +1,27 @@
+{
+  "@context": [
+    "http://localhost:10101/context.jsonld"
+  ],
+  "@type": "Article",
+  "headline": "The Future of Technology",
+  "author": {
+    "@type": "Person",
+    "name": "Jane Doe"
+  },
+  "datePublished": "2024-01-31",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Tech News",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://example.com/logo.png"
+    }
+  },
+  "image": {
+    "@type": "ImageObject",
+    "url": "https://example.com/article-image.jpg",
+    "height": 800,
+    "width": 1200
+  },
+  "articleBody": "This is an in-depth article about the future of technology, covering recent advancements and future predictions..."
+}

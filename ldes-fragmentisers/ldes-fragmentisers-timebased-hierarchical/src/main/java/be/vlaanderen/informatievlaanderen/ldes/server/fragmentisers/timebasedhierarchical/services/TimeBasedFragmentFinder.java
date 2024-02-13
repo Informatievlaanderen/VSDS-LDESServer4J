@@ -5,8 +5,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.model.FragmentationTimestamp;
 
-public class TimeBasedFragmentFinder {
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 
+public class TimeBasedFragmentFinder {
 	private final TimeBasedFragmentCreator fragmentCreator;
 	private final TimeBasedConfig config;
 
@@ -23,6 +24,10 @@ public class TimeBasedFragmentFinder {
 		return getLowestFragment(
 				fragmentCreator.getOrCreateFragment(parentFragment, fragmentationTimestamp, granularity),
 				fragmentationTimestamp, granularity.getChild());
+	}
+
+	public Fragment getDefaultFragment(Fragment rootFragment) {
+		return fragmentCreator.getOrCreateFragment(rootFragment, DEFAULT_BUCKET_STRING, Granularity.YEAR);
 	}
 
 	private boolean isLowest(Fragment fragment) {

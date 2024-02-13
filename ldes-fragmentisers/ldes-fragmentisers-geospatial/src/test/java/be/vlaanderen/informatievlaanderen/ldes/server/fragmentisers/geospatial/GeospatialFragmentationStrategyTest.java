@@ -52,7 +52,7 @@ class GeospatialFragmentationStrategyTest {
 	void when_MemberIsAddedToFragment_GeospatialFragmentationIsApplied() {
 		Member member = mock(Member.class);
 
-		when(geospatialBucketiser.bucketise(member.model())).thenReturn(Set.of("1/1/1",
+		when(geospatialBucketiser.bucketise(member.id(), member.model())).thenReturn(Set.of("1/1/1",
 				"2/2/2", "3/3/3"));
 		Fragment tileFragmentOne = mockCreationGeospatialFragment("1/1/1");
 		Fragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2");
