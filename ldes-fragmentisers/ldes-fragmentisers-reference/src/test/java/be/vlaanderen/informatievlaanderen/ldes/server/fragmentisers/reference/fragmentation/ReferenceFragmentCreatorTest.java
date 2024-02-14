@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.ReferenceFragmentationStrategyWrapper.DEFAULT_FRAGMENTATION_KEY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +30,7 @@ class ReferenceFragmentCreatorTest {
     private static final FragmentPair timebasedPair = new FragmentPair("year", "2023");
     private static final FragmentPair referenceRootPair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, FRAGMENT_KEY_REFERENCE_ROOT);
     private static final FragmentPair referencePair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, RDF.type.getURI());
+    private static final FragmentPair defaultPair = new FragmentPair(DEFAULT_FRAGMENTATION_KEY, DEFAULT_BUCKET_STRING);
 
     private ReferenceFragmentCreator referenceFragmentCreator;
 
@@ -63,7 +65,7 @@ class ReferenceFragmentCreatorTest {
     }
 
     @Test
-    void when_ReferenceFragmentDoesNotExist_RetrievedReferenceFragmentIsReturned() {
+    void when_ReferenceFragmentDoesExist_RetrievedReferenceFragmentIsReturned() {
         Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
         Fragment rootFragment = fragment.createChild(referenceRootPair);
         Fragment tileFragment = fragment.createChild(referencePair);
@@ -109,6 +111,40 @@ class ReferenceFragmentCreatorTest {
         assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, referenceRootPair)))
                 .isEqualTo(returnedFragment.getFragmentId());
         verify(fragmentRepository, times(1)).retrieveFragment(rootFragment.getFragmentId());
+        verifyNoMoreInteractions(fragmentRepository);
+    }
+    @Test
+    void when_DefaultFragmentDoesNotExist_DefaultFragmentIsCreatedAndSaved() {
+        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
+        Fragment rootFragment = fragment.createChild(referenceRootPair);
+        LdesFragmentIdentifier tileFragmentId = fragment.createChild(defaultPair).getFragmentId();
+
+        when(fragmentRepository.retrieveFragment(tileFragmentId)).thenReturn(Optional.empty());
+
+        Fragment childFragment = referenceFragmentCreator.getOrCreateFragment(fragment, DEFAULT_BUCKET_STRING, rootFragment);
+
+        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, defaultPair)))
+                .isEqualTo(childFragment.getFragmentId());
+        verify(fragmentRepository,
+                times(1)).retrieveFragment(tileFragmentId);
+        verify(fragmentRepository,
+                times(1)).saveFragment(childFragment);
+    }
+
+    @Test
+    void when_DefaultFragmentDoesExist_RetrievedDefaultFragmentIsReturned() {
+        Fragment fragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of(timebasedPair)));
+        Fragment rootFragment = fragment.createChild(referenceRootPair);
+        Fragment tileFragment = fragment.createChild(defaultPair);
+
+        when(fragmentRepository.retrieveFragment(tileFragment.getFragmentId())).thenReturn(Optional.of(tileFragment));
+
+        Fragment childFragment = referenceFragmentCreator.getOrCreateFragment(fragment, DEFAULT_BUCKET_STRING, rootFragment);
+
+        assertThat(new LdesFragmentIdentifier(viewName, List.of(timebasedPair, defaultPair)))
+                .isEqualTo(childFragment.getFragmentId());
+        verify(fragmentRepository,
+                times(1)).retrieveFragment(tileFragment.getFragmentId());
         verifyNoMoreInteractions(fragmentRepository);
     }
 
