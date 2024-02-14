@@ -17,7 +17,8 @@ public class TileFragmentRelationsAttributer {
 	}
 
 	public void addRelationsFromRootToBottom(Fragment rootFragment, Fragment tileFragments) {
-		TreeRelation relationToParentFragment = tileFragments.getValueOfKey(FRAGMENT_KEY_TILE).orElse("").equals(DEFAULT_BUCKET_STRING) ? relationsAttributer.getDefaultRelation(tileFragments) : relationsAttributer.getRelationToParentFragment(tileFragments);
+		boolean isDefaultFragment = tileFragments.getValueOfKey(FRAGMENT_KEY_TILE).orElse("").equals(DEFAULT_BUCKET_STRING);
+		TreeRelation relationToParentFragment = isDefaultFragment ? relationsAttributer.getDefaultRelation(tileFragments) : relationsAttributer.getRelationToParentFragment(tileFragments);
 		if (!rootFragment.containsRelation(relationToParentFragment)) {
 			rootFragment.addRelation(relationToParentFragment);
 			fragmentRepository.saveFragment(rootFragment);
