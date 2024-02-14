@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Set;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.constants.GeospatialConstants.FRAGMENT_KEY_TILE_ROOT;
 import static org.mockito.Mockito.*;
@@ -70,6 +71,24 @@ class GeospatialFragmentationStrategyTest {
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentThree),
 						any(), any(), any(Observation.class));
+		verifyNoMoreInteractions(decoratedFragmentationStrategy);
+	}
+	@Test
+	void when_MemberIsAddedToDefaultFragment_GeospatialFragmentationIsApplied() {
+		Member member = mock(Member.class);
+
+		when(geospatialBucketiser.bucketise(member.id(), member.model())).thenReturn(Set.of(DEFAULT_BUCKET_STRING));
+		Fragment defaultTileFragment = PARENT_FRAGMENT.createChild(new FragmentPair(FRAGMENT_KEY_TILE, DEFAULT_BUCKET_STRING));
+		when(fragmentCreator.getOrCreateTileFragment(PARENT_FRAGMENT, DEFAULT_BUCKET_STRING,
+				PARENT_FRAGMENT))
+				.thenReturn(defaultTileFragment);
+
+		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(),
+				member.model(), mock(Observation.class));
+
+		verify(decoratedFragmentationStrategy,
+				times(1)).addMemberToFragment(eq(defaultTileFragment),
+				any(), any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
