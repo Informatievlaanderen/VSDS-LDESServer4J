@@ -40,7 +40,7 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 		TreeNode treeNode = new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
-				members, collectionName);
+				members, collectionName, fragment.getNextUpdateTs());
 
 		if(fragment.isRoot()) {
 			// 04/12/23 Desactivated due to performance issues on the count query

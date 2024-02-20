@@ -17,8 +17,8 @@ class TreeNodeTest {
 
 	@Test
 	void test_EqualityOfTreeNodes() {
-		var treeNode = new TreeNode(ID, false, true, List.of(), List.of(), "collectionName");
-		var treeNode2 = new TreeNode(ID, true, true, null, List.of(), "collectionName");
+		var treeNode = new TreeNode(ID, false, true, List.of(), List.of(), "collectionName", null);
+		var treeNode2 = new TreeNode(ID, true, true, null, List.of(), "collectionName", null);
 
 		Assertions.assertEquals(treeNode, treeNode2);
 		Assertions.assertEquals(treeNode, treeNode);
@@ -28,7 +28,7 @@ class TreeNodeTest {
 	@ParameterizedTest
 	@ArgumentsSource(TreeNodeArgumentProvider.class)
 	void test_InequalityOfTreeNodes(Object otherTreeNode) {
-		var treeNode = new TreeNode(ID, false, false, null, List.of(), "collectionName");
+		var treeNode = new TreeNode(ID, false, false, null, List.of(), "collectionName", null);
 
 		Assertions.assertNotEquals(treeNode, otherTreeNode);
 
@@ -40,8 +40,8 @@ class TreeNodeTest {
 			return Stream.of(
 					Arguments.of((Object) null),
 					Arguments.of(new BigDecimal(0)),
-					Arguments.of(new TreeNode("Other id", true, false, List.of(), null, "collectionName")),
-					Arguments.of(new TreeNode("Another id", false, false, null, List.of(), "collectionName")));
+					Arguments.of(new TreeNode("Other id", true, false, List.of(), null, "collectionName", null)),
+					Arguments.of(new TreeNode("Another id", false, false, null, List.of(), "collectionName", null)));
 		}
 	}
 }

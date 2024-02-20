@@ -20,6 +20,7 @@ public class Fragment {
 	private final int nrOfMembersAdded;
 	private final List<TreeRelation> relations;
 	private LocalDateTime deleteTime;
+	private final LocalDateTime nextUpdateTs = null;
 
 	public Fragment(LdesFragmentIdentifier identifier) {
 		this(identifier, false, 0, new ArrayList<>(), null);
@@ -145,6 +146,10 @@ public class Fragment {
 				.stream()
 				.anyMatch(treeRelation -> treeRelation.treeNode()
 						.equals(otherFragment.getFragmentId()));
+	}
+
+	public LocalDateTime getNextUpdateTs() {
+		return nextUpdateTs;
 	}
 
 	@Override

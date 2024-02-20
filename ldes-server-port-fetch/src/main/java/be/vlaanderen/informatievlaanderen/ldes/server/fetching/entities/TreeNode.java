@@ -17,11 +17,11 @@ public class TreeNode {
 	private final List<Member> members;
 	private final String collectionName;
 	private long numberOfMembersInView;
-	private LocalDateTime nextUpdateTs = null;
+	private final LocalDateTime nextUpdateTs;
 
 	public TreeNode(String encodedFragmentId, boolean immutable, boolean isView,
-			List<TreeRelation> relations,
-			List<Member> members, String collectionName) {
+					List<TreeRelation> relations,
+					List<Member> members, String collectionName, LocalDateTime nextUpdateTs) {
 		this.fragmentId = encodedFragmentId;
 		this.immutable = immutable;
 		this.isView = isView;
@@ -29,6 +29,7 @@ public class TreeNode {
 		this.members = members;
 		this.collectionName = collectionName;
 		this.numberOfMembersInView = 0L;
+		this.nextUpdateTs = nextUpdateTs;
 	}
 
 	public String getFragmentId() {
