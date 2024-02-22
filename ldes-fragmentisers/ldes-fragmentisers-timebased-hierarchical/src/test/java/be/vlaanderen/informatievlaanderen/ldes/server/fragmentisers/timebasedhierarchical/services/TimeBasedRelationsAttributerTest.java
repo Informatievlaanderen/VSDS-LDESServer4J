@@ -11,11 +11,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -46,7 +47,8 @@ class TimeBasedRelationsAttributerTest {
 
 		relationsAttributer.addInBetweenRelation(PARENT, child);
 
-		assertTrue(PARENT.containsRelation(expected));
+		assertThat(PARENT.containsRelation(expected)).isTrue();
+		assertThat(PARENT.getNextUpdateTs()).isEqualTo(LocalDateTime.of(2023, 2, 28, 23, 59, 59));
 		verify(fragmentRepository).saveFragment(PARENT);
 	}
 
@@ -60,7 +62,8 @@ class TimeBasedRelationsAttributerTest {
 
 		relationsAttributer.addDefaultRelation(PARENT, child);
 
-		assertTrue(PARENT.containsRelation(expected));
+		assertThat(PARENT.containsRelation(expected)).isTrue();
+		assertThat(PARENT.getNextUpdateTs()).isNull();
 		verify(fragmentRepository).saveFragment(PARENT);
 	}
 

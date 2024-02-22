@@ -27,7 +27,6 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 		this.config = config;
 	}
 
-	// TODO TVB: test
 	public void addInBetweenRelation(Fragment parentFragment, Fragment childFragment) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(config.getFragmentationPath(),
@@ -37,7 +36,6 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 		saveRelation(parentFragment, parentChildRelation, timestamp.getNextUpdateTs());
 	}
 
-	// TODO TVB: test
 	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {
 		saveRelation(parentFragment, getDefaultRelation(childFragment), null);
 	}
