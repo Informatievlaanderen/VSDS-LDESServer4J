@@ -27,26 +27,25 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 		this.config = config;
 	}
 
+	// TODO TVB: test
 	public void addInBetweenRelation(Fragment parentFragment, Fragment childFragment) {
-		// TODO TVB: we weten granuliteit en timestamp
-		// TODO TVB: 	als granuliteit month is, dan is parent year die maanden heeft
-		// TODO TVB: 		die nextTs moet dus zijn, timestamp -> getEndOfMonth
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childFragment);
 		TreeRelation parentChildRelation = new TreeRelation(config.getFragmentationPath(),
 				childFragment.getFragmentId(),
 				timestamp.asString(), timestamp.getType(),
 				TREE_INBETWEEN_RELATION);
-		saveRelation(parentFragment, parentChildRelation);
+		saveRelation(parentFragment, parentChildRelation, timestamp.getNextUpdateTs());
 	}
 
+	// TODO TVB: test
 	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {
-		saveRelation(parentFragment, getDefaultRelation(childFragment));
+		saveRelation(parentFragment, getDefaultRelation(childFragment), null);
 	}
 
-	private void saveRelation(Fragment fragment, TreeRelation relation) {
+	private void saveRelation(Fragment fragment, TreeRelation relation, LocalDateTime nextUpdateTs) {
 		if (!fragment.containsRelation(relation)) {
-			// TODO TVB: hier nextUpdateTs zetten
-			fragment.setNextUpdateTs(LocalDateTime.MAX);
+			// TODO TVB: moet afhankelijk zijn van configuratie
+			fragment.setNextUpdateTs(nextUpdateTs);
 			fragment.addRelation(relation);
 			fragmentRepository.saveFragment(fragment);
 		}

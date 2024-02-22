@@ -45,10 +45,6 @@ public class TimeBasedFragmentCreator {
 		return fragmentRepository
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {
-					// TODO TVB: moet afhankelijk zijn van configuratie
-					// TODO TVB: bij het maken van een nieuw fragment, dan kan/ZAL er heel snel een child komen
-					// TODO TVB: bij het toevoegen van een relatie moet dit herberekend worden
-					child.setNextUpdateTs(granularity.getFoo());
 					fragmentRepository.saveFragment(child);
 					addRelationToParent(parentFragment, child);
 					logFragmentation(parentFragment, child);
