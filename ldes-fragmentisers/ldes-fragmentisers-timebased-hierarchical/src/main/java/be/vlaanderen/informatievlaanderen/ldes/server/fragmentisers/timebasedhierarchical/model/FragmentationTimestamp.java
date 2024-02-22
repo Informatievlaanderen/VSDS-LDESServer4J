@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhi
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.Granularity;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Objects;
 
 public class FragmentationTimestamp {
@@ -12,6 +13,17 @@ public class FragmentationTimestamp {
 	public FragmentationTimestamp(LocalDateTime time, Granularity granularity) {
 		this.time = time;
 		this.granularity = granularity;
+	}
+
+	public LocalDateTime getNextUpdateTs() {
+		return switch (granularity) {
+			case YEAR ->  time.with(TemporalAdjusters.lastDayOfYear()).withHour(23).withMinute(59).withSecond(59);
+			case MONTH -> time.with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
+			case DAY -> time.withHour(23).withMinute(59).withSecond(59);
+			case HOUR -> time.withMinute(59).withSecond(59);
+			case MINUTE -> time.withSecond(59);
+			case SECOND -> null;
+		};
 	}
 
 	public Granularity getGranularity() {
