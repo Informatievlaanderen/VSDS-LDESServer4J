@@ -24,7 +24,7 @@ The amount of version to retain can be set as a number (higher than 0).
       a tree:ViewDescription ;
       ldes:retentionPolicy [
         a ldes:LatestVersionSubset ;
-        tree:amount 2 ;
+        ldes:amount 2 ;
       ] ;
     ] .
   ```
