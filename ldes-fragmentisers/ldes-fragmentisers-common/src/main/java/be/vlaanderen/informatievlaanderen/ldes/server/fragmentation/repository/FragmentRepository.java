@@ -59,5 +59,12 @@ public interface FragmentRepository {
 
 	void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragment);
 
+	/**
+	 * Finds and updates all the child relations of the fragment and makes them immutable.
+	 * For example fragment year=2024, all fragments referring to months, days, hours, etc. within 2024 will become immutable.
+	 * The fragment itself does NOT become immutable. Only the children
+	 * When the fragment has no children, or only has immutable children, then no updates are done.
+	 * @param fragment The fragment whose children should become immutable
+	 */
     void makeChildrenImmutable(Fragment fragment);
 }

@@ -138,18 +138,6 @@ public class FragmentMongoRepository implements FragmentRepository {
 		repository.deleteById(readyForDeletionFragmentId.asDecodedFragmentId());
 	}
 
-//	db.fragmentation_fragment.updateMany(
-//	{
-//		$and: [
-//		{ "fragmentPairs": { $elemMatch: { "fragmentKey": "year", "fragmentValue": "2021" } } },
-//		{ "fragmentPairs": { $elemMatch: { "fragmentKey": "month", "fragmentValue": "11" } } },
-//		{ "_id": { $ne: "/parcels/timebased?year=2021&month=11" } }
-//        ]
-//	},
-//	{
-//		$set: { "immutable": true }
-//	}
-//    )
     @Override
     public void makeChildrenImmutable(Fragment fragment) {
 		final List<Criteria> criteriaList = fragment.getFragmentPairs().stream().map(pair ->
@@ -175,7 +163,7 @@ public class FragmentMongoRepository implements FragmentRepository {
 		bulkOps.updateMulti(query, update);
 
 		final var result = bulkOps.execute();
-		log.atInfo().log("{} children of {} were made immutable.", result.getModifiedCount(), fragment.getFragmentIdString());
+		log.atInfo().log("{} child/children of {} was/were made immutable.", result.getModifiedCount() - 1, fragment.getFragmentIdString());
     }
 
     private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
