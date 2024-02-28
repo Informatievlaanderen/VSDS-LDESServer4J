@@ -58,4 +58,6 @@ public interface FragmentRepository {
 	Stream<Fragment> getDeletionCandidates();
 
 	void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragment);
+
+    void makeChildrenImmutable(Fragment fragment);
 }

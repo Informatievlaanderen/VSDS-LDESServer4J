@@ -17,11 +17,11 @@ public class FragmentationTimestamp {
 
 	public LocalDateTime getNextUpdateTs() {
 		return switch (granularity) {
-			case YEAR ->  LocalDateTime.now().with(TemporalAdjusters.lastDayOfYear()).withHour(23).withMinute(59).withSecond(59);
-			case MONTH -> LocalDateTime.now().with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
-			case DAY -> LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);
-			case HOUR -> LocalDateTime.now().withMinute(59).withSecond(59);
-			case MINUTE -> LocalDateTime.now().withSecond(59);
+			case YEAR ->  time.with(TemporalAdjusters.lastDayOfYear()).withHour(23).withMinute(59).withSecond(59);
+			case MONTH -> time.with(TemporalAdjusters.lastDayOfMonth()).withHour(23).withMinute(59).withSecond(59);
+			case DAY -> time.withHour(23).withMinute(59).withSecond(59);
+			case HOUR -> time.withMinute(59).withSecond(59);
+			case MINUTE -> time.withSecond(59);
 			case SECOND -> null;
 		};
 	}

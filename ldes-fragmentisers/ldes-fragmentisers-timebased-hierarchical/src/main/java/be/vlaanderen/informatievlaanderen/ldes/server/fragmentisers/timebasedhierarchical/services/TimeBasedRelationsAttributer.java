@@ -43,6 +43,7 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 	private void saveRelation(Fragment fragment, TreeRelation relation, LocalDateTime nextUpdateTs) {
 		if (!fragment.containsRelation(relation)) {
 			// TODO TVB: moet afhankelijk zijn van configuratie
+			fragmentRepository.makeChildrenImmutable(fragment);
 			fragment.setNextUpdateTs(nextUpdateTs);
 			fragment.addRelation(relation);
 			fragmentRepository.saveFragment(fragment);
