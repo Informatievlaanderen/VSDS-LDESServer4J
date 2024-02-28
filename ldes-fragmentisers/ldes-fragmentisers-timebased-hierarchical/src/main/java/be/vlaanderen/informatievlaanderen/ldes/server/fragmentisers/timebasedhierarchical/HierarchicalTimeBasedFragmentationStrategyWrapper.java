@@ -35,7 +35,8 @@ public class HierarchicalTimeBasedFragmentationStrategyWrapper implements Fragme
 
 	private TimeBasedConfig createConfig(ConfigProperties properties) {
 		return new TimeBasedConfig(properties.getOrDefault(FRAGMENTATION_SUBJECT_FILTER, ".*"),
-				properties.get(FRAGMENTATION_PATH), Granularity.from(properties.get(MAX_GRANULARITY)));
+				properties.get(FRAGMENTATION_PATH), Granularity.from(properties.get(MAX_GRANULARITY)),
+				Boolean.parseBoolean(properties.getOrDefault(LINEAR_TIME_CACHING_ENABLED, "")));
 	}
 
 }
