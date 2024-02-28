@@ -64,7 +64,7 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 	private String getCacheControlHeader(TreeNode treeNode) {
 		return treeNode.isImmutable()
 				? restConfig.generateImmutableCacheControl()
-				: restConfig.generateMutableCacheControl(treeNode.getNextUpdateTs());
+				: restConfig.	generateMutableCacheControl(treeNode.getNextUpdateTs());
 	}
 
 	private String getContentTypeHeader(String language) {
