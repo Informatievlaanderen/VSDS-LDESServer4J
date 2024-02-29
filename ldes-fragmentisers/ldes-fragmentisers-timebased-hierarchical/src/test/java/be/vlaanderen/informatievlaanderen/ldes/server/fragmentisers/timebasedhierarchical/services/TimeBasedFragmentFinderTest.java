@@ -31,7 +31,7 @@ class TimeBasedFragmentFinderTest {
 
 	@BeforeEach
 	void setUp() {
-		config = new TimeBasedConfig(".*", "", Granularity.DAY);
+		config = new TimeBasedConfig(".*", "", Granularity.DAY, false);
 		fragmentCreator = mock(TimeBasedFragmentCreator.class);
 		fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator, config);
 
