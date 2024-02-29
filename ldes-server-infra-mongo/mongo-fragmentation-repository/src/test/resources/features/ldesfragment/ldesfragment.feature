@@ -121,3 +121,20 @@ Feature: LdesFragmentRepository
     When I delete the fragment "/mobility-hindrances/by-page"
     Then the repository contains 0 ldesFragments with viewname "mobility-hindrances/by-page"
 
+  Scenario: Children of a fragment can be made immutable
+    Given The following ldesFragments with relations
+      | viewName                    | fragmentPairs                  | immutable | relations                                                  |
+      | mobility-hindrances/by-time | [blank]                        | false     | mobility-hindrances/by-time?year=2023                      |
+      | mobility-hindrances/by-time | year,2023                      | false     | mobility-hindrances/by-time?year=2023&month=2              |
+      | mobility-hindrances/by-time | year,2023,month,2              | false     | mobility-hindrances/by-time?year=2023&month=2&pageNumber=1 |
+      | mobility-hindrances/by-time | year,2023,month,2,pageNumber,1 | true      | mobility-hindrances/by-time?year=2023&month=2&pageNumber=2 |
+      | mobility-hindrances/by-time | year,2023,month,2,pageNumber,2 | false     | [blank]                                                    |
+    And I save the ldesFragments using the LdesFragmentRepository
+    When I make the children of fragment "/mobility-hindrances/by-time?year=2023" immutable
+    Then The repository has the following fragments left
+      | viewName                    | fragmentPairs                  | immutable | relations                                                  |
+      | mobility-hindrances/by-time | [blank]                        | false     | mobility-hindrances/by-time?year=2023                      |
+      | mobility-hindrances/by-time | year,2023                      | false     | mobility-hindrances/by-time?year=2023&month=2              |
+      | mobility-hindrances/by-time | year,2023,month,2              | true      | mobility-hindrances/by-time?year=2023&month=2&pageNumber=1 |
+      | mobility-hindrances/by-time | year,2023,month,2,pageNumber,1 | true      | mobility-hindrances/by-time?year=2023&month=2&pageNumber=2 |
+      | mobility-hindrances/by-time | year,2023,month,2,pageNumber,2 | true      | [blank]                                                    |
