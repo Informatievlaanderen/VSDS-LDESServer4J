@@ -18,6 +18,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.Tre
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverterImpl;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +42,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -116,8 +119,8 @@ class TreeNodeControllerTest {
 				.andReturn();
 
 		Optional<Integer> maxAge = extractMaxAge(result.getResponse().getHeader("Cache-Control"));
-		Model resultModel = RDFParserBuilder.create().fromString(result.getResponse().getContentAsString()).lang(lang)
-				.toModel();
+		InputStream inputStream = new ByteArrayInputStream(result.getResponse().getContentAsByteArray());
+		Model resultModel = RDFParser.source(inputStream).lang(lang).toModel();
 
 		assertThat(maxAge).contains(immutable ? CONFIGURED_MAX_AGE_IMMUTABLE : CONFIGURED_MAX_AGE);
 		assertThat(getObjectURI(resultModel, RDF_SYNTAX_TYPE)).isEqualTo(TREE_NODE_RESOURCE);
@@ -192,6 +195,9 @@ class TreeNodeControllerTest {
 					Arguments.of("application/ld+json", Lang.JSONLD10, true,
 							"public,max-age=" + CONFIGURED_MAX_AGE_IMMUTABLE + ",immutable",
 							"10235d5bcd85b9450bfcbb423d4a8f0f9da876542c3f9690a24794cef459fbd8"),
+					Arguments.of("application/rdf+protobuf", Lang.RDFPROTO, true,
+							"public,max-age=" + CONFIGURED_MAX_AGE_IMMUTABLE + ",immutable",
+							"cfc950c3f081507614d7b4f0f9d4ef65fe59a45048f62c9b80486ff4c7346e49"),
 					Arguments.of("application/turtle", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
 							"92ab436c5dac07ab3b47d727354fa6bf69b5ea1dd8253b87c2badf3341d34b3e"),
 					Arguments.of("*/*", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
@@ -199,7 +205,8 @@ class TreeNodeControllerTest {
 					Arguments.of("", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
 							"c6536f80ad110d5d365e84ae1398ff90b9afbc0a7d7bec8738bac9204d63f12f"),
 					Arguments.of("text/html", Lang.TURTLE, false, "public,max-age=" + CONFIGURED_MAX_AGE,
-							"eab5179ac011c835cb460a0bdc6a28a52491255197a1073d2b963675961e66f2"));
+							"eab5179ac011c835cb460a0bdc6a28a52491255197a1073d2b963675961e66f2")
+			);
 		}
 	}
 

@@ -36,6 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -107,7 +109,8 @@ class EventStreamControllerTest {
 		assertNotNull(maxAge);
 		assertEquals(CONFIGURED_MAX_AGE_IMMUTABLE, maxAge);
 
-		Model actualModel = RDFParser.fromString(result.getResponse().getContentAsString()).lang(lang).toModel();
+		InputStream inputStream = new ByteArrayInputStream(result.getResponse().getContentAsByteArray());
+		Model actualModel = RDFParser.source(inputStream).lang(lang).toModel();
 		assertEquals(LDES_EVENT_STREAM_URI, getObjectURI(actualModel, RdfConstants.RDF_SYNTAX_TYPE));
 	}
 
@@ -156,7 +159,10 @@ class EventStreamControllerTest {
 					Arguments.of("", Lang.TURTLE,
 							"e05c986413efc584c7e9534dae550a242f26fd8164d8fff80d035caaa9f05573"),
 					Arguments.of("text/html", Lang.TURTLE,
-							"251bb000c5883ec25ff35cb340b9fae08b90ed94d4de89c585df4bf421a501f0"));
+							"251bb000c5883ec25ff35cb340b9fae08b90ed94d4de89c585df4bf421a501f0"),
+					Arguments.of("application/rdf+protobuf", Lang.RDFPROTO,
+							"5494c476036bca2a305948898e413308a2377a342064c9a36d6d0ab1dd72f7f2")
+			);
 		}
 	}
 
