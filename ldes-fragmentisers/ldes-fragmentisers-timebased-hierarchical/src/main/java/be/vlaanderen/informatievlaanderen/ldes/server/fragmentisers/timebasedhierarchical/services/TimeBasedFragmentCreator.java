@@ -36,9 +36,6 @@ public class TimeBasedFragmentCreator {
 	public Fragment getOrCreateFragment(Fragment parentFragment,
 										String timeValue,
 										Granularity granularity) {
-
-		// granu
-
 		Fragment child = parentFragment.createChild(new FragmentPair(granularity.getValue(), timeValue));
 		return fragmentRepository
 				.retrieveFragment(child.getFragmentId())
