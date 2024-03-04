@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.
 import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.resultchecker.ResultChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,6 +20,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.mongodb.client.result.UpdateResult;
@@ -136,7 +138,35 @@ public class FragmentMongoRepository implements FragmentRepository {
 		repository.deleteById(readyForDeletionFragmentId.asDecodedFragmentId());
 	}
 
-	private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
+    @Override
+    public void makeChildrenImmutable(Fragment fragment) {
+		final List<Criteria> criteriaList = fragment.getFragmentPairs().stream().map(pair ->
+				Criteria.where("fragmentPairs")
+						.elemMatch(
+								Criteria.where("fragmentKey")
+										.is(pair.fragmentKey())
+										.and("fragmentValue")
+										.is(pair.fragmentValue()))
+		).collect(Collectors.toList());
+
+		criteriaList.add(Criteria.where("_id").ne(fragment.getFragmentIdString()));
+
+		final Criteria criteria = new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
+
+		final Update update = new Update();
+		update.set("immutable", true);
+
+		final Query query = new Query();
+		query.addCriteria(criteria);
+
+		final BulkOperations bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, FragmentEntity.class);
+		bulkOps.updateMulti(query, update);
+
+		final var result = bulkOps.execute();
+		log.atInfo().log("{} child/children of {} was/were made immutable.", result.getModifiedCount() - 1, fragment.getFragmentIdString());
+    }
+
+    private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
 		List<FragmentEntity> fragments = repository.findAllByRelations_TreeNode(readyForDeletionFragmentId);
 		fragments.forEach(fragment -> {
 			List<TreeRelation> relationsToRemove = fragment.getRelations().stream()

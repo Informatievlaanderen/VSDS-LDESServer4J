@@ -27,35 +27,44 @@ public class TimeBasedFragmentCreator {
 		this.relationsAttributer = relationsAttributer;
 	}
 
-	public Fragment getOrCreateFragment(Fragment parentFragment, FragmentationTimestamp fragmentationTimestamp,
-			Granularity granularity) {
+	public Fragment getOrCreateFragment(Fragment parentFragment,
+										FragmentationTimestamp fragmentationTimestamp,
+										Granularity granularity) {
 		return getOrCreateFragment(parentFragment, fragmentationTimestamp.getTimeValueForGranularity(granularity), granularity);
 	}
 
-	public Fragment getOrCreateFragment(Fragment parentFragment, String timeValue,
+	public Fragment getOrCreateFragment(Fragment parentFragment,
+										String timeValue,
 										Granularity granularity) {
-		Fragment child = parentFragment
-				.createChild(new FragmentPair(granularity.getValue(),
-						timeValue));
+		Fragment child = parentFragment.createChild(new FragmentPair(granularity.getValue(), timeValue));
 		return fragmentRepository
 				.retrieveFragment(child.getFragmentId())
 				.orElseGet(() -> {
 					fragmentRepository.saveFragment(child);
-
-					if (isDefaultBucket(child)) {
-						relationsAttributer.addDefaultRelation(parentFragment, child);
-					} else {
-						relationsAttributer
-								.addInBetweenRelation(parentFragment, child);
-					}
-					String viewName = parentFragment.getViewName().asString();
-					Metrics.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, TIMEBASED_FRAGMENTATION_HIERARCHICAL).increment();
-					LOGGER.debug("Timebased fragment created with id: {}", child.getFragmentId());
+					addRelationToParent(parentFragment, child);
+					logFragmentation(parentFragment, child);
 					return child;
 				});
+	}
+
+	private void addRelationToParent(Fragment parentFragment, Fragment child) {
+		if (isDefaultBucket(child)) {
+			relationsAttributer.addDefaultRelation(parentFragment, child);
+		} else {
+			relationsAttributer.addInBetweenRelation(parentFragment, child);
+		}
 	}
 
 	private boolean isDefaultBucket(Fragment fragment) {
 		return fragment.getValueOfKey(Granularity.YEAR.getValue()).orElse("").equals(DEFAULT_BUCKET_STRING);
 	}
+
+	private void logFragmentation(Fragment parentFragment, Fragment child) {
+		String viewName = parentFragment.getViewName().asString();
+		Metrics
+				.counter(LDES_SERVER_CREATE_FRAGMENTS_COUNT, VIEW, viewName, FRAGMENTATION_STRATEGY, TIMEBASED_FRAGMENTATION_HIERARCHICAL)
+				.increment();
+		LOGGER.debug("Timebased fragment created with id: {}", child.getFragmentId());
+	}
+
 }

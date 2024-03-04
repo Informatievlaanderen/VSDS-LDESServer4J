@@ -33,15 +33,20 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 				childFragment.getFragmentId(),
 				timestamp.asString(), timestamp.getType(),
 				TREE_INBETWEEN_RELATION);
-		saveRelation(parentFragment, parentChildRelation);
+		saveRelation(parentFragment, parentChildRelation, timestamp.getNextUpdateTs());
 	}
 
 	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {
-		saveRelation(parentFragment, getDefaultRelation(childFragment));
+		saveRelation(parentFragment, getDefaultRelation(childFragment), null);
 	}
 
-	private void saveRelation(Fragment fragment, TreeRelation relation) {
+	private void saveRelation(Fragment fragment, TreeRelation relation, LocalDateTime nextUpdateTs) {
 		if (!fragment.containsRelation(relation)) {
+			if (config.isLinearTimeCachingEnabled()) {
+				fragmentRepository.makeChildrenImmutable(fragment);
+				fragment.setNextUpdateTs(nextUpdateTs);
+			}
+
 			fragment.addRelation(relation);
 			fragmentRepository.saveFragment(fragment);
 		}

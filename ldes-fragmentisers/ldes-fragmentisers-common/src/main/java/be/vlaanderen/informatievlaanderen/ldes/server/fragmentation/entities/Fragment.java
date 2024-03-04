@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.exceptions.DuplicateFragmentPairException;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class Fragment {
 	private final int nrOfMembersAdded;
 	private final List<TreeRelation> relations;
 	private LocalDateTime deleteTime;
+	private LocalDateTime nextUpdateTs = null;
 
 	public Fragment(LdesFragmentIdentifier identifier) {
 		this(identifier, false, 0, new ArrayList<>(), null);
@@ -145,6 +147,15 @@ public class Fragment {
 				.stream()
 				.anyMatch(treeRelation -> treeRelation.treeNode()
 						.equals(otherFragment.getFragmentId()));
+	}
+
+	@Nullable
+	public LocalDateTime getNextUpdateTs() {
+		return nextUpdateTs;
+	}
+
+	public void setNextUpdateTs(@Nullable LocalDateTime nextUpdateTs) {
+		this.nextUpdateTs = nextUpdateTs;
 	}
 
 	@Override

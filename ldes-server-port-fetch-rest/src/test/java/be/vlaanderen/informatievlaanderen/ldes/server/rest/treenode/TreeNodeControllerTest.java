@@ -96,7 +96,7 @@ class TreeNodeControllerTest {
 				ldesFragmentRequest.fragmentPairs())
 				.asDecodedFragmentId();
 		TreeNode treeNode = new TreeNode(fragmentId, immutable, false, List.of(),
-				List.of(), COLLECTION_NAME);
+				List.of(), COLLECTION_NAME, null);
 
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 
@@ -150,7 +150,7 @@ class TreeNodeControllerTest {
 				ldesFragmentRequest.fragmentPairs())
 				.asDecodedFragmentId();
 		TreeNode treeNode = new TreeNode(fragmentId, false, false, List.of(),
-				List.of(), COLLECTION_NAME);
+				List.of(), COLLECTION_NAME, null);
 		when(treeNodeFetcher.getFragment(ldesFragmentRequest)).thenReturn(treeNode);
 		mockMvc.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
 						.accept("application/json"))

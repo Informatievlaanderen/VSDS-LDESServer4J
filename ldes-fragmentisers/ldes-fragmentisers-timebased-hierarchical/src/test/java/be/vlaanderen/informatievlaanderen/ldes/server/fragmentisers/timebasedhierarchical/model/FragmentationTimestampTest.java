@@ -7,17 +7,46 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class FragmentationTimestampTest {
 
 	private static final LocalDateTime TIME6am = LocalDateTime.of(2023, 1, 2, 6, 30, 40);
 	private static final LocalDateTime TIME6pm = LocalDateTime.of(2023, 1, 2, 18, 30, 40);
+
+	@ParameterizedTest
+	@MethodSource("provideArgumentsForNextUpdateTs")
+	void testGetNextUpdateTs(LocalDateTime time, Granularity granularity, LocalDateTime expectedNextUpdateTs) {
+		assertThat(new FragmentationTimestamp(time, granularity).getNextUpdateTs()).isEqualTo(expectedNextUpdateTs);
+	}
+
+	private static Stream<Arguments> provideArgumentsForNextUpdateTs() {
+		final int tsYear = 2023;
+		final Month tsMonth = Month.JANUARY;
+		final int tsDay = 15;
+		final int tsHour = 10;
+		final int tsMinute = 30;
+		final LocalDateTime timestamp = LocalDateTime.of(tsYear, tsMonth, tsDay, tsHour, tsMinute);
+		return Stream.of(
+				Arguments.of(timestamp, Granularity.YEAR, LocalDateTime.of(tsYear, Month.DECEMBER, 31, 23, 59, 59)),
+				Arguments.of(timestamp, Granularity.MONTH, LocalDateTime.of(tsYear, tsMonth, 31, 23, 59, 59)),
+				Arguments.of(LocalDateTime.of(tsYear, Month.FEBRUARY, tsDay, tsHour, tsMinute),
+						Granularity.MONTH, LocalDateTime.of(tsYear, Month.FEBRUARY, 28, 23, 59, 59)),
+				Arguments.of(timestamp, Granularity.DAY, LocalDateTime.of(tsYear, tsMonth, tsDay, 23, 59, 59)),
+				Arguments.of(timestamp, Granularity.HOUR, LocalDateTime.of(tsYear, tsMonth, tsDay, tsHour, 59, 59)),
+				Arguments.of(timestamp, Granularity.MINUTE, LocalDateTime.of(tsYear, tsMonth, tsDay, tsHour, tsMinute, 59)),
+				Arguments.of(timestamp, Granularity.SECOND, null)
+		);
+	}
 
 	@ParameterizedTest(name = "test asString for granularity {0}")
 	@ArgumentsSource(TimeArgumentProvider.class)
