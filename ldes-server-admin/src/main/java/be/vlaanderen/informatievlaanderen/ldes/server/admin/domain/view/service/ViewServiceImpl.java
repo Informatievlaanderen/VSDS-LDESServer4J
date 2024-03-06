@@ -9,6 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -23,119 +25,128 @@ import java.util.stream.Collectors;
 
 @Service
 public class ViewServiceImpl implements ViewService {
-	private static final String EVENT_STREAM_TYPE = "eventstream";
-	private static final String VIEW_TYPE = "view";
-	private final DcatViewService dcatViewService;
-	private final ViewRepository viewRepository;
-	private final ApplicationEventPublisher eventPublisher;
+    private static final Logger log = LoggerFactory.getLogger(ViewServiceImpl.class);
+    private static final String EVENT_STREAM_TYPE = "eventstream";
+    private static final String VIEW_TYPE = "view";
+    private final DcatViewService dcatViewService;
+    private final ViewRepository viewRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-	private final HashMap<String, EventStream> eventStreams = new HashMap<>();
+    private final HashMap<String, EventStream> eventStreams = new HashMap<>();
 
-	public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
-						   ApplicationEventPublisher eventPublisher) {
-		this.dcatViewService = dcatViewService;
-		this.viewRepository = viewRepository;
-		this.eventPublisher = eventPublisher;
-	}
+    public ViewServiceImpl(DcatViewService dcatViewService, ViewRepository viewRepository,
+                           ApplicationEventPublisher eventPublisher) {
+        this.dcatViewService = dcatViewService;
+        this.viewRepository = viewRepository;
+        this.eventPublisher = eventPublisher;
+    }
 
-	@Override
-	public void addView(ViewSpecification viewSpecification) {
-		if (isEventStreamMissing(viewSpecification.getName().getCollectionName())) {
-			throw new MissingResourceException(EVENT_STREAM_TYPE, viewSpecification.getName().getCollectionName());
-		}
-		Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
-		if (view.isPresent()) {
-			throw new ExistingResourceException(VIEW_TYPE, viewSpecification.getName().asString());
-		}
+    @Override
+    public void addView(ViewSpecification viewSpecification) {
+        log.atInfo().log("START creating view {}", viewSpecification.getName().asString());
+        if (isEventStreamMissing(viewSpecification.getName().getCollectionName())) {
+            throw new MissingResourceException(EVENT_STREAM_TYPE, viewSpecification.getName().getCollectionName());
+        }
 
-		checkViewForDuplicateRetentionPolicies(viewSpecification);
+        checkIfViewAlreadyExists(viewSpecification);
+        checkViewForDuplicateRetentionPolicies(viewSpecification);
 
-		eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
-		viewRepository.saveView(viewSpecification);
-	}
+        eventPublisher.publishEvent(new ViewAddedEvent(viewSpecification));
+        viewRepository.saveView(viewSpecification);
+        log.atInfo().log("FINISHED creating view {}", viewSpecification.getName().asString());
+    }
 
-	private void checkViewForDuplicateRetentionPolicies(ViewSpecification viewSpecification) {
-		List<String> duplicateRetentionPolicies = viewSpecification.getRetentionConfigs().stream()
-				.map(retentionPolicy -> retentionPolicy.listObjectsOfProperty(RdfConstants.RDF_SYNTAX_TYPE).nextNode())
-				.collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
-				.entrySet().stream()
-				.filter(entry -> entry.getValue() > 1)
-				.map(Map.Entry::getKey)
-				.map(Object::toString)
-				.toList();
+    private void checkIfViewAlreadyExists(ViewSpecification viewSpecification) {
+        Optional<ViewSpecification> view = viewRepository.getViewByViewName(viewSpecification.getName());
+        if (view.isPresent()) {
+            throw new ExistingResourceException(VIEW_TYPE, viewSpecification.getName().asString());
+        }
+    }
 
-		if (!duplicateRetentionPolicies.isEmpty()) {
-			throw new DuplicateRetentionException(duplicateRetentionPolicies);
-		}
-	}
+    private void checkViewForDuplicateRetentionPolicies(ViewSpecification viewSpecification) {
+        List<String> duplicateRetentionPolicies = viewSpecification.getRetentionConfigs().stream()
+                .map(retentionPolicy -> retentionPolicy.listObjectsOfProperty(RdfConstants.RDF_SYNTAX_TYPE).nextNode())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .map(Object::toString)
+                .toList();
 
-	private boolean isEventStreamMissing(String collectionName) {
-		return !eventStreams.containsKey(collectionName);
-	}
+        if (!duplicateRetentionPolicies.isEmpty()) {
+            throw new DuplicateRetentionException(duplicateRetentionPolicies);
+        }
+    }
 
-	@Override
-	public ViewSpecification getViewByViewName(ViewName viewName) {
-		ViewSpecification viewSpecification = viewRepository.getViewByViewName(viewName)
-				.orElseThrow(() -> new MissingResourceException(VIEW_TYPE, viewName.asString()));
-		addDcatToViewSpecification(viewSpecification);
-		return viewSpecification;
-	}
+    private boolean isEventStreamMissing(String collectionName) {
+        return !eventStreams.containsKey(collectionName);
+    }
 
-	@Override
-	public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
-		if (isEventStreamMissing(collectionName)) {
-			throw new MissingResourceException(EVENT_STREAM_TYPE, collectionName);
-		}
-		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
-		viewSpecifications.forEach(this::addDcatToViewSpecification);
-		return viewSpecifications;
-	}
+    @Override
+    public ViewSpecification getViewByViewName(ViewName viewName) {
+        ViewSpecification viewSpecification = viewRepository.getViewByViewName(viewName)
+                .orElseThrow(() -> new MissingResourceException(VIEW_TYPE, viewName.asString()));
+        addDcatToViewSpecification(viewSpecification);
+        return viewSpecification;
+    }
 
-	private void addDcatToViewSpecification(ViewSpecification viewSpecification) {
-		dcatViewService.findByViewName(viewSpecification.getName()).ifPresent(viewSpecification::setDcat);
-	}
+    @Override
+    public List<ViewSpecification> getViewsByCollectionName(String collectionName) {
+        if (isEventStreamMissing(collectionName)) {
+            throw new MissingResourceException(EVENT_STREAM_TYPE, collectionName);
+        }
+        List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
+        viewSpecifications.forEach(this::addDcatToViewSpecification);
+        return viewSpecifications;
+    }
 
-	@Override
-	public void deleteViewByViewName(ViewName viewName) {
-		if (isEventStreamMissing(viewName.getCollectionName())) {
-			throw new MissingResourceException(EVENT_STREAM_TYPE, viewName.getCollectionName());
-		}
+    private void addDcatToViewSpecification(ViewSpecification viewSpecification) {
+        dcatViewService.findByViewName(viewSpecification.getName()).ifPresent(viewSpecification::setDcat);
+    }
 
-		deleteAllViewsByViewName(List.of(viewName));
-	}
+    @Override
+    public void deleteViewByViewName(ViewName viewName) {
+        if (isEventStreamMissing(viewName.getCollectionName())) {
+            throw new MissingResourceException(EVENT_STREAM_TYPE, viewName.getCollectionName());
+        }
 
-	@Override
-	public void deleteAllViewsByViewName(List<ViewName> viewNames) {
-		viewNames.forEach(viewName -> {
-			viewRepository.deleteViewByViewName(viewName);
-			eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
-		});
-	}
+        deleteAllViewsByViewName(List.of(viewName));
+    }
 
-	/**
-	 * Initializes the views config.
-	 * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
-	 * to give db migrations such as mongock time before this init.
-	 */
-	@EventListener(ApplicationReadyEvent.class)
-	public void initViews() {
-		viewRepository
-				.retrieveAllViews()
-				.forEach(viewSpecification -> eventPublisher
-						.publishEvent(new ViewInitializationEvent(viewSpecification)));
-	}
+    @Override
+    public void deleteAllViewsByViewName(List<ViewName> viewNames) {
+        viewNames.forEach(viewName -> {
+            log.atInfo().log("START deleting view  {}", viewName.asString());
+            viewRepository.deleteViewByViewName(viewName);
+            eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
+            log.atInfo().log("FINISHED deleting view {}", viewName.asString());
+        });
+    }
 
-	@EventListener
-	public void handleEventStreamInitEvent(EventStreamCreatedEvent event) {
-		eventStreams.put(event.eventStream().getCollection(), event.eventStream());
-	}
+    /**
+     * Initializes the views config.
+     * The ApplicationReadyEvent is used instead of earlier spring lifecycle events
+     * to give db migrations such as mongock time before this init.
+     */
+    @EventListener(ApplicationReadyEvent.class)
+    public void initViews() {
+        viewRepository
+                .retrieveAllViews()
+                .forEach(viewSpecification -> eventPublisher
+                        .publishEvent(new ViewInitializationEvent(viewSpecification)));
+    }
 
-	@EventListener
-	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		String collectionName = event.collectionName();
-		eventStreams.remove(collectionName);
-		List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
-		deleteAllViewsByViewName(viewSpecifications.stream().map(ViewSpecification::getName).toList());
-	}
+    @EventListener
+    public void handleEventStreamInitEvent(EventStreamCreatedEvent event) {
+        eventStreams.put(event.eventStream().getCollection(), event.eventStream());
+    }
+
+    @EventListener
+    public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+        String collectionName = event.collectionName();
+        eventStreams.remove(collectionName);
+        List<ViewSpecification> viewSpecifications = viewRepository.retrieveAllViewsOfCollection(collectionName);
+        deleteAllViewsByViewName(viewSpecifications.stream().map(ViewSpecification::getName).toList());
+    }
 
 }

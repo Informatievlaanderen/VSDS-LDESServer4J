@@ -68,7 +68,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		bulkOps.updateMulti(query, update);
 
 		final var result = bulkOps.execute();
-		log.atInfo().log("View {} added to {} MemberProperties", viewName.asString(), result.getModifiedCount());
+		log.atDebug().log("View {} added to {} MemberProperties", viewName.asString(), result.getModifiedCount());
 	}
 
 	@Override
