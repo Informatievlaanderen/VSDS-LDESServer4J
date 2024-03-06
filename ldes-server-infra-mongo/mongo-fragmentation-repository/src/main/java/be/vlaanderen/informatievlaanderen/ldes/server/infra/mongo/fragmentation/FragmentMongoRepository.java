@@ -108,13 +108,13 @@ public class FragmentMongoRepository implements FragmentRepository {
 	@Override
 	public void removeLdesFragmentsOfView(String viewName) {
 		int deleteCount = repository.removeByViewName(viewName).size();
-		log.info("Deleted {} treeNodes", deleteCount);
+		log.debug("Deleted {} treeNodes", deleteCount);
 	}
 
 	@Override
 	public void deleteTreeNodesByCollection(String collectionName) {
 		Long deleteCount = repository.deleteAllByCollectionName(collectionName);
-		log.info("Deleted {} treeNodes", deleteCount);
+		log.debug("Deleted {} treeNodes", deleteCount);
 	}
 
 	@Override
