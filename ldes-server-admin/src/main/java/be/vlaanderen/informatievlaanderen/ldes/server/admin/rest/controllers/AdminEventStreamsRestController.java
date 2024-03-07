@@ -23,51 +23,54 @@ import static org.apache.jena.riot.WebContent.*;
 @RequestMapping(value = "/admin/api/v1/eventstreams")
 public class AdminEventStreamsRestController implements OpenApiAdminEventStreamsController {
 
-	private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
+    private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
 
-	private final EventStreamService eventStreamService;
-	private final EventStreamResponseConverter eventStreamResponseConverter;
-	private final ModelValidator eventStreamValidator;
+    private final EventStreamService eventStreamService;
+    private final EventStreamResponseConverter eventStreamResponseConverter;
+    private final ModelValidator eventStreamValidator;
 
-	public AdminEventStreamsRestController(EventStreamService eventStreamService,
-										   @Qualifier("eventStreamShaclValidator") ModelValidator eventStreamValidator,
-										   EventStreamResponseConverter eventStreamResponseConverter) {
-		this.eventStreamService = eventStreamService;
-		this.eventStreamValidator = eventStreamValidator;
-		this.eventStreamResponseConverter = eventStreamResponseConverter;
-	}
+    public AdminEventStreamsRestController(EventStreamService eventStreamService,
+                                           @Qualifier("eventStreamShaclValidator") ModelValidator eventStreamValidator,
+                                           EventStreamResponseConverter eventStreamResponseConverter) {
+        this.eventStreamService = eventStreamService;
+        this.eventStreamValidator = eventStreamValidator;
+        this.eventStreamResponseConverter = eventStreamResponseConverter;
+    }
 
-	@InitBinder
-	private void initBinder(WebDataBinder binder) {
-		binder.setValidator(eventStreamValidator);
-	}
+    @InitBinder
+    private void initBinder(WebDataBinder binder) {
+        binder.setValidator(eventStreamValidator);
+    }
 
-	@Override
-	@GetMapping
-	public List<EventStreamResponse> getEventStreams() {
-		return eventStreamService.retrieveAllEventStreams();
-	}
+    @Override
+    @GetMapping
+    public List<EventStreamResponse> getEventStreams() {
+        return eventStreamService.retrieveAllEventStreams();
+    }
 
-	@ResponseStatus(value = HttpStatus.CREATED)
-	@Override
-	@PostMapping(consumes = {contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle})
-	public EventStreamResponse createEventStream(@RequestBody @Validated Model eventStreamModel) {
-		EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
-		return eventStreamService.createEventStream(eventStreamResponse);
-	}
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @Override
+    @PostMapping(consumes = {contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle})
+    public EventStreamResponse createEventStream(@RequestBody @Validated Model eventStreamModel) {
+        EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
+        log.atInfo().log("START creating collection {}", eventStreamResponse.getCollection());
+        eventStreamService.createEventStream(eventStreamResponse);
+        log.atInfo().log("FINISHED creating collection {}", eventStreamResponse.getCollection());
+        return eventStreamResponse;
+    }
 
-	@Override
-	@GetMapping("/{collectionName}")
-	public EventStreamResponse getEventStream(@PathVariable String collectionName) {
-		return eventStreamService.retrieveEventStream(collectionName);
-	}
+    @Override
+    @GetMapping("/{collectionName}")
+    public EventStreamResponse getEventStream(@PathVariable String collectionName) {
+        return eventStreamService.retrieveEventStream(collectionName);
+    }
 
-	@Override
-	@DeleteMapping("/{collectionName}")
-	public void deleteEventStream(@PathVariable String collectionName) {
-		log.atInfo().log("START deleting " + collectionName);
-		eventStreamService.deleteEventStream(collectionName);
-		log.atInfo().log("FINISHED deleting " + collectionName);
-	}
+    @Override
+    @DeleteMapping("/{collectionName}")
+    public void deleteEventStream(@PathVariable String collectionName) {
+        log.atInfo().log("START deleting collection {}", collectionName);
+        eventStreamService.deleteEventStream(collectionName);
+        log.atInfo().log("FINISHED deleting collection {}", collectionName);
+    }
 
 }
