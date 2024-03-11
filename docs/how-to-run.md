@@ -40,6 +40,9 @@ spring:
       port: 27017
       database: ldes
       auto-index-creation: true
+rest:
+  max-age: 120
+  max-age-immutable: 604800
 ````
 
 Here is an explanation provided for all the possibilities on how to tweak and configure your LDES Server:
