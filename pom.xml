@@ -102,7 +102,7 @@
         <!-- Monitoring and Logging -->
         <spring.aop.version>3.2.3</spring.aop.version>
         <spring-boot.actuator.version>3.2.3</spring-boot.actuator.version>
-        <micrometer-prometheus.version>1.12.3</micrometer-prometheus.version>
+        <micrometer-prometheus.version>1.12.4</micrometer-prometheus.version>
         <micrometer-tracing.version>1.2.3</micrometer-tracing.version>
         <zipkin-reporter.version>3.3.0</zipkin-reporter.version>
         <loki.version>1.5.0</loki.version>
