@@ -31,7 +31,7 @@ class TimeBasedFragmentFinderTest {
 
 	@BeforeEach
 	void setUp() {
-		config = new TimeBasedConfig(".*", "", Granularity.DAY);
+		config = new TimeBasedConfig(".*", "", Granularity.DAY, false);
 		fragmentCreator = mock(TimeBasedFragmentCreator.class);
 		fragmentFinder = new TimeBasedFragmentFinder(fragmentCreator, config);
 
@@ -40,12 +40,12 @@ class TimeBasedFragmentFinderTest {
 	@Test
 	void when_GetLowestIsCalled_Then_ReturnExpectedFragment() {
 		Fragment expected = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, timePairs));
-		Fragment firstSub = PARENT.createChild(new FragmentPair(Granularity.YEAR.getValue(), "2023"));
-		Fragment secondSub = firstSub.createChild(new FragmentPair(Granularity.MONTH.getValue(), "01"));
-		Fragment thirdSub = secondSub.createChild(new FragmentPair(Granularity.DAY.getValue(), "01"));
-		when(fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.YEAR)).thenReturn(firstSub);
-		when(fragmentCreator.getOrCreateFragment(firstSub, TIME, Granularity.MONTH)).thenReturn(secondSub);
-		when(fragmentCreator.getOrCreateFragment(secondSub, TIME, Granularity.DAY)).thenReturn(thirdSub);
+		Fragment yearFragment = PARENT.createChild(new FragmentPair(Granularity.YEAR.getValue(), "2023"));
+		Fragment monthFragment = yearFragment.createChild(new FragmentPair(Granularity.MONTH.getValue(), "01"));
+		Fragment dayFragment = monthFragment.createChild(new FragmentPair(Granularity.DAY.getValue(), "01"));
+		when(fragmentCreator.getOrCreateFragment(PARENT, TIME, Granularity.YEAR)).thenReturn(yearFragment);
+		when(fragmentCreator.getOrCreateFragment(yearFragment, TIME, Granularity.MONTH)).thenReturn(monthFragment);
+		when(fragmentCreator.getOrCreateFragment(monthFragment, TIME, Granularity.DAY)).thenReturn(dayFragment);
 
 		Fragment actual = fragmentFinder.getLowestFragment(PARENT, TIME, Granularity.YEAR);
 

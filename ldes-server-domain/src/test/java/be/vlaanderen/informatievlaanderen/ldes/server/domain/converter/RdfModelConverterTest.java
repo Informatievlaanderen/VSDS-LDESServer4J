@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RelativeUrlException;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +15,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.stream.Stream;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -57,7 +56,7 @@ class RdfModelConverterTest {
     @ParameterizedTest
     @ArgumentsSource(ContentTypeArgumentsProvider.class)
     void when_UseRelativeUrlAndIncompatibleContentType_Then_ThrowException(Lang type) {
-        assertThatThrownBy(()->rdfModelConverter.checkLangForRelativeUrl(type)).isInstanceOf(RelativeUrlException.class);
+        assertThatThrownBy(() -> rdfModelConverter.checkLangForRelativeUrl(type)).isInstanceOf(RelativeUrlException.class);
     }
 
     static class ContentTypeArgumentsProvider implements ArgumentsProvider {
@@ -67,7 +66,9 @@ class RdfModelConverterTest {
                     Arguments.of(Lang.NQUADS),
                     Arguments.of(Lang.NTRIPLES),
                     Arguments.of(Lang.RDFJSON),
-                    Arguments.of(Lang.RDFXML));
+                    Arguments.of(Lang.RDFXML),
+                    Arguments.of(Lang.RDFPROTO),
+                    Arguments.of(Lang.RDFTHRIFT));
         }
     }
 }

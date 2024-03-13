@@ -7,8 +7,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -23,9 +21,6 @@ import static org.apache.jena.riot.WebContent.*;
 @RestController
 @RequestMapping("/admin/api/v1")
 public class AdminViewsRestController implements OpenApiAdminViewsRestController {
-
-	private static final Logger log = LoggerFactory.getLogger(AdminViewsRestController.class);
-
 	private final ViewService viewService;
 	private final ModelValidator viewValidator;
 	private final ViewSpecificationConverter viewConverter;
@@ -60,9 +55,7 @@ public class AdminViewsRestController implements OpenApiAdminViewsRestController
 	@DeleteMapping("/eventstreams/{collectionName}/views/{view}")
 	public void deleteView(@PathVariable String collectionName, @PathVariable String view) {
 		ViewName viewName = new ViewName(collectionName, view);
-		log.atInfo().log("START deleting " + viewName.asString());
 		viewService.deleteViewByViewName(viewName);
-		log.atInfo().log("DONE deleting " + viewName.asString());
 	}
 
 	@GetMapping(value = "/eventstreams/{collectionName}/views/{viewName}", produces = {contentTypeJSONLD,

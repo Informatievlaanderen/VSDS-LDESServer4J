@@ -18,5 +18,6 @@ open module ldes.fetch.rest {
     requires io.swagger.v3.oas.annotations;
     requires micrometer.observation;
     requires org.slf4j;
+    requires org.jetbrains.annotations;
 
 }

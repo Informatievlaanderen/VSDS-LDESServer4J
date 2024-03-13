@@ -7,6 +7,14 @@ import java.util.List;
 public class ServerConstants {
     private ServerConstants() {
     }
+
     public static final String DEFAULT_BUCKET_STRING = "unknown";
-    public static final List<Lang> RELATIVE_URL_INCOMPATIBLE_LANGS = List.of(Lang.NQUADS, Lang.NTRIPLES, Lang.RDFXML, Lang.RDFJSON);
+    public static final List<Lang> RELATIVE_URL_INCOMPATIBLE_LANGS = List.of(
+            Lang.NQUADS,
+            Lang.NTRIPLES,
+            Lang.RDFXML,
+            Lang.RDFJSON,
+            Lang.RDFPROTO,
+            Lang.RDFTHRIFT
+    );
 }

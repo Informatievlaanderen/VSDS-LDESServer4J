@@ -49,7 +49,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		CHILD_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(new FragmentPair("is", "child"))));
 		TIME = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 		GRANULARITY = Granularity.SECOND;
-		config = new TimeBasedConfig(".*", "", GRANULARITY);
+		config = new TimeBasedConfig(".*", "", GRANULARITY, false);
 		fragmentFinder = mock(TimeBasedFragmentFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		fragmentRepository = mock(FragmentRepository.class);

@@ -32,10 +32,11 @@ public class FragmentEntity {
 	private String collectionName;
 	@Indexed
 	private LocalDateTime deleteTime;
+	private LocalDateTime nextUpdateTs;
 
 	public FragmentEntity(String id, Boolean root, String viewName, List<FragmentPair> fragmentPairs,
 			Boolean immutable, String parentId, Integer nrOfMembersAdded,
-			List<TreeRelation> relations, String collectionName, LocalDateTime deleteTime) {
+			List<TreeRelation> relations, String collectionName, LocalDateTime deleteTime, LocalDateTime nextUpdateTs) {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
@@ -46,6 +47,7 @@ public class FragmentEntity {
 		this.relations = relations;
 		this.collectionName = collectionName;
 		this.deleteTime = deleteTime;
+		this.nextUpdateTs = nextUpdateTs;
 	}
 
 	public FragmentEntity() {
@@ -61,9 +63,11 @@ public class FragmentEntity {
 
 	public Fragment toLdesFragment() {
 		int effectiveNrOfMembersAdded = nrOfMembersAdded == null ? 0 : nrOfMembersAdded;
-		return new Fragment(new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs), immutable,
-				effectiveNrOfMembersAdded,
-				relations, deleteTime);
+		final var ldesFragmentIdentifier = new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs);
+		final var fragment =
+				new Fragment(ldesFragmentIdentifier, immutable, effectiveNrOfMembersAdded, relations, deleteTime);
+		fragment.setNextUpdateTs(nextUpdateTs);
+		return fragment;
 	}
 
 	public String getViewName() {
@@ -79,7 +83,9 @@ public class FragmentEntity {
 				fragment.getParentIdAsString(),
 				fragment.getNrOfMembersAdded(),
 				fragment.getRelations(),
-				fragment.getFragmentId().getViewName().getCollectionName(), fragment.getDeleteTime());
+				fragment.getFragmentId().getViewName().getCollectionName(),
+				fragment.getDeleteTime(),
+				fragment.getNextUpdateTs());
 	}
 
 	public List<TreeRelation> getRelations() {

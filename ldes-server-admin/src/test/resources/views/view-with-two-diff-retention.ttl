@@ -12,7 +12,7 @@ viewName:description
       ] ;
     ldes:retentionPolicy [
       a ldes:LatestVersionSubset  ;
-      tree:amount 2 ;
+      ldes:amount 2 ;
     ] ;
     tree:fragmentationStrategy ([
       a     tree:ExampleFragmentation ;

@@ -53,7 +53,7 @@ class TreeNodeConverterImplTest {
     @Test
     void when_TreeNodeHasNoMembersAndIsAView_ModelHasTreeNodeAndLdesStatements() {
         TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
-                COLLECTION_NAME);
+                COLLECTION_NAME, null);
         ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
@@ -73,7 +73,7 @@ class TreeNodeConverterImplTest {
     @Test
     void when_TreeNodeHasNoMembersAndIsNotAView_ModelHasTreeNodeAndPartOfStatements() {
         TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(), List.of(),
-                COLLECTION_NAME);
+                COLLECTION_NAME, null);
         Model model = treeNodeConverter.toModel(treeNode);
 
         assertThat(model.listStatements().toList()).hasSize(2);
@@ -96,7 +96,7 @@ class TreeNodeConverterImplTest {
                 new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
                 "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
         TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, false, List.of(treeRelation),
-                List.of(member), COLLECTION_NAME);
+                List.of(member), COLLECTION_NAME, null);
 
         Model model = treeNodeConverter.toModel(treeNode);
 
@@ -205,7 +205,7 @@ class TreeNodeConverterImplTest {
     @Test
     void testHandleDcatViewEvents() {
         TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
-                COLLECTION_NAME);
+                COLLECTION_NAME, null);
         ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);

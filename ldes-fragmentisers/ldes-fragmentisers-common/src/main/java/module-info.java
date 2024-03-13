@@ -9,6 +9,7 @@ open module ldes.fragmentation.domain {
     requires micrometer.core;
     requires org.slf4j;
     requires org.apache.jena.arq;
+    requires org.jetbrains.annotations;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
     exports be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;

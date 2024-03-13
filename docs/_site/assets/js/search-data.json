@@ -288,7 +288,7 @@
   },"41": {
     "doc": "Version Based Retention",
     "title": "Example",
-    "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:LatestVersionSubset ; tree:amount 2 ; ] ; ] . ",
+    "content": "@prefix ldes: &lt;https://w3id.org/ldes#&gt; . @prefix tree: &lt;https://w3id.org/tree#&gt;. &lt;view1&gt; a tree:Node ; tree:viewDescription [ a tree:ViewDescription ; ldes:retentionPolicy [ a ldes:LatestVersionSubset ; ldes:amount 2 ; ] ; ] . ",
     "url": "/configuration/retention-policies/version-based#example",
     
     "relUrl": "/configuration/retention-policies/version-based#example"

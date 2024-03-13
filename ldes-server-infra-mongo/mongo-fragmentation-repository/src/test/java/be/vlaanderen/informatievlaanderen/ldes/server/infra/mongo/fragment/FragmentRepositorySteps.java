@@ -40,7 +40,7 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 		return new FragmentWithRelation(new Fragment(new LdesFragmentIdentifier(
 				ViewName.fromString(row.get("viewName")),
                 row.get("fragmentPairs").isEmpty() ? List.of() : getFragmentPairs(row.get("fragmentPairs"))),
-				false,
+				Boolean.parseBoolean(row.get("immutable")),
 				0,
                 row.get("relations").isEmpty() ? List.of()
 						: Arrays.stream(row.get("relations").split(",")).map(treeNode -> new TreeRelation("",
@@ -178,6 +178,18 @@ public class FragmentRepositorySteps extends MongoFragmentationIntegrationTest {
 							.map(TreeRelation::treeNode)
 							.collect(Collectors.toSet()));
 		});
+	}
+
+	@When("I make the children of fragment {string} immutable")
+	public void iMakeTheChildrenOfFragmentImmutable(String fragmentId) {
+		LdesFragmentIdentifier fragmentIdentifier = LdesFragmentIdentifier.fromFragmentId(fragmentId);
+		Fragment fragment =
+				fragments
+						.stream()
+						.filter(f -> f.equals(new Fragment(fragmentIdentifier)))
+						.findFirst()
+						.orElseThrow();
+		fragmentRepository.makeChildrenImmutable(fragment);
 	}
 
 	public record OutgoingRelationResult(LdesFragmentIdentifier outgoingRelation,

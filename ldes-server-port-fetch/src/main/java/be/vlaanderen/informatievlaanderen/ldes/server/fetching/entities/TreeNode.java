@@ -2,7 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import org.jetbrains.annotations.Nullable;
 
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,10 +17,11 @@ public class TreeNode {
 	private final List<Member> members;
 	private final String collectionName;
 	private long numberOfMembersInView;
+	private final LocalDateTime nextUpdateTs;
 
 	public TreeNode(String encodedFragmentId, boolean immutable, boolean isView,
-			List<TreeRelation> relations,
-			List<Member> members, String collectionName) {
+					List<TreeRelation> relations,
+					List<Member> members, String collectionName, LocalDateTime nextUpdateTs) {
 		this.fragmentId = encodedFragmentId;
 		this.immutable = immutable;
 		this.isView = isView;
@@ -25,6 +29,7 @@ public class TreeNode {
 		this.members = members;
 		this.collectionName = collectionName;
 		this.numberOfMembersInView = 0L;
+		this.nextUpdateTs = nextUpdateTs;
 	}
 
 	public String getFragmentId() {
@@ -57,6 +62,11 @@ public class TreeNode {
 		return Objects.equals(fragmentId, that.fragmentId);
 	}
 
+	@Nullable
+	public LocalDateTime getNextUpdateTs() {
+		return nextUpdateTs;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(fragmentId);
@@ -73,4 +83,5 @@ public class TreeNode {
 	public void setNumberOfMembersInView(long numberOfMembersInView) {
 		this.numberOfMembersInView = numberOfMembersInView;
 	}
+
 }
