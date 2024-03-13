@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -19,12 +19,12 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException.RdfFormatContext.FETCH;
 import static be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config.EventStreamWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 
-public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamResponse> {
-	private final EventStreamResponseConverter eventStreamResponseConverter;
+public class EventStreamResponseHttpConverter implements HttpMessageConverter<EventStreamTO> {
+	private final EventStreamTOConverter eventStreamTOConverter;
 	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamResponseHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
-		this.eventStreamResponseConverter = eventStreamResponseConverter;
+	public EventStreamResponseHttpConverter(EventStreamTOConverter eventStreamTOConverter, RdfModelConverter rdfModelConverter) {
+		this.eventStreamTOConverter = eventStreamTOConverter;
 		this.rdfModelConverter = rdfModelConverter;
 	}
 
@@ -35,7 +35,7 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 
 	@Override
 	public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-		return EventStreamResponse.class.isAssignableFrom(clazz);
+		return EventStreamTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -44,17 +44,17 @@ public class EventStreamResponseHttpConverter implements HttpMessageConverter<Ev
 	}
 
 	@Override
-	public EventStreamResponse read(Class<? extends EventStreamResponse> clazz, HttpInputMessage inputMessage)
+	public EventStreamTO read(Class<? extends EventStreamTO> clazz, HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void write(EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
+	public void write(EventStreamTO eventStreamTO, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
 		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
-		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
+		Model eventStreamModel = eventStreamTOConverter.toModel(eventStreamTO);
 		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, rdfFormat);
 	}
 }

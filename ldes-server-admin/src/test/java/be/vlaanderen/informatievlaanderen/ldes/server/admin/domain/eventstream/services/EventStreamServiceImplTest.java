@@ -8,7 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
@@ -42,11 +42,12 @@ class EventStreamServiceImplTest {
 	private static final String COLLECTION = "collection";
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
-	private static final EventStreamResponse EVENT_STREAM_RESPONSE = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
-			VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel());
+	private static final boolean VERSION_CREATION_ENABLED = false;
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
+	private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
+			VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
 	private DcatDataset dataset;
-	private EventStreamResponse eventStreamResponseWithDataset;
+	private EventStreamTO eventStreamTOWithDataset;
 
 	@Mock
 	private EventStreamRepository eventStreamRepository;
@@ -72,18 +73,18 @@ class EventStreamServiceImplTest {
 				eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
-		eventStreamResponseWithDataset = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH,
-				VERSION_OF_PATH, List.of(), ModelFactory.createDefaultModel(), dataset);
+		eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
+				VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), dataset);
 	}
 
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
 		final String otherCollection = "other";
-		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf");
+		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", false);
 		List<ViewSpecification> views = List
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
-		EventStreamResponse otherEventStreamResponse = new EventStreamResponse(otherCollection, "created", "versionOf",
+		EventStreamTO otherEventStreamTO = new EventStreamTO(otherCollection, "created", "versionOf", false,
 				views, ModelFactory.createDefaultModel(), dataset);
 
 		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
@@ -98,9 +99,9 @@ class EventStreamServiceImplTest {
 		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
 		when(dcatDatasetService.retrieveDataset(otherCollection)).thenReturn(Optional.of(dataset));
 
-		List<EventStreamResponse> eventStreams = service.retrieveAllEventStreams();
+		List<EventStreamTO> eventStreams = service.retrieveAllEventStreams();
 
-		assertThat(eventStreams).containsExactlyInAnyOrder(EVENT_STREAM_RESPONSE, otherEventStreamResponse);
+		assertThat(eventStreams).containsExactlyInAnyOrder(EVENT_STREAM_RESPONSE, otherEventStreamTO);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveAllEventStreams();
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
@@ -120,9 +121,9 @@ class EventStreamServiceImplTest {
 				new ShaclShape(COLLECTION, ModelFactory.createDefaultModel()));
 		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.empty());
 
-		EventStreamResponse eventStreamResponse = service.retrieveEventStream(COLLECTION);
+		EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
 
-		assertThat(eventStreamResponse).isEqualTo(EVENT_STREAM_RESPONSE);
+		assertThat(eventStreamTO).isEqualTo(EVENT_STREAM_RESPONSE);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
@@ -139,9 +140,9 @@ class EventStreamServiceImplTest {
 		when(dcatDatasetService.retrieveDataset(COLLECTION)).thenReturn(Optional.of(dataset));
 
 
-		EventStreamResponse eventStreamResponse = service.retrieveEventStream(COLLECTION);
+		EventStreamTO eventStreamTO = service.retrieveEventStream(COLLECTION);
 
-		assertThat(eventStreamResponse).isEqualTo(eventStreamResponseWithDataset);
+		assertThat(eventStreamTO).isEqualTo(eventStreamTOWithDataset);
 		InOrder inOrder = inOrder(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService);
 		inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		inOrder.verify(viewService).getViewsByCollectionName(COLLECTION);
@@ -165,19 +166,19 @@ class EventStreamServiceImplTest {
 	class CreateEventStream {
 		private static final String TIMESTAMP_PATH = "generatedAt";
 		private static final String VERSION_OF_PATH = "versionOf";
-		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
+		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 
 		@Test
 		void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
 			ShaclShape shaclShape = new ShaclShape(COLLECTION, ModelFactory.createDefaultModel());
 			when(eventStreamRepository.saveEventStream(EVENT_STREAM)).thenReturn(EVENT_STREAM);
 			when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
-			EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-					List.of(), ModelFactory.createDefaultModel());
+			EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
 
-			EventStreamResponse createdEventStream = service.createEventStream(eventStreamResponse);
+			EventStreamTO createdEventStream = service.createEventStream(eventStreamTO);
 
-			assertThat(createdEventStream).isEqualTo(eventStreamResponse);
+			assertThat(createdEventStream).isEqualTo(eventStreamTO);
 			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService);
 			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 			inOrder.verify(eventStreamRepository).saveEventStream(EVENT_STREAM);
@@ -187,10 +188,10 @@ class EventStreamServiceImplTest {
 		@Test
 		void given_ExistingEventStream_when_createEventStreamWithSameName_then_throwException() {
 			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
-			EventStreamResponse eventStreamResponse = new EventStreamResponse(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-					List.of(), ModelFactory.createDefaultModel());
+			EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
+					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
 
-			assertThatThrownBy(() -> service.createEventStream(eventStreamResponse))
+			assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
 					.isInstanceOf(IllegalArgumentException.class)
 					.hasMessage("This collection already exists!");
 
@@ -207,10 +208,11 @@ class EventStreamServiceImplTest {
 			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.empty());
 			ViewSpecification byPageView = new ViewSpecification(new ViewName(COLLECTION, byPage), List.of(), List.of(), 100);
 			ViewSpecification byLocationView = new ViewSpecification(new ViewName(COLLECTION, byLocation), List.of(), List.of(), 100);
-			EventStreamResponse eventStreamResponse = new EventStreamResponse(
+			EventStreamTO eventStreamTO = new EventStreamTO(
 					COLLECTION,
 					TIMESTAMP_PATH,
 					VERSION_OF_PATH,
+					VERSION_CREATION_ENABLED,
 					List.of(byPageView, byLocationView),
 					ModelFactory.createDefaultModel());
 
@@ -218,7 +220,7 @@ class EventStreamServiceImplTest {
 			doNothing().when(viewService).addView(byPageView);
 			doThrow(new DuplicateRetentionException()).when(viewService).addView(byLocationView);
 
-			assertThatThrownBy(() -> service.createEventStream(eventStreamResponse))
+			assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
 					.isInstanceOf(DuplicateRetentionException.class);
 			InOrder inOrder = inOrder(eventStreamRepository, shaclShapeService, viewService, eventPublisher);
 			inOrder.verify(eventStreamRepository).retrieveEventStream(COLLECTION);

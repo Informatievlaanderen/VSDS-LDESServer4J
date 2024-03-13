@@ -14,6 +14,7 @@ server:name1 a ldes:EventStream, dcat:Dataset ;
     dcterms:identifier "http://localhost:8080/name1"^^rdfs:Literal ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
+    ldes:createVersions false ;
     tree:shape server:shape .
 
 server:shape a sh:NodeShape .

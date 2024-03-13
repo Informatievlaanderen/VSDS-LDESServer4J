@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
@@ -26,15 +26,15 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
 
     private final EventStreamService eventStreamService;
-    private final EventStreamResponseConverter eventStreamResponseConverter;
+    private final EventStreamTOConverter eventStreamTOConverter;
     private final ModelValidator eventStreamValidator;
 
     public AdminEventStreamsRestController(EventStreamService eventStreamService,
                                            @Qualifier("eventStreamShaclValidator") ModelValidator eventStreamValidator,
-                                           EventStreamResponseConverter eventStreamResponseConverter) {
+                                           EventStreamTOConverter eventStreamTOConverter) {
         this.eventStreamService = eventStreamService;
         this.eventStreamValidator = eventStreamValidator;
-        this.eventStreamResponseConverter = eventStreamResponseConverter;
+        this.eventStreamTOConverter = eventStreamTOConverter;
     }
 
     @InitBinder
@@ -44,24 +44,24 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
 
     @Override
     @GetMapping
-    public List<EventStreamResponse> getEventStreams() {
+    public List<EventStreamTO> getEventStreams() {
         return eventStreamService.retrieveAllEventStreams();
     }
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @Override
     @PostMapping(consumes = {contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle})
-    public EventStreamResponse createEventStream(@RequestBody @Validated Model eventStreamModel) {
-        EventStreamResponse eventStreamResponse = eventStreamResponseConverter.fromModel(eventStreamModel);
-        log.atInfo().log("START creating collection {}", eventStreamResponse.getCollection());
-        eventStreamService.createEventStream(eventStreamResponse);
-        log.atInfo().log("FINISHED creating collection {}", eventStreamResponse.getCollection());
-        return eventStreamResponse;
+    public EventStreamTO createEventStream(@RequestBody @Validated Model eventStreamModel) {
+        EventStreamTO eventStreamTO = eventStreamTOConverter.fromModel(eventStreamModel);
+        log.atInfo().log("START creating collection {}", eventStreamTO.getCollection());
+        eventStreamService.createEventStream(eventStreamTO);
+        log.atInfo().log("FINISHED creating collection {}", eventStreamTO.getCollection());
+        return eventStreamTO;
     }
 
     @Override
     @GetMapping("/{collectionName}")
-    public EventStreamResponse getEventStream(@PathVariable String collectionName) {
+    public EventStreamTO getEventStream(@PathVariable String collectionName) {
         return eventStreamService.retrieveEventStream(collectionName);
     }
 

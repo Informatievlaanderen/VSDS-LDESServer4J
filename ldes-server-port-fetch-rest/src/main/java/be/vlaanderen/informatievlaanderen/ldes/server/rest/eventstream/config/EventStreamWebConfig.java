@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
@@ -16,9 +16,9 @@ public class EventStreamWebConfig {
 	public static final String DEFAULT_RDF_MEDIA_TYPE = "text/turtle";
 
 	@Bean
-	public HttpMessageConverter<EventStreamResponse> eventStreamResponseHttpMessageConverter(
-			EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
-		return new EventStreamResponseHttpConverter(eventStreamResponseConverter, rdfModelConverter);
+	public HttpMessageConverter<EventStreamTO> eventStreamResponseHttpMessageConverter(
+			EventStreamTOConverter eventStreamTOConverter, RdfModelConverter rdfModelConverter) {
+		return new EventStreamResponseHttpConverter(eventStreamTOConverter, rdfModelConverter);
 	}
 
 	@ConditionalOnMissingBean

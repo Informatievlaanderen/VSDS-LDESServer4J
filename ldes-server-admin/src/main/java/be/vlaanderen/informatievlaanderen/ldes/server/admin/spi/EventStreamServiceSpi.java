@@ -5,9 +5,9 @@ import org.apache.jena.rdf.model.Model;
 import java.util.List;
 
 public interface EventStreamServiceSpi {
-	List<EventStreamResponse> retrieveAllEventStreams();
+	List<EventStreamTO> retrieveAllEventStreams();
 
-	EventStreamResponse retrieveEventStream(String collectionName);
+	EventStreamTO retrieveEventStream(String collectionName);
 
 	Model getComposedDcat();
 }
