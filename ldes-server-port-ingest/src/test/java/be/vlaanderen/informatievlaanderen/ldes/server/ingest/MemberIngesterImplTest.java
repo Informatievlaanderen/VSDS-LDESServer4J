@@ -20,6 +20,7 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,68 +32,71 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MemberIngesterImplTest {
 
-	@Mock
-	private MemberRepository memberRepository;
+    @Mock
+    private MemberRepository memberRepository;
 
-	@Mock
-	private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
 
-	@Mock
-	private MemberIngestValidator validator;
+    @Mock
+    private MemberIngestValidator validator;
 
-	@InjectMocks
-	private MemberIngesterImpl memberIngestService;
+    @InjectMocks
+    private MemberIngesterImpl memberIngestService;
 
-	@Test
-	void whenValidatorThrowsAnException_thenTheIngestIsAborted_andTheExceptionIsThrown() {
-		Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
+    @Test
+    void whenValidatorThrowsAnException_thenTheIngestIsAborted_andTheExceptionIsThrown() {
+        Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
 
-		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-				0L, model);
+        Member member = new Member(
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+                "versionOf", LocalDateTime.now(),
+                0L, "txId", model);
 
-		doThrow(new RuntimeException("testException")).when(validator).validate(member);
+        doThrow(new RuntimeException("testException")).when(validator).validate(member);
 
-		var exception = assertThrows(RuntimeException.class, () -> memberIngestService.ingest(member));
-		assertEquals("testException", exception.getMessage());
-		verifyNoInteractions(memberRepository);
-		verifyNoInteractions(eventPublisher);
-	}
+        var exception = assertThrows(RuntimeException.class, () -> memberIngestService.ingest(member));
+        assertEquals("testException", exception.getMessage());
+        verifyNoInteractions(memberRepository);
+        verifyNoInteractions(eventPublisher);
+    }
 
-	@Test
-	@DisplayName("Adding Member when there is a member with the same id that already exists")
-	void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
-		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-				StandardCharsets.UTF_8);
-		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insert(member)).thenReturn(Optional.empty());
+    @Test
+    @DisplayName("Adding Member when there is a member with the same id that already exists")
+    void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
+        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+                StandardCharsets.UTF_8);
+        Member member = new Member(
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464", LocalDateTime.parse("2020-12-28T09:36:37.127"),
+                0L, "txId", RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
+        when(memberRepository.insert(member)).thenReturn(Optional.empty());
 
-		boolean memberIngested = memberIngestService.ingest(member);
+        boolean memberIngested = memberIngestService.ingest(member);
 
-		assertThat(memberIngested).isFalse();
-		verify(memberRepository, times(1)).insert(member);
-		verifyNoInteractions(eventPublisher);
-	}
+        assertThat(memberIngested).isFalse();
+        verify(memberRepository, times(1)).insert(member);
+        verifyNoInteractions(eventPublisher);
+    }
 
-	@Test
-	@DisplayName("Adding Member when there is no existing member with the same id")
-	void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() throws IOException {
-		String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-				StandardCharsets.UTF_8);
-		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-				0L, RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
-		when(memberRepository.insert(member)).thenReturn(Optional.of(member));
+    @Test
+    @DisplayName("Adding Member when there is no existing member with the same id")
+    void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() throws IOException {
+        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
+                StandardCharsets.UTF_8);
+        Member member = new Member(
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464", LocalDateTime.parse("2020-12-28T09:36:37.127"),
+                0L, "txId", RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
+        when(memberRepository.insert(member)).thenReturn(Optional.of(member));
 
-		boolean memberIngested = memberIngestService.ingest(member);
+        boolean memberIngested = memberIngestService.ingest(member);
 
-		assertThat(memberIngested).isTrue();
-		InOrder inOrder = inOrder(memberRepository, eventPublisher);
-		inOrder.verify(memberRepository, times(1)).insert(member);
-		inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
-		inOrder.verifyNoMoreInteractions();
-	}
+        assertThat(memberIngested).isTrue();
+        InOrder inOrder = inOrder(memberRepository, eventPublisher);
+        inOrder.verify(memberRepository, times(1)).insert(member);
+        inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
+        inOrder.verifyNoMoreInteractions();
+    }
 
 }

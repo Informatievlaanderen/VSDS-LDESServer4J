@@ -26,6 +26,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
 
@@ -73,7 +74,7 @@ public class MemberConverter implements HttpMessageConverter<Member> {
 		String collectionName = request.getRequestURI().replace(request.getContextPath() + "/", "");
 
 		String memberId = extractMemberId(memberModel, collectionName);
-		return new Member(memberId, collectionName, null, memberModel);
+		return new Member(memberId, collectionName, null, null, null, UUID.randomUUID().toString(), memberModel);
 	}
 
 	@Override

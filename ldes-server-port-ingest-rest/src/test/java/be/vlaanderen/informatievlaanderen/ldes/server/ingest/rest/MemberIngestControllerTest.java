@@ -62,8 +62,8 @@ class MemberIngestControllerTest {
 	@BeforeEach
 	void setUp() {
 		Stream.of(
-						new EventStream("mobility-hindrances", "timestampPath", "http://purl.org/dc/terms/isVersionOf"),
-						new EventStream("restaurant", "timestampPath", "https://vocabulary.uncefact.org/elementVersionId"))
+						new EventStream("mobility-hindrances", "timestampPath", "http://purl.org/dc/terms/isVersionOf", false),
+						new EventStream("restaurant", "timestampPath", "https://vocabulary.uncefact.org/elementVersionId", false))
 				.map(EventStreamCreatedEvent::new)
 				.forEach(eventPublisher::publishEvent);
 	}
