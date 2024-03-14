@@ -57,7 +57,7 @@ class TreeNodeFactoryImplTest {
 		fragment.addRelation(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
 				"valueType", "relation"));
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
-		Member member = new Member("member", null, null);
+		Member member = new Member("member", null, null, null, null);
 		when(allocationRepository.getMemberAllocationsByFragmentId(TREE_NODE_ID.asDecodedFragmentId()))
 				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
 		when(memberFetcher.fetchAllByIds(List.of("member"))).thenReturn(List.of(member));
