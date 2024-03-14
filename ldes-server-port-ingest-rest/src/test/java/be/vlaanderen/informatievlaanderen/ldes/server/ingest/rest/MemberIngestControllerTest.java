@@ -79,6 +79,15 @@ class MemberIngestControllerTest {
 	}
 
 	@Test
+	void when_POSTRequestIsPerformedWithVersionOfInBlankNode_LDesMemberIsSaved() throws Exception {
+		byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-versionOf-in-blank-node.nq", Lang.NQUADS);
+
+		mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
+				.andExpect(status().isOk());
+		verify(memberIngester, times(1)).ingest(any(Member.class));
+	}
+
+	@Test
 	void when_POSTRequestIsPerformedWithoutMultipleNamedNodes_ThrowException() throws Exception {
 		byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-with-multiple-nodes.nq", Lang.NQUADS);
 
