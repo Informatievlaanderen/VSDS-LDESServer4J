@@ -1,13 +1,17 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.VersionObjectTransformerCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.VersionObjectTransformerCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers.VersionObjectExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers.VersionObjectTransformer;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
-import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,11 +20,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.util.ResourceUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,6 +34,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MemberIngesterImplTest {
+    private static final String COLLECTION_NAME = "hindrances";
+    private static final String MEMBER_ID = "hindrances/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483";
+    private static final String VERSION_OF = "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622";
+    private static final LocalDateTime TIMESTAMP = ZonedDateTime.parse("2020-12-28T09:36:37.127Z").toLocalDateTime();
 
     @Mock
     private MemberRepository memberRepository;
@@ -41,21 +48,29 @@ class MemberIngesterImplTest {
     @Mock
     private MemberIngestValidator validator;
 
-    @InjectMocks
-    private MemberIngesterImpl memberIngestService;
+    private MemberIngester memberIngestService;
+
+    @BeforeEach
+    void setUp() {
+        VersionObjectTransformerCollection versionObjectTransformerCollection = new VersionObjectTransformerCollectionImpl();
+        memberIngestService = new MemberIngesterImpl(validator, memberRepository, eventPublisher, versionObjectTransformerCollection);
+
+        final VersionObjectTransformer versionObjectTransformer = new VersionObjectExtractor(COLLECTION_NAME, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
+        versionObjectTransformerCollection.addVersionObjectTransformer(COLLECTION_NAME, versionObjectTransformer);
+    }
 
     @Test
     void whenValidatorThrowsAnException_thenTheIngestIsAborted_andTheExceptionIsThrown() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
 
         Member member = new Member(
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-                "versionOf", LocalDateTime.now(),
+                MEMBER_ID, COLLECTION_NAME,
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, "txId", model);
 
         doThrow(new RuntimeException("testException")).when(validator).validate(member);
 
-        var exception = assertThrows(RuntimeException.class, () -> memberIngestService.ingest(member));
+        var exception = assertThrows(RuntimeException.class, () -> memberIngestService.ingest(COLLECTION_NAME, model));
         assertEquals("testException", exception.getMessage());
         verifyNoInteractions(memberRepository);
         verifyNoInteractions(eventPublisher);
@@ -64,15 +79,14 @@ class MemberIngesterImplTest {
     @Test
     @DisplayName("Adding Member when there is a member with the same id that already exists")
     void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-                StandardCharsets.UTF_8);
+        Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
         Member member = new Member(
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464", LocalDateTime.parse("2020-12-28T09:36:37.127"),
-                0L, "txId", RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
+                MEMBER_ID, COLLECTION_NAME,
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
+                0L, "txId", model);
         when(memberRepository.insert(member)).thenReturn(Optional.empty());
 
-        boolean memberIngested = memberIngestService.ingest(member);
+        boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isFalse();
         verify(memberRepository, times(1)).insert(member);
@@ -82,15 +96,14 @@ class MemberIngesterImplTest {
     @Test
     @DisplayName("Adding Member when there is no existing member with the same id")
     void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() throws IOException {
-        String ldesMemberString = FileUtils.readFileToString(ResourceUtils.getFile("classpath:example-ldes-member.nq"),
-                StandardCharsets.UTF_8);
+        Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQ).toModel();
         Member member = new Member(
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464", LocalDateTime.parse("2020-12-28T09:36:37.127"),
-                0L, "txId", RDFParser.fromString(ldesMemberString).lang(Lang.NQUADS).build().toModel());
+                MEMBER_ID, COLLECTION_NAME,
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
+                0L, "txId", model);
         when(memberRepository.insert(member)).thenReturn(Optional.of(member));
 
-        boolean memberIngested = memberIngestService.ingest(member);
+        boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isTrue();
         InOrder inOrder = inOrder(memberRepository, eventPublisher);

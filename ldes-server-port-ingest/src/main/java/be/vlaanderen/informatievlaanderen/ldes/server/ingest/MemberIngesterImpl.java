@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.VersionObjectTransformerCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers.VersionObjectTransformer;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import io.micrometer.core.instrument.Metrics;
+import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -18,21 +21,23 @@ public class MemberIngesterImpl implements MemberIngester {
     private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
     private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
     private static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists. Duplicate member is ignored";
+
     private final MemberIngestValidator validator;
 	private final MemberRepository memberRepository;
 	private final ApplicationEventPublisher eventPublisher;
+    private final VersionObjectTransformerCollection versionObjectTransformerCollection;
 
 	private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
 	public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
-			ApplicationEventPublisher eventPublisher) {
+                              ApplicationEventPublisher eventPublisher, VersionObjectTransformerCollection versionObjectTransformerCollection) {
 		this.validator = validator;
 		this.memberRepository = memberRepository;
 		this.eventPublisher = eventPublisher;
-	}
+        this.versionObjectTransformerCollection = versionObjectTransformerCollection;
+    }
 
-    @Override
-    public boolean ingest(Member member) {
+    private boolean ingestVersionObject(Member member) {
         validator.validate(member);
         final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
         Optional<Member> ingestedMember = insertIntoRepo(member);
@@ -42,6 +47,12 @@ public class MemberIngesterImpl implements MemberIngester {
         return ingestedMember.isPresent();
     }
 
+    @Override
+    public boolean ingest(String collectionName, Model ingestedModel) {
+        final VersionObjectTransformer versionObjectTransformer = versionObjectTransformerCollection.getVersionObjectTransformer(collectionName);
+        final Member member = versionObjectTransformer.transformToVersionObjects(ingestedModel).getFirst();
+        return ingestVersionObject(member);
+    }
 
     private void handleSuccessfulMemberInsertion(Member member, String memberId) {
         final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),

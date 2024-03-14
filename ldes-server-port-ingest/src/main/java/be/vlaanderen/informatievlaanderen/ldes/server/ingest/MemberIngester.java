@@ -1,9 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import org.apache.jena.rdf.model.Model;
 
 public interface MemberIngester {
-
-	boolean ingest(Member member);
+    boolean ingest(String collectionName, Model ingestedModel);
 
 }
