@@ -2,13 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,14 +17,14 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 
 	private final FragmentRepository fragmentRepository;
 	private final AllocationRepository allocationRepository;
-	private final MemberRepository memberRepository;
+	private final MemberFetcher memberFetcher;
 
 	public TreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-							   MemberRepository memberRepository) {
+                               MemberFetcher memberFetcher) {
 		this.fragmentRepository = fragmentRepository;
 		this.allocationRepository = allocationRepository;
-		this.memberRepository = memberRepository;
-	}
+        this.memberFetcher = memberFetcher;
+    }
 
 	@Override
 	public TreeNode getTreeNode(LdesFragmentIdentifier treeNodeId, String hostName, String collectionName) {
@@ -35,8 +34,8 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 						() -> new MissingResourceException("fragment", treeNodeId.asEncodedFragmentId()));
 
 		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId());
-		List<Member> members = memberRepository
-				.findAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
+		List<Member> members = memberFetcher
+				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
 
 		TreeNode treeNode = new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
