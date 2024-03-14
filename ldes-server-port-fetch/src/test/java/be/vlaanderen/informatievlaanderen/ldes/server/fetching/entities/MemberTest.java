@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.TimeZone;
 
@@ -46,8 +47,8 @@ class MemberTest {
         private static final String MEMBER_MODEL_STRING = """
                 <http://test-data/mobility-hindrance/1/2> <http://purl.org/dc/terms/isVersionOf> <http://test-data/mobility-hindrance/1> .
                 <http://test-data/mobility-hindrance/1/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .
-                <http://test-data/mobility-hindrance/1/2> <http://www.w3.org/ns/prov#generatedAtTime> "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-                """;
+                <http://test-data/mobility-hindrance/1/2> <http://www.w3.org/ns/prov#generatedAtTime> "%s"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+                """.formatted(LocalDateTime.parse("2023-04-06T11:58:15.867").atZone(TimeZone.getDefault().toZoneId()).toInstant());
 
         private static final Model EXPECTED_MEMBER_MODEL = RDFParser.fromString(MEMBER_MODEL_STRING).lang(Lang.NQ).toModel();
 
