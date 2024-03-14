@@ -2,9 +2,14 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.EventStreamProperties;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
@@ -35,8 +40,20 @@ public class Member {
     }
 
     public Model getModel() {
-        model.add(createResource(getMemberIdWithoutPrefix()), createProperty(eventStreamProperties.versionOfPath()), createProperty(versionOf));
-        model.add(createResource(getMemberIdWithoutPrefix()), createProperty(eventStreamProperties.timestampPath()), createTypedLiteral(timestamp));
+        if (!model.contains(null, createProperty(eventStreamProperties.versionOfPath()), (RDFNode) null)) {
+            model.add(createResource(getMemberIdWithoutPrefix()), createProperty(eventStreamProperties.versionOfPath()), createProperty(versionOf));
+        }
+        if (!model.contains(null, createProperty(eventStreamProperties.timestampPath()), (RDFNode) null)) {
+            enrichModelWithTimestamp();
+        }
         return model;
+    }
+
+    private void enrichModelWithTimestamp() {
+        final Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        ZonedDateTime zoneTimestamp = timestamp.atZone(TimeZone.getDefault().toZoneId());
+        calendar.setTimeInMillis(zoneTimestamp.toInstant().toEpochMilli());
+        final XSDDateTime xsdTimestamp = new XSDDateTime(calendar);
+        model.add(createResource(getMemberIdWithoutPrefix()), createProperty(eventStreamProperties.timestampPath()), createTypedLiteral(xsdTimestamp));
     }
 }
