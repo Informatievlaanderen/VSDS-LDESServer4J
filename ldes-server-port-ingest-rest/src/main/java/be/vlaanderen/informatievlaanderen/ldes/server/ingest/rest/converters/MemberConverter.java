@@ -86,7 +86,9 @@ public class MemberConverter implements HttpMessageConverter<Member> {
 		final String versionOfPath = versionOfPathCollection
 				.getVersionOfPath(collectionName)
 				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
-		final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath)).toSet();
+		final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath))
+				.filterDrop(resource -> resource.asNode().isBlank())
+				.toSet();
 		if (ids.size() != 1) {
 			throw new MemberIdNotFoundException(model);
 		} else {
