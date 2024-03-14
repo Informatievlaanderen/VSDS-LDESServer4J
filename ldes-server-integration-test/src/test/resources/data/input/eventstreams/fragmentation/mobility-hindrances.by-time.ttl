@@ -18,7 +18,7 @@ mobility-hindrances:by-time a tree:Node ;
     a tree:ViewDescription ;
     tree:fragmentationStrategy ([
         a tree:HierarchicalTimeBasedFragmentation;
-        tree:fragmentationPath prov:generatedAtTime ;
+        tree:fragmentationPath dcterms:created ;
         tree:maxGranularity "day" ;
     ]) ;
     tree:pageSize "10"^^xsd:integer ;

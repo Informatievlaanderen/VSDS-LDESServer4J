@@ -43,7 +43,7 @@ Feature: LDES Server Fragmentation
   @timebased
   Scenario: Server can do Timebased Fragmentation of an LDES
     Given I create the eventstream "data/input/eventstreams/fragmentation/mobility-hindrances.by-time.ttl"
-    And I ingest 5 members to the collection "mobility-hindrances"
+    And I ingest 5 members to the collection "mobility-hindrances" with current timestamp
     And the LDES "mobility-hindrances" contains 5 members
     When I fetch the timebased fragment "by-time" fragment of this month of "mobility-hindrances"
     And I fetch the next fragment through the first "InBetweenRelation"

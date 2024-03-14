@@ -67,17 +67,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I ingest {int} members to the collection {string}")
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
-		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/mob-hind.template.ttl")
-					.replace("ID", String.valueOf(i))
-					.replace("DATETIME", getCurrentTimestamp()))
-					.lang(Lang.TURTLE)
-					.toModel();
-			mockMvc.perform(post("/" + collectionName)
-					.contentType("text/turtle")
-					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
-					.andExpect(status().is2xxSuccessful());
-		}
+		ingestMembersToCollectionWithTimestamp(numberOfMembers, collectionName, "2023-04-06T09:58:15.867Z");
+	}
+
+	@When("I ingest {int} members to the collection {string} with current timestamp")
+	public void iIngestMembersToTheCollectionWithCurrentTimestamp(int numberOfMembers, String collectionName) throws Exception {
+		ingestMembersToCollectionWithTimestamp(numberOfMembers, collectionName, getCurrentTimestamp());
 	}
 
 	@When("I ingest {int} members of template {string} to the collection {string}")
@@ -266,6 +261,20 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
 				.andReturn().getResponse();
 		assertTrue(response.getContentAsString().contains(message + " 1.0"));
+	}
+
+	private void ingestMembersToCollectionWithTimestamp(int numberOfMembers, String collectionName, String timestamp) throws Exception {
+		for (int i = 0; i < numberOfMembers; i++) {
+			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/mob-hind.template.ttl")
+							.replace("ID", String.valueOf(i))
+							.replace("DATETIME", timestamp))
+					.lang(Lang.TURTLE)
+					.toModel();
+			mockMvc.perform(post("/" + collectionName)
+							.contentType("text/turtle")
+							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+					.andExpect(status().is2xxSuccessful());
+		}
 	}
 
 }
