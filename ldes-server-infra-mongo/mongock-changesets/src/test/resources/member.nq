@@ -1,0 +1,47 @@
+_:Ba13d67dd72809c2d307a0057fd68cf7b <http://www.w3.org/2006/time#hasXSDDuration> "PT1H"^^<http://www.w3.org/2001/XMLSchema#duration> .
+_:Ba13d67dd72809c2d307a0057fd68cf7b <http://www.w3.org/2006/time#hasBeginning> _:Ba7f72db8e8f33052186ebd1d4e40f5f7 .
+_:Ba13d67dd72809c2d307a0057fd68cf7b <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/time#TemporalEntity> .
+_:Bc71573ec37565ce5dfbf75c37234fa44 <http://www.opengis.net/ont/geosparql#asWKT> "MULTILINESTRING ((-6.24031410164351 53.3756072010337, -6.2403628016435 53.3756159010337, -6.2404272016435 53.3756267010337, -6.24122490164335 53.3757483010336, -6.24161280164327 53.3758069010336, -6.24174840164325 53.3758198010336, -6.24215590164318 53.3758540010335, -6.24229640164315 53.3758841010335))"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+_:Bc71573ec37565ce5dfbf75c37234fa44 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.opengis.net/ont/sf#MultiLineString> .
+_:Bd07941d3f38bea80efab6cf027dfe14d <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie> _:Baaac86d190f1d4c2b1b2f95e5c2bf95e .
+_:Bd07941d3f38bea80efab6cf027dfe14d <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/netwerk#Knoop> .
+_:Baaac86d190f1d4c2b1b2f95e5c2bf95e <http://www.opengis.net/ont/geosparql#asWKT> "POINT(-6.24031410164351 53.3756072010337)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+_:Baaac86d190f1d4c2b1b2f95e5c2bf95e <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.opengis.net/ont/sf#Point> .
+_:Bbabf291f4c517fe2dd393a3e17820135 <http://purl.org/dc/terms/type> <https://data.vlaanderen.be/doc/concept/VkmMeetInstrumentType/telraam> .
+_:Bbabf291f4c517fe2dd393a3e17820135 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/sosa/Sensor> .
+_:B92dd169b8082087d8b0e7b48bf1f3e01 <https://data.vlaanderen.be/ns/netwerk#Puntreferentie.opPositie> _:B88cc4e38b59ae4f4e23e40d8a3a450c0 .
+_:B92dd169b8082087d8b0e7b48bf1f3e01 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/netwerk#Puntreferentie> .
+_:B1cd17c462d5389a894ae7a95be2a39fb <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie> _:B9ee8b97fcbdeca7bf8b49cb626b48590 .
+_:B1cd17c462d5389a894ae7a95be2a39fb <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/netwerk#Knoop> .
+_:B9ee8b97fcbdeca7bf8b49cb626b48590 <http://www.opengis.net/ont/geosparql#asWKT> "POINT(-6.24229640164315 53.3758841010335)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+_:B9ee8b97fcbdeca7bf8b49cb626b48590 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.opengis.net/ont/sf#Point> .
+_:Ba7f72db8e8f33052186ebd1d4e40f5f7 <http://www.w3.org/2006/time#inXSDDateTimeStamp> "2024-02-20T13:00:00+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+_:Ba7f72db8e8f33052186ebd1d4e40f5f7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2006/time#Instant> .
+_:Be8b7e942e791853e69b9cb9d9164d9a4 <https://data.vlaanderen.be/ns/netwerk#eindknoop> _:B1cd17c462d5389a894ae7a95be2a39fb .
+_:Be8b7e942e791853e69b9cb9d9164d9a4 <https://data.vlaanderen.be/ns/netwerk#beginknoop> _:Bd07941d3f38bea80efab6cf027dfe14d .
+_:Be8b7e942e791853e69b9cb9d9164d9a4 <https://data.vlaanderen.be/ns/netwerk#Link.geometriemiddellijn> _:Bc71573ec37565ce5dfbf75c37234fa44 .
+_:Be8b7e942e791853e69b9cb9d9164d9a4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/weg#Wegsegment> .
+_:B86f12669bb99c1b4c5d64b53e0a7abff <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeersmeetpunt.verkeersmeetpuntnetwerkreferentie> _:B92dd169b8082087d8b0e7b48bf1f3e01 .
+_:B86f12669bb99c1b4c5d64b53e0a7abff <https://data.vlaanderen.be/ns/verkeersmetingen#bemonsterdObject> _:B6a0d23164e3ed9bb7a4d059ba38eafe8 .
+_:B86f12669bb99c1b4c5d64b53e0a7abff <http://def.isotc211.org/iso19156/2011/SamplingPoint#SF_SamplingPoint.shape> _:B70b5744f7875678ff65e8c444f16a7f1 .
+_:B86f12669bb99c1b4c5d64b53e0a7abff <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/verkeersmetingen#Verkeersmeetpunt> .
+_:B70b5744f7875678ff65e8c444f16a7f1 <http://www.opengis.net/ont/geosparql#asWKT> "POINT(-6.241301110113588 53.37575981383679)"^^<http://www.opengis.net/ont/geosparql#wktLiteral> .
+_:B70b5744f7875678ff65e8c444f16a7f1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.opengis.net/ont/sf#Point> .
+_:B88cc4e38b59ae4f4e23e40d8a3a450c0 <https://schema.org/value> "67.85238141353749e0"^^<http://www.w3.org/2001/XMLSchema#double> .
+_:B88cc4e38b59ae4f4e23e40d8a3a450c0 <https://schema.org/unitCode> "m"^^<https://w3id.org/cdt/ucumunit> .
+_:B88cc4e38b59ae4f4e23e40d8a3a450c0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://def.isotc211.org/iso19103/2015/MeasureTypes#Length> .
+_:B6a0d23164e3ed9bb7a4d059ba38eafe8 <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Rijrichting.netwerkreferentieelement> _:Be8b7e942e791853e69b9cb9d9164d9a4 .
+_:B6a0d23164e3ed9bb7a4d059ba38eafe8 <https://data.vlaanderen.be/ns/weg#rijrichting> <https://inspire.ec.europa.eu/codelist/LinkDirectionValue/inDirection> .
+_:B6a0d23164e3ed9bb7a4d059ba38eafe8 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/weg#Rijrichting> .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling.tellingresultaat> "7.73700472122148E0"^^<http://www.w3.org/2001/XMLSchema#double> .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling.geobserveerdKenmerk> _:B7698f198bf40a5cae1ccf2a6de7b5050 .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <https://data.vlaanderen.be/ns/verkeersmetingen#geobserveerdObject> _:B86f12669bb99c1b4c5d64b53e0a7abff .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <http://www.w3.org/ns/sosa/madeBySensor> _:Bbabf291f4c517fe2dd393a3e17820135 .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <http://www.w3.org/ns/prov#generatedAtTime> "2024-02-20T13:00:00+00:00"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <http://purl.org/dc/terms/isVersionOf> <https://telraam.net/en/location/9000001518#bike> .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime> _:Ba13d67dd72809c2d307a0057fd68cf7b .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://data.vlaanderen.be/ns/verkeersmetingen#Verkeersmeting> .
+<https://telraam.net/en/location/9000001518#bike-2024-02-20T13:00:00+00:00> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling> .
+_:B7698f198bf40a5cae1ccf2a6de7b5050 <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstellingkenmerk.kenmerktype> <https://data.vlaanderen.be/doc/concept/VkmVerkeersKenmerkType/aantal> .
+_:B7698f198bf40a5cae1ccf2a6de7b5050 <https://data.vlaanderen.be/ns/verkeersmetingen#voertuigType> <https://data.vlaanderen.be/doc/concept/VkmVoertuigType/fiets> .
+_:B7698f198bf40a5cae1ccf2a6de7b5050 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstellingkenmerk> .

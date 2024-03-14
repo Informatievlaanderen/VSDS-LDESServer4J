@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 @ChangeUnit(id = "eventstream-updater-changeset-15", order = "2024-03-14 00:00:00", author = "VSDS")
 public class EventStreamUpdaterChange {
+    public static final String EVENT_STREAM_COLLECTION_NAME = "eventstream";
 
     private static final Logger log = LoggerFactory.getLogger(be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset15.EventStreamUpdaterChange.class);
 
@@ -25,7 +26,7 @@ public class EventStreamUpdaterChange {
     public void changeSet() {
         final var query = new Query();
         final var update = new Update().set("versionCreationEnabled", false);
-        final var bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "eventstream");
+        final var bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, EVENT_STREAM_COLLECTION_NAME);
         bulkOps.updateMulti(query, update);
 
         final var result = bulkOps.execute();
@@ -36,7 +37,7 @@ public class EventStreamUpdaterChange {
     public void rollback() {
         final var query = new Query();
         final var update = new Update().unset("versionCreationEnabled");
-        final var bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, "eventstream");
+        final var bulkOps = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, EVENT_STREAM_COLLECTION_NAME);
         bulkOps.updateMulti(query, update);
 
         final var result = bulkOps.execute();

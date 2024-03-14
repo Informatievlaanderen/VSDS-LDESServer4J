@@ -3,20 +3,28 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.chang
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
+
 import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.changeset15.MemberUpdaterChange.MEMBER_COLLECTION_NAME;
 
 @Document(MEMBER_COLLECTION_NAME)
-public class MemberV1 {
+public class MemberEntityV2 {
     @Id
     private final String id;
     private final String collectionName;
+    private final String versionOf;
+    private final LocalDateTime timestamp;
     private final Long sequenceNr;
+    private final String transactionId;
     private final String model;
 
-    public MemberV1(String id, String collectionName, Long sequenceNr, String model) {
+    public MemberEntityV2(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, String model) {
         this.id = id;
         this.collectionName = collectionName;
+        this.versionOf = versionOf;
+        this.timestamp = timestamp;
         this.sequenceNr = sequenceNr;
+        this.transactionId = transactionId;
         this.model = model;
     }
 
@@ -28,20 +36,24 @@ public class MemberV1 {
         return collectionName;
     }
 
+    public String getVersionOf() {
+        return versionOf;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
     public Long getSequenceNr() {
         return sequenceNr;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
     }
 
     public String getModel() {
         return model;
     }
 
-    public static MemberV1 from(MemberV2 memberV2) {
-        return new MemberV1(
-                memberV2.getId(),
-                memberV2.getCollectionName(),
-                memberV2.getSequenceNr(),
-                memberV2.getModel()
-        );
-    }
 }
