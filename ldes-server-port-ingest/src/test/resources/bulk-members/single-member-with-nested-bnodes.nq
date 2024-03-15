@@ -1,0 +1,4 @@
+<http://example.org/A> <http://example.org/P1> _:genid1 .
+_:genid1 <http://example.org/P2> _:genid2 .
+_:genid2 <http://example.org/P3> _:genid3 .
+_:genid3 <http://example.org/P4> <http://example.org/O> .

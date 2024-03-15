@@ -1,0 +1,2 @@
+<http://temporary.org#bart> <http://example.com/vocab#name> "Bart" .
+<http://temporary.org#bart> <http://example.com/vocab#parent> <http://temporary.org#homer> .
