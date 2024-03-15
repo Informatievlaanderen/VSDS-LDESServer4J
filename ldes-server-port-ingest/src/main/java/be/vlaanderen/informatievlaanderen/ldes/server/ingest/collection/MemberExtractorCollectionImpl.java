@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.StateObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import org.springframework.context.event.EventListener;
@@ -36,7 +37,7 @@ public class MemberExtractorCollectionImpl implements MemberExtractorCollection 
         final EventStream eventStream = event.eventStream();
         final MemberExtractor memberExtractor;
         if (eventStream.isVersionCreationEnabled()) {
-            memberExtractor = null;
+            memberExtractor = new StateObjectMemberExtractor(eventStream.getCollection());
         } else {
             memberExtractor = new VersionObjectMemberExtractor(
                     eventStream.getCollection(),

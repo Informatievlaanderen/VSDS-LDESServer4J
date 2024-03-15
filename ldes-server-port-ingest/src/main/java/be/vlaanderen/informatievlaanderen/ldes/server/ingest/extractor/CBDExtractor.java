@@ -1,57 +1,54 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.rdf.model.Statement;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.valueobjects.MemberModel;
+import org.apache.jena.rdf.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CBDExtractor {
     private final Model model;
-    private final List<RDFNode> namedSubjects;
-    private final List<RDFNode> processedSubjects = new ArrayList<>();
+    private final List<Resource> namedSubjects;
+    private final List<Resource> processedSubjects = new ArrayList<>();
 
-    private CBDExtractor(Model model, List<RDFNode> namedSubjects) {
+    private CBDExtractor(Model model, List<Resource> namedSubjects) {
         this.model = model;
         this.namedSubjects = namedSubjects;
     }
 
     public static CBDExtractor initialize(Model model) {
-        List<RDFNode> namedSubjects = extractAllNodesSubjects(model);
+        List<Resource> namedSubjects = extractAllNodesSubjects(model);
         return new CBDExtractor(model, namedSubjects);
     }
 
-    public List<RDFNode> getNamedSubjects() {
+    public List<Resource> getNamedSubjects() {
         return namedSubjects;
     }
 
-    public List<Model> extractAllMemberModels() {
+    public List<MemberModel> extractAllMemberModels() {
         return namedSubjects.stream()
-                .map(this::extractMemberModel)
+                .map(subject -> new MemberModel(subject.getURI(), extractMemberModel(subject)))
                 .toList();
     }
 
-    public Model extractMemberModel(RDFNode subject) {
+    public Model extractMemberModel(Resource subject) {
         processedSubjects.add(subject);
         Model member = ModelFactory.createDefaultModel();
         model.listStatements().forEach(statement -> {
             if (statementBelongsToSubject(subject, statement)) {
                 member.add(statement);
                 if (statementContainsProcessableBNode(statement)) {
-                    member.add(extractMemberModel(statement.getObject()));
+                    member.add(extractMemberModel((Resource) statement.getObject()));
                 }
             }
         });
         return member;
     }
 
-    private static List<RDFNode> extractAllNodesSubjects(Model model) {
+    private static List<Resource> extractAllNodesSubjects(Model model) {
         return model.listSubjects().toList()
                 .stream()
                 .filter(subject -> !subject.isAnon())
-                .map(RDFNode.class::cast)
                 .toList();
     }
 

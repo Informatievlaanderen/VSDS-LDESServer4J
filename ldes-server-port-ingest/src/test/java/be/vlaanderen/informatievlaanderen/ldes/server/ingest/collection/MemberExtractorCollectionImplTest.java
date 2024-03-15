@@ -1,7 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.StateObjectMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberExtractorCollectionImplTest {
     private static final String COLLECTION_NAME = "collection";
-    private MemberExtractorCollection memberExtractorCollection;
+    private MemberExtractorCollectionImpl memberExtractorCollection;
     private MemberExtractor memberExtractor;
 
     @BeforeEach
@@ -38,13 +42,33 @@ class MemberExtractorCollectionImplTest {
     }
 
     @Test
-    void test_Deletion() {
+    void test_HandleEventStreamDeletedEvent() {
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .isPresent();
 
-        memberExtractorCollection.deleteMemberExtractor(COLLECTION_NAME);
+        memberExtractorCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
 
         assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
                 .isEmpty();
+    }
+
+    @Test
+    void test_HandleVersionObjectEventStreamCreatedEvent() {
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
+
+        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+
+        assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
+                .containsInstanceOf(VersionObjectMemberExtractor.class);
+    }
+
+    @Test
+    void test_HandleStateObjectEventStreamCreatedEvent() {
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true);
+
+        memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
+
+        assertThat(memberExtractorCollection.getMemberExtractor(COLLECTION_NAME))
+                .containsInstanceOf(StateObjectMemberExtractor.class);
     }
 }

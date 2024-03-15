@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.valueobjects.MemberModel;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -28,7 +29,7 @@ class CDBExtractorTest {
                 .toList();
         final Model model = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
 
-        final List<RDFNode> namedNodes = CBDExtractor.initialize(model).getNamedSubjects();
+        final List<Resource> namedNodes = CBDExtractor.initialize(model).getNamedSubjects();
 
         assertThat(namedNodes).containsExactlyInAnyOrderElementsOf(expectedNamedNodes);
     }
@@ -53,11 +54,11 @@ class CDBExtractorTest {
                 .toList();
         final Model modelToExtract = RDFParser.source(modelToExtractFileName).lang(Lang.NQ).toModel();
 
-        final List<Model> actualMembers = CBDExtractor.initialize(modelToExtract).extractAllMemberModels();
+        final List<MemberModel> actualMembers = CBDExtractor.initialize(modelToExtract).extractAllMemberModels();
 
         assertThat(actualMembers)
                 .isNotEmpty()
-                .allMatch(actualMember -> expectedMembers.stream().anyMatch(actualMember::isIsomorphicWith));
+                .allMatch(actualMember -> expectedMembers.stream().anyMatch(expectedMember -> actualMember.getModel().isIsomorphicWith(expectedMember)));
     }
 
     static class SingleMemberExtractionArgumentsProvider implements ArgumentsProvider {
