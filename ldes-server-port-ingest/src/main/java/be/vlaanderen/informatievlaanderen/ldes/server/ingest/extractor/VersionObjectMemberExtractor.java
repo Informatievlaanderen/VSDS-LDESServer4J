@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers;
+package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -11,20 +11,20 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public class VersionObjectExtractor implements VersionObjectTransformer {
+public class VersionObjectMemberExtractor implements MemberExtractor {
     private final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
     private final String collectionName;
     private final String versionOfPath;
     private final String timestampPath;
 
-    public VersionObjectExtractor(String collectionName, String versionOfPath, String timestampPath) {
+    public VersionObjectMemberExtractor(String collectionName, String versionOfPath, String timestampPath) {
         this.collectionName = collectionName;
         this.versionOfPath = versionOfPath;
         this.timestampPath = timestampPath;
     }
 
     @Override
-    public List<Member> transformToVersionObjects(Model ingestedModel) {
+    public List<Member> extractMembers(Model ingestedModel) {
         final String memberId = extractMemberId(ingestedModel);
         final String transactionId = UUID.randomUUID().toString();
         final String versionOf = extractVersionOf(ingestedModel);

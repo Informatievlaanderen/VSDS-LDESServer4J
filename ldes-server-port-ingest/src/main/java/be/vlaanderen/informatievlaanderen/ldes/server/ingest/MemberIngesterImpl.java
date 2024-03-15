@@ -1,10 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.VersionObjectTransformerCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers.VersionObjectTransformer;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
@@ -25,16 +26,16 @@ public class MemberIngesterImpl implements MemberIngester {
     private final MemberIngestValidator validator;
 	private final MemberRepository memberRepository;
 	private final ApplicationEventPublisher eventPublisher;
-    private final VersionObjectTransformerCollection versionObjectTransformerCollection;
+    private final MemberExtractorCollection memberExtractorCollection;
 
 	private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
 	public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
-                              ApplicationEventPublisher eventPublisher, VersionObjectTransformerCollection versionObjectTransformerCollection) {
+                              ApplicationEventPublisher eventPublisher, MemberExtractorCollection memberExtractorCollection) {
 		this.validator = validator;
 		this.memberRepository = memberRepository;
 		this.eventPublisher = eventPublisher;
-        this.versionObjectTransformerCollection = versionObjectTransformerCollection;
+        this.memberExtractorCollection = memberExtractorCollection;
     }
 
     private boolean ingestVersionObject(Member member) {
@@ -49,8 +50,10 @@ public class MemberIngesterImpl implements MemberIngester {
 
     @Override
     public boolean ingest(String collectionName, Model ingestedModel) {
-        final VersionObjectTransformer versionObjectTransformer = versionObjectTransformerCollection.getVersionObjectTransformer(collectionName);
-        final Member member = versionObjectTransformer.transformToVersionObjects(ingestedModel).getFirst();
+        final MemberExtractor memberExtractor = memberExtractorCollection
+                .getMemberExtractor(collectionName)
+                .orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
+        final Member member = memberExtractor.extractMembers(ingestedModel).getFirst();
         return ingestVersionObject(member);
     }
 

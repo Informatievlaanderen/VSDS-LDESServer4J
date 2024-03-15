@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.VersionObjectTransformerCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.VersionObjectTransformerCollectionImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers.VersionObjectExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.transformers.VersionObjectTransformer;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
@@ -52,11 +51,11 @@ class MemberIngesterImplTest {
 
     @BeforeEach
     void setUp() {
-        VersionObjectTransformerCollection versionObjectTransformerCollection = new VersionObjectTransformerCollectionImpl();
-        memberIngestService = new MemberIngesterImpl(validator, memberRepository, eventPublisher, versionObjectTransformerCollection);
+        MemberExtractorCollection memberExtractorCollection = new MemberExtractorCollectionImpl();
+        memberIngestService = new MemberIngesterImpl(validator, memberRepository, eventPublisher, memberExtractorCollection);
 
-        final VersionObjectTransformer versionObjectTransformer = new VersionObjectExtractor(COLLECTION_NAME, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
-        versionObjectTransformerCollection.addVersionObjectTransformer(COLLECTION_NAME, versionObjectTransformer);
+        final MemberExtractor memberExtractor = new VersionObjectMemberExtractor(COLLECTION_NAME, "http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
+        memberExtractorCollection.addMemberExtractor(COLLECTION_NAME, memberExtractor);
     }
 
     @Test
