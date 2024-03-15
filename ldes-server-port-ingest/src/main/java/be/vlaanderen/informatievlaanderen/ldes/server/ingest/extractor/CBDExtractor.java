@@ -48,12 +48,11 @@ public class CBDExtractor {
     }
 
     private static List<RDFNode> extractAllNodesSubjects(Model model) {
-        final List<RDFNode> namedNodes = new ArrayList<>();
-        model.listSubjects().toList()
+        return model.listSubjects().toList()
                 .stream()
                 .filter(subject -> !subject.isAnon())
-                .forEach(namedNodes::add);
-        return namedNodes;
+                .map(RDFNode.class::cast)
+                .toList();
     }
 
     private boolean statementBelongsToSubject(RDFNode subject, Statement statement) {

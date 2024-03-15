@@ -47,7 +47,7 @@ class CDBExtractorTest {
 
     @ParameterizedTest
     @ArgumentsSource(AllMembersExtractionArgumentsProvider.class)
-    void name(String modelToExtractFileName, List<String> memberFileNames) {
+    void test_extractAllMembersFromModel(String modelToExtractFileName, List<String> memberFileNames) {
         final List<Model> expectedMembers = memberFileNames.stream()
                 .map(fileName -> RDFParser.source(fileName).lang(Lang.NQ).toModel())
                 .toList();
