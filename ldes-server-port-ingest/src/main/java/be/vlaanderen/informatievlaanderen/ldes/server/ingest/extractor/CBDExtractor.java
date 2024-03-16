@@ -38,7 +38,7 @@ public class CBDExtractor {
             if (statementBelongsToSubject(subject, statement)) {
                 member.add(statement);
                 if (statementContainsProcessableBNode(statement)) {
-                    member.add(extractMemberModel((Resource) statement.getObject()));
+                    member.add(extractMemberModel(statement.getObject().asResource()));
                 }
             }
         });
@@ -58,7 +58,7 @@ public class CBDExtractor {
 
     private boolean statementContainsProcessableBNode(Statement statement) {
         return !statement.getObject().isLiteral()
-                && !processedSubjects.contains(statement.getObject())
-                && !namedSubjects.contains(statement.getObject());
+                && !processedSubjects.contains(statement.getObject().asResource())
+                && !namedSubjects.contains(statement.getObject().asResource());
     }
 }
