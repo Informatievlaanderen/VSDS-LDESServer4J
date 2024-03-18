@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
@@ -29,8 +29,8 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EventStreamTOConverterImplTest {
-	private EventStreamTOConverter eventStreamConverter;
+class EventStreamConverterImplTest {
+	private EventStreamConverter eventStreamConverter;
 	private Model shacl;
 	private Model dataSetModel;
 
@@ -41,7 +41,7 @@ class EventStreamTOConverterImplTest {
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(), prefixConstructor);
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
-		eventStreamConverter = new EventStreamTOConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
+		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
 	}

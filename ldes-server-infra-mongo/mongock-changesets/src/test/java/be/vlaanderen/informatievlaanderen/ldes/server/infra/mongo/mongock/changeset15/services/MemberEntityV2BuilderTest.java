@@ -39,7 +39,7 @@ class MemberEntityV2BuilderTest {
     @Test
     void given_MemberV1WithMissingVersionOf_when_BuildMemberV2_then_ReturnThrowException() throws IOException {
         final List<String> modelLines = readFileContent();
-        modelLines.removeIf(line -> line.contains(EVENT_STREAM_PROPERTIES.getVersionOfPath()));
+        modelLines.removeIf(line -> line.contains(EVENT_STREAM_PROPERTIES.versionOfPath()));
         final String model = String.join("\n", modelLines);
         final MemberEntityV1 memberEntityV1 = new MemberEntityV1(ID, COLLECTION_NAME, SEQUENCE_NR, model);
 
@@ -49,13 +49,13 @@ class MemberEntityV2BuilderTest {
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Database model does not contain expected %s", EVENT_STREAM_PROPERTIES.getVersionOfPath());
+                .hasMessage("Database model does not contain expected %s", EVENT_STREAM_PROPERTIES.versionOfPath());
     }
 
     @Test
     void given_MemberV1WithMissingTimestamp_when_BuildMemberV2_then_ReturnThrowException() throws IOException {
         final List<String> modelLines = readFileContent();
-        modelLines.removeIf(line -> line.contains(EVENT_STREAM_PROPERTIES.getTimestampPath()));
+        modelLines.removeIf(line -> line.contains(EVENT_STREAM_PROPERTIES.timestampPath()));
         final String model = String.join("\n", modelLines);
         final MemberEntityV1 memberEntityV1 = new MemberEntityV1(ID, COLLECTION_NAME, SEQUENCE_NR, model);
 
@@ -65,7 +65,7 @@ class MemberEntityV2BuilderTest {
 
         assertThatThrownBy(builder::build)
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("Database model does not contain expected %s", EVENT_STREAM_PROPERTIES.getTimestampPath());
+                .hasMessage("Database model does not contain expected %s", EVENT_STREAM_PROPERTIES.timestampPath());
     }
 
     private List<String> readFileContent() throws IOException {

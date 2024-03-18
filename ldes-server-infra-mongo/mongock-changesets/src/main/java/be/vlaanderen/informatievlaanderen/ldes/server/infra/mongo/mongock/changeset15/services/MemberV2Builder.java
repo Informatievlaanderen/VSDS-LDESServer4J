@@ -52,7 +52,7 @@ public class MemberV2Builder {
     }
 
     private String extractVersionOf() {
-        final String versionOfPath = eventStreamProperties.getVersionOfPath();
+        final String versionOfPath = eventStreamProperties.versionOfPath();
         return getJenaModel().listObjectsOfProperty(ResourceFactory.createProperty(versionOfPath))
                 .nextOptional()
                 .map(RDFNode::toString)
@@ -61,7 +61,7 @@ public class MemberV2Builder {
 
     private LocalDateTime extractTimestamp() {
         final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
-        final String timestampPath = eventStreamProperties.getTimestampPath();
+        final String timestampPath = eventStreamProperties.timestampPath();
         return getJenaModel()
                 .listObjectsOfProperty(ResourceFactory.createProperty(timestampPath))
                 .nextOptional()

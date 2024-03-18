@@ -21,7 +21,6 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-//@SuppressWarnings("java:S1075")
 @Observed
 @Component
 public class IngestedModelConverter implements HttpMessageConverter<Model> {
