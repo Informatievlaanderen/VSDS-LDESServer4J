@@ -40,15 +40,16 @@ class TimeBasedRelationsAttributerTest {
 	@Test
 	void when_RelationNotPresent_AndCachingDisabled_ThenRelationIsAdded_NextUpdateTsIsNotSet_ChildrenStayMutable() {
 		Fragment child = parentFragment.createChild(monthPair);
+
 		TreeRelation expected = new TreeRelation(config.getFragmentationPath(),
 				child.getFragmentId(),
-				"2023-02", Granularity.MONTH.getType(),
-				TREE_INBETWEEN_RELATION);
+				LocalDateTime.of(2023,2,1,0,0).toString()
+				, XSD_DATETIME, TREE_GTE_RELATION);
 
 		relationsAttributer.addInBetweenRelation(parentFragment, child);
 
 		assertThat(parentFragment.containsRelation(expected)).isTrue();
-		verify(fragmentRepository).saveFragment(parentFragment);
+		verify(fragmentRepository, times(2)).saveFragment(parentFragment);
 		assertThat(parentFragment.getNextUpdateTs()).isNull();
 		verify(fragmentRepository, times(0)).makeChildrenImmutable(any());
 	}
