@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.jetbrains.annotations.Nullable;
 
 

@@ -13,4 +13,4 @@
     a as:Note ;
     as:content "This is a simple note"
   ] ;
-  as:published "DATETIME"^^xsd:dateTime .
+  dcterms:created "DATETIME"^^xsd:dateTime .

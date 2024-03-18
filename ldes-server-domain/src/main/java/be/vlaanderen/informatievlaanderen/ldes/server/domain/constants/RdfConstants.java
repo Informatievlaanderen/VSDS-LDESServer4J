@@ -25,6 +25,7 @@ public class RdfConstants {
 	public static final String RDF_SCHEMA = "http://www.w3.org/2000/01/rdf-schema#";
 	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOfPath");
 	public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
+	public static final Property LDES_CREATE_VERSIONS = createProperty(LDES, "createVersions");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
@@ -35,17 +36,11 @@ public class RdfConstants {
 	public static final String RDF_LITERAL = RDF_SCHEMA + "Literal";
 	public static final Property DC_CONFORMS_TO = createProperty(DC_TERMS, "conformsTo");
 	public static final Property DC_STANDARD = createProperty(DC_TERMS, "Standard");
-	public static final String PROV = "http://www.w3.org/ns/prov#";
-	public static final String PROV_GENERATED_AT_TIME = PROV + GENERATED_AT_TIME;
 
-	public static final String TREE_GREATER_THAN_OR_EQUAL_TO_RELATION = TREE + "GreaterThanOrEqualToRelation";
-	public static final String TREE_LESSER_THAN_OR_EQUAL_TO_RELATION = TREE + "LessThanOrEqualToRelation";
 
 	public static final String GENERIC_TREE_RELATION = TREE + "Relation";
 
 	public static final String VIEW = TREE + "view";
-	public static final String VIEW_TYPE = LDES + "View";
-	public static final String SHAPE = TREE + "shape";
 	public static final String NODE_SHAPE_TYPE = SHACL + "NodeShape";
 	public static final String EVENT_STREAM_TYPE = LDES + "EventStream";
 	public static final String RETENTION_TYPE = LDES + "retentionPolicy";

@@ -15,6 +15,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -23,90 +25,73 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MemberTest {
 
-	@Test
-	@DisplayName("Test correct replacing of TreeMember statement")
-	void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() {
-		Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
-		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-				0L, model);
+    @Test
+    @DisplayName("Test correct replacing of TreeMember statement")
+    void when_TreeMemberStatementIsReplaced_TreeMemberStatementHasADifferentSubject() {
+        Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
+        Member member = new Member(
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
+                LocalDateTime.parse("2020-12-28T09:36:37.127"),
+                0L, UUID.randomUUID().toString(), model);
 
-		member.removeTreeMember();
-		Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
-				.orElse(null);
+        member.removeTreeMember();
+        Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
+                .orElse(null);
 
-		assertNull(statement);
-	}
+        assertNull(statement);
+    }
 
-	@Test
-	void testGetters() {
-		Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
-		Member member = new Member(
-				"https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
-				0L, model);
+    @Test
+    void testGetters() {
+        Model model = RDFParser.source("example-ldes-member.nq").build().toModel();
+        Member member = new Member(
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
+                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
+                LocalDateTime.parse("2020-12-28T09:36:37.127"),
+                0L, UUID.randomUUID().toString(), model);
 
-		assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
-				member.getId());
-		assertEquals(0L, member.getSequenceNr());
-		assertEquals("collectionName", member.getCollectionName());
-		assertTrue(member.getModel().isIsomorphicWith(model));
-	}
+        assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
+                member.getId());
+        assertEquals(0L, member.getSequenceNr());
+        assertEquals("collectionName", member.getCollectionName());
+        assertTrue(member.getModel().isIsomorphicWith(model));
+    }
 
-	@ParameterizedTest
-	@ArgumentsSource(EqualityTestProvider.class)
-	void testEqualsAndHashCode(BiConsumer<Object, Object> assertion, Member a, Member b) {
-		assertNotNull(assertion);
-		assertion.accept(a, b);
-		if (a != null && b != null) {
-			assertion.accept(a.hashCode(), b.hashCode());
-		}
-	}
+    @ParameterizedTest
+    @ArgumentsSource(EqualityTestProvider.class)
+    void testEqualsAndHashCode(BiConsumer<Object, Object> assertion, Member a, Member b) {
+        assertNotNull(assertion);
+        assertion.accept(a, b);
+        if (a != null && b != null) {
+            assertion.accept(a.hashCode(), b.hashCode());
+        }
+    }
 
-	@Nested
-	class GetMemberIdWithoutPrefix {
-		@Test
-		void shouldThrowException_whenIdHasNoPrefix() {
-			Member member = new Member(
-					"http://localhost:8080/member/1", "collectionName",
-					0L, null);
+    static class EqualityTestProvider implements ArgumentsProvider {
 
-			assertThrows(IllegalStateException.class, member::getMemberIdWithoutPrefix);
-		}
+        private static final String idA = "idA";
+        private static final Member memberA = new Member(idA, null, null, null, null, null, null);
 
-		@Test
-		void shouldReturnIdWithoutPrefix_whenIdHasPrefix() {
-			Member member = new Member(
-					"parcels/http://localhost:8080/member/1", "collectionName",
-					0L, null);
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+            return Stream.of(
+                    Arguments.of(equals(), memberA, memberA),
+                    Arguments.of(equals(), new Member(idA, "otherCollection", "other", LocalDateTime.now(), 10L, "txId", ModelFactory.createDefaultModel()),
+                            memberA),
+                    Arguments.of(notEquals(),
+                            new Member("idB", "otherCollection", "other", LocalDateTime.now(), 10L, "txId", ModelFactory.createDefaultModel()), memberA),
+                    Arguments.of(notEquals(), new Member("idB", null, null, null, null, null, null), memberA));
+        }
 
-			assertEquals("http://localhost:8080/member/1", member.getMemberIdWithoutPrefix());
-		}
-	}
+        private static BiConsumer<Object, Object> equals() {
+            return Assertions::assertEquals;
+        }
 
-	static class EqualityTestProvider implements ArgumentsProvider {
+        private static BiConsumer<Object, Object> notEquals() {
+            return Assertions::assertNotEquals;
+        }
 
-		private static final String idA = "idA";
-		private static final Member memberA = new Member(idA, null, null, null);
-
-		@Override
-		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-			return Stream.of(
-					Arguments.of(equals(), memberA, memberA),
-					Arguments.of(equals(), new Member(idA, "otherCollection", 10L, ModelFactory.createDefaultModel()),
-							memberA),
-					Arguments.of(notEquals(),
-							new Member("idB", "otherCollection", 10L, ModelFactory.createDefaultModel()), memberA),
-					Arguments.of(notEquals(), new Member("idB", null, null, null), memberA));
-		}
-
-		private static BiConsumer<Object, Object> equals() {
-			return Assertions::assertEquals;
-		}
-
-		private static BiConsumer<Object, Object> notEquals() {
-			return Assertions::assertNotEquals;
-		}
-
-	}
+    }
 
 }

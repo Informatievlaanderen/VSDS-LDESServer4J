@@ -33,6 +33,7 @@ server:name2  rdf:type      ldes:EventStream, dcat:Dataset ;
         terms:identifier  "http://localhost:8080/name2"^^rdfs:Literal ;
         ldes:timestampPath  terms:created ;
         ldes:versionOfPath  terms:isVersionOf ;
+        ldes:createVersions false ;
         tree:view           name2:view1 ;
         tree:shape          name2:shape .
 
@@ -56,6 +57,7 @@ server:name1  rdf:type      ldes:EventStream, dcat:Dataset ;
         terms:identifier  "http://localhost:8080/name1"^^rdfs:Literal ;
         ldes:timestampPath  terms:created ;
         ldes:versionOfPath  terms:isVersionOf ;
+        ldes:createVersions false ;
         tree:view           name1:view2 , name1:view3 ;
         tree:shape          name1:shape .
 

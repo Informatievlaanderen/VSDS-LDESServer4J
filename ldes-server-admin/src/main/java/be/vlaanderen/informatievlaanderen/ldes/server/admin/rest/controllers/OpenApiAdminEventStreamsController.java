@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -70,7 +70,7 @@ public interface OpenApiAdminEventStreamsController {
 					[{"@id":"_:b0","https://w3id.org/tree#pageSize":[{"@value":"100","@type":"http://www.w3.org/2001/XMLSchema#int"}],"https://w3id.org/tree#fragmentationStrategy":[{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"}]},{"@id":"http://localhost:8080/mobility-hindrances","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/mobility-hindrances/shape"}]},{"@id":"http://localhost:8080/mobility-hindrances/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/shape"}]},{"@id":"http://localhost:8080/parcels/paged","https://w3id.org/tree#viewDescription":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://localhost:8080/shape"},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/by-page":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]}]
 					"""))
 	})
-	List<EventStreamResponse> getEventStreams();
+	List<EventStreamTO> getEventStreams();
 
 	@Operation(summary = "Create an Event Stream based on the provided config")
 	@ApiResponse(responseCode = "201", content = {
@@ -102,7 +102,7 @@ public interface OpenApiAdminEventStreamsController {
 					"""))
 	})
 	@ApiResponse(responseCode = "400", description = "The provided config is not valid", content = @Content)
-	EventStreamResponse createEventStream(
+    EventStreamTO createEventStream(
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							@prefix ldes: <https://w3id.org/ldes#> .
@@ -172,7 +172,7 @@ public interface OpenApiAdminEventStreamsController {
 					"""))
 	})
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found", content = @Content)
-	EventStreamResponse getEventStream(@Parameter(example = "parcels") String collectionName);
+    EventStreamTO getEventStream(@Parameter(example = "parcels") String collectionName);
 
 	@Operation(summary = "Delete an Event Stream")
 	@ApiResponse(responseCode = "200", description = "Event Stream has been successfully deleted")

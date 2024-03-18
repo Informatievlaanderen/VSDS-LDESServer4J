@@ -21,6 +21,7 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    dct:conformsTo       <https://w3id.org/ldes/specification> , <https://w3id.org/tree/specification> ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
+   ldes:createVersions true ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 ;

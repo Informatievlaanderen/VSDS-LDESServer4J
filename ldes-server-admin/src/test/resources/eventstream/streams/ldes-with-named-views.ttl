@@ -23,6 +23,7 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    dc:identifier "http://localhost:8080/collectionName1"^^rdfs:Literal ;
    ldes:timestampPath dc:created ;
    ldes:versionOfPath dc:isVersionOf ;
+   ldes:createVersions false ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 .

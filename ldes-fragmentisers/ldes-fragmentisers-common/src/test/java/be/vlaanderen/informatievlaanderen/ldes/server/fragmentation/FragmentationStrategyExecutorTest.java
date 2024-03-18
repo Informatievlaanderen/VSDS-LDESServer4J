@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -21,6 +22,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -104,11 +106,11 @@ class FragmentationStrategyExecutorTest {
 			verify(fragmentSequenceRepository).saveLastProcessedSequence(new FragmentSequence(viewName, sequenceNr));
 		}
 
-		private be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member createIngestMember(String id,
+		private Member createIngestMember(String id,
 				Model model,
 				long sequenceNr) {
-			return new be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member(id, "collectionName",
-					sequenceNr, model);
+			return new Member(id, "collectionName", "versionOf", LocalDateTime.now(),
+					sequenceNr, "txId", model);
 		}
 	}
 

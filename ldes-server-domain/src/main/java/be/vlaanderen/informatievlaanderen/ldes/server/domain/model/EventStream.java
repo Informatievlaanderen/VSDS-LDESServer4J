@@ -7,12 +7,14 @@ public class EventStream {
 	private final String collection;
 	private final String timestampPath;
 	private final String versionOfPath;
+	private final boolean versionCreationEnabled;
 
-	public EventStream(String collection, String timestampPath, String versionOfPath) {
+	public EventStream(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
-	}
+        this.versionCreationEnabled = versionCreationEnabled;
+    }
 
 	public String getCollection() {
 		return collection;
@@ -24,6 +26,10 @@ public class EventStream {
 
 	public String getVersionOfPath() {
 		return versionOfPath;
+	}
+
+	public boolean isVersionCreationEnabled() {
+		return versionCreationEnabled;
 	}
 
 	@Override

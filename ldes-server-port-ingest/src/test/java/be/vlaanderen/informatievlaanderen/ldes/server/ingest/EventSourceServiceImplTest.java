@@ -37,7 +37,7 @@ class EventSourceServiceImplTest {
 	}
 
 	private Member createMember(int id) {
-		return new Member(String.valueOf(id), COLLECTION_NAME, (long) id, null);
+		return new Member(String.valueOf(id), COLLECTION_NAME, null, null, (long) id, null, null);
 	}
 
 }

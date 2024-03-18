@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles({"test", "rest"})
 @ContextConfiguration(classes = {AdminEventStreamsRestController.class, HttpModelConverter.class,
-		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamResponseConverterImpl.class,
+		EventStreamListHttpConverter.class, EventStreamHttpConverter.class, EventStreamConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, ValidatorsConfig.class,
 		AdminRestResponseEntityExceptionHandler.class, RetentionModelExtractor.class,
 		FragmentationConfigExtractor.class, PrefixConstructor.class, RdfModelConverter.class})
@@ -63,7 +63,7 @@ class AdminEventStreamsRestControllerTest {
 
 	@Nested
 	class GetEventStreamList {
-		private List<EventStreamResponse> eventStreams;
+		private List<EventStreamTO> eventStreams;
 
 		@BeforeEach
 		void initEventStreams() throws URISyntaxException {
@@ -87,11 +87,11 @@ class AdminEventStreamsRestControllerTest {
 							List.of(fragmentationConfig), 100));
 
 			eventStreams = List.of(
-					new EventStreamResponse(COLLECTION, "http://purl.org/dc/terms/created",
-							"http://purl.org/dc/terms/isVersionOf",
+					new EventStreamTO(COLLECTION, "http://purl.org/dc/terms/created",
+							"http://purl.org/dc/terms/isVersionOf", false,
 							views, shape1),
-					new EventStreamResponse("name2", "http://purl.org/dc/terms/created",
-							"http://purl.org/dc/terms/isVersionOf",
+					new EventStreamTO("name2", "http://purl.org/dc/terms/created",
+							"http://purl.org/dc/terms/isVersionOf", false,
 							List.of(singleView),
 							shape2));
 		}
@@ -117,8 +117,8 @@ class AdminEventStreamsRestControllerTest {
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
 			Model model = readModelFromFile("ldes-1-with-dcat.ttl");
 			Model shape = readModelFromFile("example-shape.ttl");
-			EventStreamResponse eventStream = new EventStreamResponse("name1", "http://purl.org/dc/terms/created",
-					"http://purl.org/dc/terms/isVersionOf",
+			EventStreamTO eventStream = new EventStreamTO("name1", "http://purl.org/dc/terms/created",
+					"http://purl.org/dc/terms/isVersionOf", false,
 					List.of(), shape);
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
@@ -150,13 +150,14 @@ class AdminEventStreamsRestControllerTest {
 			final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
 			final Model shape = readModelFromFile("example-shape.ttl");
 
-			EventStreamResponse eventStreamResponse = new EventStreamResponse(
+			EventStreamTO eventStreamTO = new EventStreamTO(
 					"name1",
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
+					false,
 					List.of(), shape);
 
-			when(eventStreamService.createEventStream(any(EventStreamResponse.class))).thenReturn(eventStreamResponse);
+			when(eventStreamService.createEventStream(any(EventStreamTO.class))).thenReturn(eventStreamTO);
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
 							.accept(contentTypeNQuads)
@@ -166,7 +167,7 @@ class AdminEventStreamsRestControllerTest {
 					.andExpect(content().contentType(contentTypeNQuads))
 					.andExpect(IsIsomorphic.with(expectedModel));
 
-			verify(eventStreamService).createEventStream(any(EventStreamResponse.class));
+			verify(eventStreamService).createEventStream(any(EventStreamTO.class));
 		}
 
 		@Test

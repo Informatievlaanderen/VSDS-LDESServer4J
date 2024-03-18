@@ -60,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles({ "test", "rest" })
 @Import({ EventStreamControllerTest.EventStreamControllerTestConfiguration.class })
 @ContextConfiguration(classes = { EventStreamController.class, RestConfig.class,
-		RestResponseEntityExceptionHandler.class, EventStreamResponseConverterImpl.class,
+		RestResponseEntityExceptionHandler.class, EventStreamConverterImpl.class,
 		ViewSpecificationConverter.class, PrefixAdderImpl.class, EventStreamResponseHttpConverter.class,
 		RetentionModelExtractor.class, HttpModelConverter.class, FragmentationConfigExtractor.class,
 		PrefixConstructor.class, RdfModelConverter.class
@@ -78,9 +78,10 @@ class EventStreamControllerTest {
 	@BeforeEach
 	void setUp() {
 		hostname = "http://localhost:8080";
-		EventStreamResponse eventStream = new EventStreamResponse(COLLECTION,
+		EventStreamTO eventStream = new EventStreamTO(COLLECTION,
 				"http://www.w3.org/ns/prov#generatedAtTime",
-				"http://purl.org/dc/terms/isVersionOf", List.of(),
+				"http://purl.org/dc/terms/isVersionOf",
+				false, List.of(),
 				ModelFactory.createDefaultModel());
 
 		Model shacl = createDefaultModel().add(createResource(hostname + "/" + COLLECTION),

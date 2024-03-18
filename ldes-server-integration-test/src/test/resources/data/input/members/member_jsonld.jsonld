@@ -12,7 +12,7 @@
     "@type": [
       "https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder"
     ],
-    "http://www.w3.org/ns/prov#generatedAtTime": [
+    "http://purl.org/dc/terms/created": [
       {
         "@value": "2023-04-06T09:58:15.867Z",
         "@type": "http://www.w3.org/2001/XMLSchema#dateTime"

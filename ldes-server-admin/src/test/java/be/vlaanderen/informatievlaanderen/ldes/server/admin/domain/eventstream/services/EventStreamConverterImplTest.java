@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverterImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
@@ -29,8 +29,8 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EventStreamResponseConverterImplTest {
-	private EventStreamResponseConverter eventStreamConverter;
+class EventStreamConverterImplTest {
+	private EventStreamConverter eventStreamConverter;
 	private Model shacl;
 	private Model dataSetModel;
 
@@ -41,7 +41,7 @@ class EventStreamResponseConverterImplTest {
 		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(), prefixConstructor);
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
-		eventStreamConverter = new EventStreamResponseConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
+		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
 		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
 	}
@@ -71,19 +71,19 @@ class EventStreamResponseConverterImplTest {
 
 		@Test
 		void when_modelHasViews_then_convertToEventStreamResponse() {
-			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+			EventStreamTO expectedEventStreamTO = new EventStreamTO("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
 					views, shacl);
 
-			EventStreamResponse result = eventStreamConverter.fromModel(eventStreamModel);
+			EventStreamTO result = eventStreamConverter.fromModel(eventStreamModel);
 
-			assertEquals(expectedEventStreamResponse, result);
+			assertEquals(expectedEventStreamTO, result);
 		}
 
 		@Test
 		void when_eventStreamHasViews_then_convertToModel() {
-			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
 					views, shacl);
 
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
@@ -103,18 +103,18 @@ class EventStreamResponseConverterImplTest {
 
 		@Test
 		void when_modelHasNoViews_then_convertToEventStreamResponse() {
-			EventStreamResponse expectedEventStreamResponse = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+			EventStreamTO expectedEventStreamTO = new EventStreamTO("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
 					List.of(),
 					shacl);
 
-			assertEquals(expectedEventStreamResponse, eventStreamConverter.fromModel(eventStreamModel));
+			assertEquals(expectedEventStreamTO, eventStreamConverter.fromModel(eventStreamModel));
 		}
 
 		@Test
 		void when_eventStreamResponseHasNoViews_then_convertToModel() {
-			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
-					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
+			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
@@ -122,8 +122,8 @@ class EventStreamResponseConverterImplTest {
 
 		@Test
 		void when_eventStreamResponseHasTimestampAndVersionOf_then_convertToModel() {
-			EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
-					null, null,
+			EventStreamTO eventStream = new EventStreamTO("collectionName1",
+					null, null, false,
 					List.of(),
 					shacl);
 
@@ -163,9 +163,9 @@ class EventStreamResponseConverterImplTest {
 
 		@Test
 		void when_eventStreamHasViewsAndDataset_Then_ConvertToModel() {
-			final EventStreamResponse eventStream = new EventStreamResponse("collectionName1",
+			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-                    views, shacl,
+                    true, views, shacl,
 					new DcatDataset("collectionName1", dataSetModel));
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 

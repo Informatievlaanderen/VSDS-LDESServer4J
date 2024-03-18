@@ -4,13 +4,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,14 +32,14 @@ class TreeNodeFactoryImplTest {
 	private TreeNodeFactory treeNodeFactory;
 	private FragmentRepository fragmentRepository;
 	private AllocationRepository allocationRepository;
-	private MemberRepository memberRepository;
+	private MemberFetcher memberFetcher;
 
 	@BeforeEach
 	void setUp() {
 		fragmentRepository = mock(FragmentRepository.class);
-		memberRepository = mock(MemberRepository.class);
+		memberFetcher = mock(MemberFetcher.class);
 		allocationRepository = mock(AllocationRepository.class);
-		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberRepository);
+		treeNodeFactory = new TreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberFetcher);
 	}
 
 	@Test
@@ -58,10 +57,10 @@ class TreeNodeFactoryImplTest {
 		fragment.addRelation(new TreeRelation("path", LdesFragmentIdentifier.fromFragmentId("/col/view"), "value",
 				"valueType", "relation"));
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
-		Member member = new Member("member", COLLECTION_NAME, 0L, null);
+		Member member = new Member("member", null, null, null, null);
 		when(allocationRepository.getMemberAllocationsByFragmentId(TREE_NODE_ID.asDecodedFragmentId()))
 				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
-		when(memberRepository.findAllByIds(List.of("member"))).thenReturn(List.of(member));
+		when(memberFetcher.fetchAllByIds(List.of("member"))).thenReturn(List.of(member));
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

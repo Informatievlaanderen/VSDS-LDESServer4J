@@ -124,7 +124,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	@When("I fetch the timebased fragment {string} fragment of this month of {string}")
 	public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) throws Exception {
 		LocalDateTime now = LocalDateTime.now();
-		currentPath = "/%s/%s?year=%s&month=%s".formatted(collection, view, now.getYear(), formatDateValue(now.getMonthValue()));
+		currentPath = "/%s/%s?year=%s&month=%02d".formatted(collection, view, now.getYear(), now.getMonthValue());
 		String response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse()
@@ -132,9 +132,4 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 		currentFragment = RDFParser.fromString(response).lang(Lang.TURTLE).toModel();
 	}
-
-	private String formatDateValue(int value) {
-		return value < 10 ? "0" + value : String.valueOf(value);
-	}
-
 }

@@ -13,9 +13,11 @@ import org.apache.jena.rdf.model.ModelFactory;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,7 +37,10 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 		return new Member(
 				row.get("id"),
 				row.get("collectionName"),
-				row.get("sequenceNr").equals("") ? null : Long.parseLong(row.get("sequenceNr")),
+				row.get("versionOf"),
+				LocalDateTime.parse(row.get("timestamp")),
+                row.get("sequenceNr").isEmpty() ? null : Long.parseLong(row.get("sequenceNr")),
+				UUID.randomUUID().toString(),
 				ModelFactory.createDefaultModel());
 	}
 
