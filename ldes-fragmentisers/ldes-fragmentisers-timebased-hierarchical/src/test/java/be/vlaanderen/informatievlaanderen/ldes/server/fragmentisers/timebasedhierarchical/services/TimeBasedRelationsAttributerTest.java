@@ -66,7 +66,7 @@ class TimeBasedRelationsAttributerTest {
 
 		TreeRelation ltRelation = new TreeRelation(config.getFragmentationPath(),
 				child.getFragmentId(),
-				LocalDateTime.of(2023,2,28,23,59, 59).toString()
+				LocalDateTime.of(2023,3,1,0,0).toString()
 				, XSD_DATETIME, TREE_LT_RELATION);
 
 		relationsAttributer.addInBetweenRelation(parentFragment, child);
