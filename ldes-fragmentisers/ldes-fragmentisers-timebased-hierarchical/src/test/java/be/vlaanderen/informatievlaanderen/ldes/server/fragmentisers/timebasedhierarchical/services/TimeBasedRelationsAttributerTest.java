@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -59,17 +59,23 @@ class TimeBasedRelationsAttributerTest {
 		relationsAttributer = new TimeBasedRelationsAttributer(fragmentRepository, config);
 
 		Fragment child = parentFragment.createChild(monthPair);
-		TreeRelation expected = new TreeRelation(config.getFragmentationPath(),
+		TreeRelation gteRelation = new TreeRelation(config.getFragmentationPath(),
 				child.getFragmentId(),
-				"2023-02", Granularity.MONTH.getType(),
-				TREE_INBETWEEN_RELATION);
+				LocalDateTime.of(2023,2,1,0,0).toString()
+				, XSD_DATETIME, TREE_GTE_RELATION);
+
+		TreeRelation ltRelation = new TreeRelation(config.getFragmentationPath(),
+				child.getFragmentId(),
+				LocalDateTime.of(2023,2,28,23,59, 59).toString()
+				, XSD_DATETIME, TREE_LT_RELATION);
 
 		relationsAttributer.addInBetweenRelation(parentFragment, child);
 
-		assertThat(parentFragment.containsRelation(expected)).isTrue();
-		verify(fragmentRepository).saveFragment(parentFragment);
+		assertThat(parentFragment.containsRelation(gteRelation)).isTrue();
+		assertThat(parentFragment.containsRelation(ltRelation)).isTrue();
+		verify(fragmentRepository, times(2)).saveFragment(parentFragment);
 		assertThat(parentFragment.getNextUpdateTs()).isEqualTo(LocalDateTime.of(2023, 2, 28, 23, 59, 59));
-		verify(fragmentRepository).makeChildrenImmutable(parentFragment);
+		verify(fragmentRepository, times(2)).makeChildrenImmutable(parentFragment);
 	}
 
 	@Test

@@ -58,6 +58,8 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
 				.next().getObject().toString();
 
+
+
 		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
