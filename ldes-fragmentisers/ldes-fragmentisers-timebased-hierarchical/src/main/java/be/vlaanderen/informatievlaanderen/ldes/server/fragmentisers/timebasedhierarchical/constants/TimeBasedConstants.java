@@ -8,8 +8,6 @@ public class TimeBasedConstants {
 	}
 
 	private static final String XSD = "http://www.w3.org/2001/XMLSchema#";
-
-	public static final String TREE_INBETWEEN_RELATION = TREE + "InBetweenRelation";
 	public static final String TREE_GTE_RELATION = TREE + "GreaterThanOrEqualToRelation";
 	public static final String TREE_LT_RELATION = TREE + "LessThanRelation";
 	public static final String XSD_DATETIME = XSD + "dateTime";
