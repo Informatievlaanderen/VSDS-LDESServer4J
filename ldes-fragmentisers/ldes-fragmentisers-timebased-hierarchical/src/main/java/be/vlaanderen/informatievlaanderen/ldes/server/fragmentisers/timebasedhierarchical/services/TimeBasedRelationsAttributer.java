@@ -35,7 +35,7 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 				TREE_GTE_RELATION);
 		TreeRelation parentLtRelation = new TreeRelation(config.getFragmentationPath(),
 				childFragment.getFragmentId(),
-				timestamp.getNextUpdateTs().toString(), XSD_DATETIME,
+				timestamp.getLtBoundary().toString(), XSD_DATETIME,
 				TREE_LT_RELATION);
 		saveRelation(parentFragment, parentGteRelation, timestamp.getNextUpdateTs());
 		saveRelation(parentFragment, parentLtRelation, timestamp.getNextUpdateTs());
