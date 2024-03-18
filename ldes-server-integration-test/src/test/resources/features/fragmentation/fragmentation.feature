@@ -46,7 +46,7 @@ Feature: LDES Server Fragmentation
     And I ingest 5 members to the collection "mobility-hindrances" with current timestamp
     And the LDES "mobility-hindrances" contains 5 members
     When I fetch the timebased fragment "by-time" fragment of this month of "mobility-hindrances"
-    And I fetch the next fragment through the first "InBetweenRelation"
+    And I fetch the next fragment through the first "GreaterThanOrEqualToRelation"
     And I fetch the next fragment through the first "Relation"
 
   @reference

@@ -8,30 +8,22 @@ import java.util.stream.Stream;
 
 public enum Granularity {
 
-	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"), DateTimeFormatter.ofPattern("ss"),
-			"http://www.w3.org/2001/XMLSchema#dateTime", null),
-	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"), DateTimeFormatter.ofPattern("mm"),
-			"http://www.w3.org/2001/XMLSchema#string", Granularity.SECOND),
-	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH"), DateTimeFormatter.ofPattern("HH"),
-			"http://www.w3.org/2001/XMLSchema#string", Granularity.MINUTE),
-	DAY("day", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"),
-			"http://www.w3.org/2001/XMLSchema#date", Granularity.HOUR),
-	MONTH("month", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"),
-			"http://www.w3.org/2001/XMLSchema#gYearMonth", Granularity.DAY),
-	YEAR("year", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"),
-			"http://www.w3.org/2001/XMLSchema#gYear", Granularity.MONTH);
+	SECOND("second", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"), DateTimeFormatter.ofPattern("ss"), null),
+	MINUTE("minute", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"), DateTimeFormatter.ofPattern("mm"), Granularity.SECOND),
+	HOUR("hour", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH"), DateTimeFormatter.ofPattern("HH"), Granularity.MINUTE),
+	DAY("day", DateTimeFormatter.ofPattern("yyyy-MM-dd"), DateTimeFormatter.ofPattern("dd"), Granularity.HOUR),
+	MONTH("month", DateTimeFormatter.ofPattern("yyyy-MM"), DateTimeFormatter.ofPattern("MM"), Granularity.DAY),
+	YEAR("year", DateTimeFormatter.ofPattern("yyyy"), DateTimeFormatter.ofPattern("yyyy"), Granularity.MONTH);
 
 	private final String value;
 	private final DateTimeFormatter formatter;
 	private final DateTimeFormatter getTimeValue;
-	private final String type;
 	private final Granularity child;
 
-	Granularity(String value, DateTimeFormatter formatter, DateTimeFormatter getTimeValue, String type, Granularity child) {
+	Granularity(String value, DateTimeFormatter formatter, DateTimeFormatter getTimeValue, Granularity child) {
 		this.value = value;
 		this.formatter = formatter;
 		this.getTimeValue = getTimeValue;
-		this.type = type;
 		this.child = child;
 	}
 
@@ -70,10 +62,6 @@ public enum Granularity {
 
 	public Granularity getChild() {
 		return child;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 }
