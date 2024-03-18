@@ -20,18 +20,24 @@ Feature: event streams can be configured at runtime
 
   Scenario: put a valid event stream
     Given a db which does not contain specified event stream
-    When the client posts a valid model
+    When the client posts model from file eventstream/streams/ldes-1.ttl
     Then the client receives HTTP status 201
-    And I verify the event stream in the response body
+    And I verify the event stream in the response body to file eventstream/streams-with-dcat/ldes-1.ttl
 
   Scenario: post an event stream with an invalid view
     Given a db which does not contain specified event stream
-    When the client posts invalid model from file ldes-with-duplicate-retention.ttl
+    When the client posts model from file ldes-with-duplicate-retention.ttl
     Then the client receives HTTP status 400
+
+  Scenario: post an event stream that creates versions
+    Given a db which does not contain specified event stream
+    When the client posts model from file eventstream/streams/ldes-create-versions.ttl
+    Then the client receives HTTP status 201
+    And I verify the event stream in the response body to file eventstream/streams-with-dcat/ldes-create-versions.ttl
 
 
   Scenario Outline: put a invalid event stream
-    When the client posts invalid model from file <fileName>
+    When the client posts model from file <fileName>
     Then the client receives HTTP status 400
     And I verify the absence of interactions
     And I verify the absence of the event stream

@@ -73,6 +73,7 @@ public class EventStreamTO {
 		return Objects.equals(collection, that.collection) && Objects.equals(timestampPath, that.timestampPath)
 				&& Objects.equals(versionOfPath, that.versionOfPath)
 				&& shacl.isIsomorphicWith(that.shacl)
+				&& versionCreationEnabled == that.versionCreationEnabled
 				&& new HashSet<>(views).containsAll(that.views)
 				&& new HashSet<>(that.views).containsAll(views)
 				&& Objects.equals(dcatDataset, that.dcatDataset);

@@ -277,4 +277,16 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		}
 	}
 
+	@When("I ingest {int} files of state objects from folder {string} to the collection {string}")
+	public void iIngestFilesOfStateObjectsFromFolderToTheCollection(int numberOfStateFiles, String folderName, String collectionName) throws Exception {
+		for (int i = 0; i < numberOfStateFiles; i++) {
+			Model model = RDFParser.source("%s/%d.ttl".formatted(folderName, i + 1))
+					.lang(Lang.TURTLE)
+					.toModel();
+			mockMvc.perform(post("/" + collectionName)
+							.contentType("text/turtle")
+							.content(RDFWriter.source(model).lang(Lang.TURTLE).asString()))
+					.andExpect(status().is2xxSuccessful());
+		}
+	}
 }

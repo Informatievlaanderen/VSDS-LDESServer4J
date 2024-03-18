@@ -32,6 +32,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.existsById(memberId);
 	}
 
+	@Override
 	public Optional<Member> insert(Member member) {
 		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
 		try {
@@ -39,6 +40,16 @@ public class MemberRepositoryImpl implements MemberRepository {
 			return Optional.of(memberEntityMapper.toMember(savedMember));
 		} catch (DuplicateKeyException e) {
 			return Optional.empty();
+		}
+	}
+
+	@Override
+	public List<Member> insertAll(List<Member> members) {
+		try {
+			List<MemberEntity> memberEntities = members.stream().map(memberEntityMapper::toMemberEntity).toList();
+			return memberEntityRepository.insert(memberEntities).stream().map(memberEntityMapper::toMember).toList();
+		} catch (DuplicateKeyException e) {
+			return List.of();
 		}
 	}
 

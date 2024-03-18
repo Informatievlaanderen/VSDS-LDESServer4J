@@ -14,14 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
     private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
     private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
-    private static final String DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS = "Duplicate member ingested. Member with id {} already exists. Duplicate member is ignored";
+    private static final String DUPLICATE_MEMBERS_DETECTED = "Duplicate members detected. Member(s) are ignored";
 
     private final MemberIngestValidator validator;
 	private final MemberRepository memberRepository;
@@ -38,36 +38,34 @@ public class MemberIngesterImpl implements MemberIngester {
         this.memberExtractorCollection = memberExtractorCollection;
     }
 
-    private boolean ingestVersionObject(Member member) {
-        validator.validate(member);
-        final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
-        Optional<Member> ingestedMember = insertIntoRepo(member);
-        ingestedMember.ifPresentOrElse(insertedMember -> handleSuccessfulMemberInsertion(insertedMember, memberId),
-                () -> log.warn(DUPLICATE_MEMBER_INGESTED_MEMBER_WITH_ID_ALREADY_EXISTS, memberId)
-        );
-        return ingestedMember.isPresent();
-    }
-
     @Override
     public boolean ingest(String collectionName, Model ingestedModel) {
         final MemberExtractor memberExtractor = memberExtractorCollection
                 .getMemberExtractor(collectionName)
                 .orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
-        final Member member = memberExtractor.extractMembers(ingestedModel).getFirst();
-        return ingestVersionObject(member);
+        final List<Member> members = memberExtractor.extractMembers(ingestedModel);
+        members.forEach(validator::validate);
+
+        return insertIntoRepo(members);
     }
 
-    private void handleSuccessfulMemberInsertion(Member member, String memberId) {
+    private boolean insertIntoRepo(List<Member> members) {
+        members.forEach(Member::removeTreeMember);
+        List<Member> insertedMembers = memberRepository.insertAll(members);
+        if (insertedMembers.size() != members.size()) {
+            log.warn(DUPLICATE_MEMBERS_DETECTED);
+            return false;
+        }
+        insertedMembers.forEach(this::handleSuccessfulMemberInsertion);
+        return true;
+    }
+
+    private void handleSuccessfulMemberInsertion(Member member) {
+        final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
         final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
                 member.getCollectionName(), member.getSequenceNr());
         eventPublisher.publishEvent(memberIngestedEvent);
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
         log.debug(MEMBER_WITH_ID_INGESTED, memberId);
     }
-
-    private Optional<Member> insertIntoRepo(Member member) {
-        member.removeTreeMember();
-        return memberRepository.insert(member);
-    }
-
 }

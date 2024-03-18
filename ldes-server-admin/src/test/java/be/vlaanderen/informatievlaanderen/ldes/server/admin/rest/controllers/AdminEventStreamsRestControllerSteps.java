@@ -107,7 +107,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
-		Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
+		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
@@ -140,25 +140,17 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
-	@When("the client posts a valid model")
-	public void theClientPostsAValidModel() throws Exception {
-		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
-				.accept(Lang.TURTLE.getHeaderString())
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("ldes-1.ttl")));
-	}
-
-	@And("I verify the event stream in the response body")
-	public void iVerifyTheEventStreamInTheResponseBody() throws Exception {
-		final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
+	@And("I verify the event stream in the response body to file (.*)$")
+	public void iVerifyTheEventStreamInTheResponseBody(String filename) throws Exception {
+		final Model expectedModel = readModelFromFile(filename);
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
 		verify(eventStreamRepository).saveEventStream(any());
 		verify(shaclShapeRepository).saveShaclShape(any());
 	}
 
-	@When("^the client posts invalid model from file (.*)$")
-	public void theClientPostsInvalidModelFromFileFileName(String fileName) throws Exception {
+	@When("^the client posts model from file (.*)$")
+	public void theClientPostsModelFromFileFileName(String fileName) throws Exception {
 		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.accept(Lang.TURTLE.getHeaderString())
 				.contentType(Lang.TURTLE.getHeaderString())
