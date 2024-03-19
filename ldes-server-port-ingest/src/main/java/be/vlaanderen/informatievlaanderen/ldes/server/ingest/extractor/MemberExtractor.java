@@ -5,6 +5,7 @@ import org.apache.jena.rdf.model.Model;
 
 import java.util.List;
 
+@FunctionalInterface
 public interface MemberExtractor {
     List<Member> extractMembers(Model ingestedModel);
 }

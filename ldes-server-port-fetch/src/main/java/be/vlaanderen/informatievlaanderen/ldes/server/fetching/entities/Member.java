@@ -51,7 +51,7 @@ public class Member {
 
     private void enrichModelWithTimestamp() {
         final Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        ZonedDateTime zoneTimestamp = timestamp.atZone(TimeZone.getDefault().toZoneId());
+        final ZonedDateTime zoneTimestamp = timestamp.atZone(TimeZone.getDefault().toZoneId());
         calendar.setTimeInMillis(zoneTimestamp.toInstant().toEpochMilli());
         final XSDDateTime xsdTimestamp = new XSDDateTime(calendar);
         model.add(createResource(getMemberIdWithoutPrefix()), createProperty(eventStreamProperties.timestampPath()), createTypedLiteral(xsdTimestamp));
