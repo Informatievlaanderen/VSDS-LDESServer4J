@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.vocabulary.RDF;
@@ -42,8 +39,9 @@ class EventStreamInfoResponseTest {
 
         Model model = ModelFactory.createDefaultModel().add(statements);
         Resource shapeSubject = model.listSubjectsWithProperty(RDF.type, createResource(NODE_SHAPE_TYPE)).nextResource();
-        assertThat(model.listObjectsOfProperty(TREE_SHAPE).hasNext()).isTrue();
-        assertThat(model.listObjectsOfProperty(TREE_SHAPE).next().asResource()).isEqualTo(shapeSubject);
+        NodeIterator nodeIterator = model.listObjectsOfProperty(TREE_SHAPE);
+        assertThat(nodeIterator).hasNext();
+        assertThat(nodeIterator.next().asResource()).isEqualTo(shapeSubject);
     }
 
 }

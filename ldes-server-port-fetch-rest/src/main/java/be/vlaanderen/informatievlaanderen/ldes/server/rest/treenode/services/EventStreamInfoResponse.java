@@ -50,7 +50,7 @@ public class EventStreamInfoResponse {
 	}
 
 	private boolean hasMeaningfulValue(String objectContent) {
-		return objectContent != null && !objectContent.equals("");
+		return objectContent != null && !objectContent.isEmpty();
 	}
 
 	private void addShape(List<Statement> statements, Resource collection) {
