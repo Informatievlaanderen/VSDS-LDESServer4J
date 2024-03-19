@@ -78,7 +78,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					baseUrl,
 					eventStream.getTimestampPath(),
 					eventStream.getVersionOfPath(),
-					null,
+					shaclShape,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
 			statements.addAll(shaclShape.listStatements().toList());
