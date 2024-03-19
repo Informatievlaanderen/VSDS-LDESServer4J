@@ -23,6 +23,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,12 +64,14 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	}
 
 	@DataTableType
-	public MemberIngestedEvent MemberIngestedEventEntryTransformer(Map<String, String> row)
-			throws URISyntaxException, IOException {
+	public MemberIngestedEvent MemberIngestedEventEntryTransformer(Map<String, String> row) {
 		return new MemberIngestedEvent(
-				createModel(row.get("versionOf"), row.get("timestamp")),
 				row.get("id"),
-				row.get("collectionName"), Integer.parseInt(row.get("sequenceNumber")));
+				row.get("collectionName"),
+				Long.parseLong(row.get("sequenceNumber")),
+				row.get("versionOf"),
+				LocalDateTime.parse(row.get("timestamp"))
+				);
 	}
 
 	@Given("an EventStream with the following properties")
@@ -93,20 +96,6 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				.timeout(secondsToWait + 1, SECONDS)
 				.pollDelay(secondsToWait, SECONDS)
 				.untilAsserted(() -> assertTrue(true));
-	}
-
-	private Model createModel(String versionOf, String timestamp) throws URISyntaxException, IOException {
-		String modelTemplate = readMemberTemplateFromFile();
-		String updatedModel = modelTemplate.replace("#VERSIONOF", versionOf).replace("#TIMESTAMP", timestamp);
-		return RDFParserBuilder.create()
-				.fromString(updatedModel).lang(Lang.TURTLE)
-				.toModel();
-	}
-
-	private String readMemberTemplateFromFile() throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URI uri = Objects.requireNonNull(classLoader.getResource(MEMBER_TEMPLATE_FILENAME)).toURI();
-		return Files.lines(Paths.get(uri)).collect(Collectors.joining());
 	}
 
 	@And("the following members are allocated to the view {string}")

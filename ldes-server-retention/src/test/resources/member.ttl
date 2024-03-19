@@ -1,7 +1,0 @@
-@prefix prov: <http://www.w3.org/ns/prov#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix dc: <http://purl.org/dc/terms/> .
-
-<http://www.example.org/member>
-  prov:generatedAtTime "2022-09-28T07:14:00.000Z"^^xsd:dateTime ;
-  dc:isVersionOf "version" .

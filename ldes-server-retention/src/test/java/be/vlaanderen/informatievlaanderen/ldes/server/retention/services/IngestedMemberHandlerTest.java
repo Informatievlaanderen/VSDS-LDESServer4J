@@ -15,6 +15,7 @@ import org.mockito.Captor;
 
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,33 +25,25 @@ import static org.mockito.Mockito.*;
 class IngestedMemberHandlerTest {
 	private final static String COLLECTION = "COLLECTION";
 	private final static String MEMBER_ID = "http://www.example.org/member";
-	private final static String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
-	private final static String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
-	private final static EventStreamProperties eventStreamProperties = new EventStreamProperties(VERSION_OF_PATH,
-			TIMESTAMP_PATH);
 	private MemberIngestedEvent event;
 
 	private IngestedMemberHandler ingestedMemberHandler;
 	private MemberPropertiesRepository memberPropertiesRepository;
-	private EventStreamCollection eventStreamCollection;
 	private ViewCollection viewCollection;
 	@Captor
 	ArgumentCaptor<MemberProperties> captor;
 
 	@BeforeEach
-	void setUp() throws URISyntaxException {
+	void setUp() {
 		captor = ArgumentCaptor.forClass(MemberProperties.class);
 		memberPropertiesRepository = mock(MemberPropertiesRepository.class);
-		eventStreamCollection = mock(EventStreamCollection.class);
 		viewCollection = mock(ViewCollection.class);
-		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, eventStreamCollection, viewCollection);
-		event = new MemberIngestedEvent(readModelFromFile("member.ttl"), MEMBER_ID, COLLECTION, 0L);
+		ingestedMemberHandler = new IngestedMemberHandler(memberPropertiesRepository, viewCollection);
+		event = new MemberIngestedEvent(MEMBER_ID, COLLECTION, 0L, "version", ZonedDateTime.parse("2022-09-28T07:14:00.000Z").toLocalDateTime());
 	}
 
 	@Test
 	void when_MemberIngested_Then_MemberIsSaved() {
-		when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(eventStreamProperties);
-
 		ingestedMemberHandler.handleMemberIngestedEvent(event);
 
 		verify(memberPropertiesRepository).insert(captor.capture());
@@ -60,9 +53,6 @@ class IngestedMemberHandlerTest {
 
 	@Test
 	void when_MemberWithIncorrectPath_Then_PropertyIsIgnored() {
-		EventStreamProperties differentProperties = new EventStreamProperties("otherVersionPath", "otherTimestampPath");
-		when(eventStreamCollection.getEventStreamProperties(COLLECTION)).thenReturn(differentProperties);
-
 		ingestedMemberHandler.handleMemberIngestedEvent(event);
 
 		verify(memberPropertiesRepository).insert(captor.capture());

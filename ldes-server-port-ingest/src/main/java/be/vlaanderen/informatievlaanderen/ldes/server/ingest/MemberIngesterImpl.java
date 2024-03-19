@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.Membe
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.rdf.model.Model;
@@ -24,17 +24,17 @@ public class MemberIngesterImpl implements MemberIngester {
     private static final String DUPLICATE_MEMBERS_DETECTED = "Duplicate members detected. Member(s) are ignored";
 
     private final MemberIngestValidator validator;
-	private final MemberRepository memberRepository;
-	private final ApplicationEventPublisher eventPublisher;
+    private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
     private final MemberExtractorCollection memberExtractorCollection;
 
-	private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(MemberIngesterImpl.class);
 
-	public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
+    public MemberIngesterImpl(MemberIngestValidator validator, MemberRepository memberRepository,
                               ApplicationEventPublisher eventPublisher, MemberExtractorCollection memberExtractorCollection) {
-		this.validator = validator;
-		this.memberRepository = memberRepository;
-		this.eventPublisher = eventPublisher;
+        this.validator = validator;
+        this.memberRepository = memberRepository;
+        this.eventPublisher = eventPublisher;
         this.memberExtractorCollection = memberExtractorCollection;
     }
 
@@ -62,8 +62,11 @@ public class MemberIngesterImpl implements MemberIngester {
 
     private void handleSuccessfulMembersInsertion(Member member) {
         final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
-        final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
-                member.getCollectionName(), member.getSequenceNr());
+        final var memberIngestedEvent = new MemberIngestedEvent(member.getId(),
+                member.getCollectionName(),
+                member.getSequenceNr(),
+                member.getVersionOf(),
+                member.getTimestamp());
         eventPublisher.publishEvent(memberIngestedEvent);
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
         log.debug(MEMBER_WITH_ID_INGESTED, memberId);
