@@ -63,7 +63,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(24);
+        assertThat(model.listStatements().toList()).hasSize(25);
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
 
@@ -212,10 +212,10 @@ class TreeNodeConverterImplTest {
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
 
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(11);
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(24);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(25);
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
+        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(11);
     }
 }

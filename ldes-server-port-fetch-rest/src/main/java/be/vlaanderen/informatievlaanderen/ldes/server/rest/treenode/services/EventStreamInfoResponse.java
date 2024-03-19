@@ -57,6 +57,7 @@ public class EventStreamInfoResponse {
 		if (shape != null) {
 			Resource shapeSubject = shape.listSubjectsWithProperty(RDF.type, createResource(NODE_SHAPE_TYPE)).nextResource();
 			statements.add(createStatement(collection, TREE_SHAPE, shapeSubject));
+			statements.addAll(shape.listStatements().toList());
 		}
 	}
 

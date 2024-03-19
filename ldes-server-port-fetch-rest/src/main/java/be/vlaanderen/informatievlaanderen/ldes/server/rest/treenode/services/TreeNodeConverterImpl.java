@@ -81,7 +81,6 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					shaclShape,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			statements.addAll(shaclShape.listStatements().toList());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection(), prefix);
 			// 04/12/23 Desactivated due to performance issues on the count query
 			// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
