@@ -51,7 +51,7 @@ public class TreeRelationResponse {
 	}
 
 	private boolean hasMeaningfulValue(String objectContent) {
-		return objectContent != null && !objectContent.equals("");
+		return objectContent != null && !objectContent.isEmpty();
 	}
 
 }
