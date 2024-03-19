@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
@@ -29,11 +29,11 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 @Component
 public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamTO>> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-	private final EventStreamTOConverter eventStreamTOConverter;
+	private final EventStreamConverter eventStreamConverter;
 	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamListHttpConverter(EventStreamTOConverter eventStreamTOConverter, RdfModelConverter rdfModelConverter) {
-		this.eventStreamTOConverter = eventStreamTOConverter;
+	public EventStreamListHttpConverter(EventStreamConverter eventStreamConverter, RdfModelConverter rdfModelConverter) {
+		this.eventStreamConverter = eventStreamConverter;
 		this.rdfModelConverter = rdfModelConverter;
 	}
 
@@ -81,7 +81,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
                       HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
 		Model model = ModelFactory.createDefaultModel();
 		eventStreamRespons.stream()
-				.map(eventStreamTOConverter::toModel)
+				.map(eventStreamConverter::toModel)
 				.forEach(model::add);
 		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);

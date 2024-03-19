@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.HttpModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
@@ -17,8 +17,8 @@ public class EventStreamWebConfig {
 
 	@Bean
 	public HttpMessageConverter<EventStreamTO> eventStreamResponseHttpMessageConverter(
-			EventStreamTOConverter eventStreamTOConverter, RdfModelConverter rdfModelConverter) {
-		return new EventStreamResponseHttpConverter(eventStreamTOConverter, rdfModelConverter);
+			EventStreamConverter eventStreamConverter, RdfModelConverter rdfModelConverter) {
+		return new EventStreamResponseHttpConverter(eventStreamConverter, rdfModelConverter);
 	}
 
 	@ConditionalOnMissingBean

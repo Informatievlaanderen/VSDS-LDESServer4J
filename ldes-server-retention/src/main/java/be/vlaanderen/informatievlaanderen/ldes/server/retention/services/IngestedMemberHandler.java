@@ -58,12 +58,12 @@ public class IngestedMemberHandler {
 	}
 
 	private Optional<String> getVersionOf(Model model, EventStreamProperties eventStreamProperties) {
-		return extractPropertyFromModel(model, eventStreamProperties.getVersionOfPath())
+		return extractPropertyFromModel(model, eventStreamProperties.versionOfPath())
 				.map(RDFNode::toString);
 	}
 
 	private Optional<LocalDateTime> getTimestamp(Model model, EventStreamProperties eventStreamProperties) {
-		return extractPropertyFromModel(model, eventStreamProperties.getTimestampPath())
+		return extractPropertyFromModel(model, eventStreamProperties.timestampPath())
 				.map(LiteralImpl.class::cast)
 				.map(localDateTimeConverter::getLocalDateTime);
 	}

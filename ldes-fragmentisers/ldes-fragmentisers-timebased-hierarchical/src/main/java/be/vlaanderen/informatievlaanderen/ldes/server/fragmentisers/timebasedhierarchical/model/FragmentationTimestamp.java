@@ -26,6 +26,17 @@ public class FragmentationTimestamp {
 		};
 	}
 
+	public LocalDateTime getLtBoundary() {
+		return switch (granularity) {
+			case YEAR ->  time.plusYears(1);
+			case MONTH -> time.plusMonths(1);
+			case DAY -> time.plusDays(1);
+			case HOUR -> time.plusHours(1);
+			case MINUTE -> time.plusMinutes(1);
+			case SECOND -> time.plusSeconds(1);
+		};
+	}
+
 	public Granularity getGranularity() {
 		return granularity;
 	}
@@ -36,10 +47,6 @@ public class FragmentationTimestamp {
 
 	public String getTimeValueForGranularity(Granularity granularity) {
 		return granularity.getGetTimeValue().format(time);
-	}
-
-	public String getType() {
-		return granularity.getType();
 	}
 
 	public String asString() {

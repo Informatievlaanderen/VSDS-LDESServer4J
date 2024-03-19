@@ -17,7 +17,7 @@ import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static org.apache.jena.rdf.model.ResourceFactory.*;
 
 @Component
-public class EventStreamTOConverterImpl implements EventStreamTOConverter {
+public class EventStreamConverterImpl implements EventStreamConverter {
 
     public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
     public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
@@ -25,8 +25,8 @@ public class EventStreamTOConverterImpl implements EventStreamTOConverter {
     private final PrefixAdder prefixAdder;
     private final PrefixConstructor prefixConstructor;
 
-    public EventStreamTOConverterImpl(ViewSpecificationConverter viewSpecificationConverter,
-                                      PrefixAdder prefixAdder, PrefixConstructor prefixConstructor) {
+    public EventStreamConverterImpl(ViewSpecificationConverter viewSpecificationConverter,
+                                    PrefixAdder prefixAdder, PrefixConstructor prefixConstructor) {
         this.viewSpecificationConverter = viewSpecificationConverter;
         this.prefixAdder = prefixAdder;
         this.prefixConstructor = prefixConstructor;
@@ -156,12 +156,6 @@ public class EventStreamTOConverterImpl implements EventStreamTOConverter {
                 .toList();
     }
 
-    /**
-     * @param resource the resource of which the according statements need to be
-     *                 retrieved
-     * @param model    the model of which all the statements need to be retrieved
-     * @return a list of all the according statement of the model
-     */
     private List<Statement> retrieveAllStatements(Resource resource, Model model) {
         StmtIterator iterator = model.listStatements(resource, null, (Resource) null);
         List<Statement> statements = new ArrayList<>();

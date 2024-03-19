@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services.EventStreamService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTOConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.slf4j.Logger;
@@ -26,15 +26,15 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     private static final Logger log = LoggerFactory.getLogger(AdminEventStreamsRestController.class);
 
     private final EventStreamService eventStreamService;
-    private final EventStreamTOConverter eventStreamTOConverter;
+    private final EventStreamConverter eventStreamConverter;
     private final ModelValidator eventStreamValidator;
 
     public AdminEventStreamsRestController(EventStreamService eventStreamService,
                                            @Qualifier("eventStreamShaclValidator") ModelValidator eventStreamValidator,
-                                           EventStreamTOConverter eventStreamTOConverter) {
+                                           EventStreamConverter eventStreamConverter) {
         this.eventStreamService = eventStreamService;
         this.eventStreamValidator = eventStreamValidator;
-        this.eventStreamTOConverter = eventStreamTOConverter;
+        this.eventStreamConverter = eventStreamConverter;
     }
 
     @InitBinder
@@ -52,7 +52,7 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     @Override
     @PostMapping(consumes = {contentTypeJSONLD, contentTypeNQuads, contentTypeTurtle})
     public EventStreamTO createEventStream(@RequestBody @Validated Model eventStreamModel) {
-        EventStreamTO eventStreamTO = eventStreamTOConverter.fromModel(eventStreamModel);
+        EventStreamTO eventStreamTO = eventStreamConverter.fromModel(eventStreamModel);
         log.atInfo().log("START creating collection {}", eventStreamTO.getCollection());
         eventStreamService.createEventStream(eventStreamTO);
         log.atInfo().log("FINISHED creating collection {}", eventStreamTO.getCollection());
