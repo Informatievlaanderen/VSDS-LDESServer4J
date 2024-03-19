@@ -23,8 +23,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import static org.apache.jena.vocabulary.RDF.Init.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -83,12 +85,12 @@ class MemberIngesterImplTest {
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, "txId", model);
-        when(memberRepository.insert(member)).thenReturn(Optional.empty());
+        when(memberRepository.insertAll(List.of(member))).thenReturn(List.of());
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isFalse();
-        verify(memberRepository, times(1)).insert(member);
+        verify(memberRepository, times(1)).insertAll(List.of(member));
         verifyNoInteractions(eventPublisher);
     }
 
@@ -100,13 +102,13 @@ class MemberIngesterImplTest {
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, "txId", model);
-        when(memberRepository.insert(member)).thenReturn(Optional.of(member));
+        when(memberRepository.insertAll(List.of(member))).thenReturn(List.of(member));
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isTrue();
         InOrder inOrder = inOrder(memberRepository, eventPublisher);
-        inOrder.verify(memberRepository, times(1)).insert(member);
+        inOrder.verify(memberRepository, times(1)).insertAll(List.of(member));
         inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
         inOrder.verifyNoMoreInteractions();
     }

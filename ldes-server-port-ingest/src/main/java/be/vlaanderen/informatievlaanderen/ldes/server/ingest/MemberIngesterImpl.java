@@ -56,11 +56,11 @@ public class MemberIngesterImpl implements MemberIngester {
             log.warn(DUPLICATE_MEMBERS_DETECTED);
             return false;
         }
-        insertedMembers.forEach(this::handleSuccessfulMemberInsertion);
+        insertedMembers.forEach(this::handleSuccessfulMembersInsertion);
         return true;
     }
 
-    private void handleSuccessfulMemberInsertion(Member member) {
+    private void handleSuccessfulMembersInsertion(Member member) {
         final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
         final var memberIngestedEvent = new MemberIngestedEvent(member.getModel(), member.getId(),
                 member.getCollectionName(), member.getSequenceNr());
