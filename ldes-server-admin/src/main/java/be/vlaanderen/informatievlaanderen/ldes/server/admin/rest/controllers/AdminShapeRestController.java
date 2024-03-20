@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ModelValidator;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Qualifier;

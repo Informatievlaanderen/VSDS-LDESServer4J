@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.blanknodevalidators.DcatBlankNodeValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Property;

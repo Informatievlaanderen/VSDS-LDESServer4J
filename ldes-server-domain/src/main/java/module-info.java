@@ -12,6 +12,7 @@ open module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validators;
 
     requires spring.web;
     requires spring.context;
@@ -28,5 +29,6 @@ open module ldes.domain {
     requires micrometer.core;
     requires org.apache.tomcat.embed.core;
     requires titanium.json.ld;
+    requires org.jetbrains.annotations;
 
 }

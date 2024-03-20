@@ -4,8 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.DcatShaclValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.ModelValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.DcatShaclValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ModelValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.DcatViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;

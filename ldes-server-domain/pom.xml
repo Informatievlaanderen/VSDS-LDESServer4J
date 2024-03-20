@@ -33,6 +33,13 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- NULL ANNOTATIONS -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>${jetbrains-annotations.version}</version>
+        </dependency>
+
         <!-- JSON & RDF -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
