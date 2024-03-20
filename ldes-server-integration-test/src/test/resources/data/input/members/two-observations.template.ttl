@@ -24,7 +24,6 @@
                                        ];
                   time:hasXSDDuration  "PT15M"^^<http://www.w3.org/2001/XMLSchema#duration>
                 ];
-        prov:generatedAtTime  "2022-08-18T12:45:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
         sosa:madeBySensor     [ rdf:type    sosa:Sensor;
                                 terms:type  VkmMeetInstrumentType:rubberslang
                               ];
