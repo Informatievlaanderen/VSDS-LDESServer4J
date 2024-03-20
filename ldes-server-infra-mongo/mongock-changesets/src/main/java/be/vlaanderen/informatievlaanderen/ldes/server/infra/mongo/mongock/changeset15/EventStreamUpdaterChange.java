@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-@ChangeUnit(id = "eventstream-updater-changeset-15", order = "2024-03-14 00:00:00", author = "VSDS")
+@ChangeUnit(id = "eventstream-updater-changeset-15", order = "2024-03-14 00:00:10", author = "VSDS")
 public class EventStreamUpdaterChange {
     public static final String EVENT_STREAM_COLLECTION_NAME = "eventstream";
 
