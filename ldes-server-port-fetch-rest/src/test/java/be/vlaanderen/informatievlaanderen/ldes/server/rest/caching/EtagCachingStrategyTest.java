@@ -35,7 +35,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private static Member createMember(String memberId) {
-		return new Member(memberId, null, null, null, null);
+		return new Member(memberId, null);
 	}
 
 	@ParameterizedTest

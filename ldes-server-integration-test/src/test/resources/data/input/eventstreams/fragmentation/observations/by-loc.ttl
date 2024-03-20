@@ -1,0 +1,34 @@
+@prefix paged:                      <http://localhost:8080/observations/paged/> .
+@prefix dc:                         <http://purl.org/dc/terms/> .
+@prefix dcat:                       <http://www.w3.org/ns/dcat#> .
+@prefix ldes:                       <https://w3id.org/ldes#> .
+@prefix observations:               <http://localhost:8080/observations/> .
+@prefix prov:                       <http://www.w3.org/ns/prov#> .
+@prefix rdf:                        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix shacl:                      <http://www.w3.org/ns/shacl#> .
+@prefix tree:                       <https://w3id.org/tree#> .
+@prefix xsd:                        <http://www.w3.org/2001/XMLSchema#> .
+@prefix vsds-verkeersmetingen:      <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#> .
+@prefix geosparql: <http://www.opengis.net/ont/geosparql#> .
+
+<http://localhost:8080/observations>
+        rdf:type            ldes:EventStream ;
+        ldes:timestampPath  prov:generatedAtTime ;
+        ldes:versionOfPath  dc:isVersionOf ;
+        ldes:createVersions true ;
+        tree:shape          [ rdf:type           shacl:NodeShape ;
+                              shacl:targetClass  vsds-verkeersmetingen:Verkeerstelling
+                            ] ;
+        tree:view           observations:by-loc .
+
+
+observations:by-loc a tree:Node ;
+  tree:viewDescription [
+    a tree:ViewDescription ;
+    tree:fragmentationStrategy ([
+        a tree:GeospatialFragmentation; ;
+        tree:maxZoom "9"^^xsd:integer ;
+        tree:fragmentationPath geosparql:asWKT ;
+    ]) ;
+    tree:pageSize "15"^^xsd:integer ;
+  ] .

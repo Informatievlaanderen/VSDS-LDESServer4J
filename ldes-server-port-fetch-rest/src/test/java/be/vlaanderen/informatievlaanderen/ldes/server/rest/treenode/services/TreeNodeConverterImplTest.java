@@ -10,7 +10,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.EventStreamProperties;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -20,7 +19,6 @@ import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,9 +89,7 @@ class TreeNodeConverterImplTest {
                 <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
                 .""").lang(Lang.NQUADS).toModel();
         Member member = new Member(
-                "collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165",
-                new EventStreamProperties("http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime"),
-                "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", LocalDateTime.parse("2021-01-06T18:04:56.907"), ldesMemberModel);
+                "collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel);
         TreeRelation treeRelation = new TreeRelation("path",
                 new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
                 "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
@@ -102,7 +98,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(11);
+        assertThat(model.listStatements().toList()).hasSize(9);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         Resource relationObject = model.listStatements(null, TREE_RELATION,
@@ -197,7 +193,7 @@ class TreeNodeConverterImplTest {
                 String.format("[%s, %s, \"0\"^^http://www.w3.org/2001/XMLSchema#long]",
                         HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
                         TREE_REMAINING_ITEMS)
-                );
+        );
     }
 
     private void verifyRemainingItemsStatementAbsent(Model model) {

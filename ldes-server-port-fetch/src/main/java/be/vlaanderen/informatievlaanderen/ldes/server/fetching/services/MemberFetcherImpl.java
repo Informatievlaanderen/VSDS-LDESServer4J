@@ -4,7 +4,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.valueobjects.EventStreamProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.versioncreation.VersionObjectCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.versioncreation.VersionObjectCreatorFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 @Service
 public class MemberFetcherImpl implements MemberFetcher {
-    private final Map<String, EventStreamProperties> eventStreamPropertiesMap = new HashMap<>();
+    private final Map<String, VersionObjectCreator> versionObjectCreatorMap = new HashMap<>();
     private final MemberRepository memberRepository;
 
     public MemberFetcherImpl(MemberRepository memberRepository) {
@@ -27,10 +28,7 @@ public class MemberFetcherImpl implements MemberFetcher {
         return memberRepository.findAllByIds(ids)
                 .stream().map(ingestMember -> new Member(
                         ingestMember.getId(),
-                        eventStreamPropertiesMap.get(ingestMember.getCollectionName()),
-                        ingestMember.getVersionOf(),
-                        ingestMember.getTimestamp(),
-                        ingestMember.getModel()
+                        versionObjectCreatorMap.get(ingestMember.getCollectionName()).createFromMember(ingestMember)
                 ))
                 .toList();
     }
@@ -38,12 +36,12 @@ public class MemberFetcherImpl implements MemberFetcher {
     @EventListener
     public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
         final EventStream eventStream = event.eventStream();
-        final EventStreamProperties eventStreamProperties = new EventStreamProperties(eventStream.getVersionOfPath(), eventStream.getTimestampPath());
-        eventStreamPropertiesMap.put(eventStream.getCollection(), eventStreamProperties);
+        final VersionObjectCreator versionObjectCreator = VersionObjectCreatorFactory.createVersionObjectCreator(eventStream);
+        versionObjectCreatorMap.put(eventStream.getCollection(), versionObjectCreator);
     }
 
     @EventListener
     public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-        eventStreamPropertiesMap.remove(event.collectionName());
+        versionObjectCreatorMap.remove(event.collectionName());
     }
 }

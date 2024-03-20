@@ -32,32 +32,7 @@
                 [ rdf:type  verkeersmetingen:Verkeersmeetpunt;
                   <http://def.isotc211.org/iso19156/2011/SamplingPoint#SF_SamplingPoint.shape>
                           [ rdf:type         sf:Point;
-                            geosparql:asWKT  "POINT (3.22918854653835 51.1993559181769)"^^geosparql:wktLiteral
-                          ];
-                  verkeersmetingen:bemonsterdObject
-                          [ rdf:type         weg:Rijrichting;
-                            weg:rijrichting  LinkDirectionValue:inOppositeDirection;
-                            <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Rijrichting.netwerkreferentieelement>
-                                    [ rdf:type  weg:Wegsegment;
-                                      <https://data.vlaanderen.be/ns/netwerk#Link.geometriemiddellijn>
-                                              [ rdf:type         sf:LineString;
-                                                geosparql:asWKT  "LINESTRING (3.22909165173769 51.1992888999808, 3.22918854653835 51.1993559181769, 3.22931695729494 51.1994485669959)"^^geosparql:wktLiteral
-                                              ];
-                                      <https://data.vlaanderen.be/ns/netwerk#beginknoop>
-                                              [ rdf:type  weg:Wegknoop;
-                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
-                                                        [ rdf:type         sf:Point;
-                                                          geosparql:asWKT  "POINT (3.22909165173769 51.1992888999808)"^^geosparql:wktLiteral
-                                                        ]
-                                              ];
-                                      <https://data.vlaanderen.be/ns/netwerk#eindknoop>
-                                              [ rdf:type  weg:Wegknoop;
-                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
-                                                        [ rdf:type         sf:Point;
-                                                          geosparql:asWKT  "POINT (3.22931695729494 51.1994485669959)"^^geosparql:wktLiteral
-                                                        ]
-                                              ]
-                                    ]
+                            geosparql:asWKT "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^<http://www.opengis.net/ont/geosparql#wktLiteral> ;
                           ];
                   <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeersmeetpunt.verkeersmeetpuntnetwerkreferentie>
                           [ rdf:type  <https://data.vlaanderen.be/ns/netwerk#Puntreferentie>;
@@ -95,32 +70,7 @@
                 [ rdf:type  verkeersmetingen:Verkeersmeetpunt;
                   <http://def.isotc211.org/iso19156/2011/SamplingPoint#SF_SamplingPoint.shape>
                           [ rdf:type         sf:Point;
-                            geosparql:asWKT  "POINT (3.21265339851379 51.2046876490443)"^^geosparql:wktLiteral
-                          ];
-                  verkeersmetingen:bemonsterdObject
-                          [ rdf:type         weg:Rijrichting;
-                            weg:rijrichting  LinkDirectionValue:inOppositeDirection;
-                            <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Rijrichting.netwerkreferentieelement>
-                                    [ rdf:type  weg:Wegsegment;
-                                      <https://data.vlaanderen.be/ns/netwerk#Link.geometriemiddellijn>
-                                              [ rdf:type         sf:LineString;
-                                                geosparql:asWKT  "LINESTRING (3.21246866136789 51.2046433255357, 3.21265339851379 51.2046876490443, 3.21282338351011 51.2047281913631)"^^geosparql:wktLiteral
-                                              ];
-                                      <https://data.vlaanderen.be/ns/netwerk#beginknoop>
-                                              [ rdf:type  weg:Wegknoop;
-                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
-                                                        [ rdf:type         sf:Point;
-                                                          geosparql:asWKT  "POINT (3.21246866136789 51.2046433255357)"^^geosparql:wktLiteral
-                                                        ]
-                                              ];
-                                      <https://data.vlaanderen.be/ns/netwerk#eindknoop>
-                                              [ rdf:type  weg:Wegknoop;
-                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
-                                                        [ rdf:type         sf:Point;
-                                                          geosparql:asWKT  "POINT (3.21282338351011 51.2047281913631)"^^geosparql:wktLiteral
-                                                        ]
-                                              ]
-                                    ]
+                            geosparql:asWKT "POLYGON ((3.7337472847142124 51.04745170597559, 4.359276660355135 50.851907920816956, 4.711285586572245 50.84364854093491, 4.4020885567877315 51.214619167436666, 3.7337472847142124 51.04745170597559))"^^<http://www.opengis.net/ont/geosparql#wktLiteral> ;
                           ];
                   <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeersmeetpunt.verkeersmeetpuntnetwerkreferentie>
                           [ rdf:type  <https://data.vlaanderen.be/ns/netwerk#Puntreferentie>;
