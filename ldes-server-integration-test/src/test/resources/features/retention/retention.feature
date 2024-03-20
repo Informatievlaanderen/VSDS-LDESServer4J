@@ -1,12 +1,16 @@
 Feature: LDES Server Retention
 
   @time-based
-  Scenario: Server provides timebased retention
-    Given I create the eventstream "data/input/eventstreams/retention/mobility-hindrances_timebased.ttl"
-    When I ingest 30 members to the collection "mobility-hindrances"
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 30 members
+  Scenario Outline: Server provides timebased retention
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest <numberOfMembers> members of template <template> to the collection <collection>
+    Then the first fragment of the <view> view in collection <collection> contains <beforeRetentionCount> members
     # Since all added members' timestamp values equal to their ingestion date, they should be removed after 15 seconds
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 0 members
+    Then the first fragment of the <view> view in collection <collection> contains <afterRetentionCount> members
+    Examples:
+      | eventStreamDescriptionFile                                            | template                                           | numberOfMembers | collection            | view    | beforeRetentionCount | afterRetentionCount |
+#      | "data/input/eventstreams/retention/mobility-hindrances_timebased.ttl" | "data/input/members/mob-hind.template.ttl"         | 30              | "mobility-hindrances" | "paged" | 30                   | 0                   |
+      | "data/input/eventstreams/retention/observations/timebased.ttl"        | "data/input/members/two-observations.template.ttl" | 30              | "observations"        | "paged" | 60                   | 0                   |
 
   @version-based
   Scenario: Server provides version retention

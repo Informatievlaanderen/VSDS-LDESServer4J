@@ -79,14 +79,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
 			throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate(memberTemplate)
+			String memberContent = readMemberTemplate(memberTemplate)
 					.replace("ID", String.valueOf(i))
-					.replace("DATETIME", getCurrentTimestamp()))
-					.lang(Lang.TURTLE)
-					.toModel();
+					.replace("DATETIME", getCurrentTimestamp());
 			mockMvc.perform(post("/" + collectionName)
 					.contentType("text/turtle")
-					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+					.content(memberContent))
 					.andExpect(status().is2xxSuccessful());
 		}
 	}

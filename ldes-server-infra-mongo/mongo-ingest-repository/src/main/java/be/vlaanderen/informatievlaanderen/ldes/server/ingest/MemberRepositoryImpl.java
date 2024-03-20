@@ -33,17 +33,6 @@ public class MemberRepositoryImpl implements MemberRepository {
 	}
 
 	@Override
-	public Optional<Member> insert(Member member) {
-		MemberEntity memberEntityToSave = memberEntityMapper.toMemberEntity(member);
-		try {
-			MemberEntity savedMember = memberEntityRepository.insert(memberEntityToSave);
-			return Optional.of(memberEntityMapper.toMember(savedMember));
-		} catch (DuplicateKeyException e) {
-			return Optional.empty();
-		}
-	}
-
-	@Override
 	public List<Member> insertAll(List<Member> members) {
 		try {
 			List<MemberEntity> memberEntities = members.stream().map(memberEntityMapper::toMemberEntity).toList();

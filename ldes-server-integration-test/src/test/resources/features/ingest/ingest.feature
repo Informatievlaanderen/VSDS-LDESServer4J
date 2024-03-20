@@ -53,4 +53,5 @@ Feature: LDES Server basic Ingest functionality
     When I fetch the root "paged" fragment of "simpsons"
     And I fetch the next fragment through the first "Relation"
     Then this fragment contains 7 members
+    #TODO check is isomorphic
 

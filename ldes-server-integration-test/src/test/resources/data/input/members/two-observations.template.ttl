@@ -1,0 +1,143 @@
+@prefix B-A:                    <https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/> .
+@prefix LinkDirectionValue:     <https://inspire.ec.europa.eu/codelist/LinkDirectionValue/> .
+@prefix MeasureTypes:           <http://def.isotc211.org/iso19103/2015/MeasureTypes#> .
+@prefix VkmMeetInstrumentType:  <https://data.vlaanderen.be/doc/concept/VkmMeetInstrumentType/> .
+@prefix VkmVerkeersKenmerkType: <https://data.vlaanderen.be/doc/concept/VkmVerkeersKenmerkType/> .
+@prefix VkmVoertuigType:        <https://data.vlaanderen.be/doc/concept/VkmVoertuigType/> .
+@prefix geosparql:              <http://www.opengis.net/ont/geosparql#> .
+@prefix prov:                   <http://www.w3.org/ns/prov#> .
+@prefix rdf:                    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sf:                     <http://www.opengis.net/ont/sf#> .
+@prefix sosa:                   <http://www.w3.org/ns/sosa/> .
+@prefix terms:                  <http://purl.org/dc/terms/> .
+@prefix time:                   <http://www.w3.org/2006/time#> .
+@prefix verkeersmetingen:       <https://data.vlaanderen.be/ns/verkeersmetingen#> .
+@prefix weg:                    <https://data.vlaanderen.be/ns/weg#> .
+
+
+<https://geomobility.eu/id/observation/3145a8ea-0f1e-4083-a270-cb18f3d85328/B-A/OGV1>
+        rdf:type              <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
+                [ rdf:type             time:TemporalEntity;
+                  time:hasBeginning    [ rdf:type                 time:Instant;
+                                         time:inXSDDateTimeStamp  "2022-08-18T12:45:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+                                       ];
+                  time:hasXSDDuration  "PT15M"^^<http://www.w3.org/2001/XMLSchema#duration>
+                ];
+        prov:generatedAtTime  "2022-08-18T12:45:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>;
+        sosa:madeBySensor     [ rdf:type    sosa:Sensor;
+                                terms:type  VkmMeetInstrumentType:rubberslang
+                              ];
+        verkeersmetingen:geobserveerdObject
+                [ rdf:type  verkeersmetingen:Verkeersmeetpunt;
+                  <http://def.isotc211.org/iso19156/2011/SamplingPoint#SF_SamplingPoint.shape>
+                          [ rdf:type         sf:Point;
+                            geosparql:asWKT  "POINT (3.22918854653835 51.1993559181769)"^^geosparql:wktLiteral
+                          ];
+                  verkeersmetingen:bemonsterdObject
+                          [ rdf:type         weg:Rijrichting;
+                            weg:rijrichting  LinkDirectionValue:inOppositeDirection;
+                            <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Rijrichting.netwerkreferentieelement>
+                                    [ rdf:type  weg:Wegsegment;
+                                      <https://data.vlaanderen.be/ns/netwerk#Link.geometriemiddellijn>
+                                              [ rdf:type         sf:LineString;
+                                                geosparql:asWKT  "LINESTRING (3.22909165173769 51.1992888999808, 3.22918854653835 51.1993559181769, 3.22931695729494 51.1994485669959)"^^geosparql:wktLiteral
+                                              ];
+                                      <https://data.vlaanderen.be/ns/netwerk#beginknoop>
+                                              [ rdf:type  weg:Wegknoop;
+                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
+                                                        [ rdf:type         sf:Point;
+                                                          geosparql:asWKT  "POINT (3.22909165173769 51.1992888999808)"^^geosparql:wktLiteral
+                                                        ]
+                                              ];
+                                      <https://data.vlaanderen.be/ns/netwerk#eindknoop>
+                                              [ rdf:type  weg:Wegknoop;
+                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
+                                                        [ rdf:type         sf:Point;
+                                                          geosparql:asWKT  "POINT (3.22931695729494 51.1994485669959)"^^geosparql:wktLiteral
+                                                        ]
+                                              ]
+                                    ]
+                          ];
+                  <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeersmeetpunt.verkeersmeetpuntnetwerkreferentie>
+                          [ rdf:type  <https://data.vlaanderen.be/ns/netwerk#Puntreferentie>;
+                            <https://data.vlaanderen.be/ns/netwerk#Puntreferentie.opPositie>
+                                    [ rdf:type                       MeasureTypes:Length;
+                                      <https://schema.org/unitCode>  "m"^^<https://w3id.org/cdt/ucumunit>;
+                                      <https://schema.org/value>     10.07267835241124e0
+                                    ];
+                            <https://data.vlaanderen.be/ns/netwerk#toepassingsRichting>
+                                    LinkDirectionValue:bothDirection
+                          ]
+                ];
+        <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling.geobserveerdKenmerk>
+                [ rdf:type                       <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstellingkenmerk>;
+                  verkeersmetingen:voertuigType  VkmVoertuigType:vrachtwagen;
+                  <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstellingkenmerk.kenmerktype>
+                          VkmVerkeersKenmerkType:aantal
+                ];
+        <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling.tellingresultaat>
+                4 .
+
+<https://geomobility.eu/id/observation/2ca1709f-22c7-4eee-9489-fba89e9e255e/B-A/P-C>
+        rdf:type              <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling>;
+        <http://def.isotc211.org/iso19156/2011/Observation#OM_Observation.phenomenonTime>
+                [ rdf:type             time:TemporalEntity;
+                  time:hasBeginning    [ rdf:type                 time:Instant;
+                                         time:inXSDDateTimeStamp  "2022-08-10T05:00:00.000Z"^^<http://www.w3.org/2001/XMLSchema#dateTime>
+                                       ];
+                  time:hasXSDDuration  "PT15M"^^<http://www.w3.org/2001/XMLSchema#duration>
+                ];
+        sosa:madeBySensor     [ rdf:type    sosa:Sensor;
+                                terms:type  VkmMeetInstrumentType:rubberslang
+                              ];
+        verkeersmetingen:geobserveerdObject
+                [ rdf:type  verkeersmetingen:Verkeersmeetpunt;
+                  <http://def.isotc211.org/iso19156/2011/SamplingPoint#SF_SamplingPoint.shape>
+                          [ rdf:type         sf:Point;
+                            geosparql:asWKT  "POINT (3.21265339851379 51.2046876490443)"^^geosparql:wktLiteral
+                          ];
+                  verkeersmetingen:bemonsterdObject
+                          [ rdf:type         weg:Rijrichting;
+                            weg:rijrichting  LinkDirectionValue:inOppositeDirection;
+                            <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Rijrichting.netwerkreferentieelement>
+                                    [ rdf:type  weg:Wegsegment;
+                                      <https://data.vlaanderen.be/ns/netwerk#Link.geometriemiddellijn>
+                                              [ rdf:type         sf:LineString;
+                                                geosparql:asWKT  "LINESTRING (3.21246866136789 51.2046433255357, 3.21265339851379 51.2046876490443, 3.21282338351011 51.2047281913631)"^^geosparql:wktLiteral
+                                              ];
+                                      <https://data.vlaanderen.be/ns/netwerk#beginknoop>
+                                              [ rdf:type  weg:Wegknoop;
+                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
+                                                        [ rdf:type         sf:Point;
+                                                          geosparql:asWKT  "POINT (3.21246866136789 51.2046433255357)"^^geosparql:wktLiteral
+                                                        ]
+                                              ];
+                                      <https://data.vlaanderen.be/ns/netwerk#eindknoop>
+                                              [ rdf:type  weg:Wegknoop;
+                                                <https://data.vlaanderen.be/ns/netwerk#Knoop.geometrie>
+                                                        [ rdf:type         sf:Point;
+                                                          geosparql:asWKT  "POINT (3.21282338351011 51.2047281913631)"^^geosparql:wktLiteral
+                                                        ]
+                                              ]
+                                    ]
+                          ];
+                  <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeersmeetpunt.verkeersmeetpuntnetwerkreferentie>
+                          [ rdf:type  <https://data.vlaanderen.be/ns/netwerk#Puntreferentie>;
+                            <https://data.vlaanderen.be/ns/netwerk#Puntreferentie.opPositie>
+                                    [ rdf:type                       MeasureTypes:Length;
+                                      <https://schema.org/unitCode>  "m"^^<https://w3id.org/cdt/ucumunit>;
+                                      <https://schema.org/value>     13.820604441159047e0
+                                    ];
+                            <https://data.vlaanderen.be/ns/netwerk#toepassingsRichting>
+                                    LinkDirectionValue:bothDirection
+                          ]
+                ];
+        <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling.geobserveerdKenmerk>
+                [ rdf:type                       <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstellingkenmerk>;
+                  verkeersmetingen:voertuigType  VkmVoertuigType:fiets;
+                  <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstellingkenmerk.kenmerktype>
+                          VkmVerkeersKenmerkType:aantal
+                ];
+        <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#Verkeerstelling.tellingresultaat>
+                11 .
