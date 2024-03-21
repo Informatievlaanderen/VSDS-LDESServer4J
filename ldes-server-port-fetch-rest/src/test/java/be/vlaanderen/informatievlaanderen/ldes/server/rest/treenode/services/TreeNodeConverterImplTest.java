@@ -94,7 +94,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.size()).isEqualTo(11);
+        assertThat(model.size()).isEqualTo(9);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         Resource relationObject = model.listStatements(null, TREE_RELATION,
