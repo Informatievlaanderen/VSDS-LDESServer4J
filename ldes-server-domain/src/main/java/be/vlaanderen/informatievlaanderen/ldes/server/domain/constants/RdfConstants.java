@@ -36,6 +36,7 @@ public class RdfConstants {
 	public static final String RDF_LITERAL = RDF_SCHEMA + "Literal";
 	public static final Property DC_CONFORMS_TO = createProperty(DC_TERMS, "conformsTo");
 	public static final Property DC_STANDARD = createProperty(DC_TERMS, "Standard");
+	public static final Property XML_DATETIME = createProperty("http://www.w3.org/2001/XMLSchema#dateTime");
 
 
 	public static final String GENERIC_TREE_RELATION = TREE + "Relation";
