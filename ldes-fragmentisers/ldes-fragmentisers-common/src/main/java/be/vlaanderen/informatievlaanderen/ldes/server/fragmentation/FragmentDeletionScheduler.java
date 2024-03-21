@@ -28,6 +28,7 @@ public class FragmentDeletionScheduler {
 		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}
 
+	@SuppressWarnings("java:S6857")
 	@Scheduled(cron = DELETION_CRON_KEY)
 	public void deleteFragments() {
 		if(retentionPolicyEmptinessChecker.isEmpty()) {

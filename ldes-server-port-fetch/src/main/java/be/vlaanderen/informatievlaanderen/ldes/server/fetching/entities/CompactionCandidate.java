@@ -16,7 +16,7 @@ public class CompactionCandidate {
 
 	public Fragment getFragment() {
 		if (fragment == null) {
-			throw new RuntimeException("Fragment has not yet been initialized");
+			throw new IllegalStateException("Fragment has not yet been initialized");
 		}
 		return fragment;
 	}

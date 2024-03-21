@@ -61,13 +61,9 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(24);
+        assertThat(model.size()).isEqualTo(25);
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
-
-        // 04/12/23 Desactivated due to performance issues on the count query
-        // refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-//        verifyRemainingItemsStatement(model);
     }
 
     @Test
@@ -76,7 +72,7 @@ class TreeNodeConverterImplTest {
                 COLLECTION_NAME, null);
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(2);
+        assertThat(model.size()).isEqualTo(2);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         verifyRemainingItemsStatementAbsent(model);
@@ -98,7 +94,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(9);
+        assertThat(model.size()).isEqualTo(11);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         Resource relationObject = model.listStatements(null, TREE_RELATION,
@@ -208,10 +204,10 @@ class TreeNodeConverterImplTest {
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
 
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
+        assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(24);
+        assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(25);
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
+        assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
     }
 }
