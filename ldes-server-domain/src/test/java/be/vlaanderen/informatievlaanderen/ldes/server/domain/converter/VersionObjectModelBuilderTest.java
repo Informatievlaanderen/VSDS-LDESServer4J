@@ -5,13 +5,13 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class VersionObjectModelBuilderTest {
     private static final String MEMBER_ID = "http://example.org/measurement/1/2024-03-14T18:00:15";
-    private static final String TIMESTAMP_STRING = "2024-03-14T18:00:15";
+    private static final String TIMESTAMP_STRING = "2024-03-14T18:00:15Z";
     private static final String VERSION_OF = "http://example.org/measurement/1";
     private static final String DC_TERMS = "http://purl.org/dc/terms/";
 
@@ -27,7 +27,7 @@ class VersionObjectModelBuilderTest {
         final Model actualVersionObject = VersionObjectModelBuilder.create()
                 .withMemberId(MEMBER_ID)
                 .withVersionOfProperties(DC_TERMS + "isVersionOf", VERSION_OF)
-                .withTimestampProperties(DC_TERMS + "created", LocalDateTime.parse(TIMESTAMP_STRING))
+                .withTimestampProperties(DC_TERMS + "created", ZonedDateTime.parse(TIMESTAMP_STRING).toLocalDateTime())
                 .withModel(startingModel)
                 .buildVersionObjectModel();
 
