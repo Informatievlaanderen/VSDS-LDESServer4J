@@ -1,4 +1,4 @@
-@prefix by-page:                    <http://localhost:8080/observations/by-page/> .
+@prefix paged:                    <http://localhost:8080/observations/paged/> .
 @prefix dc:                         <http://purl.org/dc/terms/> .
 @prefix dcat:                       <http://www.w3.org/ns/dcat#> .
 @prefix ldes:                       <https://w3id.org/ldes#> .
@@ -10,7 +10,7 @@
 @prefix tree:                       <https://w3id.org/tree#> .
 @prefix vsds-verkeersmetingen:      <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#> .
 
-by-page:description  rdf:type       tree:ViewDescription ;
+paged:description  rdf:type       tree:ViewDescription ;
         tree:fragmentationStrategy  () ;
         tree:pageSize               "1500"^^<http://www.w3.org/2001/XMLSchema#int> .
 
@@ -22,8 +22,8 @@ by-page:description  rdf:type       tree:ViewDescription ;
         tree:shape          [ rdf:type           shacl:NodeShape ;
                               shacl:targetClass  vsds-verkeersmetingen:Verkeerstelling
                             ] ;
-        tree:view           observations:by-page .
+        tree:view           observations:paged .
 
 
-observations:by-page  rdf:type  tree:Node , rdfs:Resource ;
-        tree:viewDescription  by-page:description .
+observations:paged  rdf:type  tree:Node , rdfs:Resource ;
+        tree:viewDescription  paged:description .
