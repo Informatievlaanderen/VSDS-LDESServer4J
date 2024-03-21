@@ -36,6 +36,7 @@ public class CompactionScheduler {
 		this.retentionPolicyEmptinessChecker = retentionPolicyEmptinessChecker;
 	}
 
+	@SuppressWarnings("java:S6857")
 	@Scheduled(cron = COMPACTION_CRON_KEY)
 	public void compactFragments() {
 		if(retentionPolicyEmptinessChecker.isEmpty()) {
