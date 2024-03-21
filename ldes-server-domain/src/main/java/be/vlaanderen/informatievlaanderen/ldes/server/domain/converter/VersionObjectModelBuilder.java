@@ -63,7 +63,7 @@ public class VersionObjectModelBuilder {
         versionObjectModel.add(partitionedStatements.get(false));
 
         versionObjectModel.add(subject, ResourceFactory.createProperty(versionOfPath), ResourceFactory.createProperty(versionOf));
-        versionObjectModel.add(subject, ResourceFactory.createProperty(timestampPath), createTimestampLiteral(timestamp));
+        versionObjectModel.add(subject, ResourceFactory.createProperty(timestampPath), createTimestampLiteral());
 
         return versionObjectModel;
     }
@@ -75,7 +75,7 @@ public class VersionObjectModelBuilder {
         return ResourceFactory.createProperty(memberId.substring(memberId.indexOf("/") + 1));
     }
 
-    private Literal createTimestampLiteral(LocalDateTime timestamp) {
+    private Literal createTimestampLiteral() {
         final Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         final ZonedDateTime zoneTimestamp = timestamp.atZone(TimeZone.getDefault().toZoneId());
         calendar.setTimeInMillis(zoneTimestamp.toInstant().toEpochMilli());

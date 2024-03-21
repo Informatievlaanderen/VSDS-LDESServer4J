@@ -15,10 +15,6 @@ public class MemberModel {
         this.model = model;
     }
 
-    public String getSubjectUri() {
-        return subjectUri;
-    }
-
     public Model getModel() {
         return model;
     }
