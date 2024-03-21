@@ -37,17 +37,9 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 		List<Member> members = memberFetcher
 				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
 
-		TreeNode treeNode = new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
+		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
 				members, collectionName, fragment.getNextUpdateTs());
-
-		if(fragment.isRoot()) {
-			// 04/12/23 Desactivated due to performance issues on the count query
-			// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-//			treeNode.setNumberOfMembersInView(allocationRepository.countByCollectionNameAndViewName(collectionName, treeNodeId.getViewName().getViewName()));
-		}
-
-		return treeNode;
 	}
 
 }

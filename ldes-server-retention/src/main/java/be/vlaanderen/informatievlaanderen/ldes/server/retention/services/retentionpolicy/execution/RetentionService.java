@@ -33,6 +33,7 @@ public class RetentionService {
 		this.retentionPolicyCollection = retentionPolicyCollection;
 	}
 
+	@SuppressWarnings("java:S6857")
 	@Scheduled(cron = RETENTION_CRON_KEY)
 	public void executeRetentionPolicies() {
 		if(retentionPolicyCollection.isEmpty()) {

@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("java:S6857")
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Value("${springdoc.swagger-ui.path:/swagger}")

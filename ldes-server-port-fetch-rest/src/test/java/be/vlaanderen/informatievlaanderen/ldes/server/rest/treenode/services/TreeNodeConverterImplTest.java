@@ -66,10 +66,6 @@ class TreeNodeConverterImplTest {
         assertThat(model.size()).isEqualTo(25);
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
-
-        // 04/12/23 Desactivated due to performance issues on the count query
-        // refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-//        verifyRemainingItemsStatement(model);
     }
 
     @Test
