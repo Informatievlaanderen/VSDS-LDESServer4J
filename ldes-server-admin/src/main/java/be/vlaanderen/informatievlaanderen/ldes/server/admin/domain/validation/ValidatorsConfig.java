@@ -1,7 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ModelValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ShaclValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

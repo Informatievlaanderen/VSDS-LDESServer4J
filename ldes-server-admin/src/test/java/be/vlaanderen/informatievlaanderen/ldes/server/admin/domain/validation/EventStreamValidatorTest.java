@@ -2,8 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ModelValidator;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.validators.ShaclValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.RDFDataMgr;
