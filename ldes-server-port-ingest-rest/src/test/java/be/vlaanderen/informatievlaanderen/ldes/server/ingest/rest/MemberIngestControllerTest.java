@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidationConfig;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -49,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {IngestedModelConverter.class, MemberIngestController.class,
-        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class})
+        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, IngestValidationConfig.class})
 class MemberIngestControllerTest {
 
     @Autowired
@@ -64,8 +65,8 @@ class MemberIngestControllerTest {
     @BeforeEach
     void setUp() {
         Stream.of(
-                        new EventStream("mobility-hindrances", "timestampPath", "http://purl.org/dc/terms/isVersionOf", false),
-                        new EventStream("restaurant", "timestampPath", "https://vocabulary.uncefact.org/elementVersionId", false))
+                        new EventStream("mobility-hindrances", "http://www.w3.org/ns/prov#generatedAtTime", "http://purl.org/dc/terms/isVersionOf", false),
+                        new EventStream("restaurant", "http://www.w3.org/ns/prov#generatedAtTime", "https://vocabulary.uncefact.org/elementVersionId", false))
                 .map(EventStreamCreatedEvent::new)
                 .forEach(eventPublisher::publishEvent);
     }
@@ -81,7 +82,7 @@ class MemberIngestControllerTest {
     }
 
     @Test
-    void when_POSTRequestIsPerformedWithoutMultipleNamedNodes_ThrowException() throws Exception {
+    void when_POSTRequestIsPerformedWithMultipleNamedNodes_ThrowException() throws Exception {
         byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-with-multiple-nodes.nq", Lang.NQUADS);
 
         when(memberIngester.ingest(eq("mobility-hindrances"), any()))
@@ -91,17 +92,18 @@ class MemberIngestControllerTest {
                         .contentType("application/n-quads")
                         .content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member id could not be extracted from model")));
+                .andExpect(content().string(containsString("Member must not contain named graphs")));
     }
 
     @Test
-    void when_POSTRequestIsPerformed_LdesMemberIsSavedWithoutTimestamp() throws Exception {
+    void when_POSTRequestIsPerformedWithoutTimestampPath_ThrowException() throws Exception {
         byte[] ldesMemberBytes = readLdesMemberDataFromFile("example-ldes-member-without-timestamp.nq",
                 Lang.NQUADS);
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
-                .andExpect(status().isOk());
-        verify(memberIngester, times(1)).ingest(anyString(), any(Model.class));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the timestamp path: http://www.w3.org/ns/prov#generatedAtTime exactly once.")));
+        verify(memberIngester, never()).ingest(anyString(), any(Model.class));
     }
 
     @Test
@@ -114,7 +116,7 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member id could not be extracted from model")));
+                .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the version of path: http://purl.org/dc/terms/isVersionOf exactly once.")));
     }
 
     @Test

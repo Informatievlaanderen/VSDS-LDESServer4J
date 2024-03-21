@@ -8,4 +8,5 @@
     :category :mainDish ;
     :price "6.99"^^xsd:decimal ;
     unece:elementVersionId :menuItemA ;
+    <http://www.w3.org/ns/prov#generatedAtTime> "2022-05-20T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> ;
     :ingredients "Spaghetti, ground beef, tomatoes, onions, garlic, herbs" .

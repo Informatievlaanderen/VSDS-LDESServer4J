@@ -5,6 +5,7 @@ open module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.constants;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.rest;
+    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validators;
 
     // Events
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation;
@@ -12,7 +13,6 @@ open module ldes.domain {
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin;
     exports be.vlaanderen.informatievlaanderen.ldes.server.domain.events.compaction;
-    exports be.vlaanderen.informatievlaanderen.ldes.server.domain.validators;
 
     requires spring.web;
     requires spring.context;
