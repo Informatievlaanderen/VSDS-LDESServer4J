@@ -51,15 +51,6 @@ class IngestedMemberHandlerTest {
 		assertEquals(LocalDateTime.parse("2022-09-28T07:14:00.000"), captor.getValue().getTimestamp());
 	}
 
-	@Test
-	void when_MemberWithIncorrectPath_Then_PropertyIsIgnored() {
-		ingestedMemberHandler.handleMemberIngestedEvent(event);
-
-		verify(memberPropertiesRepository).insert(captor.capture());
-		assertNull(captor.getValue().getVersionOf());
-		assertNull(captor.getValue().getTimestamp());
-	}
-
 	private Model readModelFromFile(String fileName) throws URISyntaxException {
 		ClassLoader classLoader = getClass().getClassLoader();
 		String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()

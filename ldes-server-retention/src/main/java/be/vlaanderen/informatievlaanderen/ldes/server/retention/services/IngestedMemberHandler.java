@@ -25,9 +25,9 @@ public class IngestedMemberHandler {
 
 	@EventListener
 	public void handleMemberIngestedEvent(MemberIngestedEvent event) {
-		LocalDateTime timestamp = event.timestamp();
-		String versionOf = event.versionOf();
-		MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf, timestamp);
+		final LocalDateTime timestamp = event.timestamp();
+		final String versionOf = event.versionOf();
+		final MemberProperties member = new MemberProperties(event.id(), event.collectionName(), versionOf, timestamp);
 		addViewsToMember(member);
 
 		memberPropertiesRepository.insert(member);
