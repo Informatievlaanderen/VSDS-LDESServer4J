@@ -28,6 +28,5 @@ open module ldes.domain {
     requires micrometer.core;
     requires org.apache.tomcat.embed.core;
     requires titanium.json.ld;
-    requires org.jetbrains.annotations;
 
 }
