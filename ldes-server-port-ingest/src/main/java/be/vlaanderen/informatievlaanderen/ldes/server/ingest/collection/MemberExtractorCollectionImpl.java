@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractorFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -14,38 +14,27 @@ import java.util.Optional;
 
 @Component
 public class MemberExtractorCollectionImpl implements MemberExtractorCollection {
-    private final Map<String, MemberExtractor> versionObjectTransformers = new HashMap<>();
+    private final Map<String, MemberExtractor> memberExtractors = new HashMap<>();
 
     @Override
     public Optional<MemberExtractor> getMemberExtractor(String collectionName) {
-        return Optional.ofNullable(versionObjectTransformers.get(collectionName));
+        return Optional.ofNullable(memberExtractors.get(collectionName));
     }
 
     @Override
     public void addMemberExtractor(String collectionName, MemberExtractor memberExtractor) {
-        versionObjectTransformers.put(collectionName, memberExtractor);
+        memberExtractors.put(collectionName, memberExtractor);
     }
 
     @Override
     public void deleteMemberExtractor(String collectionName) {
-        versionObjectTransformers.remove(collectionName);
+        memberExtractors.remove(collectionName);
     }
 
     @EventListener
     public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
         final EventStream eventStream = event.eventStream();
-        final MemberExtractor memberExtractor;
-        if (eventStream.isVersionCreationEnabled()) {
-            memberExtractor = null;
-        } else {
-            memberExtractor = new VersionObjectMemberExtractor(
-                    eventStream.getCollection(),
-                    eventStream.getVersionOfPath(),
-                    eventStream.getTimestampPath()
-            );
-        }
-
-        addMemberExtractor(eventStream.getCollection(), memberExtractor);
+        addMemberExtractor(eventStream.getCollection(), MemberExtractorFactory.createMemberExtractor(eventStream));
     }
 
     @EventListener

@@ -1,12 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollectionImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.MemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionObjectMemberExtractor;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
@@ -23,7 +23,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,12 +83,12 @@ class MemberIngesterImplTest {
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, "txId", model);
-        when(memberRepository.insert(member)).thenReturn(Optional.empty());
+        when(memberRepository.insertAll(List.of(member))).thenReturn(List.of());
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isFalse();
-        verify(memberRepository, times(1)).insert(member);
+        verify(memberRepository, times(1)).insertAll(List.of(member));
         verifyNoInteractions(eventPublisher);
     }
 
@@ -100,14 +100,14 @@ class MemberIngesterImplTest {
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
                 0L, "txId", model);
-        when(memberRepository.insert(member)).thenReturn(Optional.of(member));
+        when(memberRepository.insertAll(List.of(member))).thenReturn(List.of(member));
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
 
         assertThat(memberIngested).isTrue();
         InOrder inOrder = inOrder(memberRepository, eventPublisher);
-        inOrder.verify(memberRepository, times(1)).insert(member);
-        inOrder.verify(eventPublisher).publishEvent((MemberIngestedEvent) any());
+        inOrder.verify(memberRepository, times(1)).insertAll(List.of(member));
+        inOrder.verify(eventPublisher).publishEvent(any(MembersIngestedEvent.class));
         inOrder.verifyNoMoreInteractions();
     }
 

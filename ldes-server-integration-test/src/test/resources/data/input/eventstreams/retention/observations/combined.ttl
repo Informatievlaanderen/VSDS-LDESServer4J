@@ -1,0 +1,35 @@
+@prefix paged:                    <http://localhost:8080/observations/paged/> .
+@prefix dc:                         <http://purl.org/dc/terms/> .
+@prefix dcat:                       <http://www.w3.org/ns/dcat#> .
+@prefix ldes:                       <https://w3id.org/ldes#> .
+@prefix observations:               <http://localhost:8080/observations/> .
+@prefix prov:                       <http://www.w3.org/ns/prov#> .
+@prefix rdf:                        <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix shacl:                      <http://www.w3.org/ns/shacl#> .
+@prefix tree:                       <https://w3id.org/tree#> .
+@prefix vsds-verkeersmetingen:      <https://implementatie.data.vlaanderen.be/ns/vsds-verkeersmetingen#> .
+
+<http://localhost:8080/observations>
+        rdf:type            ldes:EventStream ;
+        ldes:timestampPath  prov:generatedAtTime ;
+        ldes:versionOfPath  dc:isVersionOf ;
+        ldes:createVersions true ;
+        tree:shape          [ rdf:type           shacl:NodeShape ;
+                              shacl:targetClass  vsds-verkeersmetingen:Verkeerstelling
+                            ] ;
+        tree:view           observations:paged .
+
+
+observations:paged  rdf:type  tree:Node ;
+        tree:viewDescription [
+            tree:fragmentationStrategy  () ;
+            ldes:retentionPolicy [
+                  a ldes:LatestVersionSubset ;
+                  ldes:amount 5 ;
+                ] ;
+            ldes:retentionPolicy [
+                  a ldes:DurationAgoPolicy ;
+                  tree:value "PT5S"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+                ] ;
+            tree:pageSize   "1500"^^<http://www.w3.org/2001/XMLSchema#int> ;
+        ] .

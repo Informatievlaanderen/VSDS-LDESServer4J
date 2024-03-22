@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
+import static org.apache.jena.rdf.model.ResourceFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -81,6 +81,21 @@ class EventStreamConverterImplTest {
 		}
 
 		@Test
+		void when_modelCreateVersions_then_convertToEventStreamResponse() {
+			EventStreamTO expectedEventStreamTO = new EventStreamTO("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", true,
+					views, shacl);
+			eventStreamModel.remove(eventStreamModel.listStatements(null,
+					createProperty("https://w3id.org/ldes#createVersions"), (RDFNode) null));
+			eventStreamModel.add(createResource("http://localhost:8080/collectionName1"),
+					createProperty("https://w3id.org/ldes#createVersions"), createTypedLiteral(true));
+
+			EventStreamTO result = eventStreamConverter.fromModel(eventStreamModel);
+
+			assertEquals(expectedEventStreamTO, result);
+		}
+
+		@Test
 		void when_eventStreamHasViews_then_convertToModel() {
 			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
@@ -117,6 +132,21 @@ class EventStreamConverterImplTest {
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
 					List.of(), shacl);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
+			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
+		}
+
+		@Test
+		void when_eventStreamCreateVersions_then_convertToModel() {
+			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
+					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", true,
+					List.of(), shacl);
+			final Model convertedModel = eventStreamConverter.toModel(eventStream);
+
+			eventStreamModel.remove(eventStreamModel.listStatements(null,
+					createProperty("https://w3id.org/ldes#createVersions"), (RDFNode) null));
+			eventStreamModel.add(createResource("http://localhost:8080/collectionName1"),
+					createProperty("https://w3id.org/ldes#createVersions"), createTypedLiteral(true));
+
 			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
 

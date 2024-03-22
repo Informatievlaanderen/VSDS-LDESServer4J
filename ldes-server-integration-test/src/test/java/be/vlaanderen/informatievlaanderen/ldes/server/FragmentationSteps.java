@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -37,7 +39,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	private void fetchFragment(String path) throws Exception {
@@ -47,7 +49,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	@And("I fetch the next fragment through the first {string}")
@@ -64,7 +66,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	@Then("this fragment only has {int} {string} relation")
@@ -88,7 +90,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	public void thisFragmentContainsMembers(int expectedMemberCount) {
 		await().atMost(Duration.of(20, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
-			return currentFragment.listObjectsOfProperty(TREE_MEMBER).toList().size() == expectedMemberCount;
+			return MemberCounter.countMembers(expectedMemberCount).matches(currentFragment);
 		});
 	}
 
@@ -120,7 +122,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	@When("I fetch the timebased fragment {string} fragment of this month of {string}")

@@ -29,7 +29,7 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 
 	@When("I save the members using the MemberRepository")
 	public void iSaveTheMembers() {
-		members.forEach(memberRepository::insert);
+		memberRepository.insertAll(members);
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")

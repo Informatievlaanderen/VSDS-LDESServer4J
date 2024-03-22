@@ -50,8 +50,9 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	}
 
 	@Override
-	public void insert(MemberProperties memberProperties) {
-		memberPropertiesEntityRepository.insert(memberPropertiesEntityMapper.toMemberPropertiesEntity(memberProperties));
+	public void insertAll(List<MemberProperties> memberProperties) {
+		final List<MemberPropertiesEntity> entities = memberProperties.stream().map(memberPropertiesEntityMapper::toMemberPropertiesEntity).toList();
+		memberPropertiesEntityRepository.insert(entities);
 	}
 
 	@Override

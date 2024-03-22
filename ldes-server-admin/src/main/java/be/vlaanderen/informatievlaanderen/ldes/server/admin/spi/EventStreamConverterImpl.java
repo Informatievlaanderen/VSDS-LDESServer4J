@@ -38,7 +38,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
                 .orElseThrow(() -> new MissingStatementException("Not blank node with type " + EVENT_STREAM_TYPE));
         final String timestampPath = getResource(model, LDES_TIMESTAMP_PATH).orElse(null);
         final String versionOfPath = getResource(model, LDES_VERSION_OF).orElse(null);
-        final boolean versionCreationEnabled = getResource(model, LDES_CREATE_VERSIONS).map(Boolean::parseBoolean).orElse(false);
+        final boolean versionCreationEnabled = getBooleanResource(model, LDES_CREATE_VERSIONS).orElse(false);
         final List<ViewSpecification> views = getViews(model, collection);
         final Model shacl = getShaclFromModel(model);
         return new EventStreamTO(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl);
@@ -128,6 +128,13 @@ public class EventStreamConverterImpl implements EventStreamConverter {
         return model.listStatements(null, predicate, (Resource) null)
                 .nextOptional()
                 .map(statement -> statement.getObject().toString());
+    }
+
+    private Optional<Boolean> getBooleanResource(Model model, Property predicate) {
+        return model.listStatements(null, predicate, (Resource) null)
+                .nextOptional()
+                .map(statement -> statement.getObject().asLiteral())
+                .map(Literal::getBoolean);
     }
 
     private Model getShaclFromModel(Model model) {

@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberAllocatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -14,19 +14,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -63,12 +55,13 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	}
 
 	@DataTableType
-	public MemberIngestedEvent MemberIngestedEventEntryTransformer(Map<String, String> row)
-			throws URISyntaxException, IOException {
-		return new MemberIngestedEvent(
-				createModel(row.get("versionOf"), row.get("timestamp")),
+	public MembersIngestedEvent MembersIngestedEventEntryTransformer(Map<String, String> row) {
+		final MembersIngestedEvent.MemberProperties member = new MembersIngestedEvent.MemberProperties(
 				row.get("id"),
-				row.get("collectionName"), Integer.parseInt(row.get("sequenceNumber")));
+				row.get("versionOf"),
+				LocalDateTime.parse(row.get("timestamp"))
+		);
+		return new MembersIngestedEvent(row.get("collectionName"), List.of(member));
 	}
 
 	@Given("an EventStream with the following properties")
@@ -77,7 +70,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	}
 
 	@And("the following Members are ingested")
-	public void theFollowingMembersAreIngested(List<MemberIngestedEvent> ingestedMembers) {
+	public void theFollowingMembersAreIngested(List<MembersIngestedEvent> ingestedMembers) {
 		ingestedMembers.forEach(applicationEventPublisher::publishEvent);
 	}
 
@@ -93,20 +86,6 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				.timeout(secondsToWait + 1, SECONDS)
 				.pollDelay(secondsToWait, SECONDS)
 				.untilAsserted(() -> assertTrue(true));
-	}
-
-	private Model createModel(String versionOf, String timestamp) throws URISyntaxException, IOException {
-		String modelTemplate = readMemberTemplateFromFile();
-		String updatedModel = modelTemplate.replace("#VERSIONOF", versionOf).replace("#TIMESTAMP", timestamp);
-		return RDFParserBuilder.create()
-				.fromString(updatedModel).lang(Lang.TURTLE)
-				.toModel();
-	}
-
-	private String readMemberTemplateFromFile() throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		URI uri = Objects.requireNonNull(classLoader.getResource(MEMBER_TEMPLATE_FILENAME)).toURI();
-		return Files.lines(Paths.get(uri)).collect(Collectors.joining());
 	}
 
 	@And("the following members are allocated to the view {string}")

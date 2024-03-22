@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -115,7 +116,7 @@ class AdminEventStreamsRestControllerTest {
 	class GetSingleEventStream {
 		@Test
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
-			Model model = readModelFromFile("ldes-1-with-dcat.ttl");
+			Model model = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
 			Model shape = readModelFromFile("example-shape.ttl");
 			EventStreamTO eventStream = new EventStreamTO("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf", false,
@@ -147,7 +148,7 @@ class AdminEventStreamsRestControllerTest {
 	class CreateEventStream {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
-			final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
+			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
 			final Model shape = readModelFromFile("example-shape.ttl");
 
 			EventStreamTO eventStreamTO = new EventStreamTO(
@@ -161,7 +162,32 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
 							.accept(contentTypeNQuads)
-							.content(readDataFromFile("ldes-1.ttl"))
+							.content(readDataFromFile("eventstream/streams/ldes-1.ttl"))
+							.contentType(contentTypeTurtle))
+					.andExpect(status().isCreated())
+					.andExpect(content().contentType(contentTypeNQuads))
+					.andExpect(IsIsomorphic.with(expectedModel));
+
+			verify(eventStreamService).createEventStream(any(EventStreamTO.class));
+		}
+
+		@Test
+		void when_eventStreamThatCreateVersionsModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
+			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-create-versions.ttl");
+			final Model shape = readModelFromFile("example-shape.ttl");
+
+			EventStreamTO eventStreamTO = new EventStreamTO(
+					"name1",
+					"http://purl.org/dc/terms/created",
+					"http://purl.org/dc/terms/isVersionOf",
+					true,
+					List.of(), shape);
+
+			when(eventStreamService.createEventStream(any(EventStreamTO.class))).thenReturn(eventStreamTO);
+
+			mockMvc.perform(post("/admin/api/v1/eventstreams")
+							.accept(contentTypeNQuads)
+							.content(readDataFromFile("eventstream/streams/ldes-create-versions.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
 					.andExpect(content().contentType(contentTypeNQuads))

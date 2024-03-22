@@ -23,7 +23,11 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
     }
 
     @Override
-    public void insert(MemberProperties memberProperties) {
+    public void insertAll(List<MemberProperties> memberProperties) {
+        memberProperties.forEach(this::insert);
+    }
+
+    private void insert(MemberProperties memberProperties) {
         if (memberPropertiesMap.containsKey(memberProperties.getId())) {
             throw new IllegalArgumentException("MemberProperties already inserted!");
         }

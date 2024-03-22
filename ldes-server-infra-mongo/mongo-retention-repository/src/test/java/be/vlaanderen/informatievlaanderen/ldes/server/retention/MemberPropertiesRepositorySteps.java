@@ -49,7 +49,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@When("I save the MemberProperties using the MemberPropertiesRepository")
 	public void iSaveTheMemberPropertiesUsingTheMemberPropertiesRepository() {
-		memberProperties.forEach(memberPropertiesRepository::insert);
+		memberPropertiesRepository.insertAll(memberProperties);
 	}
 
 	@And("I retrieve the MemberProperties with id {string}")
@@ -59,7 +59,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@And("The retrieved MemberProperties has the view {string} as a property")
 	public void theMemberPropertyContainsTheView(String view) {
-		assertTrue(retrievedMemberProperties.get(0).containsViewReference(view));
+		assertTrue(retrievedMemberProperties.getFirst().containsViewReference(view));
 	}
 
 	@And("I retrieve all MemberProperties with versionOf {string} from view {string}")
@@ -106,7 +106,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@And("The retrieved MemberProperties does not have the view {string} as a property")
 	public void theRetrievedMemberPropertiesDoesNotHaveTheViewAsAProperty(String viewName) {
-		assertFalse(retrievedMemberProperties.get(0).containsViewReference(viewName));
+		assertFalse(retrievedMemberProperties.getFirst().containsViewReference(viewName));
 	}
 
 	@And("I delete the MemberProperties with id {string}")

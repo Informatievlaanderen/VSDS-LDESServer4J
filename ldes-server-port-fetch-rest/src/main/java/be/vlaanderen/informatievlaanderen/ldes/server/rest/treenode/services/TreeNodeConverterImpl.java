@@ -46,7 +46,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 			String baseUrl = prefix + "/" + treeNode.getCollectionName();
 			model.add(addEventStreamStatements(treeNode, baseUrl));
 			treeNode.getMembers().stream()
-					.map(Member::getModel).forEach(model::add);
+					.map(Member::model).forEach(model::add);
 		}
 
 		return prefixAdder.addPrefixesToModel(model);

@@ -1,0 +1,10 @@
+@prefix ns0: <http://example.com/vocab#> .
+
+<http://temporary.org#bart>
+  ns0:name "Bart" ;
+  ns0:parent <http://temporary.org#homer> .
+
+<http://temporary.org#homer> ns0:name "Homer" .
+<http://temporary.org#lisa>
+  ns0:name "Lisa" ;
+  ns0:parent <http://temporary.org#homer> .

@@ -1,5 +1,4 @@
 @prefix ldes: <https://w3id.org/ldes#> .
-@prefix custom: <http://example.org/> .
 @prefix dcat:       <http://www.w3.org/ns/dcat#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix tree: <https://w3id.org/tree#>.

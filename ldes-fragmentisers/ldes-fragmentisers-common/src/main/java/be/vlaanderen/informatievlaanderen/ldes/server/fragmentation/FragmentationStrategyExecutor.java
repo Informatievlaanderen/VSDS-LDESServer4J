@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.MemberRetriever;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 
@@ -22,24 +22,24 @@ public class FragmentationStrategyExecutor {
 	private final ViewName viewName;
 	private final RootFragmentRetriever rootFragmentRetriever;
 	private final ObservationRegistry observationRegistry;
-	private final EventSourceService eventSourceService;
+	private final MemberRetriever memberRetriever;
 	private final FragmentSequenceRepository fragmentSequenceRepository;
 	private boolean isExecutorActive = true;
 
 	public FragmentationStrategyExecutor(ViewName viewName,
-			FragmentationStrategy fragmentationStrategy,
-			RootFragmentRetriever rootFragmentRetriever,
-			ObservationRegistry observationRegistry,
-			ExecutorService executorService,
-			EventSourceService eventSourceService,
-			FragmentSequenceRepository fragmentSequenceRepository) {
+                                         FragmentationStrategy fragmentationStrategy,
+                                         RootFragmentRetriever rootFragmentRetriever,
+                                         ObservationRegistry observationRegistry,
+                                         ExecutorService executorService,
+										 MemberRetriever memberRetriever,
+                                         FragmentSequenceRepository fragmentSequenceRepository) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
-		this.eventSourceService = eventSourceService;
 		this.executorService = executorService;
 		this.fragmentationStrategy = fragmentationStrategy;
 		this.viewName = viewName;
-		this.fragmentSequenceRepository = fragmentSequenceRepository;
+        this.memberRetriever = memberRetriever;
+        this.fragmentSequenceRepository = fragmentSequenceRepository;
 	}
 
 	public void execute() {
@@ -65,9 +65,7 @@ public class FragmentationStrategyExecutor {
 	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
 		final String collectionName = viewName.getCollectionName();
 		final long lastProcessedSequenceNr = lastProcessedSequence.sequenceNr();
-		return eventSourceService
-				.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, lastProcessedSequenceNr)
-				.map(member -> new Member(member.getId(), member.getModel(), member.getSequenceNr()));
+		return memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, lastProcessedSequenceNr);
 	}
 
 	private FragmentSequence fragment(Member member) {
