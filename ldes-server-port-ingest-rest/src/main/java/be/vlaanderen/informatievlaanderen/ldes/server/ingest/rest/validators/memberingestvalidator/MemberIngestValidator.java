@@ -41,9 +41,12 @@ public class MemberIngestValidator implements IngestValidator {
     }
 
     private void validateModel(Model model, EventStream eventStream) {
-        Resource memberSubject = getRootNode(model);
-        int timestampPathCount = model.listStatements(memberSubject, ResourceFactory.createProperty(eventStream.getTimestampPath()), (RDFNode) null).toList().size();
-        int versionOfPathCount = model.listStatements(memberSubject, ResourceFactory.createProperty(eventStream.getVersionOfPath()), (RDFNode) null).toList().size();
+        List<Resource> memberSubjects = getRootNode(model);
+        if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
+            throw new IngestValidationException("Only 1 member is allowed per ingest");
+        }
+        int timestampPathCount = model.listStatements(null, ResourceFactory.createProperty(eventStream.getTimestampPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList().size();
+        int versionOfPathCount = model.listStatements(null, ResourceFactory.createProperty(eventStream.getVersionOfPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList().size();
         boolean conformsTimePath = eventStream.isVersionCreationEnabled() ? timestampPathCount == 0 : timestampPathCount == 1;
         boolean conformsVersionPath = eventStream.isVersionCreationEnabled() ? versionOfPathCount == 0 : versionOfPathCount == 1;
         if (!(conformsTimePath && conformsVersionPath)) {
@@ -52,7 +55,7 @@ public class MemberIngestValidator implements IngestValidator {
         }
     }
 
-    private Resource getRootNode(Model model) {
+    private List<Resource> getRootNode(Model model) {
         String queryString = """
                 SELECT DISTINCT ?s\s
                         WHERE {\s
@@ -65,11 +68,9 @@ public class MemberIngestValidator implements IngestValidator {
         Query query = QueryFactory.create(queryString) ;
         try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
             ResultSet results = qexec.execSelect() ;
-            QuerySolution soln = results.nextSolution();
-            if (results.hasNext()) {
-                throw new IngestValidationException("Only 1 member is allowed per ingest");
-            }
-            return soln.getResource("s");
+            List<Resource> rootNodes = new ArrayList<>();
+            results.forEachRemaining(sol -> rootNodes.add(sol.getResource("s")));
+            return rootNodes;
         }
     }
 
