@@ -14,21 +14,21 @@ import java.util.Optional;
 
 @Component
 public class MemberExtractorCollectionImpl implements MemberExtractorCollection {
-    private final Map<String, MemberExtractor> versionObjectTransformers = new HashMap<>();
+    private final Map<String, MemberExtractor> memberExtractors = new HashMap<>();
 
     @Override
     public Optional<MemberExtractor> getMemberExtractor(String collectionName) {
-        return Optional.ofNullable(versionObjectTransformers.get(collectionName));
+        return Optional.ofNullable(memberExtractors.get(collectionName));
     }
 
     @Override
     public void addMemberExtractor(String collectionName, MemberExtractor memberExtractor) {
-        versionObjectTransformers.put(collectionName, memberExtractor);
+        memberExtractors.put(collectionName, memberExtractor);
     }
 
     @Override
     public void deleteMemberExtractor(String collectionName) {
-        versionObjectTransformers.remove(collectionName);
+        memberExtractors.remove(collectionName);
     }
 
     @EventListener

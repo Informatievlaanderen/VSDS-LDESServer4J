@@ -19,7 +19,7 @@ public class StateObjectMemberExtractor implements MemberExtractor {
         final String txId = UUID.randomUUID().toString();
         final LocalDateTime ingestedTimestamp = LocalDateTime.now();
 
-        return CBDExtractor.initialize(ingestedModel).extractAllMemberModels().stream()
+        return MemberModelExtractor.initialize(ingestedModel).extractAllMemberModels().stream()
                 .map(memberModel -> memberModel.mapToMember(collectionName, ingestedTimestamp, txId))
                 .toList();
     }

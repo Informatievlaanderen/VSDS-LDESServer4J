@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.valueobjects.MemberModel;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
@@ -19,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CDBExtractorTest {
+class MemberModelExtractorTest {
 
     @Test
     void test_ExtractNamedSubjects() {
@@ -29,7 +28,7 @@ class CDBExtractorTest {
                 .toList();
         final Model model = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
 
-        final List<Resource> namedNodes = CBDExtractor.initialize(model).getNamedSubjects();
+        final List<Resource> namedNodes = MemberModelExtractor.initialize(model).getNamedSubjects();
 
         assertThat(namedNodes).containsExactlyInAnyOrderElementsOf(expectedNamedNodes);
     }
@@ -41,7 +40,7 @@ class CDBExtractorTest {
         final Model modelToExtract = RDFParser.source(modelToExtractFileName).lang(Lang.NQ).toModel();
         final Resource subjectToExtract = ResourceFactory.createResource(subjectUri);
 
-        final Model actualModel = CBDExtractor.initialize(modelToExtract).extractMemberModel(subjectToExtract);
+        final Model actualModel = MemberModelExtractor.initialize(modelToExtract).extractMemberModel(subjectToExtract);
 
         assertThat(actualModel).matches(expectedModel::isIsomorphicWith);
     }
@@ -54,7 +53,7 @@ class CDBExtractorTest {
                 .toList();
         final Model modelToExtract = RDFParser.source(modelToExtractFileName).lang(Lang.NQ).toModel();
 
-        final List<MemberModel> actualMembers = CBDExtractor.initialize(modelToExtract).extractAllMemberModels();
+        final List<MemberModel> actualMembers = MemberModelExtractor.initialize(modelToExtract).extractAllMemberModels();
 
         assertThat(actualMembers)
                 .isNotEmpty()

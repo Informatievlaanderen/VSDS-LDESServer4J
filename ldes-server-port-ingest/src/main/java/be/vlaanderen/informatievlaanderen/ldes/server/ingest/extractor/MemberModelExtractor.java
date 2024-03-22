@@ -6,19 +6,19 @@ import org.apache.jena.rdf.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CBDExtractor {
+public class MemberModelExtractor {
     private final Model model;
     private final List<Resource> namedSubjects;
     private final List<Resource> processedSubjects = new ArrayList<>();
 
-    private CBDExtractor(Model model, List<Resource> namedSubjects) {
+    private MemberModelExtractor(Model model, List<Resource> namedSubjects) {
         this.model = model;
         this.namedSubjects = namedSubjects;
     }
 
-    public static CBDExtractor initialize(Model model) {
+    public static MemberModelExtractor initialize(Model model) {
         List<Resource> namedSubjects = extractAllNodesSubjects(model);
-        return new CBDExtractor(model, namedSubjects);
+        return new MemberModelExtractor(model, namedSubjects);
     }
 
     public List<Resource> getNamedSubjects() {
