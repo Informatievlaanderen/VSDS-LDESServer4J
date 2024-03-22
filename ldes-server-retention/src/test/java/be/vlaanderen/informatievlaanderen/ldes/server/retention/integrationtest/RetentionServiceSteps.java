@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.integrationtest
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberAllocatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -14,20 +14,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFParserBuilder;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -64,14 +55,13 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	}
 
 	@DataTableType
-	public MemberIngestedEvent MemberIngestedEventEntryTransformer(Map<String, String> row) {
-		return new MemberIngestedEvent(
+	public MembersIngestedEvent MembersIngestedEventEntryTransformer(Map<String, String> row) {
+		final MembersIngestedEvent.MemberProperties member = new MembersIngestedEvent.MemberProperties(
 				row.get("id"),
-				row.get("collectionName"),
-				Long.parseLong(row.get("sequenceNumber")),
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp"))
-				);
+		);
+		return new MembersIngestedEvent(row.get("collectionName"), List.of(member));
 	}
 
 	@Given("an EventStream with the following properties")
@@ -80,7 +70,7 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 	}
 
 	@And("the following Members are ingested")
-	public void theFollowingMembersAreIngested(List<MemberIngestedEvent> ingestedMembers) {
+	public void theFollowingMembersAreIngested(List<MembersIngestedEvent> ingestedMembers) {
 		ingestedMembers.forEach(applicationEventPublisher::publishEvent);
 	}
 

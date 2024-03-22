@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 public interface MemberPropertiesRepository {
 
-	void insert(MemberProperties memberProperties);
+	void insertAll(List<MemberProperties> memberProperties);
 
 	Optional<MemberProperties> retrieve(String id);
 

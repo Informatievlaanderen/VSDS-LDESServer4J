@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,14 +23,14 @@ class FragmentationServiceTest {
 
 	@Test
 	void when_MemberIngestedEvent_then_AllFragmentationExecutorsFromThisCollection_should_BeTriggered() {
-		final MemberIngestedEvent memberIngestedEvent = new MemberIngestedEvent("id",
-				"collectionName", 1L, "versionOf", LocalDateTime.now());
+		final MembersIngestedEvent.MemberProperties memberProperties = new MembersIngestedEvent.MemberProperties("collectionName", "versionOf", LocalDateTime.now());
+		final MembersIngestedEvent membersIngestedEvent = new MembersIngestedEvent("id", List.of(memberProperties));
 		final FragmentationStrategyExecutor executorA = mock(FragmentationStrategyExecutor.class);
 		final FragmentationStrategyExecutor executorB = mock(FragmentationStrategyExecutor.class);
-		when(fragmentationStrategyCollection.getFragmentationStrategyExecutors(memberIngestedEvent.collectionName()))
+		when(fragmentationStrategyCollection.getFragmentationStrategyExecutors(membersIngestedEvent.collectionName()))
 				.thenReturn(List.of(executorA, executorB));
 
-		fragmentationService.executeFragmentation(memberIngestedEvent);
+		fragmentationService.executeFragmentation(membersIngestedEvent);
 
 		verify(executorA).execute();
 		verify(executorB).execute();

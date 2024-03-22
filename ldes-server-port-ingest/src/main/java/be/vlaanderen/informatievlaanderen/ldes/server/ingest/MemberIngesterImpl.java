@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.collection.MemberExtractorCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
@@ -40,35 +40,40 @@ public class MemberIngesterImpl implements MemberIngester {
 
     @Override
     public boolean ingest(String collectionName, Model ingestedModel) {
-        final MemberExtractor memberExtractor = memberExtractorCollection
-                .getMemberExtractor(collectionName)
-                .orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
-        final List<Member> members = memberExtractor.extractMembers(ingestedModel);
+        final List<Member> members = extractMembersFromModel(collectionName, ingestedModel);
+
         members.forEach(validator::validate);
-
-        return insertIntoRepo(members);
-    }
-
-    private boolean insertIntoRepo(List<Member> members) {
         members.forEach(Member::removeTreeMember);
-        List<Member> insertedMembers = memberRepository.insertAll(members);
-        if (insertedMembers.size() != members.size()) {
+
+        int ingestedMembersCount = memberRepository.insertAll(members).size();
+
+        if (ingestedMembersCount != members.size()) {
             log.warn(DUPLICATE_MEMBERS_DETECTED);
             return false;
         }
-        insertedMembers.forEach(this::handleSuccessfulMembersInsertion);
+        publishIngestedEvent(collectionName, members);
+        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment(ingestedMembersCount);
+        members.forEach(member -> logSuccessfulMemberIngestion(member.getId()));
         return true;
     }
 
-    private void handleSuccessfulMembersInsertion(Member member) {
-        final String memberId = member.getId().replaceAll("[\n\r\t]", "_");
-        final var memberIngestedEvent = new MemberIngestedEvent(member.getId(),
-                member.getCollectionName(),
-                member.getSequenceNr(),
-                member.getVersionOf(),
-                member.getTimestamp());
-        eventPublisher.publishEvent(memberIngestedEvent);
-        Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment();
-        log.debug(MEMBER_WITH_ID_INGESTED, memberId);
+    private List<Member> extractMembersFromModel(String collectionName, Model model) {
+        final MemberExtractor memberExtractor = memberExtractorCollection
+                .getMemberExtractor(collectionName)
+                .orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
+        return memberExtractor.extractMembers(model);
+    }
+
+    private void publishIngestedEvent(String collectionName, List<Member> members) {
+        final List<MembersIngestedEvent.MemberProperties> memberProperties = members.stream()
+                .map(member -> new MembersIngestedEvent.MemberProperties(member.getId(), member.getVersionOf(), member.getTimestamp()))
+                .toList();
+        eventPublisher.publishEvent(new MembersIngestedEvent(collectionName, memberProperties));
+    }
+
+
+    private void logSuccessfulMemberIngestion(String memberId) {
+        final String loggableMemberId = memberId.replaceAll("[\n\r\t]", "_");
+        log.debug(MEMBER_WITH_ID_INGESTED, loggableMemberId);
     }
 }
