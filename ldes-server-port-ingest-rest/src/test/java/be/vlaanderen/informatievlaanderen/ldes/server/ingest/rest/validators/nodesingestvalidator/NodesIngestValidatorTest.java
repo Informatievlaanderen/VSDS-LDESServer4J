@@ -30,12 +30,12 @@ class NodesIngestValidatorTest {
     void when_IncorrectMemberReceived_Then_ValidationThrowsException(Model model) {
         assertThrows(ShaclValidationException.class, () -> validator.validate(model, "collection"));
     }
+
     @ParameterizedTest
     @ArgumentsSource(CorrectMemberArgumentsProvider.class)
     void when_CorrectMemberReceived_Then_ValidationDoesNotThrowException(Model model) {
         assertDoesNotThrow(() -> validator.validate(model, "collection"));
     }
-
 
     static class IncorrectMemberArgumentsProvider implements ArgumentsProvider {
         @Override
@@ -45,27 +45,18 @@ class NodesIngestValidatorTest {
                     Arguments.of(readModelFromFile("example-ldes-member-blank-node.nq")));
         }
     }
+
     static class CorrectMemberArgumentsProvider implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
             return Stream.of(
-                    Arguments.of(readModelFromFileCorrectMember("example-ldes-member-state.nq")),
-                    Arguments.of(readModelFromFileCorrectMember("example-ldes-member.nq")));
+                    Arguments.of(readModelFromFile("example-ldes-member-state.nq")),
+                    Arguments.of(readModelFromFile("example-ldes-member.nq")));
         }
     }
 
     private static Model readModelFromFile(String fileName) throws URISyntaxException {
-        ClassLoader classLoader = IncorrectMemberArgumentsProvider.class.getClassLoader();
-        String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-                .toString();
-        return RDFDataMgr.loadModel(uri);
-    }
-
-    private static Model readModelFromFileCorrectMember(String fileName) throws URISyntaxException {
-        ClassLoader classLoader = CorrectMemberArgumentsProvider.class.getClassLoader();
-        String uri = Objects.requireNonNull(classLoader.getResource(fileName)).toURI()
-                .toString();
-        return RDFDataMgr.loadModel(uri);
+        return RDFDataMgr.loadModel(fileName);
     }
 
 }

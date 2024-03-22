@@ -9,7 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.nodesingestvalidator.NodesIngestValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator.MemberIngestValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -50,7 +51,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {IngestedModelConverter.class, MemberIngestController.class,
-        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, IngestValidationConfig.class})
+        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, NodesIngestValidator.class, MemberIngestValidator.class})
 class MemberIngestControllerTest {
 
     @Autowired
@@ -92,7 +93,7 @@ class MemberIngestControllerTest {
                         .contentType("application/n-quads")
                         .content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member must not contain named graphs")));
+                .andExpect(content().string(containsString("Only 1 member is allowed per ingest")));
     }
 
     @Test
@@ -103,7 +104,7 @@ class MemberIngestControllerTest {
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the timestamp path: http://www.w3.org/ns/prov#generatedAtTime exactly once.")));
-        verify(memberIngester, never()).ingest(anyString(), any(Model.class));
+        verifyNoInteractions(memberIngester);
     }
 
     @Test
