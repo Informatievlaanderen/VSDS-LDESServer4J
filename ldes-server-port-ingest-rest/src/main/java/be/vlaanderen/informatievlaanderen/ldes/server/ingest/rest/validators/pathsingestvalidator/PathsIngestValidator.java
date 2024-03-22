@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
+import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.springframework.context.event.EventListener;
 
@@ -36,16 +37,30 @@ public class PathsIngestValidator implements IngestValidator {
     }
 
     private void validateModel(Model model, EventStream eventStream) {
-        Set<Resource> namedSubjects = model.listStatements().mapWith(Statement::getSubject).filterDrop(RDFNode::isAnon).toSet();
-        if (namedSubjects.size() != 1) {
-            throw new IngestValidationException("Member must not contain named graphs");
-        }
-        Resource memberSubject = namedSubjects.iterator().next();
+        Resource memberSubject = getRootNode(model);
         boolean conformsTimePath = model.listStatements(memberSubject, ResourceFactory.createProperty(eventStream.getTimestampPath()), (RDFNode) null).toList().size() == 1 ^ eventStream.isVersionCreationEnabled();
         boolean conformsVersionPath = model.listStatements(memberSubject, ResourceFactory.createProperty(eventStream.getVersionOfPath()), (RDFNode) null).toList().size() == 1 ^ eventStream.isVersionCreationEnabled();
         if (!(conformsTimePath && conformsVersionPath)) {
             String message = getValidationMessage(eventStream, conformsTimePath, conformsVersionPath);
             throw new IngestValidationException(message);
+        }
+    }
+
+    private Resource getRootNode(Model model) {
+        String queryString = """
+                SELECT DISTINCT ?s\s
+                        WHERE {\s
+                            ?s ?p ?o .\s
+                            FILTER NOT EXISTS {
+                                ?s_in ?p_in ?s .
+                            }\s
+                        }
+                """ ;
+        Query query = QueryFactory.create(queryString) ;
+        try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
+            ResultSet results = qexec.execSelect() ;
+            QuerySolution soln = results.nextSolution();
+            return soln.getResource("s");
         }
     }
 

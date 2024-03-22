@@ -2,7 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
 import io.micrometer.observation.annotation.Observed;
+import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -54,7 +56,11 @@ public class IngestedModelConverter implements HttpMessageConverter<Model> {
 						requireNonNull(inputMessage.getHeaders().getContentType()),
 						RdfFormatException.RdfFormatContext.INGEST
 				);
-		return RDFParser.source(inputMessage.getBody()).context(rdfModelConverter.getContext()).lang(lang).toModel();
+		Dataset dataset = RDFParser.source(inputMessage.getBody()).context(rdfModelConverter.getContext()).lang(lang).toDataset();
+		if (dataset.listModelNames().hasNext()) {
+			throw new IngestValidationException("Member can not contain named graphs");
+		}
+		return dataset.getDefaultModel();
 	}
 
 	@Override
