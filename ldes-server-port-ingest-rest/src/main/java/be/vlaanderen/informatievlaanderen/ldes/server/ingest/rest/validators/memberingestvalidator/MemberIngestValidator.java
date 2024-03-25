@@ -16,7 +16,7 @@ import java.util.*;
 @Component
 @Order(2)
 public class MemberIngestValidator implements IngestValidator {
-    private final List<EventStream> eventstreams = new ArrayList<>();
+    private final Set<EventStream> eventstreams = new HashSet<>();
 
     private void addEventStream(EventStream eventStream) {
         eventstreams.add(eventStream);
