@@ -26,15 +26,16 @@ For more details, please refer to the Swagger API under the `base` definition.
 Currently, an event stream can ingest version objects by default. A version object describes the state of a specific
 version of a resource at a specific timestamp.
 
-However, an event stream can be configured in such a way that it can ingest state objects. Once retrieving the event
-stream and its fragments, the members will be presented as version objects. A state object describes the latest state of
-a resource. When such an object is ingested, the server stores the timestamp of ingestion and determines the subject of
-that member, which will be stored and used to determine whereof that state object is a version.
+However, an event stream can be configured in such a way that it can ingest state objects. Once the event stream and
+its fragments are retrieved, the members will be presented as version objects. A state object describes the latest state
+of a resource. When such an object is ingested, the server stores the RDF model as is, the timestamp of ingestion and
+determines the subject of that member.
 
-When the members of such an event stream are fetched, version objects are created from that state object. This version
-creation includes the following actions:
+When the members of such an event stream are fetched, the stored RDF model is enriched with the version object
+properties,
+which includes:
 
-- the subject of that state object, which is the versionOf, will be replaced with the member id, which has the following
+- the named subject node, which is the versionOf, will be replaced with the member id, which has the following
   structure: `{versionOf}/{timestamp}`
 - the following statements will be added:
     * `<{memberId}> <{timestamp-path-of-the-ldes}> "{timestamp}""^^<http://www.w3.org/2001/XMLSchema#dateTime>`
