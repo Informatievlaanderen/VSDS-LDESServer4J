@@ -23,11 +23,11 @@ For more details, please refer to the Swagger API under the `base` definition.
 
 ## Version objects, state objects and version creation
 
-Currently, an event stream can ingest version objects by default. A version object describe the state of a specific
+Currently, an event stream can ingest version objects by default. A version object describes the state of a specific
 version of a resource at a specific timestamp.
 
-However, an event stream can be configured in such a way that it can ingest state objects and that version objects can
-be created when the even stream and its fragments are fetched. A state object describes the latest state of
+However, an event stream can be configured in such a way that it can ingest state objects. Once retrieving the event
+stream and its fragments, the members will be presented as version objects. A state object describes the latest state of
 a resource. When such an object is ingested, the server stores the timestamp of ingestion and determines the subject of
 that member, which will be stored and used to determine whereof that state object is a version.
 
