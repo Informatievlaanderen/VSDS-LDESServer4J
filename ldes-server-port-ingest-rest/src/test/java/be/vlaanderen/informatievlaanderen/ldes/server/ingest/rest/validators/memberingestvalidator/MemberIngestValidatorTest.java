@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.me
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.XML_DATETIME;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemberIngestValidatorTest {
@@ -69,7 +69,7 @@ class MemberIngestValidatorTest {
                     Arguments.of(readModelFromFile("example-ldes-member-wrong-type-version-of.nq"), VERSION,
                             "Object of statement with property: " + VERSIONOF_PATH + " should be a resource."),
                     Arguments.of(readModelFromFile("example-ldes-member-wrong-type-timestamp.nq"), VERSION,
-                            "Object of statement with property: " + TIMESTAMP_PATH + " should be a literal of type " + XML_DATETIME.getURI()));
+                            "Object of statement with property: " + TIMESTAMP_PATH + " should be a literal of type " + XSDDatatype.XSDdateTime.getURI()));
         }
     }
 

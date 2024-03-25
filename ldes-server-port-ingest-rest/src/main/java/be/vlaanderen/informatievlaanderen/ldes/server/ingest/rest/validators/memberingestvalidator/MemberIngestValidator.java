@@ -5,6 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.springframework.context.event.EventListener;
@@ -12,8 +13,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.XML_DATETIME;
 
 @Component
 @Order(2)
@@ -47,26 +46,36 @@ public class MemberIngestValidator implements IngestValidator {
         if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
             throw new IngestValidationException("Only 1 member is allowed per ingest");
         }
+
+        boolean conformsTimePath = validateTimestampPath(memberSubjects, model, eventStream);
+        boolean conformsVersionPath = validateVersionOfPath(memberSubjects, model, eventStream);
+        if (!(conformsTimePath && conformsVersionPath)) {
+            String message = getValidationMessage(eventStream, conformsTimePath, conformsVersionPath);
+            throw new IngestValidationException(message);
+        }
+    }
+
+    private boolean validateTimestampPath(List<Resource> memberSubjects, Model model, EventStream eventStream) {
         List<Statement> timestampStatements = model.listStatements(null, ResourceFactory.createProperty(eventStream.getTimestampPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
-        List<Statement> versionOfStatements = model.listStatements(null, ResourceFactory.createProperty(eventStream.getVersionOfPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
 
         timestampStatements.forEach(statement -> {
-            if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype().getURI(), XML_DATETIME.getURI())) {
-                throw new IngestValidationException(String.format("Object of statement with property: %s should be a literal of type %s", eventStream.getTimestampPath(), XML_DATETIME.getURI()));
+            if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype(), XSDDatatype.XSDdateTime)) {
+                throw new IngestValidationException(String.format("Object of statement with property: %s should be a literal of type %s", eventStream.getTimestampPath(), XSDDatatype.XSDdateTime.getURI()));
             }
         });
+
+        return eventStream.isVersionCreationEnabled() ? timestampStatements.isEmpty() : timestampStatements.size() == 1;
+    }
+
+    private boolean validateVersionOfPath(List<Resource> memberSubjects, Model model, EventStream eventStream) {
+        List<Statement> versionOfStatements = model.listStatements(null, ResourceFactory.createProperty(eventStream.getVersionOfPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
+
         versionOfStatements.forEach(statement -> {
             if (!statement.getObject().isResource()) {
                 throw new IngestValidationException(String.format("Object of statement with property: %s should be a resource.", eventStream.getVersionOfPath()));
             }
         });
-
-        boolean conformsTimePath = eventStream.isVersionCreationEnabled() ? timestampStatements.isEmpty() : timestampStatements.size() == 1;
-        boolean conformsVersionPath = eventStream.isVersionCreationEnabled() ? versionOfStatements.isEmpty() : versionOfStatements.size() == 1;
-        if (!(conformsTimePath && conformsVersionPath)) {
-            String message = getValidationMessage(eventStream, conformsTimePath, conformsVersionPath);
-            throw new IngestValidationException(message);
-        }
+        return eventStream.isVersionCreationEnabled() ? versionOfStatements.isEmpty() : versionOfStatements.size() == 1;
     }
 
     private List<Resource> getRootNode(Model model) {
