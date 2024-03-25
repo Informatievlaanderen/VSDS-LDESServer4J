@@ -48,7 +48,7 @@ Creating a generic Event Stream named "generic-eventstream"
 server:generic-eventstream a ldes:EventStream ;
     ldes:timestampPath dcterms:created ;
     ldes:versionOfPath dcterms:isVersionOf ;
-    ldes:createVersions true
+    ldes:createVersions true ;
     tree:shape genericES:shape .
 
 genericES:shape a sh:NodeShape .
