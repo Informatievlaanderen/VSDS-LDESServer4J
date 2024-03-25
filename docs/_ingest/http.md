@@ -54,9 +54,33 @@ one or many members.
 
 ## Member Conformity
 
-Only one member can be ingested at a time. Bulk ingest is (not yet) supported.
-Every model that is sent for ingestion, should contain exactly one named node.
-Otherwise it will be rejected.
+Every member should conform to certain conditions, depending on the eventstream on which they are ingested.
+
+### Named Graphs
+
+Named graphs are not supported.
+When a named graph is present in a member, the member is rejected.
+
+### Shared or Loose Blank Nodes
+
+All blank nodes should be part of exactly one member.
+When a blank node is present that is not part of a member or 2 members reference the same blank node, the ingested model is rejected.
+
+This also means that the root node of every member should be a named node.
+
+It is still possible for a single member to reference the same blank node multiple times.
+
+### Timestamp and Version Of Path
+
+Every eventstream defines the property where the timestamp and version of can be found on each member.
+If the eventstream has version creation NOT enabled, these properties should be present on each member.
+If version creation is enabled, these properties should NOT be present on the members received.
+
+### Bulk Ingestion
+
+Depending on if the eventstream has version creation enabled, multiple members can be ingested with a single POST request.
+Later this will also be possible without version creation.
+For now, a request will be rejected if multiple named nodes are found which are not referenced by any triple. (Without version creation enabled)
 
 ## Duplicate Members
 
