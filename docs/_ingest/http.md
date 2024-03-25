@@ -54,7 +54,7 @@ one or many members.
 
 ## Member Conformity
 
-Every member should conform to certain conditions, depending on the eventstream on which they are ingested.
+Every member should conform to certain conditions, depending on the event stream on which they are ingested.
 
 ### Named Graphs
 
@@ -72,13 +72,13 @@ It is still possible for a single member to reference the same blank node multip
 
 ### Timestamp and Version Of Path
 
-Every eventstream defines the property where the timestamp and version of can be found on each member.
-If the eventstream has version creation NOT enabled, these properties should be present on each member.
+Every event stream defines the property where the timestamp and version of can be found on each member.
+If the event stream has version creation NOT enabled, these properties should be present on each member.
 If version creation is enabled, these properties should NOT be present on the members received.
 
 ### Bulk Ingestion
 
-Depending on if the eventstream has version creation enabled, multiple members can be ingested with a single POST request.
+Depending on if the event stream has version creation enabled, multiple members can be ingested with a single POST request.
 Later this will also be possible without version creation.
 For now, a request will be rejected if multiple named nodes are found which are not referenced by any triple. (Without version creation enabled)
 
