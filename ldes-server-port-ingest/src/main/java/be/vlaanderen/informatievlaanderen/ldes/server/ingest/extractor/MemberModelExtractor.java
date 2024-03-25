@@ -8,25 +8,18 @@ import java.util.List;
 
 public class MemberModelExtractor {
     private final Model model;
-    private final List<Resource> namedSubjects;
     private final List<Resource> processedSubjects = new ArrayList<>();
 
-    private MemberModelExtractor(Model model, List<Resource> namedSubjects) {
+    private MemberModelExtractor(Model model) {
         this.model = model;
-        this.namedSubjects = namedSubjects;
     }
 
     public static MemberModelExtractor initialize(Model model) {
-        List<Resource> namedSubjects = extractAllNodesSubjects(model);
-        return new MemberModelExtractor(model, namedSubjects);
-    }
-
-    public List<Resource> getNamedSubjects() {
-        return namedSubjects;
+        return new MemberModelExtractor(model);
     }
 
     public List<MemberModel> extractAllMemberModels() {
-        return namedSubjects.stream()
+        return getNamedSubjectNodes().stream()
                 .map(subject -> new MemberModel(subject.getURI(), extractMemberModel(subject)))
                 .toList();
     }
@@ -45,7 +38,7 @@ public class MemberModelExtractor {
         return member;
     }
 
-    private static List<Resource> extractAllNodesSubjects(Model model) {
+    public List<Resource> getNamedSubjectNodes() {
         return model.listSubjects().toList()
                 .stream()
                 .filter(subject -> !subject.isAnon())
@@ -57,8 +50,6 @@ public class MemberModelExtractor {
     }
 
     private boolean statementContainsProcessableBNode(Statement statement) {
-        return !statement.getObject().isLiteral()
-                && !processedSubjects.contains(statement.getObject().asResource())
-                && !namedSubjects.contains(statement.getObject().asResource());
+        return statement.getObject().isAnon() && !processedSubjects.contains(statement.getObject().asResource());
     }
 }
