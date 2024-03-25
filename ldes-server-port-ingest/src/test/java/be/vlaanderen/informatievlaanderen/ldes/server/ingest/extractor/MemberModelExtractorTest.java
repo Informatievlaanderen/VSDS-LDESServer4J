@@ -28,7 +28,7 @@ class MemberModelExtractorTest {
                 .toList();
         final Model model = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
 
-        final List<Resource> namedNodes = MemberModelExtractor.initialize(model).getNamedSubjects();
+        final List<Resource> namedNodes = MemberModelExtractor.initialize(model).getNamedSubjectNodes();
 
         assertThat(namedNodes).containsExactlyInAnyOrderElementsOf(expectedNamedNodes);
     }
