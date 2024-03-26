@@ -49,7 +49,6 @@ import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
-import static be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig.DEFAULT_MAX_AGE;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -68,6 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
+	private static final Integer CONFIGURED_MAX_AGE_MUTABLE = 180;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -104,7 +104,7 @@ class EventStreamControllerTest {
 
 		Integer maxAge = extractMaxAge(result);
 		assertNotNull(maxAge);
-		assertEquals(DEFAULT_MAX_AGE, maxAge);
+		assertEquals(CONFIGURED_MAX_AGE_MUTABLE, maxAge);
 
 		InputStream inputStream = new ByteArrayInputStream(result.getResponse().getContentAsByteArray());
 		Model actualModel = RDFParser.source(inputStream).lang(lang).toModel();
