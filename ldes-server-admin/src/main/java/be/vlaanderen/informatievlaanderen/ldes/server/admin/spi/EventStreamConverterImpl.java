@@ -138,10 +138,14 @@ public class EventStreamConverterImpl implements EventStreamConverter {
     }
 
     private Model getShaclFromModel(Model model) {
-        final Statement shaclStatement = model.listStatements(null, TREE_SHAPE, (Resource) null).nextStatement();
-        List<Statement> shaclStatements = retrieveAllStatements(shaclStatement.getResource(), model);
-
-        return createDefaultModel().add(shaclStatements);
+        final Model shaclModel = ModelFactory.createDefaultModel();
+        model.listStatements(null, TREE_SHAPE, (Resource) null)
+                .nextOptional()
+                .ifPresent(statement ->  {
+                    shaclModel.add(statement);
+                    shaclModel.add(retrieveAllStatements(statement.getResource(), model));
+                });
+        return shaclModel;
     }
 
     private List<ViewSpecification> getViews(Model model, String collection) {
