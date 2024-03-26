@@ -67,6 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
+	private static final Integer CONFIGURED_MAX_AGE_MUTABLE = 180;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -103,8 +104,7 @@ class EventStreamControllerTest {
 
 		Integer maxAge = extractMaxAge(result);
 		assertNotNull(maxAge);
-		final int configuredMaxAgeInAppYaml = 180;
-		assertEquals(configuredMaxAgeInAppYaml, maxAge);
+		assertEquals(CONFIGURED_MAX_AGE_MUTABLE, maxAge);
 
 		InputStream inputStream = new ByteArrayInputStream(result.getResponse().getContentAsByteArray());
 		Model actualModel = RDFParser.source(inputStream).lang(lang).toModel();
