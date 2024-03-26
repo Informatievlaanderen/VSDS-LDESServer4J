@@ -56,6 +56,12 @@ one or many members.
 
 Every member should conform to certain conditions, depending on the event stream on which they are ingested.
 
+### Root Node
+
+The member itself should be the root node. This means that no triple can be present which references the member.
+If such a member is present, the member is not recognised and can't be properly validated.
+This will commonly lead to a validation error stating the timestamp path and version-of path are missing, depending on the data itself.
+
 ### Named Graphs
 
 Named graphs are not supported.
@@ -75,6 +81,13 @@ It is still possible for a single member to reference the same blank node multip
 Every event stream defines the property where the timestamp and version of can be found on each member.
 If the event stream has version creation NOT enabled, these properties should be present on each member.
 If version creation is enabled, these properties should NOT be present on the members received.
+
+The timestamp defined on the timestamp path should be of the type `<http://www.w3.org/2001/XMLSchema#dateTime>`.
+The timestamp must have this datatype explicitly declared.
+ex. `<https://example.be/member/1> <http://www.w3.org/ns/prov#generatedAtTime> "1996-03-28T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+
+The object defined on the versionOf path must be a uri. This uri should represent the state object of which the member is a version.
+ex. `<https://example.be/member/1> <http://purl.org/dc/terms/isVersionOf> <https://example.be/member> .`
 
 ### Bulk Ingestion
 
