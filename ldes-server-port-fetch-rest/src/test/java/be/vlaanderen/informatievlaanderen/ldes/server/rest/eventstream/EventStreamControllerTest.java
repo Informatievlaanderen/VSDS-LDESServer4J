@@ -16,7 +16,10 @@ import org.apache.http.HttpHeaders;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -45,10 +48,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.LDES_EVENT_STREAM_URI;
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.NODE_SHAPE_TYPE;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
-import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
-import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -67,7 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 class EventStreamControllerTest {
 	private static final String COLLECTION = "mobility-hindrances";
-	private static final Integer CONFIGURED_MAX_AGE_IMMUTABLE = 360;
+	private static final Integer CONFIGURED_MAX_AGE_MUTABLE = 180;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -83,10 +83,6 @@ class EventStreamControllerTest {
 				"http://purl.org/dc/terms/isVersionOf",
 				false, List.of(),
 				ModelFactory.createDefaultModel());
-
-		Model shacl = createDefaultModel().add(createResource(hostname + "/" + COLLECTION),
-				createProperty(NODE_SHAPE_TYPE),
-				createResource("https://private-api.gipod.test-vlaanderen.be/api/v1/ldes/mobility-hindrances/shape"));
 
 		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 	}
@@ -108,7 +104,7 @@ class EventStreamControllerTest {
 
 		Integer maxAge = extractMaxAge(result);
 		assertNotNull(maxAge);
-		assertEquals(CONFIGURED_MAX_AGE_IMMUTABLE, maxAge);
+		assertEquals(CONFIGURED_MAX_AGE_MUTABLE, maxAge);
 
 		InputStream inputStream = new ByteArrayInputStream(result.getResponse().getContentAsByteArray());
 		Model actualModel = RDFParser.source(inputStream).lang(lang).toModel();
@@ -139,7 +135,6 @@ class EventStreamControllerTest {
 
 	@Test
 	@DisplayName("Requesting with Unsupported MediaType returns 406")
-	@Disabled("to be enabled once AppConfig:getLdesConfig returns exception again")
 	void when_GETRequestIsPerformedWithUnsupportedMediaType_ResponseIs406HttpMediaTypeNotAcceptableException()
 			throws Exception {
 		mockMvc.perform(get("/{collection}", COLLECTION).accept("application/json"))

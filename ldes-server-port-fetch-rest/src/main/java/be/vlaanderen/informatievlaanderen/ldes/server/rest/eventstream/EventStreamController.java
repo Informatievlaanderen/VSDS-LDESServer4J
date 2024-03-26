@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.eventstream;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import io.micrometer.observation.annotation.Observed;
@@ -47,7 +47,7 @@ public class EventStreamController implements OpenApiEventStreamController {
 		return ResponseEntity
 				.ok()
 				.header(CONTENT_TYPE, getContentTypeHeader(language))
-				.header(CACHE_CONTROL, restConfig.generateImmutableCacheControl())
+				.header(CACHE_CONTROL, restConfig.generateMutableCacheControl(null))
 				.header(CONTENT_DISPOSITION, RestConfig.INLINE)
 				.eTag(cachingStrategy.generateCacheIdentifier(eventStream.getCollection(), language))
 				.body(eventStream);
