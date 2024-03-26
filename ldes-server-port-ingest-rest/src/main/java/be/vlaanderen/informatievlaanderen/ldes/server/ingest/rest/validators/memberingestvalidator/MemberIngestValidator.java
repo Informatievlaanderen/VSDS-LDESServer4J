@@ -56,7 +56,7 @@ public class MemberIngestValidator implements IngestValidator {
     }
 
     private boolean validateTimestampPath(List<Resource> memberSubjects, Model model, EventStream eventStream) {
-        List<Statement> timestampStatements = model.listStatements(null, ResourceFactory.createProperty(eventStream.getTimestampPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
+        List<Statement> timestampStatements = getStatementsOfPath(memberSubjects, model, eventStream.getTimestampPath());
 
         timestampStatements.forEach(statement -> {
             if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype(), XSDDatatype.XSDdateTime)) {
@@ -68,7 +68,7 @@ public class MemberIngestValidator implements IngestValidator {
     }
 
     private boolean validateVersionOfPath(List<Resource> memberSubjects, Model model, EventStream eventStream) {
-        List<Statement> versionOfStatements = model.listStatements(null, ResourceFactory.createProperty(eventStream.getVersionOfPath()), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
+        List<Statement> versionOfStatements = getStatementsOfPath(memberSubjects, model, eventStream.getVersionOfPath());
 
         versionOfStatements.forEach(statement -> {
             if (!statement.getObject().isResource()) {
@@ -76,6 +76,10 @@ public class MemberIngestValidator implements IngestValidator {
             }
         });
         return eventStream.isVersionCreationEnabled() ? versionOfStatements.isEmpty() : versionOfStatements.size() == 1;
+    }
+
+    private List<Statement> getStatementsOfPath(List<Resource> memberSubjects, Model model, String path) {
+        return model.listStatements(null, ResourceFactory.createProperty(path), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
     }
 
     private List<Resource> getRootNode(Model model) {
