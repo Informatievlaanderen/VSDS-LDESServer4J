@@ -1,0 +1,10 @@
+apiVersion: skaffold/v2beta12
+kind: Config
+build:
+  artifacts:
+    - image: ldes/ldesserver
+      jib: {}
+deploy:
+  kubectl:
+    manifests:
+      - k8s/**

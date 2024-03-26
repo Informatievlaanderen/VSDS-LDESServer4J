@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ldesserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ldesserver
+  template:
+    metadata:
+      labels:
+        app: ldesserver
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: ldesserver
+          image: ldes/ldesserver:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 1Gi
+              cpu: 1.2
