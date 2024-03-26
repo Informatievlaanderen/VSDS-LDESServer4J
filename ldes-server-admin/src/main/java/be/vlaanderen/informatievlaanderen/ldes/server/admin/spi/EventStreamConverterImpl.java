@@ -141,10 +141,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
         final Model shaclModel = ModelFactory.createDefaultModel();
         model.listStatements(null, TREE_SHAPE, (Resource) null)
                 .nextOptional()
-                .ifPresent(statement ->  {
-                    shaclModel.add(statement);
-                    shaclModel.add(retrieveAllStatements(statement.getResource(), model));
-                });
+                .ifPresent(statement -> shaclModel.add(retrieveAllStatements(statement.getResource(), model)));
         return shaclModel;
     }
 
