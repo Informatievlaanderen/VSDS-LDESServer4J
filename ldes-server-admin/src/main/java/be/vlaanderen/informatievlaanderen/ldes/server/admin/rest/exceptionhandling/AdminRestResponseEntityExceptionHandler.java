@@ -58,7 +58,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		log.error(ex.getMessage());
+		log.warn(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		var httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.TEXT_PLAIN);
