@@ -18,7 +18,8 @@ public class RestConfig {
 	public static final String TEXT_TURTLE = "text/turtle";
 	public static final String INLINE = "inline";
 
-	private int maxAge = 60;
+	public static final int DEFAULT_MAX_AGE = 60;
+	private int maxAge = DEFAULT_MAX_AGE;
 	private int maxAgeImmutable = 604800;
 
 	public void setMaxAge(int maxAge) {
