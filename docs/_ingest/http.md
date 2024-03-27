@@ -6,11 +6,11 @@ nav_order: 0
 
 # Ingest Members With HTTP
 
-An Event Stream without its members is nothing. Therefore, new members can be ingested via 
-a `POST` HTTP Endpoint. This endpoint follows the following pattern: 
+An Event Stream without its members is nothing. Therefore, new members can be ingested via
+a `POST` HTTP Endpoint. This endpoint follows the following pattern:
 `{ldes server hostname}/{event-stream}`.
 
-Note that this event stream should already be configured. 
+Note that this event stream should already be configured.
 (Read [Configuring a Event Stream](../configuration/event-stream) for more details)
 
 ## Accepted formats
@@ -21,11 +21,66 @@ The most common types to use are `application/n-quads`, `text/turtle` and `appli
 
 For more details, please refer to the Swagger API under the `base` definition.
 
+## Version objects, state objects and version creation
+
+Currently, an event stream can ingest version objects by default. A version object describes the state of a specific
+version of a resource at a specific timestamp.
+
+However, an event stream can be configured in such a way that it can ingest state objects. Once the event stream and
+its fragments are retrieved, the members will be presented as version objects. A state object describes the latest state
+of a resource. When such an object is ingested, the server stores the RDF model as is, the timestamp of ingestion and
+determines the subject of that member.
+
+When the members of such an event stream are fetched, the stored RDF model is enriched with the version object
+properties,
+which includes:
+
+- the named subject node, which is the versionOf, will be replaced with the member id, which has the following
+  structure: `{versionOf}/{timestamp}`
+- the following statements will be added:
+    * `<{memberId}> <{timestamp-path-of-the-ldes}> "{timestamp}""^^<http://www.w3.org/2001/XMLSchema#dateTime>`
+    * `<{memberId}> <{version-of-path-of-the-ldes}> <versionOf>`
+
+## Bulk ingestion
+
+When the event stream is configured to ingest state objects, a fun side effect is enabled, namely bulk ingest. This is a
+result of the extraction algorithm used to extract all the state objects out of the ingested RDF model. This algorithm
+searches for all the named subject nodes and then searches for all the nested statements that are related to each named
+subject. All the statements of each subject and its nested statements will be put together in an RDF model resulting in
+one or many members.
+
+> **CAUTION:** when the ingestion fails for one of the members, e.g. due to a validation violation,
+> the ingestion for **all** the members will fail and none of them will be stored.
+
 ## Member Conformity
 
-Only one member can be ingested at a time. Bulk ingest is (not yet) supported.
-Every model that is sent for ingestion, should contain exactly one named node.
-Otherwise it will be rejected.
+Every member should conform to certain conditions, depending on the event stream on which they are ingested.
+
+### Named Graphs
+
+Named graphs are not supported.
+When a named graph is present in a member, the member is rejected.
+
+### Shared or Loose Blank Nodes
+
+All blank nodes should be part of exactly one member.
+When a blank node is present that is not part of a member or 2 members reference the same blank node, the ingested model is rejected.
+
+This also means that the root node of every member should be a named node.
+
+It is still possible for a single member to reference the same blank node multiple times.
+
+### Timestamp and Version Of Path
+
+Every event stream defines the property where the timestamp and version of can be found on each member.
+If the event stream has version creation NOT enabled, these properties should be present on each member.
+If version creation is enabled, these properties should NOT be present on the members received.
+
+### Bulk Ingestion
+
+Depending on if the event stream has version creation enabled, multiple members can be ingested with a single POST request.
+Later this will also be possible without version creation.
+For now, a request will be rejected if multiple named nodes are found which are not referenced by any triple. (Without version creation enabled)
 
 ## Duplicate Members
 

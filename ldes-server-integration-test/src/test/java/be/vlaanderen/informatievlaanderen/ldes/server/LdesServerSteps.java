@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -16,6 +18,7 @@ import org.apache.jena.vocabulary.RDF;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -28,7 +31,6 @@ import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_MEMBER;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
@@ -42,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class LdesServerSteps extends LdesServerIntegrationTest {
 	public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
 	private int lastStatusCode;
+	private Model responseModel;
 	Stack<String> interactedStreams = new Stack<>();
 
 	@Before("@clearRegistry")
@@ -69,13 +72,13 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iIngestMembersToTheCollection(int numberOfMembers, String collectionName) throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
 			Model member = RDFParser.fromString(readMemberTemplate("data/input/members/mob-hind.template.ttl")
-					.replace("ID", String.valueOf(i))
-					.replace("DATETIME", getCurrentTimestamp()))
+							.replace("ID", String.valueOf(i))
+							.replace("DATETIME", "2023-04-06T09:58:15.867Z"))
 					.lang(Lang.TURTLE)
 					.toModel();
 			mockMvc.perform(post("/" + collectionName)
-					.contentType("text/turtle")
-					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+							.contentType("text/turtle")
+							.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
 					.andExpect(status().is2xxSuccessful());
 		}
 	}
@@ -84,14 +87,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	public void iIngestMembersToTheCollection(int numberOfMembers, String memberTemplate, String collectionName)
 			throws Exception {
 		for (int i = 0; i < numberOfMembers; i++) {
-			Model member = RDFParser.fromString(readMemberTemplate(memberTemplate)
+			String memberContent = readMemberTemplate(memberTemplate)
 					.replace("ID", String.valueOf(i))
-					.replace("DATETIME", getCurrentTimestamp()))
-					.lang(Lang.TURTLE)
-					.toModel();
+					.replace("DATETIME", getCurrentTimestamp());
 			mockMvc.perform(post("/" + collectionName)
 					.contentType("text/turtle")
-					.content(RDFWriter.source(member).lang(Lang.TURTLE).asString()))
+					.content(memberContent))
 					.andExpect(status().is2xxSuccessful());
 		}
 	}
@@ -108,20 +109,21 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		return RDFDataMgr.loadModel(uri);
 	}
 
-	@Then("I can fetch the TreeNode {string} and it contains {int} members and the expected response is equal to {string}")
-	public void iCanFetchTheTreeNodeAndItContainsMembersAndTheExpectedResponseIsEqualTo(String url,
-			int expectedNumberOfMembers, String expectedOutputFile) throws Exception {
+	@Then("I can fetch the TreeNode {string} and it contains {int} members")
+	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) throws Exception {
 		await()
 				.atMost(10, SECONDS)
 				.pollInterval(1, SECONDS)
-				.until(() -> {
-					int size = getResponseAsModel(url, "text/turtle").listObjectsOfProperty(TREE_MEMBER).toList()
-							.size();
-					return size == expectedNumberOfMembers;
-				});
+				.untilAsserted(() -> mockMvc.perform(get(url))
+                        .andExpect(MemberCounter.countMembers(expectedNumberOfMembers))
+						.andDo(result -> responseModel = new ResponseToModelConverter(result.getResponse()).convert()));
+	}
+
+	@And("The expected response is equal to {string}")
+	public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException, UnsupportedEncodingException {
 		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
 
-		Model actualModel = stripGeneratedAtTimeOfModel(getResponseAsModel(url, "text/turtle"));
+		Model actualModel = stripGeneratedAtTimeOfModel(responseModel);
 		assertTrue(actualModel.isIsomorphicWith(expectedModel));
 	}
 
@@ -261,11 +263,23 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		assertThat(size).isEqualTo(statementCount);
 	}
 
-	@And("The prometheus value for key {string} is 1")
-	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message) throws Exception {
+	@And("The prometheus value for key {string} is {string}")
+	public void theResponseFromRequestingTheUrlDoesContainAJsonFile(String message, String value) throws Exception {
 		MockHttpServletResponse response = mockMvc.perform(get(ACTUATOR_PROMETHEUS).accept("application/openmetrics-text"))
 				.andReturn().getResponse();
-		assertTrue(response.getContentAsString().contains(message + " 1.0"));
+		assertTrue(response.getContentAsString().contains(message + " " + value));
 	}
 
+	@When("I ingest {int} files of state objects from folder {string} to the collection {string}")
+	public void iIngestFilesOfStateObjectsFromFolderToTheCollection(int numberOfStateFiles, String folderName, String collectionName) throws Exception {
+		for (int i = 0; i < numberOfStateFiles; i++) {
+			Model model = RDFParser.source("%s/%d.ttl".formatted(folderName, i + 1))
+					.lang(Lang.TURTLE)
+					.toModel();
+			mockMvc.perform(post("/" + collectionName)
+							.contentType("text/turtle")
+							.content(RDFWriter.source(model).lang(Lang.TURTLE).asString()))
+					.andExpect(status().is2xxSuccessful());
+		}
+	}
 }

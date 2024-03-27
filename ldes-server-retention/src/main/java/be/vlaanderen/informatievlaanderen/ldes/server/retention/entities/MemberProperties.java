@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.retention.entities;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class MemberProperties {
@@ -46,6 +47,10 @@ public class MemberProperties {
 
 	public void addViewReference(String viewName) {
 		viewReferences.add(viewName);
+	}
+
+	public void addAllViewReferences(List<String> viewNames) {
+		viewReferences.addAll(viewNames);
 	}
 
 	public void deleteViewReference(String viewName) {

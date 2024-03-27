@@ -7,7 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.r
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -43,27 +43,27 @@ public class EventStreamServiceImpl implements EventStreamService {
 	}
 
 	@Override
-	public List<EventStreamResponse> retrieveAllEventStreams() {
+	public List<EventStreamTO> retrieveAllEventStreams() {
 		return eventStreamRepository.retrieveAllEventStreams().stream().map(eventStream -> {
 			List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
 			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
 			Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
-			return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(),
+			return new EventStreamTO(eventStream.getCollection(), eventStream.getTimestampPath(),
+					eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(),
 					views, shaclShape.getModel(), dataset.orElse(null));
 		}).toList();
 	}
 
 	@Override
-	public EventStreamResponse retrieveEventStream(String collectionName) {
+	public EventStreamTO retrieveEventStream(String collectionName) {
 		EventStream eventStream = eventStreamRepository.retrieveEventStream(collectionName)
 				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
 		List<ViewSpecification> views = viewService.getViewsByCollectionName(collectionName);
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
 		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(collectionName);
 
-		return new EventStreamResponse(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), views,
+		return new EventStreamTO(eventStream.getCollection(), eventStream.getTimestampPath(),
+				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(), views,
 				shaclShape.getModel(), dataset.orElse(null));
 	}
 
@@ -77,9 +77,9 @@ public class EventStreamServiceImpl implements EventStreamService {
 	}
 
 	@Override
-	public EventStreamResponse createEventStream(EventStreamResponse eventStreamResponse) {
-		EventStream eventStream = mapToEventStream(eventStreamResponse);
-		ShaclShape shaclShape = new ShaclShape(eventStreamResponse.getCollection(), eventStreamResponse.getShacl());
+	public EventStreamTO createEventStream(EventStreamTO eventStreamTO) {
+		EventStream eventStream = mapToEventStream(eventStreamTO);
+		ShaclShape shaclShape = new ShaclShape(eventStreamTO.getCollection(), eventStreamTO.getShacl());
 
 		checkCollectionDoesNotYetExist(eventStream.getCollection());
 
@@ -87,13 +87,13 @@ public class EventStreamServiceImpl implements EventStreamService {
 			eventStreamRepository.saveEventStream(eventStream);
 			shaclShapeService.updateShaclShape(shaclShape);
 			eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
-			eventStreamResponse.getViews().forEach(viewService::addView);
+			eventStreamTO.getViews().forEach(viewService::addView);
 		} catch (RuntimeException e) {
-			delete(eventStreamResponse.getCollection());
+			delete(eventStreamTO.getCollection());
 			throw e;
 		}
 
-		return eventStreamResponse;
+		return eventStreamTO;
 	}
 
 	private void delete(String collectionName) {
@@ -108,11 +108,12 @@ public class EventStreamServiceImpl implements EventStreamService {
 		}
 	}
 
-	private EventStream mapToEventStream(EventStreamResponse eventStreamResponse) {
+	private EventStream mapToEventStream(EventStreamTO eventStreamTO) {
 		return new EventStream(
-				eventStreamResponse.getCollection(),
-				eventStreamResponse.getTimestampPath(),
-				eventStreamResponse.getVersionOfPath()
+				eventStreamTO.getCollection(),
+				eventStreamTO.getTimestampPath(),
+				eventStreamTO.getVersionOfPath(),
+				eventStreamTO.isVersionCreationEnabled()
 		);
 	}
 

@@ -10,7 +10,7 @@ public interface MemberRepository {
 
 	boolean memberExists(String memberId);
 
-	Optional<Member> insert(Member member);
+	List<Member> insertAll(List<Member> members);
 
 	Optional<Member> findById(String id);
 

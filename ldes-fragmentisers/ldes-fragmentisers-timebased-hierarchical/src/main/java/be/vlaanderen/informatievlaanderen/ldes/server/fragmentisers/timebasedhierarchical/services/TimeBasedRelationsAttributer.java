@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.TREE_INBETWEEN_RELATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.constants.TimeBasedConstants.*;
 
 public class TimeBasedRelationsAttributer implements RelationsAttributer {
 
@@ -29,11 +29,16 @@ public class TimeBasedRelationsAttributer implements RelationsAttributer {
 
 	public void addInBetweenRelation(Fragment parentFragment, Fragment childFragment) {
 		FragmentationTimestamp timestamp = timestampFromFragmentPairs(childFragment);
-		TreeRelation parentChildRelation = new TreeRelation(config.getFragmentationPath(),
+		TreeRelation parentGteRelation = new TreeRelation(config.getFragmentationPath(),
 				childFragment.getFragmentId(),
-				timestamp.asString(), timestamp.getType(),
-				TREE_INBETWEEN_RELATION);
-		saveRelation(parentFragment, parentChildRelation, timestamp.getNextUpdateTs());
+				timestamp.getTime().toString(), XSD_DATETIME,
+				TREE_GTE_RELATION);
+		TreeRelation parentLtRelation = new TreeRelation(config.getFragmentationPath(),
+				childFragment.getFragmentId(),
+				timestamp.getLtBoundary().toString(), XSD_DATETIME,
+				TREE_LT_RELATION);
+		saveRelation(parentFragment, parentGteRelation, timestamp.getNextUpdateTs());
+		saveRelation(parentFragment, parentLtRelation, timestamp.getNextUpdateTs());
 	}
 
 	public void addDefaultRelation(Fragment parentFragment, Fragment childFragment) {

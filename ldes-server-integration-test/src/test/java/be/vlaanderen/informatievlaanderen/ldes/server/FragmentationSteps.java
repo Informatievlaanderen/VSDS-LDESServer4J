@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
+import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -37,7 +39,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	private void fetchFragment(String path) throws Exception {
@@ -47,7 +49,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	@And("I fetch the next fragment through the first {string}")
@@ -58,11 +60,13 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 		currentPath = currentFragment.listStatements(relationSubj, createProperty(TREE, "node"), (Resource) null)
 				.next().getObject().toString();
 
+
+
 		MockHttpServletResponse response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	@Then("this fragment only has {int} {string} relation")
@@ -86,7 +90,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 	public void thisFragmentContainsMembers(int expectedMemberCount) {
 		await().atMost(Duration.of(20, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
-			return currentFragment.listObjectsOfProperty(TREE_MEMBER).toList().size() == expectedMemberCount;
+			return MemberCounter.countMembers(expectedMemberCount).matches(currentFragment);
 		});
 	}
 
@@ -118,13 +122,13 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 				.andReturn()
 				.getResponse();
 		currentFragmentCacheControl = response.getHeader("Cache-Control");
-		currentFragment = RDFParser.fromString(response.getContentAsString()).lang(Lang.TURTLE).toModel();
+		currentFragment = new ResponseToModelConverter(response).convert();
 	}
 
 	@When("I fetch the timebased fragment {string} fragment of this month of {string}")
 	public void iFetchTheTimebasedFragmentFragmentOfTodayOf(String view, String collection) throws Exception {
 		LocalDateTime now = LocalDateTime.now();
-		currentPath = "/%s/%s?year=%s&month=%s".formatted(collection, view, now.getYear(), formatDateValue(now.getMonthValue()));
+		currentPath = "/%s/%s?year=%s&month=%02d".formatted(collection, view, now.getYear(), now.getMonthValue());
 		String response = mockMvc.perform(get(new URI(currentPath)).accept("text/turtle"))
 				.andReturn()
 				.getResponse()
@@ -132,9 +136,4 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 		currentFragment = RDFParser.fromString(response).lang(Lang.TURTLE).toModel();
 	}
-
-	private String formatDateValue(int value) {
-		return value < 10 ? "0" + value : String.valueOf(value);
-	}
-
 }

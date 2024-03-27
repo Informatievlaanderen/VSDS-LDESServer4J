@@ -5,6 +5,7 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -12,65 +13,76 @@ import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
 public class Member {
 
-	public static final String TREE = "https://w3id.org/tree#";
-	public static final Property TREE_MEMBER = createProperty(TREE, "member");
+    public static final String TREE = "https://w3id.org/tree#";
+    public static final Property TREE_MEMBER = createProperty(TREE, "member");
 
-	private final String id;
-	private final String collectionName;
-	private final Long sequenceNr;
-	private final Model model;
+    private final String id;
+    private final String collectionName;
+    private final String versionOf;
+    private final LocalDateTime timestamp;
+    private final Long sequenceNr;
+    private final String transactionId;
+    private final Model model;
 
-	public Member(String id, String collectionName, Long sequenceNr, Model model) {
-		this.id = id;
-		this.collectionName = collectionName;
-		this.sequenceNr = sequenceNr;
-		this.model = model;
-	}
+    public Member(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, Model model) {
+        this.id = id;
+        this.collectionName = collectionName;
+        this.versionOf = versionOf;
+        this.timestamp = timestamp;
+        this.sequenceNr = sequenceNr;
+        this.transactionId = transactionId;
+        this.model = model;
+    }
 
-	public Model getModel() {
-		return model;
-	}
+    public Model getModel() {
+        return model;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getMemberIdWithoutPrefix() {
-		if (id.startsWith("http")) {
-			throw new IllegalStateException("id '%s' does not contain a prefix".formatted(id));
-		}
-		return id.substring(id.indexOf("/") + 1);
-	}
+    public void removeTreeMember() {
+        getCurrentTreeMemberStatement().ifPresent(model::remove);
+    }
 
-	public void removeTreeMember() {
-		getCurrentTreeMemberStatement().ifPresent(model::remove);
-	}
+    private Optional<Statement> getCurrentTreeMemberStatement() {
+        return model.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
+    }
 
-	private Optional<Statement> getCurrentTreeMemberStatement() {
-		return model.listStatements(null, TREE_MEMBER, (Resource) null).nextOptional();
-	}
+    public String getCollectionName() {
+        return collectionName;
+    }
 
-	public String getCollectionName() {
-		return collectionName;
-	}
+    public String getVersionOf() {
+        return versionOf;
+    }
 
-	public Long getSequenceNr() {
-		return sequenceNr;
-	}
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Member member = (Member) o;
-		return id.equals(member.id);
-	}
+    public Long getSequenceNr() {
+        return sequenceNr;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Member member = (Member) o;
+        return getId().equals(member.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 
 }

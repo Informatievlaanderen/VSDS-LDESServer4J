@@ -3,8 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -35,7 +35,7 @@ class EtagCachingStrategyTest {
 	}
 
 	private static Member createMember(String memberId) {
-		return new Member(memberId, null, null, null);
+		return new Member(memberId, null);
 	}
 
 	@ParameterizedTest

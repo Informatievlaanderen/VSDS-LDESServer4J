@@ -15,12 +15,13 @@ class EventStreamCollectionImplTest {
 	private final static String COLLECTION = "COLLECTION";
 	private final static String TIMESTAMP_PATH = "http://www.w3.org/ns/prov#generatedAtTime";
 	private final static String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
+	private final static boolean VERSION_CREATION_ENABLED = false;
 	private final EventStreamCollectionImpl eventStreamCollection = new EventStreamCollectionImpl();
 
 	@Test
 	void when_EventStreamDoesNotExist_then_MissingEventStreamExceptionIsThrown() {
 		eventStreamCollection.handleEventStreamCreatedEvent(
-				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
 		eventStreamCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
 		assertThatThrownBy(() -> eventStreamCollection.getEventStreamProperties(COLLECTION))
@@ -31,7 +32,7 @@ class EventStreamCollectionImplTest {
 	@Test
 	void when_EventStreamExists_then_EventStreamPropertiesCanBeRetrieved() {
 		eventStreamCollection.handleEventStreamCreatedEvent(
-				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
 
 		EventStreamProperties actualEventStreamProperties = eventStreamCollection.getEventStreamProperties(COLLECTION);
 

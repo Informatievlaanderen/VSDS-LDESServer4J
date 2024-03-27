@@ -1,0 +1,28 @@
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tree: <https://w3id.org/tree#>.
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix server: <http://localhost:8080/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix simpsons: <http://localhost:8080/simpsons/> .
+
+server:simpsons a ldes:EventStream ;
+	ldes:timestampPath dcterms:created ;
+	ldes:versionOfPath dcterms:isVersionOf ;
+	ldes:createVersions true ;
+    tree:view simpsons:paged  ;
+    tree:shape simpsons:shape .
+
+simpsons:paged
+    a tree:Node ;
+    tree:viewDescription [
+		tree:fragmentationStrategy  () ;
+	    tree:pageSize "1500"^^<http://www.w3.org/2001/XMLSchema#int> ;
+	] .
+
+simpsons:shape a sh:NodeShape ;
+    sh:nodeShape [
+        sh:closed true ;
+        sh:propertyShape []
+        ] ;
+    sh:deactivated true .

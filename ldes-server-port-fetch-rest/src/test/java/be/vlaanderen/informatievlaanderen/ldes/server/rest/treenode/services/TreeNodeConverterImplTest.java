@@ -8,8 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
@@ -43,7 +43,7 @@ class TreeNodeConverterImplTest {
 
         EventStream eventStream = new EventStream(COLLECTION_NAME,
                 "http://www.w3.org/ns/prov#generatedAtTime",
-                "http://purl.org/dc/terms/isVersionOf");
+                "http://purl.org/dc/terms/isVersionOf", false);
 
         treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor);
         treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
@@ -61,13 +61,9 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(24);
+        assertThat(model.size()).isEqualTo(25);
         verifyTreeNodeStatement(model);
         verifyLdesStatements(model);
-
-        // 04/12/23 Desactivated due to performance issues on the count query
-        // refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-//        verifyRemainingItemsStatement(model);
     }
 
     @Test
@@ -76,7 +72,7 @@ class TreeNodeConverterImplTest {
                 COLLECTION_NAME, null);
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(2);
+        assertThat(model.size()).isEqualTo(2);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         verifyRemainingItemsStatementAbsent(model);
@@ -89,9 +85,7 @@ class TreeNodeConverterImplTest {
                 <https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165>
                 .""").lang(Lang.NQUADS).toModel();
         Member member = new Member(
-                "collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165",
-                "collectionName",
-                0L, ldesMemberModel);
+                "collectionName/https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/165", ldesMemberModel);
         TreeRelation treeRelation = new TreeRelation("path",
                 new LdesFragmentIdentifier("mobility-hindrances/node", List.of()), "value",
                 "http://www.w3.org/2001/XMLSchema#dateTime", "relation");
@@ -100,7 +94,7 @@ class TreeNodeConverterImplTest {
 
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.listStatements().toList()).hasSize(9);
+        assertThat(model.size()).isEqualTo(9);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         Resource relationObject = model.listStatements(null, TREE_RELATION,
@@ -195,7 +189,7 @@ class TreeNodeConverterImplTest {
                 String.format("[%s, %s, \"0\"^^http://www.w3.org/2001/XMLSchema#long]",
                         HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME,
                         TREE_REMAINING_ITEMS)
-                );
+        );
     }
 
     private void verifyRemainingItemsStatementAbsent(Model model) {
@@ -210,10 +204,10 @@ class TreeNodeConverterImplTest {
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
 
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
+        assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(24);
+        assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(25);
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
-        assertThat(treeNodeConverter.toModel(treeNode).listStatements().toList()).hasSize(10);
+        assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
     }
 }

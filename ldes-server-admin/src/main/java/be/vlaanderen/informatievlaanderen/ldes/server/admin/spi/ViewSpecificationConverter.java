@@ -5,7 +5,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
-import org.apache.jena.graph.Factory;
+import org.apache.jena.graph.GraphMemFactory;
 import org.apache.jena.graph.Node;
 import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.rdf.model.*;
@@ -118,7 +118,7 @@ public class ViewSpecificationConverter {
 		List<Statement> statements = new ArrayList<>();
 		List<ResourceImpl> fragmentationResources = fragmentationList.stream().map(fragmentation -> {
 			Node blankNode = NodeFactory.createBlankNode();
-			ResourceImpl resource = new ResourceImpl(blankNode, new ModelCom(Factory.createGraphMem()));
+			ResourceImpl resource = new ResourceImpl(blankNode, new ModelCom(GraphMemFactory.createGraphMem()));
 			resource.addProperty(RDF_SYNTAX_TYPE, createResource(TREE + fragmentation.getName()));
 			fragmentation.getConfig().forEach(
 					(key, value) -> resource.addProperty(createProperty(TREE + key), createPlainLiteral(value)));

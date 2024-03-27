@@ -1,23 +1,33 @@
 Feature: LDES Server Retention
 
   @time-based
-  Scenario: Server provides timebased retention
-    Given I create the eventstream "data/input/eventstreams/retention/mobility-hindrances_timebased.ttl"
-    When I ingest 30 members to the collection "mobility-hindrances"
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 30 members
+  Scenario Outline: Server provides timebased retention
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 30 members of template <template> to the collection <collection>
+    Then the first fragment of the "paged" view in collection <collection> contains <ingestedMemberCount> members
     # Since all added members' timestamp values equal to their ingestion date, they should be removed after 15 seconds
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 0 members
+    Then the first fragment of the "paged" view in collection <collection> contains 0 members
+    Examples:
+      | eventStreamDescriptionFile                                            | template                                           | collection            | ingestedMemberCount |
+      | "data/input/eventstreams/retention/mobility-hindrances_timebased.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 30                  |
+      | "data/input/eventstreams/retention/observations/timebased.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 60                  |
 
   @version-based
-  Scenario: Server provides version retention
-    Given I create the eventstream "data/input/eventstreams/retention/mobility-hindrances_versionbased.ttl"
-    When I ingest 30 members to the collection "mobility-hindrances"
-    # Since all added members belong to the same version, only 10 are kept as defined by the retention policy
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 10 members
+  Scenario Outline: Server provides version retention
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 30 members of template <template> to the collection <collection>
+    Then the first fragment of the "paged" view in collection <collection> contains <expectedMemberCount> members
+    Examples:
+      | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
+      | "data/input/eventstreams/retention/mobility-hindrances_versionbased.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 10                  |
+      | "data/input/eventstreams/retention/observations/versionbased.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 20                  |
 
   @combined @version-based-and-time-based
-  Scenario: Server combines multiple retention policies
-    Given I create the eventstream "data/input/eventstreams/retention/mobility-hindrances_combined.ttl"
-    When I ingest 30 members to the collection "mobility-hindrances"
-    # With the version based and timebased retention combined, only 5 members will remain even if they are more than 5s ago
-    Then the first fragment of the "paged" view in collection "mobility-hindrances" contains 5 members
+  Scenario Outline: Server combines multiple retention policies
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 30 members of template <template> to the collection <collection>
+    Then the first fragment of the "paged" view in collection <collection> contains <expectedMemberCount> members
+    Examples:
+      | eventStreamDescriptionFile                                           | template                                           | collection            | expectedMemberCount |
+      | "data/input/eventstreams/retention/mobility-hindrances_combined.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 5                   |
+      | "data/input/eventstreams/retention/observations/combined.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 10                  |

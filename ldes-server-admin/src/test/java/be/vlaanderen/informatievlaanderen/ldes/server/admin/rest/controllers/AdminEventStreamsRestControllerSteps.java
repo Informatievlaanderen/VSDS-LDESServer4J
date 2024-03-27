@@ -40,13 +40,14 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	private static final String COLLECTION = "name1";
 	private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
+	private static final boolean VERSION_CREATION_ENABLED = false;
 	private ResultActions resultActions;
 
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {
 		final String collection2 = "name2";
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
-		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
+		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
 		Model shape1 = readModelFromFile("shape-name1.ttl");
@@ -97,7 +98,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@Given("a db containing one event stream")
 	public void aDbContainingOneEventStream() throws URISyntaxException {
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		Model shape = readModelFromFile("example-shape.ttl");
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
@@ -106,7 +107,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
-		Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
+		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
@@ -133,31 +134,23 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db which does not contain specified event stream")
 	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
-		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH);
+		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		final Model shacl = readModelFromFile("example-shape.ttl");
 		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}
 
-	@When("the client posts a valid model")
-	public void theClientPostsAValidModel() throws Exception {
-		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
-				.accept(Lang.TURTLE.getHeaderString())
-				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("ldes-1.ttl")));
-	}
-
-	@And("I verify the event stream in the response body")
-	public void iVerifyTheEventStreamInTheResponseBody() throws Exception {
-		final Model expectedModel = readModelFromFile("ldes-1-with-dcat.ttl");
+	@And("I verify the event stream in the response body to file (.*)$")
+	public void iVerifyTheEventStreamInTheResponseBody(String filename) throws Exception {
+		final Model expectedModel = readModelFromFile(filename);
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 
 		verify(eventStreamRepository).saveEventStream(any());
 		verify(shaclShapeRepository).saveShaclShape(any());
 	}
 
-	@When("^the client posts invalid model from file (.*)$")
-	public void theClientPostsInvalidModelFromFileFileName(String fileName) throws Exception {
+	@When("^the client posts model from file (.*)$")
+	public void theClientPostsModelFromFileFileName(String fileName) throws Exception {
 		resultActions = mockMvc.perform(post("/admin/api/v1/eventstreams")
 				.accept(Lang.TURTLE.getHeaderString())
 				.contentType(Lang.TURTLE.getHeaderString())

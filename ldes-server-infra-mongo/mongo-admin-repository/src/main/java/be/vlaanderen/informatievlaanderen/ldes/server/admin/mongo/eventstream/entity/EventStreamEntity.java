@@ -9,11 +9,13 @@ public class EventStreamEntity {
 	private final String id;
 	private final String timestampPath;
 	private final String versionOfPath;
+	private final boolean versionCreationEnabled;
 
-	public EventStreamEntity(String id, String timestampPath, String versionOfPath) {
+	public EventStreamEntity(String id, String timestampPath, String versionOfPath, boolean versionCreationEnabled) {
 		this.id = id;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
+		this.versionCreationEnabled = versionCreationEnabled;
 	}
 
 	public String getId() {
@@ -28,4 +30,7 @@ public class EventStreamEntity {
 		return versionOfPath;
 	}
 
+	public boolean isVersionCreationEnabled() {
+		return versionCreationEnabled;
+	}
 }

@@ -1,9 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.jetbrains.annotations.Nullable;
-
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +14,6 @@ public class TreeNode {
 	private final List<TreeRelation> relations;
 	private final List<Member> members;
 	private final String collectionName;
-	private long numberOfMembersInView;
 	private final LocalDateTime nextUpdateTs;
 
 	public TreeNode(String encodedFragmentId, boolean immutable, boolean isView,
@@ -28,7 +25,6 @@ public class TreeNode {
 		this.relations = relations;
 		this.members = members;
 		this.collectionName = collectionName;
-		this.numberOfMembersInView = 0L;
 		this.nextUpdateTs = nextUpdateTs;
 	}
 
@@ -74,14 +70,6 @@ public class TreeNode {
 
 	public String getCollectionName() {
 		return collectionName;
-	}
-
-	public long getNumberOfMembersInView() {
-		return numberOfMembersInView;
-	}
-
-	public void setNumberOfMembersInView(long numberOfMembersInView) {
-		this.numberOfMembersInView = numberOfMembersInView;
 	}
 
 }

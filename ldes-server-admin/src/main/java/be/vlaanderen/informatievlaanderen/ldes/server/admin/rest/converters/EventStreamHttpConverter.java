@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
@@ -24,13 +24,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 
 @Observed
 @Component
-public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamResponse> {
+public class EventStreamHttpConverter implements HttpMessageConverter<EventStreamTO> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-	private final EventStreamResponseConverter eventStreamResponseConverter;
+	private final EventStreamConverter eventStreamConverter;
 	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
-		this.eventStreamResponseConverter = eventStreamResponseConverter;
+	public EventStreamHttpConverter(EventStreamConverter eventStreamConverter, RdfModelConverter rdfModelConverter) {
+		this.eventStreamConverter = eventStreamConverter;
 		this.rdfModelConverter = rdfModelConverter;
 	}
 
@@ -41,7 +41,7 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 
 	@Override
 	public boolean canWrite(@NotNull Class<?> clazz, MediaType mediaType) {
-		return EventStreamResponse.class.isAssignableFrom(clazz);
+		return EventStreamTO.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -50,15 +50,15 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	}
 
 	@Override
-	public EventStreamResponse read(@NotNull Class<? extends EventStreamResponse> clazz, @NotNull HttpInputMessage inputMessage)
+	public EventStreamTO read(@NotNull Class<? extends EventStreamTO> clazz, @NotNull HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read an event stream response");
 	}
 
 	@Override
-	public void write(@NotNull EventStreamResponse eventStreamResponse, MediaType contentType, HttpOutputMessage outputMessage)
+	public void write(@NotNull EventStreamTO eventStreamTO, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Model eventStreamModel = eventStreamResponseConverter.toModel(eventStreamResponse);
+		Model eventStreamModel = eventStreamConverter.toModel(eventStreamTO);
 		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
 		outputMessage.getHeaders().setContentType(contentType);

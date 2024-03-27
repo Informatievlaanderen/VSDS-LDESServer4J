@@ -6,8 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
@@ -46,7 +46,7 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 			String baseUrl = prefix + "/" + treeNode.getCollectionName();
 			model.add(addEventStreamStatements(treeNode, baseUrl));
 			treeNode.getMembers().stream()
-					.map(Member::getModel).forEach(model::add);
+					.map(Member::model).forEach(model::add);
 		}
 
 		return prefixAdder.addPrefixesToModel(model);
@@ -63,13 +63,13 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 		TreeNodeInfoResponse treeNodeInfoResponse = new TreeNodeInfoResponse(treeNode.getFragmentId(),
 				treeRelationResponses);
 		List<Statement> statements = new ArrayList<>(treeNodeInfoResponse.convertToStatements());
-		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape, treeNode.getNumberOfMembersInView(), prefix);
+		addLdesCollectionStatements(statements, treeNode.isView(), treeNode.getFragmentId(), eventStream, shaclShape, prefix);
 
 		return statements;
 	}
 
 	private void addLdesCollectionStatements(List<Statement> statements, boolean isView, String currentFragmentId,
-			EventStream eventStream, Model shaclShape, long numberOfMembersInView, String prefix) {
+			EventStream eventStream, Model shaclShape, String prefix) {
 		String baseUrl = prefix + "/" + eventStream.getCollection();
 		Resource collection = createResource(baseUrl);
 
@@ -78,14 +78,10 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 					baseUrl,
 					eventStream.getTimestampPath(),
 					eventStream.getVersionOfPath(),
-					null,
+					shaclShape,
 					Collections.singletonList(currentFragmentId));
 			statements.addAll(eventStreamInfoResponse.convertToStatements());
-			statements.addAll(shaclShape.listStatements().toList());
 			addDcatStatements(statements, currentFragmentId, eventStream.getCollection(), prefix);
-			// 04/12/23 Desactivated due to performance issues on the count query
-			// refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-//			statements.add(createStatement(createResource(currentFragmentId), createProperty(TREE_REMAINING_ITEMS), createTypedLiteral(numberOfMembersInView)));
 		} else {
 			statements.add(createStatement(createResource(currentFragmentId), IS_PART_OF_PROPERTY, collection));
 		}

@@ -9,7 +9,7 @@
 </activities> a ldes:EventStream ;
     tree:view </activities/paged>  ;
 	tree:shape [ a sh:NodeShape ; sh:targetClass as:Create ] ;
-	ldes:timestampPath as:published ;
+	ldes:timestampPath dcterms:created ;
 	ldes:versionOfPath dcterms:isVersionOf .
 
 </activities/paged> a tree:Node ;

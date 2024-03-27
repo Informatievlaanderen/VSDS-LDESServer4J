@@ -1,0 +1,2 @@
+<http://temporary.org#lisa> <http://example.com/vocab#name> "Lisa" .
+<http://temporary.org#lisa> <http://example.com/vocab#parent> <http://temporary.org#homer> .

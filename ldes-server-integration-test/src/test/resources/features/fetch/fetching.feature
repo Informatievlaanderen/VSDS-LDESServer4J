@@ -1,12 +1,16 @@
 Feature: Server basic fetching functionality
 
-  Scenario: The LDES server has access control headers and etag
-    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
-    When I ingest 1 members to the collection "mobility-hindrances"
-    Then The response from requesting the url "/mobility-hindrances" has access control headers and an etag
-    And The response from requesting the url "/mobility-hindrances/paged" has access control headers and an etag
-    And The response from requesting the url "/mobility-hindrances/paged?pageNumber=1" has access control headers and an etag
-    And I delete the eventstream "mobility-hindrances"
+  Scenario Outline: The LDES server has access control headers and etag
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 1 members of template <template> to the collection "<collectionName>"
+    Then The response from requesting the url "/<collectionName>" has access control headers and an etag
+    And The response from requesting the url "/<collectionName>/paged" has access control headers and an etag
+    And The response from requesting the url "/<collectionName>/paged?pageNumber=1" has access control headers and an etag
+    And I delete the eventstream <collectionName>
+    Examples:
+      | eventStreamDescriptionFile                                       | template                                           | collectionName      |
+      | "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl" | "data/input/members/mob-hind.template.ttl"         | mobility-hindrances |
+      | "data/input/eventstreams/observations.ttl"                       | "data/input/members/two-observations.template.ttl" | observations        |
 
   Scenario Outline: The LDES server supports different mime types for fetching
     Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
@@ -27,26 +31,19 @@ Feature: Server basic fetching functionality
     And I delete the eventstream <collectionName>
 
     Examples:
-      | eventStreamDescription                                         | collectionEndpoint   | viewEndpoint                 | collectionName      |
-      | data/input/eventstreams/mobility-hindrances_paginated_1500.ttl | /mobility-hindrances | /mobility-hindrances/paged   | mobility-hindrances |
-      | data/input/eventstreams/cartoons_paginated_2.ttl               | /cartoons            | /cartoons/my-view            | cartoons            |
-
-#   04/12/23 Desactivated due to performance issues on the count query
-#   refer to: https://github.com/Informatievlaanderen/VSDS-LDESServer4J/issues/1028
-
-#  Scenario: The LDES server contains remaining items statements
-#    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
-#    When I ingest 1 members to the collection "mobility-hindrances"
-#    Then The response from requesting the url "/mobility-hindrances" contains 0 remaining items statements
-#    And The response from requesting the url "/mobility-hindrances/paged" contains 1 remaining items statements
-#    And The response from requesting the url "/mobility-hindrances/paged?pageNumber=1" contains 0 remaining items statements
-#    And I delete the eventstream "mobility-hindrances"
+      | eventStreamDescription                                         | collectionEndpoint   | viewEndpoint               | collectionName      |
+      | data/input/eventstreams/mobility-hindrances_paginated_1500.ttl | /mobility-hindrances | /mobility-hindrances/paged | mobility-hindrances |
+      | data/input/eventstreams/cartoons_paginated_2.ttl               | /cartoons            | /cartoons/my-view          | cartoons            |
 
   @clearRegistry
-  Scenario: Counter is created and returns number of inserted members
-    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
-    When I ingest 1 members to the collection "mobility-hindrances"
-    Then The prometheus value for key "ldes_server_ingested_members_count_total" is 1
+  Scenario Outline: Counter is created and returns number of inserted members
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 1 members of template <template> to the collection <collectionName>
+    Then The prometheus value for key "ldes_server_ingested_members_count_total" is <prometheusValue>
+    Examples:
+      | eventStreamDescriptionFile                                       | template                                           | collectionName        | prometheusValue |
+      | "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | "1.0"           |
+      | "data/input/eventstreams/observations.ttl"                       | "data/input/members/two-observations.template.ttl" | "observations"        | "2.0"           |
 
 
 

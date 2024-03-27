@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MemberIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,9 @@ public class FragmentationService {
 	}
 
 	@EventListener
-	public void executeFragmentation(MemberIngestedEvent memberEvent) {
+	public void executeFragmentation(MembersIngestedEvent event) {
 		fragmentationStrategyCollection
-				.getFragmentationStrategyExecutors(memberEvent.collectionName())
+				.getFragmentationStrategyExecutors(event.collectionName())
 				.forEach(FragmentationStrategyExecutor::execute);
 	}
 

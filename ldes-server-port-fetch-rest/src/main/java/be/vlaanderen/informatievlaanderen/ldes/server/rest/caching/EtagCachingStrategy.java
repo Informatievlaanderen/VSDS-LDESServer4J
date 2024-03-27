@@ -2,8 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.caching;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class EtagCachingStrategy implements CachingStrategy {
 						.map(LdesFragmentIdentifier::asDecodedFragmentId)
 						.collect(Collectors.joining(""))
 				+ treeNode.getMembers().stream()
-						.map(Member::getId)
+						.map(Member::id)
 						.collect(Collectors.joining(""))
 				+ language);
 	}

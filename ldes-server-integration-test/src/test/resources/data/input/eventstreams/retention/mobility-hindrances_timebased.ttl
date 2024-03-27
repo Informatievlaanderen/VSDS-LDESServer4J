@@ -8,7 +8,7 @@
 @prefix mobility-hindrances: <http://localhost:8080/mobility-hindrances/> .
 
 server:mobility-hindrances a ldes:EventStream ;
-	ldes:timestampPath prov:generatedAtTime ;
+	ldes:timestampPath dc:created ;
 	ldes:versionOfPath dc:isVersionOf ;
     tree:view mobility-hindrances:paged  ;
 	tree:shape mobility-hindrances:shape .

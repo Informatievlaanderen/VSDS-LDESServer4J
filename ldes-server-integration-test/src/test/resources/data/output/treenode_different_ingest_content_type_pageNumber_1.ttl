@@ -8,17 +8,17 @@
 <http://test-data/mobility-hindrance/1/1>
         rdf:type              mobiliteit:Mobiliteitshinder ;
         terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
-        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+        terms:created  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 
 <http://test-data/mobility-hindrance/1/4>
         rdf:type              mobiliteit:Mobiliteitshinder ;
         terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
-        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+        terms:created  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 
 <http://test-data/mobility-hindrance/1/2>
         rdf:type              mobiliteit:Mobiliteitshinder ;
         terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
-        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+        terms:created  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
 
 <http://localhost:8080/mobility-hindrances/paged?pageNumber=1>
         rdf:type        tree:Node ;
@@ -31,4 +31,4 @@
 <http://test-data/mobility-hindrance/1/3>
         rdf:type              mobiliteit:Mobiliteitshinder ;
         terms:isVersionOf     <http://test-data/mobility-hindrance/1> ;
-        prov:generatedAtTime  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+        terms:created  "2023-04-06T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .

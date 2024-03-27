@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponse;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamResponseConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import io.micrometer.observation.annotation.Observed;
 import org.apache.jena.rdf.model.Model;
@@ -27,13 +27,13 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.R
 
 @Observed
 @Component
-public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamResponse>> {
+public class EventStreamListHttpConverter implements GenericHttpMessageConverter<List<EventStreamTO>> {
 	private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.valueOf("text/turtle");
-	private final EventStreamResponseConverter eventStreamResponseConverter;
+	private final EventStreamConverter eventStreamConverter;
 	private final RdfModelConverter rdfModelConverter;
 
-	public EventStreamListHttpConverter(EventStreamResponseConverter eventStreamResponseConverter, RdfModelConverter rdfModelConverter) {
-		this.eventStreamResponseConverter = eventStreamResponseConverter;
+	public EventStreamListHttpConverter(EventStreamConverter eventStreamConverter, RdfModelConverter rdfModelConverter) {
+		this.eventStreamConverter = eventStreamConverter;
 		this.rdfModelConverter = rdfModelConverter;
 	}
 
@@ -54,7 +54,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 
 	@Override
 	public boolean canWrite(Type type, @NotNull Class<?> clazz, MediaType mediaType) {
-		TypeToken<List<EventStreamResponse>> expectedType = new TypeToken<>() {
+		TypeToken<List<EventStreamTO>> expectedType = new TypeToken<>() {
 		};
 		return canWrite(clazz, mediaType) && expectedType.isSupertypeOf(type);
 	}
@@ -65,23 +65,23 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 	}
 
 	@Override
-	public List<EventStreamResponse> read(@NotNull Class<? extends List<EventStreamResponse>> clazz,
-			@NotNull HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
+	public List<EventStreamTO> read(@NotNull Class<? extends List<EventStreamTO>> clazz,
+                                    @NotNull HttpInputMessage inputMessage) throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
 	}
 
 	@Override
-	public List<EventStreamResponse> read(@NotNull Type type, Class<?> contextClass, @NotNull HttpInputMessage inputMessage)
+	public List<EventStreamTO> read(@NotNull Type type, Class<?> contextClass, @NotNull HttpInputMessage inputMessage)
 			throws HttpMessageNotReadableException {
 		throw new UnsupportedOperationException("Not supported to read a list of event stream responses");
 	}
 
 	@Override
-	public void write(List<EventStreamResponse> eventStreamResponses, MediaType contentType,
-			HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+	public void write(List<EventStreamTO> eventStreamRespons, MediaType contentType,
+                      HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
 		Model model = ModelFactory.createDefaultModel();
-		eventStreamResponses.stream()
-				.map(eventStreamResponseConverter::toModel)
+		eventStreamRespons.stream()
+				.map(eventStreamConverter::toModel)
 				.forEach(model::add);
 		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
@@ -90,8 +90,8 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 	}
 
 	@Override
-	public void write(@NotNull List<EventStreamResponse> eventStreamResponses, Type type, MediaType contentType,
-					  @NotNull HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-		write(eventStreamResponses, contentType, outputMessage);
+	public void write(@NotNull List<EventStreamTO> eventStreamRespons, Type type, MediaType contentType,
+                      @NotNull HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+		write(eventStreamRespons, contentType, outputMessage);
 	}
 }
