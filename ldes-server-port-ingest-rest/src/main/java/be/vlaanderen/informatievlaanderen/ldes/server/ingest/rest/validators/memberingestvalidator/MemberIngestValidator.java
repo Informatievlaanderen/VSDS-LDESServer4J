@@ -1,18 +1,26 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.shacl.ValidationReport;
+import org.apache.jena.shacl.validation.ReportEntry;
+import org.apache.jena.shacl.validation.Severity;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHACL_SOURCE_CONSTRAINT_COMPONENT;
 
 @Component
 @Order(2)
@@ -42,44 +50,68 @@ public class MemberIngestValidator implements IngestValidator {
     }
 
     private void validateModel(Model model, EventStream eventStream) {
+        List<ReportEntry> reportEntries = new ArrayList<>();
         List<Resource> memberSubjects = getRootNode(model);
         if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
-            throw new IngestValidationException("Only 1 member is allowed per ingest");
+            memberSubjects.forEach(subject -> addEntry(reportEntries, subject,
+                        "Only 1 member is allowed per request on collection with version creation disabled"
+                )
+            );
         }
 
-        boolean conformsTimePath = validateTimestampPath(memberSubjects, model, eventStream);
-        boolean conformsVersionPath = validateVersionOfPath(memberSubjects, model, eventStream);
-        if (!(conformsTimePath && conformsVersionPath)) {
-            String message = getValidationMessage(eventStream, conformsTimePath, conformsVersionPath);
-            throw new IngestValidationException(message);
+        validateTimestampPath(memberSubjects, model, eventStream, reportEntries);
+        validateVersionOfPath(memberSubjects, model, eventStream, reportEntries);
+
+        if (!reportEntries.isEmpty()) {
+            ValidationReport.Builder builder = ValidationReport.create();
+            reportEntries.forEach(builder::addReportEntry);
+            ValidationReport report = builder.build();
+            throw new ShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE), report.getModel());
         }
     }
 
-    private boolean validateTimestampPath(List<Resource> memberSubjects, Model model, EventStream eventStream) {
-        List<Statement> timestampStatements = getStatementsOfPath(memberSubjects, model, eventStream.getTimestampPath());
-
-        timestampStatements.forEach(statement -> {
-            if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype(), XSDDatatype.XSDdateTime)) {
-                throw new IngestValidationException(String.format("Object of statement with property: %s should be a literal of type %s", eventStream.getTimestampPath(), XSDDatatype.XSDdateTime.getURI()));
+    private void validateTimestampPath(List<Resource> memberSubjects, Model model, EventStream eventStream, List<ReportEntry> entries) {
+        int expectedNumber = eventStream.isVersionCreationEnabled() ? 0 : 1;
+        memberSubjects.forEach(subject -> {
+            List<Statement> timestampStatements = getStatementsOfPath(subject, model, eventStream.getTimestampPath());
+            if (timestampStatements.size() != expectedNumber) {
+                addEntry(entries, subject,
+                        String.format(String.format("Member must have exactly %s statement%s with timestamp path: %s as predicate.", expectedNumber, expectedNumber == 1 ? "" : "s", eventStream.getTimestampPath()))
+                );
             }
-        });
 
-        return eventStream.isVersionCreationEnabled() ? timestampStatements.isEmpty() : timestampStatements.size() == 1;
+            timestampStatements.forEach(statement -> {
+                if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype(), XSDDatatype.XSDdateTime)) {
+                    addEntry(entries, subject,
+                            String.format(String.format("Object of statement with predicate: %s should be a literal of type %s", eventStream.getTimestampPath(), XSDDatatype.XSDdateTime.getURI()))
+                    );
+                }
+            });
+        });
     }
 
-    private boolean validateVersionOfPath(List<Resource> memberSubjects, Model model, EventStream eventStream) {
-        List<Statement> versionOfStatements = getStatementsOfPath(memberSubjects, model, eventStream.getVersionOfPath());
-
-        versionOfStatements.forEach(statement -> {
-            if (!statement.getObject().isResource()) {
-                throw new IngestValidationException(String.format("Object of statement with property: %s should be a resource.", eventStream.getVersionOfPath()));
+    private void validateVersionOfPath(List<Resource> memberSubjects, Model model, EventStream eventStream, List<ReportEntry> entries) {
+        int expectedNumber = eventStream.isVersionCreationEnabled() ? 0 : 1;
+        memberSubjects.forEach(subject -> {
+            List<Statement> versionOfStatements = getStatementsOfPath(subject, model, eventStream.getVersionOfPath());
+            if (versionOfStatements.size() != expectedNumber) {
+                addEntry(entries, subject,
+                        String.format("Member must have exactly %s statement%s with versionOf path: %s as predicate.", expectedNumber, expectedNumber == 1 ? "" : "s", eventStream.getVersionOfPath())
+                );
             }
+
+            versionOfStatements.forEach(statement -> {
+                if (!statement.getObject().isResource()) {
+                    addEntry(entries, subject,
+                            String.format("Object of statement with predicate: %s should be a resource", eventStream.getVersionOfPath())
+                    );
+                }
+            });
         });
-        return eventStream.isVersionCreationEnabled() ? versionOfStatements.isEmpty() : versionOfStatements.size() == 1;
     }
 
-    private List<Statement> getStatementsOfPath(List<Resource> memberSubjects, Model model, String path) {
-        return model.listStatements(null, ResourceFactory.createProperty(path), (RDFNode) null).filterKeep(statement -> memberSubjects.contains(statement.getSubject())).toList();
+    private List<Statement> getStatementsOfPath(Resource memberSubject, Model model, String path) {
+        return model.listStatements(memberSubject, ResourceFactory.createProperty(path), (RDFNode) null).toList();
     }
 
     private List<Resource> getRootNode(Model model) {
@@ -101,28 +133,11 @@ public class MemberIngestValidator implements IngestValidator {
         }
     }
 
-    private String getValidationMessage(EventStream eventStream, boolean conformsTimePath, boolean conformsVersionPath) {
-        StringBuilder message = new StringBuilder("Member ingested on collection ")
-                .append(eventStream.getCollection())
-                .append(" should ");
-        if (eventStream.isVersionCreationEnabled()) {
-            message.append("not ");
-        }
-        message.append("contain ");
-        if (!conformsTimePath) {
-            message.append("the timestamp path: ")
-                    .append(eventStream.getTimestampPath());
-        }
-        if (!(conformsTimePath || conformsVersionPath)) {
-            message.append(" and ");
-        }
-        if (!conformsVersionPath) {
-            message.append("the version of path: ")
-                    .append(eventStream.getVersionOfPath());
-        }
-        if (!eventStream.isVersionCreationEnabled()) {
-            message.append(" exactly once.");
-        }
-        return message.toString();
+    private void addEntry(List<ReportEntry> entries, Resource focusNode, String message) {
+        ReportEntry entry = ReportEntry.create().focusNode(focusNode.asNode())
+                .severity(Severity.Violation)
+                .sourceConstraintComponent(NodeFactory.createURI(SHACL_SOURCE_CONSTRAINT_COMPONENT))
+                .message(message);
+        entries.add(entry);
     }
 }

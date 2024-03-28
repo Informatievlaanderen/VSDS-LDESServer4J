@@ -13,7 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class IngestionRestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { MemberIdNotFoundException.class, ShaclValidationException.class, IngestValidationException.class })
+	@ExceptionHandler(value = { MemberIdNotFoundException.class, ShaclValidationException.class })
 	protected ResponseEntity<Object> handleGeneralException(
 			RuntimeException ex, WebRequest request) {
 		logger.error(ex.getMessage());
