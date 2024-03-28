@@ -20,7 +20,7 @@ public interface OpenApiDcatViewsController {
 	@ApiResponse(responseCode = "400")
 	@Operation(summary = "Add DCAT metadata for a view")
 	void createDcat(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName,
 			@Parameter(description = "The name of the view", example = "by-page") String viewName,
 			@RequestBody(description = "A blank node of type dcat:DataService with only dcat:DataService properties " +
 					"(e.g. dct:title) and relations (e.g. dct:license), excluding relations " +
@@ -51,7 +51,7 @@ public interface OpenApiDcatViewsController {
 	@ApiResponse(responseCode = "404")
 	@Operation(summary = "Update DCAT metadata for a view")
 	void updateDcat(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName,
 			@Parameter(description = "The name of the view", example = "by-page") String viewName,
 			@RequestBody(description = "A blank node of type dcat:DataService with only dcat:DataService properties " +
 					"(e.g. dct:title) and relations (e.g. dct:license), excluding relations " +
@@ -80,7 +80,7 @@ public interface OpenApiDcatViewsController {
 	@ApiResponse(responseCode = "200")
 	@Operation(summary = "Delete DCAT metadata for a view")
 	void deleteDcat(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName,
 			@Parameter(description = "The name of the view", example = "by-page") String viewName);
 
 }

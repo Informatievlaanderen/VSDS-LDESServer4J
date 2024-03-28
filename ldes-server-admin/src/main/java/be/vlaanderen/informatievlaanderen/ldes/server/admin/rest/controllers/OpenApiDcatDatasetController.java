@@ -19,7 +19,7 @@ public interface OpenApiDcatDatasetController {
 	@ApiResponse(responseCode = "400")
 	@Operation(summary = "Add DCAT metadata for a LDES")
 	void postDataset(
-			@Parameter(description = "The name of a collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of a collection", example = "event-stream") String collectionName,
 			@RequestBody(description = "The body must contain a blank node of type dcat:Dataset " +
 					"with only dcat:Dataset properties (e.g. dct:title) and relations (e.g. dct:creator), " +
 					"excluding relations (non-configurable metadata) to dcat:Catalog and dcat:DataService.", content = {
@@ -51,7 +51,7 @@ public interface OpenApiDcatDatasetController {
 	@ApiResponse(responseCode = "404")
 	@Operation(summary = "Update DCAT metadata for a LDES")
 	void putDataset(
-			@Parameter(description = "The name of a collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of a collection", example = "event-stream") String collectionName,
 			@RequestBody(description = "The body must contain a blank node of type dcat:Dataset " +
 					"with only dcat:Dataset properties (e.g. dct:title) and relations (e.g. dct:creator), " +
 					"excluding relations (non-configurable metadata) to dcat:Catalog and dcat:DataService.", content = {
@@ -81,5 +81,5 @@ public interface OpenApiDcatDatasetController {
 	@ApiResponse(responseCode = "200")
 	@Operation(summary = "Delete DCAT metadata for a LDES")
 	void deleteDataset(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName);
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName);
 }
