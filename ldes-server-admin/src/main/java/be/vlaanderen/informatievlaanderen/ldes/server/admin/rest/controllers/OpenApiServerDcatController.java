@@ -13,10 +13,7 @@ import org.apache.jena.rdf.model.Model;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import static org.apache.jena.riot.WebContent.contentTypeJSONLD;
-import static org.apache.jena.riot.WebContent.contentTypeNQuads;
-import static org.apache.jena.riot.WebContent.contentTypeTextPlain;
-import static org.apache.jena.riot.WebContent.contentTypeTurtle;
+import static org.apache.jena.riot.WebContent.*;
 
 @SuppressWarnings("java:S2479") // whitespace needed for examples
 @Tag(name = "DCAT")
@@ -39,8 +36,8 @@ public interface OpenApiServerDcatController {
 							  dct:title "My LDES'es"@en ;
 							  dct:description "All LDES'es from publiser X"@en ;
 							  dct:publisher <http://sample.org/company/PublisherX> ;
-							  dcat:dataset </parcels> ;
-							  dcat:service </parcels/by-page/description>.
+							  dcat:dataset </event-stream> ;
+							  dcat:service </event-stream/by-page/description>.
 
 							<http://sample.org/company/PublisherX> a foaf:Agent ;
 							  foaf:name "Data Publishing Company" ;
@@ -54,13 +51,13 @@ public interface OpenApiServerDcatController {
 								m8g:hasEmail "info@data-publishing-company.com"
 							  ] .
 
-							</parcels> a dcat:Dataset ;
+							</event-stream> a dcat:Dataset ;
 							 dct:title "My LDES"@en ;
 							 dct:description "LDES for my data collection"@en .
 
-							</parcels/by-page/description> a dcat:DataService ;
-							  dcat:endpointURL </parcels/by-page> ;
-							  dcat:servesDataset </parcels> ;
+							</event-stream/by-page/description> a dcat:DataService ;
+							  dcat:endpointURL </event-stream/by-page> ;
+							  dcat:servesDataset </event-stream> ;
 							  dct:title "My geo-spatial view"@en ;
 							  dct:description "Geospatial fragmentation for my LDES"@en ;
 							  dct:license [
@@ -78,8 +75,8 @@ public interface OpenApiServerDcatController {
 							<http://localhost:8080/> <http://purl.org/dc/terms/title> "My LDES'es"@en .
 							<http://localhost:8080/> <http://purl.org/dc/terms/description> "All LDES'es from publiser X"@en .
 							<http://localhost:8080/> <http://purl.org/dc/terms/publisher> <http://sample.org/company/PublisherX> .
-							<http://localhost:8080/> <http://www.w3.org/ns/dcat#dataset> <http://localhost:8080/parcels> .
-							<http://localhost:8080/> <http://www.w3.org/ns/dcat#service> <http://localhost:8080/parcels/by-page/description> .
+							<http://localhost:8080/> <http://www.w3.org/ns/dcat#dataset> <http://localhost:8080/event-stream> .
+							<http://localhost:8080/> <http://www.w3.org/ns/dcat#service> <http://localhost:8080/event-stream/by-page/description> .
 							<http://sample.org/company/PublisherX> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://xmlns.com/foaf/0.1/Agent> .
 							<http://sample.org/company/PublisherX> <http://xmlns.com/foaf/0.1/name> "Data Publishing Company" .
 							<http://sample.org/company/PublisherX> <http://www.w3.org/ns/legal#legalName> "Data Publishing Company BV" .
@@ -89,15 +86,15 @@ public interface OpenApiServerDcatController {
 							_:genid1 <http://www.w3.org/ns/locn#fullAddress> "Some full address here" .
 							_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://data.europa.eu/m8g/ContactPoint> .
 							_:genid2 <http://data.europa.eu/m8g/hasEmail> "info@data-publishing-company.com" .
-							<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/dcat#Dataset> .
-							<http://localhost:8080/parcels> <http://purl.org/dc/terms/title> "My LDES"@en .
-							<http://localhost:8080/parcels> <http://purl.org/dc/terms/description> "LDES for my data collection"@en .
-							<http://localhost:8080/parcels/by-page/description> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/dcat#DataService> .
-							<http://localhost:8080/parcels/by-page/description> <http://www.w3.org/ns/dcat#endpointURL> <http://localhost:8080/parcels/by-page> .
-							<http://localhost:8080/parcels/by-page/description> <http://www.w3.org/ns/dcat#servesDataset> <http://localhost:8080/parcels> .
-							<http://localhost:8080/parcels/by-page/description> <http://purl.org/dc/terms/title> "My geo-spatial view"@en .
-							<http://localhost:8080/parcels/by-page/description> <http://purl.org/dc/terms/description> "Geospatial fragmentation for my LDES"@en .
-							<http://localhost:8080/parcels/by-page/description> <http://purl.org/dc/terms/license> _:genid3 .
+							<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/dcat#Dataset> .
+							<http://localhost:8080/event-stream> <http://purl.org/dc/terms/title> "My LDES"@en .
+							<http://localhost:8080/event-stream> <http://purl.org/dc/terms/description> "LDES for my data collection"@en .
+							<http://localhost:8080/event-stream/by-page/description> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/dcat#DataService> .
+							<http://localhost:8080/event-stream/by-page/description> <http://www.w3.org/ns/dcat#endpointURL> <http://localhost:8080/event-stream/by-page> .
+							<http://localhost:8080/event-stream/by-page/description> <http://www.w3.org/ns/dcat#servesDataset> <http://localhost:8080/event-stream> .
+							<http://localhost:8080/event-stream/by-page/description> <http://purl.org/dc/terms/title> "My geo-spatial view"@en .
+							<http://localhost:8080/event-stream/by-page/description> <http://purl.org/dc/terms/description> "Geospatial fragmentation for my LDES"@en .
+							<http://localhost:8080/event-stream/by-page/description> <http://purl.org/dc/terms/license> _:genid3 .
 							_:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/dc/terms/LicenseDocument> .
 							_:genid3 <http://purl.org/dc/terms/type> _:genid4 .
 							_:genid4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2004/02/skos/core#Concept> .
@@ -106,7 +103,7 @@ public interface OpenApiServerDcatController {
 			}),
 			@Content(mediaType = contentTypeJSONLD, examples = {
 					@ExampleObject(value = """
-							[{"@id":"_:b0","@type":["http://www.w3.org/ns/locn#Address"],"http://www.w3.org/ns/locn#fullAddress":[{"@value":"Some full address here"}]},{"@id":"_:b1","@type":["http://data.europa.eu/m8g/ContactPoint"],"http://data.europa.eu/m8g/hasEmail":[{"@value":"info@data-publishing-company.com"}]},{"@id":"_:b2","@type":["http://purl.org/dc/terms/LicenseDocument"],"http://purl.org/dc/terms/type":[{"@id":"_:b3"}]},{"@id":"_:b3","@type":["http://www.w3.org/2004/02/skos/core#Concept"],"http://www.w3.org/2004/02/skos/core#prefLabel":[{"@value":"some public license","@language":"en"}]},{"@id":"http://data.europa.eu/m8g/ContactPoint"},{"@id":"http://localhost:8080/","@type":["http://www.w3.org/ns/dcat#Catalog"],"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"All LDES'es from publiser X","@language":"en"}],"http://purl.org/dc/terms/publisher":[{"@id":"http://sample.org/company/PublisherX"}],"http://www.w3.org/ns/dcat#dataset":[{"@id":"http://localhost:8080/parcels"}],"http://www.w3.org/ns/dcat#service":[{"@id":"http://localhost:8080/parcels/by-page/description"}]},{"@id":"http://localhost:8080/parcels","@type":["http://www.w3.org/ns/dcat#Dataset"],"http://purl.org/dc/terms/title":[{"@value":"My LDES","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"LDES for my data collection","@language":"en"}]},{"@id":"http://localhost:8080/parcels/by-page"},{"@id":"http://localhost:8080/parcels/by-page/description","@type":["http://www.w3.org/ns/dcat#DataService"],"http://www.w3.org/ns/dcat#endpointURL":[{"@id":"http://localhost:8080/parcels/by-page"}],"http://www.w3.org/ns/dcat#servesDataset":[{"@id":"http://localhost:8080/parcels"}],"http://purl.org/dc/terms/title":[{"@value":"My geo-spatial view","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"Geospatial fragmentation for my LDES","@language":"en"}],"http://purl.org/dc/terms/license":[{"@id":"_:b2"}]},{"@id":"http://purl.org/dc/terms/LicenseDocument"},{"@id":"http://sample.org/company/PublisherX","@type":["http://xmlns.com/foaf/0.1/Agent"],"http://xmlns.com/foaf/0.1/name":[{"@value":"Data Publishing Company"}],"http://www.w3.org/ns/legal#legalName":[{"@value":"Data Publishing Company BV"}],"http://data.europa.eu/m8g/registeredAddress":[{"@id":"_:b0"}],"http://data.europa.eu/m8g/contactPoint":[{"@id":"_:b1"}]},{"@id":"http://www.w3.org/2004/02/skos/core#Concept"},{"@id":"http://www.w3.org/ns/dcat#Catalog"},{"@id":"http://www.w3.org/ns/dcat#DataService"},{"@id":"http://www.w3.org/ns/dcat#Dataset"},{"@id":"http://www.w3.org/ns/locn#Address"},{"@id":"http://xmlns.com/foaf/0.1/Agent"}]
+							[{"@id":"_:b0","@type":["http://www.w3.org/ns/locn#Address"],"http://www.w3.org/ns/locn#fullAddress":[{"@value":"Some full address here"}]},{"@id":"_:b1","@type":["http://data.europa.eu/m8g/ContactPoint"],"http://data.europa.eu/m8g/hasEmail":[{"@value":"info@data-publishing-company.com"}]},{"@id":"_:b2","@type":["http://purl.org/dc/terms/LicenseDocument"],"http://purl.org/dc/terms/type":[{"@id":"_:b3"}]},{"@id":"_:b3","@type":["http://www.w3.org/2004/02/skos/core#Concept"],"http://www.w3.org/2004/02/skos/core#prefLabel":[{"@value":"some public license","@language":"en"}]},{"@id":"http://data.europa.eu/m8g/ContactPoint"},{"@id":"http://localhost:8080/","@type":["http://www.w3.org/ns/dcat#Catalog"],"http://purl.org/dc/terms/title":[{"@value":"My LDES'es","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"All LDES'es from publiser X","@language":"en"}],"http://purl.org/dc/terms/publisher":[{"@id":"http://sample.org/company/PublisherX"}],"http://www.w3.org/ns/dcat#dataset":[{"@id":"http://localhost:8080/event-stream"}],"http://www.w3.org/ns/dcat#service":[{"@id":"http://localhost:8080/event-stream/by-page/description"}]},{"@id":"http://localhost:8080/event-stream","@type":["http://www.w3.org/ns/dcat#Dataset"],"http://purl.org/dc/terms/title":[{"@value":"My LDES","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"LDES for my data collection","@language":"en"}]},{"@id":"http://localhost:8080/event-stream/by-page"},{"@id":"http://localhost:8080/event-stream/by-page/description","@type":["http://www.w3.org/ns/dcat#DataService"],"http://www.w3.org/ns/dcat#endpointURL":[{"@id":"http://localhost:8080/event-stream/by-page"}],"http://www.w3.org/ns/dcat#servesDataset":[{"@id":"http://localhost:8080/event-stream"}],"http://purl.org/dc/terms/title":[{"@value":"My geo-spatial view","@language":"en"}],"http://purl.org/dc/terms/description":[{"@value":"Geospatial fragmentation for my LDES","@language":"en"}],"http://purl.org/dc/terms/license":[{"@id":"_:b2"}]},{"@id":"http://purl.org/dc/terms/LicenseDocument"},{"@id":"http://sample.org/company/PublisherX","@type":["http://xmlns.com/foaf/0.1/Agent"],"http://xmlns.com/foaf/0.1/name":[{"@value":"Data Publishing Company"}],"http://www.w3.org/ns/legal#legalName":[{"@value":"Data Publishing Company BV"}],"http://data.europa.eu/m8g/registeredAddress":[{"@id":"_:b0"}],"http://data.europa.eu/m8g/contactPoint":[{"@id":"_:b1"}]},{"@id":"http://www.w3.org/2004/02/skos/core#Concept"},{"@id":"http://www.w3.org/ns/dcat#Catalog"},{"@id":"http://www.w3.org/ns/dcat#DataService"},{"@id":"http://www.w3.org/ns/dcat#Dataset"},{"@id":"http://www.w3.org/ns/locn#Address"},{"@id":"http://xmlns.com/foaf/0.1/Agent"}]
 							""")
 			})
 	})

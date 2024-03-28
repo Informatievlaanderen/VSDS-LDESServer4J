@@ -26,7 +26,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeNQuads) })
 	@ApiResponse(responseCode = "404", description = "Missing EventStream", content = @Content)
 	List<ViewSpecification> getViews(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName);
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName);
 
 	@Operation(summary = "Retrieve a specific view of a collection")
 	@ApiResponse(responseCode = "200", content = {
@@ -35,7 +35,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeNQuads) })
 	@ApiResponse(responseCode = "404", description = "Missing EventStream or Missing View", content = @Content)
 	ViewSpecification getViewOfCollection(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName,
 			@Parameter(description = "The name of requested view", example = "time-based-retention") String viewName);
 
 	@Operation(summary = "Delete a specific view for a collection")
@@ -45,7 +45,7 @@ public interface OpenApiAdminViewsRestController {
 			@Content(mediaType = contentTypeNQuads) })
 	@ApiResponse(responseCode = "404", description = "Missing EventStream or Missing View")
 	void deleteView(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName,
 			@Parameter(description = "The name of deleted view", example = "time-based-retention") String viewName);
 
 	@ApiResponse(responseCode = "201")
@@ -53,14 +53,14 @@ public interface OpenApiAdminViewsRestController {
 	@ApiResponse(responseCode = "404", description = "Missing EventStream")
 	@Operation(summary = "Add view to a collection")
 	void createView(
-			@Parameter(description = "The name of the collection", example = "mobility-hindrances") String collectionName,
+			@Parameter(description = "The name of the collection", example = "event-stream") String collectionName,
 			@RequestBody(description = "A valid RDF model defining a view for a collection", content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = {
 							@ExampleObject(name = "Time-Based Retention", description = "A time-based retention policy which is configured to only keep members whose ldes:timestamppath is less than 2 minutes ago.", value = """
 									@prefix ldes: <https://w3id.org/ldes#> .
 									@prefix tree: <https://w3id.org/tree#> .
 									@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix server: <http://localhost:8080/event-stream/> .
 
 									server:time-based-retention tree:viewDescription [
 										a tree:fragmentationStrategy;
@@ -76,7 +76,7 @@ public interface OpenApiAdminViewsRestController {
 									@prefix ldes: <https://w3id.org/ldes#> .
 									@prefix tree: <https://w3id.org/tree#>.
 									@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix server: <http://localhost:8080/event-stream/> .
 
 									server:version-based-retention tree:viewDescription [
 										tree:fragmentationStrategy  () ;
@@ -88,7 +88,7 @@ public interface OpenApiAdminViewsRestController {
 									] .
 									"""),
 							@ExampleObject(name = "Pagination View", description = "A pagination fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix server: <http://localhost:8080/event-stream/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:pagination tree:viewDescription [
@@ -97,7 +97,7 @@ public interface OpenApiAdminViewsRestController {
 									 ] .
 									"""),
 							@ExampleObject(name = "Time-Based Fragmentation Strategy", description = "A time-based fragmentation strategy which is configured to create new pages when a member limit of 100 members is reached.", value = """
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix server: <http://localhost:8080/event-stream/> .
 									@prefix tree: <https://w3id.org/tree#> .
 									@prefix ldes: <https://w3id.org/ldes#> .
 
@@ -112,7 +112,7 @@ public interface OpenApiAdminViewsRestController {
 									 ] .
 									"""),
 							@ExampleObject(name = "Geospatial Fragmentation Strategy", description = "A geospatial fragmentation strategy which is configured to partition the data on zoom level 15.", value = """
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix server: <http://localhost:8080/event-stream/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:geospatial tree:viewDescription [
@@ -125,7 +125,7 @@ public interface OpenApiAdminViewsRestController {
 									] .
 									"""),
 							@ExampleObject(name = "Reference Fragmentation Strategy", description = "A reference fragmentation strategy which is configured to partition the data on the provided property path (fragmentationPath).", value = """
-									@prefix server: <http://localhost:8080/mobility-hindrances/> .
+									@prefix server: <http://localhost:8080/event-stream/> .
 									@prefix tree: <https://w3id.org/tree#> .
 
 									server:reference tree:viewDescription [
