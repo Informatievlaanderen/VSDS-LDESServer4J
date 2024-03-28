@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.me
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,7 +65,11 @@ class MemberIngestValidatorTest {
                                     " exactly once."),
                     Arguments.of(readModelFromFile("example-ldes-member-without-version-of.nq"), VERSION,
                             "Member ingested on collection " + VERSION + " should contain the version of path: " + VERSIONOF_PATH +
-                                    " exactly once."));
+                                    " exactly once."),
+                    Arguments.of(readModelFromFile("example-ldes-member-wrong-type-version-of.nq"), VERSION,
+                            "Object of statement with property: " + VERSIONOF_PATH + " should be a resource."),
+                    Arguments.of(readModelFromFile("example-ldes-member-wrong-type-timestamp.nq"), VERSION,
+                            "Object of statement with property: " + TIMESTAMP_PATH + " should be a literal of type " + XSDDatatype.XSDdateTime.getURI()));
         }
     }
 
