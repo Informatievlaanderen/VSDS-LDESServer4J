@@ -34,8 +34,8 @@ public class RdfModelConverter {
 
     private Context context;
 
-    public Lang getLang(MediaType contentType, RdfFormatException.RdfFormatContext rdfFormatContext) {
-        if (contentType.equals(MediaType.TEXT_HTML)) {
+    public Lang getLangOrDefault(MediaType contentType, RdfFormatException.RdfFormatContext rdfFormatContext) {
+        if (MediaType.ALL.equals(contentType) || MediaType.TEXT_HTML.equals(contentType)) {
             return TURTLE;
         }
         return ofNullable(nameToLang(contentType.getType() + "/" + contentType.getSubtype()))

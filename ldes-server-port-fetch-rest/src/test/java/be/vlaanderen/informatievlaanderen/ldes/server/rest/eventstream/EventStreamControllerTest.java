@@ -148,8 +148,8 @@ class EventStreamControllerTest {
 			return Stream.of(
 					Arguments.of("application/n-quads", Lang.NQUADS,
 							"33a964ecee072d6e4c97a3522d3b5fc58d752c1d69276a36eddcb640ba90a509"),
-					Arguments.of("application/turtle", Lang.TURTLE,
-							"f922774bd3fe66a59686e17f1bc1e000f591670d7ee70c0c3e1d66377ca08610"),
+					Arguments.of("text/turtle", Lang.TURTLE,
+							"e05c986413efc584c7e9534dae550a242f26fd8164d8fff80d035caaa9f05573"),
 					Arguments.of("*/*", Lang.TURTLE,
 							"adb0e3a84b4ef0dd5356de5961f62a58b1f8a1541dffc62dc7c62644aaed7357"),
 					Arguments.of("", Lang.TURTLE,

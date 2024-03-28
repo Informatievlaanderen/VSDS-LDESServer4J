@@ -85,11 +85,11 @@ public class ListViewHttpConverter implements GenericHttpMessageConverter<List<V
 	@Override
 	public void write(List<ViewSpecification> views, MediaType contentType,
 					  HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-		Lang rdfFormat = rdfModelConverter.getLang(contentType, FETCH);
-		rdfModelConverter.checkLangForRelativeUrl(rdfFormat);
+		Lang lang = rdfModelConverter.getLangOrDefault(contentType, FETCH);
+		rdfModelConverter.checkLangForRelativeUrl(lang);
 		Model model = ModelFactory.createDefaultModel();
 		views.stream().map(viewSpecificationConverter::modelFromView).forEach(model::add);
-		outputMessage.getHeaders().setContentType(contentType);
-		RDFDataMgr.write(outputMessage.getBody(), model, rdfFormat);
+		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
+		RDFDataMgr.write(outputMessage.getBody(), model, lang);
 	}
 }
