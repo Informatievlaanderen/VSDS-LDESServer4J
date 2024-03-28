@@ -20,9 +20,9 @@ public class ViewAddedHandler {
 	@Async
 	@EventListener
 	public void handle(ViewAddedEvent event) {
-		log.atInfo().log("STARTED adding members to view {} in the background", event.getViewName().asString());
+		log.atInfo().log("STARTED adding existing members to view {} in the background", event.getViewName().asString());
 		memberPropertiesRepository.addViewToAll(event.getViewName());
-		log.atInfo().log("FINISHED adding members to view {} in the background", event.getViewName().asString());
+		log.atInfo().log("FINISHED adding existing members to view {} in the background", event.getViewName().asString());
 	}
 
 }
