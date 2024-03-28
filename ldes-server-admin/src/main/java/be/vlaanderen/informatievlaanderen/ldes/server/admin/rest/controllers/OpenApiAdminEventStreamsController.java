@@ -27,52 +27,52 @@ public interface OpenApiAdminEventStreamsController {
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
 					@prefix server: <http://localhost:8080/> .
 					@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-					@prefix parcels: <http://localhost:8080/parcels/> .
-					@prefix mobility-hindrances: <http://localhost:8080/mobility-hindrances/> .
+					@prefix event-stream-1: <http://localhost:8080/event-stream-1/> .
+					@prefix event-stream-2: <http://localhost:8080/event-stream-2/> .
 
-					server:mobility-hindrances a ldes:EventStream ;
+					server:event-stream-1 a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
 						ldes:createVersions false ;
-						tree:shape mobility-hindrances:shape .
+						tree:shape event-stream-1:shape .
 
-					server:parcels a ldes:EventStream ;
+					server:event-stream-2 a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
 						ldes:createVersions true ;
-						tree:shape server:shape .
-						ldes:view parcels:by-page .
+						tree:shape event-stream-2:shape .
+						ldes:view event-stream-2:by-page .
 
-					parcels:paged tree:viewDescription [
+					event-stream-2:by-page tree:viewDescription [
 						tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 						tree:fragmentationStrategy () ;
 					] .
 
-					parcels:shape a sh:NodeShape .
+					event-stream-1:shape a sh:NodeShape .
 
-					mobility-hindrances:shape a sh:NodeShape .
+					event-stream-2:shape a sh:NodeShape .
 					""")),
 			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
-					<http://localhost:8080/mobility-hindrances> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-					<http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-					<http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					<http://localhost:8080/mobility-hindrances> <https://w3id.org/ldes#createVersions> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					<http://localhost:8080/mobility-hindrances> <https://w3id.org/tree#shape> <http://localhost:8080/mobility-hindrances/shape> .
-					<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#createVersions> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/shape> .
-					<https://w3id.org/ldes#view> <http://localhost:8080/parcels/by-page> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
-					_:genid1 <https://w3id.org/tree#pageSize> "100"^^<http://www.w3.org/2001/XMLSchema#int> .
-					_:genid1 <https://w3id.org/tree#fragmentationStrategy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-					<http://localhost:8080/parcels/paged> <https://w3id.org/tree#viewDescription> _:genid1 .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
-					<http://localhost:8080/mobility-hindrances/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+					<http://localhost:8080/event-stream-1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+					   <http://localhost:8080/event-stream-1> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+					   <http://localhost:8080/event-stream-1> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+					   <http://localhost:8080/event-stream-1> <https://w3id.org/ldes#createVersions> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+					   <http://localhost:8080/event-stream-1> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream-1/shape> .
+					   <http://localhost:8080/event-stream-2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+					   <http://localhost:8080/event-stream-2> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+					   <http://localhost:8080/event-stream-2> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+					   <http://localhost:8080/event-stream-2> <https://w3id.org/ldes#createVersions> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+					   <http://localhost:8080/event-stream-2> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream-2/shape> .
+					   <https://w3id.org/ldes#view> <http://localhost:8080/event-stream-2/by-page> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
+					   _:genid1 <https://w3id.org/tree#pageSize> "100"^^<http://www.w3.org/2001/XMLSchema#int> .
+					   _:genid1 <https://w3id.org/tree#fragmentationStrategy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+					   <http://localhost:8080/event-stream-2/by-page> <https://w3id.org/tree#viewDescription> _:genid1 .
+					   <http://localhost:8080/event-stream-1/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+					   <http://localhost:8080/event-stream-2/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 					""")),
 			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
-                    [{"@id":"_:b0","https://w3id.org/tree#pageSize":[{"@value":"100","@type":"http://www.w3.org/2001/XMLSchema#int"}],"https://w3id.org/tree#fragmentationStrategy":[{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"}]},{"@id":"http://localhost:8080/mobility-hindrances","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":false}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/mobility-hindrances/shape"}]},{"@id":"http://localhost:8080/mobility-hindrances/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":true}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/shape"}]},{"@id":"http://localhost:8080/parcels/paged","https://w3id.org/tree#viewDescription":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://localhost:8080/shape"},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/by-page":[{"@value":""}]}]
-                    """))
+					[{"@id":"_:b0","https://w3id.org/tree#pageSize":[{"@value":"100","@type":"http://www.w3.org/2001/XMLSchema#int"}],"https://w3id.org/tree#fragmentationStrategy":[{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"}]},{"@id":"http://localhost:8080/event-stream-1","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":false}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/event-stream-1/shape"}]},{"@id":"http://localhost:8080/event-stream-1/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://localhost:8080/event-stream-2","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":true}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/event-stream-2/shape"}]},{"@id":"http://localhost:8080/event-stream-2/by-page","https://w3id.org/tree#viewDescription":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/event-stream-2/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/event-stream-2/by-page":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]}]
+					"""))
 	})
 	List<EventStreamTO> getEventStreams();
 
@@ -85,30 +85,30 @@ public interface OpenApiAdminEventStreamsController {
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
 					@prefix server: <http://localhost:8080/> .
 					@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-					@prefix parcels: <http://localhost:8080/parcels/> .
+					@prefix event-stream: <http://localhost:8080/event-stream/> .
 
-					server:parcels a ldes:EventStream ;
+					server:event-stream a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
 						ldes:createVersions false ;
-						tree:shape parcels:shape .
+						tree:shape event-stream:shape .
 
-					parcels:shape a sh:NodeShape .
+					event-stream:shape a sh:NodeShape .
 					""")),
 			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
-					<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#createVersions> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+					<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .
+					               <http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 					""")),
 			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
-                    [{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":false}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"}]					
-                    """))
+					[{"@id":"http://localhost:8080/event-stream","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":false}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/event-stream/shape"}]},{"@id":"http://localhost:8080/event-stream/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"}]
+					"""))
 	})
 	@ApiResponse(responseCode = "400", description = "The provided config is not valid", content = @Content)
-    EventStreamTO createEventStream(
+	EventStreamTO createEventStream(
 			@RequestBody(content = {
 					@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 							@prefix ldes: <https://w3id.org/ldes#> .
@@ -117,73 +117,73 @@ public interface OpenApiAdminEventStreamsController {
 							@prefix sh:   <http://www.w3.org/ns/shacl#> .
 							@prefix server: <http://localhost:8080/> .
 							@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-							@prefix parcels: <http://localhost:8080/parcels/> .
+							@prefix event-stream: <http://localhost:8080/event-stream/> .
 
-							server:parcels a ldes:EventStream ;
+							server:event-stream a ldes:EventStream ;
 								ldes:timestampPath dcterms:created ;
 								ldes:versionOfPath dcterms:isVersionOf ;
-								tree:shape parcels:shape .
+								tree:shape event-stream:shape .
 
-							parcels:shape a sh:NodeShape .
+							event-stream:shape a sh:NodeShape .
 							""")),
 					@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
-							<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-							 	<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-							 	<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-							 	<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
-							 	<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+							<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+							<http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+							<http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+							<http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .
+							<http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 							""")),
 					@Content(mediaType = contentTypeJSONLD, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
-							[{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://basisregisters.vlaanderen.be/implementatiemodel/gebouwenregister#Perceel"},{"@id":"https://w3id.org/ldes#EventStream"}]
+							[{"@id":"http://localhost:8080/event-stream","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/event-stream/shape"}]},{"@id":"http://localhost:8080/event-stream/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"}]
 							"""))
 			}) Model eventStreamModel);
 
 	@Operation(summary = "Retrieve specific Event Stream configuration")
 	@ApiResponse(responseCode = "200", content = {
-            @Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
+			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ldes: <https://w3id.org/ldes#> .
 					@prefix dcterms: <http://purl.org/dc/terms/> .
 					@prefix tree: <https://w3id.org/tree#>.
 					@prefix sh:   <http://www.w3.org/ns/shacl#> .
 					@prefix server: <http://localhost:8080/> .
 					@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-					@prefix parcels: <http://localhost:8080/parcels/> .
+					@prefix event-stream: <http://localhost:8080/event-stream/> .
 
-					server:parcels a ldes:EventStream ;
+					server:event-stream a ldes:EventStream ;
 						ldes:timestampPath dcterms:created ;
 						ldes:versionOfPath dcterms:isVersionOf ;
 						ldes:createVersions false ;
-						tree:shape parcels:shape .
-						ldes:view parcels:pagination .
+						tree:shape event-stream:shape .
+						ldes:view event-stream:pagination .
 
-					parcels:pagination tree:viewDescription [
+					event-stream:pagination tree:viewDescription [
 						tree:pageSize "100"^^<http://www.w3.org/2001/XMLSchema#int> ;
 						tree:fragmentationStrategy () ;
 					] .
 
-					parcels:shape a sh:NodeShape .
+					event-stream:shape a sh:NodeShape .
 					""")),
-            @Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
-					<http://localhost:8080/parcels> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
-					<http://localhost:8080/parcels> <https://w3id.org/ldes#createVersions> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
-					<http://localhost:8080/parcels> <https://w3id.org/tree#shape> <http://localhost:8080/parcels/shape> .
-					<https://w3id.org/ldes#view> <http://localhost:8080/parcels/pagination> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
-					_:genid1 <https://w3id.org/tree#pageSize> "100"^^<http://www.w3.org/2001/XMLSchema#int> .
-					_:genid1 <https://w3id.org/tree#fragmentationStrategy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
-					<http://localhost:8080/parcels/pagination> <https://w3id.org/tree#viewDescription> _:genid1 .
-					<http://localhost:8080/parcels/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
+			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
+					<http://localhost:8080/event-stream> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventStream> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/ldes#timestampPath> <http://purl.org/dc/terms/created> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/ldes#versionOfPath> <http://purl.org/dc/terms/isVersionOf> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/ldes#createVersions> "false"^^<http://www.w3.org/2001/XMLSchema#boolean> .
+					               <http://localhost:8080/event-stream> <https://w3id.org/tree#shape> <http://localhost:8080/event-stream/shape> .
+					               <https://w3id.org/ldes#view> <http://localhost:8080/event-stream/pagination> ""^^<http://www.w3.org/2001/XMLSchema#integer> .
+					               _:genid1 <https://w3id.org/tree#pageSize> "100"^^<http://www.w3.org/2001/XMLSchema#int> .
+					               _:genid1 <https://w3id.org/tree#fragmentationStrategy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#nil> .
+					               <http://localhost:8080/event-stream/pagination> <https://w3id.org/tree#viewDescription> _:genid1 .
+					               <http://localhost:8080/event-stream/shape> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#NodeShape> .
 					""")),
-            @Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
-                    [{"@id":"_:b0","https://w3id.org/tree#pageSize":[{"@value":"100","@type":"http://www.w3.org/2001/XMLSchema#int"}],"https://w3id.org/tree#fragmentationStrategy":[{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"}]},{"@id":"http://localhost:8080/parcels","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":false}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/parcels/shape"}]},{"@id":"http://localhost:8080/parcels/pagination","https://w3id.org/tree#viewDescription":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/parcels/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/parcels/pagination":[{"@value":""}]}]
-                    """))
+			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
+					[{"@id":"_:b0","https://w3id.org/tree#pageSize":[{"@value":"100","@type":"http://www.w3.org/2001/XMLSchema#int"}],"https://w3id.org/tree#fragmentationStrategy":[{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"}]},{"@id":"http://localhost:8080/event-stream","@type":["https://w3id.org/ldes#EventStream"],"https://w3id.org/ldes#timestampPath":[{"@id":"http://purl.org/dc/terms/created"}],"https://w3id.org/ldes#versionOfPath":[{"@id":"http://purl.org/dc/terms/isVersionOf"}],"https://w3id.org/ldes#createVersions":[{"@value":false}],"https://w3id.org/tree#shape":[{"@id":"http://localhost:8080/event-stream/shape"}]},{"@id":"http://localhost:8080/event-stream/pagination","https://w3id.org/tree#viewDescription":[{"@id":"_:b0"}]},{"@id":"http://localhost:8080/event-stream/shape","@type":["http://www.w3.org/ns/shacl#NodeShape"]},{"@id":"http://purl.org/dc/terms/created"},{"@id":"http://purl.org/dc/terms/isVersionOf"},{"@id":"http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"},{"@id":"http://www.w3.org/ns/shacl#NodeShape"},{"@id":"https://w3id.org/ldes#EventStream"},{"@id":"https://w3id.org/ldes#view","http://localhost:8080/event-stream/pagination":[{"@value":"","@type":"http://www.w3.org/2001/XMLSchema#integer"}]}]
+					"""))
 	})
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found", content = @Content)
-    EventStreamTO getEventStream(@Parameter(example = "parcels") String collectionName);
+	EventStreamTO getEventStream(@Parameter(example = "event-stream") String collectionName);
 
 	@Operation(summary = "Delete an Event Stream")
 	@ApiResponse(responseCode = "200", description = "Event Stream has been successfully deleted")
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found")
-	void deleteEventStream(@Parameter(example = "parcels") String collectionName);
+	void deleteEventStream(@Parameter(example = "event-stream") String collectionName);
 }
