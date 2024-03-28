@@ -93,7 +93,7 @@ class MemberIngestControllerTest {
                         .contentType("application/n-quads")
                         .content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Only 1 member is allowed per ingest")));
+                .andExpect(content().string(containsString("Only 1 member is allowed per request on collection with version creation disabled")));
     }
 
     @Test
@@ -103,7 +103,7 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the timestamp path: http://www.w3.org/ns/prov#generatedAtTime exactly once.")));
+                .andExpect(content().string(containsString("Member must have exactly 1 statement with timestamp path: http://www.w3.org/ns/prov#generatedAtTime")));
         verifyNoInteractions(memberIngester);
     }
 
@@ -117,7 +117,7 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the version of path: http://purl.org/dc/terms/isVersionOf exactly once.")));
+                .andExpect(content().string(containsString("Member must have exactly 1 statement with versionOf path: http://purl.org/dc/terms/isVersionOf")));
     }
 
     @Test
