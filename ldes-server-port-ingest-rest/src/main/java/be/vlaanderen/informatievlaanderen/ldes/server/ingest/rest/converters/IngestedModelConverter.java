@@ -52,7 +52,7 @@ public class IngestedModelConverter implements HttpMessageConverter<Model> {
 	public Model read(@NotNull Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		final Lang lang =
-				rdfModelConverter.getLang(
+				rdfModelConverter.getLangOrDefault(
 						requireNonNull(inputMessage.getHeaders().getContentType()),
 						RdfFormatException.RdfFormatContext.INGEST
 				);

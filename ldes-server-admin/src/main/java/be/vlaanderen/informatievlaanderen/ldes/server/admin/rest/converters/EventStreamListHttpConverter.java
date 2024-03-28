@@ -83,7 +83,7 @@ public class EventStreamListHttpConverter implements GenericHttpMessageConverter
 		eventStreamRespons.stream()
 				.map(eventStreamConverter::toModel)
 				.forEach(model::add);
-		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
+		Lang lang = rdfModelConverter.getLangOrDefault(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
 		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
 		RDFDataMgr.write(outputMessage.getBody(), model, lang);
