@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -96,7 +97,7 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3"),
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/4")
-        );
+        ).filter(Objects::nonNull);
     }
 
     @Override
@@ -109,7 +110,7 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3")
-        );
+        ).filter(Objects::nonNull);
     }
 
     @Override
@@ -123,6 +124,6 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3"),
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/3/4")
-        );
+        ).filter(Objects::nonNull);
     }
 }
