@@ -8,9 +8,9 @@ import java.util.Collection;
 public interface ViewCollection {
 	void saveViewCapacity(ViewCapacity viewCapacity);
 
-	ViewCapacity getViewCapacityByViewName(ViewName viewName);
-
 	void deleteViewCapacityByViewName(ViewName viewName);
+
+	void deleteViewCapacitiesByViewName(String collectionName);
 
 	Collection<ViewCapacity> getAllViewCapacities();
 }

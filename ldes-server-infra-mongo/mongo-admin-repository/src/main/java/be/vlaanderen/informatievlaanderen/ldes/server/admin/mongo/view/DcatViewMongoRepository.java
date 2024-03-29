@@ -39,6 +39,11 @@ public class DcatViewMongoRepository implements DcatViewRepository {
 	}
 
 	@Override
+	public void deleteByCollectionName(String collectionName) {
+		dataServiceEntityRepository.deleteAllByCollectionName(collectionName);
+	}
+
+	@Override
 	public List<DcatView> findAll() {
 		return dataServiceEntityRepository.findAll().stream().map(dcatServiceEntityConverter::toDcatView).toList();
 	}

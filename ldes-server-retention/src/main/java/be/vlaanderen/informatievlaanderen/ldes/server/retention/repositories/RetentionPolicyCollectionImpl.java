@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
@@ -16,43 +17,51 @@ import java.util.Map;
 @Component
 public class RetentionPolicyCollectionImpl implements RetentionPolicyCollection {
 
-	private final Map<ViewName, RetentionPolicy> retentionPolicyMap;
-	private final RetentionPolicyFactory retentionPolicyFactory;
+    private final Map<ViewName, RetentionPolicy> retentionPolicyMap;
+    private final RetentionPolicyFactory retentionPolicyFactory;
 
-	public RetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
-		this.retentionPolicyFactory = retentionPolicyFactory;
-		this.retentionPolicyMap = new HashMap<>();
-	}
+    public RetentionPolicyCollectionImpl(RetentionPolicyFactory retentionPolicyFactory) {
+        this.retentionPolicyFactory = retentionPolicyFactory;
+        this.retentionPolicyMap = new HashMap<>();
+    }
 
-	@EventListener
-	public void handleViewAddedEvent(ViewAddedEvent event) {
-		addToMap(event.getViewName(), event.getViewSpecification());
-	}
+    @EventListener
+    public void handleViewAddedEvent(ViewAddedEvent event) {
+        addToMap(event.getViewName(), event.getViewSpecification());
+    }
 
-	@EventListener
-	public void handleViewInitializationEvent(ViewInitializationEvent event) {
-		addToMap(event.getViewName(), event.getViewSpecification());
-	}
+    @EventListener
+    public void handleViewInitializationEvent(ViewInitializationEvent event) {
+        addToMap(event.getViewName(), event.getViewSpecification());
+    }
 
-	@EventListener
-	public void handleViewDeletedEvent(ViewDeletedEvent event) {
-		retentionPolicyMap.remove(event.getViewName());
-	}
+    @EventListener
+    public void handleViewDeletedEvent(ViewDeletedEvent event) {
+        retentionPolicyMap.remove(event.getViewName());
+    }
 
-	@Override
-	public Map<ViewName, RetentionPolicy> getRetentionPolicyMap() {
-		return Map.copyOf(retentionPolicyMap);
-	}
+    @EventListener
+    public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
+        retentionPolicyMap.keySet().stream()
+                .filter(viewName -> viewName.getCollectionName().equals(event.collectionName()))
+                .toList()
+                .forEach(retentionPolicyMap::remove);
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return retentionPolicyMap.isEmpty();
-	}
+    @Override
+    public Map<ViewName, RetentionPolicy> getRetentionPolicyMap() {
+        return Map.copyOf(retentionPolicyMap);
+    }
 
-	private void addToMap(ViewName viewName, ViewSpecification viewSpecification) {
-		retentionPolicyFactory
-				.extractRetentionPolicy(viewSpecification)
-				.ifPresent(policy -> retentionPolicyMap.put(viewName, policy));
-	}
+    @Override
+    public boolean isEmpty() {
+        return retentionPolicyMap.isEmpty();
+    }
+
+    private void addToMap(ViewName viewName, ViewSpecification viewSpecification) {
+        retentionPolicyFactory
+                .extractRetentionPolicy(viewSpecification)
+                .ifPresent(policy -> retentionPolicyMap.put(viewName, policy));
+    }
 
 }
