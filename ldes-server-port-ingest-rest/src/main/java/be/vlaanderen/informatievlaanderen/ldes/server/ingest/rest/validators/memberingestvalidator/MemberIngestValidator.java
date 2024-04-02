@@ -52,7 +52,7 @@ public class MemberIngestValidator implements IngestValidator {
         Map<Integer, List<Resource>> numberOfReferences = getNumberOfNodeReferences(model);
         List<Resource> memberSubjects = model.listSubjects().filterDrop(RDFNode::isAnon).toList();
 
-        validateDanglingBlankNodes(numberOfReferences.getOrDefault(0, List.of()), model, reportEntries);
+        validateDanglingBlankNodes(numberOfReferences, model, reportEntries);
         validateBlankNodeScope(numberOfReferences, model, reportEntries);
 
         if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
@@ -118,13 +118,15 @@ public class MemberIngestValidator implements IngestValidator {
         return model.listStatements(memberSubject, ResourceFactory.createProperty(path), (RDFNode) null).toList();
     }
 
-    private void validateDanglingBlankNodes(List<Resource> subjects, Model model, List<ReportEntry> reportEntries) {
-        subjects.forEach(subject-> {
-            if (subject.isAnon()) {
-                addEntry(reportEntries, subject, model.listStatements(subject, null, (RDFNode) null).toList(),
-                        "Object graphs don't allow blank nodes to occur outside of a named object.");
-            }
-        });
+    private void validateDanglingBlankNodes(Map<Integer, List<Resource>> nrOfReferences, Model model, List<ReportEntry> reportEntries) {
+        if (nrOfReferences.containsKey(0)) {
+            nrOfReferences.get(0).forEach(subject-> {
+                if (subject.isAnon()) {
+                    addEntry(reportEntries, subject, model.listStatements(subject, null, (RDFNode) null).toList(),
+                            "Object graphs don't allow blank nodes to occur outside of a named object.");
+                }
+            });
+        }
     }
 
     private void validateBlankNodeScope(Map<Integer, List<Resource>> numberOfReferences, Model model, List<ReportEntry> reportEntries) {
@@ -139,7 +141,7 @@ public class MemberIngestValidator implements IngestValidator {
     }
 
     private Map<Integer, List<Resource>> getNumberOfNodeReferences(Model model) {
-        return model.listSubjects().toList().stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s).mapWith(Statement::getSubject).toSet().size()));
+        return model.listSubjects().filterKeep(Resource::isAnon).toList().stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s).mapWith(Statement::getSubject).toSet().size()));
     }
 
     private void addEntry(List<ReportEntry> entries, Resource focusNode, String message) {
