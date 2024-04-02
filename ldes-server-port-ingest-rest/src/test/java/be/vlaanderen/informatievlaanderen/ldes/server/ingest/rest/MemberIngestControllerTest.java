@@ -9,7 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.nodesingestvalidator.NodesIngestValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator.MemberIngestValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -51,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {IngestedModelConverter.class, MemberIngestController.class,
-        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, NodesIngestValidator.class, MemberIngestValidator.class})
+        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, MemberIngestValidator.class})
 class MemberIngestControllerTest {
 
     @Autowired
