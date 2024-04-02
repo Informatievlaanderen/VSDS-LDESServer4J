@@ -8,22 +8,20 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.query.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.shacl.ValidationReport;
 import org.apache.jena.shacl.validation.ReportEntry;
 import org.apache.jena.shacl.validation.Severity;
 import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHACL_SOURCE_CONSTRAINT_COMPONENT;
 
 @Component
-@Order(2)
 public class MemberIngestValidator implements IngestValidator {
     private final Set<EventStream> eventstreams = new HashSet<>();
 
@@ -51,8 +49,14 @@ public class MemberIngestValidator implements IngestValidator {
 
     private void validateModel(Model model, EventStream eventStream) {
         List<ReportEntry> reportEntries = new ArrayList<>();
-        List<Resource> memberSubjects = getRootNode(model);
+        Map<Integer, List<Resource>> numberOfReferences = getNumberOfNodeReferences(model);
+        List<Resource> memberSubjects = model.listSubjects().filterDrop(RDFNode::isAnon).toList();
+
+        validateDanglingBlankNodes(numberOfReferences.getOrDefault(0, List.of()), model, reportEntries);
+        validateBlankNodeScope(numberOfReferences, model, reportEntries);
+
         if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
+            // To be removed when bulk ingest is allowed when version creation is disabled
             memberSubjects.forEach(subject -> addEntry(reportEntries, subject,
                         "Only 1 member is allowed per request on collection with version creation disabled"
                 )
@@ -114,30 +118,79 @@ public class MemberIngestValidator implements IngestValidator {
         return model.listStatements(memberSubject, ResourceFactory.createProperty(path), (RDFNode) null).toList();
     }
 
-    private List<Resource> getRootNode(Model model) {
-        String queryString = """
-                SELECT DISTINCT ?s\s
-                        WHERE {\s
-                            ?s ?p ?o .\s
-                            FILTER NOT EXISTS {
-                                ?s_in ?p_in ?s .
-                            }\s
-                        }
-                """ ;
-        Query query = QueryFactory.create(queryString) ;
-        try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
-            ResultSet results = qexec.execSelect() ;
-            List<Resource> rootNodes = new ArrayList<>();
-            results.forEachRemaining(sol -> rootNodes.add(sol.getResource("s")));
-            return rootNodes;
-        }
+    private void validateDanglingBlankNodes(List<Resource> subjects, Model model, List<ReportEntry> reportEntries) {
+        subjects.forEach(subject-> {
+            if (subject.isAnon()) {
+                addEntry(reportEntries, subject, model.listStatements(subject, null, (RDFNode) null).toList(),
+                        "Object graphs don't allow blank nodes to occur outside of a named object.");
+            }
+        });
+    }
+
+    private void validateBlankNodeScope(Map<Integer, List<Resource>> numberOfReferences, Model model, List<ReportEntry> reportEntries) {
+        numberOfReferences.forEach((amount, resourceList) -> {
+            if (amount > 1) {
+                resourceList.forEach(resource -> addEntry(reportEntries,
+                        resource,model.listStatements(null, null, resource).toList() ,
+                        "Blank nodes must be scoped to one object."));
+            }
+        });
+
+    }
+    private void validateBlankNodeScope2(Model model, List<Resource> subjects, List<ReportEntry> reportEntries) {
+        Map<Resource, List<Statement>> blankNodes = model.listStatements().filterKeep(statement -> statement.getObject().isAnon()).toList().stream().collect(Collectors.groupingBy(Statement::getResource));
+        blankNodes.forEach((r, list) -> {
+            Set<Resource> end = new HashSet<>();
+            List<Resource> visit = new ArrayList<>();
+            do {
+                List<Statement> newList = new ArrayList<>();
+                list.stream().forEach(statement -> {
+                    if (isEndNode(statement.getSubject(), subjects)) {
+                        end.add(statement.getSubject());
+                    } else if (visit.contains(statement.getSubject())) {
+                        addEntry(reportEntries, r, "Looping references are not allowed.");
+                    } else {
+                        List<Statement> statements = getReferencingNodes(model, statement.getSubject());
+                        newList.addAll(statements);
+                        visit.addAll(statements.stream().map(Statement::getResource).toList());
+                    }
+                });
+                list = newList;
+            } while (!list.isEmpty());
+            if (end.size() != 1) {
+                addEntry(reportEntries, r, "Blank nodes must be scoped to one named object.");
+            }
+        });
+
+    }
+
+    private boolean isEndNode(Resource node, List<Resource> subjects) {
+        return subjects.contains(node);
+    }
+
+    private List<Statement> getReferencingNodes(Model model, Resource resource) {
+        return model.listStatements(null, null, resource).toList();
+    }
+
+    private Map<Integer, List<Resource>> getNumberOfNodeReferences(Model model) {
+        return model.listSubjects().toList().stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s).mapWith(Statement::getSubject).toSet().size()));
     }
 
     private void addEntry(List<ReportEntry> entries, Resource focusNode, String message) {
-        ReportEntry entry = ReportEntry.create().focusNode(focusNode.asNode())
+        ReportEntry entry = createEntry(focusNode, message);
+        entries.add(entry);
+    }
+
+    private void addEntry(List<ReportEntry> entries, Resource focusNode, List<Statement> offendingStatements, String message) {
+        ReportEntry entry = createEntry(focusNode, message);
+        entry.value(NodeFactory.createLiteral(offendingStatements.toString()));
+        entries.add(entry);
+    }
+
+    private ReportEntry createEntry(Resource focusNode, String message) {
+        return ReportEntry.create().focusNode(focusNode.asNode())
                 .severity(Severity.Violation)
                 .sourceConstraintComponent(NodeFactory.createURI(SHACL_SOURCE_CONSTRAINT_COMPONENT))
                 .message(message);
-        entries.add(entry);
     }
 }

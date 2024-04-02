@@ -35,9 +35,10 @@ class MemberIngestValidatorTest {
                 new EventStream(VERSION,TIMESTAMP_PATH, VERSIONOF_PATH, false)));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Receiving incorrect member {0}")
     @ArgumentsSource(IncorrectMemberArgumentsProvider.class)
-    void when_IncorrectMemberReceived_Then_ValidationThrowsException(Model model, String collectionName, List<String> expectedMessages) {
+    void when_IncorrectMemberReceived_Then_ValidationThrowsException(String modelName, String collectionName, List<String> expectedMessages) throws URISyntaxException {
+        Model model = readModelFromFile(modelName);
         String actualMessage = assertThrows(ShaclValidationException.class, () -> validator.validate(model, collectionName)).getMessage();
         expectedMessages.forEach(expectedMessage -> assertTrue(actualMessage.contains(expectedMessage)));
     }
@@ -52,22 +53,25 @@ class MemberIngestValidatorTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
             return Stream.of(
-                    Arguments.of(readModelFromFile("example-ldes-member.nq"), STATE,
+                    Arguments.of("example-ldes-member.nq", STATE,
                             List.of("Member must have exactly 0 statements with timestamp path: " + TIMESTAMP_PATH,
                                     "Member must have exactly 0 statements with versionOf path: " + VERSIONOF_PATH)),
-                    Arguments.of(readModelFromFile("example-ldes-member-multiple-version-ofs.nq"), STATE,
+                    Arguments.of("example-ldes-member-multiple-version-ofs.nq", STATE,
                             List.of("Member must have exactly 0 statements with timestamp path: " + TIMESTAMP_PATH,
                                     "Member must have exactly 0 statements with versionOf path: " + VERSIONOF_PATH)),
-                    Arguments.of(readModelFromFile("example-ldes-member-without-root-timestamp.nq"), VERSION,
+                    Arguments.of("example-ldes-member-without-root-timestamp.nq", VERSION,
                             List.of("Member must have exactly 1 statement with timestamp path: " + TIMESTAMP_PATH)),
-                    Arguments.of(readModelFromFile("example-ldes-member-multiple-version-ofs.nq"), VERSION,
+                    Arguments.of("example-ldes-member-multiple-version-ofs.nq", VERSION,
                             List.of("Member must have exactly 1 statement with versionOf path: " + VERSIONOF_PATH)),
-                    Arguments.of(readModelFromFile("example-ldes-member-without-version-of.nq"), VERSION,
+                    Arguments.of("example-ldes-member-without-version-of.nq", VERSION,
                             List.of("Member must have exactly 1 statement with versionOf path: " + VERSIONOF_PATH)),
-                    Arguments.of(readModelFromFile("example-ldes-member-wrong-type-version-of.nq"), VERSION,
+                    Arguments.of("example-ldes-member-wrong-type-version-of.nq", VERSION,
                             List.of("Object of statement with predicate: " + VERSIONOF_PATH + " should be a resource")),
-                    Arguments.of(readModelFromFile("example-ldes-member-wrong-type-timestamp.nq"), VERSION,
-                            List.of("Object of statement with predicate: " + TIMESTAMP_PATH + " should be a literal of type " + XSDDatatype.XSDdateTime.getURI())));
+                    Arguments.of("example-ldes-member-wrong-type-timestamp.nq", VERSION,
+                            List.of("Object of statement with predicate: " + TIMESTAMP_PATH + " should be a literal of type " + XSDDatatype.XSDdateTime.getURI())),
+                    Arguments.of("example-ldes-member-dangling-nodes.nq", VERSION, List.of("Object graphs don't allow blank nodes to occur outside of a named object.")),
+                    Arguments.of("example-ldes-member-blank-node.nq", VERSION, List.of("Object graphs don't allow blank nodes to occur outside of a named object.")),
+                    Arguments.of("example-ldes-member-shared-blank-node.nq", VERSION, List.of("Blank nodes must be scoped to one object.")));
         }
     }
 
