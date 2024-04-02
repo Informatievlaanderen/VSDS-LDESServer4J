@@ -5,6 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
 public interface DataServiceEntityRepository extends MongoRepository<DataServiceEntity, String> {
-    @Query("{'_id':  {$regex:  ?0}}")
+    @Query(value = "{'_id':  {$regex:  ?0}}", delete = true)
     void deleteAllByCollectionName(String collectionName);
 }

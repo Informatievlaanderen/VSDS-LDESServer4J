@@ -207,4 +207,9 @@ class TreeNodeConverterImplTest {
         treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
         assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
     }
+
+    @Test
+    void test_HandleEventStreamDeleted() {
+
+    }
 }

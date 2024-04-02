@@ -17,3 +17,8 @@ Feature: DcatViewRepository
     Given the database contains multiple dcatViews
     Then I can find all dcatViews
 
+  Scenario: A dcatView is deleted when the eventstream is deleted
+    Given I have a dcatView with a viewName and model
+    Then I can save the dcatView with the repository
+    When I delete the corresponding eventstream
+    Then I can not retrieve the dcatView from the repository

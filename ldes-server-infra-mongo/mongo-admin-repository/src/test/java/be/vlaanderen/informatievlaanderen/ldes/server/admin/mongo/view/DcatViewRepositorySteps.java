@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -84,5 +85,10 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
 		List<String> views = dcatViews.stream().map(DcatView::getViewName).map(ViewName::getViewName).toList();
 		assertTrue(views.contains("view1"));
 		assertTrue(views.contains("view2"));
+	}
+
+	@When("I delete the corresponding eventstream")
+	public void iDeleteTheCorrespondingEventstream() {
+		dcatViewMongoRepository.deleteByCollectionName(COLLECTION_NAME);
 	}
 }
