@@ -3,6 +3,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.me
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.BlankNodesValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.PathsValidator;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
@@ -28,7 +30,7 @@ class MemberIngestValidatorTest {
 
     @BeforeEach
     void setup() {
-        validator = new MemberIngestValidator();
+        validator = new MemberIngestValidator(List.of(new BlankNodesValidator(), new PathsValidator()));
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(
                 new EventStream(STATE, TIMESTAMP_PATH, VERSIONOF_PATH, true)));
         validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(

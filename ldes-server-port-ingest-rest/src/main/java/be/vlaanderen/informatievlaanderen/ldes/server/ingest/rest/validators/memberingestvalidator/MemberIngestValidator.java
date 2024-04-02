@@ -5,25 +5,25 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.IngestReportValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.ShaclReportManager;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.IngestValidator;
-import org.apache.jena.datatypes.xsd.XSDDatatype;
-import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.shacl.ValidationReport;
-import org.apache.jena.shacl.validation.ReportEntry;
-import org.apache.jena.shacl.validation.Severity;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHACL_SOURCE_CONSTRAINT_COMPONENT;
 
 @Component
 public class MemberIngestValidator implements IngestValidator {
     private final Set<EventStream> eventstreams = new HashSet<>();
+    private final List<IngestReportValidator> validators;
+
+    public MemberIngestValidator(List<IngestReportValidator> validators) {
+        this.validators = validators;
+    }
 
     private void addEventStream(EventStream eventStream) {
         eventstreams.add(eventStream);
@@ -48,117 +48,13 @@ public class MemberIngestValidator implements IngestValidator {
     }
 
     private void validateModel(Model model, EventStream eventStream) {
-        List<ReportEntry> reportEntries = new ArrayList<>();
-        Map<Integer, List<Resource>> numberOfReferences = getNumberOfNodeReferences(model);
-        List<Resource> memberSubjects = model.listSubjects().filterDrop(RDFNode::isAnon).toList();
+        ShaclReportManager reportManager = new ShaclReportManager();
 
-        validateDanglingBlankNodes(numberOfReferences, model, reportEntries);
-        validateBlankNodeScope(numberOfReferences, model, reportEntries);
+        validators.forEach(validator -> validator.validate(model, eventStream, reportManager));
+        ValidationReport report = reportManager.createReport();
 
-        if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
-            // To be removed when bulk ingest is allowed when version creation is disabled
-            memberSubjects.forEach(subject -> addEntry(reportEntries, subject,
-                        "Only 1 member is allowed per request on collection with version creation disabled"
-                )
-            );
-        }
-
-        validateTimestampPath(memberSubjects, model, eventStream, reportEntries);
-        validateVersionOfPath(memberSubjects, model, eventStream, reportEntries);
-
-        if (!reportEntries.isEmpty()) {
-            ValidationReport.Builder builder = ValidationReport.create();
-            reportEntries.forEach(builder::addReportEntry);
-            ValidationReport report = builder.build();
+        if (!report.getEntries().isEmpty()) {
             throw new ShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE), report.getModel());
         }
-    }
-
-    private void validateTimestampPath(List<Resource> memberSubjects, Model model, EventStream eventStream, List<ReportEntry> entries) {
-        int expectedNumber = eventStream.isVersionCreationEnabled() ? 0 : 1;
-        memberSubjects.forEach(subject -> {
-            List<Statement> timestampStatements = getStatementsOfPath(subject, model, eventStream.getTimestampPath());
-            if (timestampStatements.size() != expectedNumber) {
-                addEntry(entries, subject,
-                        String.format(String.format("Member must have exactly %s statement%s with timestamp path: %s as predicate.", expectedNumber, expectedNumber == 1 ? "" : "s", eventStream.getTimestampPath()))
-                );
-            }
-
-            timestampStatements.forEach(statement -> {
-                if (!statement.getObject().isLiteral() || !Objects.equals(statement.getObject().asLiteral().getDatatype(), XSDDatatype.XSDdateTime)) {
-                    addEntry(entries, subject,
-                            String.format(String.format("Object of statement with predicate: %s should be a literal of type %s", eventStream.getTimestampPath(), XSDDatatype.XSDdateTime.getURI()))
-                    );
-                }
-            });
-        });
-    }
-
-    private void validateVersionOfPath(List<Resource> memberSubjects, Model model, EventStream eventStream, List<ReportEntry> entries) {
-        int expectedNumber = eventStream.isVersionCreationEnabled() ? 0 : 1;
-        memberSubjects.forEach(subject -> {
-            List<Statement> versionOfStatements = getStatementsOfPath(subject, model, eventStream.getVersionOfPath());
-            if (versionOfStatements.size() != expectedNumber) {
-                addEntry(entries, subject,
-                        String.format("Member must have exactly %s statement%s with versionOf path: %s as predicate.", expectedNumber, expectedNumber == 1 ? "" : "s", eventStream.getVersionOfPath())
-                );
-            }
-
-            versionOfStatements.forEach(statement -> {
-                if (!statement.getObject().isResource()) {
-                    addEntry(entries, subject,
-                            String.format("Object of statement with predicate: %s should be a resource", eventStream.getVersionOfPath())
-                    );
-                }
-            });
-        });
-    }
-
-    private List<Statement> getStatementsOfPath(Resource memberSubject, Model model, String path) {
-        return model.listStatements(memberSubject, ResourceFactory.createProperty(path), (RDFNode) null).toList();
-    }
-
-    private void validateDanglingBlankNodes(Map<Integer, List<Resource>> nrOfReferences, Model model, List<ReportEntry> reportEntries) {
-        if (nrOfReferences.containsKey(0)) {
-            nrOfReferences.get(0).forEach(subject-> {
-                if (subject.isAnon()) {
-                    addEntry(reportEntries, subject, model.listStatements(subject, null, (RDFNode) null).toList(),
-                            "Object graphs don't allow blank nodes to occur outside of a named object.");
-                }
-            });
-        }
-    }
-
-    private void validateBlankNodeScope(Map<Integer, List<Resource>> numberOfReferences, Model model, List<ReportEntry> reportEntries) {
-        numberOfReferences.forEach((amount, resourceList) -> {
-            if (amount > 1) {
-                resourceList.forEach(resource -> addEntry(reportEntries,
-                        resource,model.listStatements(null, null, resource).toList() ,
-                        "Blank nodes must be scoped to one object."));
-            }
-        });
-
-    }
-
-    private Map<Integer, List<Resource>> getNumberOfNodeReferences(Model model) {
-        return model.listSubjects().filterKeep(Resource::isAnon).toList().stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s).mapWith(Statement::getSubject).toSet().size()));
-    }
-
-    private void addEntry(List<ReportEntry> entries, Resource focusNode, String message) {
-        ReportEntry entry = createEntry(focusNode, message);
-        entries.add(entry);
-    }
-
-    private void addEntry(List<ReportEntry> entries, Resource focusNode, List<Statement> offendingStatements, String message) {
-        ReportEntry entry = createEntry(focusNode, message);
-        entry.value(NodeFactory.createLiteral(offendingStatements.toString()));
-        entries.add(entry);
-    }
-
-    private ReportEntry createEntry(Resource focusNode, String message) {
-        return ReportEntry.create().focusNode(focusNode.asNode())
-                .severity(Severity.Violation)
-                .sourceConstraintComponent(NodeFactory.createURI(SHACL_SOURCE_CONSTRAINT_COMPONENT))
-                .message(message);
     }
 }
