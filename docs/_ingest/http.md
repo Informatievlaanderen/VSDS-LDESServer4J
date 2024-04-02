@@ -56,25 +56,28 @@ one or many members.
 
 Every member should conform to certain conditions, depending on the event stream on which they are ingested.
 
-### Root Node
+### Named nodes
 
-The member itself should be the root node. This means that no triple can be present which references the member.
-If such a member is present, the member is not recognised and can't be properly validated.
-This will commonly lead to a validation error stating the timestamp path and version-of path are missing, depending on the data itself.
+Every named node is viewed as a member.
+Having a named node that is not intended as a member to be ingested on the collection can lead to several validation errors.
+Most commonly this will lead to a validation error stating the timestamp path and version-of path are missing, depending on the data itself.
+
+If by chance it conforms to the all following validation, it will be treated as any normal member.
+To prevent such cases, additional [shacl validation can be configured](../configuration/event-stream#configuring-a-shacl-shape) on the event stream.
 
 ### Named Graphs
 
 Named graphs are not supported.
-When a named graph is present in a member, the member is rejected.
+When a named graph is present, the model is rejected.
 
 ### Shared or Loose Blank Nodes
 
-All blank nodes should be part of exactly one member.
-When a blank node is present that is not part of a member or 2 members reference the same blank node, the ingested model is rejected.
+All blank nodes should be referenced by exactly 1 other subject.
+When a blank node is present that is not the object of a statement or the object of 2 or more statements with different subjects, the ingested model is rejected.
 
 This also means that the root node of every member should be a named node.
 
-It is still possible for a single member to reference the same blank node multiple times.
+It is still possible for a single subject to reference the same blank node multiple times.
 
 ### Timestamp and Version Of Path
 
