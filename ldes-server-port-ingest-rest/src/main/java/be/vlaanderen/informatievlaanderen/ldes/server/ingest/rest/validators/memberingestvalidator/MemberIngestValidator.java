@@ -137,40 +137,6 @@ public class MemberIngestValidator implements IngestValidator {
         });
 
     }
-    private void validateBlankNodeScope2(Model model, List<Resource> subjects, List<ReportEntry> reportEntries) {
-        Map<Resource, List<Statement>> blankNodes = model.listStatements().filterKeep(statement -> statement.getObject().isAnon()).toList().stream().collect(Collectors.groupingBy(Statement::getResource));
-        blankNodes.forEach((r, list) -> {
-            Set<Resource> end = new HashSet<>();
-            List<Resource> visit = new ArrayList<>();
-            do {
-                List<Statement> newList = new ArrayList<>();
-                list.stream().forEach(statement -> {
-                    if (isEndNode(statement.getSubject(), subjects)) {
-                        end.add(statement.getSubject());
-                    } else if (visit.contains(statement.getSubject())) {
-                        addEntry(reportEntries, r, "Looping references are not allowed.");
-                    } else {
-                        List<Statement> statements = getReferencingNodes(model, statement.getSubject());
-                        newList.addAll(statements);
-                        visit.addAll(statements.stream().map(Statement::getResource).toList());
-                    }
-                });
-                list = newList;
-            } while (!list.isEmpty());
-            if (end.size() != 1) {
-                addEntry(reportEntries, r, "Blank nodes must be scoped to one named object.");
-            }
-        });
-
-    }
-
-    private boolean isEndNode(Resource node, List<Resource> subjects) {
-        return subjects.contains(node);
-    }
-
-    private List<Statement> getReferencingNodes(Model model, Resource resource) {
-        return model.listStatements(null, null, resource).toList();
-    }
 
     private Map<Integer, List<Resource>> getNumberOfNodeReferences(Model model) {
         return model.listSubjects().toList().stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s).mapWith(Statement::getSubject).toSet().size()));
