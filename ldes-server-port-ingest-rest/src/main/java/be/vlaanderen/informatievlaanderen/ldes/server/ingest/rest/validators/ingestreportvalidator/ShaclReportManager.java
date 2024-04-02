@@ -13,7 +13,7 @@ import java.util.List;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHACL_SOURCE_CONSTRAINT_COMPONENT;
 
 public class ShaclReportManager {
-    private List<ReportEntry> reportEntries = new ArrayList<>();
+    private final List<ReportEntry> reportEntries = new ArrayList<>();
 
     public ValidationReport createReport() {
         ValidationReport.Builder builder = ValidationReport.create();

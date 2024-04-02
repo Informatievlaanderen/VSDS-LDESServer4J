@@ -12,6 +12,8 @@ import java.util.Objects;
 @Order(2)
 @Component
 public class PathsValidator implements IngestReportValidator {
+
+    @Override
     public void validate(Model model, EventStream eventStream, ShaclReportManager reportManager) {
         List<Resource> memberSubjects = model.listSubjects().filterDrop(RDFNode::isAnon).toList();
 

@@ -15,12 +15,15 @@ import java.util.stream.Collectors;
 @Order(1)
 @Component
 public class BlankNodesValidator implements IngestReportValidator {
+
+    @Override
     public void validate(Model model, EventStream eventStream, ShaclReportManager reportManager) {
         Map<Integer, List<Resource>> numberOfReferences = getNumberOfNodeReferences(model);
 
         validateDanglingBlankNodes(numberOfReferences, model, reportManager);
         validateBlankNodeScope(numberOfReferences, model, reportManager);
     }
+
     private void validateDanglingBlankNodes(Map<Integer, List<Resource>> nrOfReferences, Model model, ShaclReportManager reportManager) {
         if (nrOfReferences.containsKey(0)) {
             nrOfReferences.get(0).forEach(subject-> {
@@ -44,6 +47,8 @@ public class BlankNodesValidator implements IngestReportValidator {
     }
 
     private Map<Integer, List<Resource>> getNumberOfNodeReferences(Model model) {
-        return model.listSubjects().filterKeep(Resource::isAnon).toList().stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s).mapWith(Statement::getSubject).toSet().size()));
+        return model.listSubjects().filterKeep(Resource::isAnon).toList()
+                .stream().collect(Collectors.groupingBy(s -> model.listStatements(null, null, s)
+                        .mapWith(Statement::getSubject).toSet().size()));
     }
 }
