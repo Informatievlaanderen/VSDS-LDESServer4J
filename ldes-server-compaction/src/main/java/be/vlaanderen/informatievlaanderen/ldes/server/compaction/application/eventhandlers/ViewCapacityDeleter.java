@@ -21,7 +21,7 @@ public class ViewCapacityDeleter {
 
 	@EventListener
 	public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
-		viewCollection.deleteViewCapacitiesByViewName(event.collectionName());
+		viewCollection.deleteViewCapacitiesByCollectionName(event.collectionName());
 	}
 
 }

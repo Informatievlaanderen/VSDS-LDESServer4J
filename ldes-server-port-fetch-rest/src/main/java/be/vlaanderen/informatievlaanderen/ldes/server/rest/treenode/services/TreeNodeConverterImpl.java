@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
@@ -54,6 +55,9 @@ public class TreeNodeConverterImpl implements TreeNodeConverter {
 
     private List<Statement> addTreeNodeStatements(TreeNode treeNode, String collectionName, String prefix) {
         EventStream eventStream = eventStreams.get(collectionName);
+        if(eventStream == null) {
+            throw new MissingResourceException("eventstream", collectionName);
+        }
         Model shaclShape = shaclShapes.get(collectionName);
         List<TreeRelationResponse> treeRelationResponses = treeNode.getRelations().stream()
                 .map(treeRelation -> new TreeRelationResponse(treeRelation.treePath(),

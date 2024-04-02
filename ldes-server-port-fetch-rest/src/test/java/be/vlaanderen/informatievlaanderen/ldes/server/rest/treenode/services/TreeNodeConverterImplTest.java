@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
@@ -23,6 +24,7 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Rd
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 import static org.apache.jena.rdf.model.ResourceFactory.createResource;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TreeNodeConverterImplTest {
 
@@ -195,11 +197,11 @@ class TreeNodeConverterImplTest {
 
     @Test
     void testHandleDcatViewEvents() {
-        TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+        final TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
                 COLLECTION_NAME, null);
-        ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
-        Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
-        DcatView dcatView = DcatView.from(viewName, dcat);
+        final ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
+        final Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+        final DcatView dcatView = DcatView.from(viewName, dcat);
 
         assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
         treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
@@ -210,6 +212,11 @@ class TreeNodeConverterImplTest {
 
     @Test
     void test_HandleEventStreamDeleted() {
+        final TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
+                COLLECTION_NAME, null);
 
+        treeNodeConverter.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
+
+        assertThatThrownBy(() -> treeNodeConverter.toModel(treeNode)).isInstanceOf(MissingResourceException.class);
     }
 }

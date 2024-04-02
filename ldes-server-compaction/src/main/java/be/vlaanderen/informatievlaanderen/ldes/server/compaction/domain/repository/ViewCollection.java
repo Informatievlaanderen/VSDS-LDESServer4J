@@ -10,7 +10,7 @@ public interface ViewCollection {
 
 	void deleteViewCapacityByViewName(ViewName viewName);
 
-	void deleteViewCapacitiesByViewName(String collectionName);
+	void deleteViewCapacitiesByCollectionName(String collectionName);
 
 	Collection<ViewCapacity> getAllViewCapacities();
 }

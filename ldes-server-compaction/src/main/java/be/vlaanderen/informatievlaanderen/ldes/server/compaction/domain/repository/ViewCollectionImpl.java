@@ -23,7 +23,7 @@ public class ViewCollectionImpl implements ViewCollection {
     }
 
     @Override
-    public void deleteViewCapacitiesByViewName(String collectionName) {
+    public void deleteViewCapacitiesByCollectionName(String collectionName) {
         viewCapacities.keySet().stream()
                 .filter(viewName -> viewName.getCollectionName().equals(collectionName))
                 .toList()
