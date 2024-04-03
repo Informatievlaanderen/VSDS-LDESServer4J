@@ -53,7 +53,7 @@ public class MemberIngestValidator implements IngestValidator {
         validators.forEach(validator -> validator.validate(model, eventStream, reportManager));
         ValidationReport report = reportManager.createReport();
 
-        if (!report.getEntries().isEmpty()) {
+        if (!report.conforms()) {
             throw new ShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE), report.getModel());
         }
     }

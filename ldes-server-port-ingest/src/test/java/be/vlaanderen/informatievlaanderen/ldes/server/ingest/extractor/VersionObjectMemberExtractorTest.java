@@ -17,8 +17,7 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 class VersionObjectMemberExtractorTest {
     private static final String COLLECTION = "mobility-hindrances";
@@ -51,6 +50,13 @@ class VersionObjectMemberExtractorTest {
                 .usingRecursiveComparison()
                 .ignoringFields("model", "transactionId")
                 .isEqualTo(expectedMember);
+    }
+
+    @Test
+    void given_ValidModelThatContainsBlankNodesWithVersionOf_when_ExtractMembers_then_ThrowNoException() {
+        final Model model = RDFParser.source("member-with-nested-isversionof-bnodes.ttl").toModel();
+
+        assertThatNoException().isThrownBy(() -> memberExtractor.extractMembers(model));
     }
 
     @Test

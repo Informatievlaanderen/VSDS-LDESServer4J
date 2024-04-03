@@ -1,0 +1,223 @@
+@prefix adms:              <http://www.w3.org/ns/adms#> .
+@prefix concepts:          <https://westtoer.be/id/concepts/> .
+@prefix core:              <https://www.datatourisme.fr/ontology/core#> .
+@prefix dcmitype:          <http://purl.org/dc/dcmitype/> .
+@prefix dcterms:           <http://purl.org/dc/terms/> .
+@prefix generiek:          <https://data.vlaanderen.be/ns/generiek#> .
+@prefix locn:              <http://www.w3.org/ns/locn#> .
+@prefix log:               <http://www.w3.org/2000/10/swap/log#> .
+@prefix logies:            <https://data.vlaanderen.be/ns/logies#> .
+@prefix ns0:               <https://schema.org/> .
+@prefix ns1:               <http://www.w3.org/ns/adms#> .
+@prefix ns10:              <https://westtoer.be/ns#> .
+@prefix ns11:              <https://westtoer.be/ns#> .
+@prefix ns12:              <https://westtoer.be/ns#> .
+@prefix ns13:              <https://westtoer.be/ns#> .
+@prefix ns14:              <https://westtoer.be/ns#> .
+@prefix ns15:              <https://westtoer.be/ns#> .
+@prefix ns16:              <https://westtoer.be/ns#> .
+@prefix ns17:              <https://westtoer.be/ns#> .
+@prefix ns18:              <https://westtoer.be/ns#> .
+@prefix ns19:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns2:               <http://www.w3.org/ns/locn#> .
+@prefix ns20:              <https://data.vlaanderen.be/ns/adres#> .
+@prefix ns21:              <https://data.vlaanderen.be/ns/adres#> .
+@prefix ns22:              <https://data.vlaanderen.be/ns/adres#> .
+@prefix ns23:              <https://data.vlaanderen.be/ns/adres#> .
+@prefix ns24:              <https://westtoer.be/ns#> .
+@prefix ns25:              <https://westtoer.be/ns#> .
+@prefix ns26:              <https://westtoer.be/ns#> .
+@prefix ns27:              <https://westtoer.be/ns#> .
+@prefix ns28:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns29:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns3:               <https://data.vlaanderen.be/ns/generiek#> .
+@prefix ns30:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns31:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns32:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns33:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns34:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns35:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns36:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns37:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns38:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns39:              <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix ns4:               <https://data.vlaanderen.be/ns/logies#> .
+@prefix ns40:              <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix ns41:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns42:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns43:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns44:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns45:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns46:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns47:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns48:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns49:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns5:               <https://www.datatourisme.fr/ontology/core#> .
+@prefix ns50:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns51:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns52:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns53:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns54:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns55:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns56:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns57:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix ns6:               <http://www.w3.org/ns/org#> .
+@prefix ns7:               <http://purl.org/dc/terms/> .
+@prefix ns8:               <http://www.w3.org/ns/prov#> .
+@prefix ns9:               <https://westtoer.be/ns#> .
+@prefix org:               <http://www.w3.org/ns/org#> .
+@prefix organisatie:       <http://data.vlaanderen.be/id/organisatie/> .
+@prefix prov:              <http://www.w3.org/ns/prov#> .
+@prefix rdf:               <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:              <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema:            <https://schema.org/> .
+@prefix terms:             <http://purl.org/dc/terms/> .
+@prefix toeristischeregio: <https://westtoer.be/id/toeristischeregio/> .
+@prefix unit:              <http://qudt.org/vocab/unit/> .
+@prefix westtoerns:        <https://westtoer.be/ns#> .
+@prefix wgs84_pos:         <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix xsd:               <http://www.w3.org/2001/XMLSchema#> .
+
+<https://westtoer.be/id/product/8ea3a52f-7618-498f-971c-a527339cfe8f>
+        generiek:lokaleIdentificator  "8ea3a52f-7618-498f-971c-a527339cfe8f"^^rdfs:string .
+
+<https://westtoer.be/id/product/8ea3a52f-7618-498f-971c-a527339cfe8f/2024-04-03T13:41:10.8388913Z>
+        rdf:type                      schema:TouristAttraction;
+        dcterms:isVersionOf           <https://westtoer.be/id/product/8ea3a52f-7618-498f-971c-a527339cfe8f>;
+        adms:identifier               [ rdf:type           adms:Identifier;
+                                        dcterms:creator    organisatie:OVO018769;
+                                        ns57:notation      "1000055"^^<https://westtoer.be/id/concept/identificatiesysteem/win>;
+                                        adms:schemaAgency  "Westtoer"
+                                      ];
+        locn:address                  [ rdf:type                    locn:Address;
+                                        locn:adminUnitL2            "West Flanders"@en , "West-Vlaanderen"@nl , "Flandre-Occidentale"@fr , "Westflandern"@de;
+                                        locn:postCode               "8000";
+                                        locn:thoroughfare           "Zandstraat"@nl;
+                                        ns21:Adresvoorstelling.huisnummer
+                                                "170";
+                                        ns21:gemeentenaam           "Brugge"@nl;
+                                        ns21:land                   "België"@nl;
+                                        westtoerns:adresregel1      "Zandstraat 170";
+                                        westtoerns:gemeenteniscode  31005;
+                                        westtoerns:isToegekendDoorGemeente
+                                                [ dcterms:isVersionOf  concepts:f2067c92-ce2d-5220-4334-a84515867382;
+                                                  ns57:prefLabel       "Brugge"@nl
+                                                ];
+                                        westtoerns:isToegekendDoorProvincie
+                                                [ dcterms:isVersionOf  concepts:66763d2d-8d5a-4e09-ba60-4a124bee5b02;
+                                                  ns57:prefLabel       "West Flanders"@en , "West-Vlaanderen"@nl , "Flandre-Occidentale"@fr , "Westflandern"@de
+                                                ]
+                                      ];
+        locn:geometry                 [ rdf:type   generiek:Geometrie;
+                                        ns40:lat   "5.120175591201257E1"^^<https://www.w3.org/2001/XMLSchema#double>;
+                                        ns40:long  "3.189392966761876E0"^^<https://www.w3.org/2001/XMLSchema#double>
+                                      ];
+        dcterms:created               "2024-04-03T13:41:10.8388913Z"^^xsd:dateTime;
+        generiek:lokaleIdentificator  "8ea3a52f-7618-498f-971c-a527339cfe8f"^^rdfs:string;
+        generiek:naamruimte           "https://westtoer.be/id/product"^^rdfs:string;
+        generiek:versieIdentificator  "2024-04-03T13:41:10.8388913Z";
+        logies:aantalSlaapplaatsen    1;
+        logies:aantalVerhuureenheden  12;
+        logies:behoortTotToeristischeRegio
+                [ rdf:type             logies:ToeristischeRegio;
+                  dcterms:isVersionOf  toeristischeregio:af605677-e22f-4602-8860-57ac66e0e066;
+                  ns57:prefLabel       "Kunststad Brugge"@nl
+                ];
+        schema:additionalType         [ dcterms:isVersionOf
+                          <https://westtoer.be/id/concept/producttype/45f61341-895b-43dd-853e-2b37ecf08843> ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:5ba2fd0664cc4083981e613ed0fc5b41;
+                                        schema:name                "Eigen tuin of park"@nl , "Eigen tuin of park"@fr , "Eigen tuin of park"@de , "Eigen tuin of park"@en
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:e477890e75bb4a80b158cf91b7c5bd65;
+                                        schema:name                "Zwemgelegenheid openlucht"@nl , "Zwemgelegenheid openlucht"@de , "Zwemgelegenheid openlucht"@en , "Zwemgelegenheid openlucht"@fr
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:0d7181b959674443bd788e9dc38a61d7;
+                                        schema:name                "WIFI (draadloos internet)"@nl , "WIFI (draadloos internet)"@de , "WIFI (draadloos internet)"@en , "WIFI (draadloos internet)"@fr
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:b43735055a5a4dc3b296b29a66f8e140;
+                                        schema:name                "Barbecue aanwezig"@de , "Barbecue aanwezig"@en , "Barbecue aanwezig"@fr , "Barbecue aanwezig"@nl
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:5aa26a48af184343b4232bab214e2c36;
+                                        schema:name                "Speelruimte/speeltuin"@nl , "Speelruimte/speeltuin"@fr , "Speelruimte/speeltuin"@en , "Speelruimte/speeltuin"@de
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:c97ac2a41641452a8d09c05e5a59beb8;
+                                        schema:name                "Babybedje"@nl , "Babybedje"@en , "Babybedje"@de , "Babybedje"@fr
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:5cea2778b1f0486e90acbbaeae46cc20;
+                                        schema:name                "Houtkachel"@nl , "Houtkachel"@fr , "Houtkachel"@en , "Houtkachel"@de
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:9e1f5a01c3e04e5988f28eb2559241d7;
+                                        schema:name                "Kuurmogelijkheden"@nl , "Kuurmogelijkheden"@fr , "Kuurmogelijkheden"@en , "Kuurmogelijkheden"@de
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:243d60bbfcc64613977b3aa1401d00bd;
+                                        schema:name                "TV in de logieseenheid"@nl , "TV in de logieseenheid"@fr , "TV in de logieseenheid"@en , "TV in de logieseenheid"@de
+                                      ];
+        schema:amenityFeature         [ rdf:type                   logies:Faciliteit;
+                                        logies:isSpecialisatieVan  concepts:c8534860dd474f86b505abb343248ded;
+                                        schema:name                "Sauna"@nl , "Sauna"@fr , "Sauna"@de , "Sauna"@en
+                                      ];
+        schema:amount                 [ rdf:type         schema:MonetaryAmount;
+                                        schema:currency  "EUR"
+                                      ];
+        schema:contactPoint           [ rdf:type      schema:ContactPoint;
+                                        schema:email  "jens.Rappe@sirus.be"
+                                      ];
+        schema:name                   "Test product 1 voor lijst"@nl;
+        schema:starRating             [ rdf:type            schema:Rating;
+                                        dcterms:type        [ dcterms:isVersionOf  []
+                                                            ];
+                                        schema:author       organisatie:OVO000034;
+                                        schema:bestRating   "5 * sup";
+                                        schema:description  "5 sterren"@en , "5 sterren"@nl , "5 sterren"@fr , "5 sterren"@de;
+                                        schema:ratingValue  "940a21a4-eea6-4af5-aef4-7875e397567f";
+                                        schema:worstRating  "1 *"
+                                      ];
+        schema:starRating             [ rdf:type            schema:Rating;
+                                        dcterms:type        [ dcterms:isVersionOf  []
+                                                            ];
+                                        schema:author       organisatie:OVO000034;
+                                        schema:bestRating   "A+";
+                                        schema:description  "5 sterren"@nl , "5 sterren"@fr , "5 sterren"@de , "5 sterren"@en;
+                                        schema:ratingValue  "940a21a4-eea6-4af5-aef4-7875e397567f";
+                                        schema:worstRating  "M"
+                                      ];
+        westtoerns:Product.status     [ dcterms:isVersionOf
+                          concepts:f6c056f4-5db9-4030-a1f5-7727cd475715 ];
+        westtoerns:behoortTotMacroproduct
+                [ dcterms:isVersionOf  <https://westtoer.be/id/macroproduct/52f09c50-3728-4b5d-90eb-4ba0c46c7697>;
+                  ns57:prefLabel       "Kunststad Brugge"@nl
+                ];
+        westtoerns:heeftKenmerk       [ dcterms:isVersionOf
+                          concepts:0fd0799e-17bf-4ba9-950a-1c8a295d0293 ];
+        westtoerns:heeftRuimte        [ rdf:type          core:MultiPurposeRoomOrCommunityRoom;
+                                        schema:floorSize  [ rdf:type         schema:QuantitativeValue;
+                                                            schema:unitCode  unit:M2;
+                                                            schema:unitText  "m2"
+                                                          ];
+                                        schema:height     [ rdf:type         schema:QuantitativeValue;
+                                                            schema:unitCode  unit:M;
+                                                            schema:unitText  "m"
+                                                          ]
+                                      ];
+        westtoerns:isRelevantVoorWesttoer
+                true;
+        westtoerns:isStopgezet        false;
+        westtoerns:tijdelijkGesloten  false;
+        westtoerns:uitsluitenVanJaarlijkseBevraging
+                false;
+        westtoerns:uitsluitenVanPublicatie
+                false;
+        core:hasContact               [ rdf:type             org:Organization;
+                                        ns57:prefLabel       ""@nl;
+                                        schema:contactPoint  [ rdf:type  schema:ContactPoint ]
+                                      ];
+        core:isLocatedAt              [ rdf:type  dcterms:Location ] .

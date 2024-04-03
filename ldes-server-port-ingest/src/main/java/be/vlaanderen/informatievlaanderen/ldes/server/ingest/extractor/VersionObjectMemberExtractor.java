@@ -51,7 +51,10 @@ public class VersionObjectMemberExtractor implements MemberExtractor {
     }
 
     private String extractMemberId(Model model) {
-        final var ids = model.listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath)).toSet();
+        final var ids = model
+                .listSubjectsWithProperty(ResourceFactory.createProperty(versionOfPath))
+                .filterDrop(RDFNode::isAnon)
+                .toSet();
         if (ids.size() != 1) {
             throw new MemberIdNotFoundException(model);
         } else {
