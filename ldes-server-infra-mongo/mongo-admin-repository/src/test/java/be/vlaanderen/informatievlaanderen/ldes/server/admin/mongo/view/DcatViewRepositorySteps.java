@@ -3,17 +3,20 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -26,6 +29,11 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
 
 	private DcatView dcatView;
 	private DcatView resultDcatView;
+
+	@Before
+	public void teardown() {
+		dcatViewMongoRepository.findAll().stream().map(DcatView::getViewName).forEach(dcatViewMongoRepository::delete);
+	}
 
 	@Given("I have a dcatView with a viewName and model")
 	public void giveIHaveADcatView() {
@@ -90,5 +98,21 @@ public class DcatViewRepositorySteps extends SpringIntegrationTest {
 	@When("I delete the corresponding eventstream")
 	public void iDeleteTheCorrespondingEventstream() {
 		dcatViewMongoRepository.deleteByCollectionName(COLLECTION_NAME);
+	}
+
+	@And("I have a second dcatView with a viewName and model")
+	public void iHaveASecondDcatViewWithAViewNameAndModel() {
+		dcatView = DcatView.from(VIEW_NAME, model);
+	}
+
+	@And("the database already contains another dcatView")
+	public void theDatabaseAlreadyContainsAnotherDcatView() {
+		final var otherDcatView = DcatView.from(new ViewName("other-" + COLLECTION_NAME, VIEW), ModelFactory.createDefaultModel());
+		dcatViewMongoRepository.save(otherDcatView);
+	}
+
+	@Then("the repository contains exactly {int} dcatViews")
+	public void theRepositoryContainsExactlyDcatView(int expectedNumberOfDcatViews) {
+		assertThat(dcatViewMongoRepository.findAll()).hasSize(expectedNumberOfDcatViews);
 	}
 }
