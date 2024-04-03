@@ -49,8 +49,7 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     }
 
     private Observation startObservation(Observation parentObservation) {
-        return Observation.createNotStarted("reference fragmentation",
-                        observationRegistry)
+        return Observation.createNotStarted("reference fragmentation", observationRegistry)
                 .parentObservation(parentObservation)
                 .start();
     }

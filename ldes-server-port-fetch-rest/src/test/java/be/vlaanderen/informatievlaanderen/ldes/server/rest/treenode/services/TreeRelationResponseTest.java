@@ -1,10 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Statement;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_VALUE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -27,9 +30,25 @@ class TreeRelationResponseTest {
 		verifyRelationStatements(statements);
 	}
 
+	@Test
+	void given_ByReferenceTreeNode_when_ConvertToStatements_then_StatementsContainTreeValueAsResource() {
+		TreeRelationResponse treeRelation = new TreeRelationResponse("path",
+				HOST_NAME + "/" + COLLECTION_NAME + "/node", "https://data.vlaanderen.be/ns/verkeersmetingen#Verkeersmeetpunt",
+				XSDDatatype.XSDanyURI.getURI(), "relation");
+
+		List<Statement> statements = treeRelation
+				.convertToStatements(HOST_NAME + "/" + COLLECTION_NAME + "/" + VIEW_NAME);
+
+		assertEquals(5, statements.size());
+		assertThat(statements)
+				.filteredOn(statement -> statement.getPredicate().equals(TREE_VALUE))
+				.first()
+				.matches(statement -> statement.getObject().isResource());
+	}
+
 	private void verifyRelationStatements(List<Statement> statements) {
 		List<String> statementsAsStrings = statements.stream().map(Statement::toString).toList();
-		String anonymousObjectId = statements.get(0).getObject().toString();
+		String anonymousObjectId = statements.getFirst().getObject().toString();
 
 		assertTrue(statementsAsStrings.contains(
 				String.format(

@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
 import org.apache.jena.datatypes.TypeMapper;
+import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
@@ -33,8 +34,12 @@ public class TreeRelationResponse {
 		Resource treeRelationNode = createResource();
 		statements.add(createStatement(createResource(treeNodeId), TREE_RELATION, treeRelationNode));
 		if (hasMeaningfulValue(treeValue)) {
-			statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeValue,
-					TypeMapper.getInstance().getTypeByName(treeValueType))));
+			if(treeValueType.equals(XSDDatatype.XSDanyURI.getURI())) {
+				statements.add(createStatement(treeRelationNode, TREE_VALUE, createResource(treeValue)));
+			} else {
+				statements.add(createStatement(treeRelationNode, TREE_VALUE, createTypedLiteral(treeValue,
+						TypeMapper.getInstance().getTypeByName(treeValueType))));
+			}
 		}
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_PATH, treePath);
 		addStatementIfMeaningful(statements, treeRelationNode, TREE_NODE,
