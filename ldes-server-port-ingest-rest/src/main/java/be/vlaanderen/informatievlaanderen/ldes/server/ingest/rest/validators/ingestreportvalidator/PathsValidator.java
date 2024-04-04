@@ -70,9 +70,6 @@ public class PathsValidator implements IngestReportValidator {
     }
 
     private List<Statement> getStatementsOfPath(Resource memberSubject, Model model, String path) {
-        return model
-                .listStatements(memberSubject, ResourceFactory.createProperty(path), (RDFNode) null)
-                .filterDrop(statement -> statement.getSubject().isAnon())
-                .toList();
+        return model.listStatements(memberSubject, ResourceFactory.createProperty(path), (RDFNode) null).toList();
     }
 }
