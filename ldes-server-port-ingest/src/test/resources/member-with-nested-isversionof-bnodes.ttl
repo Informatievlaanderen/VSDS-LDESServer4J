@@ -1,0 +1,50 @@
+@prefix adms:              <http://www.w3.org/ns/adms#> .
+@prefix concepts:          <https://westtoer.be/id/concepts/> .
+@prefix core:              <https://www.datatourisme.fr/ontology/core#> .
+@prefix dcterms:           <http://purl.org/dc/terms/> .
+@prefix generiek:          <https://data.vlaanderen.be/ns/generiek#> .
+@prefix locn:              <http://www.w3.org/ns/locn#> .
+@prefix ns21:              <https://data.vlaanderen.be/ns/adres#> .
+@prefix ns57:              <http://www.w3.org/2004/02/skos/core#> .
+@prefix organisatie:       <http://data.vlaanderen.be/id/organisatie/> .
+@prefix prov:              <http://www.w3.org/ns/prov#> .
+@prefix rdf:               <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:              <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema:            <https://schema.org/> .
+@prefix toeristischeregio: <https://westtoer.be/id/toeristischeregio/> .
+@prefix unit:              <http://qudt.org/vocab/unit/> .
+@prefix westtoerns:        <https://westtoer.be/ns#> .
+@prefix xsd:               <http://www.w3.org/2001/XMLSchema#> .
+
+<https://westtoer.be/id/product/8ea3a52f-7618-498f-971c-a527339cfe8f>
+        generiek:lokaleIdentificator  "8ea3a52f-7618-498f-971c-a527339cfe8f"^^rdfs:string .
+
+<https://westtoer.be/id/product/8ea3a52f-7618-498f-971c-a527339cfe8f/2024-04-03T13:41:10.8388913Z>
+        rdf:type                      schema:TouristAttraction;
+        dcterms:isVersionOf           <https://westtoer.be/id/product/8ea3a52f-7618-498f-971c-a527339cfe8f>;
+        adms:identifier               [ rdf:type           adms:Identifier;
+                                        dcterms:creator    organisatie:OVO018769;
+                                        ns57:notation      "1000055"^^<https://westtoer.be/id/concept/identificatiesysteem/win>;
+                                        adms:schemaAgency  "Westtoer"
+                                      ];
+        locn:address                  [ rdf:type                    locn:Address;
+                                        locn:adminUnitL2            "West Flanders"@en , "West-Vlaanderen"@nl , "Flandre-Occidentale"@fr , "Westflandern"@de;
+                                        locn:postCode               "8000";
+                                        locn:thoroughfare           "Zandstraat"@nl;
+                                        ns21:Adresvoorstelling.huisnummer
+                                                "170";
+                                        ns21:gemeentenaam           "Brugge"@nl;
+                                        ns21:land                   "België"@nl;
+                                        westtoerns:adresregel1      "Zandstraat 170";
+                                        westtoerns:gemeenteniscode  31005;
+                                        westtoerns:isToegekendDoorGemeente
+                                                [ dcterms:isVersionOf  concepts:f2067c92-ce2d-5220-4334-a84515867382;
+                                                  ns57:prefLabel       "Brugge"@nl
+                                                ];
+                                        westtoerns:isToegekendDoorProvincie
+                                                [ dcterms:isVersionOf  concepts:66763d2d-8d5a-4e09-ba60-4a124bee5b02;
+                                                  ns57:prefLabel       "West Flanders"@en , "West-Vlaanderen"@nl , "Flandre-Occidentale"@fr , "Westflandern"@de
+                                                ]
+                                      ];
+        prov:generatedAtTime          "2024-04-03T13:41:10.8388913Z"^^xsd:dateTime;
+        core:isLocatedAt              [ rdf:type  dcterms:Location ] .

@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -39,8 +38,8 @@ class MemberIngestValidatorTest {
 
     @ParameterizedTest(name = "Receiving incorrect member {0}")
     @ArgumentsSource(IncorrectMemberArgumentsProvider.class)
-    void when_IncorrectMemberReceived_Then_ValidationThrowsException(String modelName, String collectionName, List<String> expectedMessages) throws URISyntaxException {
-        Model model = readModelFromFile(modelName);
+    void when_IncorrectMemberReceived_Then_ValidationThrowsException(String modelName, String collectionName, List<String> expectedMessages) {
+        Model model = RDFDataMgr.loadModel(modelName);
         String actualMessage = assertThrows(ShaclValidationException.class, () -> validator.validate(model, collectionName)).getMessage();
         expectedMessages.forEach(expectedMessage -> assertTrue(actualMessage.contains(expectedMessage)));
     }
@@ -53,7 +52,7 @@ class MemberIngestValidatorTest {
 
     static class IncorrectMemberArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     Arguments.of("example-ldes-member.nq", STATE,
                             List.of("Member must have exactly 0 statements with timestamp path: " + TIMESTAMP_PATH,
@@ -79,14 +78,10 @@ class MemberIngestValidatorTest {
 
     static class CorrectMemberArgumentsProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                    Arguments.of(readModelFromFile("example-ldes-member-state.nq"), STATE),
-                    Arguments.of(readModelFromFile("example-ldes-member.nq"), VERSION));
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member-state.nq"), STATE),
+                    Arguments.of(RDFDataMgr.loadModel("example-ldes-member.nq"), VERSION));
         }
-    }
-
-    private static Model readModelFromFile(String fileName) throws URISyntaxException {
-        return RDFDataMgr.loadModel(fileName);
     }
 }
