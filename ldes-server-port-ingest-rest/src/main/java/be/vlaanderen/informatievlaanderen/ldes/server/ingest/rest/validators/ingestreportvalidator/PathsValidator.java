@@ -17,6 +17,14 @@ public class PathsValidator implements IngestReportValidator {
     public void validate(Model model, EventStream eventStream, ShaclReportManager reportManager) {
         List<Resource> memberSubjects = model.listSubjects().filterDrop(RDFNode::isAnon).toList();
 
+        if (memberSubjects.size() > 1 && !eventStream.isVersionCreationEnabled()) {
+            // To be removed when bulk ingest is allowed when version creation is disabled
+            memberSubjects.forEach(subject -> reportManager.addEntry(subject,
+                            "Only 1 member is allowed per request on collection with version creation disabled"
+                    )
+            );
+        }
+
         validateTimestampPath(memberSubjects, model, eventStream, reportManager);
         validateVersionOfPath(memberSubjects, model, eventStream, reportManager);
     }
