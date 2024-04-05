@@ -28,7 +28,4 @@ public interface MemberRepository {
 
 	long getMemberCountOfCollection(String collectionName);
 
-	long getTotalSequence();
-
-	long getSequenceForCollection(String collectionName);
 }

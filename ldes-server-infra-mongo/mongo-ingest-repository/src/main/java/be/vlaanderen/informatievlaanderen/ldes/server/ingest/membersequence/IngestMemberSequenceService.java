@@ -1,51 +1,43 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestMemberSequenceEntity;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Update;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
-import static org.springframework.data.mongodb.core.FindAndModifyOptions.options;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 public class IngestMemberSequenceService {
 
-	private final MongoOperations mongoOperations;
+	private final MemberEntityRepository memberEntityRepository;
+	private final Map<String, AtomicLong> sequenceByCollection;
 
-	public IngestMemberSequenceService(MongoOperations mongoOperations) {
-		this.mongoOperations = mongoOperations;
+	public IngestMemberSequenceService(MemberEntityRepository memberEntityRepository) {
+		this.sequenceByCollection = new HashMap<>();
+		this.memberEntityRepository = memberEntityRepository;
 	}
 
-	long generateSequence(String collectionName) {
-		IngestMemberSequenceEntity counter = mongoOperations.findAndModify(
-				query(where("_id").is(collectionName)),
-				new Update().inc("seq", 1),
-				options().returnNew(true).upsert(true),
-				IngestMemberSequenceEntity.class);
-		return !Objects.isNull(counter) ? counter.getSeq() : 1;
+	@EventListener
+	public void handleEventStreamCreated(EventStreamCreatedEvent event) {
+		final String collectionName = event.eventStream().getCollection();
+		final AtomicLong sequence = memberEntityRepository
+				.findFirstByCollectionNameOrderBySequenceNrDesc(collectionName)
+				.map(MemberEntity::getSequenceNr)
+				.map(AtomicLong::new)
+				.orElse(new AtomicLong());
+		sequenceByCollection.put(collectionName, sequence);
 	}
 
-	public long getSequenceForCollection(String collectionName) {
-		IngestMemberSequenceEntity counter = mongoOperations.findOne(
-				query(where("_id").is(collectionName)),
-				IngestMemberSequenceEntity.class);
-		return !Objects.isNull(counter) ? counter.getSeq() : 0;
-	}
-
-	public long getTotalSequence() {
-		return mongoOperations.findAll(
-				IngestMemberSequenceEntity.class).stream()
-				.reduce(0L, (subtotal, sequence) -> subtotal + sequence.getSeq(), Long::sum);
+	public long generateNextSequence(String collectionName) {
+		return sequenceByCollection.get(collectionName).incrementAndGet();
 	}
 
 	public void removeSequence(String collectionName) {
-		mongoOperations.findAndRemove(
-				query(where("_id").is(collectionName)),
-				IngestMemberSequenceEntity.class);
+		sequenceByCollection.remove(collectionName);
 	}
 
 }

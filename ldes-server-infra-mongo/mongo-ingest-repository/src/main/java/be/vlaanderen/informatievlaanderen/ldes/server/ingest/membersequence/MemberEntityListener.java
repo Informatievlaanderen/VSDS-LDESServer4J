@@ -17,7 +17,7 @@ public class MemberEntityListener extends AbstractMongoEventListener<MemberEntit
 	@Override
 	public void onBeforeConvert(BeforeConvertEvent<MemberEntity> event) {
 		if (event.getSource().getSequenceNr() == null) {
-			event.getSource().setSequenceNr(sequenceGenerator.generateSequence(event.getSource().getCollectionName()));
+			event.getSource().setSequenceNr(sequenceGenerator.generateNextSequence(event.getSource().getCollectionName()));
 		}
 	}
 
