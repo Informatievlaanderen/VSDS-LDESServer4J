@@ -20,9 +20,9 @@ public class MemberEntity {
 	private final LocalDateTime timestamp;
 	private Long sequenceNr;
 	private final String transactionId;
-	private final String model;
+	private final byte[] model;
 
-	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, String model) {
+	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, byte[] model) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
@@ -60,7 +60,7 @@ public class MemberEntity {
 		return transactionId;
 	}
 
-	public String getModel() {
+	public byte[] getModel() {
 		return model;
 	}
 
