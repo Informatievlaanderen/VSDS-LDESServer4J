@@ -7,10 +7,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.net.*;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.HOST_NAME_KEY;
-
 @Configuration
 public class ActuatorHostNameCustomizer implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
+    private static final String HOST_NAME_KEY = "${ldes-server.host-name}";
     private final String hostName;
 
     public ActuatorHostNameCustomizer(@Value(HOST_NAME_KEY) String hostName) {
