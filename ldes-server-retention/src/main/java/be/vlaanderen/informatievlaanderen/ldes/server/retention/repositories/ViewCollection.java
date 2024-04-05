@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewSupplier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.springframework.context.event.EventListener;
@@ -26,6 +23,15 @@ public class ViewCollection {
     @EventListener
     public void handle(ViewDeletedEvent event) {
         views.remove(event.getViewName());
+    }
+
+    @EventListener
+    public void handle(EventStreamDeletedEvent event) {
+        views.keySet().stream()
+                .filter(viewName -> viewName.getCollectionName().equals(event.collectionName()))
+                .toList()
+                .forEach(views::remove);
+
     }
 
     public Collection<ViewSpecification> getViews() {

@@ -25,6 +25,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
 @EnableConfigurationProperties()
@@ -65,8 +66,8 @@ public class MongoAdminAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public DcatViewRepository dcatViewMongoRepository(final DataServiceEntityRepository dataServiceEntityRepository) {
-		return new DcatViewMongoRepository(dataServiceEntityRepository, new DcatServiceEntityConverter());
+	public DcatViewRepository dcatViewMongoRepository(final DataServiceEntityRepository dataServiceEntityRepository, final MongoTemplate mongoTemplate) {
+		return new DcatViewMongoRepository(dataServiceEntityRepository, new DcatServiceEntityConverter(), mongoTemplate);
 	}
 
 }

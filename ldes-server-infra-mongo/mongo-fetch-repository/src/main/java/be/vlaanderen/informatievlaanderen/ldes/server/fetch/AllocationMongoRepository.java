@@ -96,6 +96,7 @@ public class AllocationMongoRepository implements AllocationRepository {
 		return mongoTemplate.aggregateStream(aggregation, FETCH_ALLOCATION, CompactionCandidate.class);
 	}
 
+	@Override
 	public void deleteByCollectionName(String collectionName) {
 		repository.deleteAllByCollectionName(collectionName);
 	}
