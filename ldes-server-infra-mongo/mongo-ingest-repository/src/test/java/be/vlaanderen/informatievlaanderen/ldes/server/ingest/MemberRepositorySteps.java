@@ -1,5 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
@@ -16,6 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -39,6 +43,13 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
                 row.get("sequenceNr").isEmpty() ? null : Long.parseLong(row.get("sequenceNr")),
 				UUID.randomUUID().toString(),
 				ModelFactory.createDefaultModel());
+	}
+
+	@Given("eventstream {string}")
+	public void eventstream(String collectionName) {
+		EventStreamCreatedEvent event =
+				new EventStreamCreatedEvent(new EventStream(collectionName, null, null, false));
+		ingestMemberSequenceService.handleEventStreamCreated(event);
 	}
 
 	@Given("The following members")
@@ -108,21 +119,15 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 
 	@And("The sequence for {string} will have been removed")
 	public void theSequenceForWillHaveBeenRemoved(String collectionName) {
-//		assertFalse(hasSequence(collectionName));
+		assertThatExceptionOfType(NullPointerException.class)
+				.isThrownBy(() -> ingestMemberSequenceService.generateNextSequence(collectionName));
 	}
 
 	@And("The sequence for {string} will still exist")
 	public void theSequenceForWillStillExist(String collectionName) {
-//		assertTrue(hasSequence(collectionName));
+		long sequence = ingestMemberSequenceService.generateNextSequence(collectionName);
+		assertThat(sequence).isPositive();
 	}
-
-	// TODO TVB: think
-
-//	private boolean hasSequence(String collectionName) {
-//		Query query = new Query(Criteria.where("_id").is(collectionName));
-//		long count = mongoTemplate.count(query, IngestMemberSequenceEntity.COLLECTION_NAME);
-//		return count > 0;
-//	}
 
 	@And("I search for the first member from collection {string} and sequenceNr greater than {int}")
 	public void iSearchForTheFirstMemberFromCollectionAndSequenceNrGreaterThan(String collectionName, int sequence) {

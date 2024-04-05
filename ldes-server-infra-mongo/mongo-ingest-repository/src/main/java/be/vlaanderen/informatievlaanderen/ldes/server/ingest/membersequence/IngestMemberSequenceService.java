@@ -13,8 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class IngestMemberSequenceService {
 
-	// TODO TVB: mongock to remove memberSequence entity
-
 	private final MemberEntityRepository memberEntityRepository;
 	private final Map<String, AtomicLong> sequenceByCollection;
 
@@ -34,7 +32,7 @@ public class IngestMemberSequenceService {
 		sequenceByCollection.put(collectionName, sequence);
 	}
 
-	long generateNextSequence(String collectionName) {
+	public long generateNextSequence(String collectionName) {
 		return sequenceByCollection.get(collectionName).incrementAndGet();
 	}
 
