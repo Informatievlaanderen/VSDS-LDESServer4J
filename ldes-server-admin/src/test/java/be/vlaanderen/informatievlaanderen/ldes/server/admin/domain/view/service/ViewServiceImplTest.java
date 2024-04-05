@@ -141,8 +141,8 @@ class ViewServiceImplTest {
 			viewService.deleteViewByViewName(viewName);
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
-			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
 			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
+			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
 			inOrder.verifyNoMoreInteractions();
 		}
 	}
@@ -239,7 +239,6 @@ class ViewServiceImplTest {
 
 		viewService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
-		verify(eventPublisher, times(2)).publishEvent(any(ViewDeletedEvent.class));
 		verify(viewRepository).deleteViewByViewName(view);
 		verify(viewRepository).deleteViewByViewName(view2);
 		assertThatThrownBy(() -> viewService.getViewsByCollectionName(COLLECTION))

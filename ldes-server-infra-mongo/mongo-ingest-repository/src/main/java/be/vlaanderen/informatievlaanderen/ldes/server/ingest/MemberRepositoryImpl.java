@@ -90,14 +90,4 @@ public class MemberRepositoryImpl implements MemberRepository {
 		return memberEntityRepository.countByCollectionName(collectionName);
 	}
 
-	@Override
-	public long getTotalSequence() {
-		return sequenceService.getTotalSequence();
-	}
-
-	@Override
-	public long getSequenceForCollection(String collectionName) {
-		return sequenceService.getSequenceForCollection(collectionName);
-	}
-
 }

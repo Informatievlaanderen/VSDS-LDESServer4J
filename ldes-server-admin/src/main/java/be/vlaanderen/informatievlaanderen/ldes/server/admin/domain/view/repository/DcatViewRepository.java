@@ -8,12 +8,14 @@ import java.util.Optional;
 
 public interface DcatViewRepository {
 
-	void save(DcatView dcatView);
+    void save(DcatView dcatView);
 
-	Optional<DcatView> findByViewName(ViewName viewName);
+    Optional<DcatView> findByViewName(ViewName viewName);
 
-	void delete(ViewName viewName);
+    void delete(ViewName viewName);
 
-	List<DcatView> findAll();
+    void deleteByCollectionName(String collectionName);
+
+    List<DcatView> findAll();
 
 }

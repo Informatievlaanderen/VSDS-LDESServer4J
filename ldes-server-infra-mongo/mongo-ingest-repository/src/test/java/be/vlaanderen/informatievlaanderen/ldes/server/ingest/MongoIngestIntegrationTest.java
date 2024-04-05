@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.IngestMemberSequenceService;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -17,6 +18,9 @@ import org.springframework.test.context.ContextConfiguration;
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.ingest" })
 @SuppressWarnings("java:S2187")
 public class MongoIngestIntegrationTest {
+
+	@Autowired
+	IngestMemberSequenceService ingestMemberSequenceService;
 
 	@Autowired
 	MemberRepositoryImpl memberRepository;

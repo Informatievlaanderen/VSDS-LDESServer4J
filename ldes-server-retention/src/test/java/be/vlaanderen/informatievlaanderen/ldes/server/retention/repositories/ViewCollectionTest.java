@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewSupplier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,10 +49,10 @@ class ViewCollectionTest {
 
     @Test
     void testHandleViewDeletedEvent() {
-        ViewName viewNameA = ViewName.fromString("col/viewA");
-        ViewSpecification viewSpecificationA = new ViewSpecification(viewNameA, List.of(), List.of(), 10);
-        ViewName viewNameB = ViewName.fromString("col/viewB");
-        ViewSpecification viewSpecificationB = new ViewSpecification(viewNameB, List.of(), List.of(), 10);
+        final ViewName viewNameA = ViewName.fromString("col/viewA");
+        final ViewSpecification viewSpecificationA = new ViewSpecification(viewNameA, List.of(), List.of(), 10);
+        final ViewName viewNameB = ViewName.fromString("col/viewB");
+        final ViewSpecification viewSpecificationB = new ViewSpecification(viewNameB, List.of(), List.of(), 10);
 
         viewCollection.handle(new ViewAddedEvent(viewSpecificationA));
         viewCollection.handle(new ViewAddedEvent(viewSpecificationB));
@@ -66,6 +63,28 @@ class ViewCollectionTest {
 
         assertThat(viewCollection.getViews()).hasSize(1);
         assertThat(viewCollection.getViews()).contains(viewSpecificationB);
+    }
+
+    @Test
+    void testHandleEventStreamDeletedEvent() {
+        final String collectionNameA = "colA";
+        final ViewName viewNameAA = new ViewName(collectionNameA, "viewA");
+        final ViewSpecification viewSpecificationA = new ViewSpecification(viewNameAA, List.of(), List.of(), 10);
+        final ViewName viewNameAB = new ViewName(collectionNameA, "viewB");
+        final ViewSpecification viewSpecificationB = new ViewSpecification(viewNameAB, List.of(), List.of(), 10);
+        final ViewName viewNameBC = ViewName.fromString("colB/viewC");
+        final ViewSpecification viewSpecificationC = new ViewSpecification(viewNameBC, List.of(), List.of(), 10);
+
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationA));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationB));
+        viewCollection.handle(new ViewAddedEvent(viewSpecificationC));
+
+        assertThat(viewCollection.getViews()).hasSize(3);
+
+        viewCollection.handle(new EventStreamDeletedEvent(collectionNameA));
+
+        assertThat(viewCollection.getViews()).hasSize(1);
+        assertThat(viewCollection.getViews()).contains(viewSpecificationC);
     }
 
 }

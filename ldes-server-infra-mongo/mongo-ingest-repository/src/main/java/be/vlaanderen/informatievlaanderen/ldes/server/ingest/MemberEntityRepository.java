@@ -21,4 +21,6 @@ public interface MemberEntityRepository extends MongoRepository<MemberEntity, St
 
 	long countByCollectionName(String collectionName);
 
+	Optional<MemberEntity> findFirstByCollectionNameOrderBySequenceNrDesc(String collectionName);
+
 }
