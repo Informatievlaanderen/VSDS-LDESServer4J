@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -11,18 +12,22 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.impl.LiteralImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser.getFragmentationObjectLocalDateTime;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
 	public static final String TIMEBASED_FRAGMENTATION_HIERARCHICAL = "HierarchicalTimeBasedFragmentation";
 	private static final Logger LOGGER = LoggerFactory.getLogger(HierarchicalTimeBasedFragmentationStrategy.class);
+	private static final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
 	private final ObservationRegistry observationRegistry;
 	private final TimeBasedFragmentFinder fragmentFinder;
@@ -70,4 +75,33 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 				.start();
 	}
 
+	private Optional<LocalDateTime> getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
+																			  String fragmentationPredicate) {
+		return getFragmentationObjectsLocalDateTime(model, subjectFilter, fragmentationPredicate)
+				.stream()
+				.findFirst();
+	}
+
+	private List<LocalDateTime> getFragmentationObjectsLocalDateTime(Model model, String subjectFilter,
+																		   String fragmentationPath) {
+		return model
+				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
+				.toList()
+				.stream()
+				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
+				.map(this::getDateTimeValue)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.toList();
+	}
+
+	private Optional<LocalDateTime> getDateTimeValue(Statement statement) {
+		try {
+			LiteralImpl literal = (LiteralImpl) statement.getObject().asLiteral();
+			return Optional.of(localDateTimeConverter.getLocalDateTime(literal));
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract datetime from: {} Reason: {}", statement, exception.getMessage());
+			return Optional.empty();
+		}
+	}
 }

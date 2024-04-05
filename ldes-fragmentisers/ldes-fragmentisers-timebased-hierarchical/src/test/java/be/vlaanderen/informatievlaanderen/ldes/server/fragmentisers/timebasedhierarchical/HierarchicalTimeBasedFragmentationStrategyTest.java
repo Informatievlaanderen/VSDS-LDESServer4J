@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -14,16 +13,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.junit.jupiter.api.AfterEach;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -36,7 +36,6 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	private static Fragment CHILD_FRAGMENT;
 	private static LocalDateTime TIME;
 	private static Granularity GRANULARITY;
-	private MockedStatic<ModelParser> modelParserMock;
 	private HierarchicalTimeBasedFragmentationStrategy fragmentationStrategy;
 	private TimeBasedFragmentFinder fragmentFinder;
 	private TimeBasedConfig config;
@@ -49,26 +48,19 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		CHILD_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(new FragmentPair("is", "child"))));
 		TIME = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 		GRANULARITY = Granularity.SECOND;
-		config = new TimeBasedConfig(".*", "", GRANULARITY, false);
+		config = new TimeBasedConfig(".*", "http://purl.org/dc/terms/created", GRANULARITY, false);
 		fragmentFinder = mock(TimeBasedFragmentFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
 		fragmentRepository = mock(FragmentRepository.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), fragmentFinder, fragmentRepository, config);
-		modelParserMock = Mockito.mockStatic(ModelParser.class);
-	}
-
-	@AfterEach
-	void tearDown() {
-		modelParserMock.close();
 	}
 
 	@Test
-	void when_FragmentationCalled_Then_FunctionsAreCalled() {
-		Member member = mock(Member.class);
+	void when_FragmentationCalled_Then_FunctionsAreCalled() throws URISyntaxException {
+		Model model = readModelFromFile();
+		Member member = new Member("1", model, 1L);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
-		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
-				.thenReturn(Optional.of(TIME));
 		when(fragmentFinder.getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, Granularity.YEAR))
 				.thenReturn(CHILD_FRAGMENT);
 
@@ -85,8 +77,6 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	@Test
 	void when_FragmentationCalledForMemberWithMissingTimestamp_Then_FunctionsAreCalled() {
 		Member member = mock(Member.class);
-		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
-				.thenReturn(Optional.empty());
 		when(fragmentFinder.getDefaultFragment(PARENT_FRAGMENT))
 				.thenReturn(CHILD_FRAGMENT);
 
@@ -100,4 +90,10 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 				any(), any(Observation.class));
 	}
 
+	private Model readModelFromFile() throws URISyntaxException {
+		ClassLoader classLoader = getClass().getClassLoader();
+		String uri = Objects.requireNonNull(classLoader.getResource("example-ldes-member.nq")).toURI()
+				.toString();
+		return RDFDataMgr.loadModel(uri);
+	}
 }

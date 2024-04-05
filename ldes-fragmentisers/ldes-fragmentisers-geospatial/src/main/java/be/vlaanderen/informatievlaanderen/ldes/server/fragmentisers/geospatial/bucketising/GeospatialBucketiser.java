@@ -1,16 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.config.GeospatialConfig;
 import org.apache.jena.geosparql.implementation.GeometryWrapper;
 import org.apache.jena.geosparql.implementation.vocabulary.SRS_URI;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Statement;
 import org.locationtech.jts.geom.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ public class GeospatialBucketiser {
 		try {
 			List<Coordinate> coordinates = new ArrayList<>();
 
-			ModelParser.getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(),
+			getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(),
 							geospatialConfig.fragmentationPath())
 					.stream()
 					.map(this::toCoordinates)
@@ -54,6 +57,27 @@ public class GeospatialBucketiser {
 		} catch (Exception exception) {
 			LOGGER.warn("Could not extract coordinates from statement Reason: {}", exception.getMessage());
 			return List.of();
+		}
+	}
+
+	private List<Object> getFragmentationObjects(Model model, String subjectFilter, String fragmentationPath) {
+		return model
+				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
+				.toList()
+				.stream()
+				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
+				.map(this::getValue)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.toList();
+	}
+
+	private Optional<Object> getValue(Statement statement) {
+		try {
+			return Optional.of(statement.getObject().asLiteral().getValue());
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract literal from {} Reason: {}", statement, exception.getMessage());
+			return Optional.empty();
 		}
 	}
 }
