@@ -17,7 +17,7 @@ class MemberEntityListenerTest {
 
     @Test
     void test_MemberHasNoIndex() {
-        MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", "versionOf", LocalDateTime.now(), null, "txId", "model");
+        MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", "versionOf", LocalDateTime.now(), null, "txId", "model".getBytes());
         BeforeConvertEvent<MemberEntity> beforeConvertEvent = new BeforeConvertEvent<>(ldesMemberEntity,
                 "collection");
 
@@ -28,7 +28,7 @@ class MemberEntityListenerTest {
 
     @Test
     void test_MemberHasIndex() {
-        MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", "versionOf", LocalDateTime.now(), 23L, "txId", "model");
+        MemberEntity ldesMemberEntity = new MemberEntity("id", "collectionName", "versionOf", LocalDateTime.now(), 23L, "txId", "model".getBytes());
         BeforeConvertEvent<MemberEntity> beforeConvertEvent = new BeforeConvertEvent<>(ldesMemberEntity,
                 "collection");
 
