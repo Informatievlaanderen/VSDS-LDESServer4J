@@ -23,7 +23,7 @@ class MemberEntityListenerTest {
 
         ldesMemberEntityListener.onBeforeConvert(beforeConvertEvent);
 
-        verify(ingestMemberSequenceService, times(1)).generateSequence("collectionName");
+        verify(ingestMemberSequenceService, times(1)).generateNextSequence("collectionName");
     }
 
     @Test
