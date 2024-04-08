@@ -39,9 +39,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	private MockedStatic<ModelParser> modelParserMock;
 	private HierarchicalTimeBasedFragmentationStrategy fragmentationStrategy;
 	private TimeBasedFragmentFinder fragmentFinder;
-	private TimeBasedConfig config;
 	private FragmentationStrategy decoratedFragmentationStrategy;
-	private FragmentRepository fragmentRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -49,10 +47,10 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		CHILD_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(new FragmentPair("is", "child"))));
 		TIME = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 		GRANULARITY = Granularity.SECOND;
-		config = new TimeBasedConfig(".*", "", GRANULARITY, false);
+		TimeBasedConfig config = new TimeBasedConfig(".*", "", GRANULARITY, false);
 		fragmentFinder = mock(TimeBasedFragmentFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
-		fragmentRepository = mock(FragmentRepository.class);
+		FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), fragmentFinder, fragmentRepository, config);
 		modelParserMock = Mockito.mockStatic(ModelParser.class);
@@ -87,6 +85,24 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		Member member = mock(Member.class);
 		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
 				.thenReturn(Optional.empty());
+		when(fragmentFinder.getDefaultFragment(PARENT_FRAGMENT))
+				.thenReturn(CHILD_FRAGMENT);
+
+		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
+				mock(Observation.class));
+
+		InOrder inOrder = Mockito.inOrder(fragmentFinder, decoratedFragmentationStrategy);
+		inOrder.verify(fragmentFinder).getDefaultFragment(PARENT_FRAGMENT);
+		inOrder.verify(decoratedFragmentationStrategy,
+				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
+				any(), any(Observation.class));
+	}
+
+	@Test
+	void when_FragmentationCalledForMemberAndExceptionIsThrown_Then_FunctionsAreCalledx() {
+		Member member = mock(Member.class);
+		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
+				.thenReturn(null);
 		when(fragmentFinder.getDefaultFragment(PARENT_FRAGMENT))
 				.thenReturn(CHILD_FRAGMENT);
 
