@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.LocalDateTimeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
@@ -10,14 +11,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.ModelParser.getFragmentationObjectLocalDateTime;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
@@ -70,4 +69,28 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 				.start();
 	}
 
+	private Optional<LocalDateTime> getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
+	                                                                    String fragmentationPath) {
+		return model
+				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
+				.toList()
+				.stream()
+				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
+				.map(this::getDateTimeValue)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.findFirst();
+	}
+
+	private Optional<LocalDateTime> getDateTimeValue(Statement statement) {
+		LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
+
+		try {
+			Literal literal = statement.getObject().asLiteral();
+			return Optional.of(localDateTimeConverter.getLocalDateTime(literal));
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract datetime from: {} Reason: {}", statement, exception.getMessage());
+			return Optional.empty();
+		}
+	}
 }
