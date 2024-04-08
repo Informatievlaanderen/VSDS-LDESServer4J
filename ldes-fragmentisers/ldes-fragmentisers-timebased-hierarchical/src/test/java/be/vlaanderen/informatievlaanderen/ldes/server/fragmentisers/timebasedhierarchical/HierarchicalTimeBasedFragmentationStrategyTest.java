@@ -86,20 +86,4 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 				any(), any(Observation.class));
 	}
 
-	@Test
-	void when_FragmentationCalledForMemberAndExceptionIsThrown_Then_FunctionsAreCalledx() {
-		Member member = mock(Member.class);
-		when(fragmentFinder.getDefaultFragment(PARENT_FRAGMENT))
-				.thenReturn(CHILD_FRAGMENT);
-
-		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(),
-				mock(Observation.class));
-
-		InOrder inOrder = Mockito.inOrder(fragmentFinder, decoratedFragmentationStrategy);
-		inOrder.verify(fragmentFinder).getDefaultFragment(PARENT_FRAGMENT);
-		inOrder.verify(decoratedFragmentationStrategy,
-				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
-				any(), any(Observation.class));
-	}
-
 }
