@@ -11,23 +11,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhierarchical.services.TimeBasedFragmentFinder;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.rdf.model.ResourceFactory;
-import org.apache.jena.rdf.model.Statement;
-import org.apache.jena.rdf.model.impl.LiteralImpl;
+import org.apache.jena.rdf.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStrategyDecorator {
 
 	public static final String TIMEBASED_FRAGMENTATION_HIERARCHICAL = "HierarchicalTimeBasedFragmentation";
 	private static final Logger LOGGER = LoggerFactory.getLogger(HierarchicalTimeBasedFragmentationStrategy.class);
-	private static final LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
 
 	private final ObservationRegistry observationRegistry;
 	private final TimeBasedFragmentFinder fragmentFinder;
@@ -76,14 +70,7 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 	}
 
 	private Optional<LocalDateTime> getFragmentationObjectLocalDateTime(Model model, String subjectFilter,
-																			  String fragmentationPredicate) {
-		return getFragmentationObjectsLocalDateTime(model, subjectFilter, fragmentationPredicate)
-				.stream()
-				.findFirst();
-	}
-
-	private List<LocalDateTime> getFragmentationObjectsLocalDateTime(Model model, String subjectFilter,
-																		   String fragmentationPath) {
+	                                                                    String fragmentationPath) {
 		return model
 				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
 				.toList()
@@ -92,12 +79,14 @@ public class HierarchicalTimeBasedFragmentationStrategy extends FragmentationStr
 				.map(this::getDateTimeValue)
 				.filter(Optional::isPresent)
 				.map(Optional::get)
-				.toList();
+				.findFirst();
 	}
 
 	private Optional<LocalDateTime> getDateTimeValue(Statement statement) {
+		LocalDateTimeConverter localDateTimeConverter = new LocalDateTimeConverter();
+
 		try {
-			LiteralImpl literal = (LiteralImpl) statement.getObject().asLiteral();
+			Literal literal = statement.getObject().asLiteral();
 			return Optional.of(localDateTimeConverter.getLocalDateTime(literal));
 		} catch (Exception exception) {
 			LOGGER.warn("Could not extract datetime from: {} Reason: {}", statement, exception.getMessage());

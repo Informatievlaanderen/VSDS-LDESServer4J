@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConstants.DEFAULT_BUCKET_STRING;
 
@@ -33,7 +34,6 @@ public class GeospatialBucketiser {
 
 			getFragmentationObjects(memberModel, geospatialConfig.fragmenterSubjectFilter(),
 							geospatialConfig.fragmentationPath())
-					.stream()
 					.map(this::toCoordinates)
 					.forEach(coordinates::addAll);
 			Set<String> tiles = coordinates.stream()
@@ -50,34 +50,42 @@ public class GeospatialBucketiser {
 		}
 	}
 
-	private List<Coordinate> toCoordinates(Object geoObject) {
-		try {
-			GeometryWrapper geometryWrapper = ((GeometryWrapper) geoObject).convertSRS(SRS_URI.WGS84_CRS);
-			return List.of(geometryWrapper.getXYGeometry().getCoordinates());
-		} catch (Exception exception) {
-			LOGGER.warn("Could not extract coordinates from statement Reason: {}", exception.getMessage());
-			return List.of();
-		}
-	}
-
-	private List<Object> getFragmentationObjects(Model model, String subjectFilter, String fragmentationPath) {
+	private Stream<GeometryWrapper> getFragmentationObjects(Model model, String subjectFilter, String fragmentationPath) {
 		return model
 				.listStatements(null, ResourceFactory.createProperty(fragmentationPath), (Resource) null)
 				.toList()
 				.stream()
 				.filter(statement -> statement.getSubject().toString().matches(subjectFilter))
-				.map(this::getValue)
+				.map(this::getGeometryWrapper)
 				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.toList();
+				.map(Optional::get);
 	}
 
-	private Optional<Object> getValue(Statement statement) {
+	private Optional<GeometryWrapper> getGeometryWrapper(Statement statement) {
+		Optional<Object> geoObject = getGeoObject(statement);
+		return geoObject.flatMap(this::convertToGeometryWrapper);
+	}
+
+	private Optional<Object> getGeoObject(Statement statement) {
 		try {
 			return Optional.of(statement.getObject().asLiteral().getValue());
 		} catch (Exception exception) {
 			LOGGER.warn("Could not extract literal from {} Reason: {}", statement, exception.getMessage());
 			return Optional.empty();
 		}
+	}
+
+	private Optional<GeometryWrapper> convertToGeometryWrapper(Object geoObject) {
+		try {
+			GeometryWrapper geometryWrapper = ((GeometryWrapper) geoObject).convertSRS(SRS_URI.WGS84_CRS);
+			return Optional.of(geometryWrapper);
+		} catch (Exception exception) {
+			LOGGER.warn("Could not extract coordinates from statement Reason: {}", exception.getMessage());
+			return Optional.empty();
+		}
+	}
+
+	private List<Coordinate> toCoordinates(GeometryWrapper geometryWrapper) {
+		return List.of(geometryWrapper.getXYGeometry().getCoordinates());
 	}
 }

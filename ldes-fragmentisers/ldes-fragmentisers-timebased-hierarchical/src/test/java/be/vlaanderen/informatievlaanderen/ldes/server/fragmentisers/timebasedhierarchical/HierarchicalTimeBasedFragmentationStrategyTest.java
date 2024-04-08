@@ -14,17 +14,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.timebasedhie
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.RDFDataMgr;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
+import static org.apache.jena.riot.RDFDataMgr.loadModel;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -57,8 +55,8 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	}
 
 	@Test
-	void when_FragmentationCalled_Then_FunctionsAreCalled() throws URISyntaxException {
-		Model model = readModelFromFile();
+	void when_FragmentationCalled_Then_FunctionsAreCalled() {
+		Model model = loadModel("member_with_created_property.nq");
 		Member member = new Member("1", model, 1L);
 		FragmentationTimestamp fragmentationTimestamp = new FragmentationTimestamp(TIME, GRANULARITY);
 		when(fragmentFinder.getLowestFragment(PARENT_FRAGMENT, fragmentationTimestamp, Granularity.YEAR))
@@ -88,12 +86,5 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
 				any(), any(Observation.class));
-	}
-
-	private Model readModelFromFile() throws URISyntaxException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		String uri = Objects.requireNonNull(classLoader.getResource("example-ldes-member.nq")).toURI()
-				.toString();
-		return RDFDataMgr.loadModel(uri);
 	}
 }
