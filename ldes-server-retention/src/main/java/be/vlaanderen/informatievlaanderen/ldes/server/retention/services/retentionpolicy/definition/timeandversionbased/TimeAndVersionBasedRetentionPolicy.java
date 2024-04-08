@@ -14,15 +14,13 @@ public record TimeAndVersionBasedRetentionPolicy(Duration duration,
                                                  int numberOfMembersToKeep) implements RetentionPolicy {
 
     public static TimeAndVersionBasedRetentionPolicy from(RetentionPolicy policyA, RetentionPolicy policyB) {
-        if (policyA instanceof TimeBasedRetentionPolicy timeBasedPolicy) {
+        if (policyA instanceof TimeBasedRetentionPolicy(Duration duration)) {
             verifyIsTypeVersionBased(policyB);
             final int numberOfMembersToKeep = ((VersionBasedRetentionPolicy) policyB).numberOfMembersToKeep();
-            final Duration duration = timeBasedPolicy.duration();
             return new TimeAndVersionBasedRetentionPolicy(duration, numberOfMembersToKeep);
-        } else if (policyB instanceof TimeBasedRetentionPolicy timeBasedPolicy) {
+        } else if (policyB instanceof TimeBasedRetentionPolicy(Duration duration)) {
             verifyIsTypeVersionBased(policyA);
             final int numberOfMembersToKeep = ((VersionBasedRetentionPolicy) policyA).numberOfMembersToKeep();
-            final Duration duration = timeBasedPolicy.duration();
             return new TimeAndVersionBasedRetentionPolicy(duration, numberOfMembersToKeep);
         } else {
             throw timebasedAndVersionBasedRequiredException();
