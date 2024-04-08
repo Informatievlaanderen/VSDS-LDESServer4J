@@ -89,8 +89,6 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	@Test
 	void when_FragmentationCalledForMemberAndExceptionIsThrown_Then_FunctionsAreCalledx() {
 		Member member = mock(Member.class);
-		modelParserMock.when(() -> ModelParser.getFragmentationObjectLocalDateTime(eq(member.model()), any(), any()))
-				.thenReturn(null);
 		when(fragmentFinder.getDefaultFragment(PARENT_FRAGMENT))
 				.thenReturn(CHILD_FRAGMENT);
 
