@@ -62,13 +62,10 @@ public class GeospatialBucketiser {
 	}
 
 	private Optional<GeometryWrapper> getGeometryWrapper(Statement statement) {
-		Optional<Object> geoObject = getGeoObject(statement);
-		return geoObject.flatMap(this::convertToGeometryWrapper);
-	}
-
-	private Optional<Object> getGeoObject(Statement statement) {
 		try {
-			return Optional.of(statement.getObject().asLiteral().getValue());
+			return Optional
+					.of(statement.getObject().asLiteral().getValue())
+					.flatMap(this::convertToGeometryWrapper);
 		} catch (Exception exception) {
 			LOGGER.warn("Could not extract literal from {} Reason: {}", statement, exception.getMessage());
 			return Optional.empty();
