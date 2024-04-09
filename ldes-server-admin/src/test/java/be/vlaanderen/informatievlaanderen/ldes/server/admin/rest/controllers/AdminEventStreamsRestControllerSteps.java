@@ -106,6 +106,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 	}
 
 	@And("the client receives a single event stream")
