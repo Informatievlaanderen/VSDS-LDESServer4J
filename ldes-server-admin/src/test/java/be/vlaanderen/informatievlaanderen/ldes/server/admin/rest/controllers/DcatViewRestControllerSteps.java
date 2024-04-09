@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.SpringIntegrationTest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -37,6 +38,11 @@ public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
 	private ResultActions resultActions;
 	private String turtleDataservice;
+
+	@After
+	public void cleanup() {
+		resourceRemover.removeUsedResources();
+	}
 
 	@Given("I have a valid dcat dataservice")
 	public void iHaveAValidDcatDataservice() throws Exception {

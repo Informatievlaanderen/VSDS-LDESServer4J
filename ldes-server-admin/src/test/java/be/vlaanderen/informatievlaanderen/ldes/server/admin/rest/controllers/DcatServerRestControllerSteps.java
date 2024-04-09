@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.entities.DcatServer;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.SpringIntegrationTest;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -28,6 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DcatServerRestControllerSteps extends SpringIntegrationTest {
 	private final String uuid = UUID.randomUUID().toString();
 	private ResultActions resultActions;
+
+	@After
+	public void cleanup() {
+		resourceRemover.removeUsedResources();
+	}
 
 	@Given("a db containing no dcatserver")
 	public void aDbWithoutDcatserver() {

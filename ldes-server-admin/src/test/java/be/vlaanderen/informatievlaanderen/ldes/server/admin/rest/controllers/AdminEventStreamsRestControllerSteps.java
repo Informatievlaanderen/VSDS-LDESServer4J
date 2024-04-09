@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -24,10 +25,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -42,6 +40,11 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	private static final String VERSION_OF_PATH = "http://purl.org/dc/terms/isVersionOf";
 	private static final boolean VERSION_CREATION_ENABLED = false;
 	private ResultActions resultActions;
+
+	@After
+	public void cleanup() {
+		resourceRemover.removeUsedResources();
+	}
 
 	@Given("a db containing multiple eventstreams")
 	public void aDbContainingMultipleEventstreams() throws URISyntaxException {

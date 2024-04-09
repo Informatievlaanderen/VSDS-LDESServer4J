@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config.SpringIntegrationTest;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -28,6 +29,10 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
 	private final static String COLLECTION_NAME = "collectionName";
 	private ResultActions resultActions;
 	private String datasetString;
+	@After
+	public void cleanup() {
+		resourceRemover.removeUsedResources();
+	}
 
 	@Given("I have a valid dcat dataset")
 	public void iHaveAValidDcatDataset() throws Exception {
