@@ -59,7 +59,7 @@ class DcatDatasetRestControllerTest {
 	class PostDataset {
 		@Test
 		void when_DatasetIsPosted_Then_DatasetIsSaved_And_StatusIs201() throws Exception {
-			final String dataset = readDataFromFile("dataset/valid.ttl");
+			final String dataset = readDataFromFile("dcat/dataset/valid.ttl");
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/dcat")
 					.accept(contentTypeTurtle)
@@ -72,7 +72,7 @@ class DcatDatasetRestControllerTest {
 
 		@Test
 		void when_DatasetExists_Then_StatusIs400() throws Exception {
-			final String dataset = readDataFromFile("dataset/valid.ttl");
+			final String dataset = readDataFromFile("dcat/dataset/valid.ttl");
 			doThrow(new ExistingResourceException("dcat-dataset", COLLECTION_NAME)).when(dcatDatasetService)
 					.saveDataset(any(DcatDataset.class));
 
@@ -90,7 +90,7 @@ class DcatDatasetRestControllerTest {
 	class PutDataset {
 		@Test
 		void when_DatasetExists_Then_DatasetIsSaved_And_StatusIs200() throws Exception {
-			final String dataset = readDataFromFile("dataset/valid.ttl");
+			final String dataset = readDataFromFile("dcat/dataset/valid.ttl");
 
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + COLLECTION_NAME + "/dcat")
 					.accept(contentTypeTurtle)
@@ -103,7 +103,7 @@ class DcatDatasetRestControllerTest {
 
 		@Test
 		void when_DatasetDoesNotExist_Then_StatusIs404() throws Exception {
-			final String dataset = readDataFromFile("dataset/valid.ttl");
+			final String dataset = readDataFromFile("dcat/dataset/valid.ttl");
 			doThrow(new MissingResourceException("dcat-dataset", COLLECTION_NAME)).when(dcatDatasetService)
 					.updateDataset(any(DcatDataset.class));
 

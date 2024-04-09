@@ -37,11 +37,11 @@ public class DcatServerRestControllerSteps extends SpringIntegrationTest {
 	@When("the client makes a post request with a valid model")
 	public void theClientMakesAPostRequestWithAValidModel() throws Exception {
 		when(dcatServerRepository.saveServerDcat(any()))
-				.thenReturn(new DcatServer(uuid, readModelFromFile("dcat/valid-server-dcat.ttl")));
+				.thenReturn(new DcatServer(uuid, readModelFromFile("dcat/catalog/valid-server-dcat.ttl")));
 
 		resultActions = mockMvc.perform(post("/admin/api/v1/dcat")
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/valid-server-dcat.ttl")));
+				.content(readDataFromFile("dcat/catalog/valid-server-dcat.ttl")));
 	}
 
 	@And("the client receives an UUID")
@@ -67,12 +67,12 @@ public class DcatServerRestControllerSteps extends SpringIntegrationTest {
 	public void theClientMakesAPostRequestWithAInvalidModel() throws Exception {
 		resultActions = mockMvc.perform(post("/admin/api/v1/dcat")
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/invalid-server-dcat.ttl")));
+				.content(readDataFromFile("dcat/catalog/invalid-server-dcat.ttl")));
 	}
 
 	@Given("a db containing one dcatserver")
 	public void aDbContainingOneDcatserver() {
-		DcatServer dcatServer = new DcatServer(uuid, readModelFromFile("dcat/valid-server-dcat.ttl"));
+		DcatServer dcatServer = new DcatServer(uuid, readModelFromFile("dcat/catalog/valid-server-dcat.ttl"));
 		when(dcatServerRepository.getServerDcat()).thenReturn(List.of(dcatServer));
 		when(dcatServerRepository.getServerDcatById(uuid)).thenReturn(Optional.of(dcatServer));
 	}
@@ -81,14 +81,14 @@ public class DcatServerRestControllerSteps extends SpringIntegrationTest {
 	public void theClientMakesAPutRequestWithAValidModel() throws Exception {
 		resultActions = mockMvc.perform(put("/admin/api/v1/dcat/{id}", uuid)
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/valid-server-dcat.ttl")));
+				.content(readDataFromFile("dcat/catalog/valid-server-dcat.ttl")));
 	}
 
 	@When("the client makes a put request with a invalid model")
 	public void theClientMakesAPutRequestWithAnInValidModel() throws Exception {
 		resultActions = mockMvc.perform(put("/admin/api/v1/dcat/{id}", uuid)
 				.contentType(Lang.TURTLE.getHeaderString())
-				.content(readDataFromFile("dcat/invalid-server-dcat.ttl")));
+				.content(readDataFromFile("dcat/catalog/invalid-server-dcat.ttl")));
 	}
 
 	@When("the client makes a delete serverdcat request")

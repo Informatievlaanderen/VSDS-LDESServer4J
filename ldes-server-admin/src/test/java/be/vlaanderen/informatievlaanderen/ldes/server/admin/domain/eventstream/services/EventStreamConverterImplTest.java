@@ -43,7 +43,7 @@ class EventStreamConverterImplTest {
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
 		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
-		dataSetModel = readModelFromFile("dcat-dataset/valid.ttl");
+		dataSetModel = readModelFromFile("dcat/dataset/valid.ttl");
 	}
 
 	@Nested
