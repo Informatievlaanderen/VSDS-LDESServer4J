@@ -8,7 +8,7 @@ ldes:collectionName1 a ldes:EventStream ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    tree:shape ldes:shape ;
-   ldes:view ldes:view1 .
+   ldes:view server:view1 .
 
 ldes:shape a sh:NodeShape ;
    sh:deactivated true .
