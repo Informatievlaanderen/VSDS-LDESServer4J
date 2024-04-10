@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -68,8 +67,8 @@ class AdminEventStreamsRestControllerTest {
 
 		@BeforeEach
 		void initEventStreams() throws URISyntaxException {
-			Model shape1 = readModelFromFile("shape-name1.ttl");
-			Model shape2 = readModelFromFile("shape-name2.ttl");
+			Model shape1 = readModelFromFile("shacl/shape-name1.ttl");
+			Model shape2 = readModelFromFile("shacl/shape-name2.ttl");
 			FragmentationConfig fragmentationConfig = new FragmentationConfig();
 			fragmentationConfig.setName("ExampleFragmentation");
 			fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
@@ -117,7 +116,7 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
 			Model model = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
-			Model shape = readModelFromFile("example-shape.ttl");
+			Model shape = readModelFromFile("shacl/server-shape.ttl");
 			EventStreamTO eventStream = new EventStreamTO("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf", false,
 					List.of(), shape);
@@ -149,7 +148,7 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
 			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
-			final Model shape = readModelFromFile("example-shape.ttl");
+			final Model shape = readModelFromFile("shacl/server-shape.ttl");
 
 			EventStreamTO eventStreamTO = new EventStreamTO(
 					"name1",
@@ -174,7 +173,7 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_eventStreamThatCreateVersionsModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
 			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-create-versions.ttl");
-			final Model shape = readModelFromFile("example-shape.ttl");
+			final Model shape = readModelFromFile("shacl/server-shape.ttl");
 
 			EventStreamTO eventStreamTO = new EventStreamTO(
 					"name1",

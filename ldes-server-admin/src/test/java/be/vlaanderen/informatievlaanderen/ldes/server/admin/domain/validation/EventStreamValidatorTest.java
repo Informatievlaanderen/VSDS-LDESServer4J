@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class EventStreamValidatorTest {
 
-	private final ModelValidator validator = new ShaclValidator("validator-shapes/eventstreamShaclShape.ttl");
+	private final ModelValidator validator = new ShaclValidator("shacl/validation/eventstreamShaclShape.ttl");
 
 	@Test
 	void test_support() {
@@ -36,7 +36,7 @@ class EventStreamValidatorTest {
 
 	@Test
 	void when_invalidLdesProvided_then_returnInvalid() throws URISyntaxException {
-		Model model = readModelFromFile("eventstream/streams/invalid-shape.ttl");
+		Model model = readModelFromFile("shacl/invalid-shape.ttl");
 
 		assertThatThrownBy(() -> validator.validate(model)).isInstanceOf(ShaclValidationException.class);
 	}

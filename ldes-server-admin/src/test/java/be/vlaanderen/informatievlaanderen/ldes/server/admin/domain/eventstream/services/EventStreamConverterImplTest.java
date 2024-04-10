@@ -1,12 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.FragmentationConfigExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.RetentionModelExtractor;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.ViewSpecificationConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdder;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
@@ -42,7 +37,7 @@ class EventStreamConverterImplTest {
 				new FragmentationConfigExtractor(), prefixConstructor);
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
-		shacl = readModelFromFile("eventstream/streams/example-shape.ttl");
+		shacl = readModelFromFile("eventstream/streams/server-shape.ttl");
 		dataSetModel = readModelFromFile("dcat/dataset/valid.ttl");
 	}
 

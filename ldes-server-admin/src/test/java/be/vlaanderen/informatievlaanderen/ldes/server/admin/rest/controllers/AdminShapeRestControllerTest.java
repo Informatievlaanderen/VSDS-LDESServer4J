@@ -69,7 +69,7 @@ class AdminShapeRestControllerTest {
 		@Test
 		void when_ShapeIsPresentArePresent_Then_ShapeIsReturned() throws Exception {
 			String collectionName = "name1";
-			Model expectedShapeModel = RDFDataMgr.loadModel("shape-1.ttl");
+			Model expectedShapeModel = RDFDataMgr.loadModel("shacl/menu-shape.ttl");
 			when(shaclShapeService.retrieveShaclShape(collectionName))
 					.thenReturn(new ShaclShape(collectionName, expectedShapeModel));
 
@@ -98,7 +98,7 @@ class AdminShapeRestControllerTest {
 		@Test
 		void when_ModelInRequestBody_Then_MethodIsCalled() throws Exception {
 			String collectionName = "name1";
-			String fileName = "shape-1.ttl";
+			String fileName = "shacl/menu-shape.ttl";
 			Model expectedShapeModel = RDFDataMgr.loadModel(fileName);
 
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
@@ -121,7 +121,7 @@ class AdminShapeRestControllerTest {
 			String collectionName = "name1";
 			mockMvc.perform(put("/admin/api/v1/eventstreams/" + collectionName + "/shape")
 							.accept(contentTypeTurtle)
-							.content(readDataFromFile("shape-without-type.ttl"))
+							.content(readDataFromFile("shacl/shape-without-type.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
 					.andExpect(content().contentType(contentTypeTurtle));

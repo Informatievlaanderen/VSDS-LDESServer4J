@@ -22,7 +22,7 @@ class ShaclShapeValidatorTest {
 
     @Nested
     class ShapeValidator {
-        private final ModelValidator validator = new ShaclValidator("validator-shapes/shapeShaclShape.ttl");
+        private final ModelValidator validator = new ShaclValidator("shacl/validation/shapeShaclShape.ttl");
 
         @Test
         void test_classSupport() {
@@ -44,7 +44,7 @@ class ShaclShapeValidatorTest {
 
         @Test
         void when_validateInvalidShaclShape_thenReturnInvalid() {
-            final Model model = RDFDataMgr.loadModel("eventstream/streams/invalid-shape.ttl");
+            final Model model = RDFDataMgr.loadModel("shacl/invalid-shape.ttl");
 
             assertThatThrownBy(() -> validator.validate(model)).isInstanceOf(ShaclValidationException.class);
         }
@@ -52,7 +52,7 @@ class ShaclShapeValidatorTest {
 
     @Nested
     class ViewShapeValidator {
-        private final ModelValidator validator = new ShaclValidator("validator-shapes/viewShaclShape.ttl");
+        private final ModelValidator validator = new ShaclValidator("shacl/validation/viewShaclShape.ttl");
 
         @Test
         void given_ValidViewWithHierarchicalFragmentation_when_validateView_then_ThrowNoException() {
