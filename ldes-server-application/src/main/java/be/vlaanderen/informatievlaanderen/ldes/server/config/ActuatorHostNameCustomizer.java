@@ -3,11 +3,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.context.annotation.Configuration;
 
 import java.net.*;
-
-@Configuration
+//Quickfix to prevent socket hangup when running server in docker.
+//To be re-enabled when exact problem is found.
+//@Configuration
 public class ActuatorHostNameCustomizer implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
     private static final String HOST_NAME_KEY = "${ldes-server.host-name}";
     private final String hostName;
