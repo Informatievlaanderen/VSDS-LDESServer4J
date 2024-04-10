@@ -46,16 +46,16 @@ public class HttpModelConverter implements HttpMessageConverter<Model> {
 	@Override
 	public void write(Model model, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
-		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
+		Lang lang = rdfModelConverter.getLangOrDefault(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
-		outputMessage.getHeaders().setContentType(contentType);
+		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
 		RDFDataMgr.write(outputMessage.getBody(), prefixAdder.addPrefixesToModel(model), lang);
 	}
 
 	@Override
 	public Model read(Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
-		Lang lang = rdfModelConverter.getLang(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
+		Lang lang = rdfModelConverter.getLangOrDefault(Objects.requireNonNull(inputMessage.getHeaders().getContentType()), REST_ADMIN);
 		return RDFParser.source(inputMessage.getBody()).context(rdfModelConverter.getContext()).lang(lang).toModel();
 	}
 }

@@ -11,24 +11,22 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Observed
 @RestController
 public class MemberIngestController implements OpenApiMemberIngestController {
 
-	private final List<IngestValidator> validators;
+	private final IngestValidator validator;
 	private final MemberIngester memberIngester;
 
-	public MemberIngestController(List<IngestValidator> validators, MemberIngester memberIngester) {
-		this.validators = validators;
+	public MemberIngestController(IngestValidator validator, MemberIngester memberIngester) {
+		this.validator = validator;
         this.memberIngester = memberIngester;
 	}
 
 	@Override
 	@PostMapping(value = "{collectionName}")
 	public ResponseEntity<Object> ingestLdesMember(@RequestBody Model ingestedModel, @PathVariable String collectionName) {
-		validators.forEach(ingestValidator -> ingestValidator.validate(ingestedModel, collectionName));
+		validator.validate(ingestedModel, collectionName);
 		HttpStatus statusCode = memberIngester.ingest(collectionName, ingestedModel) ? HttpStatus.CREATED : HttpStatus.OK;
 		return new ResponseEntity<>(statusCode);
 	}

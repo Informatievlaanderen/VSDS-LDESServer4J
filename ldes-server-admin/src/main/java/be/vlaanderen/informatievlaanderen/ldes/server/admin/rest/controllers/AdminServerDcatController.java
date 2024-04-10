@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import static org.apache.jena.riot.WebContent.contentTypeTurtle;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @Observed
@@ -36,7 +37,7 @@ public class AdminServerDcatController implements OpenApiServerDcatController {
 
 	@Override
 	@GetMapping
-	public ResponseEntity<Model> getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = "text/turtle") String language,
+	public ResponseEntity<Model> getDcat(@RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = contentTypeTurtle) String language,
 			HttpServletResponse response) {
 		setContentTypeHeader(language, response);
 		try {

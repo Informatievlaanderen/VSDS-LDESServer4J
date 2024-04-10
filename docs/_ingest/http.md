@@ -56,25 +56,41 @@ one or many members.
 
 Every member should conform to certain conditions, depending on the event stream on which they are ingested.
 
+### Named nodes
+
+Every named node is viewed as a member.
+Having a named node that is not intended as a member to be ingested on the collection can lead to several validation errors.
+Most commonly this will lead to a validation error stating the timestamp path and version-of path are missing, depending on the data itself.
+
+If by chance it conforms to the all following validation, it will be treated as any normal member.
+To prevent such cases, additional [shacl validation can be configured](../configuration/event-stream#configuring-a-shacl-shape) on the event stream.
+
 ### Named Graphs
 
 Named graphs are not supported.
-When a named graph is present in a member, the member is rejected.
+When a named graph is present, the model is rejected.
 
 ### Shared or Loose Blank Nodes
 
-All blank nodes should be part of exactly one member.
-When a blank node is present that is not part of a member or 2 members reference the same blank node, the ingested model is rejected.
+All blank nodes should be referenced by exactly 1 other subject.
+When a blank node is present that is not the object of a statement or the object of 2 or more statements with different subjects, the ingested model is rejected.
 
 This also means that the root node of every member should be a named node.
 
-It is still possible for a single member to reference the same blank node multiple times.
+It is still possible for a single subject to reference the same blank node multiple times.
 
 ### Timestamp and Version Of Path
 
 Every event stream defines the property where the timestamp and version of can be found on each member.
 If the event stream has version creation NOT enabled, these properties should be present on each member.
 If version creation is enabled, these properties should NOT be present on the members received.
+
+The timestamp defined on the timestamp path should be of the type `<http://www.w3.org/2001/XMLSchema#dateTime>`.
+The timestamp must have this datatype explicitly declared.
+ex. `<https://example.be/member/1> <http://www.w3.org/ns/prov#generatedAtTime> "1996-03-28T09:58:15.867Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .`
+
+The object defined on the versionOf path must be a uri. This uri should represent the state object of which the member is a version.
+ex. `<https://example.be/member/1> <http://purl.org/dc/terms/isVersionOf> <https://example.be/member> .`
 
 ### Bulk Ingestion
 

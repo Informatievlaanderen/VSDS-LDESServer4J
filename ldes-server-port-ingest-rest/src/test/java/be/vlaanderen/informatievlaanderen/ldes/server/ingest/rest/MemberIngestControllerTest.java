@@ -9,7 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberIngester;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters.IngestedModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestionRestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.MemberIdNotFoundException;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.nodesingestvalidator.NodesIngestValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.BlankNodesValidator;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ingestreportvalidator.PathsValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator.MemberIngestValidator;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -51,7 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest
 @ActiveProfiles("test")
 @ContextConfiguration(classes = {IngestedModelConverter.class, MemberIngestController.class,
-        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, NodesIngestValidator.class, MemberIngestValidator.class})
+        IngestionRestResponseEntityExceptionHandler.class, RdfModelConverter.class, MemberIngestValidator.class,
+        BlankNodesValidator.class, PathsValidator.class})
 class MemberIngestControllerTest {
 
     @Autowired
@@ -93,7 +95,7 @@ class MemberIngestControllerTest {
                         .contentType("application/n-quads")
                         .content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Only 1 member is allowed per ingest")));
+                .andExpect(content().string(containsString("Only 1 member is allowed per request on collection with version creation disabled")));
     }
 
     @Test
@@ -103,7 +105,7 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the timestamp path: http://www.w3.org/ns/prov#generatedAtTime exactly once.")));
+                .andExpect(content().string(containsString("Member must have exactly 1 statement with timestamp path: http://www.w3.org/ns/prov#generatedAtTime")));
         verifyNoInteractions(memberIngester);
     }
 
@@ -117,7 +119,7 @@ class MemberIngestControllerTest {
 
         mockMvc.perform(post("/mobility-hindrances").contentType("application/n-quads").content(ldesMemberBytes))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Member ingested on collection mobility-hindrances should contain the version of path: http://purl.org/dc/terms/isVersionOf exactly once.")));
+                .andExpect(content().string(containsString("Member must have exactly 1 statement with versionOf path: http://purl.org/dc/terms/isVersionOf")));
     }
 
     @Test
@@ -187,7 +189,7 @@ class MemberIngestControllerTest {
                     Arguments.of("x/ld-json-10", Lang.JSONLD10),
                     Arguments.of("text/rdf+n3", Lang.N3),
                     Arguments.of("application/trix", Lang.TRIX),
-                    Arguments.of("application/turtle", Lang.TURTLE),
+                    Arguments.of("text/turtle", Lang.TURTLE),
                     Arguments.of("text/trig", Lang.TRIG),
                     Arguments.of("application/rdf+protobuf", Lang.RDFPROTO),
                     Arguments.of("application/rdf+thrift", Lang.RDFTHRIFT));

@@ -21,7 +21,7 @@ An Event Stream config needs to contain a couple of items:
       ingest state objects.
       The default value of this object is `false` and the property can be omitted.
 
-    * For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
+    * For more info, visit the [Swagger API documentation.](./admin-api)
 
 ### Create version objects vs ingest version objects
 
@@ -70,7 +70,7 @@ the shape to validate and reason about the data they receive.
 
 Defining a shape can be done through the `/admin/api/eventstreams/{collectionName}/shape` endpoint.
 
-For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
+For more info, visit the [Swagger API documentation.](./admin-api)
 
 ### Example
 

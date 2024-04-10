@@ -38,15 +38,15 @@ public class AdminViewsRestController implements OpenApiAdminViewsRestController
 		binder.setValidator(viewValidator);
 	}
 
-	@GetMapping(value = "/eventstreams/{collectionName}/views", produces = {contentTypeJSONLD, contentTypeNQuads,
-			contentTypeTurtle})
+	@GetMapping(value = "/eventstreams/{collectionName}/views", produces = {contentTypeTurtle, contentTypeJSONLD,
+			contentTypeNQuads})
 	public List<ViewSpecification> getViews(@PathVariable String collectionName) {
 		return viewService.getViewsByCollectionName(collectionName);
 	}
 
 	@ResponseStatus(value = HttpStatus.CREATED)
-	@PostMapping(value = "/eventstreams/{collectionName}/views", consumes = {contentTypeJSONLD, contentTypeNQuads,
-			contentTypeTurtle})
+	@PostMapping(value = "/eventstreams/{collectionName}/views", consumes = {contentTypeTurtle, contentTypeJSONLD,
+			contentTypeNQuads})
 	public void createView(@PathVariable String collectionName,
 						   @RequestBody @Validated Model view) {
 		viewService.addView(viewConverter.viewFromModel(view, collectionName));
@@ -58,9 +58,9 @@ public class AdminViewsRestController implements OpenApiAdminViewsRestController
 		viewService.deleteViewByViewName(viewName);
 	}
 
-	@GetMapping(value = "/eventstreams/{collectionName}/views/{viewName}", produces = {contentTypeJSONLD,
-			contentTypeNQuads,
-			contentTypeTurtle})
+	@GetMapping(value = "/eventstreams/{collectionName}/views/{viewName}", produces = {contentTypeTurtle,
+			contentTypeJSONLD,
+			contentTypeNQuads})
 	public ViewSpecification getViewOfCollection(@PathVariable String collectionName,
 												 @PathVariable String viewName) {
 		return viewService.getViewByViewName(new ViewName(collectionName, viewName));

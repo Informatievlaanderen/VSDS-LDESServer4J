@@ -2,12 +2,17 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.converters;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.exception.IngestValidationException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import io.micrometer.observation.annotation.Observed;
+import org.apache.jena.graph.NodeFactory;
 import org.apache.jena.query.Dataset;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
+import org.apache.jena.shacl.ValidationReport;
+import org.apache.jena.shacl.validation.ReportEntry;
+import org.apache.jena.shacl.validation.Severity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpInputMessage;
@@ -21,6 +26,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.List;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.SHACL_SOURCE_CONSTRAINT_COMPONENT;
 import static java.util.Objects.requireNonNull;
 
 @Observed
@@ -52,13 +58,16 @@ public class IngestedModelConverter implements HttpMessageConverter<Model> {
 	public Model read(@NotNull Class<? extends Model> clazz, HttpInputMessage inputMessage)
 			throws IOException, HttpMessageNotReadableException {
 		final Lang lang =
-				rdfModelConverter.getLang(
+				rdfModelConverter.getLangOrDefault(
 						requireNonNull(inputMessage.getHeaders().getContentType()),
 						RdfFormatException.RdfFormatContext.INGEST
 				);
 		Dataset dataset = RDFParser.source(inputMessage.getBody()).context(rdfModelConverter.getContext()).lang(lang).toDataset();
 		if (dataset.listModelNames().hasNext()) {
-			throw new IngestValidationException("Member can not contain named graphs");
+			ValidationReport.Builder builder = ValidationReport.create();
+			dataset.listModelNames().forEachRemaining(namedNode -> builder.addReportEntry(getReportEntry(namedNode)));
+			ValidationReport report = builder.build();
+			throw new ShaclValidationException(RdfModelConverter.toString(report.getModel(), Lang.TURTLE), report.getModel());
 		}
 		return dataset.getDefaultModel();
 	}
@@ -67,5 +76,12 @@ public class IngestedModelConverter implements HttpMessageConverter<Model> {
 	public void write(@NotNull Model model, @Nullable MediaType contentType, @NotNull HttpOutputMessage outputMessage)
 			throws UnsupportedOperationException, HttpMessageNotWritableException {
 		throw new UnsupportedOperationException();
+	}
+
+	private ReportEntry getReportEntry(Resource focusNode) {
+		return ReportEntry.create().focusNode(focusNode.asNode())
+				.severity(Severity.Violation)
+				.sourceConstraintComponent(NodeFactory.createURI(SHACL_SOURCE_CONSTRAINT_COMPONENT))
+				.message("Member can not contain named graphs.");
 	}
 }

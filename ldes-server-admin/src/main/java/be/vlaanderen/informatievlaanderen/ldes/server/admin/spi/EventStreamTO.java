@@ -81,6 +81,6 @@ public class EventStreamTO {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(collection, timestampPath, versionOfPath, views, shacl, dcatDataset);
+		return Objects.hash(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, dcatDataset);
 	}
 }

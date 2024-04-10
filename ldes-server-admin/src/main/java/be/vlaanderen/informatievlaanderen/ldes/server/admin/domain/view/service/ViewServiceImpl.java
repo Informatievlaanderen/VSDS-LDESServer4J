@@ -110,6 +110,7 @@ public class ViewServiceImpl implements ViewService {
             throw new MissingResourceException(EVENT_STREAM_TYPE, viewName.getCollectionName());
         }
 
+        eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
         deleteAllViewsByViewName(List.of(viewName));
     }
 
@@ -118,7 +119,6 @@ public class ViewServiceImpl implements ViewService {
         viewNames.forEach(viewName -> {
             log.atInfo().log("START deleting view  {}", viewName.asString());
             viewRepository.deleteViewByViewName(viewName);
-            eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
             log.atInfo().log("FINISHED deleting view {}", viewName.asString());
         });
     }

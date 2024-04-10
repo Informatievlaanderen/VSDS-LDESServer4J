@@ -1,66 +1,72 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestMemberSequenceEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEntity;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Update;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
-import static org.springframework.data.mongodb.core.query.Query.query;
 
+@ExtendWith(MockitoExtension.class)
 class IngestMemberSequenceServiceTest {
 
-	private final MongoOperations mongoOperations = mock(MongoOperations.class);
-	private final IngestMemberSequenceService ingestMemberSequenceService = new IngestMemberSequenceService(
-			mongoOperations);
+	@Mock
+	private MemberEntityRepository memberEntityRepository;
+
+	@InjectMocks
+	private IngestMemberSequenceService ingestMemberSequenceService;
 
 	@Test
-	void test_memberSequenceEntityIsNotNull() {
-		IngestMemberSequenceEntity ingestMemberSequenceEntity = new IngestMemberSequenceEntity();
-		ingestMemberSequenceEntity.setId("collectionName");
-		ingestMemberSequenceEntity.setSeq(100);
-		when(mongoOperations.findAndModify(eq(query(where("_id").is("collectionName"))),
-				eq(new Update().inc("seq", 1)),
-				any(),
-				eq(IngestMemberSequenceEntity.class))).thenReturn(ingestMemberSequenceEntity);
-		long sequence = ingestMemberSequenceService.generateSequence("collectionName");
+	void whenSequenceExists_itIsIncrementedAndReturned() {
+		String existingCollection = "existing-collection";
+		EventStreamCreatedEvent existingCollectionEvent =
+				new EventStreamCreatedEvent(
+						new EventStream(existingCollection, null, null, false)
+				);
+		long sequence = 20L;
+		when(memberEntityRepository.findFirstByCollectionNameOrderBySequenceNrDesc(existingCollection))
+				.thenReturn(Optional.of(new MemberEntity("id", existingCollection, null, null, sequence, null, null)));
+		ingestMemberSequenceService.handleEventStreamCreated(existingCollectionEvent);
 
-		assertEquals(100, sequence);
+		String newCollection = "collection";
+		EventStreamCreatedEvent newCollectionEvent =
+				new EventStreamCreatedEvent(
+						new EventStream(newCollection, null, null, false)
+				);
+		ingestMemberSequenceService.handleEventStreamCreated(newCollectionEvent);
+
+		assertThat(ingestMemberSequenceService.generateNextSequence(existingCollection)).isEqualTo(sequence + 1);
+		assertThat(ingestMemberSequenceService.generateNextSequence(newCollection)).isEqualTo(1);
 	}
 
 	@Test
-	void test_memberSequenceEntityIsNull() {
-		long sequence = ingestMemberSequenceService.generateSequence("collectionName");
-
-		assertEquals(1, sequence);
+	void whenSequenceDoesNotExist_exceptionIsThrown() {
+		assertThatExceptionOfType(NullPointerException.class)
+				.isThrownBy(() -> ingestMemberSequenceService.generateNextSequence("fantasy"));
 	}
 
 	@Test
-	void when_MultipleLDESes_Then_getCorrectSequence() {
-		IngestMemberSequenceEntity ingestMemberSequenceEntity = new IngestMemberSequenceEntity();
-		ingestMemberSequenceEntity.setId("collectionName");
-		ingestMemberSequenceEntity.setSeq(100);
-		when(mongoOperations.findOne(query(where("_id").is("collectionName")),
-				IngestMemberSequenceEntity.class)).thenReturn(ingestMemberSequenceEntity);
-		IngestMemberSequenceEntity ingestMemberSequenceEntity2 = new IngestMemberSequenceEntity();
-		ingestMemberSequenceEntity2.setId("otherCollectionName");
-		ingestMemberSequenceEntity2.setSeq(150);
-		when(mongoOperations.findOne(query(where("_id").is("otherCollectionName")),
-				IngestMemberSequenceEntity.class)).thenReturn(ingestMemberSequenceEntity2);
-		when(mongoOperations.findAll(IngestMemberSequenceEntity.class))
-				.thenReturn(List.of(ingestMemberSequenceEntity, ingestMemberSequenceEntity2));
+	void whenSequenceIsRemoved_thenItCanNoLongerBeRetrieved() {
+		String collection = "collection";
+		EventStreamCreatedEvent newCollectionEvent =
+				new EventStreamCreatedEvent(
+						new EventStream(collection, null, null, false)
+				);
+		ingestMemberSequenceService.handleEventStreamCreated(newCollectionEvent);
 
-		assertEquals(250, ingestMemberSequenceService.getTotalSequence());
-		assertEquals(100, ingestMemberSequenceService.getSequenceForCollection("collectionName"));
-		assertEquals(150, ingestMemberSequenceService.getSequenceForCollection("otherCollectionName"));
+		assertThat(ingestMemberSequenceService.generateNextSequence(collection)).isEqualTo(1);
 
+		ingestMemberSequenceService.removeSequence(collection);
+		assertThatExceptionOfType(NullPointerException.class)
+				.isThrownBy(() -> ingestMemberSequenceService.generateNextSequence(collection));
 	}
-
 }

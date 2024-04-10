@@ -25,6 +25,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 	@ExceptionHandler(value = {MissingResourceException.class})
 	protected ResponseEntity<Object> handleMissingResourceException(
 			RuntimeException ex, WebRequest request) {
+		log.warn(ex.getMessage());
 		return handleException(ex, HttpStatus.NOT_FOUND, request);
 	}
 
@@ -32,6 +33,7 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 			IllegalArgumentException.class, MissingStatementException.class, DuplicateRetentionException.class})
 	protected ResponseEntity<Object> handleBadRequest(
 			RuntimeException ex, WebRequest request) {
+		log.warn(ex.getMessage());
 		return handleException(ex, HttpStatus.BAD_REQUEST, request);
 	}
 
@@ -41,24 +43,26 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		String validationReport = RDFWriter.source(ex.getValidationReportModel()).lang(Lang.TURTLE).asString();
 		var httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.valueOf(Lang.TURTLE.getHeaderString()));
+		log.warn(ex.getMessage());
 		return handleExceptionInternal(ex, validationReport, httpHeaders, HttpStatus.BAD_REQUEST, request);
 	}
 
 	@ExceptionHandler(value = {RdfFormatException.class, RelativeUrlException.class})
 	protected ResponseEntity<Object> handleUnsupportedMediaTypeException(
 			RuntimeException ex, WebRequest request) {
+		log.warn(ex.getMessage());
 		return handleException(ex, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
 	}
 
 	@ExceptionHandler(value = {Exception.class})
 	protected ResponseEntity<Object> fallbackHandleException(
 			RuntimeException ex, WebRequest request) {
+		log.error(ex.getMessage());
 		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 
 	private ResponseEntity<Object> handleException(
 			RuntimeException ex, HttpStatus status, WebRequest request) {
-		log.error(ex.getMessage());
 		String bodyOfResponse = ex.getMessage();
 		var httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.TEXT_PLAIN);

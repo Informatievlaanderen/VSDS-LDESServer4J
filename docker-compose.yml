@@ -20,11 +20,13 @@ services:
       - ldes-mongodb
   ldes-mongodb:
     container_name: ldes-mongodb
-    image: mongo
+    build:
+      context: ./docker-compose/mongo
     ports:
       - 27017:27017
     networks:
       - ldes
+    command: --replSet rs0
   pyroscope:
     image: grafana/pyroscope:latest
     ports:

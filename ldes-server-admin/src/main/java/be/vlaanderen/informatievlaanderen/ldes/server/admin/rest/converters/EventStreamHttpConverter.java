@@ -59,9 +59,9 @@ public class EventStreamHttpConverter implements HttpMessageConverter<EventStrea
 	public void write(@NotNull EventStreamTO eventStreamTO, MediaType contentType, HttpOutputMessage outputMessage)
 			throws IOException, HttpMessageNotWritableException {
 		Model eventStreamModel = eventStreamConverter.toModel(eventStreamTO);
-		Lang lang = rdfModelConverter.getLang(contentType, REST_ADMIN);
+		Lang lang = rdfModelConverter.getLangOrDefault(contentType, REST_ADMIN);
 		rdfModelConverter.checkLangForRelativeUrl(lang);
-		outputMessage.getHeaders().setContentType(contentType);
+		outputMessage.getHeaders().setContentType(MediaType.parseMediaType(lang.getHeaderString()));
 		RDFDataMgr.write(outputMessage.getBody(), eventStreamModel, lang);
 	}
 }
