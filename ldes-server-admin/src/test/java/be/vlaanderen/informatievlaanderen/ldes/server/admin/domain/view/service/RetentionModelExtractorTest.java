@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RetentionModelExtractorTest {
 	private final RetentionModelExtractor retentionModelExtractor = new RetentionModelExtractor();
@@ -46,10 +46,10 @@ class RetentionModelExtractorTest {
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
 			return Stream.of(
-					Arguments.of("viewconverter/retentionpolicies/timebased_retentionpolicy.ttl", 1, List.of(2)),
-					Arguments.of("viewconverter/retentionpolicies/versionbased_retentionpolicy.ttl", 1, List.of(2)),
-					Arguments.of("viewconverter/retentionpolicies/fictional_retentionpolicy.ttl", 1, List.of(6)),
-					Arguments.of("viewconverter/retentionpolicies/multiple_retentionpolicies.ttl", 2,
+					Arguments.of("retention/timebased_retentionpolicy.ttl", 1, List.of(2)),
+					Arguments.of("retention/versionbased_retentionpolicy.ttl", 1, List.of(2)),
+					Arguments.of("retention/fictional_retentionpolicy.ttl", 1, List.of(6)),
+					Arguments.of("retention/multiple_retentionpolicies.ttl", 2,
 							List.of(2, 2)));
 		}
 	}

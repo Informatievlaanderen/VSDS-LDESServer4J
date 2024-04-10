@@ -36,7 +36,7 @@ class ViewSpecificationConverterTest {
 		viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(),
 				new PrefixConstructor(HOST_NAME, false));
-		Model retentionModel = readModelFromFile("viewconverter/retentionpolicies/example_timebased.ttl");
+		Model retentionModel = readModelFromFile("retention/example_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(
@@ -44,7 +44,7 @@ class ViewSpecificationConverterTest {
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		view = new ViewSpecification(viewName, List.of(retentionModel), fragmentations, 100);
-		Model dcat = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		Model dcat = RDFParser.source("dcat/dataservice/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
 		view.setDcat(dcatView);
 	}
