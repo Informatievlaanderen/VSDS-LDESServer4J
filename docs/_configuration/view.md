@@ -17,7 +17,7 @@ A view config needs to have the following structure:
   * a `ldes:retentionPolicy` object that contains a set of retention policies.
   * a `tree:pageSize` object that marks how many members should be partitioned per fragment.
 
-For more info, visit the Swagger API endpoint configured in [the run guide.](../how-to-run)
+For more info, visit the [Swagger API documentation.](./admin-api)
 
 ### Fragmentations
 

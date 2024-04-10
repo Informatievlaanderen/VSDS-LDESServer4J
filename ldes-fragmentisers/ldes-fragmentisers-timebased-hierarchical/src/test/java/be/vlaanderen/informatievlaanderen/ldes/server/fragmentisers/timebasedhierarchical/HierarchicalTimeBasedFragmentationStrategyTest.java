@@ -36,9 +36,7 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 	private static Granularity GRANULARITY;
 	private HierarchicalTimeBasedFragmentationStrategy fragmentationStrategy;
 	private TimeBasedFragmentFinder fragmentFinder;
-	private TimeBasedConfig config;
 	private FragmentationStrategy decoratedFragmentationStrategy;
-	private FragmentRepository fragmentRepository;
 
 	@BeforeEach
 	void setUp() {
@@ -46,10 +44,10 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 		CHILD_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of(new FragmentPair("is", "child"))));
 		TIME = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
 		GRANULARITY = Granularity.SECOND;
-		config = new TimeBasedConfig(".*", "http://purl.org/dc/terms/created", GRANULARITY, false);
+		TimeBasedConfig config = new TimeBasedConfig(".*", "http://purl.org/dc/terms/created", GRANULARITY, false);
 		fragmentFinder = mock(TimeBasedFragmentFinder.class);
 		decoratedFragmentationStrategy = mock(FragmentationStrategy.class);
-		fragmentRepository = mock(FragmentRepository.class);
+		FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 		fragmentationStrategy = new HierarchicalTimeBasedFragmentationStrategy(decoratedFragmentationStrategy,
 				ObservationRegistry.create(), fragmentFinder, fragmentRepository, config);
 	}
@@ -87,4 +85,5 @@ class HierarchicalTimeBasedFragmentationStrategyTest {
 				times(1)).addMemberToFragment(eq(CHILD_FRAGMENT), any(),
 				any(), any(Observation.class));
 	}
+
 }
