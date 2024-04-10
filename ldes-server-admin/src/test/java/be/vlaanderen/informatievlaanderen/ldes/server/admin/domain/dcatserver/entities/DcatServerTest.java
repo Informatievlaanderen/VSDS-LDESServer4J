@@ -83,7 +83,7 @@ class DcatServerTest {
 	@Test
 	void should_ReturnNamedDcatStatements_when_GetStatementsWithBaseIsCalled() {
 		String host = "http://localhost.dev";
-		Model view1 = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		Model view1 = RDFParser.source("dcat/dataservice/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		Model view2 = ModelFactory.createDefaultModel();
 		DcatView dcatView1 = DcatView.from(new ViewName("col1", "view1"), view1);
 		DcatView dcatView2 = DcatView.from(new ViewName("col1", "view2"), view2);

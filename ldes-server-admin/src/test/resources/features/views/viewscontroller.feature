@@ -6,14 +6,14 @@ Feature: AdminViewsRestController
     Then I obtain an HTTP status <status>
     Examples:
       | fileName                                | status |
-      | views/view-without-retention.ttl        | 201    |
-      | views/view-1.ttl                        | 201    |
-      | views/view-with-duplicate-retention.ttl | 400    |
-      | views/view-with-two-diff-retention.ttl  | 201    |
+      | view/view-without-retention.ttl        | 201    |
+      | view/view.ttl                          | 201    |
+      | view/view-with-duplicate-retention.ttl | 400    |
+      | view/view-with-two-diff-retention.ttl  | 201    |
 
   Scenario: Add a view to a non-existing event stream
     Given an LDES server with an event stream
-    When I POST a view from file "views/view-1.ttl" to "/admin/api/v1/eventstreams/an-unique-and-non-existing-event-stream/views"
+    When I POST a view from file "view/view.ttl" to "/admin/api/v1/eventstreams/an-unique-and-non-existing-event-stream/views"
     Then I obtain an HTTP status 404
     And I check if there were no interactions with the db
 

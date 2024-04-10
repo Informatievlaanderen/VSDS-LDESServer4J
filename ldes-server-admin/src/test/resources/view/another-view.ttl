@@ -11,9 +11,9 @@ viewName:description
         tree:value "PT10M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
       ] ;
     tree:fragmentationStrategy ([
-      a                 tree:ExampleFragmentation ;
+      a     tree:ExampleFragmentation ;
       tree:property  "ldes:propertyPath"
     ]) .
 
-<http://localhost:8080/name1/view2>  a tree:Node ;
+server:view2 a tree:Node ;
         tree:viewDescription <http://localhost:8080/name1/view2/description> .

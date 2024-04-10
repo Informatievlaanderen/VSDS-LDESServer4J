@@ -35,7 +35,7 @@ class DcatDatasetValidatorTest {
 
 	@Test
 	void when_ValidModel_Then_Pass() {
-		Model dcat = RDFParser.source("dcat-dataset/valid.ttl").lang(Lang.TURTLE).toModel();
+		Model dcat = RDFParser.source("dcat/dataset/valid.ttl").lang(Lang.TURTLE).toModel();
 
 		assertThatNoException().isThrownBy(() -> validator.validate(dcat));
 	}
@@ -54,7 +54,7 @@ class DcatDatasetValidatorTest {
 		private final String validDcat;
 
 		InvalidArgumentsProvider() throws IOException {
-			validDcat = FileUtils.readFileToString(ResourceUtils.getFile("classpath:dcat-dataset/valid.ttl"),
+			validDcat = FileUtils.readFileToString(ResourceUtils.getFile("classpath:dcat/dataset/valid.ttl"),
 					StandardCharsets.UTF_8);
 		}
 

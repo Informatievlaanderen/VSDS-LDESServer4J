@@ -40,12 +40,12 @@ public class DcatViewRestControllerSteps extends SpringIntegrationTest {
 
 	@Given("I have a valid dcat dataservice")
 	public void iHaveAValidDcatDataservice() throws Exception {
-		turtleDataservice = readDataFromFile("dcat-view-valid.ttl");
+		turtleDataservice = readDataFromFile("dcat/dataservice/dcat-view-valid.ttl");
 	}
 
 	@Given("I have a invalid dcat dataservice")
 	public void iHaveAnInvalidDcatDataservice() throws Exception {
-		turtleDataservice = readDataFromFile("dcat-view-invalid.ttl");
+		turtleDataservice = readDataFromFile("dcat/dataservice/dcat-view-invalid.ttl");
 	}
 
 	@When("I POST this dataservice")

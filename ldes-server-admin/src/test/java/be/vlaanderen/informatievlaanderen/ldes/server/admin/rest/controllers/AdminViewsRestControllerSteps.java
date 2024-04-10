@@ -69,8 +69,8 @@ public class AdminViewsRestControllerSteps extends SpringIntegrationTest {
 
 	@And("the event stream contains two views")
 	public void theEventStreamContainsTwoViews() {
-		view1 = RDFDataMgr.loadModel("views/view-1.ttl");
-		view2 = RDFDataMgr.loadModel("views/view-2.ttl");
+		view1 = RDFDataMgr.loadModel("view/view.ttl");
+		view2 = RDFDataMgr.loadModel("view/another-view.ttl");
 
 		final FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");

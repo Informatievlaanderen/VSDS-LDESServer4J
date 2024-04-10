@@ -31,12 +31,12 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
 
 	@Given("I have a valid dcat dataset")
 	public void iHaveAValidDcatDataset() throws Exception {
-		datasetString = readDataFromFile("dataset-valid.ttl");
+		datasetString = readDataFromFile("dcat/dataset/valid.ttl");
 	}
 
 	@Given("I have a invalid dcat dataset")
 	public void iHaveAnInvalidDcatDataset() throws Exception {
-		datasetString = readDataFromFile("dataset-not-valid.ttl");
+		datasetString = readDataFromFile("dcat/dataset/not-valid.ttl");
 	}
 
 	@When("I POST this dataset")
