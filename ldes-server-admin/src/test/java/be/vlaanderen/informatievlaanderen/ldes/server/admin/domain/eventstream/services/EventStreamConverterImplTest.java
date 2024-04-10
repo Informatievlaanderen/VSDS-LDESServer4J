@@ -37,7 +37,7 @@ class EventStreamConverterImplTest {
 				new FragmentationConfigExtractor(), prefixConstructor);
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
 		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
-		shacl = readModelFromFile("eventstream/streams/server-shape.ttl");
+		shacl = readModelFromFile("shacl/collection-shape.ttl");
 		dataSetModel = readModelFromFile("dcat/dataset/valid.ttl");
 	}
 

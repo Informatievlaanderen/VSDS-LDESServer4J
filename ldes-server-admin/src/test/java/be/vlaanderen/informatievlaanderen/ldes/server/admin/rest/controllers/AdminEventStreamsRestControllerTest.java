@@ -98,7 +98,7 @@ class AdminEventStreamsRestControllerTest {
 
 		@Test
 		void when_StreamsPresent_then_StreamsAreReturned() throws Exception {
-			Model expectedEventStreamsModel = readModelFromFile("multiple-ldes.ttl");
+			Model expectedEventStreamsModel = readModelFromFile("eventstream/streams/multiple-ldes.ttl");
 
 			when(eventStreamService.retrieveAllEventStreams()).thenReturn(eventStreams);
 
@@ -115,7 +115,7 @@ class AdminEventStreamsRestControllerTest {
 	class GetSingleEventStream {
 		@Test
 		void when_StreamPresent_Then_StreamIsReturned() throws Exception {
-			Model model = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
+			Model model = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 			Model shape = readModelFromFile("shacl/server-shape.ttl");
 			EventStreamTO eventStream = new EventStreamTO("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf", false,
@@ -147,7 +147,7 @@ class AdminEventStreamsRestControllerTest {
 	class CreateEventStream {
 		@Test
 		void when_eventStreamModelIsPut_then_eventStreamIsSaved_and_status200IsExpected() throws Exception {
-			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
+			final Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 			final Model shape = readModelFromFile("shacl/server-shape.ttl");
 
 			EventStreamTO eventStreamTO = new EventStreamTO(
@@ -161,7 +161,7 @@ class AdminEventStreamsRestControllerTest {
 
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
 							.accept(contentTypeNQuads)
-							.content(readDataFromFile("eventstream/streams/ldes-1.ttl"))
+							.content(readDataFromFile("eventstream/streams/ldes.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isCreated())
 					.andExpect(content().contentType(contentTypeNQuads))
@@ -198,7 +198,7 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_ModelWithoutType_Then_ReturnedBadRequest() throws Exception {
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
-							.content(readDataFromFile("ldes-without-type.ttl"))
+							.content(readDataFromFile("eventstream/streams/ldes-without-type.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
 					.andExpect(content().contentType(contentTypeTurtle));
@@ -209,7 +209,7 @@ class AdminEventStreamsRestControllerTest {
 		@Test
 		void when_MalformedModelInRequestBody_Then_ReturnedBadRequest() throws Exception {
 			mockMvc.perform(post("/admin/api/v1/eventstreams")
-							.content(readDataFromFile("malformed-ldes.ttl"))
+							.content(readDataFromFile("eventstream/streams/malformed-ldes.ttl"))
 							.contentType(contentTypeTurtle))
 					.andExpect(status().isBadRequest())
 					.andExpect(content().contentType(MediaType.TEXT_PLAIN));

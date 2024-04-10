@@ -90,7 +90,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a valid list of event streams")
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
-		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
+		Model expectedModel = readModelFromFile("eventstream/streams/multiple-ldes.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
@@ -107,7 +107,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
-		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
+		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);

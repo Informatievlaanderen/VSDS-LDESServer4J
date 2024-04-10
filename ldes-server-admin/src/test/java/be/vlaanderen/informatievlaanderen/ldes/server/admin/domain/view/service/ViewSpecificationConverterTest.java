@@ -51,7 +51,7 @@ class ViewSpecificationConverterTest {
 
 	@Test
 	void when_ValidModel_Then_ReturnViewSpecification() throws URISyntaxException {
-		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
+		Model viewModel = readModelFromFile("view/view_valid.ttl");
 		ViewSpecification actualView = viewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME);
 		assertEquals(view, actualView);
 		assertTrue(compareList(view.getFragmentations().stream().map(FragmentationConfig::getConfig).toList(),
@@ -64,7 +64,7 @@ class ViewSpecificationConverterTest {
 
 	@Test
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
-		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
+		Model viewModel = readModelFromFile("view/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
 
 		assertThat(viewModel).matches(actualModel::isIsomorphicWith);
@@ -72,7 +72,7 @@ class ViewSpecificationConverterTest {
 
 	@Test
 	void when_MultipleFragmentationStrategies_Then_OrderIsKept() throws URISyntaxException {
-		Model expectedModel = readModelFromFile("viewconverter/view_multiple_fragmentations.ttl");
+		Model expectedModel = readModelFromFile("view/view_multiple_fragmentations.ttl");
 		ViewSpecification expectedViewSpecification = getExpectedViewSpecification();
 
 		ViewSpecification actualViewSpecification = viewSpecificationConverter.viewFromModel(expectedModel,

@@ -16,7 +16,7 @@ class ConfigFilterPredicateTest {
 	@Test
 	void when_StatementsContainAStatementWithSamePredicateAsConfigFilterPredicate_then_TheseAreExtracted()
 			throws URISyntaxException {
-		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
+		Model viewModel = readModelFromFile("view/view_valid.ttl");
 		ConfigFilterPredicate retentionFilter = new ConfigFilterPredicate(RETENTION_TYPE);
 		ConfigFilterPredicate fragmentationFilter = new ConfigFilterPredicate(FRAGMENTATION_OBJECT);
 

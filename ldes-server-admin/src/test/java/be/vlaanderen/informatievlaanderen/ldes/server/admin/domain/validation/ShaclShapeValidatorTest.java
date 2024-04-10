@@ -36,8 +36,8 @@ class ShaclShapeValidatorTest {
         }
 
         @Test
-        void when_ValidateValidShaclShape_thenReturnValid() throws URISyntaxException {
-            final Model validShaclShape = RDFDataMgr.loadModel("eventstream/streams/valid-shape.ttl");
+        void when_ValidateValidShaclShape_thenReturnValid() {
+            final Model validShaclShape = RDFDataMgr.loadModel("shacl/valid-shape.ttl");
 
             assertThatNoException().isThrownBy(() -> validator.validate(validShaclShape));
         }
@@ -56,14 +56,14 @@ class ShaclShapeValidatorTest {
 
         @Test
         void given_ValidViewWithHierarchicalFragmentation_when_validateView_then_ThrowNoException() {
-            final Model model = RDFDataMgr.loadModel("view-with-hierarchical-timebased-frag.ttl");
+            final Model model = RDFDataMgr.loadModel("view/view-with-hierarchical-timebased-frag.ttl");
 
             assertThatNoException().isThrownBy(() -> validator.validate(model));
         }
 
         @Test
         void given_InvalidViewWithHierarchicalFragmentation_when_validateView_then_ThrowNoException() throws IOException {
-            final File file = ResourceUtils.getFile("classpath:view-with-hierarchical-timebased-frag.ttl");
+            final File file = ResourceUtils.getFile("classpath:view/view-with-hierarchical-timebased-frag.ttl");
             final String modelString = FileUtils.readFileToString(file, StandardCharsets.UTF_8).replace("day", "invalid-value");
             final Model model = RDFParser.fromString(modelString).lang(Lang.TURTLE).toModel();
 
