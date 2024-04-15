@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.ResourceFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,6 +19,22 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberModelExtractorTest {
+
+    @Test
+    void test_ExtractNamedSubjects() {
+        final List<String> expectedNamedNodes = Stream.of("bart", "lisa", "homer")
+                .map("http://temporary.org#%s"::formatted)
+                .toList();
+        final Model model = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
+
+        final List<String> namedNodes = MemberModelExtractor.initialize(model)
+                .extractAllMemberModels()
+                .stream()
+                .map(MemberModel::getSubjectUri)
+                .toList();
+
+        assertThat(namedNodes).containsExactlyInAnyOrderElementsOf(expectedNamedNodes);
+    }
 
     @ParameterizedTest
     @ArgumentsSource(SingleMemberExtractionArgumentsProvider.class)
