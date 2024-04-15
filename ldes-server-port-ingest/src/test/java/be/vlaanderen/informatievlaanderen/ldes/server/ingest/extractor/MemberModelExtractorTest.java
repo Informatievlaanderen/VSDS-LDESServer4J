@@ -22,13 +22,16 @@ class MemberModelExtractorTest {
 
     @Test
     void test_ExtractNamedSubjects() {
-        final List<Resource> expectedNamedNodes = Stream.of("bart", "lisa", "homer")
+        final List<String> expectedNamedNodes = Stream.of("bart", "lisa", "homer")
                 .map("http://temporary.org#%s"::formatted)
-                .map(ResourceFactory::createResource)
                 .toList();
         final Model model = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
 
-        final List<Resource> namedNodes = MemberModelExtractor.initialize(model).getNamedSubjectNodes();
+        final List<String> namedNodes = MemberModelExtractor.initialize(model)
+                .extractAllMemberModels()
+                .stream()
+                .map(MemberModel::getSubjectUri)
+                .toList();
 
         assertThat(namedNodes).containsExactlyInAnyOrderElementsOf(expectedNamedNodes);
     }
