@@ -19,8 +19,9 @@ public class MemberModelExtractor {
     }
 
     public List<MemberModel> extractAllMemberModels() {
-        return getNamedSubjectNodes().stream()
-                .map(subject -> new MemberModel(subject.getURI(), extractMemberModel(subject)))
+        return model.listSubjects()
+                .filterDrop(RDFNode::isAnon)
+                .mapWith(subject -> new MemberModel(subject.getURI(), extractMemberModel(subject)))
                 .toList();
     }
 
@@ -36,13 +37,6 @@ public class MemberModelExtractor {
             }
         });
         return member;
-    }
-
-    public List<Resource> getNamedSubjectNodes() {
-        return model.listSubjects().toList()
-                .stream()
-                .filter(subject -> !subject.isAnon())
-                .toList();
     }
 
     private boolean statementBelongsToSubject(RDFNode subject, Statement statement) {

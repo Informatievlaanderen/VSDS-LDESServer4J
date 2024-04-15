@@ -51,7 +51,9 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 
 	@Override
 	public void insertAll(List<MemberProperties> memberProperties) {
-		final List<MemberPropertiesEntity> entities = memberProperties.stream()
+		final List<MemberPropertiesEntity> entities = memberProperties
+				.stream()
+				.parallel()
 				.map(memberPropertiesEntityMapper::toMemberPropertiesEntity)
 				.toList();
 		mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, MemberPropertiesEntity.class)

@@ -20,19 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberModelExtractorTest {
 
-    @Test
-    void test_ExtractNamedSubjects() {
-        final List<Resource> expectedNamedNodes = Stream.of("bart", "lisa", "homer")
-                .map("http://temporary.org#%s"::formatted)
-                .map(ResourceFactory::createResource)
-                .toList();
-        final Model model = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
-
-        final List<Resource> namedNodes = MemberModelExtractor.initialize(model).getNamedSubjectNodes();
-
-        assertThat(namedNodes).containsExactlyInAnyOrderElementsOf(expectedNamedNodes);
-    }
-
     @ParameterizedTest
     @ArgumentsSource(SingleMemberExtractionArgumentsProvider.class)
     void test_extractModel(String expectedModelFileName, String modelToExtractFileName, String subjectUri) {
