@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import org.apache.jena.datatypes.TypeMapper;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Property;
@@ -59,4 +60,9 @@ public class TreeRelationResponse {
 		return objectContent != null && !objectContent.isEmpty();
 	}
 
+	public static TreeRelationResponse fromRelation(TreeRelation relation, String prefix) {
+		return new TreeRelationResponse(relation.treePath(),
+				prefix + relation.treeNode().asEncodedFragmentId(),
+				relation.treeValue(), relation.treeValueType(), relation.relation());
+	}
 }

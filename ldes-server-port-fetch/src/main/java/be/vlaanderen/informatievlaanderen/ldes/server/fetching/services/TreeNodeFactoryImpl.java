@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
@@ -11,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Component
 public class TreeNodeFactoryImpl implements TreeNodeFactory {
@@ -33,13 +35,12 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.orElseThrow(
 						() -> new MissingResourceException("fragment", treeNodeId.asEncodedFragmentId()));
 
-		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId());
+		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId()).toList();
 		List<Member> members = memberFetcher
-				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
+				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList()).toList();
 
 		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
 				members, collectionName, fragment.getNextUpdateTs());
 	}
-
 }

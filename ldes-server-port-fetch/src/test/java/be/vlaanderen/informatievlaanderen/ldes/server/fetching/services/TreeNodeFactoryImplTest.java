@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -59,8 +60,8 @@ class TreeNodeFactoryImplTest {
 		when(fragmentRepository.retrieveFragment(TREE_NODE_ID)).thenReturn(Optional.of(fragment));
 		Member member = new Member("member", null);
 		when(allocationRepository.getMemberAllocationsByFragmentId(TREE_NODE_ID.asDecodedFragmentId()))
-				.thenReturn(List.of(new MemberAllocation("id", "", "", "", "member")));
-		when(memberFetcher.fetchAllByIds(List.of("member"))).thenReturn(List.of(member));
+				.thenReturn(Stream.of(new MemberAllocation("id", "", "", "", "member")));
+		when(memberFetcher.fetchAllByIds(List.of("member"))).thenReturn(Stream.of(member));
 
 		TreeNode treeNode = treeNodeFactory.getTreeNode(TREE_NODE_ID, HOSTNAME, COLLECTION_NAME);
 

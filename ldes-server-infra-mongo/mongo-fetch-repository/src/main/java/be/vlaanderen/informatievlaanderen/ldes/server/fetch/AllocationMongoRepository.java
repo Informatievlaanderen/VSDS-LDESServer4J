@@ -54,11 +54,10 @@ public class AllocationMongoRepository implements AllocationRepository {
 		repository.deleteByMemberIdAndCollectionNameAndViewName(memberId, collectionName, viewName);
 	}
 
-	public List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId) {
+	public Stream<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId) {
 		return repository.findAllByFragmentId(fragmentId)
 				.stream()
-				.map(mapper::toMemberAllocation)
-				.toList();
+				.map(mapper::toMemberAllocation);
 	}
 
 	@Override

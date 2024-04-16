@@ -14,7 +14,7 @@ public interface MemberRepository {
 
 	Optional<Member> findById(String id);
 
-	List<Member> findAllByIds(List<String> memberIds);
+	Stream<Member> findAllByIds(List<String> memberIds);
 
 	void deleteMembersByCollection(String collectionName);
 
