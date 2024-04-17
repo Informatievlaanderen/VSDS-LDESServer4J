@@ -187,8 +187,7 @@ Here is an explanation provided for all the possibilities on how to tweak and co
 > **Note** ***: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
 > annotation `@Scheduled` adds a 6th parameter to support seconds. The cron schedules are in timezone 'UTC'.
 >
-> More information about this can be found in
-> the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+> More information about this can be found in the [spring documentation]
 
 > **Note** ****: When using the swagger API with separate port bindings, the swagger API will always be available under
 > the admin port.
@@ -221,3 +220,5 @@ networks:
   ldes:
     name: quick_start_network
 ````
+
+[spring documentation]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html
