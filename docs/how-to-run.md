@@ -53,32 +53,25 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   <tr><th>Property</th><th>Description</th><th>Required</th><th>Default value</th></tr>
 </thead>
 <tbody>
-  <tr><td colspan="4"><b>Open-API</b></td></tr>
-  <tr>
-    <td>springdoc.api-docs.enabled</td>
-    <td>This boolean indicates whether Open API documentation is enabld. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
-    <td>No</td>
-    <td>true</td>
-  </tr>
+  <tr><td colspan="4"><b>API endpoints documentation</b></td></tr>
   <tr>
     <td>springdoc.api-docs.path</td>
-    <td>When enabled, an url* needs to be configured that points to the Open API documentation. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
+    <td>The url* that will point to the Open API documentation. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
     <td>No</td>
-  </tr>
-  <tr><td colspan="4"><b>Swagger UI</b></td></tr>
-  <tr>
-    <td>springdoc.swagger-ui.enabled</td>
-    <td>This boolean indicates whether Swagger API is enabled. This can be used to easily configure your Streams. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
-    <td>No</td>
-    <td></td>
   </tr>
   <tr>
     <td>springdoc.swagger-ui.path</td>
-    <td>When enabled, an url* needs to be configured that points to the Swagger documentation. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
+    <td>The url* that will point to the Swagger documentation. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
     <td>No</td>
     <td>true</td>
   </tr>
   <tr><td colspan="4"><b>URL Configuration</b></td></tr>
+  <tr>
+    <td>server.address</td>
+    <td>This is the url that will be used by the server application to bind to. This is especially useful when exposing actuator endpoints publicly. However, it must be known if the address cannot be found or is unavailable, the application will be unable to start.</td>
+    <td>No</td>
+    <td></td>
+  </tr>
   <tr>
     <td>ldes-server.host-name</td>
     <td>This is the url that will be used throughout the fragment names. This should therefor point to a resolvable url.</td>
@@ -195,10 +188,10 @@ Here is an explanation provided for all the possibilities on how to tweak and co
 > annotation `@Scheduled` adds a 6th parameter to support seconds. The cron schedules are in timezone 'UTC'.
 >
 > More information about this can be found in
->
-the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+> the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
 
-> **Note** ****: When using the swagger API with separate port bindings, the swagger API will always be available under the admin port.
+> **Note** ****: When using the swagger API with separate port bindings, the swagger API will always be available under
+> the admin port.
 
 ## Docker Compose
 
