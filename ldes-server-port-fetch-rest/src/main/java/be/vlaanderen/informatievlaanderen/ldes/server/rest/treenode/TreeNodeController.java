@@ -69,7 +69,7 @@ public class TreeNodeController/* implements OpenApiTreeNodeController */{
 		TreeNodeStreamConverterImpl converter = new TreeNodeStreamConverterImpl(collectionName,
 				new PrefixConstructor("", false), treeNode.getFragmentId());
 //		String contentTypeString = getContentTypeHeader(language);
-		MediaType contentType = MediaType.APPLICATION_JSON;
+		MediaType contentType = MediaType.parseMediaType(Lang.RDFPROTO.getHeaderString());
 
 		executor.submit(() -> {
 			try {
