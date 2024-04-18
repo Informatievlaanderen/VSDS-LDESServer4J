@@ -30,7 +30,14 @@ public class MemberFetcherImpl implements MemberFetcher {
                 .map(ingestMember -> new Member(
                         ingestMember.getId(),
                         versionObjectCreatorMap.get(ingestMember.getCollectionName()).createFromMember(ingestMember)
-                ));
+                )).peek(a-> {
+                    try {
+                        Thread.sleep(1500);
+                        System.out.println(a.getMemberIdWithoutPrefix());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     @EventListener

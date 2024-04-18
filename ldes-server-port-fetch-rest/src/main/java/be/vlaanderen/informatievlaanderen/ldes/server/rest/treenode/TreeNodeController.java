@@ -11,8 +11,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.TreeNode
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.exceptions.ConnectionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeStreamConverterImpl;
 import io.micrometer.observation.annotation.Observed;
+import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -20,10 +22,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,8 +37,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 
 @Observed
 @RestController
-public class TreeNodeController/* implements OpenApiTreeNodeController*/ {
-
+public class TreeNodeController/* implements OpenApiTreeNodeController */{
 	private final RestConfig restConfig;
 	private final TreeNodeFetcher treeNodeFetcher;
 	private final StreamingTreeNodeFactoryImpl streamingTreeNodeFactory;
@@ -50,8 +53,8 @@ public class TreeNodeController/* implements OpenApiTreeNodeController*/ {
 
 //	@Override
 	@CrossOrigin(origins = "*", allowedHeaders = "")
-	@GetMapping(value = "{collectionname}/{view}")
-	public ResponseEntity<ResponseBodyEmitter> retrieveLdesFragmenta(@PathVariable("view") String view,
+	@GetMapping(value = "{collectionname}/{view}", produces = { MediaType.TEXT_EVENT_STREAM_VALUE })
+	public ResponseEntity<ResponseBodyEmitter> retrieveLdesFragmentStreaming(@PathVariable("view") String view,
 														 @RequestParam Map<String, String> requestParameters,
 														 @RequestHeader(value = HttpHeaders.ACCEPT, defaultValue = DEFAULT_RDF_MEDIA_TYPE) String language,
 														 @PathVariable("collectionname") String collectionName) {
@@ -59,45 +62,49 @@ public class TreeNodeController/* implements OpenApiTreeNodeController*/ {
 
 		ExecutorService executor
 				= Executors.newCachedThreadPool();
-		ResponseBodyEmitter emitter = new ResponseBodyEmitter();
+		SseEmitter emitter = new SseEmitter(100000000000L);
 
 		TreeNode treeNode = getFragmentWithoutMembers(viewName, requestParameters);
 
 		TreeNodeStreamConverterImpl converter = new TreeNodeStreamConverterImpl(collectionName,
 				new PrefixConstructor("", false), treeNode.getFragmentId());
-		String contentTypeString = getContentTypeHeader(language);
-		MediaType contentType = MediaType.parseMediaType(contentTypeString);
+//		String contentTypeString = getContentTypeHeader(language);
+		MediaType contentType = MediaType.APPLICATION_JSON;
 
-		executor.execute(() -> {
-
-
-
-
+		executor.submit(() -> {
 			try {
 				emitter.send(converter.getMetaDataStatements(treeNode), contentType);
 				streamingTreeNodeFactory.getMembersOfFragment(treeNode.getFragmentId()).map(converter::getMemberStatements).forEach(model -> {
-                    try {
-                        emitter.send(model, contentType);
-                    } catch (IOException exception) {
-						log.error("Error while sending LDES fragment: {}", exception.getMessage());
+					try {
+						emitter.send(model, contentType);
+
+					} catch (IOException exception) {
+						log.error("Error while sending LDES member: {}", exception.getMessage());
 						emitter.completeWithError(exception);
-                    }
-                });
+					}
+				});
 
 				emitter.complete();
-			} catch (IOException exception) {
-				log.error("Error while sending LDES fragment: {}", exception.getMessage());
-				emitter.completeWithError(exception);
+			} catch (Exception exception) {
+				String message = String.format("Error while sending LDES fragment: %s", exception.getMessage());
+				log.error(message);
+                try {
+                    emitter.send(SseEmitter.event().data(message).name("error"));
+                } catch (IOException e) {
+                    throw new ConnectionException("Could not send previous error message to client", e);
+                }
+                emitter.completeWithError(exception);
 			}
+
 		});
 
 
 		return ResponseEntity
 				.ok()
-				.header(CONTENT_TYPE, contentTypeString)
+				.header(CONTENT_TYPE, MediaType.TEXT_EVENT_STREAM_VALUE)
 				.header(HttpHeaders.CONTENT_DISPOSITION, RestConfig.INLINE)
 				.header(CACHE_CONTROL, getCacheControlHeader(treeNode))
-				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
+//				.eTag(cachingStrategy.generateCacheIdentifier(treeNode, language))
 				.body(emitter);
 	}
 
