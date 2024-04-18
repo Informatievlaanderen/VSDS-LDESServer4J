@@ -158,7 +158,7 @@ class DcatServerServiceImplTest {
 		}
 
 		private Optional<DcatServer> createServer() {
-			Model server = RDFParser.source("dcat/server.ttl").lang(Lang.TURTLE).build().toModel();
+			Model server = RDFParser.source("dcat/catalog/server.ttl").lang(Lang.TURTLE).build().toModel();
 			return Optional.of(new DcatServer(ID, server));
 		}
 
@@ -170,24 +170,24 @@ class DcatServerServiceImplTest {
 		}
 
 		private List<DcatDataset> createDatasets() {
-			Model parcels = RDFParser.source("dcat/parcels.ttl").lang(Lang.TURTLE).build().toModel();
+			Model parcels = RDFParser.source("dcat/dataset/parcels.ttl").lang(Lang.TURTLE).build().toModel();
 			DcatDataset parcelDataset = new DcatDataset(COLLECTION_PARCELS, parcels);
 
-			Model buildings = RDFParser.source("dcat/buildings.ttl").lang(Lang.TURTLE).build().toModel();
+			Model buildings = RDFParser.source("dcat/dataset/buildings.ttl").lang(Lang.TURTLE).build().toModel();
 			DcatDataset buildingDataset = new DcatDataset(COLLECTION_BUILDINGS, buildings);
 			return List.of(parcelDataset, buildingDataset);
 		}
 
 		private List<DcatView> createDcatParcelViews() {
-			Model byPage = RDFParser.source("dcat/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
-			Model byTime = RDFParser.source("dcat/view-by-geospatial.ttl").lang(Lang.TURTLE).build().toModel();
+			Model byPage = RDFParser.source("dcat/dataservice/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
+			Model byTime = RDFParser.source("dcat/dataservice/view-by-geospatial.ttl").lang(Lang.TURTLE).build().toModel();
 			return List.of(
 					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_PAGE), byPage),
 					DcatView.from(new ViewName(COLLECTION_PARCELS, VIEW_BY_TIME), byTime));
 		}
 
 		private List<DcatView> createDcatBuildingViews() {
-			Model byPage = RDFParser.source("dcat/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
+			Model byPage = RDFParser.source("dcat/dataservice/view-by-page.ttl").lang(Lang.TURTLE).build().toModel();
 			return List.of(DcatView.from(new ViewName(COLLECTION_BUILDINGS, VIEW_BY_PAGE), byPage));
 		}
 

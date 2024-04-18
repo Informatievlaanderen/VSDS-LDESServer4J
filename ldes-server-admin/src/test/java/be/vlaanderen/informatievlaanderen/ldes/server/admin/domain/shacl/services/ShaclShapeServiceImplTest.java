@@ -45,7 +45,7 @@ class ShaclShapeServiceImplTest {
 	class RetrieveShaclShape {
 		@Test
 		void when_collectionExists_and_hasShapeConfigured_then_retrieveShape() throws URISyntaxException {
-			final Model shape = readModelFromFile("eventstream/streams/example-shape.ttl");
+			final Model shape = readModelFromFile("shacl/collection-shape.ttl");
 			when(shaclShapeRepository.retrieveShaclShape(COLLECTION_NAME_1))
 					.thenReturn(Optional.of(new ShaclShape(COLLECTION_NAME_1, shape)));
 
@@ -85,7 +85,7 @@ class ShaclShapeServiceImplTest {
 	class UpdateShaclShape {
 		@Test
 		void when_collectionExists_and_updateShape_then_expectUpdatedShacl() throws URISyntaxException {
-			final Model newShape = readModelFromFile("eventstream/streams/example-shape.ttl");
+			final Model newShape = readModelFromFile("shacl/collection-shape.ttl");
 			final ShaclShape shaclShape = new ShaclShape(COLLECTION_NAME_1, newShape);
 
 			ShaclShape updateShaclShape = service.updateShaclShape(shaclShape);

@@ -45,7 +45,7 @@ class DcatViewTest {
 	void should_ReturnNamedDcatStatements_when_GetStatementsWithBaseIsCalled() {
 		final int nrOfAdditionalDcatStatements = 6; // servesDataset, 2 x endpointURL + identifier + 2 x endpointDescription
 		final String host = "http://localhost.dev";
-		final Model anon = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		final Model anon = RDFParser.source("dcat/dataservice/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		final Resource iri = ResourceFactory.createResource(host + "/" + COLLECTION_NAME + "/" + VIEW + "/description");
 
 		final DcatView dcatView = DcatView.from(VIEW_NAME, anon);

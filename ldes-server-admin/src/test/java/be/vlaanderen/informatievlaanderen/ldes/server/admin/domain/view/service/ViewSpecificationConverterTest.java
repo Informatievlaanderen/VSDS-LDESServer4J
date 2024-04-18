@@ -36,7 +36,7 @@ class ViewSpecificationConverterTest {
 		viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
 				new FragmentationConfigExtractor(),
 				new PrefixConstructor(HOST_NAME, false));
-		Model retentionModel = readModelFromFile("viewconverter/retentionpolicies/example_timebased.ttl");
+		Model retentionModel = readModelFromFile("retention/example_timebased.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(
@@ -44,14 +44,14 @@ class ViewSpecificationConverterTest {
 		List<FragmentationConfig> fragmentations = List.of(fragmentationConfig);
 		ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 		view = new ViewSpecification(viewName, List.of(retentionModel), fragmentations, 100);
-		Model dcat = RDFParser.source("viewconverter/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
+		Model dcat = RDFParser.source("dcat/dataservice/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 		DcatView dcatView = DcatView.from(viewName, dcat);
 		view.setDcat(dcatView);
 	}
 
 	@Test
 	void when_ValidModel_Then_ReturnViewSpecification() throws URISyntaxException {
-		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
+		Model viewModel = readModelFromFile("view/view_valid.ttl");
 		ViewSpecification actualView = viewSpecificationConverter.viewFromModel(viewModel, COLLECTION_NAME);
 		assertEquals(view, actualView);
 		assertTrue(compareList(view.getFragmentations().stream().map(FragmentationConfig::getConfig).toList(),
@@ -64,7 +64,7 @@ class ViewSpecificationConverterTest {
 
 	@Test
 	void when_ViewSpecification_Then_ReturnModel() throws URISyntaxException {
-		Model viewModel = readModelFromFile("viewconverter/view_valid.ttl");
+		Model viewModel = readModelFromFile("view/view_valid.ttl");
 		Model actualModel = viewSpecificationConverter.modelFromView(view);
 
 		assertThat(viewModel).matches(actualModel::isIsomorphicWith);
@@ -72,7 +72,7 @@ class ViewSpecificationConverterTest {
 
 	@Test
 	void when_MultipleFragmentationStrategies_Then_OrderIsKept() throws URISyntaxException {
-		Model expectedModel = readModelFromFile("viewconverter/view_multiple_fragmentations.ttl");
+		Model expectedModel = readModelFromFile("view/view_multiple_fragmentations.ttl");
 		ViewSpecification expectedViewSpecification = getExpectedViewSpecification();
 
 		ViewSpecification actualViewSpecification = viewSpecificationConverter.viewFromModel(expectedModel,

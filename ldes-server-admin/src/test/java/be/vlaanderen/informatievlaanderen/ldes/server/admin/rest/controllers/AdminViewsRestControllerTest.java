@@ -69,9 +69,9 @@ class AdminViewsRestControllerTest {
 
 	@Test
 	void when_StreamAndViewsArePresent_Then_ViewsAreReturned() throws Exception {
-		Model expectedViewModel1 = RDFDataMgr.loadModel("views/view-1.ttl");
+		Model expectedViewModel1 = RDFDataMgr.loadModel("view/view.ttl");
 		ViewSpecification view1 = converter.viewFromModel(expectedViewModel1, COLLECTION_NAME);
-		Model expectedViewModel2 = RDFDataMgr.loadModel("views/view-2.ttl");
+		Model expectedViewModel2 = RDFDataMgr.loadModel("view/another-view.ttl");
 		ViewSpecification view2 = converter.viewFromModel(expectedViewModel2, COLLECTION_NAME);
 		when(viewService.getViewsByCollectionName(COLLECTION_NAME)).thenReturn(List.of(view1, view2));
 
@@ -84,7 +84,7 @@ class AdminViewsRestControllerTest {
 
 	@Test
 	void when_StreamAndViewArePresent_Then_ViewIsReturned() throws Exception {
-		Model expectedViewModel = RDFDataMgr.loadModel("views/view-1.ttl");
+		Model expectedViewModel = RDFDataMgr.loadModel("view/view.ttl");
 		ViewSpecification view = converter.viewFromModel(expectedViewModel, COLLECTION_NAME);
 		when(viewService.getViewByViewName(new ViewName(COLLECTION_NAME, VIEW_NAME))).thenReturn(view);
 
@@ -110,11 +110,11 @@ class AdminViewsRestControllerTest {
 
 	@Test
 	void given_ValidView_when_PostView_then_Return201() throws Exception {
-		Model expectedViewModel = RDFDataMgr.loadModel("views/view-1.ttl");
+		Model expectedViewModel = RDFDataMgr.loadModel("view/view.ttl");
 		ViewSpecification view = converter.viewFromModel(expectedViewModel, COLLECTION_NAME);
 
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
-						.content(readDataFromFile("views/view-1.ttl"))
+						.content(readDataFromFile("view/view.ttl"))
 						.contentType(contentTypeTurtle))
 				.andExpect(status().isCreated())
 				.andExpect(content().bytes(new byte[]{}));
@@ -123,7 +123,7 @@ class AdminViewsRestControllerTest {
 
 	@Test
 	void given_ViewWithDuplicateRetentionPolicy_when_PostView_then_Return400() throws Exception {
-		Model viewModel = RDFDataMgr.loadModel("views/view-with-duplicate-retention.ttl");
+		Model viewModel = RDFDataMgr.loadModel("view/view-with-duplicate-retention.ttl");
 		ViewSpecification view = converter.viewFromModel(viewModel, COLLECTION_NAME);
 
 		doThrow(new DuplicateRetentionException()).when(viewService).addView(view);
@@ -139,7 +139,7 @@ class AdminViewsRestControllerTest {
 	@Test
 	void when_PostView_then_ViewIsValidated() throws Exception {
 		mockMvc.perform(post("/admin/api/v1/eventstreams/{collectionName}/views", COLLECTION_NAME)
-				.content(readDataFromFile("views/view-1.ttl"))
+				.content(readDataFromFile("view/view.ttl"))
 				.contentType(contentTypeTurtle));
 		verify(validator).validate(any(), any());
 	}

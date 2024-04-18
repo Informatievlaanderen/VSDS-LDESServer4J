@@ -36,7 +36,7 @@ class DcatViewValidatorTest {
 
 	@Test
 	void should_NotThrowAnything_when_Valid() {
-		final Model model = RDFParser.source("validation/valid-dcat-service.ttl").lang(Lang.TURTLE).build().toModel();
+		final Model model = RDFParser.source("dcat/dataservice/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
 
 		assertThatNoException().isThrownBy(() -> validator.validate(model));
 	}
@@ -101,7 +101,7 @@ class DcatViewValidatorTest {
 		}
 
 		private String readDcatFromFile() throws IOException {
-			File file = ResourceUtils.getFile("classpath:validation/valid-dcat-service.ttl");
+			File file = ResourceUtils.getFile("classpath:dcat/dataservice/dcat-view-valid.ttl");
 			return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 		}
 

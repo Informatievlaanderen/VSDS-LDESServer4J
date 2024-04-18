@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.mongock.confi
 import io.mongock.runner.core.executor.MongockRunner;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,7 @@ public class MongockRunnerExecutor {
 	}
 
 	@EventListener(ApplicationReadyEvent.class)
+	@Order(1)
 	public void execute() {
 		if (applicationRunner.isEnabled()) {
 			applicationRunner.execute();

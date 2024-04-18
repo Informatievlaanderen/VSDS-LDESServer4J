@@ -3,9 +3,9 @@
 @prefix foaf:  <http://xmlns.com/foaf/0.1/> .
 @prefix org:   <http://www.w3.org/ns/org#> .
 @prefix legal: <http://www.w3.org/ns/legal#> .
-@prefix m8g:   <http://data.europa.eu/m8g/>
-@prefix locn:  <http://www.w3.org/ns/locn#>
-@prefix skos:  <http://www.w3.org/2004/02/skos/core#>
+@prefix m8g:   <http://data.europa.eu/m8g/> .
+@prefix locn:  <http://www.w3.org/ns/locn#> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 
 [] a dcat:DataService ;
     dct:title "My geo-spatial view"@en ;

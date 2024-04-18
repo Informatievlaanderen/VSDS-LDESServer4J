@@ -62,7 +62,7 @@ class DcatViewsRestControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(readTurtleFromFile("dcat-view-valid.ttl")))
+					.content(writeToTurtle(readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl")))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
 
@@ -71,7 +71,7 @@ class DcatViewsRestControllerTest {
 
 		@Test
 		void should_Return201_when_CreatedSuccessfully() throws Exception {
-			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
+			Model dcat = readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl");
 			mockMvc.perform(post(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(dcat))
 					.contentType(Lang.TURTLE.getHeaderString()))
@@ -91,7 +91,7 @@ class DcatViewsRestControllerTest {
 			doThrow(IllegalArgumentException.class).when(validator).validate(any(), any());
 
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
-					.content(writeToTurtle(readTurtleFromFile("dcat-view-valid.ttl")))
+					.content(writeToTurtle(readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl")))
 					.contentType(Lang.TURTLE.getHeaderString()))
 					.andExpect(status().isBadRequest());
 
@@ -100,7 +100,7 @@ class DcatViewsRestControllerTest {
 
 		@Test
 		void should_Return200_when_UpdatedSuccessfully() throws Exception {
-			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
+			Model dcat = readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl");
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(dcat))
 					.contentType(Lang.TURTLE.getHeaderString()))
@@ -114,7 +114,7 @@ class DcatViewsRestControllerTest {
 		void should_Return404_when_ResourceNotFound() throws Exception {
 			doThrow(MissingResourceException.class).when(dcatViewService).update(any(), any());
 
-			Model dcat = readTurtleFromFile("dcat-view-valid.ttl");
+			Model dcat = readTurtleFromFile("dcat/dataservice/dcat-view-valid.ttl");
 			mockMvc.perform(put(BASE_URL, COLLECTION_NAME, VIEW_NAME)
 					.content(writeToTurtle(dcat))
 					.contentType(Lang.TURTLE.getHeaderString()))

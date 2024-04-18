@@ -186,11 +186,11 @@ class AdminDcatServerControllerTest {
 	}
 
 	private Model readModelFromFile() {
-		return RDFParser.source("dcat/valid-server-dcat.ttl").lang(Lang.TURTLE).toModel();
+		return RDFParser.source("dcat/catalog/valid-server-dcat.ttl").lang(Lang.TURTLE).toModel();
 	}
 
 	private String readDataFromFile() throws IOException {
-		final File file = ResourceUtils.getFile("classpath:dcat/valid-server-dcat.ttl");
+		final File file = ResourceUtils.getFile("classpath:dcat/catalog/valid-server-dcat.ttl");
 		return FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 	}
 

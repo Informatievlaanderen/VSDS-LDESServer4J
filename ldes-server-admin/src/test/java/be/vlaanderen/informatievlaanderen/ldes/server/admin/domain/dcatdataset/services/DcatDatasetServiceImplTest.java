@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DcatDatasetServiceImplTest {
 	private static final String DATASET_ID = "id";
-	private static final String MODEL_FILE_PATH = "dcat-dataset/valid.ttl";
+	private static final String MODEL_FILE_PATH = "dcat/dataset/valid.ttl";
 	private DcatDataset dataset;
 
 	private DcatDatasetServiceImpl datasetService;

@@ -50,8 +50,8 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 		final EventStream eventStream2 = new EventStream(collection2, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream2));
-		Model shape1 = readModelFromFile("shape-name1.ttl");
-		Model shape2 = readModelFromFile("shape-name2.ttl");
+		Model shape1 = readModelFromFile("shacl/shape-name1.ttl");
+		Model shape2 = readModelFromFile("shacl/shape-name2.ttl");
 		FragmentationConfig fragmentationConfig = new FragmentationConfig();
 		fragmentationConfig.setName("ExampleFragmentation");
 		fragmentationConfig.setConfig(Map.of("property", "ldes:propertyPath"));
@@ -90,7 +90,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a valid list of event streams")
 	public void theClientReceivesAValidListOfEventStreams() throws Exception {
-		Model expectedModel = readModelFromFile("multiple-ldes.ttl");
+		Model expectedModel = readModelFromFile("eventstream/streams/multiple-ldes.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
 		verify(shaclShapeRepository).retrieveShaclShape(COLLECTION);
@@ -99,7 +99,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	@Given("a db containing one event stream")
 	public void aDbContainingOneEventStream() throws URISyntaxException {
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-		Model shape = readModelFromFile("example-shape.ttl");
+		Model shape = readModelFromFile("shacl/server-shape.ttl");
 		when(shaclShapeRepository.retrieveShaclShape(COLLECTION))
 				.thenReturn(Optional.of(new ShaclShape(COLLECTION, shape)));
 		when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(eventStream));
@@ -107,7 +107,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 
 	@And("the client receives a single event stream")
 	public void theClientReceivesASingleEventStream() throws Exception {
-		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-1.ttl");
+		Model expectedModel = readModelFromFile("eventstream/streams-with-dcat/ldes-with-dcat.ttl");
 		resultActions.andExpect(IsIsomorphic.with(expectedModel));
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verify(viewRepository).retrieveAllViewsOfCollection(COLLECTION);
@@ -135,7 +135,7 @@ public class AdminEventStreamsRestControllerSteps extends SpringIntegrationTest 
 	public void aDbWhichDoesNotContainSpecifiedEventStream() throws URISyntaxException {
 		assertEquals(Optional.empty(), eventStreamRepository.retrieveEventStream(COLLECTION));
 		final EventStream eventStream = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
-		final Model shacl = readModelFromFile("example-shape.ttl");
+		final Model shacl = readModelFromFile("shacl/server-shape.ttl");
 		when(eventStreamRepository.saveEventStream(any(EventStream.class))).thenReturn(eventStream);
 		when(shaclShapeRepository.saveShaclShape(any(ShaclShape.class))).thenReturn(new ShaclShape(COLLECTION, shacl));
 	}

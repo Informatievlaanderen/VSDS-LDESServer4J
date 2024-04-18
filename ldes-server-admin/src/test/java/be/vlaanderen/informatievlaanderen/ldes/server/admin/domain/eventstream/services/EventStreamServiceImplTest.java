@@ -72,7 +72,7 @@ class EventStreamServiceImplTest {
 				dcatServerService,
 				eventPublisher);
 
-		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat-dataset/valid.ttl"));
+		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
 		eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
 				VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), dataset);
 	}
