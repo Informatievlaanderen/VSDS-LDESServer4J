@@ -7,7 +7,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.StreamingTreeNodeFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
@@ -16,10 +18,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.Res
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeStreamConverterImpl;
+import com.fasterxml.jackson.databind.util.ArrayBuilders;
+import jakarta.servlet.WriteListener;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,9 +48,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -65,7 +69,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TreeNodeController.class,
 		RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
-		RdfModelConverter.class})
+		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class})
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
@@ -78,6 +82,8 @@ class TreeNodeControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
+	@MockBean
+	private StreamingTreeNodeFactory streamingTreeNodeFactory;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
 
@@ -208,6 +214,34 @@ class TreeNodeControllerTest {
 							"eab5179ac011c835cb460a0bdc6a28a52491255197a1073d2b963675961e66f2")
 			);
 		}
+	}
+
+	@Test
+	@DisplayName("Requesting LDES fragment stream")
+	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() throws Exception {
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+
+		LdesFragmentIdentifier identifier = new LdesFragmentIdentifier(ViewName.fromString(fullViewName),
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+		final String fragmentId = identifier.asDecodedFragmentId();
+		TreeNode treeNode = new TreeNode(fragmentId, false, false, List.of(),
+				List.of(), COLLECTION_NAME, null);
+
+		when(streamingTreeNodeFactory.getFragmentWithoutMemberData(identifier)).thenReturn(treeNode);
+		when(streamingTreeNodeFactory.getMembersOfFragment(identifier.asDecodedFragmentId()))
+				.thenReturn(Stream.of(new Member("member1", ModelFactory.createDefaultModel()), new Member("member2", ModelFactory.createDefaultModel())));
+
+		MvcResult result = mockMvc
+				.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
+						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
+						.accept(MediaType.TEXT_EVENT_STREAM_VALUE))
+				.andExpect(status().isOk())
+				.andExpect(header().string("Cache-Control", "public,max-age=" + CONFIGURED_MAX_AGE))
+				.andExpect(header().string("Etag", "\"bf61f90ee94d31484e296ffaa887de432976ce27638cfbd35e40f99a0e799554\""))
+				.andReturn();
+		String content = result.getResponse().getContentAsString();
+		assertThat(content).contains("member1", "member2");
 	}
 
 	@TestConfiguration

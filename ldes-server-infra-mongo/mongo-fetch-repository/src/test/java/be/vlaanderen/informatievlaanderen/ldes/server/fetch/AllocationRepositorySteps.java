@@ -92,12 +92,12 @@ public class AllocationRepositorySteps extends MongoAllocationIntegrationTest {
 	@Then("^Querying by the fragment ids ([^ ]+) returns empty list")
 	public void queryingByTheFragmentIdsFragmentIdsReturnsEmptyList(String fragmentIds) {
 		Arrays.stream(fragmentIds.split(",")).forEach(fragmentId ->
-				assertTrue(allocationMongoRepository.getMemberAllocationsByFragmentId(fragmentId).isEmpty()));
+				assertTrue(allocationMongoRepository.getMemberAllocationsByFragmentId(fragmentId).toList().isEmpty()));
 	}
 
 	private void assertGetMemberAllocationsByFragmentId(String fragmentId, List<String> expectedIds) {
 		List<MemberAllocation> memberAllocationsByFragmentId = allocationMongoRepository
-				.getMemberAllocationsByFragmentId(fragmentId);
+				.getMemberAllocationsByFragmentId(fragmentId).toList();
 		List<String> actualIds = memberAllocationsByFragmentId.stream().map(MemberAllocation::getId).sorted().toList();
 		assertEquals(expectedIds, actualIds);
 	}

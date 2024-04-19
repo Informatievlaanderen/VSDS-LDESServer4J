@@ -8,7 +8,11 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import java.util.Map;
 
@@ -18,7 +22,16 @@ import static org.apache.jena.riot.WebContent.*;
 @SuppressWarnings("java:S2479")
 public interface OpenApiTreeNodeController {
 
-	@Operation(summary = "Retrieve an LDES Fragment")
+	@Operation(summary = "Retrieve an LDES Fragment in a streaming way")
+	@ApiResponse(responseCode = "200", content = {
+			@Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE, schema = @Schema(implementation = String.class))
+	})
+	@ApiResponse(responseCode = "404", content = @Content, description = "No Linked Data Event Stream found with provided collection name")
+    ResponseEntity<ResponseBodyEmitter> retrieveLdesFragmentStreaming(@PathVariable("view") String view,
+                                                                      @RequestParam Map<String, String> requestParameters,
+                                                                      @PathVariable("collectionname") String collectionName);
+
+    @Operation(summary = "Retrieve an LDES Fragment")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ns0: <https://w3id.org/tree#> .
