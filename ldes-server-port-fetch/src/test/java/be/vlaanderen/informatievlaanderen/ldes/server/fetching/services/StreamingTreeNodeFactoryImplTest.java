@@ -3,9 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetching.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentRequest;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
@@ -23,7 +21,6 @@ import java.util.Optional;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERATED_AT_TIME;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 class StreamingTreeNodeFactoryImplTest {

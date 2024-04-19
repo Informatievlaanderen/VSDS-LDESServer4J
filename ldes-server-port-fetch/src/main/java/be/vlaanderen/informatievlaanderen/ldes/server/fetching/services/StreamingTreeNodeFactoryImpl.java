@@ -31,7 +31,7 @@ public class StreamingTreeNodeFactoryImpl implements StreamingTreeNodeFactory {
         return fragmentRepository.retrieveFragment(treeNodeId).map(fragment -> new TreeNode(fragment.getFragmentIdString(), fragment.isImmutable(), fragment.isRoot(),
                         fragment.getRelations(), List.of(), fragment.getFragmentId().getViewName().getCollectionName(), fragment.getNextUpdateTs()))
                 .orElseThrow(
-                        () -> new MissingResourceException("fragment", treeNodeId.asEncodedFragmentId()));
+                        () -> new MissingResourceException("fragment", treeNodeId.asDecodedFragmentId()));
     }
 
     @Override
