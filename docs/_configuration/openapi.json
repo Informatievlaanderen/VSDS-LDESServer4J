@@ -1,5 +1,10 @@
 {
   "openapi": "3.0.1",
+  "info": {
+    "title": "LDES Server Admin API",
+    "description": "This API makes it possible to manage an LDES Server",
+    "version": "2.15.0-SNAPSHOT"
+  },
   "servers": [
     {
       "url": "/",
