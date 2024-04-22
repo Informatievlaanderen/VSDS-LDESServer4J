@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.MemberCounter;
 import be.vlaanderen.informatievlaanderen.ldes.server.resultactionsextensions.ResponseToModelConverter;
+import com.launchdarkly.eventsource.MessageEvent;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
@@ -12,24 +13,39 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.atlas.web.ContentType;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.*;
 import org.apache.jena.vocabulary.RDF;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.publisher.Flux;
+import reactor.test.StepVerifier;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.TREE_REMAINING_ITEMS;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -42,10 +58,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LdesServerSteps extends LdesServerIntegrationTest {
+
+	@Autowired
+	private WebApplicationContext wac;
+	private WebTestClient client;
 	public static final String ACTUATOR_PROMETHEUS = "/actuator/prometheus";
 	private int lastStatusCode;
 	private Model responseModel;
 	Stack<String> interactedStreams = new Stack<>();
+
+	@Before
+	void setUp() {
+		client = MockMvcWebTestClient.bindToApplicationContext(this.wac).build();
+	}
 
 	@Before("@clearRegistry")
 	public void clearRegistry() {
@@ -281,5 +306,35 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 							.content(RDFWriter.source(model).lang(Lang.TURTLE).asString()))
 					.andExpect(status().is2xxSuccessful());
 		}
+	}
+
+
+	@When("I fetch a fragment from url {string} in a streaming way")
+	public void iFetchAStreamingFragment(String url) {
+		await().atMost(Duration.ofSeconds(40))
+				.until(() -> {
+					client = MockMvcWebTestClient.bindToApplicationContext(this.wac).build();
+					FluxExchangeResult<String> response = client.get().uri(url).accept(MediaType.TEXT_EVENT_STREAM).exchange()
+							.expectStatus().isOk().returnResult(String.class);
+
+					Flux<String> eventFlux = response.getResponseBody();
+					responseModel = ModelFactory.createDefaultModel();
+
+					eventFlux.toStream().forEach(responseText -> {
+						InputStream decoded = new ByteArrayInputStream(Base64.getDecoder().decode(responseText));
+						Model eventModel = RDFParser
+								.source(decoded)
+								.lang(Lang.RDFPROTO)
+								.toModel();
+						responseModel.add(eventModel);
+					});
+
+					return Objects.nonNull(responseModel);
+				});
+	}
+
+	@Then("The response model is the same as the model from the url {string}")
+	public void modelIsIsomorphic(String url) throws Exception {
+		assertTrue(responseModel.isIsomorphicWith(getResponseAsModel(url, Lang.TURTLE.getHeaderString())));
 	}
 }

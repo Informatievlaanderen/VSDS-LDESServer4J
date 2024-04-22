@@ -34,6 +34,7 @@ class TreeNodeConverterImplTest {
     private static final String VIEW_NAME = "view";
     private final PrefixAdder prefixAdder = new PrefixAdderImpl();
     private final PrefixConstructor prefixConstructor = new PrefixConstructor(HOST_NAME, false);
+    private final TreeNodeStatementCreatorImpl treeNodeStatementCreator = new TreeNodeStatementCreatorImpl();
     private TreeNodeConverterImpl treeNodeConverter;
 
     @BeforeEach
@@ -44,9 +45,9 @@ class TreeNodeConverterImplTest {
                 "http://www.w3.org/ns/prov#generatedAtTime",
                 "http://purl.org/dc/terms/isVersionOf", false);
 
-        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor);
-        treeNodeConverter.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
-        treeNodeConverter.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
+        treeNodeConverter = new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
+        treeNodeStatementCreator.handleEventStreamInitEvent(new EventStreamCreatedEvent(eventStream));
+        treeNodeStatementCreator.handleShaclInitEvent(new ShaclChangedEvent(COLLECTION_NAME, shacl));
     }
 
     @Test
@@ -56,7 +57,7 @@ class TreeNodeConverterImplTest {
         ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
         Model dcat = RDFParser.source("eventstream/streams/dcat-view-valid.ttl").lang(Lang.TURTLE).build().toModel();
         DcatView dcatView = DcatView.from(viewName, dcat);
-        treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
+        treeNodeStatementCreator.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
 
         Model model = treeNodeConverter.toModel(treeNode);
 
@@ -204,9 +205,9 @@ class TreeNodeConverterImplTest {
         final DcatView dcatView = DcatView.from(viewName, dcat);
 
         assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
-        treeNodeConverter.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
+        treeNodeStatementCreator.handleDcatViewSavedEvent(new DcatViewSavedEvent(dcatView));
         assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(25);
-        treeNodeConverter.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
+        treeNodeStatementCreator.handleDcatViewDeletedEvent(new DcatViewDeletedEvent(dcatView.getViewName()));
         assertThat(treeNodeConverter.toModel(treeNode).size()).isEqualTo(11);
     }
 
@@ -215,7 +216,7 @@ class TreeNodeConverterImplTest {
         final TreeNode treeNode = new TreeNode(PREFIX + VIEW_NAME, false, true, List.of(), List.of(),
                 COLLECTION_NAME, null);
 
-        treeNodeConverter.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
+        treeNodeStatementCreator.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION_NAME));
 
         assertThatThrownBy(() -> treeNodeConverter.toModel(treeNode)).isInstanceOf(MissingResourceException.class);
     }

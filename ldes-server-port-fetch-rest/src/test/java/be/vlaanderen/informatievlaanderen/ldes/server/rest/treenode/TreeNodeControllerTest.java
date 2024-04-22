@@ -16,9 +16,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingSt
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverterImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeStreamConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.*;
 import com.fasterxml.jackson.databind.util.ArrayBuilders;
 import jakarta.servlet.WriteListener;
 import org.apache.jena.rdf.model.*;
@@ -251,7 +249,8 @@ class TreeNodeControllerTest {
 		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
-			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor);
+			TreeNodeStatementCreator treeNodeStatementCreator = new TreeNodeStatementCreatorImpl();
+			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
 		}
 
 		@Bean
