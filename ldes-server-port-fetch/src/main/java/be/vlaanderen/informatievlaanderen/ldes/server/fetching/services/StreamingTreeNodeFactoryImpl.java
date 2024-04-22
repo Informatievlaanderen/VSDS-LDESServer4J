@@ -17,18 +17,17 @@ import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.Se
 
 @Component
 public class StreamingTreeNodeFactoryImpl implements StreamingTreeNodeFactory {
-
-    @Value(HOST_NAME_KEY)
-    private String prefix;
+    private final String prefix;
     private final FragmentRepository fragmentRepository;
     private final AllocationRepository allocationRepository;
     private final MemberFetcher memberFetcher;
 
     public StreamingTreeNodeFactoryImpl(FragmentRepository fragmentRepository, AllocationRepository allocationRepository,
-                                        MemberFetcher memberFetcher) {
+                                        MemberFetcher memberFetcher, @Value(HOST_NAME_KEY) String prefix) {
         this.fragmentRepository = fragmentRepository;
         this.allocationRepository = allocationRepository;
         this.memberFetcher = memberFetcher;
+        this.prefix = prefix;
     }
 
     @Override
