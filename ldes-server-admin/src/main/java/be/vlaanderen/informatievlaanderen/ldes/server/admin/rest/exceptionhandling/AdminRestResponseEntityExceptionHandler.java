@@ -56,13 +56,13 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 
 	@ExceptionHandler(value = {Exception.class})
 	protected ResponseEntity<Object> fallbackHandleException(
-			RuntimeException ex, WebRequest request) {
+			Exception ex, WebRequest request) {
 		log.error(ex.getMessage());
 		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 
 	private ResponseEntity<Object> handleException(
-			RuntimeException ex, HttpStatus status, WebRequest request) {
+			Exception ex, HttpStatus status, WebRequest request) {
 		String bodyOfResponse = ex.getMessage();
 		var httpHeaders = new HttpHeaders();
 		httpHeaders.setContentType(MediaType.TEXT_PLAIN);

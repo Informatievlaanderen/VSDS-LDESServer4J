@@ -104,7 +104,7 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 
 	@When("I try to retrieve the following members by Id")
 	public void iTryToRetrieveTheFollowingMembersByIdMemberIds(@Transpose DataTable table) {
-		members = memberRepository.findAllByIds(table.column(0).stream().toList());
+		members = memberRepository.findAllByIds(table.column(0).stream().toList()).toList();
 	}
 
 	@Then("I expect a list of {int} members")

@@ -48,10 +48,9 @@ public class MemberRepositoryImpl implements MemberRepository {
 	}
 
 	@Override
-	public List<Member> findAllByIds(List<String> memberIds) {
+	public Stream<Member> findAllByIds(List<String> memberIds) {
 		return memberEntityRepository.findAllByIdIn(memberIds)
-				.map(memberEntityMapper::toMember)
-				.toList();
+				.map(memberEntityMapper::toMember);
 	}
 
 	@Override

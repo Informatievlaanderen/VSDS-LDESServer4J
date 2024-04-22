@@ -12,7 +12,7 @@ public interface AllocationRepository {
 	void saveAllocation(MemberAllocation memberAllocation);
 	void saveAllocations(List<MemberAllocation> memberAllocations);
 
-	List<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
+	Stream<MemberAllocation> getMemberAllocationsByFragmentId(String fragmentId);
 
 	List<String> getMemberAllocationIdsByFragmentIds(Set<String> fragmentIds);
 

@@ -60,7 +60,7 @@ class MemberFetcherImplTest {
                 .containsExactlyInAnyOrderElementsOf(MEMBER_IDS);
     }
 
-    private List<Member> createIngestMembers() {
+    private Stream<Member> createIngestMembers() {
         return MEMBER_IDS.stream()
                 .map(id -> new Member(
                         id,
@@ -69,8 +69,7 @@ class MemberFetcherImplTest {
                         TIMESTAMP,
                         null,
                         "txId",
-                        ModelFactory.createDefaultModel()))
-                .toList();
+                        ModelFactory.createDefaultModel()));
     }
 
 }
