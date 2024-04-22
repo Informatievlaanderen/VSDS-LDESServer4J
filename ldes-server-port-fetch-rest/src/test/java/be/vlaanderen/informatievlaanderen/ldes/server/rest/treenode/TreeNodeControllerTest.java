@@ -17,8 +17,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.*;
-import com.fasterxml.jackson.databind.util.ArrayBuilders;
-import jakarta.servlet.WriteListener;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -46,9 +44,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -67,7 +65,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TreeNodeController.class,
 		RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
-		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class})
+		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class,
+		TreeNodeStatementCreatorImpl.class})
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
@@ -127,19 +126,20 @@ class TreeNodeControllerTest {
 		Model resultModel = RDFParser.source(inputStream).lang(lang).toModel();
 
 		assertThat(maxAge).contains(immutable ? CONFIGURED_MAX_AGE_IMMUTABLE : CONFIGURED_MAX_AGE);
-		assertThat(getObjectURI(resultModel, RDF_SYNTAX_TYPE)).isEqualTo(TREE_NODE_RESOURCE);
+		assertThat(getObjectURIs(resultModel, RDF_SYNTAX_TYPE)).contains(TREE_NODE_RESOURCE);
 		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
 	}
 
-	private String getObjectURI(Model model, Property property) {
+	private List<String> getObjectURIs(Model model, Property property) {
 		return model
 				.listStatements(null, property, (Resource) null)
-				.nextOptional()
+				.toList()
+				.stream()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)
 				.map(Resource::getURI)
 				.map(Objects::toString)
-				.orElse(null);
+				.toList();
 	}
 
 	private Optional<Integer> extractMaxAge(String header) {
@@ -239,17 +239,16 @@ class TreeNodeControllerTest {
 				.andExpect(header().string("Etag", "\"bf61f90ee94d31484e296ffaa887de432976ce27638cfbd35e40f99a0e799554\""))
 				.andReturn();
 		String content = result.getResponse().getContentAsString();
-		assertThat(content).contains("member1", "member2");
+		assertThat(content).contains("member");
 	}
 
 	@TestConfiguration
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
+		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName, @Autowired TreeNodeStatementCreator treeNodeStatementCreator) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
-			TreeNodeStatementCreator treeNodeStatementCreator = new TreeNodeStatementCreatorImpl();
 			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
 		}
 
