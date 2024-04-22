@@ -15,13 +15,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberIngesterImpl implements MemberIngester {
 
     private static final String LDES_SERVER_INGESTED_MEMBERS_COUNT = "ldes_server_ingested_members_count";
     private static final String MEMBER_WITH_ID_INGESTED = "Member with id {} ingested.";
-    private static final String DUPLICATE_MEMBERS_DETECTED = "Duplicate members detected. Member(s) are ignored";
+    private static final String DUPLICATE_MEMBERS_DETECTED = "Duplicate members detected. Following members are ignored: {}";
 
     private final MemberIngestValidator validator;
     private final MemberRepository memberRepository;
@@ -48,7 +49,7 @@ public class MemberIngesterImpl implements MemberIngester {
         int ingestedMembersCount = memberRepository.insertAll(members).size();
 
         if (ingestedMembersCount != members.size()) {
-            log.warn(DUPLICATE_MEMBERS_DETECTED);
+            log.atWarn().log(DUPLICATE_MEMBERS_DETECTED, members.stream().map(Member::getId).collect(Collectors.joining(", ")));
             return false;
         }
         publishIngestedEvent(collectionName, members);
