@@ -35,6 +35,7 @@ Feature: Server basic fetching functionality
       | data/input/eventstreams/mobility-hindrances_paginated_1500.ttl | /mobility-hindrances | /mobility-hindrances/paged | mobility-hindrances |
       | data/input/eventstreams/cartoons_paginated_2.ttl               | /cartoons            | /cartoons/my-view          | cartoons            |
 
+  @setupStreaming
   Scenario: The LDES server supports streaming for fetching
     Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
     When I ingest 1 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"

@@ -72,7 +72,7 @@ class TreeNodeConverterImplTest {
                 COLLECTION_NAME, null);
         Model model = treeNodeConverter.toModel(treeNode);
 
-        assertThat(model.size()).isEqualTo(2);
+        assertThat(model.size()).isEqualTo(3);
         verifyTreeNodeStatement(model);
         verifyIsPartOfStatement(model);
         verifyRemainingItemsStatementAbsent(model);

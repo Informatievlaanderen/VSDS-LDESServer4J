@@ -30,9 +30,9 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
     @Override
     public List<Statement> addEventStreamStatements(TreeNode treeNode, String baseUrl) {
         List<Statement> statements = new ArrayList<>();
-        Resource viewId = createResource(baseUrl);
-        statements.addAll(getEventStreamStatements(viewId));
-        statements.addAll(getMemberStatements(treeNode, viewId));
+        Resource collectionId = createResource(baseUrl);
+        statements.addAll(getEventStreamStatements(collectionId));
+        statements.addAll(getMemberStatements(treeNode, collectionId));
         return statements;
     }
 
@@ -84,18 +84,18 @@ public class TreeNodeStatementCreatorImpl implements TreeNodeStatementCreator {
     }
 
 
-    private List<Statement> getMemberStatements(TreeNode treeNode, Resource viewId) {
+    private List<Statement> getMemberStatements(TreeNode treeNode, Resource collectionId) {
         List<Statement> statements = new ArrayList<>();
         treeNode.getMembers()
                 .stream().map(Member::getMemberIdWithoutPrefix)
-                .forEach(memberId -> statements.add(createStatement(viewId, TREE_MEMBER,
+                .forEach(memberId -> statements.add(createStatement(collectionId, TREE_MEMBER,
                         createResource(memberId))));
         return statements;
     }
 
-    private List<Statement> getEventStreamStatements(Resource viewId) {
+    private List<Statement> getEventStreamStatements(Resource collectionId) {
         List<Statement> statements = new ArrayList<>();
-        statements.add(createStatement(viewId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
+        statements.add(createStatement(collectionId, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_STREAM_URI)));
         return statements;
     }
 
