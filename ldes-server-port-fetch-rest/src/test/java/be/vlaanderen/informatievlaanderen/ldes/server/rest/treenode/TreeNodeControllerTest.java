@@ -36,17 +36,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -83,6 +89,13 @@ class TreeNodeControllerTest {
 	private StreamingTreeNodeFactory streamingTreeNodeFactory;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private TreeNodeStreamConverter treeNodeStreamConverter;
+	@Autowired
+	private RestConfig restConfig;
+	@Autowired
+	private CachingStrategy cachingStrategy;
+	private WebTestClient client;
 
 	@BeforeEach
 	void setUp() {
@@ -230,16 +243,20 @@ class TreeNodeControllerTest {
 		when(streamingTreeNodeFactory.getMembersOfFragment(identifier.asDecodedFragmentId()))
 				.thenReturn(Stream.of(new Member("member1", ModelFactory.createDefaultModel()), new Member("member2", ModelFactory.createDefaultModel())));
 
-		MvcResult result = mockMvc
-				.perform(get("/{collectionName}/{viewName}", COLLECTION_NAME, VIEW_NAME)
-						.param("generatedAtTime", FRAGMENTATION_VALUE_1)
-						.accept(MediaType.TEXT_EVENT_STREAM_VALUE))
-				.andExpect(status().isOk())
-				.andExpect(header().string("Cache-Control", "public,max-age=" + CONFIGURED_MAX_AGE))
-				.andExpect(header().string("Etag", "\"bf61f90ee94d31484e296ffaa887de432976ce27638cfbd35e40f99a0e799554\""))
-				.andReturn();
-		String content = result.getResponse().getContentAsString();
-		assertThat(content).contains("member");
+		client = WebTestClient.bindToController(new TreeNodeController(restConfig, treeNodeFetcher,
+				streamingTreeNodeFactory, treeNodeStreamConverter, cachingStrategy)).build();
+
+		FluxExchangeResult<String> response = client.get()
+				.uri("/{collectionName}/{viewName}?generatedAtTime={fragmentationValue}", COLLECTION_NAME, VIEW_NAME, FRAGMENTATION_VALUE_1)
+				.accept(MediaType.TEXT_EVENT_STREAM)
+				.exchange()
+				.expectStatus()
+				.isOk()
+				.expectHeader()
+				.valueEquals("Cache-Control", "public,max-age=" + CONFIGURED_MAX_AGE)
+				.expectHeader()
+				.valueEquals("Etag", "\"bf61f90ee94d31484e296ffaa887de432976ce27638cfbd35e40f99a0e799554\"")
+				.returnResult(String.class);
 	}
 
 	@TestConfiguration
