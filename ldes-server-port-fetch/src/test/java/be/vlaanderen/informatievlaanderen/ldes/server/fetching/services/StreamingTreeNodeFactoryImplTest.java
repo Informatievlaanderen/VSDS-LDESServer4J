@@ -24,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 
 class StreamingTreeNodeFactoryImplTest {
+    private static final String HOST = "http://localhost:8080";
     private static final String COLLECTION = "collectionName";
     private static final String VIEW = "view";
     private static final ViewName VIEW_NAME = new ViewName(COLLECTION, VIEW);
@@ -38,7 +39,7 @@ class StreamingTreeNodeFactoryImplTest {
         fragmentRepository = mock(FragmentRepository.class);
         allocationRepository = mock(AllocationRepository.class);
         memberFetcher = mock(MemberFetcher.class);
-        streamingTreeNodeFactory = new StreamingTreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberFetcher);
+        streamingTreeNodeFactory = new StreamingTreeNodeFactoryImpl(fragmentRepository, allocationRepository, memberFetcher, HOST);
     }
 
     @Test
@@ -60,7 +61,7 @@ class StreamingTreeNodeFactoryImplTest {
                 List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
         Fragment fragment = new Fragment(id, true, 10, List.of(), null);
         List<Member> members = List.of(new Member("test", ModelFactory.createDefaultModel()), new Member("test2", ModelFactory.createDefaultModel()));
-        TreeNode treeNode = new TreeNode(fragment.getFragmentIdString(), true, false, List.of(),
+        TreeNode treeNode = new TreeNode(HOST + fragment.getFragmentIdString(), true, false, List.of(),
                 members, "collectionName", null);
 
         Mockito.when(fragmentRepository.retrieveFragment(fragment.getFragmentId()))

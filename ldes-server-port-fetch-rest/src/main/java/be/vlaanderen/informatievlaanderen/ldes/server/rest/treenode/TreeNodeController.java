@@ -12,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.exceptions.ConnectionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeStreamConverter;
 import io.micrometer.observation.annotation.Observed;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig.DEFAULT_RDF_MEDIA_TYPE;
 import static org.springframework.http.HttpHeaders.CACHE_CONTROL;
@@ -57,10 +58,14 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 																			 @RequestParam Map<String, String> requestParameters,
 																			 @PathVariable("collectionname") String collectionName) {
 		final ViewName viewName = new ViewName(collectionName, view);
+		LdesFragmentIdentifier id = new LdesFragmentIdentifier(viewName,
+				requestParameters.entrySet().stream()
+						.map(entry -> new FragmentPair(entry.getKey(), entry.getValue()))
+						.toList());
 		TreeNode treeNode = getFragmentWithoutMembers(viewName, requestParameters);
 
 		SseEmitter emitter = new SseEmitter();
-		sendStreamingFragment(emitter, treeNode);
+		new Thread(() -> sendStreamingFragment(emitter, treeNode, id)).start();
 
 		String language = MediaType.TEXT_EVENT_STREAM_VALUE;
 		return ResponseEntity
@@ -90,34 +95,43 @@ public class TreeNodeController implements OpenApiTreeNodeController {
 				.body(treeNode);
 	}
 
-	private void sendStreamingFragment(SseEmitter emitter, TreeNode treeNode) {
-		MediaType contentType = MediaType.parseMediaType(Lang.RDFPROTO.getHeaderString());
-		try (ExecutorService executor = Executors.newSingleThreadExecutor()) {
-			executor.submit(() -> {
-				try {
-					emitter.send(treeNodeStreamConverter.getMetaDataStatements(treeNode), contentType);
+	private void sendStreamingFragment(SseEmitter emitter, TreeNode treeNode, LdesFragmentIdentifier id) {
+		Lang lang = Lang.RDFPROTO;
+		try {
+			emitter.send(SseEmitter.event()
+					.name("metadata")
+					.data(encodeModel(treeNodeStreamConverter.getMetaDataStatements(treeNode), lang))
+					.comment(String.format("Metadata and relations of the LDES fragment, encoded in base64 and with %s as mimetype.", lang.getHeaderString())));
 
-					streamingTreeNodeFactory.getMembersOfFragment(treeNode.getFragmentId())
-							.map(member -> treeNodeStreamConverter.getMemberStatements(member, treeNode.getFragmentId())).forEach(model -> {
-								try {
-									emitter.send(model, contentType);
-								} catch (IOException exception) {
-									log.error("Error while sending LDES member: {}", exception.getMessage());
-									emitter.completeWithError(exception);
-								}
-							});
-					emitter.complete();
-				} catch (Exception exception) {
-					String message = String.format("Error while sending LDES fragment: %s", exception.getMessage());
-					log.error(message);
-					try {
-						emitter.send(SseEmitter.event().data(message).name("error"));
-					} catch (IOException e) {
-						throw new ConnectionException("Could not send previous error message to client", e);
-					}
-					emitter.completeWithError(exception);
-				}
-			});
+			streamingTreeNodeFactory.getMembersOfFragment(id.asDecodedFragmentId())
+					.map(member -> treeNodeStreamConverter.getMemberStatements(member, treeNode.getCollectionName())).forEach(model -> {
+						try {
+							emitter.send(SseEmitter.event().name("member")
+									.data(encodeModel(model, lang))
+									.comment(String.format("LDES member, encoded in base64 and with %s as mimetype.", lang.getHeaderString())));
+						} catch (IOException exception) {
+							log.error("Error while sending LDES member: {}", exception.getMessage());
+							emitter.completeWithError(exception);
+						}
+					});
+			emitter.complete();
+		} catch (Exception exception) {
+			String message = String.format("Error while sending LDES fragment: %s", exception.getMessage());
+			log.error(message);
+			try {
+				emitter.send(SseEmitter.event().data(message).name("error"));
+			} catch (IOException e) {
+				throw new ConnectionException("Could not send previous error message to client", e);
+			}
+			emitter.completeWithError(exception);
+		}
+	}
+
+	private byte[] encodeModel(Model model, Lang lang) throws IOException {
+		String contentType = lang.getHeaderString();
+		try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+			model.write(outputStream, contentType);
+			return Base64.getEncoder().encode(outputStream.toByteArray());
 		}
 	}
 
