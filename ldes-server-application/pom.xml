@@ -90,7 +90,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <artifactId>postgres-fragmentation-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -135,7 +135,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-fetch-repository</artifactId>
+                    <artifactId>postgres-fetch-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -150,7 +150,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <artifactId>postgres-fragmentation-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -165,7 +165,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <artifactId>postgres-fragmentation-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -180,7 +180,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <artifactId>postgres-fragmentation-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -195,7 +195,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-fragmentation-repository</artifactId>
+                    <artifactId>postgres-fragmentation-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>
@@ -210,7 +210,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-admin-repository</artifactId>
+                    <artifactId>postgres-admin-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

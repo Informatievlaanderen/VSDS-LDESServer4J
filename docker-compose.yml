@@ -27,6 +27,14 @@ services:
     networks:
       - ldes
     command: --replSet rs0
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=test
   pyroscope:
     image: grafana/pyroscope:latest
     ports:

@@ -15,6 +15,7 @@
     <modules>
         <module>ldes-server-domain</module>
         <module>ldes-server-infra-mongo</module>
+        <module>ldes-server-infra-postgres</module>
         <module>ldes-server-application</module>
         <module>ldes-fragmentisers</module>
         <module>ldes-server-admin</module>
