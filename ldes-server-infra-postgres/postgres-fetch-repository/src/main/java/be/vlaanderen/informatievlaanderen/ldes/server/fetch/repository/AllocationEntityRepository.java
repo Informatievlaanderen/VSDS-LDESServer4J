@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.CompactionCandidateProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,14 +15,14 @@ public interface AllocationEntityRepository extends JpaRepository<MemberAllocati
 	@Query("SELECT DISTINCT m.memberId FROM MemberAllocationEntity m WHERE m.fragmentId IN :fragmentIds")
 	List<String> findDistinctMemberIdsByFragmentIds(@Param("fragmentIds") Set<String> fragmentIds);
 
-	@Query(value = "SELECT fragment_id, COUNT(*) AS size " +
+	@Query(value = "SELECT fragmentId as fragmentId, COUNT(*) AS size " +
 	               "FROM MemberAllocationEntity " +
-	               "WHERE collection_name = :collectionName AND view_name = :viewName " +
-	               "GROUP BY fragment_id " +
-	               "HAVING COUNT(*) < :capacityPerPage", nativeQuery = true)
-	Stream<CompactionCandidate> findCompactionCandidates(@Param("collectionName") String collectionName,
-	                                                     @Param("viewName") String viewName,
-	                                                     @Param("capacityPerPage") Integer capacityPerPage);
+	               "WHERE collectionName = :collectionName AND viewName = :viewName " +
+	               "GROUP BY fragmentId " +
+	               "HAVING COUNT(*) < :capacityPerPage")
+	Stream<CompactionCandidateProjection> findCompactionCandidates(@Param("collectionName") String collectionName,
+	                                                               @Param("viewName") String viewName,
+	                                                               @Param("capacityPerPage") Integer capacityPerPage);
 
 	List<MemberAllocationEntity> findAllByFragmentId(String fragmentId);
 

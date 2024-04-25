@@ -39,19 +39,19 @@ public class PostgresAdminAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ShaclShapeRepository shaclShapeMongoRepository(final ShaclShapeEntityRepository shaclShapeEntityRepository) {
+	public ShaclShapeRepository shaclShapePostgresRepository(final ShaclShapeEntityRepository shaclShapeEntityRepository) {
 		return new ShaclShapePostgresRepository(shaclShapeEntityRepository);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public ViewRepository viewMongoRepository(final ViewEntityRepository viewEntityRepository) {
+	public ViewRepository viewPostgresRepository(final ViewEntityRepository viewEntityRepository) {
 		return new ViewPostgresRepository(viewEntityRepository);
 	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	public DcatDatasetRepository dcatDatasetMongoRepository(
+	public DcatDatasetRepository dcatDatasetPostgresRepository(
 			final DcatDatasetEntityRepository dcatDatasetEntityRepository) {
 		return new DcatDatasetPostgresRespository(dcatDatasetEntityRepository);
 	}
@@ -64,7 +64,7 @@ public class PostgresAdminAutoConfiguration {
 
 	@Bean
 	@ConditionalOnMissingBean
-	public DcatViewRepository dcatViewMongoRepository(final DataServiceEntityRepository dataServiceEntityRepository) {
+	public DcatViewRepository dcatViewPostgresRepository(final DataServiceEntityRepository dataServiceEntityRepository) {
 		return new DcatDataServicePostgresRepository(dataServiceEntityRepository);
 	}
 

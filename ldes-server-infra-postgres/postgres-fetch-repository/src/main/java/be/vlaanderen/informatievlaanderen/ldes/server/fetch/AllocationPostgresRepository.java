@@ -56,7 +56,8 @@ public class AllocationPostgresRepository implements AllocationRepository {
 
 	@Override
 	public Stream<CompactionCandidate> getPossibleCompactionCandidates(ViewName viewName, int capacityPerPage) {
-		return repository.findCompactionCandidates(viewName.getCollectionName(), viewName.getViewName(), capacityPerPage);
+		return repository.findCompactionCandidates(viewName.getCollectionName(), viewName.getViewName(), capacityPerPage)
+				.map(projection -> new CompactionCandidate(projection.getFragmentId(), projection.getSize()));
 	}
 
 	@Override
