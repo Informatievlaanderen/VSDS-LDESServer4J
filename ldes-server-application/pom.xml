@@ -120,7 +120,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-ingest-repository</artifactId>
+                    <artifactId>postgres-ingest-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

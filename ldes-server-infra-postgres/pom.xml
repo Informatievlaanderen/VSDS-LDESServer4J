@@ -13,6 +13,7 @@
         <module>postgres-admin-repository</module>
         <module>postgres-fetch-repository</module>
         <module>postgres-fragmentation-repository</module>
+        <module>postgres-ingest-repository</module>
     </modules>
 
     <artifactId>ldes-server-infra-postgres</artifactId>

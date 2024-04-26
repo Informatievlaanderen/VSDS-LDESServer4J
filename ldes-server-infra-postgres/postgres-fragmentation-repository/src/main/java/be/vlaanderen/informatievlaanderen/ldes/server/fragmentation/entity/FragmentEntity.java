@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -79,7 +80,7 @@ public class FragmentEntity {
 						.stream()
 						.map(FragmentPair::fromMapEntry)
 						.toList());
-		var relationList = relations.stream().map(TreeRelationEntity::toTreeRelation).toList();
+		var relationList = new ArrayList<>(relations.stream().map(TreeRelationEntity::toTreeRelation).toList());
 		var fragment =
 				new Fragment(ldesFragmentIdentifier, immutable, effectiveNrOfMembersAdded, relationList, deleteTime);
 		fragment.setNextUpdateTs(nextUpdateTs);
