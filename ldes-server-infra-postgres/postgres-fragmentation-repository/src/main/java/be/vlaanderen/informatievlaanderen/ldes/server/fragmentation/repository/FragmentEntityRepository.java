@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,8 +28,6 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
 	Long deleteAllByCollectionName(String collectionName);
 
 	List<FragmentEntity> findAllByRelations_TreeNode(String fragmentId);
-
-	int countByRelations_TreeNode(LdesFragmentIdentifier fragmentId);
 
 	@Modifying
 	@Transactional
