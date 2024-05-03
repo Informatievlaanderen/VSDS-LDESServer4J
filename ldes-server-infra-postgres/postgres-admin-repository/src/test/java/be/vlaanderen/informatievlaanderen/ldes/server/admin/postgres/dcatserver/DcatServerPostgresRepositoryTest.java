@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.entity.DcatCatalogEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.repository.DcatCatalogEntityRepository;
+import jakarta.persistence.EntityManager;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,10 +28,12 @@ class DcatServerPostgresRepositoryTest {
 	private DcatServerRepository dcatServerRepository;
 	@Mock
 	private DcatCatalogEntityRepository dcatCatalogEntityRepository;
+	@Mock
+	EntityManager entityManager;
 
 	@BeforeEach
 	void setUp() {
-		dcatServerRepository = new DcatCatalogPostgresRepository(dcatCatalogEntityRepository);
+		dcatServerRepository = new DcatCatalogPostgresRepository(dcatCatalogEntityRepository, entityManager);
 	}
 
 	@Test

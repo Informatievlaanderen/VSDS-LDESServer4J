@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.service;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.FragmentationConfigEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
@@ -20,7 +21,9 @@ public class ViewEntityConverter {
 				.map(retentionModel -> RDFWriter.source(retentionModel).lang(SERIALISATION_LANG).asString())
 				.toList();
 		return new ViewEntity(viewSpecification.getName().asString(), serializedRetentionModels,
-				viewSpecification.getFragmentations(), viewSpecification.getPageSize());
+				viewSpecification.getFragmentations()
+						.stream()
+						.map(FragmentationConfigEntity::toEntity).toList(), viewSpecification.getPageSize());
 	}
 
 	public ViewSpecification toView(ViewEntity viewEntity) {
@@ -30,6 +33,6 @@ public class ViewEntityConverter {
 				.map(serializedRetentionModel -> RDFParser.fromString(serializedRetentionModel).lang(SERIALISATION_LANG).toModel())
 				.toList();
 		return new ViewSpecification(ViewName.fromString(viewEntity.getViewName()), retentionModels,
-				viewEntity.getFragmentations(), viewEntity.getPageSize());
+				viewEntity.getFragmentations().stream().map(FragmentationConfigEntity::fromEntity).toList(), viewEntity.getPageSize());
 	}
 }

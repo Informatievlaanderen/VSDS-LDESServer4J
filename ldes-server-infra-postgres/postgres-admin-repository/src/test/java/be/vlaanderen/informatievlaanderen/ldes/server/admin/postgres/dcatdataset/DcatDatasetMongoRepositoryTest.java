@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -36,13 +37,13 @@ class DcatDatasetMongoRepositoryTest {
 	private static final String MODEL_FILE_PATH = "dcat-dataset/dataset.ttl";
 	private DcatDatasetEntity entity;
 	private DcatDataset dataset;
+	@Autowired
 	private DcatDatasetPostgresRespository mongoRepository;
 	@Mock
 	private DcatDatasetEntityRepository entityRepository;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException, IOException {
-		mongoRepository = new DcatDatasetPostgresRespository(entityRepository);
 		Model model = readModelFromFile(MODEL_FILE_PATH);
 		dataset = new DcatDataset(DATASET_ID, model);
 		entity = new DcatDatasetEntity(DATASET_ID, readDataFromFile(MODEL_FILE_PATH));

@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstrea
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,8 @@ class EventStreamMongoRepositoryTest {
 	private EventStreamPostgresRepository repository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
+	@Mock
+	EntityManager entityManager;
 
 	@BeforeEach
 	void setUp() {

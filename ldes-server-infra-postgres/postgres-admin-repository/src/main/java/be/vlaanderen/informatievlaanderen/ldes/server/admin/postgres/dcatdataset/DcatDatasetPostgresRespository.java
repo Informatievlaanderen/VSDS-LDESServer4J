@@ -4,16 +4,21 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.repository.DcatDatasetEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.service.DcatDatasetEntityConverter;
+import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class DcatDatasetPostgresRespository implements DcatDatasetRepository {
 	private final DcatDatasetEntityRepository repository;
+	private final EntityManager entityManager;
 	private final DcatDatasetEntityConverter converter = new DcatDatasetEntityConverter();
 
-	public DcatDatasetPostgresRespository(DcatDatasetEntityRepository repository) {
+	public DcatDatasetPostgresRespository(DcatDatasetEntityRepository repository, EntityManager entityManager) {
 		this.repository = repository;
+		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -23,7 +28,9 @@ public class DcatDatasetPostgresRespository implements DcatDatasetRepository {
 
 	@Override
 	public void saveDataset(DcatDataset dataset) {
-		repository.save(converter.datasetToEntity(dataset));
+		entityManager.getTransaction().begin();
+		entityManager.persist(converter.datasetToEntity(dataset));
+		entityManager.getTransaction().commit();
 	}
 
 	@Override

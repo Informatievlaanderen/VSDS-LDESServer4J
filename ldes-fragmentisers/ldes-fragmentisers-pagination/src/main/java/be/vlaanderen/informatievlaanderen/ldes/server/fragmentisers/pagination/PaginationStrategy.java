@@ -9,10 +9,14 @@ import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.jena.rdf.model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static java.lang.Boolean.TRUE;
 
 public class PaginationStrategy extends FragmentationStrategyDecorator {
+	private static final Logger log = LoggerFactory.getLogger(PaginationStrategy.class);
+
 	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 
 	private final OpenPageProvider openPageProvider;
@@ -41,5 +45,6 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 		}
 		super.addMemberToFragment(ldesFragment.getLeft(), memberId, memberModel, paginationObservation);
 		paginationObservation.stop();
+		log.debug("Member {} to be paginated in fragment {}", memberId, ldesFragment.getLeft().getFragmentId().asDecodedFragmentId());
 	}
 }

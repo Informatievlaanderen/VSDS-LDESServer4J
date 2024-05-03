@@ -225,7 +225,7 @@
                 </dependency>
                 <dependency>
                     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>mongo-retention-repository</artifactId>
+                    <artifactId>postgres-retention-repository</artifactId>
                     <version>${project.version}</version>
                 </dependency>
             </dependencies>

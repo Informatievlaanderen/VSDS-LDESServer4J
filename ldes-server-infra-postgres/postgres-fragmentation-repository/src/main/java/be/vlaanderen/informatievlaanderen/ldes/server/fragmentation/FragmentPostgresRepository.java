@@ -10,9 +10,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Component
@@ -27,6 +30,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public Fragment saveFragment(Fragment fragment) {
 		repository.save(FragmentEntity.fromLdesFragment(fragment));
 		return fragment;
@@ -53,11 +57,9 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	@Override
 	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
-				.findAllByImmutableAndParentId(false,
+				.findByImmutableAndParentId(false,
 						parentId.asDecodedFragmentId())
-				.stream()
-				.map(FragmentEntity::toLdesFragment)
-				.min(Comparator.comparing(Fragment::getFragmentIdString));
+				.map(FragmentEntity::toLdesFragment);
 	}
 
 	@Override
@@ -91,6 +93,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public void deleteTreeNodesByCollection(String collectionName) {
 		Long deleteCount = repository.deleteAllByCollectionName(collectionName);
 		log.debug("Deleted {} treeNodes", deleteCount);
@@ -113,6 +116,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public void removeRelationsPointingToFragmentAndDeleteFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
 		removeRelationsPointingToDeletedFragment(readyForDeletionFragmentId);
 		repository.deleteById(readyForDeletionFragmentId.asDecodedFragmentId());
@@ -120,10 +124,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 
     @Override
     public void makeChildrenImmutable(Fragment fragment) {
-	    Map<String, String> fragmentPairs = fragment.getFragmentPairs().stream()
-			    .collect(Collectors.toMap(FragmentPair::fragmentKey, FragmentPair::fragmentValue));
-
-		int modifiedRows = repository.setImmutableForMatchingPairs(fragment.getFragmentIdString(), fragmentPairs);
+		int modifiedRows = repository.closeChildren(fragment.getFragmentIdString());
 		log.atInfo().log("{} child/children of {} was/were made immutable.", modifiedRows, fragment.getFragmentIdString());
     }
 

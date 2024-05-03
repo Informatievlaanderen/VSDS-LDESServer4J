@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.converter.MapToStringConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import jakarta.persistence.*;
 
@@ -27,10 +28,7 @@ public class FragmentEntity {
 	private String id;
 	private Boolean root;
 	private String viewName;
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "fragmentation_fragment_pairs", joinColumns = @JoinColumn(name = "fragment_id"))
-	@MapKeyColumn(name = "key")
-	@Column(name = "value")
+	@Convert(converter = MapToStringConverter.class)
 	private Map<String, String> fragmentPairs;
 	private Boolean immutable;
 	private String parentId;

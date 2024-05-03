@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,6 +18,7 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
 
 	List<FragmentEntity> findAllByImmutableAndViewName(Boolean immutable, String viewName);
 
+	Optional<FragmentEntity> findByImmutableAndParentId(boolean immutable, String parentId);
 	Optional<FragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
 
 	Stream<FragmentEntity> findAllByViewName(String viewName);
@@ -31,8 +31,18 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
 
 	@Modifying
 	@Transactional
-	@Query("UPDATE FragmentEntity f SET f.immutable = true WHERE f.id = :id AND :params <= f.fragmentPairs")
-	int setImmutableForMatchingPairs(String id, Map<String, String> params);
+	@Query(value = "WITH RECURSIVE children AS (" +
+	               "SELECT id " +
+	               "FROM fragmentation_fragment " +
+	               "WHERE id = :parentId " +
+	               "UNION ALL " +
+	               "SELECT f.id " +
+	               "FROM fragmentation_fragment f " +
+	               "INNER JOIN children c ON f.parent_id = c.id) " +
+	               "UPDATE fragmentation_fragment " +
+	               "SET immutable = true " +
+	               "WHERE id IN (SELECT id FROM children)", nativeQuery = true)
+	int closeChildren(@Param("parentId") String parentId);
 
 	@Transactional
 	@Modifying

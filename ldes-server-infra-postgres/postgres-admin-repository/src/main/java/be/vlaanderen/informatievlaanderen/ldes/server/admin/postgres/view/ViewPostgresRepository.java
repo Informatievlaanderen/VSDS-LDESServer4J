@@ -5,10 +5,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.reposi
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.service.ViewEntityConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class ViewPostgresRepository implements ViewRepository {
 
 	private final ViewEntityRepository repository;

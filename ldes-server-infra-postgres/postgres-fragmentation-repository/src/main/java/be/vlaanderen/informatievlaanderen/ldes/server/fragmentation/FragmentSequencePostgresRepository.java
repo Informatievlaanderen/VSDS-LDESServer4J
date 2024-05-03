@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.mapper.Seque
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.SequenceEntityRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -34,11 +35,13 @@ public class FragmentSequencePostgresRepository implements FragmentSequenceRepos
 	}
 
 	@Override
+	@Transactional
 	public void deleteByViewName(ViewName viewName) {
 		repository.deleteById(viewName.asString());
 	}
 
 	@Override
+	@Transactional
 	public void deleteByCollection(String collectionName) {
 		repository.deleteAllByViewNameStartingWith(collectionName + COLLECTION_VIEW_SEPARATOR);
 	}

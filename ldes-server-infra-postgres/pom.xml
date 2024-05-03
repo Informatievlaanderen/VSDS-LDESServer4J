@@ -14,6 +14,7 @@
         <module>postgres-fetch-repository</module>
         <module>postgres-fragmentation-repository</module>
         <module>postgres-ingest-repository</module>
+        <module>postgres-retention-repository</module>
     </modules>
 
     <artifactId>ldes-server-infra-postgres</artifactId>
@@ -30,14 +31,14 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.hypersistence</groupId>
             <artifactId>hypersistence-utils-hibernate-60</artifactId>
             <version>${hibernate-extensions.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
         </dependency>
 
         <!--        TESTING-->

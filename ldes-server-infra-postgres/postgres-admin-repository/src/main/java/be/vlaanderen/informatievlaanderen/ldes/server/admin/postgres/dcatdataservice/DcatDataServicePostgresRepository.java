@@ -2,28 +2,33 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdatase
 
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.entity.DataServiceEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.repository.DataServiceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.service.DcatServiceEntityConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class DcatDataServicePostgresRepository implements DcatViewRepository {
 
     private final DataServiceEntityRepository repository;
+    private final EntityManager entityManager;
     private final DcatServiceEntityConverter converter = new DcatServiceEntityConverter();
 
-	public DcatDataServicePostgresRepository(DataServiceEntityRepository repository) {
+	public DcatDataServicePostgresRepository(DataServiceEntityRepository repository, EntityManager entityManager) {
 		this.repository = repository;
+		this.entityManager = entityManager;
 	}
 
-	@Override
+    @Override
+	@Transactional
     public void save(DcatView dcatView) {
-        DataServiceEntity dataServiceEntity = converter.fromDcatView(dcatView);
-        repository.save(dataServiceEntity);
+        repository.save(converter.fromDcatView(dcatView));
     }
 
     @Override

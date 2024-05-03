@@ -4,16 +4,22 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserv
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.repository.DcatCatalogEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.service.DcatCatalogEntityConverter;
+import jakarta.persistence.EntityManager;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class DcatCatalogPostgresRepository implements DcatServerRepository {
 	private final DcatCatalogEntityRepository repository;
+	private final EntityManager entityManager;
 	private final DcatCatalogEntityConverter converter = new DcatCatalogEntityConverter();
 
-	public DcatCatalogPostgresRepository(DcatCatalogEntityRepository repository) {
+	public DcatCatalogPostgresRepository(DcatCatalogEntityRepository repository, EntityManager entityManager) {
 		this.repository = repository;
+		this.entityManager = entityManager;
 	}
 
 	@Override
@@ -27,6 +33,7 @@ public class DcatCatalogPostgresRepository implements DcatServerRepository {
 	}
 
 	@Override
+	@Transactional
 	public DcatServer saveServerDcat(DcatServer dcatServer) {
 		repository.save(converter.fromDcatServer(dcatServer));
 		return dcatServer;

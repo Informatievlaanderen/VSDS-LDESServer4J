@@ -18,13 +18,14 @@ public class MemberEntity {
 	private String collectionName;
 	private String versionOf;
 	private LocalDateTime timestamp;
+	@GeneratedValue
 	private Long sequenceNr;
 	private String transactionId;
-	@Column(columnDefinition = "TEXT")
-	private String model;
+	@Column(columnDefinition = "bytea")
+	private byte[] model;
 	protected MemberEntity() {};
 
-	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, String model) {
+	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, byte[] model) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
@@ -62,7 +63,7 @@ public class MemberEntity {
 		return transactionId;
 	}
 
-	public String getModel() {
+	public byte[] getModel() {
 		return model;
 	}
 

@@ -2,22 +2,20 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.service;
 
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity;
-import jakarta.persistence.EntityManager;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository.MemberEntityRepository;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.Query;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MemberEntityListener {
 
-	public static EntityManager entityManager;
+
+	public static MemberEntityRepository repository;
 
 	@PrePersist
 	public void onPrePersist(MemberEntity memberEntity) {
 		if (memberEntity.getSequenceNr() == null) {
-			Query query = entityManager.createQuery("SELECT MAX(m.sequenceNr) FROM MemberEntity m WHERE m.collectionName = :collectionName");
-			query.setParameter("collectionName", memberEntity.getCollectionName());
-			Long maxSequenceNr = (Long) query.getSingleResult();
+			Long maxSequenceNr = repository.getNextSequenceNr(memberEntity.getCollectionName());
 			memberEntity.setSequenceNr(maxSequenceNr != null ? maxSequenceNr + 1 : 1);
 		}
 	}

@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.repository.ShaclShapeEntityRepository;
+import jakarta.persistence.EntityManager;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
@@ -32,6 +33,8 @@ class ShaclShapeMongoRepositoryTest {
 	private static final String COLLECTION = "collection1";
 	@Mock
 	private ShaclShapeEntityRepository shaclShapeEntityRepository;
+	@Mock
+	EntityManager entityManager;
 
 	private ShaclShapeRepository repository;
 

@@ -27,8 +27,9 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 	private Optional<Member> retrievedMember;
 
 	@When("I save the members using the MemberRepository")
-	public void iSaveTheMembers() {
+	public void iSaveTheMembers(List<Member> members) {
 		memberRepository.insertAll(members);
+		this.members = members;
 	}
 
 	@DataTableType(replaceWithEmptyString = "[blank]")
@@ -47,11 +48,6 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 	public void eventstream(String collectionName) {
 		EventStreamCreatedEvent event =
 				new EventStreamCreatedEvent(new EventStream(collectionName, null, null, false));
-	}
-
-	@Given("The following members")
-	public void theFollowingMembers(List<Member> members) {
-		this.members = members;
 	}
 
 	@Then("The member with id {string} can be retrieved from the database")

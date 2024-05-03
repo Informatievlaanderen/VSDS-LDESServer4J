@@ -1,11 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.service.FragmentationConfigEntityConverter;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.hibernate.annotations.Type;
 
 import java.util.List;
@@ -19,15 +16,16 @@ public class ViewEntity {
 	@Type(JsonBinaryType.class)
 	@Column(columnDefinition = "jsonb")
 	private List<String> retentionPolicies;
-	@Type(JsonBinaryType.class)
-	@Column(columnDefinition = "jsonb")
-	private List<FragmentationConfig> fragmentations;
+
+	@Convert(converter = FragmentationConfigEntityConverter.class)
+	@Column(name = "fragmentations", columnDefinition = "text")
+	private List<FragmentationConfigEntity> fragmentations;
 	private int pageSize;
 
 	protected ViewEntity() {}
 
 	public ViewEntity(String viewName, List<String> retentionPolicies,
-	                  List<FragmentationConfig> fragmentations, int pageSize) {
+	                  List<FragmentationConfigEntity> fragmentations, int pageSize) {
 		this.viewName = viewName;
 		this.retentionPolicies = retentionPolicies;
 		this.fragmentations = fragmentations;
@@ -42,7 +40,7 @@ public class ViewEntity {
 		return retentionPolicies;
 	}
 
-	public List<FragmentationConfig> getFragmentations() {
+	public List<FragmentationConfigEntity> getFragmentations() {
 		return fragmentations;
 	}
 

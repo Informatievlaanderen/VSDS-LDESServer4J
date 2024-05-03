@@ -1,33 +1,32 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository.MemberEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.service.MemberEntityListener;
 import io.micrometer.core.instrument.Metrics;
-import jakarta.persistence.EntityManager;
 import org.apache.jena.riot.Lang;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 public class MemberPostgresRepository implements MemberRepository {
-	public static final Lang CONVERSION_LANG = Lang.TTL;
+	public static final Lang CONVERSION_LANG = Lang.RDFPROTO;
 	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-	                                MemberEntityMapper mapper, EntityManager entityManager) {
+	                                MemberEntityMapper mapper) {
 		this.repository = repository;
 		this.mapper = mapper;
-		MemberEntityListener.entityManager = entityManager;
+		MemberEntityListener.repository = repository;
 	}
 
 	public boolean memberExists(String memberId) {
@@ -35,13 +34,26 @@ public class MemberPostgresRepository implements MemberRepository {
 	}
 
 	@Override
+	@Transactional
 	public List<Member> insertAll(List<Member> members) {
-		try {
-			List<MemberEntity> memberEntities = members.stream().map(mapper::toMemberEntity).toList();
-			return repository.saveAll(memberEntities).stream().map(mapper::toMember).toList();
-		} catch (DuplicateKeyException e) {
+		if (!membersContainDuplicateIds(members) && !membersExist(members)) {
+			repository.saveAll(members.stream().map(mapper::toMemberEntity).toList());
+			return members;
+		}
+		else {
 			return List.of();
 		}
+	}
+
+	protected boolean membersExist(List<Member> members) {
+		return repository.existsByIdIn(members.stream().map(Member::getId).toList());
+	}
+
+	protected boolean membersContainDuplicateIds(List<Member> members) {
+		return members.stream()
+				       .map(Member::getId)
+				       .collect(Collectors.toSet())
+				       .size() != members.size();
 	}
 
 	@Override
@@ -52,10 +64,12 @@ public class MemberPostgresRepository implements MemberRepository {
 	@Override
 	public Stream<Member> findAllByIds(List<String> memberIds) {
 		return repository.findAllByIdIn(memberIds)
+				.stream()
 				.map(mapper::toMember);
 	}
 
 	@Override
+	@Transactional
 	public void deleteMembersByCollection(String collectionName) {
 		repository.deleteAllByCollectionName(collectionName);
 	}
@@ -64,10 +78,12 @@ public class MemberPostgresRepository implements MemberRepository {
 	public Stream<Member> getMemberStreamOfCollection(String collectionName) {
 		return repository
 				.getAllByCollectionNameOrderBySequenceNrAsc(collectionName)
+				.stream()
 				.map(mapper::toMember);
 	}
 
 	@Override
+	@Transactional
 	public void deleteMember(String memberId) {
 		repository.deleteById(memberId);
 		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment();
