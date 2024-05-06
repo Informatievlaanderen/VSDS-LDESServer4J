@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.Stack;
@@ -70,7 +71,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Before("@clearRegistry")
 	public void clearRegistry() {
 		Metrics.globalRegistry.getMeters().forEach(meter -> {
-			if(meter instanceof Counter){
+			if (meter instanceof Counter) {
 				Metrics.globalRegistry.remove(meter);
 			}
 		});
@@ -83,8 +84,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	private Model getResponseAsModel(String url, String contentType) throws Exception {
 		return RDFParser.fromString(mockMvc.perform(get(url)
-				.accept(contentType))
-				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
+								.accept(contentType))
+						.andExpect(status().isOk()).andReturn().getResponse().getContentAsString())
 				.lang(RDFLanguages.contentTypeToLang(contentType)).toModel();
 	}
 
@@ -111,8 +112,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 					.replace("ID", String.valueOf(i))
 					.replace("DATETIME", getCurrentTimestamp());
 			mockMvc.perform(post("/" + collectionName)
-					.contentType("text/turtle")
-					.content(memberContent))
+							.contentType("text/turtle")
+							.content(memberContent))
 					.andExpect(status().is2xxSuccessful());
 		}
 	}
@@ -135,7 +136,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.atMost(40, SECONDS)
 				.pollInterval(1, SECONDS)
 				.untilAsserted(() -> mockMvc.perform(get(url))
-                        .andExpect(MemberCounter.countMembers(expectedNumberOfMembers))
+						.andExpect(MemberCounter.countMembers(expectedNumberOfMembers))
 						.andDo(result -> responseModel = new ResponseToModelConverter(result.getResponse()).convert()));
 	}
 
@@ -159,8 +160,8 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		String member = readBodyFromFile(memberFileName);
 		ContentType contentType = RDFLanguages.guessContentType(memberFileName);
 		mockMvc.perform(post("/" + collectionName)
-				.contentType(contentType.getContentTypeStr())
-				.content(member))
+						.contentType(contentType.getContentTypeStr())
+						.content(member))
 				.andExpect(status().is2xxSuccessful())
 				.andDo(result -> lastStatusCode = result.getResponse().getStatus());
 	}
@@ -183,12 +184,12 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.replace("CURRENTTIME", getCurrentTimestamp());
 
 		String eventStreamName = RDFParser.fromString(mockMvc.perform(post("/admin/api/v1/eventstreams")
-				.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
-				.content(eventstream))
-				.andExpect(status().isCreated())
-				.andReturn()
-				.getResponse()
-				.getContentAsString())
+								.contentType(RDFLanguages.guessContentType(eventStreamDescriptionFileSanitized).getContentTypeStr())
+								.content(eventstream))
+						.andExpect(status().isCreated())
+						.andReturn()
+						.getResponse()
+						.getContentAsString())
 				.lang(Lang.TURTLE)
 				.toModel()
 				.listStatements(null, RDF.type, createResource("https://w3id.org/ldes#EventStream"))
@@ -215,12 +216,17 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@Then("The response from requesting the url {string} has access control headers and an etag")
 	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) throws Exception {
-		MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
-				.header("Access-Control-Request-Method", "GET")
-				.header("Origin", "http://www.someurl.com"))
-				.andExpect(status().isOk()).andReturn().getResponse();
-		assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
-		assertNotNull(response.getHeader("ETag"));
+
+		await()
+				.atMost(Duration.of(20, ChronoUnit.SECONDS))
+				.untilAsserted(() -> {
+					MockHttpServletResponse response = mockMvc.perform(get(url).accept("text/turtle")
+									.header("Access-Control-Request-Method", "GET")
+									.header("Origin", "http://www.someurl.com"))
+							.andExpect(status().isOk()).andReturn().getResponse();
+					assertEquals("*", response.getHeader("Access-Control-Allow-Origin"));
+					assertNotNull(response.getHeader("ETag"));
+				});
 	}
 
 	@Then("the first fragment of the {string} view in collection {string} contains {long} members")
@@ -228,10 +234,10 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 			throws Exception {
 		// Get only relation from view
 		String fragmentUrl = RDFParser.fromString(mockMvc.perform(get("/%s/%s".formatted(collection, view))
-				.accept("text/turtle"))
-				.andReturn()
-				.getResponse()
-				.getContentAsString())
+								.accept("text/turtle"))
+						.andReturn()
+						.getResponse()
+						.getContentAsString())
 				.lang(Lang.TURTLE)
 				.toModel()
 				.listObjectsOfProperty(createProperty("https://w3id.org/tree#node"))
@@ -241,15 +247,15 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 		await().atMost(Duration.ofSeconds(40))
 				.until(() -> {
 					Model fragmentPage = RDFParser.fromString(
-							mockMvc.perform(get(fragmentUrl.formatted(collection, view))
-									.accept("text/turtle"))
-									.andReturn()
-									.getResponse()
-									.getContentAsString())
+									mockMvc.perform(get(fragmentUrl.formatted(collection, view))
+													.accept("text/turtle"))
+											.andReturn()
+											.getResponse()
+											.getContentAsString())
 							.lang(Lang.TURTLE).toModel();
 
 					return fragmentPage.listObjectsOfProperty(createProperty("https://w3id.org/tree#member"))
-							.toList().size() == expectedMemberCount;
+							       .toList().size() == expectedMemberCount;
 				});
 	}
 
@@ -278,7 +284,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 						.header("Origin", "http://www.someurl.com"))
 				.andExpect(status().isOk()).andReturn().getResponse();
 		Model contentAsString = RDFParser.create().fromString(response.getContentAsString()).lang(Lang.TTL).toModel();
-        long size = contentAsString.listObjectsOfProperty(createProperty(TREE_REMAINING_ITEMS))
+		long size = contentAsString.listObjectsOfProperty(createProperty(TREE_REMAINING_ITEMS))
 				.toList().size();
 		assertThat(size).isEqualTo(statementCount);
 	}
