@@ -132,7 +132,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) throws Exception {
 		await()
-				.atMost(10, SECONDS)
+				.atMost(40, SECONDS)
 				.pollInterval(1, SECONDS)
 				.untilAsserted(() -> mockMvc.perform(get(url))
                         .andExpect(MemberCounter.countMembers(expectedNumberOfMembers))

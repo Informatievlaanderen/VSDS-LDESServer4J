@@ -1,9 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = MemberAllocationEntity.FETCH_ALLOCATION, indexes = {
@@ -15,6 +12,7 @@ import jakarta.persistence.Table;
 public class MemberAllocationEntity {
 	public static final String FETCH_ALLOCATION = "fetch_allocation";
 	@Id
+	@Column(length = 1024)
 	private String id;
 	private String collectionName;
 	private String viewName;

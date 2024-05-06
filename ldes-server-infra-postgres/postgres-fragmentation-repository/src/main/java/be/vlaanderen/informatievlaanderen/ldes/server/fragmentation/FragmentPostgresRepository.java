@@ -70,8 +70,8 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId) {
-		log.debug("HIT");
 		repository.incrementNrOfMembersAdded(fragmentId.asDecodedFragmentId(), 1);
 	}
 

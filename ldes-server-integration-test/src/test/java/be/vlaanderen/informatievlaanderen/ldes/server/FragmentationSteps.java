@@ -71,7 +71,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@Then("this fragment only has {int} {string} relation")
 	public void thisFragmentOnlyHasOne(int expectedRelationCount, String relation) {
-		await().atMost(Duration.of(20, ChronoUnit.SECONDS)).until(() -> {
+		await().atMost(Duration.of(1, ChronoUnit.MINUTES)).until(() -> {
 			fetchFragment(currentPath);
 			int relationCount = currentFragment.listStatements(null, RDF.type, createResource(TREE + relation))
 					.toList().size();

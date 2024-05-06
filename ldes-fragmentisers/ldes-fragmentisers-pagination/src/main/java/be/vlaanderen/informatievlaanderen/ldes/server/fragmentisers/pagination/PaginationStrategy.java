@@ -45,6 +45,5 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 		}
 		super.addMemberToFragment(ldesFragment.getLeft(), memberId, memberModel, paginationObservation);
 		paginationObservation.stop();
-		log.debug("Member {} to be paginated in fragment {}", memberId, ldesFragment.getLeft().getFragmentId().asDecodedFragmentId());
 	}
 }

@@ -4,15 +4,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.converter.MapToStringConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.converter.FragmentPairConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @SuppressWarnings({"java:S1068", "java:S107"})
 @Entity
@@ -28,8 +26,9 @@ public class FragmentEntity {
 	private String id;
 	private Boolean root;
 	private String viewName;
-	@Convert(converter = MapToStringConverter.class)
-	private Map<String, String> fragmentPairs;
+	@Convert(converter = FragmentPairConverter.class)
+	@Column(name = "fragmentations", columnDefinition = "text")
+	private List<FragmentPair> fragmentPairs;
 	private Boolean immutable;
 	private String parentId;
 	private Integer nrOfMembersAdded;
@@ -49,8 +48,7 @@ public class FragmentEntity {
 		this.id = id;
 		this.root = root;
 		this.viewName = viewName;
-		this.fragmentPairs = fragmentPairs.stream()
-				.collect(Collectors.toMap(FragmentPair::fragmentKey, FragmentPair::fragmentValue));
+		this.fragmentPairs = fragmentPairs;
 		this.immutable = immutable;
 		this.parentId = parentId;
 		this.nrOfMembersAdded = nrOfMembersAdded;
@@ -73,11 +71,7 @@ public class FragmentEntity {
 
 	public Fragment toLdesFragment() {
 		int effectiveNrOfMembersAdded = nrOfMembersAdded == null ? 0 : nrOfMembersAdded;
-		final var ldesFragmentIdentifier = new LdesFragmentIdentifier(ViewName.fromString(viewName),
-				fragmentPairs.entrySet()
-						.stream()
-						.map(FragmentPair::fromMapEntry)
-						.toList());
+		final var ldesFragmentIdentifier = new LdesFragmentIdentifier(ViewName.fromString(viewName), fragmentPairs);
 		var relationList = new ArrayList<>(relations.stream().map(TreeRelationEntity::toTreeRelation).toList());
 		var fragment =
 				new Fragment(ldesFragmentIdentifier, immutable, effectiveNrOfMembersAdded, relationList, deleteTime);

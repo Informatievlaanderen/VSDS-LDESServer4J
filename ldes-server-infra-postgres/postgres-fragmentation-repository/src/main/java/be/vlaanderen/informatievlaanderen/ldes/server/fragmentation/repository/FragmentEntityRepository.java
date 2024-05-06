@@ -44,7 +44,6 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
 	               "WHERE id IN (SELECT id FROM children)", nativeQuery = true)
 	int closeChildren(@Param("parentId") String parentId);
 
-	@Transactional
 	@Modifying
 	@Query(value = "UPDATE fragmentation_fragment SET nr_of_members_added = nr_of_members_added  + :memberCount WHERE id = :id",
 			nativeQuery = true)

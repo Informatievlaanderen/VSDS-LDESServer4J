@@ -52,7 +52,6 @@ public class MemberIngesterImpl implements MemberIngester {
             log.info("HIT duplicate");
             return false;
         }
-        log.info("HIT ingested {}", members.get(0).getId());
         publishIngestedEvent(collectionName, members);
         Metrics.counter(LDES_SERVER_INGESTED_MEMBERS_COUNT).increment(ingestedMembersCount);
         members.forEach(member -> logSuccessfulMemberIngestion(member.getId()));
