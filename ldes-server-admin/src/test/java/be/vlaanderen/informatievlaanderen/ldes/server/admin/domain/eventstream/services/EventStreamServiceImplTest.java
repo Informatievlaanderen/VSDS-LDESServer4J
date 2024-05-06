@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.service
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
@@ -160,6 +161,15 @@ class EventStreamServiceImplTest {
 
 		verify(eventStreamRepository).retrieveEventStream(COLLECTION);
 		verifyNoInteractions(viewService, shaclShapeService);
+	}
+
+	@Test
+	void when_collectionExists_then_updateEventSource() {
+		service.updateEventSource(COLLECTION, List.of());
+
+		InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
+		inOrder.verify(eventStreamRepository).saveEventSource(COLLECTION, List.of());
+		inOrder.verify(eventPublisher).publishEvent(new DeletionPolicyChangedEvent(COLLECTION, List.of()));
 	}
 
 	@Nested

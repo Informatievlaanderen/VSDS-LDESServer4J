@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -86,6 +87,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 	@Override
 	public void updateEventSource(String collectionName, List<Model> eventSourceModel) {
 		eventStreamRepository.saveEventSource(collectionName, eventSourceModel);
+		eventPublisher.publishEvent(new DeletionPolicyChangedEvent(collectionName, eventSourceModel));
 	}
 
 	private EventStreamTO mapToEventStreamTO(EventStream eventStream) {

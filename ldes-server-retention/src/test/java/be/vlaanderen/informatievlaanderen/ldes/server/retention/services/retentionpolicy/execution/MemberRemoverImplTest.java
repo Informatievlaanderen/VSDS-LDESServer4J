@@ -49,4 +49,30 @@ class MemberRemoverImplTest {
 				.publishEvent(new MemberUnallocatedEvent(memberProperties.getId(), ViewName.fromString(VIEW_NAME)));
 		inOrder.verifyNoMoreInteractions();
 	}
+
+	@Test
+	void when_MemberPropertiesToBeREmovedFromEventSource_Then_MemberIsRemovedFromEventSource() {
+		MemberProperties memberProperties = new MemberProperties("1", null, null, null, false);
+
+		memberRemover.removeMembersFromEventSource(List.of(memberProperties));
+
+		InOrder inOrder = inOrder(memberPropertiesRepository, applicationEventPublisher);
+		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties.getId()));
+		inOrder.verify(applicationEventPublisher)
+				.publishEvent(new MembersRemovedFromEventSourceEvent(List.of(memberProperties.getId())));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	void when_MemberPropertiesNotInEventSource_Then_MemberIsRemoved() {
+		MemberProperties memberProperties = new MemberProperties("1", null, null, null, false);
+
+		memberRemover.deleteMembers(List.of(memberProperties));
+
+		InOrder inOrder = inOrder(memberPropertiesRepository, applicationEventPublisher);
+		inOrder.verify(memberPropertiesRepository).deleteAllByIds(List.of(memberProperties.getId()));
+		inOrder.verify(applicationEventPublisher)
+				.publishEvent(new MembersDeletedEvent(List.of(memberProperties.getId())));
+		inOrder.verifyNoMoreInteractions();
+	}
 }

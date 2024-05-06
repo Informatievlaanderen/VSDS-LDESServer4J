@@ -9,8 +9,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +37,17 @@ class EventSourceServiceImplTest {
 
 		List<Member> resultList = result.toList();
 		assertEquals(3, resultList.size());
+	}
+
+	@Test
+	void test_getNextMember() {
+		long sequence = 0L;
+		when(memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, sequence))
+				.thenReturn(Optional.of(createMember(0)));
+
+		Optional<Member> result = eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, sequence);
+
+		assertThat(result).isPresent().matches(memberOptional -> Objects.equals(memberOptional.get().getId(), "0"));
 	}
 
 	private Member createMember(int id) {

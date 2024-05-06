@@ -20,6 +20,8 @@ An Event Stream config needs to contain a couple of items:
     * `ldes:createVersions` object that defines whether the LDES should create version objects, indicating the LDES can
       ingest state objects.
       The default value of this object is `false` and the property can be omitted.
+    * `ldes:eventSource` object that defines which members are to be retained in the event stream.
+      When omitted, all members are retained. More info on this can be found [here](./event-stream#configuring-the-member-deletion-on-a-ldes-stream)
 
     * For more info, visit the [Swagger API documentation.](./admin-api)
 
@@ -102,4 +104,38 @@ For more info, visit the [Swagger API documentation.](./admin-api)
     sh:name "versionOfPath"@en;
     sh:path <https://w3id.org/ldes#versionOfPath>
   ] .
+````
+
+## Configuring the member deletion on a ldes stream
+
+To determine which members should be permanently deleted from the server, it is necessary to set an event source on each event stream.
+In this object, the retention policies for the event stream can be set. Each member that falls outside of each retention policy will be removed from the event source.
+These members will then be deleted, only if they not a part of any view.
+More information on which retention policies can be used can be found [here](./retention-policies/index.md)
+
+The retention policies of an event source are the only part of an event stream that can be updated once the event stream is created.
+To do this, there is an endpoint on the admin api. More info can be found [here](./admin-api.md)
+
+Older versions of the server deleted members the moment they were no longer part of any view, the event source prevents this.
+If this behaviour is wanted, it can be recreated by setting a retention policy which all members will fail.
+Example:
+````turtle
+@prefix ldes: <https://w3id.org/ldes#> .
+
+ldes:retentionPolicy [
+        a ldes:LatestVersionSubset ;
+        ldes:amount 0 ;
+      ] ;
+````
+
+### Example
+
+````turtle
+@prefix ldes: <https://w3id.org/ldes#> .
+
+<> a ldes:EventSource ;
+    ldes:retentionPolicy [
+        a ldes:DurationAgoPolicy ;
+        tree:value "PT5S"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+      ] .
 ````

@@ -163,3 +163,56 @@ Feature: MemberRepository
     Then the MemberProperties all contain a reference to view "mobility-hindrances/by-location"
     When I retrieve all MemberProperties with view "parcels/by-page"
     Then the MemberProperties do not contain a reference to view "mobility-hindrances/by-location"
+
+  Scenario: Retrieving expired MemberProperties for a collection by TimeBasedRetentionPolicy
+    Given The following MemberProperties
+      | id                                    | collectionName      | versionOf             | timestamp               | viewReference                   |
+      | http://test-data/mh/expired-by-page/1 | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/expired-by-page/2 | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/future-timestamp  | mobility-hindrances | http://test-data/mh/1 | 3023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/other-view        | mobility-hindrances | http://test-data/mh/2 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-location |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P2D"
+    Then I have retrieved 3 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/expired-by-page/1"
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/expired-by-page/2"
+    When I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P1000000D"
+    Then I have retrieved 0 MemberProperties
+
+  Scenario: Retrieving expired MemberProperties for a collection by VersionBasedRetentionPolicy
+    Given The following MemberProperties
+      | id                             | collectionName      | versionOf             | timestamp               | viewReference                   |
+      | http://test-data/mh/1          | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/2          | mobility-hindrances | http://test-data/mh/1 | 2023-08-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/3          | mobility-hindrances | http://test-data/mh/1 | 2023-09-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/4          | mobility-hindrances | http://test-data/mh/2 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/other-view | mobility-hindrances | http://test-data/mh/3 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-location |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I retrieve the expired MemberProperties for collection "mobility-hindrances" with 1 versions
+    Then I have retrieved 2 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/2"
+    When I retrieve the expired MemberProperties for collection "mobility-hindrances" with 2 versions
+    Then I have retrieved 1 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
+    When I retrieve the expired MemberProperties for collection "mobility-hindrances" with 3 versions
+    Then I have retrieved 0 MemberProperties
+
+  Scenario: Retrieving expired MemberProperties for a collection by TimeAndVersionBasedRetentionPolicy
+    Given The following MemberProperties
+      | id                             | collectionName      | versionOf             | timestamp               | viewReference                   |
+      | http://test-data/mh/1          | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/2          | mobility-hindrances | http://test-data/mh/1 | 2023-08-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/3          | mobility-hindrances | http://test-data/mh/1 | 2023-09-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/4          | mobility-hindrances | http://test-data/mh/2 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page     |
+      | http://test-data/mh/other-view | mobility-hindrances | http://test-data/mh/3 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-location |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P1000000D" and 1 versions
+    Then I have retrieved 0 MemberProperties
+    When I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P1D" and 1 versions
+    Then I have retrieved 2 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/2"
+    When I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P1D" and 2 versions
+    Then I have retrieved 1 MemberProperties
+    And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
