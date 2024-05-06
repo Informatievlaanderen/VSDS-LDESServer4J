@@ -24,7 +24,7 @@ public class MemberEntity {
 	@Column(columnDefinition = "bytea")
 	private byte[] model;
 
-	protected MemberEntity() {};
+	protected MemberEntity() {}
 
 	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, byte[] model) {
 		this.id = id;

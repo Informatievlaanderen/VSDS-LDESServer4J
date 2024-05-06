@@ -33,7 +33,7 @@ class DcatServerPostgresRepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		dcatServerRepository = new DcatCatalogPostgresRepository(dcatCatalogEntityRepository, entityManager);
+		dcatServerRepository = new DcatCatalogPostgresRepository(dcatCatalogEntityRepository);
 	}
 
 	@Test

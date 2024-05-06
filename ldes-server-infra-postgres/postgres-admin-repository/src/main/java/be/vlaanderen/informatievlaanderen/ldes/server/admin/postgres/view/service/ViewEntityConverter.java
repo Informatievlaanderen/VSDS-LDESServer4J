@@ -10,7 +10,7 @@ import org.apache.jena.riot.RDFWriter;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminAutoConfiguration.SERIALISATION_LANG;
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminConstants.SERIALISATION_LANG;
 
 public class ViewEntityConverter {
 

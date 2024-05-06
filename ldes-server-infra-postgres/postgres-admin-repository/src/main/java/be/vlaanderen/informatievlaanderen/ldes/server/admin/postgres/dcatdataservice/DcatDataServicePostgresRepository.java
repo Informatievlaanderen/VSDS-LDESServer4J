@@ -6,7 +6,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataser
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataservice.service.DcatServiceEntityConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.DcatView;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +16,10 @@ import java.util.Optional;
 public class DcatDataServicePostgresRepository implements DcatViewRepository {
 
     private final DataServiceEntityRepository repository;
-    private final EntityManager entityManager;
-    private final DcatServiceEntityConverter converter = new DcatServiceEntityConverter();
+	private final DcatServiceEntityConverter converter = new DcatServiceEntityConverter();
 
-	public DcatDataServicePostgresRepository(DataServiceEntityRepository repository, EntityManager entityManager) {
+	public DcatDataServicePostgresRepository(DataServiceEntityRepository repository) {
 		this.repository = repository;
-		this.entityManager = entityManager;
 	}
 
     @Override

@@ -6,7 +6,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.apache.jena.riot.RDFWriter;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminAutoConfiguration.SERIALISATION_LANG;
+import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminConstants.SERIALISATION_LANG;
 
 public class DcatCatalogEntityConverter {
 	public DcatCatalogEntity fromDcatServer(DcatServer dcatServer) {
