@@ -216,3 +216,13 @@ Feature: MemberRepository
     When I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P1D" and 2 versions
     Then I have retrieved 1 MemberProperties
     And The retrieved MemberProperties contains MemberProperties with id "http://test-data/mh/1"
+
+  Scenario: Remove from event source
+    Given The following MemberProperties
+      | id                         | collectionName      | versionOf             | timestamp               | viewReference               | isInEventSource |
+      | http://test-data/mh/1      | mobility-hindrances | http://test-data/mh/1 | 2023-07-05T15:28:49.665 | mobility-hindrances/by-page | true            |
+      | http://test-data/mh/2      | mobility-hindrances | http://test-data/mh/1 | 2023-08-05T15:28:49.665 | mobility-hindrances/by-page | true            |
+    When I save the MemberProperties using the MemberPropertiesRepository
+    And I remove members "http://test-data/mh/1" and "http://test-data/mh/2" from the event source
+    And I retrieve the expired MemberProperties for collection "mobility-hindrances" with duration "P1D"
+    Then The MemberProperties are not in the event source

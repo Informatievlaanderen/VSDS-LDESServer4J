@@ -27,6 +27,5 @@ public class RetentionModelSerializer {
                 .stream()
                 .map(retentionModel -> rdfModelConverter.fromString(retentionModel, dbSavedLang))
                 .toList();
-
     }
 }

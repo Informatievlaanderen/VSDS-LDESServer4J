@@ -186,9 +186,19 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		memberPropertiesRepository.addViewToAll(ViewName.fromString(viewName));
 	}
 
+	@And("I remove members {string} and {string} from the event source")
+	public void iRemoveMembersFromEventSource(String id1, String id2) {
+		memberPropertiesRepository.removeFromEventSource(List.of(id1, id2));
+	}
+
 	@Then("the MemberProperties all contain a reference to view {string}")
 	public void theMemberPropertiesAllContainAReferenceToView(String viewName) {
 		assertThat(retrievedMemberProperties).allMatch(prop -> prop.containsViewReference(viewName));
+	}
+
+	@Then("The MemberProperties are not in the event source")
+	public void theMemberPropertiesAreNotInTheEventSource() {
+		assertThat(retrievedMemberProperties).allMatch(prop -> !prop.isInEventSource());
 	}
 
 	@Then("the MemberProperties do not contain a reference to view {string}")

@@ -52,14 +52,15 @@ class MemberRemoverImplTest {
 
 	@Test
 	void when_MemberPropertiesToBeREmovedFromEventSource_Then_MemberIsRemovedFromEventSource() {
-		MemberProperties memberProperties = new MemberProperties("1", null, null, null, false);
+		MemberProperties memberProperties = new MemberProperties("1", null, null, null, true);
+		MemberProperties memberProperties2 = new MemberProperties("1", null, null, null, false);
 
-		memberRemover.removeMembersFromEventSource(List.of(memberProperties));
+		memberRemover.removeMembersFromEventSource(List.of(memberProperties, memberProperties2));
 
 		InOrder inOrder = inOrder(memberPropertiesRepository, applicationEventPublisher);
-		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties.getId()));
+		inOrder.verify(memberPropertiesRepository).removeFromEventSource(List.of(memberProperties2.getId()));
 		inOrder.verify(applicationEventPublisher)
-				.publishEvent(new MembersRemovedFromEventSourceEvent(List.of(memberProperties.getId())));
+				.publishEvent(new MembersRemovedFromEventSourceEvent(List.of(memberProperties2.getId())));
 		inOrder.verifyNoMoreInteractions();
 	}
 
