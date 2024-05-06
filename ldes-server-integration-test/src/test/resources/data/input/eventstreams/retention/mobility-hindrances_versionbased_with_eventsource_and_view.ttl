@@ -11,6 +11,7 @@ server:mobility-hindrances a ldes:EventStream ;
 	ldes:timestampPath dc:created ;
 	ldes:versionOfPath dc:isVersionOf ;
     tree:view mobility-hindrances:paged  ;
+    tree:view mobility-hindrances:paged  ;
     ldes:eventSource [
         a ldes:EventSource ;
         ldes:retentionPolicy [
@@ -19,6 +20,14 @@ server:mobility-hindrances a ldes:EventStream ;
             ]
     ] ;
 	tree:shape mobility-hindrances:shape .
+
+
+mobility-hindrances:paged
+    a tree:Node ;
+    tree:viewDescription [
+		tree:fragmentationStrategy  () ;
+	    tree:pageSize "1500"^^<http://www.w3.org/2001/XMLSchema#int> ;
+	] .
 
 mobility-hindrances:shape a sh:NodeShape ;
 	sh:targetClass <https://data.vlaanderen.be/ns/mobiliteit#Mobiliteitshinder> .

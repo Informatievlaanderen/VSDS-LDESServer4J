@@ -41,3 +41,4 @@ Feature: LDES Server Retention
     Examples:
       | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
       | "data/input/eventstreams/retention/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 10                  |
+      | "data/input/eventstreams/retention/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 30                  |
