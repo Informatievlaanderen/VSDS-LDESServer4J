@@ -89,11 +89,11 @@ class AdminEventStreamsRestControllerTest {
 			eventStreams = List.of(
 					new EventStreamTO(COLLECTION, "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf", false,
-							views, shape1),
+							views, shape1, List.of()),
 					new EventStreamTO("name2", "http://purl.org/dc/terms/created",
 							"http://purl.org/dc/terms/isVersionOf", false,
 							List.of(singleView),
-							shape2));
+							shape2, List.of()));
 		}
 
 		@Test
@@ -119,7 +119,7 @@ class AdminEventStreamsRestControllerTest {
 			Model shape = readModelFromFile("shacl/server-shape.ttl");
 			EventStreamTO eventStream = new EventStreamTO("name1", "http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf", false,
-					List.of(), shape);
+					List.of(), shape, List.of());
 
 			when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 
@@ -155,7 +155,7 @@ class AdminEventStreamsRestControllerTest {
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					false,
-					List.of(), shape);
+					List.of(), shape, List.of());
 
 			when(eventStreamService.createEventStream(any(EventStreamTO.class))).thenReturn(eventStreamTO);
 
@@ -180,7 +180,7 @@ class AdminEventStreamsRestControllerTest {
 					"http://purl.org/dc/terms/created",
 					"http://purl.org/dc/terms/isVersionOf",
 					true,
-					List.of(), shape);
+					List.of(), shape, List.of());
 
 			when(eventStreamService.createEventStream(any(EventStreamTO.class))).thenReturn(eventStreamTO);
 

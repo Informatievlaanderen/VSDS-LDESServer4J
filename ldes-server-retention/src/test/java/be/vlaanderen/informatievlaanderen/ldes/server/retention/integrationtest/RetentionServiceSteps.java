@@ -42,7 +42,8 @@ public class RetentionServiceSteps extends RetentionIntegrationTest {
 				row.get("collection"),
 				row.get("timestampPath"),
 				row.get("versionOfPath"),
-				false
+				false,
+				List.of()
         );
 	}
 

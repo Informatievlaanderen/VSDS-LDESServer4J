@@ -20,9 +20,11 @@ public interface MemberRepository {
 
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 
-	void deleteMember(String memberId);
+	void deleteMembers(List<String> memberId);
 
-	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr);
+	void removeFromEventSource(List<String> ids);
+
+	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 
 	long getMemberCount();
 

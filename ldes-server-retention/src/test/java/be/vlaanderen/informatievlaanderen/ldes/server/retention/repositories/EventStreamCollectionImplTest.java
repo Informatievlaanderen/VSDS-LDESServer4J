@@ -7,6 +7,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.valueobjects.EventStreamProperties;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -21,7 +23,7 @@ class EventStreamCollectionImplTest {
 	@Test
 	void when_EventStreamDoesNotExist_then_MissingEventStreamExceptionIsThrown() {
 		eventStreamCollection.handleEventStreamCreatedEvent(
-				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of())));
 		eventStreamCollection.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(COLLECTION));
 
 		assertThatThrownBy(() -> eventStreamCollection.getEventStreamProperties(COLLECTION))
@@ -32,7 +34,7 @@ class EventStreamCollectionImplTest {
 	@Test
 	void when_EventStreamExists_then_EventStreamPropertiesCanBeRetrieved() {
 		eventStreamCollection.handleEventStreamCreatedEvent(
-				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
+				new EventStreamCreatedEvent(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of())));
 
 		EventStreamProperties actualEventStreamProperties = eventStreamCollection.getEventStreamProperties(COLLECTION);
 

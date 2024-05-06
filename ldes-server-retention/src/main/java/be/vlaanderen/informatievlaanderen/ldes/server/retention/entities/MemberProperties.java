@@ -11,14 +11,16 @@ public class MemberProperties {
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 	private final Set<String> viewReferences;
+	private final boolean isInEventSource;
 
 	public MemberProperties(String id, String collectionName, String versionOf,
-			LocalDateTime timestamp) {
+                            LocalDateTime timestamp, boolean isInEventSource) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
-		this.viewReferences = new HashSet<>();
+        this.isInEventSource = isInEventSource;
+        this.viewReferences = new HashSet<>();
 	}
 
 	public String getId() {
@@ -41,6 +43,10 @@ public class MemberProperties {
 		return viewReferences;
 	}
 
+	public boolean isInEventSource() {
+		return isInEventSource;
+	}
+
 	public boolean containsViewReference(String viewName) {
 		return viewReferences.contains(viewName);
 	}
@@ -55,9 +61,5 @@ public class MemberProperties {
 
 	public void deleteViewReference(String viewName) {
 		viewReferences.remove(viewName);
-	}
-
-	public boolean hasNoViewReferences() {
-		return viewReferences.isEmpty();
 	}
 }

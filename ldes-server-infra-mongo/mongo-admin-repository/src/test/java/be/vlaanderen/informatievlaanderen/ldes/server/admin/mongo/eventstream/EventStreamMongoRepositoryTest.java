@@ -2,6 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.service.EventStreamConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RetentionModelSerializer;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.test.context.ContextConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,22 +22,26 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EventStreamMongoRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
 	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
-			"isVersionOf", false);
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf", false);
+			"isVersionOf", false, List.of());
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf",
+			false, List.of());
+	private MongoTemplate mongoTemplate = mock(MongoTemplate.class);
+	private RdfModelConverter rdfModelConverter = new RdfModelConverter();
+	private RetentionModelSerializer retentionModelSerializer = new RetentionModelSerializer(rdfModelConverter);
+	private EventStreamConverter eventStreamConverter = new EventStreamConverter(retentionModelSerializer);
 	private EventStreamMongoRepository mongoRepository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
 
 	@BeforeEach
 	void setUp() {
-		mongoRepository = new EventStreamMongoRepository(eventStreamEntityRepository);
+		mongoRepository = new EventStreamMongoRepository(eventStreamEntityRepository, eventStreamConverter, retentionModelSerializer, mongoTemplate);
 	}
 
 	@Test
@@ -39,12 +49,12 @@ class EventStreamMongoRepositoryTest {
 	void when_dbHasEntities_then_returnAll() {
 		when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
 				EVENT_STREAM_ENTITY,
-				new EventStreamEntity("other_collection", "created", "version", false)));
+				new EventStreamEntity("other_collection", "created", "version", false, List.of())));
 
 		List<EventStream> eventStreams = mongoRepository.retrieveAllEventStreams();
 		List<EventStream> expectedEventStreams = List.of(
 				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version", false));
+				new EventStream("other_collection", "created", "version", false, List.of()));
 		verify(eventStreamEntityRepository).findAll();
 		assertEquals(expectedEventStreams, eventStreams);
 	}

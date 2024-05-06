@@ -31,7 +31,8 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("versionOf"),
-				LocalDateTime.parse(row.get("timestamp")));
+				LocalDateTime.parse(row.get("timestamp")),
+				true);
 		properties.addViewReference(row.get("viewReference"));
 		return properties;
 	}
@@ -111,7 +112,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@And("I delete the MemberProperties with id {string}")
 	public void iDeleteTheMemberPropertiesWithId(String id) {
-		memberPropertiesRepository.deleteById(id);
+		memberPropertiesRepository.deleteAllByIds(List.of(id));
 	}
 
 	@And("I retrieve the expired MemberProperties for {string} with duration {string}")

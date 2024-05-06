@@ -66,7 +66,7 @@ class MemberIngesterImplTest {
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, "txId", model);
+                0L, true, "txId", model);
 
         doThrow(new RuntimeException("testException")).when(validator).validate(member);
 
@@ -83,7 +83,7 @@ class MemberIngesterImplTest {
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, "txId", model);
+                0L, true, "txId", model);
         when(memberRepository.insertAll(List.of(member))).thenReturn(List.of());
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
@@ -100,7 +100,7 @@ class MemberIngesterImplTest {
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, "txId", model);
+                0L, true, "txId", model);
         when(memberRepository.insertAll(List.of(member))).thenReturn(List.of(member));
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);

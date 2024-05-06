@@ -65,7 +65,7 @@ public class FragmentationStrategyExecutor {
 	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
 		final String collectionName = viewName.getCollectionName();
 		final long lastProcessedSequenceNr = lastProcessedSequence.sequenceNr();
-		return memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, lastProcessedSequenceNr);
+		return memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, lastProcessedSequenceNr);
 	}
 
 	private FragmentSequence fragment(Member member) {

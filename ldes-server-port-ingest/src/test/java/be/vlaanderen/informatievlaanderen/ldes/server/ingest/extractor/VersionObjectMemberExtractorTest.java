@@ -40,6 +40,7 @@ class VersionObjectMemberExtractorTest {
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622",
                 ZonedDateTime.parse("2020-12-28T09:36:37.127Z").toLocalDateTime(),
                 null,
+                true,
                 "txId",
                 model
         );

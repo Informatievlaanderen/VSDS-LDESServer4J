@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor.VersionOb
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,7 +55,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false, List.of());
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -64,7 +65,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true);
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true, List.of());
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 

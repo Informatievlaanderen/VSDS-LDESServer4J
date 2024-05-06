@@ -25,17 +25,17 @@ class EventStreamTOTest {
     private static final String VERSION_OF_PATH = "isVersionOf";
     private static final boolean VERSION_CREATION_ENABLED = false;
     private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-            VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+            VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
     private static final EventStreamTO EVENT_STREAM_RESPONSE_WITH_DATASET = new EventStreamTO(COLLECTION,
             TIMESTAMP_PATH,
             VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(),
-            new DcatDataset(COLLECTION, ModelFactory.createDefaultModel().add(createResource("subject"),
+            List.of(), new DcatDataset(COLLECTION, ModelFactory.createDefaultModel().add(createResource("subject"),
                     createProperty("predicate"), "value")));
 
     @Test
     void test_equality() {
         EventStreamTO other = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(),
-                ModelFactory.createDefaultModel());
+                ModelFactory.createDefaultModel(), List.of());
 
         assertEquals(EVENT_STREAM_RESPONSE, other);
     }
@@ -44,7 +44,7 @@ class EventStreamTOTest {
     void test_equality_with_dataset() {
         EventStreamTO other = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED,
                 List.of(),
-                ModelFactory.createDefaultModel(),
+                ModelFactory.createDefaultModel(), List.of(),
                 new DcatDataset(COLLECTION, ModelFactory.createDefaultModel().add(createResource("subject"),
                         createProperty("predicate"), "value")));
 
@@ -70,26 +70,26 @@ class EventStreamTOTest {
                             new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED,
                                     List.of(),
                                     ModelFactory.createDefaultModel().add(createResource(),
-                                            RdfConstants.IS_PART_OF_PROPERTY, "object"))),
+                                            RdfConstants.IS_PART_OF_PROPERTY, "object"), List.of())),
                     Arguments.of("VersionPath",
                             new EventStreamTO(COLLECTION, TIMESTAMP_PATH, "other", VERSION_CREATION_ENABLED,
                                     List.of(),
-                                    ModelFactory.createDefaultModel())),
+                                    ModelFactory.createDefaultModel(), List.of())),
                     Arguments.of("timestampPath",
                             new EventStreamTO(COLLECTION, "other", VERSION_OF_PATH, VERSION_CREATION_ENABLED,
                                     List.of(),
-                                    ModelFactory.createDefaultModel())),
+                                    ModelFactory.createDefaultModel(), List.of())),
                     Arguments.of("collection",
                             new EventStreamTO("other", TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED,
                                     List.of(),
-                                    ModelFactory.createDefaultModel())),
+                                    ModelFactory.createDefaultModel(), List.of())),
                     Arguments.of("HasDefaultView",
                             new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED,
                                     List.of(),
-                                    ModelFactory.createDefaultModel())),
+                                    ModelFactory.createDefaultModel(), List.of())),
                     Arguments.of("null", null),
                     Arguments.of("dataset", EVENT_STREAM_RESPONSE_WITH_DATASET),
-                    Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
+                    Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of())));
         }
     }
 

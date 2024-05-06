@@ -1,0 +1,38 @@
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ldes: <https://w3id.org/ldes#> .
+@prefix test: <http://validation-rules/#> .
+
+[] a sh:NodeShape;
+  sh:targetClass <https://w3id.org/ldes#EventSource> ;
+  sh:closed false;
+  sh:ignoredProperties (rdf:type) ;
+
+	sh:property [
+      	sh:path ldes:retentionPolicy;
+        sh:targetClass ldes:RetentionPolicy  ;
+        sh:name "List of retention policies";
+        sh:description "Unordered list of retention policies that declare when a member should be removed from the collection";
+    ].
+
+# Close the world beyond the defined nodeshape.
+test:additionalStatements
+	a sh:NodeShape ;
+    sh:closed true ;
+    sh:ignoredProperties (rdf:type) ;
+	sh:target [
+		a sh:SPARQLTarget ;
+		sh:select """
+			SELECT ?this
+            WHERE {
+                VALUES (?type ) {
+                    (<https://w3id.org/ldes#EventSource>)
+                }
+                ?this ?p ?o .
+                FILTER NOT EXISTS { ?x_1 ?x_2 ?this }
+                FILTER NOT EXISTS { ?this a ?type }
+            }
+			""" ;
+	] .

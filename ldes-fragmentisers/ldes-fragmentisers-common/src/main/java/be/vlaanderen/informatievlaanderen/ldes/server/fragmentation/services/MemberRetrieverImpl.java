@@ -20,11 +20,11 @@ public class MemberRetrieverImpl implements MemberRetriever {
     }
 
     @Override
-    public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
+    public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
         final MemberMapper memberMapper = memberMapperCollection.getMemberMapper(collectionName)
                 .orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
         return eventSourceService
-                .findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, sequenceNr)
+                .findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, sequenceNr)
                 .map(memberMapper::mapToFragmentationMember);
     }
 }

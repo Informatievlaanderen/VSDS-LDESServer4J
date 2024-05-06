@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,11 +20,11 @@ class EventStreamTest {
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final boolean VERSION_CREATION_ENABLED = false;
 
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of());
 
 	@Test
 	void test_inequality() {
-		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
+		final EventStream other = new EventStream("other", TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of());
 
 		assertNotEquals(EVENT_STREAM, other);
 		assertNotEquals(null, EVENT_STREAM);
@@ -43,11 +44,11 @@ class EventStreamTest {
 		public Stream<Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 			return Stream.of(
 					EVENT_STREAM,
-					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", VERSION_CREATION_ENABLED),
-					new EventStream(COLLECTION, "other", VERSION_OF_PATH, VERSION_CREATION_ENABLED),
-					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true),
-					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED),
-					new EventStream(COLLECTION, "other", "other", VERSION_CREATION_ENABLED))
+					new EventStream(COLLECTION, TIMESTAMP_PATH, "other", VERSION_CREATION_ENABLED, List.of()),
+					new EventStream(COLLECTION, "other", VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of()),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, true, List.of()),
+					new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of()),
+					new EventStream(COLLECTION, "other", "other", VERSION_CREATION_ENABLED, List.of()))
 					.map(Arguments::of);
 		}
 	}

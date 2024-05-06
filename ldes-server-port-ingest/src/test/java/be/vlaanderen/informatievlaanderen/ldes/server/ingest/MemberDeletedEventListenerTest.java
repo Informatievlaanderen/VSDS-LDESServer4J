@@ -1,17 +1,19 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MemberDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.listeners.MemberDeletedEventListener;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class MemberDeletedEventListenerTest {
-	private static final String ID = "id";
-	private final MemberDeletedEvent event = new MemberDeletedEvent(ID);
+	private static final List<String> IDS = List.of("id1", "id2", "id3");
+	private final MembersDeletedEvent event = new MembersDeletedEvent(IDS);
 	private MemberRepository memberRepository;
 	private MemberDeletedEventListener eventHandler;
 
@@ -23,8 +25,8 @@ class MemberDeletedEventListenerTest {
 
 	@Test
 	void when_MemberDeleted_MethodIsCalled() {
-		eventHandler.handleMemberDeletedEvent(event);
+		eventHandler.handleMembersDeletedEvent(event);
 
-		verify(memberRepository).deleteMember(ID);
+		verify(memberRepository).deleteMembers(IDS);
 	}
 }

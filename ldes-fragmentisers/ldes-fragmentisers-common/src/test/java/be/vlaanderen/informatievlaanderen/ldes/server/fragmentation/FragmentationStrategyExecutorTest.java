@@ -77,7 +77,7 @@ class FragmentationStrategyExecutorTest {
 
 			executor.execute();
 
-			verify(memberRetriever).findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(),
+			verify(memberRetriever).findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(viewName.getCollectionName(),
 					fragmentSequence.sequenceNr());
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, memberRetriever,
 					fragmentSequenceRepository);
@@ -93,7 +93,7 @@ class FragmentationStrategyExecutorTest {
 			String memberId = "id";
 			Model memberModel = ModelFactory.createDefaultModel();
 			long sequenceNr = 1L;
-			when(memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(viewName.getCollectionName(),
+			when(memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(viewName.getCollectionName(),
 					FragmentSequence.createNeverProcessedSequence(viewName).sequenceNr()))
 					.thenReturn(Optional.of(new Member(memberId, memberModel, sequenceNr)));
 			final Fragment rootFragment = new Fragment(new LdesFragmentIdentifier(viewName, List.of()));

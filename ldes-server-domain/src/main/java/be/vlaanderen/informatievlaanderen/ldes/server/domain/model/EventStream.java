@@ -1,5 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.model;
 
+import org.apache.jena.rdf.model.Model;
+
+import java.util.List;
 import java.util.Objects;
 
 public class EventStream {
@@ -8,12 +11,15 @@ public class EventStream {
 	private final String timestampPath;
 	private final String versionOfPath;
 	private final boolean versionCreationEnabled;
+	private final List<Model> eventSourceRetentionPolicies;
 
-	public EventStream(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled) {
+	public EventStream(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled,
+					   List<Model> retentionPolicies) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
+		this.eventSourceRetentionPolicies = retentionPolicies;
     }
 
 	public String getCollection() {
@@ -30,6 +36,10 @@ public class EventStream {
 
 	public boolean isVersionCreationEnabled() {
 		return versionCreationEnabled;
+	}
+
+	public List<Model> getEventSourceRetentionPolicies() {
+		return eventSourceRetentionPolicies;
 	}
 
 	@Override

@@ -9,6 +9,6 @@ public interface EventSourceService {
 
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 
-	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr);
+	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 
 }

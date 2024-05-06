@@ -10,5 +10,6 @@ public interface MemberPropertiesEntityRepository extends MongoRepository<Member
 
     Stream<MemberPropertiesEntity> findMemberPropertiesEntitiesByCollectionNameAndViewsContainingAndTimestampBefore(
             String collectionName, String viewName, LocalDateTime timestamp);
-
+    Stream<MemberPropertiesEntity> findMemberPropertiesEntitiesByCollectionNameAndTimestampBefore(
+            String collectionName, LocalDateTime timestamp);
 }

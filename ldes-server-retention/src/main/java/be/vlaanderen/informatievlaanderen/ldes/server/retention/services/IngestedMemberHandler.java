@@ -26,7 +26,7 @@ public class IngestedMemberHandler {
     @EventListener
     public void handleMembersIngestedEvent(MembersIngestedEvent event) {
         final List<MemberProperties> members = event.members().stream()
-                .map(member -> new MemberProperties(member.id(), event.collectionName(), member.versionOf(), member.timestamp()))
+                .map(member -> new MemberProperties(member.id(), event.collectionName(), member.versionOf(), member.timestamp(), true))
                 .toList();
 
         addViewsToMembers(members);

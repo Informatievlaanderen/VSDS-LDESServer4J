@@ -43,9 +43,9 @@ class EventStreamServiceImplTest {
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final boolean VERSION_CREATION_ENABLED = false;
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of());
 	private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-			VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+			VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 	private DcatDataset dataset;
 	private EventStreamTO eventStreamTOWithDataset;
 
@@ -74,18 +74,18 @@ class EventStreamServiceImplTest {
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
 		eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-				VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), dataset);
+				VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of(), dataset);
 	}
 
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
 		final String otherCollection = "other";
-		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", false);
+		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", false, List.of());
 		List<ViewSpecification> views = List
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
 		EventStreamTO otherEventStreamTO = new EventStreamTO(otherCollection, "created", "versionOf", false,
-				views, ModelFactory.createDefaultModel(), dataset);
+				views, ModelFactory.createDefaultModel(), List.of(), dataset);
 
 		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
@@ -166,7 +166,7 @@ class EventStreamServiceImplTest {
 	class CreateEventStream {
 		private static final String TIMESTAMP_PATH = "generatedAt";
 		private static final String VERSION_OF_PATH = "versionOf";
-		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
+		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of());
 
 		@Test
 		void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {
@@ -174,7 +174,7 @@ class EventStreamServiceImplTest {
 			when(eventStreamRepository.saveEventStream(EVENT_STREAM)).thenReturn(EVENT_STREAM);
 			when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
 			EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 
 			EventStreamTO createdEventStream = service.createEventStream(eventStreamTO);
 
@@ -189,7 +189,7 @@ class EventStreamServiceImplTest {
 		void given_ExistingEventStream_when_createEventStreamWithSameName_then_throwException() {
 			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
 			EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 
 			assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
 					.isInstanceOf(IllegalArgumentException.class)
@@ -214,7 +214,8 @@ class EventStreamServiceImplTest {
 					VERSION_OF_PATH,
 					VERSION_CREATION_ENABLED,
 					List.of(byPageView, byLocationView),
-					ModelFactory.createDefaultModel());
+					ModelFactory.createDefaultModel(),
+					List.of());
 
 
 			doNothing().when(viewService).addView(byPageView);

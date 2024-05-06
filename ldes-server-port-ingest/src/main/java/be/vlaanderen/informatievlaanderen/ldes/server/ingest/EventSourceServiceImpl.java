@@ -22,8 +22,8 @@ public class EventSourceServiceImpl implements EventSourceService {
 	}
 
 	@Override
-	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
-		return memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, sequenceNr);
+	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
+		return memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, sequenceNr);
 	}
 
 }

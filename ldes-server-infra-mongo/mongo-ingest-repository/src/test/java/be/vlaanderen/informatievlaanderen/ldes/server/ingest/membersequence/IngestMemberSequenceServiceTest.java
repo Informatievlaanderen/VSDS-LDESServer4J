@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,17 +31,17 @@ class IngestMemberSequenceServiceTest {
 		String existingCollection = "existing-collection";
 		EventStreamCreatedEvent existingCollectionEvent =
 				new EventStreamCreatedEvent(
-						new EventStream(existingCollection, null, null, false)
+						new EventStream(existingCollection, null, null, false, List.of())
 				);
 		long sequence = 20L;
 		when(memberEntityRepository.findFirstByCollectionNameOrderBySequenceNrDesc(existingCollection))
-				.thenReturn(Optional.of(new MemberEntity("id", existingCollection, null, null, sequence, null, null)));
+				.thenReturn(Optional.of(new MemberEntity("id", existingCollection, null, null, sequence, true, null, null)));
 		ingestMemberSequenceService.handleEventStreamCreated(existingCollectionEvent);
 
 		String newCollection = "collection";
 		EventStreamCreatedEvent newCollectionEvent =
 				new EventStreamCreatedEvent(
-						new EventStream(newCollection, null, null, false)
+						new EventStream(newCollection, null, null, false, List.of())
 				);
 		ingestMemberSequenceService.handleEventStreamCreated(newCollectionEvent);
 
@@ -59,7 +60,7 @@ class IngestMemberSequenceServiceTest {
 		String collection = "collection";
 		EventStreamCreatedEvent newCollectionEvent =
 				new EventStreamCreatedEvent(
-						new EventStream(collection, null, null, false)
+						new EventStream(collection, null, null, false, List.of())
 				);
 		ingestMemberSequenceService.handleEventStreamCreated(newCollectionEvent);
 

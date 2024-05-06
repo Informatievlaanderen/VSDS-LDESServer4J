@@ -31,6 +31,7 @@ public class MemberModel {
                 subjectUri,
                 ingestedTimestamp,
                 null,
+                true,
                 txId,
                 model
         );
