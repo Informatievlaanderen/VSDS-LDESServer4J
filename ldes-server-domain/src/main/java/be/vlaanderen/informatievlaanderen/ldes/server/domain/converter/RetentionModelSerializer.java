@@ -8,6 +8,7 @@ import java.util.List;
 
 @Component
 public class RetentionModelSerializer {
+    private static final Lang dbSavedLang = Lang.NQUADS;
     private final RdfModelConverter rdfModelConverter;
 
     public RetentionModelSerializer(RdfModelConverter rdfModelConverter) {
@@ -17,14 +18,14 @@ public class RetentionModelSerializer {
     public List<String> serialize(List<Model> models) {
         return models
                 .stream()
-                .map(retentionModel -> RdfModelConverter.toString(retentionModel, Lang.NQUADS))
+                .map(retentionModel -> RdfModelConverter.toString(retentionModel, dbSavedLang))
                 .toList();
     }
 
-    public List<Model> deSerialize(List<String> retentionPolicies) {
+    public List<Model> deserialize(List<String> retentionPolicies) {
         return retentionPolicies
                 .stream()
-                .map(retentionModel -> rdfModelConverter.fromString(retentionModel, Lang.NQUADS))
+                .map(retentionModel -> rdfModelConverter.fromString(retentionModel, dbSavedLang))
                 .toList();
 
     }

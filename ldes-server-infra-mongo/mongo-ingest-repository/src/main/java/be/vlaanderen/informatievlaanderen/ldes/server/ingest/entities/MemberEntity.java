@@ -19,7 +19,7 @@ public class MemberEntity {
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 	private Long sequenceNr;
-	private boolean inEventSource;
+	private final boolean inEventSource;
 	private final String transactionId;
 	private final String model;
 

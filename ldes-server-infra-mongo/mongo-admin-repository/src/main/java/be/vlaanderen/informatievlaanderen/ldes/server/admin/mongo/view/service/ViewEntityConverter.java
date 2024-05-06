@@ -25,7 +25,7 @@ public class ViewEntityConverter {
 	}
 
 	public ViewSpecification toView(ViewEntity viewEntity) {
-		List<Model> retentionModels = retentionModelSerializer.deSerialize(viewEntity.getRetentionPolicies());
+		List<Model> retentionModels = retentionModelSerializer.deserialize(viewEntity.getRetentionPolicies());
 		return new ViewSpecification(ViewName.fromString(viewEntity.getViewName()), retentionModels,
 				viewEntity.getFragmentations(), viewEntity.getPageSize());
 	}

@@ -23,7 +23,7 @@ public class EventStreamConverter {
 	}
 
 	public EventStream toEventStream(EventStreamEntity eventStreamEntity) {
-		List<Model> retentionModels = retentionModelSerializer.deSerialize(eventStreamEntity.getRetentionPolicies());
+		List<Model> retentionModels = retentionModelSerializer.deserialize(eventStreamEntity.getRetentionPolicies());
 		return new EventStream(eventStreamEntity.getId(), eventStreamEntity.getTimestampPath(),
 				eventStreamEntity.getVersionOfPath(), eventStreamEntity.isVersionCreationEnabled(), retentionModels);
 	}

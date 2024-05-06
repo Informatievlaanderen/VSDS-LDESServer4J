@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersRemovedFromEventSourceEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.listeners.MemberDeletedEventListener;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,5 +29,12 @@ class MemberDeletedEventListenerTest {
 		eventHandler.handleMembersDeletedEvent(event);
 
 		verify(memberRepository).deleteMembers(IDS);
+	}
+
+	@Test
+	void when_MemberRemovedFromEventSource_MethodIsCalled() {
+		eventHandler.handleMembersRemovedFromEventSourceEvent(new MembersRemovedFromEventSourceEvent(IDS));
+
+		verify(memberRepository).removeFromEventSource(IDS);
 	}
 }

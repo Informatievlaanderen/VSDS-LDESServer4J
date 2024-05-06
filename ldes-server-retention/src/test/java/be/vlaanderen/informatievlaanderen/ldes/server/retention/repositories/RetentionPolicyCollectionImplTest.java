@@ -57,7 +57,7 @@ class RetentionPolicyCollectionImplTest {
     @Test
     void test_HandleEventStreamDeletedEvent() {
         final String collectionName = "collection";
-        when(retentionPolicyFactory.extractRetentionPolicy((ViewSpecification) any())).thenReturn(Optional.of(mock(RetentionPolicy.class)));
+        when(retentionPolicyFactory.extractRetentionPolicy(any(ViewSpecification.class))).thenReturn(Optional.of(mock(RetentionPolicy.class)));
         Stream.of(
                         new ViewSpecification(new ViewName(collectionName, "view1"), List.of(), List.of(), 100),
                         new ViewSpecification(new ViewName(collectionName, "view2"), List.of(), List.of(), 100)

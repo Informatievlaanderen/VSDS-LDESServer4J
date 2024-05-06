@@ -38,6 +38,7 @@ public class MemberRemoverImpl implements MemberRemover {
 		applicationEventPublisher.publishEvent(
 				new MembersRemovedFromEventSourceEvent(ids));
 	}
+
 	@Override
 	public void deleteMembers(List<MemberProperties> memberProperties) {
 		List<String> ids = memberProperties.stream().map(MemberProperties::getId).toList();
