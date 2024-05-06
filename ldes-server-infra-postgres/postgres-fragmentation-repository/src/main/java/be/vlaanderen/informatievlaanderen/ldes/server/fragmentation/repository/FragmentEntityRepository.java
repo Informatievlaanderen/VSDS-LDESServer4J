@@ -46,7 +46,8 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
 
 	@Transactional
 	@Modifying
-	@Query("UPDATE FragmentEntity f SET f.nrOfMembersAdded = f.nrOfMembersAdded + :memberCount WHERE f.id = :id")
+	@Query(value = "UPDATE fragmentation_fragment SET nr_of_members_added = nr_of_members_added  + :memberCount WHERE id = :id",
+			nativeQuery = true)
 	void incrementNrOfMembersAdded(@Param("id") String id, @Param("memberCount") Integer memberCount);
 
 	Stream<FragmentEntity> findByDeleteTimeNotNull();

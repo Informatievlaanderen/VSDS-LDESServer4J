@@ -23,6 +23,7 @@ public class MemberEntity {
 	private String transactionId;
 	@Column(columnDefinition = "bytea")
 	private byte[] model;
+
 	protected MemberEntity() {};
 
 	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, byte[] model) {

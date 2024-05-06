@@ -51,6 +51,7 @@ public class FragmentationStrategyExecutor {
 			var nextMemberToFragment = getNextMemberToFragment(determineLastProcessedSequence());
 
 			while (nextMemberToFragment.isPresent() && isExecutorActive) {
+
 				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
