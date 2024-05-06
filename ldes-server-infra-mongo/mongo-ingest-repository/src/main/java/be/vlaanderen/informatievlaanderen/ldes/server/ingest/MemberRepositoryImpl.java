@@ -94,7 +94,7 @@ public class MemberRepositoryImpl implements MemberRepository {
 	@Override
 	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
 		return memberEntityRepository
-				.findFirstByCollectionNameAndInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
+				.findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
 				.map(memberEntityMapper::toMember);
 	}
 

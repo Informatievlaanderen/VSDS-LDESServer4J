@@ -19,18 +19,18 @@ public class MemberEntity {
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 	private Long sequenceNr;
-	private final boolean inEventSource;
+	private final boolean isInEventSource;
 	private final String transactionId;
 	private final String model;
 
 	@SuppressWarnings("java:S107")
-	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, boolean inEventSource, String transactionId, String model) {
+	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, boolean isInEventSource, String transactionId, String model) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 		this.sequenceNr = sequenceNr;
-        this.inEventSource = inEventSource;
+        this.isInEventSource = isInEventSource;
         this.transactionId = transactionId;
 		this.model = model;
 	}
@@ -68,6 +68,6 @@ public class MemberEntity {
 	}
 
 	public boolean isInEventSource() {
-		return inEventSource;
+		return isInEventSource;
 	}
 }

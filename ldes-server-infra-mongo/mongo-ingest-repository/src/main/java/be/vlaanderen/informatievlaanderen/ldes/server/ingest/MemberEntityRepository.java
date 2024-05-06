@@ -14,8 +14,8 @@ public interface MemberEntityRepository extends MongoRepository<MemberEntity, St
 
 	Stream<MemberEntity> findAllByIdIn(List<String> memberIds);
 
-	Optional<MemberEntity> findFirstByCollectionNameAndInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(String collectionName,
-			boolean inEventSource, long sequenceNr);
+	Optional<MemberEntity> findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(String collectionName,
+																												   boolean inEventSource, long sequenceNr);
 
 	long countByCollectionName(String collectionName);
 

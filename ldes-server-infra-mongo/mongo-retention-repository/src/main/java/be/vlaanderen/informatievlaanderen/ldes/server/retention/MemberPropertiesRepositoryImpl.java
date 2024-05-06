@@ -123,7 +123,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 		Update update = new Update();
 		update.set(IN_EVENTSOURCE, false);
 
-		mongoTemplate.updateMulti(query, update, MemberProperties.class);
+		mongoTemplate.updateMulti(query, update, MemberPropertiesEntity.class);
 	}
 
 	@Override
