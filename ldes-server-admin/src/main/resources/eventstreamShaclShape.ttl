@@ -40,7 +40,7 @@
     sh:description "The object that indicates which members are retained in the event stream."@en;
     sh:maxCount 1;
     sh:name "eventsource"@en;
-    sh:path <https://w3id.org/ldes#eventsource>
+    sh:path <https://w3id.org/ldes#eventSource>
     ] .
 
 

@@ -31,3 +31,13 @@ Feature: LDES Server Retention
       | eventStreamDescriptionFile                                           | template                                           | collection            | expectedMemberCount |
       | "data/input/eventstreams/retention/mobility-hindrances_combined.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 5                   |
       | "data/input/eventstreams/retention/observations/combined.ttl"        | "data/input/members/two-observations.template.ttl" | "observations"        | 10                  |
+
+  @deletion
+  Scenario Outline: Server retention to event source
+    Given I create the eventstream <eventStreamDescriptionFile>
+    When I ingest 30 members of template <template> to the collection <collection>
+    Then the LDES <collection> contains <expectedMemberCount> members
+
+    Examples:
+      | eventStreamDescriptionFile                                               | template                                           | collection            | expectedMemberCount |
+      | "data/input/eventstreams/retention/mobility-hindrances_versionbased_with_eventsource.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | 10                  |

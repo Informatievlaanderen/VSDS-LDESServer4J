@@ -195,23 +195,41 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
 																VersionBasedRetentionPolicy policy) {
-		return memberPropertiesEntityRepository
-				.findMemberPropertiesEntitiesByCollectionNameAndTimestampBefore(
-						collectionName,
-						LocalDateTime.now()
-				)
-				.map(memberPropertiesEntityMapper::toMemberProperties);
+		int versionsToKeep = policy.numberOfMembersToKeep();
+
+		final SortOperation sort = sortTimestampDesc();
+		final MatchOperation match =
+				match(Criteria.where(COLLECTION).is(collectionName));
+		final GroupOperation group = groupOnVersionOf();
+		final ProjectionOperation project = projectVersionsToKeep(versionsToKeep);
+		final UnwindOperation unwind = unwindDocuments();
+		final ReplaceRootOperation replaceRoot = getReplaceRootDocuments();
+
+		final Aggregation aggregation = createAggregation(
+				sort, match, group, project, unwind, replaceRoot
+		);
+
+		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
 	}
 
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
 																TimeAndVersionBasedRetentionPolicy policy) {
-		return memberPropertiesEntityRepository
-				.findMemberPropertiesEntitiesByCollectionNameAndTimestampBefore(
-						collectionName,
-						LocalDateTime.now().minus(policy.duration())
-				)
-				.map(memberPropertiesEntityMapper::toMemberProperties);
+		final MatchOperation match =
+				match(Criteria
+						.where(COLLECTION).is(collectionName)
+						.and(TIMESTAMP).lt(LocalDateTime.now().minus(policy.duration())));
+
+		final Aggregation aggregation = createAggregation(
+				sortTimestampDesc(),
+				match,
+				groupOnVersionOf(),
+				projectVersionsToKeep(policy.numberOfMembersToKeep()),
+				unwindDocuments(),
+				getReplaceRootDocuments()
+		);
+
+		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
 	}
 
 	private Aggregation createAggregation(AggregationOperation... operations) {
