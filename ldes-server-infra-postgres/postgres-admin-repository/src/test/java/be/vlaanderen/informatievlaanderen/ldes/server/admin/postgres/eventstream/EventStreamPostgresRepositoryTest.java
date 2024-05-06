@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstrea
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class EventStreamMongoRepositoryTest {
+class EventStreamPostgresRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
 	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
 			"isVersionOf", false);
@@ -29,8 +28,6 @@ class EventStreamMongoRepositoryTest {
 	private EventStreamPostgresRepository repository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
-	@Mock
-	EntityManager entityManager;
 
 	@BeforeEach
 	void setUp() {

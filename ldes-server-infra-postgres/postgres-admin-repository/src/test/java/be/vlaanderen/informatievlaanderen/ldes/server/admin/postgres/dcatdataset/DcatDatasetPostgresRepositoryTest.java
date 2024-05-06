@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,14 +30,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class DcatDatasetMongoRepositoryTest {
+class DcatDatasetPostgresRepositoryTest {
 
 	private static final String DATASET_ID = "id";
 	private static final String MODEL_FILE_PATH = "dcat-dataset/dataset.ttl";
 	private DcatDatasetEntity entity;
 	private DcatDataset dataset;
-	@Autowired
-	private DcatDatasetPostgresRespository mongoRepository;
+	private DcatDatasetPostgresRespository repository;
 	@Mock
 	private DcatDatasetEntityRepository entityRepository;
 
@@ -47,13 +45,14 @@ class DcatDatasetMongoRepositoryTest {
 		Model model = readModelFromFile(MODEL_FILE_PATH);
 		dataset = new DcatDataset(DATASET_ID, model);
 		entity = new DcatDatasetEntity(DATASET_ID, readDataFromFile(MODEL_FILE_PATH));
+		repository = new DcatDatasetPostgresRespository(entityRepository);
 	}
 
 	@Test
 	void when_DatasetPresent_Then_ReturnDataset() {
 		when(entityRepository.findById(DATASET_ID)).thenReturn(Optional.of(entity));
 
-		Optional<DcatDataset> actualDataset = mongoRepository.retrieveDataset(DATASET_ID);
+		Optional<DcatDataset> actualDataset = repository.retrieveDataset(DATASET_ID);
 
 		verify(entityRepository).findById(DATASET_ID);
 		assertTrue(actualDataset.isPresent());
@@ -66,7 +65,7 @@ class DcatDatasetMongoRepositoryTest {
 		final String otherId = "other";
 		when(entityRepository.findById(otherId)).thenReturn(Optional.empty());
 
-		Optional<DcatDataset> actualDataset = mongoRepository.retrieveDataset(otherId);
+		Optional<DcatDataset> actualDataset = repository.retrieveDataset(otherId);
 
 		verify(entityRepository).findById(otherId);
 		assertTrue(actualDataset.isEmpty());
@@ -74,14 +73,14 @@ class DcatDatasetMongoRepositoryTest {
 
 	@Test
 	void when_DatasetAdded() {
-		mongoRepository.saveDataset(dataset);
+		repository.saveDataset(dataset);
 
 		verify(entityRepository).save(any(DcatDatasetEntity.class));
 	}
 
 	@Test
 	void when_DatasetPresent_Then_DatasetRemoved() {
-		mongoRepository.deleteDataset(DATASET_ID);
+		repository.deleteDataset(DATASET_ID);
 
 		verify(entityRepository).deleteById(DATASET_ID);
 	}
@@ -92,7 +91,7 @@ class DcatDatasetMongoRepositoryTest {
 		void when_NoEntitiesAreFound_then_AnEmptyListIsReturned() {
 			when(entityRepository.findAll()).thenReturn(new ArrayList<>());
 
-			List<DcatDataset> result = mongoRepository.findAll();
+			List<DcatDataset> result = repository.findAll();
 
 			assertTrue(result.isEmpty());
 		}
@@ -104,7 +103,7 @@ class DcatDatasetMongoRepositoryTest {
 			DcatDatasetEntity dataset2 = new DcatDatasetEntity("col2", modelString);
 			when(entityRepository.findAll()).thenReturn(List.of(dataset1, dataset2));
 
-			List<DcatDataset> result = mongoRepository.findAll();
+			List<DcatDataset> result = repository.findAll();
 
 			assertEquals(2, result.size());
 			assertTrue(result.get(0).getModel().isIsomorphicWith(readModelFromFile(MODEL_FILE_PATH)));
