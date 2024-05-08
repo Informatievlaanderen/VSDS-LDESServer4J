@@ -9,7 +9,7 @@
         <version>2.15.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ldes-server-mongo-to-postgres-migration</artifactId>
+    <artifactId>ldes-server-infra-migration</artifactId>
 
     <properties>
         <postgresql.version>42.6.0</postgresql.version>
