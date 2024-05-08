@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;

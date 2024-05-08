@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;

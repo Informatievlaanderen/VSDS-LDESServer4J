@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.MemberPostgresRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.repository.MemberEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;

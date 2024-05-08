@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.repository;
 
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

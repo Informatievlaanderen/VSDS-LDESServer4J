@@ -1,10 +1,10 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper.MemberEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repository.MemberEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.service.MemberEntityListener;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.repository.MemberEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.service.MemberEntityListener;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.riot.Lang;
 import org.springframework.stereotype.Component;

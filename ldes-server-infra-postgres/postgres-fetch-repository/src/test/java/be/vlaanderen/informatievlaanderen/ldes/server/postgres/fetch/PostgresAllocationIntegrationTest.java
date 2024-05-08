@@ -1,6 +1,5 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.AllocationPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.repository.AllocationEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
@@ -18,7 +17,7 @@ import static io.zonky.test.db.AutoConfigureEmbeddedDatabase.RefreshMode.AFTER_E
 @DataJpaTest
 @AutoConfigureEmbeddedDatabase(refresh = AFTER_EACH_TEST_METHOD)
 @ActiveProfiles("postgres-test")
-@ContextConfiguration(classes = { AllocationEntityRepository.class })
+@ContextConfiguration(classes = { AllocationEntityRepository.class, AllocationPostgresRepository.class })
 @ComponentScan(value = { "be.vlaanderen.informatievlaanderen.ldes.server.fetch" })
 @SuppressWarnings("java:S2187")
 public class PostgresAllocationIntegrationTest {

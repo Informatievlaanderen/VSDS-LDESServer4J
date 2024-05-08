@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.entity;
 
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.service.MemberEntityListener;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.service.MemberEntityListener;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

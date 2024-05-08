@@ -1,7 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.ingest.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.mapper;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.MemberPostgresRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.entity.MemberEntity;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFWriter;
@@ -10,15 +11,13 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.ingest.MemberPostgresRepository.CONVERSION_LANG;
-
 @Component
 public class MemberEntityMapper {
 
 	public MemberEntity toMemberEntity(Member member) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		RDFWriter.source(member.getModel())
-				.lang(CONVERSION_LANG).output(outputStream);
+				.lang(MemberPostgresRepository.CONVERSION_LANG).output(outputStream);
 
 		return new MemberEntity(
 				member.getId(),
@@ -33,7 +32,7 @@ public class MemberEntityMapper {
 
 	public Member toMember(MemberEntity memberEntity) {
 		final Model model = RDFParser.source(new ByteArrayInputStream(memberEntity.getModel()))
-				.lang(CONVERSION_LANG)
+				.lang(MemberPostgresRepository.CONVERSION_LANG)
 				.toModel();
 
 		return new Member(

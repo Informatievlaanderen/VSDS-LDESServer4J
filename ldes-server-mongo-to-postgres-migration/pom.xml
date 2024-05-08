@@ -40,14 +40,27 @@
 
         <!-- MongoDB -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-mongodb</artifactId>
+            <version>4.1.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>4.4.2</version>
+            <scope>compile</scope>
         </dependency>
 
-        <!-- Admin -->
+        <!-- LDES Server modules -->
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-fetch-repository</artifactId>
+            <version>2.15.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>postgres-ingest-repository</artifactId>
             <version>2.15.0-SNAPSHOT</version>
         </dependency>
 
