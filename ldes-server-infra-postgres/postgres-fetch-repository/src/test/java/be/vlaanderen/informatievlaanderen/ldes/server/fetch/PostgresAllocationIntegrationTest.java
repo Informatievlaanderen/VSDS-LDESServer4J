@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.AllocationPostgresRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.repository.AllocationEntityRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.zonky.test.db.AutoConfigureEmbeddedDatabase;
 import org.springframework.beans.factory.annotation.Autowired;

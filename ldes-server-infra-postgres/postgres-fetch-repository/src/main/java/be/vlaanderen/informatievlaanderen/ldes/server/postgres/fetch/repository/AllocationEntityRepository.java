@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.repository;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.CompactionCandidateProjection;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.entity.CompactionCandidateProjection;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.entity.MemberAllocationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

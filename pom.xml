@@ -27,6 +27,7 @@
         <module>ldes-server-compaction</module>
         <module>ldes-server-integration-test</module>
         <module>ldes-server-instrumentation</module>
+        <module>ldes-server-mongo-to-postgres-migration</module>
     </modules>
 
     <developers>

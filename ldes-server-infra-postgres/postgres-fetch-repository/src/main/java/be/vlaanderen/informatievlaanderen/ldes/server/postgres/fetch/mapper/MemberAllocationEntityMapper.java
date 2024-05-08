@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.entity.MemberAllocationEntity;
 
 public class MemberAllocationEntityMapper {
 

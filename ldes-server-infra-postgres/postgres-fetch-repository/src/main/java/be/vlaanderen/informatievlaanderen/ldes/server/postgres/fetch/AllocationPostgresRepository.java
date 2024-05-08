@@ -1,11 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.mapper.MemberAllocationEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.repository.AllocationEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.CompactionCandidate;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.mapper.MemberAllocationEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.repository.AllocationEntityRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

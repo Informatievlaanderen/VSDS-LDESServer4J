@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch.entity;
 
 import jakarta.persistence.*;
 
