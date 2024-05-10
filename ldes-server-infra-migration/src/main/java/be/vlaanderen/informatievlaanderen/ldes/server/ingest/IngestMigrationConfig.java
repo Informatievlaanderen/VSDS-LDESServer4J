@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.entity.MemberEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.postgres.ingest.mapper.MemberEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper.MemberEntityMapper;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -23,8 +23,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty(name = "ldes-server.migrate-mongo", havingValue = "true")
 public class IngestMigrationConfig {
 
-	public final MemberEntityMapper mapper = new MemberEntityMapper();
-
 	@Bean
 	public MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity> memberEntityReader(MongoTemplate template) {
 		MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity> reader = new MongoItemReader<>();
@@ -35,7 +33,7 @@ public class IngestMigrationConfig {
 	}
 
 	@Bean
-	public ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity, MemberEntity> memberEntityProcessor() {
+	public ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.ingest.entity.MemberEntity, MemberEntity> memberEntityProcessor(MemberEntityMapper mapper) {
 		return noSQLData -> mapper.toMemberEntity(noSQLData.toMember());
 	}
 

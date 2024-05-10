@@ -49,7 +49,6 @@ public class MemberIngesterImpl implements MemberIngester {
 
         if (ingestedMembersCount != members.size()) {
             log.warn(DUPLICATE_MEMBERS_DETECTED);
-            log.info("HIT duplicate");
             return false;
         }
         publishIngestedEvent(collectionName, members);

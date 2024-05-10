@@ -4,7 +4,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,21 +17,23 @@ import java.util.List;
 @ConditionalOnProperty(name = "ldes-server.migrate-mongo", havingValue = "true")
 public class MongoToPostgresMigration {
 
-	@Autowired
-	private JobLauncher jobLauncher;
+	private final JobLauncher jobLauncher;
+	private final List<Job> migrationJobs;
 
-	@Qualifier("migrationMongoIngest")
-	@Autowired
-	private Job ingestMigration;
-
-	@Qualifier("migrationMongoFetch")
-	@Autowired
-	private Job fetchMigration;
+	public MongoToPostgresMigration(JobLauncher jobLauncher,
+	                                @Qualifier("migrationMongoIngest") Job ingestMigration,
+	                                @Qualifier("migrationMongoFetch") Job fetchMigration,
+	                                @Qualifier("migrationMongoFragmentation") Job fragmentMigration,
+	                                @Qualifier("migrationMongoRetention") Job retentionMigration,
+	                                @Qualifier("migrationMongoAdmin") Job adminMigration) {
+		this.jobLauncher = jobLauncher;
+		this.migrationJobs = List.of(ingestMigration, fetchMigration, fragmentMigration,
+				retentionMigration, adminMigration);
+	}
 
 	@Bean
 	public CommandLineRunner commandLineRunner() {
 		return args -> {
-			List<Job> migrationJobs = List.of(ingestMigration, fetchMigration);
 			for (Job job : migrationJobs) {
 				jobLauncher.run(job, new JobParameters());
 			}

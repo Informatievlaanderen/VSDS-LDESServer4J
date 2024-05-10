@@ -5,9 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatserver.
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParserBuilder;
 import org.apache.jena.riot.RDFWriter;
+import org.springframework.stereotype.Component;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminConstants.SERIALISATION_LANG;
 
+@Component
 public class DcatCatalogEntityConverter {
 	public DcatCatalogEntity fromDcatServer(DcatServer dcatServer) {
 		final String dcatString = RDFWriter.source(dcatServer.getDcat())

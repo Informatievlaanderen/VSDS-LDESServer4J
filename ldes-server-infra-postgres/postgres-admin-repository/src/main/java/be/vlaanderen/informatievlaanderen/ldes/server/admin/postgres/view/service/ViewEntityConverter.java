@@ -7,11 +7,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFWriter;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminConstants.SERIALISATION_LANG;
 
+@Component
 public class ViewEntityConverter {
 
 	public ViewEntity fromView(ViewSpecification viewSpecification) {

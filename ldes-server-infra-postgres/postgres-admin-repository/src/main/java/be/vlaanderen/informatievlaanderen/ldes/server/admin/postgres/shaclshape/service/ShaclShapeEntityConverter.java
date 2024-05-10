@@ -5,9 +5,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFWriter;
+import org.springframework.stereotype.Component;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminConstants.SERIALISATION_LANG;
 
+@Component
 public class ShaclShapeEntityConverter {
 	public ShaclShapeEntity fromShaclShape(ShaclShape shaclShape) {
 		String shaclShapeString = RDFWriter.source(shaclShape.getModel())

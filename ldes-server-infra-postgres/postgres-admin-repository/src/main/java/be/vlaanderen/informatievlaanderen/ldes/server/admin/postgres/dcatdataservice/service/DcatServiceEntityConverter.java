@@ -6,9 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RDFWriter;
+import org.springframework.stereotype.Component;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.PostgresAdminConstants.SERIALISATION_LANG;
 
+@Component
 public class DcatServiceEntityConverter {
 
 	public DataServiceEntity fromDcatView(DcatView dcatView) {
