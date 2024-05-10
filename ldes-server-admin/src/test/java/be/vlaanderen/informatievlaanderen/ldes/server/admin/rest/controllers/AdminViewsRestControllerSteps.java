@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -34,6 +35,11 @@ public class AdminViewsRestControllerSteps extends SpringIntegrationTest {
 	private final String COLLECTION_NAME = "name1";
 	private Model view1;
 	private Model view2;
+
+	@After
+	public void cleanup() {
+		resourceRemover.removeUsedResources();
+	}
 
 	@When("I POST a view from file {string} to {string}")
 	public void iPOSTAViewFromFile(String fileName, String endpoint) throws Exception {

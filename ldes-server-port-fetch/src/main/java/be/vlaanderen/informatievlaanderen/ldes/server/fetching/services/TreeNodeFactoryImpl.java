@@ -33,13 +33,12 @@ public class TreeNodeFactoryImpl implements TreeNodeFactory {
 				.orElseThrow(
 						() -> new MissingResourceException("fragment", treeNodeId.asEncodedFragmentId()));
 
-		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId());
+		List<MemberAllocation> memberIds = allocationRepository.getMemberAllocationsByFragmentId(treeNodeId.asDecodedFragmentId()).toList();
 		List<Member> members = memberFetcher
-				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList());
+				.fetchAllByIds(memberIds.stream().map(MemberAllocation::getMemberId).toList()).toList();
 
 		return new TreeNode(extendedTreeNodeId, fragment.isImmutable(),
 				fragment.getFragmentPairs().isEmpty(), fragment.getRelations(),
 				members, collectionName, fragment.getNextUpdateTs());
 	}
-
 }

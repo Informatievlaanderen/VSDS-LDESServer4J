@@ -119,3 +119,14 @@
   color: #008000;
   font-weight: normal;
 }
+
+@media (min-width: 66.5rem) {
+  .side-bar {
+    width: calc((100% - 90rem) / 2 + 16.5rem);
+    min-width: 16.5rem;
+  }
+
+  .main {
+    margin-left: Max(16.5rem, calc((100% - 90rem) / 2 + 16.5rem));
+  }
+}

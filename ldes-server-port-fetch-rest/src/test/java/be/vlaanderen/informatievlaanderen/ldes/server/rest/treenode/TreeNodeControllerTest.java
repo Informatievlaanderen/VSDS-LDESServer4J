@@ -7,19 +7,19 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventS
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.TreeNode;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.StreamingTreeNodeFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.services.TreeNodeFetcher;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.CachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.caching.EtagCachingStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.config.RestConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.exceptionhandling.RestResponseEntityExceptionHandler;
 import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.config.TreeViewWebConfig;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.TreeNodeConverterImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.rest.treenode.services.*;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
-import org.apache.jena.riot.RDFParserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,17 +36,23 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -65,7 +71,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(classes = {TreeNodeController.class,
 		RestConfig.class, TreeViewWebConfig.class,
 		RestResponseEntityExceptionHandler.class, PrefixConstructor.class,
-		RdfModelConverter.class})
+		RdfModelConverter.class, TreeNodeStreamConverterImpl.class, PrefixAdderImpl.class,
+		TreeNodeStatementCreatorImpl.class})
 class TreeNodeControllerTest {
 	private static final String COLLECTION_NAME = "ldes-1";
 	private static final String FRAGMENTATION_VALUE_1 = "2020-12-28T09:36:09.72Z";
@@ -78,8 +85,17 @@ class TreeNodeControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private TreeNodeFetcher treeNodeFetcher;
+	@MockBean
+	private StreamingTreeNodeFactory streamingTreeNodeFactory;
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
+	@Autowired
+	private TreeNodeStreamConverter treeNodeStreamConverter;
+	@Autowired
+	private RestConfig restConfig;
+	@Autowired
+	private CachingStrategy cachingStrategy;
+	private WebTestClient client;
 
 	@BeforeEach
 	void setUp() {
@@ -123,19 +139,20 @@ class TreeNodeControllerTest {
 		Model resultModel = RDFParser.source(inputStream).lang(lang).toModel();
 
 		assertThat(maxAge).contains(immutable ? CONFIGURED_MAX_AGE_IMMUTABLE : CONFIGURED_MAX_AGE);
-		assertThat(getObjectURI(resultModel, RDF_SYNTAX_TYPE)).isEqualTo(TREE_NODE_RESOURCE);
+		assertThat(getObjectURIs(resultModel, RDF_SYNTAX_TYPE)).contains(TREE_NODE_RESOURCE);
 		verify(treeNodeFetcher, times(1)).getFragment(ldesFragmentRequest);
 	}
 
-	private String getObjectURI(Model model, Property property) {
+	private List<String> getObjectURIs(Model model, Property property) {
 		return model
 				.listStatements(null, property, (Resource) null)
-				.nextOptional()
+				.toList()
+				.stream()
 				.map(Statement::getObject)
 				.map(RDFNode::asResource)
 				.map(Resource::getURI)
 				.map(Objects::toString)
-				.orElse(null);
+				.toList();
 	}
 
 	private Optional<Integer> extractMaxAge(String header) {
@@ -210,14 +227,46 @@ class TreeNodeControllerTest {
 		}
 	}
 
+	@Test
+	@DisplayName("Requesting LDES fragment stream")
+	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() throws Exception {
+		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
+		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
+
+		LdesFragmentIdentifier identifier = new LdesFragmentIdentifier(ViewName.fromString(fullViewName),
+				List.of(new FragmentPair(GENERATED_AT_TIME, FRAGMENTATION_VALUE_1)));
+		final String fragmentId = identifier.asDecodedFragmentId();
+		TreeNode treeNode = new TreeNode(fragmentId, false, false, List.of(),
+				List.of(), COLLECTION_NAME, null);
+
+		when(streamingTreeNodeFactory.getFragmentWithoutMemberData(identifier)).thenReturn(treeNode);
+		when(streamingTreeNodeFactory.getMembersOfFragment(identifier.asDecodedFragmentId()))
+				.thenReturn(Stream.of(new Member("member1", ModelFactory.createDefaultModel()), new Member("member2", ModelFactory.createDefaultModel())));
+
+		client = WebTestClient.bindToController(new TreeNodeController(restConfig, treeNodeFetcher,
+				streamingTreeNodeFactory, treeNodeStreamConverter, cachingStrategy)).build();
+
+		FluxExchangeResult<String> response = client.get()
+				.uri("/{collectionName}/{viewName}?generatedAtTime={fragmentationValue}", COLLECTION_NAME, VIEW_NAME, FRAGMENTATION_VALUE_1)
+				.accept(MediaType.TEXT_EVENT_STREAM)
+				.exchange()
+				.expectStatus()
+				.isOk()
+				.expectHeader()
+				.valueEquals("Cache-Control", "public,max-age=" + CONFIGURED_MAX_AGE)
+				.expectHeader()
+				.valueEquals("Etag", "\"bf61f90ee94d31484e296ffaa887de432976ce27638cfbd35e40f99a0e799554\"")
+				.returnResult(String.class);
+	}
+
 	@TestConfiguration
 	public static class TreeNodeControllerTestConfiguration {
 
 		@Bean
-		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName) {
+		public TreeNodeConverter ldesFragmentConverter(@Value(HOST_NAME_KEY) String hostName, @Autowired TreeNodeStatementCreator treeNodeStatementCreator) {
 			PrefixAdder prefixAdder = new PrefixAdderImpl();
 			PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
-			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor);
+			return new TreeNodeConverterImpl(prefixAdder, prefixConstructor, treeNodeStatementCreator);
 		}
 
 		@Bean

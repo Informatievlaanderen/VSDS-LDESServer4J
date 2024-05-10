@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @Service
 public class MemberFetcherImpl implements MemberFetcher {
@@ -24,13 +25,12 @@ public class MemberFetcherImpl implements MemberFetcher {
     }
 
     @Override
-    public List<Member> fetchAllByIds(List<String> ids) {
+    public Stream<Member> fetchAllByIds(List<String> ids) {
         return memberRepository.findAllByIds(ids)
-                .stream().map(ingestMember -> new Member(
+                .map(ingestMember -> new Member(
                         ingestMember.getId(),
                         versionObjectCreatorMap.get(ingestMember.getCollectionName()).createFromMember(ingestMember)
-                ))
-                .toList();
+                ));
     }
 
     @EventListener

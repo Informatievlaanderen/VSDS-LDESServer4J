@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 
 import java.util.Map;
 
@@ -18,7 +20,8 @@ import static org.apache.jena.riot.WebContent.*;
 @SuppressWarnings("java:S2479")
 public interface OpenApiTreeNodeController {
 
-	@Operation(summary = "Retrieve an LDES Fragment")
+
+    @Operation(summary = "Retrieve an LDES Fragment")
 	@ApiResponse(responseCode = "200", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
 					@prefix ns0: <https://w3id.org/tree#> .
@@ -73,5 +76,19 @@ public interface OpenApiTreeNodeController {
 					}
 					""")) Map<String, String> requestParameters,
 			@Parameter(hidden = true) String language,
+			@Parameter(example = "event-stream") String collectionName);
+
+
+	@ApiResponse(responseCode = "200", content = {
+			@Content(mediaType = MediaType.TEXT_EVENT_STREAM_VALUE)
+	}, description = "Streaming a fragment over http")
+	@ApiResponse(responseCode = "404", content = @Content, description = "No Linked Data Event Stream found with provided collection name")
+	ResponseEntity<ResponseBodyEmitter> retrieveLdesFragmentStreaming(
+			@Parameter(example = "by-time") String view,
+			@Parameter(examples = @ExampleObject(value = """
+					{
+						"fragment": "1"
+					}
+					""")) Map<String, String> requestParameters,
 			@Parameter(example = "event-stream") String collectionName);
 }

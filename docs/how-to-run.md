@@ -53,32 +53,25 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   <tr><th>Property</th><th>Description</th><th>Required</th><th>Default value</th></tr>
 </thead>
 <tbody>
-  <tr><td colspan="4"><b>Open-API</b></td></tr>
-  <tr>
-    <td>springdoc.api-docs.enabled</td>
-    <td>This boolean indicates whether Open API documentation is enabld. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
-    <td>No</td>
-    <td>true</td>
-  </tr>
+  <tr><td colspan="4"><b>API endpoints documentation</b></td></tr>
   <tr>
     <td>springdoc.api-docs.path</td>
-    <td>When enabled, an url* needs to be configured that points to the Open API documentation. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
+    <td>The url<sup>1</sup> that will point to the Open API documentation. <a href="https://springdoc.org/#properties">More Open-API documentation</a></td>
     <td>No</td>
-  </tr>
-  <tr><td colspan="4"><b>Swagger UI</b></td></tr>
-  <tr>
-    <td>springdoc.swagger-ui.enabled</td>
-    <td>This boolean indicates whether Swagger API is enabled. This can be used to easily configure your Streams. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
-    <td>No</td>
-    <td></td>
   </tr>
   <tr>
     <td>springdoc.swagger-ui.path</td>
-    <td>When enabled, an url* needs to be configured that points to the Swagger documentation. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
+    <td>The url<sup>1</sup> that will point to the Swagger documentation. <a href="https://springdoc.org/#swagger-ui-properties">More Swagger UI documentation</a></td>
     <td>No</td>
     <td>true</td>
   </tr>
   <tr><td colspan="4"><b>URL Configuration</b></td></tr>
+  <tr>
+    <td>server.address</td>
+    <td>This is the url that will be used by the server application to bind to. This is especially useful when exposing actuator endpoints publicly. However, it must be known if the address cannot be found or is unavailable, the application will be unable to start.</td>
+    <td>No</td>
+    <td></td>
+  </tr>
   <tr>
     <td>ldes-server.host-name</td>
     <td>This is the url that will be used throughout the fragment names. This should therefor point to a resolvable url.</td>
@@ -104,7 +97,7 @@ Here is an explanation provided for all the possibilities on how to tweak and co
     <td>No</td>
     <td>604800</td>
   </tr>
-  <tr><td colspan="4"><b>MongoDB Storage</b>**</td></tr>
+  <tr><td colspan="4"><b>MongoDB Storage</b><sup>2</sup></td></tr>
   <tr>
     <td>spring.data.mongodb.host</td>
     <td>URL that points to the MongoDB server</td>
@@ -140,7 +133,7 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   <tr><td colspan="4"><b><a href="./features/compaction">Fragment Compaction</a></b></td></tr>
   <tr>
     <td>ldes-server.compaction-cron</td>
-    <td>Defines how often the Compaction Service will check the fragments ***</td>
+    <td>Defines how often the Compaction Service will check the fragments<sup>3</sup></td>
     <td>No</td>
     <td>0 0 0 * * *</td>
   </tr>
@@ -152,14 +145,14 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   </tr>
   <tr>
     <td>ldes-server.deletion-cron</td>
-    <td>Defines how often the redundant compacted fragments will be checked for deletion ***</td>
+    <td>Defines how often the redundant compacted fragments will be checked for deletion<sup>3</sup></td>
     <td>No</td>
     <td>0 0 0 * * *</td>
   </tr>
   <tr><td colspan="4"><b>Retention (<a href="./configuration/retention-policies">Retention Policies</a>)</b></td></tr>
   <tr>
     <td>ldes-server.retention-cron</td>
-    <td>Defines how often the Retention Service will check the members ***</td>
+    <td>Defines how often the Retention Service will check the members<sup>3</sup></td>
     <td>No</td>
     <td>0 0 0 * * *</td>
   </tr>
@@ -178,27 +171,26 @@ Here is an explanation provided for all the possibilities on how to tweak and co
   </tr>
   <tr>
     <td>ldes-server.admin.port</td>
-    <td>Defines on which port the admin endpoints are available ****</td>
+    <td>Defines on which port the admin endpoints are available<sup>4</sup></td>
     <td>No</td>
     <td>8080</td>
   </tr>
 </tbody>
 </table>
 
-> **Note** *: The specified url will be prefixed by an optional `server.servlet.context-path`
+> **Note** 1: The specified url will be prefixed by an optional `server.servlet.context-path`
 
-> **Note** **: As of this moment the LDES Server only supports a MongoDB implementation. The following properties have
+> **Note** 2: As of this moment the LDES Server only supports a MongoDB implementation. The following properties have
 > to be set to provide connectivity between the server and the database
 
 
-> **Note** ***: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
+> **Note** 3: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
 > annotation `@Scheduled` adds a 6th parameter to support seconds. The cron schedules are in timezone 'UTC'.
 >
-> More information about this can be found in
->
-the [spring documentation](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html).
+> More information about this can be found in the [spring documentation]
 
-> **Note** ****: When using the swagger API with separate port bindings, the swagger API will always be available under the admin port.
+> **Note** 4: When using the swagger API with separate port bindings, the swagger API will always be available under
+> the admin port.
 
 ## Docker Compose
 
@@ -228,3 +220,5 @@ networks:
   ldes:
     name: quick_start_network
 ````
+
+[spring documentation]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html

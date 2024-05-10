@@ -9,6 +9,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.reposito
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.PrefixAdderImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.rest.PrefixConstructor;
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -41,7 +48,8 @@ import org.springframework.test.web.servlet.MockMvc;
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.converters",
-		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling" })
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.exceptionhandling",
+		"be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config" })
 @SuppressWarnings("java:S2187")
 public class SpringIntegrationTest {
 
@@ -74,5 +82,6 @@ public class SpringIntegrationTest {
 
 	@Autowired
 	protected MockMvc mockMvc;
-
+	@Autowired
+	protected ResourceRemover resourceRemover;
 }

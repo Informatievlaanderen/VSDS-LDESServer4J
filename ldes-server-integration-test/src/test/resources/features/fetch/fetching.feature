@@ -35,15 +35,24 @@ Feature: Server basic fetching functionality
       | data/input/eventstreams/mobility-hindrances_paginated_1500.ttl | /mobility-hindrances | /mobility-hindrances/paged | mobility-hindrances |
       | data/input/eventstreams/cartoons_paginated_2.ttl               | /cartoons            | /cartoons/my-view          | cartoons            |
 
+  @setupStreaming
+  Scenario: The LDES server supports streaming for fetching
+    Given I create the eventstream "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl"
+    When I ingest 1 members of template "data/input/members/mob-hind.template.ttl" to the collection "mobility-hindrances"
+    When I fetch a fragment from url "/mobility-hindrances/paged" in a streaming way
+    Then The response model is the same as the model from the url "/mobility-hindrances/paged"
+    When I fetch a fragment from url "/mobility-hindrances/paged?pageNumber=1" in a streaming way
+    Then The response model is the same as the model from the url "/mobility-hindrances/paged?pageNumber=1"
+
   @clearRegistry
   Scenario Outline: Counter is created and returns number of inserted members
     Given I create the eventstream <eventStreamDescriptionFile>
     When I ingest 1 members of template <template> to the collection <collectionName>
     Then The prometheus value for key "ldes_server_ingested_members_count_total" is <prometheusValue>
+
     Examples:
       | eventStreamDescriptionFile                                       | template                                           | collectionName        | prometheusValue |
       | "data/input/eventstreams/mobility-hindrances_paginated_1500.ttl" | "data/input/members/mob-hind.template.ttl"         | "mobility-hindrances" | "1.0"           |
       | "data/input/eventstreams/observations.ttl"                       | "data/input/members/two-observations.template.ttl" | "observations"        | "2.0"           |
-
 
 
