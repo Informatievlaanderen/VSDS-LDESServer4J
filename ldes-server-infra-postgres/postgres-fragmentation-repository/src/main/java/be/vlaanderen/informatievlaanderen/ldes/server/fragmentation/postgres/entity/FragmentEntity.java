@@ -1,11 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.converter.FragmentPairConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.converter.FragmentPairConverter;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;

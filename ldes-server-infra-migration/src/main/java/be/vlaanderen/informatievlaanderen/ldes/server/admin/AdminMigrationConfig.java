@@ -24,7 +24,7 @@ public class AdminMigrationConfig {
                                         @Qualifier("migrationView") Step viewStep
 	) {
 
-		return new JobBuilder("migrationMongoFragmentation", jobRepository)
+		return new JobBuilder("migrationMongoAdmin", jobRepository)
 				.incrementer(new RunIdIncrementer())
 				.flow(dcatDatasetStep)
 				.next(dcatCatalogStep)

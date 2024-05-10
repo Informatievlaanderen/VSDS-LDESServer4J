@@ -2,9 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.mapper.SequenceEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.SequenceEntityMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.SequenceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.SequenceEntityRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 

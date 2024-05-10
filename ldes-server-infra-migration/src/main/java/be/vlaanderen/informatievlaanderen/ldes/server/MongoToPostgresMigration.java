@@ -2,18 +2,18 @@ package be.vlaanderen.informatievlaanderen.ldes.server;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.List;
 
 @Configuration
-@EnableBatchProcessing
+@Profile("!test")
 @ConditionalOnProperty(name = "ldes-server.migrate-mongo", havingValue = "true")
 public class MongoToPostgresMigration {
 

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity;
 
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;

@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

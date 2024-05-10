@@ -1,8 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.SequenceEntity;
 import org.springframework.stereotype.Component;
 
 @Component

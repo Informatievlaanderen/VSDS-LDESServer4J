@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.converter;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.converter;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import jakarta.persistence.AttributeConverter;
