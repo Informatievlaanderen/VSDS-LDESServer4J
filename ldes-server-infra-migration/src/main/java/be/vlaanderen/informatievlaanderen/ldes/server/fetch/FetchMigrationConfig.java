@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fetch;
 
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.entity.MemberAllocationEntity;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -23,17 +23,17 @@ import org.springframework.transaction.PlatformTransactionManager;
 @ConditionalOnProperty(name = "ldes-server.migrate-mongo", havingValue = "true")
 public class FetchMigrationConfig {
 	@Bean
-	public MongoItemReader<MemberAllocationEntity> memberAllocationReader(MongoTemplate template) {
-		MongoItemReader<MemberAllocationEntity> reader = new MongoItemReader<>();
+	public MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity> memberAllocationReader(MongoTemplate template) {
+		MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity> reader = new MongoItemReader<>();
 		reader.setTemplate(template);
-		reader.setCollection(MemberAllocationEntity.FETCH_ALLOCATION);
-		reader.setTargetType(MemberAllocationEntity.class);
+		reader.setCollection(be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity.FETCH_ALLOCATION);
+		reader.setTargetType(be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity.class);
 		reader.setQuery(new Query());
 		return reader;
 	}
 
 	@Bean
-	public ItemProcessor<MemberAllocationEntity, MemberAllocationEntity> memberAllocationEntityProcessor() {
+	public ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity, MemberAllocationEntity> memberAllocationEntityProcessor() {
 		return noSQLData -> new MemberAllocationEntity(noSQLData.getId(),
 				noSQLData.getCollectionName(), noSQLData.getViewName(), noSQLData.getFragmentId(), noSQLData.getMemberId());
 	}
@@ -48,11 +48,11 @@ public class FetchMigrationConfig {
 	@Bean("migrationMongoFetch")
 	public Job migrationMongoFetchJob(JobRepository jobRepository,
 	                        PlatformTransactionManager transactionManager,
-	                        MongoItemReader<MemberAllocationEntity> reader,
-	                        ItemProcessor<MemberAllocationEntity, MemberAllocationEntity> processor,
+	                        MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity> reader,
+	                        ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity, MemberAllocationEntity> processor,
 	                        JpaItemWriter<MemberAllocationEntity> writer) {
 		Step step = new StepBuilder("migrationMemberAllocation", jobRepository)
-				.<MemberAllocationEntity, MemberAllocationEntity>chunk(1000, transactionManager)
+				.<be.vlaanderen.informatievlaanderen.ldes.server.fetch.entity.MemberAllocationEntity, MemberAllocationEntity>chunk(1000, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)

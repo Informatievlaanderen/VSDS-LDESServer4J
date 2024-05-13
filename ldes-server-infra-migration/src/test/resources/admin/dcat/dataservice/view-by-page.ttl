@@ -1,6 +1,0 @@
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-
-[] a dcat:DataService ;
-  dct:title "My view by page"@en ;
-  dct:description "By page fragmentation for my LDES"@en .

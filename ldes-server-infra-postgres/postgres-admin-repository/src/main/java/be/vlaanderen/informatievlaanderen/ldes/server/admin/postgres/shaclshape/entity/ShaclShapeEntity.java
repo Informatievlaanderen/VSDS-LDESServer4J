@@ -12,7 +12,7 @@ public class ShaclShapeEntity {
 	@Id
 	private String id;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "text")
 	private String model;
 
 	protected ShaclShapeEntity() {}

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.FragmentEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.SequenceEntity;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -26,16 +26,16 @@ public class FragmentationMigrationConfig {
 
 	// Fragment Entity
 	@Bean
-	public MongoItemReader<FragmentEntity> fragmentEntityReader(MongoTemplate template) {
-		MongoItemReader<FragmentEntity> reader = new MongoItemReader<>();
+	public MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity> fragmentEntityReader(MongoTemplate template) {
+		MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity> reader = new MongoItemReader<>();
 		reader.setTemplate(template);
-		reader.setTargetType(FragmentEntity.class);
+		reader.setTargetType(be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity.class);
 		reader.setQuery(new Query());
 		return reader;
 	}
 
 	@Bean
-	public ItemProcessor<FragmentEntity, FragmentEntity> fragmentEntityProcessor() {
+	public ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity, FragmentEntity> fragmentEntityProcessor() {
 		return noSQLData -> FragmentEntity.fromLdesFragment(noSQLData.toLdesFragment());
 	}
 
@@ -49,11 +49,11 @@ public class FragmentationMigrationConfig {
 	@Bean("migrationFragmentEntity")
 	public Step migrationFragmentEntityStep(JobRepository jobRepository,
 	                                        PlatformTransactionManager transactionManager,
-	                                        MongoItemReader<FragmentEntity> reader,
-	                                        ItemProcessor<FragmentEntity, FragmentEntity> processor,
+	                                        MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity> reader,
+	                                        ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity, FragmentEntity> processor,
 	                                        JpaItemWriter<FragmentEntity> writer) {
 		return new StepBuilder("migrationFragmentEntity", jobRepository)
-				.<FragmentEntity, FragmentEntity>chunk(1000, transactionManager)
+				.<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.FragmentEntity, FragmentEntity>chunk(1000, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)
@@ -63,16 +63,16 @@ public class FragmentationMigrationConfig {
 	// Sequence Entity
 
 	@Bean
-	public MongoItemReader<SequenceEntity> sequenceEntityReader(MongoTemplate template) {
-		MongoItemReader<SequenceEntity> reader = new MongoItemReader<>();
+	public MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity> sequenceEntityReader(MongoTemplate template) {
+		MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity> reader = new MongoItemReader<>();
 		reader.setTemplate(template);
-		reader.setTargetType(SequenceEntity.class);
+		reader.setTargetType(be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity.class);
 		reader.setQuery(new Query());
 		return reader;
 	}
 
 	@Bean
-	public ItemProcessor<SequenceEntity, SequenceEntity> sequenceEntityProcessor() {
+	public ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity, SequenceEntity> sequenceEntityProcessor() {
 		return noSQLData -> new SequenceEntity(noSQLData.getViewName(), noSQLData.getLastProcessedSequence());
 	}
 
@@ -86,11 +86,11 @@ public class FragmentationMigrationConfig {
 	@Bean("migrationSequenceEntity")
 	public Step migrationSequenceEntityStep(JobRepository jobRepository,
 	                                        PlatformTransactionManager transactionManager,
-	                                        MongoItemReader<SequenceEntity> reader,
-	                                        ItemProcessor<SequenceEntity, SequenceEntity> processor,
+	                                        MongoItemReader<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity> reader,
+	                                        ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity, SequenceEntity> processor,
 	                                        JpaItemWriter<SequenceEntity> writer) {
 		return new StepBuilder("migrationFragmentEntity", jobRepository)
-				.<SequenceEntity, SequenceEntity>chunk(1000, transactionManager)
+				.<be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entity.SequenceEntity, SequenceEntity>chunk(1000, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)

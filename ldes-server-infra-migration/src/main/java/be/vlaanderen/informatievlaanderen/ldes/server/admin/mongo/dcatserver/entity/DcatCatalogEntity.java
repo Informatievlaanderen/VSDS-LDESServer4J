@@ -26,7 +26,7 @@ public class DcatCatalogEntity {
 	}
 
 	public DcatServer toDcatServer() {
-		return new DcatServer(this.dcat, RDFParser.fromString(this.dcat)
+		return new DcatServer(this.id, RDFParser.fromString(this.dcat)
 				.lang(Lang.TURTLE)
 				.toModel());
 	}

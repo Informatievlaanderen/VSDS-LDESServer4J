@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -9,6 +10,7 @@ import jakarta.persistence.Table;
 public class DcatDatasetEntity {
 	@Id
 	private String collectionName;
+	@Column(columnDefinition = "text")
 	private String model;
 
 	protected DcatDatasetEntity() {}

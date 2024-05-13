@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 public class DcatCatalogEntity {
 	@Id
 	private String id;
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "text")
 	private String dcat;
 
 	protected DcatCatalogEntity() {

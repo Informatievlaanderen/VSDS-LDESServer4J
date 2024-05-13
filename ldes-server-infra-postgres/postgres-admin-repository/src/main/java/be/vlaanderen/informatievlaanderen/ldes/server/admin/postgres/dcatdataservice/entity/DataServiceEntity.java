@@ -12,7 +12,7 @@ public class DataServiceEntity {
 	@Id
 	private String viewName;
 
-	@Column(columnDefinition = "TEXT")
+	@Column(columnDefinition = "text")
 	private String model;
 
 	protected DataServiceEntity() {}
