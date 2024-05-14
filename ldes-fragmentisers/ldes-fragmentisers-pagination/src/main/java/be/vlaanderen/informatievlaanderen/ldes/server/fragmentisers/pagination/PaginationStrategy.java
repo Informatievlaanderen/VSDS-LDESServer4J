@@ -2,13 +2,16 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.jena.rdf.model.Model;
+
+import java.util.List;
 
 import static java.lang.Boolean.TRUE;
 
@@ -29,8 +32,8 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 	}
 
 	@Override
-	public void addMemberToFragment(Fragment parentFragment, String memberId, Model memberModel,
-			Observation parentObservation) {
+	public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, Member member,
+													  Observation parentObservation) {
 		Observation paginationObservation = Observation.createNotStarted(PAGINATION_FRAGMENTATION,
 				observationRegistry)
 				.parentObservation(parentObservation)
@@ -40,7 +43,8 @@ public class PaginationStrategy extends FragmentationStrategyDecorator {
 		if (TRUE.equals(ldesFragment.getRight())) {
 			super.addRelationFromParentToChild(parentFragment, ldesFragment.getLeft());
 		}
-		super.addMemberToFragment(ldesFragment.getLeft(), memberId, memberModel, paginationObservation);
+		List<BucketisedMember> members = super.addMemberToFragment(ldesFragment.getLeft(), member, paginationObservation);
 		paginationObservation.stop();
+		return members;
 	}
 }

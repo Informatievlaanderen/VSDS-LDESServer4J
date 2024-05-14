@@ -27,7 +27,7 @@ class FragmentationStrategyImplTest {
 		Member member = mock(Member.class);
 		when(member.id()).thenReturn("memberId");
 
-		fragmentationStrategy.addMemberToFragment(fragment, member.id(), member.model(), any());
+		fragmentationStrategy.addMemberToFragment(fragment, member, any());
 
 		verify(fragmentRepository, times(1)).incrementNrOfMembersAdded(fragment.getFragmentId());
 	}

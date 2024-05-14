@@ -49,7 +49,7 @@ class PaginationStrategyTest {
 				.thenReturn(new ImmutablePair<>(OPEN_FRAGMENT, false));
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				member.id(), member.model(), any(Observation.class));
+				member, any(Observation.class));
 
 		InOrder inOrder = inOrder(openPageProvider, fragmentRepository,
 				decoratedFragmentationStrategy);
@@ -57,7 +57,7 @@ class PaginationStrategyTest {
 				times(1)).retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1))
-				.addMemberToFragment(eq(OPEN_FRAGMENT), any(), any(), any(Observation.class));
+				.addMemberToFragment(eq(OPEN_FRAGMENT), any(), any(Observation.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -69,7 +69,7 @@ class PaginationStrategyTest {
 				.thenReturn(new ImmutablePair<>(OPEN_FRAGMENT, true));
 
 		fragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT,
-				member.id(), member.model(), any(Observation.class));
+				member, any(Observation.class));
 
 		InOrder inOrder = inOrder(openPageProvider, fragmentRepository,
 				decoratedFragmentationStrategy);
@@ -79,7 +79,7 @@ class PaginationStrategyTest {
 				times(1)).saveFragment(PARENT_FRAGMENT);
 		inOrder.verify(decoratedFragmentationStrategy,
 				times(1))
-				.addMemberToFragment(eq(OPEN_FRAGMENT), any(), any(), any(Observation.class));
+				.addMemberToFragment(eq(OPEN_FRAGMENT), any(), any(Observation.class));
 
 		inOrder.verifyNoMoreInteractions();
 	}

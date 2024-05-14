@@ -34,10 +34,10 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
 		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(fragmentRepository,
 				eventPublisher);
-		FragmentationStrategyWrapper paginationWrapper = (FragmentationStrategyWrapper) applicationContext
-				.getBean(PAGINATION_FRAGMENTATION);
-		fragmentationStrategy = paginationWrapper.wrapFragmentationStrategy(applicationContext, fragmentationStrategy,
-				viewSpecification.getPaginationProperties());
+//		FragmentationStrategyWrapper paginationWrapper = (FragmentationStrategyWrapper) applicationContext
+//				.getBean(PAGINATION_FRAGMENTATION);
+//		fragmentationStrategy = paginationWrapper.wrapFragmentationStrategy(applicationContext, fragmentationStrategy,
+//				viewSpecification.getPaginationProperties());
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);
