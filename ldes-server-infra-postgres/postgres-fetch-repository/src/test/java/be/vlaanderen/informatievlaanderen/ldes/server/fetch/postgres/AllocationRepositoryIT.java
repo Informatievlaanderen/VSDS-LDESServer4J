@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.postgres.fetch;
+package be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres;
 
 import org.junit.platform.suite.api.IncludeEngines;
 import org.junit.platform.suite.api.SelectClasspathResource;

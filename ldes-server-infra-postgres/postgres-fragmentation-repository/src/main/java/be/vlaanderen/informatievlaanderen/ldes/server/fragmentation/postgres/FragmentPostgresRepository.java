@@ -47,8 +47,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	public Optional<Fragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
-				.findAllByImmutableAndViewName(false,
-						viewName)
+				.findAllByImmutableAndViewName(false, viewName)
 				.stream()
 				.map(FragmentEntity::toLdesFragment)
 				.min(Comparator.comparing(Fragment::getFragmentIdString));
@@ -57,8 +56,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	@Override
 	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
-				.findByImmutableAndParentId(false,
-						parentId.asDecodedFragmentId())
+				.findByImmutableAndParentId(false, parentId.asDecodedFragmentId())
 				.map(FragmentEntity::toLdesFragment);
 	}
 

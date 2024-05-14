@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.converter;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DataConversionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +23,7 @@ public class FragmentPairConverter implements AttributeConverter<List<FragmentPa
 		try {
 			return objectMapper.writeValueAsString(attribute);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("Error serializing fragmentations", e);
+			throw new DataConversionException(FragmentPair.class, true, e);
 		}
 	}
 
@@ -31,7 +32,7 @@ public class FragmentPairConverter implements AttributeConverter<List<FragmentPa
 		try {
 			return objectMapper.readValue(dbData, collectionType);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to convert string to map", e);
+			throw new DataConversionException(FragmentPair.class, false, e);
 		}
 	}
 }

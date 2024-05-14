@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.entity.MemberViewsEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.mapper.MemberPropertiesEntityMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.projection.MemberPropertyVersionProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberPropertiesEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.postgres.repository.MemberViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
@@ -93,7 +92,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 		return propertiesRepo.findExpiredMemberPropertiesBeforeTimestamp(viewName.getCollectionName(),
 						viewName.asString(), LocalDateTime.now().minus(policy.duration()))
 				.stream()
-				.map(MemberPropertyVersionProjection::toMemberPropertiesEntity)
+				.map(propertiesMapper::toMemberPropertiesEntity)
 				.map(propertiesMapper::toMemberProperties);
 	}
 
@@ -104,7 +103,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 		return propertiesRepo.findExpiredMemberProperties(viewName.getCollectionName(), viewName.asString())
 				.stream()
 				.filter(projection -> policy.numberOfMembersToKeep() < projection.getVersionNumber())
-				.map(MemberPropertyVersionProjection::toMemberPropertiesEntity)
+				.map(propertiesMapper::toMemberPropertiesEntity)
 				.map(propertiesMapper::toMemberProperties);
 	}
 
@@ -115,7 +114,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 						viewName.asString(), LocalDateTime.now().minus(policy.duration()))
 				.stream()
 				.filter(projection -> policy.numberOfMembersToKeep() < projection.getVersionNumber())
-				.map(MemberPropertyVersionProjection::toMemberPropertiesEntity)
+				.map(propertiesMapper::toMemberPropertiesEntity)
 				.map(propertiesMapper::toMemberProperties);
 	}
 

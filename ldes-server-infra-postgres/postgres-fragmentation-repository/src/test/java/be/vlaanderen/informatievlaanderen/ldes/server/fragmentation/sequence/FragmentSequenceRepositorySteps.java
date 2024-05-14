@@ -6,9 +6,11 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import org.junit.jupiter.api.Assertions;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FragmentSequenceRepositorySteps extends PostgresFragmentationIntegrationTest {
 
@@ -27,8 +29,8 @@ public class FragmentSequenceRepositorySteps extends PostgresFragmentationIntegr
 
 	@Then("I receive a FragmentSequence with sequenceNr {int}")
 	public void iReceiveAFragmentSequenceWithSequenceNr(int sequenceNr) {
-		Assertions.assertTrue(retrieveFragmentSequence.isPresent());
-		Assertions.assertEquals(sequenceNr, retrieveFragmentSequence.get().sequenceNr());
+		assertTrue(retrieveFragmentSequence.isPresent());
+		assertEquals(sequenceNr, retrieveFragmentSequence.get().sequenceNr());
 	}
 
 	@When("I delete the sequence for view {string}")
@@ -38,7 +40,7 @@ public class FragmentSequenceRepositorySteps extends PostgresFragmentationIntegr
 
 	@Then("I do not find a FragmentSequence")
 	public void iDoNotFindAFragmentSequence() {
-		Assertions.assertTrue(retrieveFragmentSequence.isEmpty());
+		assertTrue(retrieveFragmentSequence.isEmpty());
 	}
 
 	@When("I delete the sequence for collection {string}")

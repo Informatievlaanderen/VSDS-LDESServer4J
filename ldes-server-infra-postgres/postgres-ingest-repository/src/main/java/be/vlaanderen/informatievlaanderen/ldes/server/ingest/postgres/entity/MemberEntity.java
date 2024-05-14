@@ -18,7 +18,6 @@ public class MemberEntity {
 	private String collectionName;
 	private String versionOf;
 	private LocalDateTime timestamp;
-	@GeneratedValue
 	private Long sequenceNr;
 	private String transactionId;
 	@Column(columnDefinition = "bytea")

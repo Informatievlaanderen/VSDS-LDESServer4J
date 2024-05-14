@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.service;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.FragmentationConfigEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.DataConversionException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
@@ -20,7 +21,7 @@ public class FragmentationConfigEntityConverter implements AttributeConverter<Li
 		try {
 			return objectMapper.writeValueAsString(attribute);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("Error serializing fragmentations", e);
+			throw new DataConversionException(FragmentationConfigEntity.class, true, e);
 		}
 	}
 
@@ -29,7 +30,7 @@ public class FragmentationConfigEntityConverter implements AttributeConverter<Li
 		try {
 			return objectMapper.readValue(dbData, collectionType);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException("Error deserializing fragmentations", e);
+			throw new DataConversionException(FragmentationConfigEntity.class, false, e);
 		}
 	}
 }
