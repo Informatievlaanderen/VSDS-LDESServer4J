@@ -19,7 +19,7 @@ public class MemberPropertiesEntity {
 	@Id
 	private String id;
 	private String collectionName;
-	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<MemberViewsEntity> views;
 	private String versionOf;
 	private LocalDateTime timestamp;
