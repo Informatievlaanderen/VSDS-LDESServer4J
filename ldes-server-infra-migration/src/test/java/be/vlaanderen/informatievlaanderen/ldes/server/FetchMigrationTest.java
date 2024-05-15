@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBatchTest
 @ActiveProfiles("test")
 @EnableJpaRepositories(basePackages = "be.vlaanderen.informatievlaanderen.ldes")
-public class FetchMigrationTest {
+class FetchMigrationTest {
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
 
@@ -40,7 +40,7 @@ public class FetchMigrationTest {
 	private AllocationEntityRepository repository;
 
 	@Test
-	public void testBatchJob() throws Exception {
+	void testBatchJob() throws Exception {
 		String es = "es";
 		String view = "v";
 		String fragment = "/%s/%s?page=1".formatted(es, view);

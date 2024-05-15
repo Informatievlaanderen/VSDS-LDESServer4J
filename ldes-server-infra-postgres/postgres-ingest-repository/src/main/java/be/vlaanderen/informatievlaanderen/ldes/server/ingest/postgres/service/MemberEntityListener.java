@@ -7,6 +7,7 @@ import jakarta.persistence.PrePersist;
 import org.springframework.stereotype.Component;
 
 @Component
+@SuppressWarnings({"java:S14444", "java:S1104"})
 public class MemberEntityListener {
 
 	public static MemberEntityRepository repository;

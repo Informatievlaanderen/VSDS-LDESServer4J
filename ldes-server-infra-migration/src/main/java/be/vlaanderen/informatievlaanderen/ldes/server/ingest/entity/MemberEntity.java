@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Document("ingest_ldesmember")
 @CompoundIndex(name = "collection_seqNr", def = "{'collectionName' : 1, 'sequenceNr': 1}")
+@SuppressWarnings("java:S1117")
 public class MemberEntity {
 
 	@Id

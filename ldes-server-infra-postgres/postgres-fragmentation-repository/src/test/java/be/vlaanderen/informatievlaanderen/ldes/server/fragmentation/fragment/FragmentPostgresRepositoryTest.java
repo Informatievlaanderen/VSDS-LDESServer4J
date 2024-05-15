@@ -17,7 +17,6 @@ import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class FragmentPostgresRepositoryTest {
@@ -42,7 +41,7 @@ class FragmentPostgresRepositoryTest {
 						.filter(ldesFragmentEntity -> !ldesFragmentEntity.isImmutable())
 						.filter(ldesFragmentEntity -> ldesFragmentEntity.getViewName()
 								.equals(VIEW_NAME.asString()))
-						.collect(Collectors.toList()));
+						.toList());
 
 		Optional<Fragment> ldesFragment = ldesFragmentMongoRepository.retrieveMutableFragment(
 				VIEW_NAME.asString(),

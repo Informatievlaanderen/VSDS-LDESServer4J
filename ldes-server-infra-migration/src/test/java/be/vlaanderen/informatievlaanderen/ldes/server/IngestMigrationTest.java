@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBatchTest
 @ActiveProfiles("test")
 @EnableJpaRepositories(basePackages = "be.vlaanderen.informatievlaanderen.ldes")
-public class IngestMigrationTest {
+class IngestMigrationTest {
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
 
@@ -61,7 +61,7 @@ public class IngestMigrationTest {
 	}
 
 	@Test
-	public void testBatchJob() throws Exception {
+	void testBatchJob() throws Exception {
 		String es = "es";
 		String memberId = "%s/https://ex.com/1".formatted(es);
 		String versionOf = "https://example.com/John-Doe";

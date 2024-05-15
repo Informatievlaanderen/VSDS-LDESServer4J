@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions;
 
+@SuppressWarnings("java:S3740")
 public class DataConversionException extends RuntimeException {
 	private final Class conversionClass;
 	private final String operation;

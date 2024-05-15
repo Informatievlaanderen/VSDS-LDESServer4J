@@ -1,13 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -42,12 +39,6 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
                 row.get("sequenceNr").isEmpty() ? null : Long.parseLong(row.get("sequenceNr")),
 				UUID.randomUUID().toString(),
 				ModelFactory.createDefaultModel());
-	}
-
-	@Given("eventstream {string}")
-	public void eventstream(String collectionName) {
-		EventStreamCreatedEvent event =
-				new EventStreamCreatedEvent(new EventStream(collectionName, null, null, false));
 	}
 
 	@Then("The member with id {string} can be retrieved from the database")

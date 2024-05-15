@@ -28,7 +28,6 @@ import reactor.core.publisher.Flux;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -131,7 +130,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
-	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) throws Exception {
+	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
 				.atMost(40, SECONDS)
 				.pollInterval(1, SECONDS)
@@ -141,7 +140,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 	@And("The expected response is equal to {string}")
-	public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException, UnsupportedEncodingException {
+	public void theExpectedResponseIsEqualTo(String expectedOutputFile) throws URISyntaxException {
 		Model expectedModel = stripGeneratedAtTimeOfModel(readModelFromFile(expectedOutputFile));
 
 		Model actualModel = stripGeneratedAtTimeOfModel(responseModel);
@@ -215,7 +214,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	}
 
 	@Then("The response from requesting the url {string} has access control headers and an etag")
-	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) throws Exception {
+	public void theResponseFromRequestingTheUrlHasAccessControlHeadersAndAnEtag(String url) {
 
 		await()
 				.atMost(Duration.of(20, ChronoUnit.SECONDS))

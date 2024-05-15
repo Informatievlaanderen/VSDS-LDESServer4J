@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBatchTest
 @ActiveProfiles("test")
 @EnableJpaRepositories(basePackages = "be.vlaanderen.informatievlaanderen.ldes")
-public class FragmentMigrationTest {
+class FragmentMigrationTest {
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
 
@@ -53,7 +53,7 @@ public class FragmentMigrationTest {
 	private static final String VIEW = "v";
 
 	@Test
-	public void testBatchJob() throws Exception {
+	void testBatchJob() throws Exception {
 		saveFragments();
 		saveSequences();
 

@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBatchTest
 @ActiveProfiles("test")
 @EnableJpaRepositories(basePackages = "be.vlaanderen.informatievlaanderen.ldes")
-public class AdminMigrationTest {
+class AdminMigrationTest {
 
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
@@ -88,7 +88,7 @@ public class AdminMigrationTest {
 
 
 	@Test
-	public void testBatchJob() throws Exception {
+	void testBatchJob() throws Exception {
 		saveDcatDatasets();
 		saveDcatCatalogs();
 		saveEventStreams();

@@ -11,8 +11,6 @@ Feature: MemberRepository
     And I delete all members from the "mobility-hindrances" collection
 
   Scenario: Saving members without a sequenceNr which gets a sequenceNr assigned
-    Given eventstream "mobility-hindrances"
-    And eventstream "gipod"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |
@@ -34,8 +32,6 @@ Feature: MemberRepository
     And I delete all members from the "gipod" collection
 
   Scenario: The repository can delete all members of a certain collection
-    Given eventstream "mobility-hindrances"
-    And eventstream "gipod"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |
@@ -52,7 +48,6 @@ Feature: MemberRepository
     And I delete all members from the "gipod" collection
 
   Scenario: The repository can indicate if members exist or not
-    Given eventstream "mobility-hindrances"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |
@@ -88,7 +83,6 @@ Feature: MemberRepository
     And I delete all members from the "gipod" collection
 
   Scenario: The repository can indicate if members exist or not
-    Given eventstream "mobility-hindrances"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |
@@ -97,7 +91,6 @@ Feature: MemberRepository
     And I delete all members from the "mobility-hindrances" collection
 
   Scenario: Delete a member with a certain id
-    Given eventstream "mobility-hindrances"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |
@@ -135,7 +128,6 @@ Feature: MemberRepository
     And I delete all members from the "other" collection
 
   Scenario: Members with the same id are not bulk inserted in the MemberRepository
-    Given eventstream "mobility-hindrances"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |
@@ -145,7 +137,6 @@ Feature: MemberRepository
     And I delete all members from the "mobility-hindrances" collection
 
   Scenario: Members with the same id are not inserted in the MemberRepository
-    Given eventstream "mobility-hindrances"
     When I save the members using the MemberRepository
       | id                                      | collectionName      | sequenceNr | versionOf                             | timestamp           |
       | http://test-data/mobility-hindrance/1/1 | mobility-hindrances | [blank]    | http://test-data/mobility-hindrance/1 | 2022-08-12T18:18:00 |

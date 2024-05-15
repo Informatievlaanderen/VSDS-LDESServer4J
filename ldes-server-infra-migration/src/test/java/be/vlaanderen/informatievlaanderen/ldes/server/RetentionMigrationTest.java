@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EntityScan("be.vlaanderen.informatievlaanderen.ldes")
 @SpringBatchTest
 @ActiveProfiles("test")
-public class RetentionMigrationTest {
+class RetentionMigrationTest {
 	@Autowired
 	private JobLauncherTestUtils jobLauncherTestUtils;
 
@@ -43,7 +43,7 @@ public class RetentionMigrationTest {
 	private MemberPropertiesEntityRepository repository;
 
 	@Test
-	public void testBatchJob() throws Exception {
+	void testBatchJob() throws Exception {
 		String es = "es";
 		String memberId = "%s/https://ex.com/1".formatted(es);
 		String versionOf = "https://example.com/John-Doe";
