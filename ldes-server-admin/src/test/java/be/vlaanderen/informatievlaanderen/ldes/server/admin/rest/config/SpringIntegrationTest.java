@@ -30,8 +30,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @EnableAutoConfiguration
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminViewsRestController.class, AdminServerDcatController.class,
-		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class, PrefixConstructor.class,
-		RdfModelConverter.class, EventSourceServiceImpl.class})
+		DcatViewsRestController.class, DcatDatasetRestController.class, EventSourceServiceImpl.class, PrefixAdderImpl.class,
+		PrefixConstructor.class, RdfModelConverter.class})
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.spi",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream",
