@@ -6,8 +6,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class PaginationService {
 
+    private final Map<String, Long> map = new HashMap<>();
     private final FragmentRepository fragmentRepository;
     private final BucketisedMemberRepository bucketisedMemberRepository;
     private final ApplicationEventPublisher eventPublisher;
