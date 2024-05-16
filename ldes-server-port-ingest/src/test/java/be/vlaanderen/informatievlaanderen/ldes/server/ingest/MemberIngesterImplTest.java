@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,7 +77,7 @@ class MemberIngesterImplTest {
 
     @Test
     @DisplayName("Adding Member when there is a member with the same id that already exists")
-    void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
+    void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
@@ -95,7 +94,7 @@ class MemberIngesterImplTest {
 
     @Test
     @DisplayName("Adding Member when there is no existing member with the same id")
-    void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() throws IOException {
+    void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQ).toModel();
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
