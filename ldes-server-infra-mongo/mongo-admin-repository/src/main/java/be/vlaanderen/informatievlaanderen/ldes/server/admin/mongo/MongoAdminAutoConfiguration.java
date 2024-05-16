@@ -21,7 +21,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.repositor
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.service.DcatServiceEntityConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.service.ViewEntityConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RetentionModelSerializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -37,11 +36,8 @@ public class MongoAdminAutoConfiguration {
 	@Bean
 	@ConditionalOnMissingBean
 	public EventStreamRepository eventStreamRepository(final EventStreamEntityRepository eventStreamEntityRepository,
-													   final EventStreamConverter eventStreamConverter,
-													   final RetentionModelSerializer retentionModelSerializer,
-													   final MongoTemplate mongoTemplate) {
-		return new EventStreamMongoRepository(eventStreamEntityRepository, eventStreamConverter,
-				retentionModelSerializer, mongoTemplate);
+													   final EventStreamConverter eventStreamConverter) {
+		return new EventStreamMongoRepository(eventStreamEntityRepository, eventStreamConverter);
 	}
 
 	@Bean

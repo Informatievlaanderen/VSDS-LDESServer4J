@@ -55,7 +55,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleVersionObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false, List.of());
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -65,7 +65,7 @@ class MemberExtractorCollectionImplTest {
 
     @Test
     void test_HandleStateObjectEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true, List.of());
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", true);
 
         memberExtractorCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 

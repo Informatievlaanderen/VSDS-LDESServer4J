@@ -59,7 +59,7 @@ class MemberMapperCollectionImplTest {
 
     @Test
     void test_HandleEventStreamCreatedEvent() {
-        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false, List.of());
+        final EventStream eventStream = new EventStream(COLLECTION_NAME, "timestampPath", "versionOfPath", false);
 
         memberMapperCollection.handleEventStreamCreatedEvent(new EventStreamCreatedEvent(eventStream));
 

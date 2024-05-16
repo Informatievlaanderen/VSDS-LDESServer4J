@@ -3,13 +3,13 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.exception.DuplicateRetentionException;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
@@ -44,7 +44,7 @@ class EventStreamServiceImplTest {
 	private static final String TIMESTAMP_PATH = "generatedAt";
 	private static final String VERSION_OF_PATH = "isVersionOf";
 	private static final boolean VERSION_CREATION_ENABLED = false;
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of());
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 	private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
 			VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 	private DcatDataset dataset;
@@ -64,14 +64,15 @@ class EventStreamServiceImplTest {
 	private DcatDatasetService dcatDatasetService;
 	@Mock
 	private DcatServerService dcatServerService;
+	@Mock
+	private EventSourceService eventSourceService;
 
 	private EventStreamService service;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		service = new EventStreamServiceImpl(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService,
-				dcatServerService,
-				eventPublisher);
+				dcatServerService, eventSourceService, eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
 		eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
@@ -81,7 +82,7 @@ class EventStreamServiceImplTest {
 	@Test
 	void when_retrieveAllEventStream_then_returnList() {
 		final String otherCollection = "other";
-		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", false, List.of());
+		EventStream otherEventStream = new EventStream(otherCollection, "created", "versionOf", false);
 		List<ViewSpecification> views = List
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
@@ -167,16 +168,15 @@ class EventStreamServiceImplTest {
 	void when_collectionExists_then_updateEventSource() {
 		service.updateEventSource(COLLECTION, List.of());
 
-		InOrder inOrder = inOrder(eventStreamRepository, eventPublisher);
-		inOrder.verify(eventStreamRepository).saveEventSource(COLLECTION, List.of());
-		inOrder.verify(eventPublisher).publishEvent(new DeletionPolicyChangedEvent(COLLECTION, List.of()));
+		InOrder inOrder = inOrder(eventSourceService, eventPublisher);
+		inOrder.verify(eventSourceService).saveEventSource(COLLECTION, List.of());
 	}
 
 	@Nested
 	class CreateEventStream {
 		private static final String TIMESTAMP_PATH = "generatedAt";
 		private static final String VERSION_OF_PATH = "versionOf";
-		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of());
+		private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 
 		@Test
 		void given_NonExistingEventStream_when_createEventStream_then_expectCreatedEventStream() {

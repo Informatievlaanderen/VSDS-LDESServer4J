@@ -49,7 +49,7 @@ public class MemberRepositorySteps extends MongoIngestIntegrationTest {
 	@Given("eventstream {string}")
 	public void eventstream(String collectionName) {
 		EventStreamCreatedEvent event =
-				new EventStreamCreatedEvent(new EventStream(collectionName, null, null, false, List.of()));
+				new EventStreamCreatedEvent(new EventStream(collectionName, null, null, false));
 		ingestMemberSequenceService.handleEventStreamCreated(event);
 	}
 

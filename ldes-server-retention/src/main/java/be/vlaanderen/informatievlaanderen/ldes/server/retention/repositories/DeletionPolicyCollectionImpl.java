@@ -1,7 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.DeletionPolicyChangedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.creation.RetentionPolicyFactory;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.RetentionPolicy;
@@ -30,11 +29,6 @@ public class DeletionPolicyCollectionImpl implements DeletionPolicyCollection {
     @Override
     public boolean isEmpty() {
         return eventSourceRetentionPolicyMap.isEmpty();
-    }
-
-    @EventListener
-    public void handleEventStreamCreatedEvent(EventStreamCreatedEvent event) {
-        addToMap(event.eventStream().getCollection(), event.eventStream().getEventSourceRetentionPolicies());
     }
 
     @EventListener

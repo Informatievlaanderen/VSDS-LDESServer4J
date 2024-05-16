@@ -13,7 +13,6 @@ public class MemberEntity {
 
 	@Id
 	private final String id;
-
 	@Indexed
 	private final String collectionName;
 	private final String versionOf;

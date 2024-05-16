@@ -89,7 +89,7 @@ class EventStreamTOTest {
                                     ModelFactory.createDefaultModel(), List.of())),
                     Arguments.of("null", null),
                     Arguments.of("dataset", EVENT_STREAM_RESPONSE_WITH_DATASET),
-                    Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of())));
+                    Arguments.of(new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED)));
         }
     }
 

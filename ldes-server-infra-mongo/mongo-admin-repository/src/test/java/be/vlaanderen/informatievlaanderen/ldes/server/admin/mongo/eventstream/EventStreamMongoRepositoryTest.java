@@ -28,20 +28,17 @@ import static org.mockito.Mockito.*;
 class EventStreamMongoRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
 	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
-			"isVersionOf", false, List.of());
+			"isVersionOf", false);
 	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf",
-			false, List.of());
-	private MongoTemplate mongoTemplate = mock(MongoTemplate.class);
-	private RdfModelConverter rdfModelConverter = new RdfModelConverter();
-	private RetentionModelSerializer retentionModelSerializer = new RetentionModelSerializer(rdfModelConverter);
-	private EventStreamConverter eventStreamConverter = new EventStreamConverter(retentionModelSerializer);
+			false);
+	private EventStreamConverter eventStreamConverter = new EventStreamConverter();
 	private EventStreamMongoRepository mongoRepository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
 
 	@BeforeEach
 	void setUp() {
-		mongoRepository = new EventStreamMongoRepository(eventStreamEntityRepository, eventStreamConverter, retentionModelSerializer, mongoTemplate);
+		mongoRepository = new EventStreamMongoRepository(eventStreamEntityRepository, eventStreamConverter);
 	}
 
 	@Test
@@ -49,12 +46,12 @@ class EventStreamMongoRepositoryTest {
 	void when_dbHasEntities_then_returnAll() {
 		when(eventStreamEntityRepository.findAll()).thenReturn(List.of(
 				EVENT_STREAM_ENTITY,
-				new EventStreamEntity("other_collection", "created", "version", false, List.of())));
+				new EventStreamEntity("other_collection", "created", "version", false)));
 
 		List<EventStream> eventStreams = mongoRepository.retrieveAllEventStreams();
 		List<EventStream> expectedEventStreams = List.of(
 				EVENT_STREAM,
-				new EventStream("other_collection", "created", "version", false, List.of()));
+				new EventStream("other_collection", "created", "version", false));
 		verify(eventStreamEntityRepository).findAll();
 		assertEquals(expectedEventStreams, eventStreams);
 	}

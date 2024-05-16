@@ -31,7 +31,7 @@ class IngestMemberSequenceServiceTest {
 		String existingCollection = "existing-collection";
 		EventStreamCreatedEvent existingCollectionEvent =
 				new EventStreamCreatedEvent(
-						new EventStream(existingCollection, null, null, false, List.of())
+						new EventStream(existingCollection, null, null, false)
 				);
 		long sequence = 20L;
 		when(memberEntityRepository.findFirstByCollectionNameOrderBySequenceNrDesc(existingCollection))
@@ -41,7 +41,7 @@ class IngestMemberSequenceServiceTest {
 		String newCollection = "collection";
 		EventStreamCreatedEvent newCollectionEvent =
 				new EventStreamCreatedEvent(
-						new EventStream(newCollection, null, null, false, List.of())
+						new EventStream(newCollection, null, null, false)
 				);
 		ingestMemberSequenceService.handleEventStreamCreated(newCollectionEvent);
 
@@ -60,7 +60,7 @@ class IngestMemberSequenceServiceTest {
 		String collection = "collection";
 		EventStreamCreatedEvent newCollectionEvent =
 				new EventStreamCreatedEvent(
-						new EventStream(collection, null, null, false, List.of())
+						new EventStream(collection, null, null, false)
 				);
 		ingestMemberSequenceService.handleEventStreamCreated(newCollectionEvent);
 
