@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberBucketisedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.context.ApplicationEventPublisher;
@@ -11,7 +12,7 @@ import java.util.Map;
 
 public class PaginationService {
 
-    private final Map<String, Long> map = new HashMap<>();
+    private final Map<ViewName, MemberPaginationService> map = new HashMap<>();
     private final FragmentRepository fragmentRepository;
     private final BucketisedMemberRepository bucketisedMemberRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -26,7 +27,9 @@ public class PaginationService {
 
     @EventListener
     public void handleMemberBucketisedEvent(MemberBucketisedEvent event) {
-        bucketisedMemberRepository.getFirstUnallocatedMember(event.viewName(), )
+        ViewName viewName = event.viewName();
+        MemberPaginationService paginationService = map.get(viewName);
+        bucketisedMemberRepository.getFirstUnallocatedMember(, )
         paginationStrategy.addMemberToFragment()
     }
 }

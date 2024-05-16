@@ -1,8 +1,12 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+
+import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
 public class OpenPageProvider {
 	private final PageCreator pageCreator;
@@ -16,23 +20,35 @@ public class OpenPageProvider {
 		this.memberLimit = memberLimit;
 	}
 
-	public ImmutablePair<Fragment, Boolean> retrieveOpenFragmentOrCreateNewFragment(Fragment parentFragment) {
+	public Fragment retrieveOpenFragmentOrCreateNewFragment(LdesFragmentIdentifier parentId) {
 
 		return fragmentRepository
-				.retrieveOpenChildFragment(parentFragment.getFragmentId())
+				.retrieveOpenChildFragment(parentId)
 				.map(fragment -> {
 					if (needsToCreateNewFragment(fragment)) {
+						Fragment parentFragment = fragmentRepository.retrieveFragment(parentId).orElseThrow();
 						Fragment newFragment = pageCreator.createNewFragment(fragment, parentFragment);
 						fragmentRepository.saveFragment(newFragment);
-						return new ImmutablePair<>(newFragment, false);
+						return newFragment;
 					} else {
-						return new ImmutablePair<>(fragment, false);
+						return fragment;
 					}
 				})
 				.orElseGet(() -> {
+					Fragment parentFragment = fragmentRepository.retrieveFragment(parentId).orElseThrow();
 					Fragment newFragment = pageCreator.createFirstFragment(parentFragment);
 					fragmentRepository.saveFragment(newFragment);
-					return new ImmutablePair<>(newFragment, true);
+
+
+					TreeRelation treeRelation = new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
+					if (!parentFragment.containsRelation(treeRelation)) {
+						parentFragment.addRelation(treeRelation);
+						fragmentRepository.saveFragment(parentFragment);
+					}
+
+
+
+					return newFragment;
 				});
 	}
 
