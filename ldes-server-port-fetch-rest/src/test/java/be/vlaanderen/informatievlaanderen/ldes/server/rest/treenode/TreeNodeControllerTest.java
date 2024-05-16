@@ -36,23 +36,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.client.MockMvcWebTestClient;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -229,7 +224,7 @@ class TreeNodeControllerTest {
 
 	@Test
 	@DisplayName("Requesting LDES fragment stream")
-	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() throws Exception {
+	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() {
 		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
@@ -246,7 +241,7 @@ class TreeNodeControllerTest {
 		client = WebTestClient.bindToController(new TreeNodeController(restConfig, treeNodeFetcher,
 				streamingTreeNodeFactory, treeNodeStreamConverter, cachingStrategy)).build();
 
-		FluxExchangeResult<String> response = client.get()
+		client.get()
 				.uri("/{collectionName}/{viewName}?generatedAtTime={fragmentationValue}", COLLECTION_NAME, VIEW_NAME, FRAGMENTATION_VALUE_1)
 				.accept(MediaType.TEXT_EVENT_STREAM)
 				.exchange()

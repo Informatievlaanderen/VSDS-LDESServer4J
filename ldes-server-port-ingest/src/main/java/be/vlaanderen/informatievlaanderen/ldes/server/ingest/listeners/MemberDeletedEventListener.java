@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.listeners;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MemberDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersDeletedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.retention.MembersRemovedFromEventSourceEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,12 @@ public class MemberDeletedEventListener {
 	}
 
 	@EventListener
-	public void handleMemberDeletedEvent(MemberDeletedEvent event) {
-		memberRepository.deleteMember(event.memberId());
+	public void handleMembersDeletedEvent(MembersDeletedEvent event) {
+		memberRepository.deleteMembers(event.memberIds());
+	}
+
+	@EventListener
+	public void handleMembersRemovedFromEventSourceEvent(MembersRemovedFromEventSourceEvent event) {
+		memberRepository.removeFromEventSource(event.ids());
 	}
 }

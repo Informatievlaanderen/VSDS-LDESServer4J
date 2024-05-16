@@ -17,22 +17,25 @@ public class EventStreamTO {
 	private final boolean versionCreationEnabled;
 	private final List<ViewSpecification> views;
 	private final Model shacl;
+	private final List<Model> eventSourceRetentionPolicies;
 	private final DcatDataset dcatDataset;
 
+	@SuppressWarnings("java:S107")
 	public EventStreamTO(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled,
-                         List<ViewSpecification> views, Model shacl, DcatDataset dcatDataset) {
+                         List<ViewSpecification> views, Model shacl, List<Model> eventSourceRetentionPolicies, DcatDataset dcatDataset) {
 		this.collection = collection;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
         this.versionCreationEnabled = versionCreationEnabled;
         this.views = views != null ? views : new ArrayList<>();
 		this.shacl = shacl;
-		this.dcatDataset = dcatDataset != null ? dcatDataset : new DcatDataset(collection);
+        this.eventSourceRetentionPolicies = eventSourceRetentionPolicies;
+        this.dcatDataset = dcatDataset != null ? dcatDataset : new DcatDataset(collection);
 	}
 
 	public EventStreamTO(String collection, String timestampPath, String versionOfPath, boolean versionCreationEnabled,
-                         List<ViewSpecification> views, Model shacl) {
-		this(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, null);
+                         List<ViewSpecification> views, Model shacl, List<Model> eventSourceRetentionPolicies) {
+		this(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, eventSourceRetentionPolicies, null);
 	}
 
 	public String getCollection() {
@@ -61,6 +64,10 @@ public class EventStreamTO {
 
 	public DcatDataset getDcatDataset() {
 		return dcatDataset;
+	}
+
+	public List<Model> getEventSourceRetentionPolicies() {
+		return eventSourceRetentionPolicies;
 	}
 
 	@Override

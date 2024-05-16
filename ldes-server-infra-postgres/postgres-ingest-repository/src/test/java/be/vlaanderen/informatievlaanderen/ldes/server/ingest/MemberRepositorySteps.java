@@ -37,6 +37,7 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 				row.get("versionOf"),
 				LocalDateTime.parse(row.get("timestamp")),
                 row.get("sequenceNr").isEmpty() ? null : Long.parseLong(row.get("sequenceNr")),
+				true,
 				UUID.randomUUID().toString(),
 				ModelFactory.createDefaultModel());
 	}
@@ -98,12 +99,12 @@ public class MemberRepositorySteps extends PostgresIngestIntegrationTest {
 
 	@When("I delete the member with id {string}")
 	public void iDeleteMemberWithId(String memberId) {
-		memberRepository.deleteMember(memberId);
+		memberRepository.deleteMembers(List.of(memberId));
 	}
 
 	@And("I search for the first member from collection {string} and sequenceNr greater than {int}")
 	public void iSearchForTheFirstMemberFromCollectionAndSequenceNrGreaterThan(String collectionName, int sequence) {
-		retrievedMember = memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, sequence);
+		retrievedMember = memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, sequence);
 	}
 
 	@Then("The retrieved member is empty")

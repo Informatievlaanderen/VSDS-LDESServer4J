@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EventStreamConverter {
-	public EventStreamEntity fromEventStream(EventStream eventStream) {
+
+    public EventStreamEntity fromEventStream(EventStream eventStream) {
 		return new EventStreamEntity(eventStream.getCollection(), eventStream.getTimestampPath(),
 				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled());
 	}

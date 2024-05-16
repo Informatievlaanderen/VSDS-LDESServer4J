@@ -17,7 +17,7 @@ public class EventStreamEntity {
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
 		this.versionCreationEnabled = versionCreationEnabled;
-	}
+    }
 
 	public String getId() {
 		return id;

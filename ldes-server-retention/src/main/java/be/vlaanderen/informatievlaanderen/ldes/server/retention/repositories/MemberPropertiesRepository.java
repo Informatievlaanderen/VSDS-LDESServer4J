@@ -26,7 +26,9 @@ public interface MemberPropertiesRepository {
 
 	void removeMemberPropertiesOfCollection(String collectionName);
 
-	void deleteById(String id);
+	void deleteAllByIds(List<String> id);
+
+	void removeFromEventSource(List<String> id);
 
 	/**
 	 * Finds all
@@ -37,4 +39,7 @@ public interface MemberPropertiesRepository {
 	Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeBasedRetentionPolicy policy);
 	Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, VersionBasedRetentionPolicy policy);
 	Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName, TimeAndVersionBasedRetentionPolicy policy);
+	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeBasedRetentionPolicy policy);
+	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, VersionBasedRetentionPolicy policy);
+	Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeAndVersionBasedRetentionPolicy policy);
 }
