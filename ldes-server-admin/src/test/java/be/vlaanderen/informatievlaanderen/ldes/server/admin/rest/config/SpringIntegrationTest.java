@@ -2,6 +2,8 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.config;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.repositories.DcatServerRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.repository.EventSourceRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceServiceImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.repository.DcatViewRepository;
@@ -29,7 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = { AdminEventStreamsRestController.class, AdminViewsRestController.class, AdminServerDcatController.class,
 		DcatViewsRestController.class, DcatDatasetRestController.class, PrefixAdderImpl.class, PrefixConstructor.class,
-		RdfModelConverter.class})
+		RdfModelConverter.class, EventSourceServiceImpl.class})
 @ComponentScan(value = {
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.spi",
 		"be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream",
@@ -56,6 +58,10 @@ public class SpringIntegrationTest {
 	@Autowired
 	@MockBean
 	protected DcatServerRepository dcatServerRepository;
+
+	@Autowired
+	@MockBean
+	protected EventSourceRepository eventSourceRepository;
 
 	@Autowired
 	@MockBean

@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.IngestEventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class MemberRetrieverImplTest {
     private static final long LAST_PROCESSED_SEQUENCE_NR = 65L;
 
     @Mock
-    private EventSourceService eventSourceService;
+    private IngestEventSourceService eventSourceService;
     @Mock
     private MemberMapperCollection memberMapperCollection;
     @InjectMocks

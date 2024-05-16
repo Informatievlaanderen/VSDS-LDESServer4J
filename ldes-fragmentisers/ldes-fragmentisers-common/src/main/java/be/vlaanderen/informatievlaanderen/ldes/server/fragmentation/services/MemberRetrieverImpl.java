@@ -4,17 +4,17 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.IngestEventSourceService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class MemberRetrieverImpl implements MemberRetriever {
-    private final EventSourceService eventSourceService;
+    private final IngestEventSourceService eventSourceService;
     private final MemberMapperCollection memberMapperCollection;
 
-    public MemberRetrieverImpl(EventSourceService eventSourceService, MemberMapperCollection memberMapperCollection) {
+    public MemberRetrieverImpl(IngestEventSourceService eventSourceService, MemberMapperCollection memberMapperCollection) {
         this.eventSourceService = eventSourceService;
         this.memberMapperCollection = memberMapperCollection;
     }

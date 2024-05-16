@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class EventSourceServiceImplTest {
+class IngestEventSourceServiceImplTest {
 
 	private static final String COLLECTION_NAME = "parcels";
 
@@ -26,7 +26,7 @@ class EventSourceServiceImplTest {
 	private MemberRepository memberRepository;
 
 	@InjectMocks
-	private EventSourceServiceImpl eventSourceService;
+	private IngestEventSourceServiceImpl eventSourceService;
 
 	@Test
 	void test_getMemberStreamOfCollection() {
