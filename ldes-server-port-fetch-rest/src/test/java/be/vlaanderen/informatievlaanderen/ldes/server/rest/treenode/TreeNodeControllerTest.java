@@ -224,7 +224,7 @@ class TreeNodeControllerTest {
 
 	@Test
 	@DisplayName("Requesting LDES fragment stream")
-	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() throws Exception {
+	void when_GETRequestIsPerformedForStreaming_ResponseContainsAnLDesFragment() {
 		EventStream eventStream = new EventStream(COLLECTION_NAME, null, null, false);
 		eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 
