@@ -5,18 +5,19 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.MemberEnti
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFParserBuilder;
+import org.apache.jena.riot.RDFParser;
 import org.springframework.stereotype.Component;
 
-import java.io.StringWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
 @Component
 public class MemberEntityMapper {
 
     public MemberEntity toMemberEntity(Member member) {
-        final StringWriter outputStream = new StringWriter();
-        RDFDataMgr.write(outputStream, member.getModel(), Lang.NQUADS);
-        final String modelString = outputStream.toString();
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        RDFDataMgr.write(outputStream, member.getModel(), Lang.RDFPROTO);
+        final byte[] modelBytes = outputStream.toByteArray();
         return new MemberEntity(
                 member.getId(),
                 member.getCollectionName(),
@@ -24,12 +25,12 @@ public class MemberEntityMapper {
                 member.getTimestamp(),
                 member.getSequenceNr(),
                 member.getTransactionId(),
-                modelString
+                modelBytes
         );
     }
 
     public Member toMember(MemberEntity memberEntity) {
-        final Model model = RDFParserBuilder.create().fromString(memberEntity.getModel()).lang(Lang.NQUADS).toModel();
+        final Model model = RDFParser.source(new ByteArrayInputStream(memberEntity.getModel())).lang(Lang.RDFPROTO).toModel();
         return new Member(
                 memberEntity.getId(),
                 memberEntity.getCollectionName(),
