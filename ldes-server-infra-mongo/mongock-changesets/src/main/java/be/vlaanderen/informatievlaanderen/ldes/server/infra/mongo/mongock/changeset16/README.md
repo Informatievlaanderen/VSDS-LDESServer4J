@@ -12,8 +12,6 @@ mongock:
 
 Consequences of Changeset:
 
-* eventstream:
-    * Add field retentionPolicies
 * ingest_ldesmember
     * Add field isInEventSource
 * retention_member_properties

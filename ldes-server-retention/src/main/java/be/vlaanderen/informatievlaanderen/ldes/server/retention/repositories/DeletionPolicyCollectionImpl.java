@@ -43,8 +43,10 @@ public class DeletionPolicyCollectionImpl implements DeletionPolicyCollection {
     }
 
     private void addToMap(String collectionName, List<Model> retentionPolicyModels) {
-        retentionPolicyFactory
-                .extractRetentionPolicy(retentionPolicyModels)
-                .ifPresent(policy -> eventSourceRetentionPolicyMap.put(collectionName, policy));
+        if (!retentionPolicyModels.isEmpty()) {
+            retentionPolicyFactory
+                    .extractRetentionPolicy(retentionPolicyModels)
+                    .ifPresent(policy -> eventSourceRetentionPolicyMap.put(collectionName, policy));
+        }
     }
 }
