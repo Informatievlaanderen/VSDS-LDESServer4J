@@ -66,32 +66,32 @@
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-fetch-repository</artifactId>
-            <version>2.16.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-ingest-repository</artifactId>
-            <version>2.16.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-fragmentation-repository</artifactId>
-            <version>2.16.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-retention-repository</artifactId>
-            <version>2.16.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>postgres-admin-repository</artifactId>
-            <version>2.16.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
             <artifactId>ldes-fragmentisers-pagination</artifactId>
-            <version>2.16.0-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -105,11 +105,13 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>1.18.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
             <version>1.18.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

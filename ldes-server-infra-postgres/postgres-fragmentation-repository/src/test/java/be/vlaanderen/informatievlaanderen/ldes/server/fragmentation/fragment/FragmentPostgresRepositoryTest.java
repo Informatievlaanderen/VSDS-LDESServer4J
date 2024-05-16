@@ -27,7 +27,7 @@ class FragmentPostgresRepositoryTest {
 	private static final String THIRD_VALUE = "2020-12-30T09:36:37.127Z";
 
 	private final FragmentEntityRepository ldesFragmentEntityRepository = Mockito.mock(FragmentEntityRepository.class);
-	private final FragmentPostgresRepository ldesFragmentMongoRepository = new FragmentPostgresRepository(
+	private final FragmentPostgresRepository ldesFragmentPostgresRepository = new FragmentPostgresRepository(
 			ldesFragmentEntityRepository);
 
 	@ParameterizedTest
@@ -43,7 +43,7 @@ class FragmentPostgresRepositoryTest {
 								.equals(VIEW_NAME.asString()))
 						.toList());
 
-		Optional<Fragment> ldesFragment = ldesFragmentMongoRepository.retrieveMutableFragment(
+		Optional<Fragment> ldesFragment = ldesFragmentPostgresRepository.retrieveMutableFragment(
 				VIEW_NAME.asString(),
 				List.of());
 

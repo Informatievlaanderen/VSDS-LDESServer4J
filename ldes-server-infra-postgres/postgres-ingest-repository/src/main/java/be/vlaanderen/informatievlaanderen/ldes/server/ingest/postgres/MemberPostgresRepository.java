@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.Me
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import org.apache.jena.riot.Lang;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
+@Primary
 public class MemberPostgresRepository implements MemberRepository {
 	public static final Lang CONVERSION_LANG = Lang.RDFPROTO;
 	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";

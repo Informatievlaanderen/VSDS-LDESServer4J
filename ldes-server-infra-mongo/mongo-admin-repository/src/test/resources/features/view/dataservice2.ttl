@@ -1,6 +1,0 @@
-@prefix dct:   <http://purl.org/dc/terms/> .
-@prefix dcat:  <http://www.w3.org/ns/dcat#> .
-
-[] a dcat:DataService ;
-  dct:title "My updated geo-spatial view"@en ;
-  dct:description "An updated Geospatial fragmentation for my LDES"@en .

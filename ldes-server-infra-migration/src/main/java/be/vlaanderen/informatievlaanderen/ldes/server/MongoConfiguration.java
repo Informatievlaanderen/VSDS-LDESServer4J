@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
 @Configuration
+@ConditionalOnProperty(name = "ldes-server.migrate-mongo", havingValue = "true")
 public class MongoConfiguration {
 
 	@Value("${spring.data.mongodb.uri}")

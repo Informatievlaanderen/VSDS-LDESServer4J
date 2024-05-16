@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.repository
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.entity.CompactionCandidateProjection;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetch.postgres.entity.MemberAllocationEntity;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@Primary
 public interface AllocationEntityRepository extends JpaRepository<MemberAllocationEntity, String> {
 
 	@Query("SELECT DISTINCT m.memberId FROM MemberAllocationEntity m WHERE m.fragmentId IN :fragmentIds")

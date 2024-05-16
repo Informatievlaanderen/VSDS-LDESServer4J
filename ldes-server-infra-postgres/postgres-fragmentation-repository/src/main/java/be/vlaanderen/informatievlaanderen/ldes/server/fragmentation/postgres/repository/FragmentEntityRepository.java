@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.re
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.FragmentEntity;
 import jakarta.transaction.Transactional;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @SuppressWarnings("java:S100")
+@Primary
 public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, String> {
 
 	Optional<FragmentEntity> findLdesFragmentEntityByRootAndViewName(Boolean root, String viewName);
