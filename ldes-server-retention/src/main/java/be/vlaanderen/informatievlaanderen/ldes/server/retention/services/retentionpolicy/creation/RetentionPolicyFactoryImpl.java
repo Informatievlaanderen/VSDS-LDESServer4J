@@ -36,13 +36,23 @@ public class RetentionPolicyFactoryImpl implements RetentionPolicyFactory {
 	public Optional<RetentionPolicy> extractRetentionPolicy(ViewSpecification viewSpecification) {
 		List<RetentionPolicy> policies = getRetentionPolicyListForView(viewSpecification);
 
+		return createCombinedRetentionPolicy(policies);
+	}
+
+	@Override
+	public Optional<RetentionPolicy> extractRetentionPolicy(List<Model> retentionPolicies) {
+		List<RetentionPolicy> policies = retentionPolicies.stream().map(this::getRetentionPolicy).toList();
+
+		return createCombinedRetentionPolicy(policies);
+	}
+
+	private Optional<RetentionPolicy> createCombinedRetentionPolicy(List<RetentionPolicy> policies) {
 		return switch (policies.size()) {
 			case 0 -> Optional.empty();
 			case 1 -> Optional.of(policies.get(0));
 			case 2 -> Optional.of(TimeAndVersionBasedRetentionPolicy.from(policies.get(0), policies.get(1)));
 			default -> throw new IllegalArgumentException("A view cannot have more than 2 retention policies!");
 		};
-
 	}
 
 	private List<RetentionPolicy> getRetentionPolicyListForView(ViewSpecification viewSpecification) {

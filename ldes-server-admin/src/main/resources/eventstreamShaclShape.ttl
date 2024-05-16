@@ -3,7 +3,7 @@
 @prefix sh:   <http://www.w3.org/ns/shacl#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
 @prefix test: <http://validation-rules/#> .
-
+@prefix ldes: <https://w3id.org/ldes#> .
 @prefix shsh: <http://www.w3.org/ns/shacl-shacl#> .
 
 [] a sh:NodeShape;
@@ -19,7 +19,7 @@
     sh:path <https://w3id.org/tree#shape>
   ], [
     sh:nodeKind sh:IRI ;
-    sh:description "The object property of the members that idicates how members relate to each other from the time perspective."@en;
+    sh:description "The object property of the members that indicates how members relate to each other from the time perspective."@en;
     sh:maxCount 1;
     sh:name "timestampPath"@en;
     sh:path <https://w3id.org/ldes#timestampPath>
@@ -35,7 +35,13 @@
     sh:maxCount 1;
     sh:name "createVersions"@en;
     sh:path <https://w3id.org/ldes#createVersions>
-] .
+], [
+    sh:class ldes:EventSource;
+    sh:description "The object that indicates which members are retained in the event stream."@en;
+    sh:maxCount 1;
+    sh:name "eventsource"@en;
+    sh:path <https://w3id.org/ldes#eventSource>
+    ] .
 
 
 shsh:

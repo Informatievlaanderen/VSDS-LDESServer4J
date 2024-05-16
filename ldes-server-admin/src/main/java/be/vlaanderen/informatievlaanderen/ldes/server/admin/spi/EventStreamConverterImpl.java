@@ -22,12 +22,14 @@ public class EventStreamConverterImpl implements EventStreamConverter {
     public static final String DCAT_PREFIX = "http://www.w3.org/ns/dcat#";
     public static final String DATASET_TYPE = DCAT_PREFIX + "Dataset";
     private final ViewSpecificationConverter viewSpecificationConverter;
+    private final RetentionModelExtractor retentionModelExtractor;
     private final PrefixAdder prefixAdder;
     private final PrefixConstructor prefixConstructor;
 
-    public EventStreamConverterImpl(ViewSpecificationConverter viewSpecificationConverter,
+    public EventStreamConverterImpl(ViewSpecificationConverter viewSpecificationConverter, RetentionModelExtractor retentionModelExtractor,
                                     PrefixAdder prefixAdder, PrefixConstructor prefixConstructor) {
         this.viewSpecificationConverter = viewSpecificationConverter;
+        this.retentionModelExtractor = retentionModelExtractor;
         this.prefixAdder = prefixAdder;
         this.prefixConstructor = prefixConstructor;
     }
@@ -41,7 +43,8 @@ public class EventStreamConverterImpl implements EventStreamConverter {
         final boolean versionCreationEnabled = getBooleanResource(model, LDES_CREATE_VERSIONS).orElse(false);
         final List<ViewSpecification> views = getViews(model, collection);
         final Model shacl = getShaclFromModel(model);
-        return new EventStreamTO(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl);
+        final List<Model> eventSourceRetentionModels = getEventSourceRetentionPolicies(model);
+        return new EventStreamTO(collection, timestampPath, versionOfPath, versionCreationEnabled, views, shacl, eventSourceRetentionModels);
     }
 
     @Override
@@ -155,6 +158,16 @@ public class EventStreamConverterImpl implements EventStreamConverter {
                 .map(statements -> createDefaultModel().add(statements))
                 .map(viewModel -> viewSpecificationConverter.viewFromModel(viewModel, collection))
                 .toList();
+    }
+
+    private List<Model> getEventSourceRetentionPolicies(Model model) {
+        Optional<Statement> eventSourceStatement = model.listStatements(null, LDES_EVENT_SOURCE,  (RDFNode) null).nextOptional();
+        if (eventSourceStatement.isEmpty()) {
+            return List.of();
+        } else {
+            Model eventSourceModel = ModelFactory.createDefaultModel().add(retrieveAllStatements(eventSourceStatement.get().getResource(), model));
+            return retentionModelExtractor.extractRetentionStatements(eventSourceModel);
+        }
     }
 
     private List<Statement> retrieveAllStatements(Resource resource, Model model) {

@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.service.EventStreamConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,14 +25,16 @@ class EventStreamMongoRepositoryTest {
 	private static final String COLLECTION_NAME = "collection1";
 	private static final EventStreamEntity EVENT_STREAM_ENTITY = new EventStreamEntity(COLLECTION_NAME, "generatedAt",
 			"isVersionOf", false);
-	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf", false);
+	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION_NAME, "generatedAt", "isVersionOf",
+			false);
+	private EventStreamConverter eventStreamConverter = new EventStreamConverter();
 	private EventStreamMongoRepository mongoRepository;
 	@Mock
 	private EventStreamEntityRepository eventStreamEntityRepository;
 
 	@BeforeEach
 	void setUp() {
-		mongoRepository = new EventStreamMongoRepository(eventStreamEntityRepository);
+		mongoRepository = new EventStreamMongoRepository(eventStreamEntityRepository, eventStreamConverter);
 	}
 
 	@Test

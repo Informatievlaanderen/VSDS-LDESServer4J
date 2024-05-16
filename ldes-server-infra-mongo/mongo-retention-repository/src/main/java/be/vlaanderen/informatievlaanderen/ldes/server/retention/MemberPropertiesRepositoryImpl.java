@@ -37,6 +37,7 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	private static final String COLLECTION = "collectionName";
 	private static final String VERSION_OF = "versionOf";
 	private static final String TIMESTAMP = "timestamp";
+	private static final String IN_EVENTSOURCE = "isInEventSource";
 
 	private final MemberPropertiesEntityRepository memberPropertiesEntityRepository;
 	private final MemberPropertiesEntityMapper memberPropertiesEntityMapper;
@@ -111,8 +112,18 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 	}
 
 	@Override
-	public void deleteById(String id) {
-		memberPropertiesEntityRepository.deleteById(id);
+	public void deleteAllByIds(List<String> ids) {
+		memberPropertiesEntityRepository.deleteAllById(ids);
+	}
+
+	@Override
+	public void removeFromEventSource(List<String> ids) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(ID).in(ids));
+		Update update = new Update();
+		update.set(IN_EVENTSOURCE, false);
+
+		mongoTemplate.updateMulti(query, update, MemberPropertiesEntity.class);
 	}
 
 	@Override
@@ -156,6 +167,57 @@ public class MemberPropertiesRepositoryImpl implements MemberPropertiesRepositor
 				match(Criteria
 						.where(COLLECTION).is(viewName.getCollectionName())
 						.and(VIEWS).in(viewName.asString())
+						.and(TIMESTAMP).lt(LocalDateTime.now().minus(policy.duration())));
+
+		final Aggregation aggregation = createAggregation(
+				sortTimestampDesc(),
+				match,
+				groupOnVersionOf(),
+				projectVersionsToKeep(policy.numberOfMembersToKeep()),
+				unwindDocuments(),
+				getReplaceRootDocuments()
+		);
+
+		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
+																TimeBasedRetentionPolicy policy) {
+		return memberPropertiesEntityRepository
+				.findMemberPropertiesEntitiesByCollectionNameAndTimestampBefore(
+						collectionName,
+						LocalDateTime.now().minus(policy.duration())
+				)
+				.map(memberPropertiesEntityMapper::toMemberProperties);
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
+																VersionBasedRetentionPolicy policy) {
+		int versionsToKeep = policy.numberOfMembersToKeep();
+
+		final SortOperation sort = sortTimestampDesc();
+		final MatchOperation match =
+				match(Criteria.where(COLLECTION).is(collectionName));
+		final GroupOperation group = groupOnVersionOf();
+		final ProjectionOperation project = projectVersionsToKeep(versionsToKeep);
+		final UnwindOperation unwind = unwindDocuments();
+		final ReplaceRootOperation replaceRoot = getReplaceRootDocuments();
+
+		final Aggregation aggregation = createAggregation(
+				sort, match, group, project, unwind, replaceRoot
+		);
+
+		return mongoTemplate.aggregateStream(aggregation, MemberPropertiesEntity.NAME, MemberProperties.class);
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
+																TimeAndVersionBasedRetentionPolicy policy) {
+		final MatchOperation match =
+				match(Criteria
+						.where(COLLECTION).is(collectionName)
 						.and(TIMESTAMP).lt(LocalDateTime.now().minus(policy.duration())));
 
 		final Aggregation aggregation = createAggregation(

@@ -7,7 +7,6 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.RDFParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,7 +32,7 @@ class MemberTest {
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
                 LocalDateTime.parse("2020-12-28T09:36:37.127"),
-                0L, UUID.randomUUID().toString(), model);
+                0L, true, UUID.randomUUID().toString(), model);
 
         member.removeTreeMember();
         Statement statement = member.getModel().listStatements(null, TREE_MEMBER, (Resource) null).nextOptional()
@@ -49,7 +48,7 @@ class MemberTest {
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1", "collectionName",
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464",
                 LocalDateTime.parse("2020-12-28T09:36:37.127"),
-                0L, UUID.randomUUID().toString(), model);
+                0L, true, UUID.randomUUID().toString(), model);
 
         assertEquals("https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10810464/1",
                 member.getId());
@@ -71,17 +70,17 @@ class MemberTest {
     static class EqualityTestProvider implements ArgumentsProvider {
 
         private static final String idA = "idA";
-        private static final Member memberA = new Member(idA, null, null, null, null, null, null);
+        private static final Member memberA = new Member(idA, null, null, null, null, true, null, null);
 
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
             return Stream.of(
                     Arguments.of(equals(), memberA, memberA),
-                    Arguments.of(equals(), new Member(idA, "otherCollection", "other", LocalDateTime.now(), 10L, "txId", ModelFactory.createDefaultModel()),
+                    Arguments.of(equals(), new Member(idA, "otherCollection", "other", LocalDateTime.now(), 10L, true, "txId", ModelFactory.createDefaultModel()),
                             memberA),
                     Arguments.of(notEquals(),
-                            new Member("idB", "otherCollection", "other", LocalDateTime.now(), 10L, "txId", ModelFactory.createDefaultModel()), memberA),
-                    Arguments.of(notEquals(), new Member("idB", null, null, null, null, null, null), memberA));
+                            new Member("idB", "otherCollection", "other", LocalDateTime.now(), 10L, true, "txId", ModelFactory.createDefaultModel()), memberA),
+                    Arguments.of(notEquals(), new Member("idB", null, null, null, null, true, null, null), memberA));
         }
 
         private static BiConsumer<Object, Object> equals() {

@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.repository.ViewEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.view.service.ViewEntityConverter;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RdfModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.RetentionModelSerializer;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +20,8 @@ import static org.mockito.Mockito.*;
 class ViewMongoRepositoryTest {
 
 	private final ViewEntityRepository viewEntityRepository = mock(ViewEntityRepository.class);
-	private final RdfModelConverter rdfModelConverter = mock(RdfModelConverter.class);
-	private final ViewEntityConverter viewEntityConverter = new ViewEntityConverter(rdfModelConverter);
+	private final RetentionModelSerializer retentionModelSerializer = mock(RetentionModelSerializer.class);
+	private final ViewEntityConverter viewEntityConverter = new ViewEntityConverter(retentionModelSerializer);
 
 	private ViewMongoRepository repository;
 

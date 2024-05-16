@@ -20,8 +20,8 @@ import static org.mockito.Mockito.*;
 class DeleteEventHandlerTest {
 	private static final String COLLECTION = "collection";
 	private static final ViewName VIEW = new ViewName(COLLECTION, "view1");
-	private MemberProperties member1 = new MemberProperties("1", COLLECTION, "version", LocalDateTime.now());
-	private MemberProperties member2 = new MemberProperties("2", COLLECTION, "version", LocalDateTime.now());
+	private MemberProperties member1 = new MemberProperties("1", COLLECTION, "version", LocalDateTime.now(), true);
+	private MemberProperties member2 = new MemberProperties("2", COLLECTION, "version", LocalDateTime.now(), true);
 	private ViewDeletedEvent event = new ViewDeletedEvent(VIEW);
 	private MemberPropertiesRepository memberPropertiesRepository;
 	private MemberRemover memberRemover;

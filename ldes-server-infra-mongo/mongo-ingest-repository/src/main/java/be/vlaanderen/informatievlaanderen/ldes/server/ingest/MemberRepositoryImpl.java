@@ -7,6 +7,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.membersequence.Inge
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,17 +19,22 @@ import java.util.stream.Stream;
 
 @Component
 public class MemberRepositoryImpl implements MemberRepository {
+	public static final String ID = "_id";
+	private static final String IN_EVENTSOURCE = "isInEventSource";
 	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
+	private final MongoTemplate mongoTemplate;
 	private final MemberEntityRepository memberEntityRepository;
 	private final MemberEntityMapper memberEntityMapper;
 	private final IngestMemberSequenceService sequenceService;
 
 	public MemberRepositoryImpl(MemberEntityRepository memberEntityRepository,
-			MemberEntityMapper memberEntityMapper,
-			IngestMemberSequenceService sequenceService) {
+								MemberEntityMapper memberEntityMapper,
+								IngestMemberSequenceService sequenceService,
+								MongoTemplate mongoTemplate) {
 		this.memberEntityRepository = memberEntityRepository;
 		this.memberEntityMapper = memberEntityMapper;
 		this.sequenceService = sequenceService;
+		this.mongoTemplate = mongoTemplate;
 	}
 
 	public boolean memberExists(String memberId) {
@@ -67,15 +76,25 @@ public class MemberRepositoryImpl implements MemberRepository {
 	}
 
 	@Override
-	public void deleteMember(String memberId) {
-		memberEntityRepository.deleteById(memberId);
-		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment();
+	public void deleteMembers(List<String> memberIds) {
+		memberEntityRepository.deleteAllById(memberIds);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(memberIds.size());
 	}
 
 	@Override
-	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
+	public void removeFromEventSource(List<String> ids) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where(ID).in(ids));
+		Update update = new Update();
+		update.set(IN_EVENTSOURCE, false);
+
+		mongoTemplate.updateMulti(query, update, MemberEntity.class);
+	}
+
+	@Override
+	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
 		return memberEntityRepository
-				.findFirstByCollectionNameAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, sequenceNr)
+				.findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
 				.map(memberEntityMapper::toMember);
 	}
 

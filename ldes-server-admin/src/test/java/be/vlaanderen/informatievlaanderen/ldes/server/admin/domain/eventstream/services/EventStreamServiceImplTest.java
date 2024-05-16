@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
@@ -45,7 +46,7 @@ class EventStreamServiceImplTest {
 	private static final boolean VERSION_CREATION_ENABLED = false;
 	private static final EventStream EVENT_STREAM = new EventStream(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH, VERSION_CREATION_ENABLED);
 	private static final EventStreamTO EVENT_STREAM_RESPONSE = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-			VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+			VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 	private DcatDataset dataset;
 	private EventStreamTO eventStreamTOWithDataset;
 
@@ -63,18 +64,19 @@ class EventStreamServiceImplTest {
 	private DcatDatasetService dcatDatasetService;
 	@Mock
 	private DcatServerService dcatServerService;
+	@Mock
+	private EventSourceService eventSourceService;
 
 	private EventStreamService service;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		service = new EventStreamServiceImpl(eventStreamRepository, viewService, shaclShapeService, dcatDatasetService,
-				dcatServerService,
-				eventPublisher);
+				dcatServerService, eventSourceService, eventPublisher);
 
 		dataset = new DcatDataset(COLLECTION, readModelFromFile("dcat/dataset/valid.ttl"));
 		eventStreamTOWithDataset = new EventStreamTO(COLLECTION, TIMESTAMP_PATH,
-				VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), dataset);
+				VERSION_OF_PATH, VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of(), dataset);
 	}
 
 	@Test
@@ -85,7 +87,7 @@ class EventStreamServiceImplTest {
 				.of(new ViewSpecification(new ViewName("other", "view1"), List.of(), List.of(), 100));
 
 		EventStreamTO otherEventStreamTO = new EventStreamTO(otherCollection, "created", "versionOf", false,
-				views, ModelFactory.createDefaultModel(), dataset);
+				views, ModelFactory.createDefaultModel(), List.of(), dataset);
 
 		when(eventStreamRepository.retrieveAllEventStreams()).thenReturn(List.of(EVENT_STREAM, otherEventStream));
 		when(viewService.getViewsByCollectionName(otherCollection)).thenReturn(views);
@@ -162,6 +164,14 @@ class EventStreamServiceImplTest {
 		verifyNoInteractions(viewService, shaclShapeService);
 	}
 
+	@Test
+	void when_collectionExists_then_updateEventSource() {
+		service.updateEventSource(COLLECTION, List.of());
+
+		InOrder inOrder = inOrder(eventSourceService, eventPublisher);
+		inOrder.verify(eventSourceService).saveEventSource(COLLECTION, List.of());
+	}
+
 	@Nested
 	class CreateEventStream {
 		private static final String TIMESTAMP_PATH = "generatedAt";
@@ -174,7 +184,7 @@ class EventStreamServiceImplTest {
 			when(eventStreamRepository.saveEventStream(EVENT_STREAM)).thenReturn(EVENT_STREAM);
 			when(shaclShapeService.updateShaclShape(shaclShape)).thenReturn(shaclShape);
 			EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 
 			EventStreamTO createdEventStream = service.createEventStream(eventStreamTO);
 
@@ -189,7 +199,7 @@ class EventStreamServiceImplTest {
 		void given_ExistingEventStream_when_createEventStreamWithSameName_then_throwException() {
 			when(eventStreamRepository.retrieveEventStream(COLLECTION)).thenReturn(Optional.of(EVENT_STREAM));
 			EventStreamTO eventStreamTO = new EventStreamTO(COLLECTION, TIMESTAMP_PATH, VERSION_OF_PATH,
-					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel());
+					VERSION_CREATION_ENABLED, List.of(), ModelFactory.createDefaultModel(), List.of());
 
 			assertThatThrownBy(() -> service.createEventStream(eventStreamTO))
 					.isInstanceOf(IllegalArgumentException.class)
@@ -214,7 +224,8 @@ class EventStreamServiceImplTest {
 					VERSION_OF_PATH,
 					VERSION_CREATION_ENABLED,
 					List.of(byPageView, byLocationView),
-					ModelFactory.createDefaultModel());
+					ModelFactory.createDefaultModel(),
+					List.of());
 
 
 			doNothing().when(viewService).addView(byPageView);

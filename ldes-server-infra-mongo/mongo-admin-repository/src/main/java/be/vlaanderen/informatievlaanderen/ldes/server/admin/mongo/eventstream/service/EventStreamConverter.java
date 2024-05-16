@@ -2,9 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.s
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.mongo.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
+import org.springframework.stereotype.Component;
 
+@Component
 public class EventStreamConverter {
-	public EventStreamEntity fromEventStream(EventStream eventStream) {
+
+    public EventStreamEntity fromEventStream(EventStream eventStream) {
 		return new EventStreamEntity(eventStream.getCollection(), eventStream.getTimestampPath(),
 				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled());
 	}

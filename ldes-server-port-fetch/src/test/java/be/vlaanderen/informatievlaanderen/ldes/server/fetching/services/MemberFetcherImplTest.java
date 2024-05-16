@@ -68,6 +68,7 @@ class MemberFetcherImplTest {
                         "http://example.org/verkeerspunt/meting",
                         TIMESTAMP,
                         null,
+                        true,
                         "txId",
                         ModelFactory.createDefaultModel()));
     }

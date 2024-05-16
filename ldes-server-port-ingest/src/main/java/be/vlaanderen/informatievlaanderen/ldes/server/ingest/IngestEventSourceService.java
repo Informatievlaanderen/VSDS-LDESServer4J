@@ -5,10 +5,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public interface EventSourceService {
+public interface IngestEventSourceService {
 
 	Stream<Member> getMemberStreamOfCollection(String collectionName);
 
-	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr);
+	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 
 }

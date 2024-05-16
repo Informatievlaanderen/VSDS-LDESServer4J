@@ -20,15 +20,17 @@ public class MemberPropertiesEntity {
 	private final String collectionName;
 	@Indexed
 	private final Set<String> views;
+	private final boolean isInEventSource;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
 
-	public MemberPropertiesEntity(String id, String collectionName, Set<String> views, String versionOf,
-			LocalDateTime timestamp) {
+	public MemberPropertiesEntity(String id, String collectionName, Set<String> views, boolean isInEventSource, String versionOf,
+                                  LocalDateTime timestamp) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.views = views;
-		this.versionOf = versionOf;
+        this.isInEventSource = isInEventSource;
+        this.versionOf = versionOf;
 		this.timestamp = timestamp;
 	}
 
@@ -42,6 +44,10 @@ public class MemberPropertiesEntity {
 
 	public Set<String> getViews() {
 		return views;
+	}
+
+	public boolean isInEventSource() {
+		return isInEventSource;
 	}
 
 	public String getVersionOf() {

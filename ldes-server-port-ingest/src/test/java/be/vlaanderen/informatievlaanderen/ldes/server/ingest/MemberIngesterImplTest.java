@@ -20,11 +20,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -66,7 +64,7 @@ class MemberIngesterImplTest {
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, "txId", model);
+                0L, true, "txId", model);
 
         doThrow(new RuntimeException("testException")).when(validator).validate(member);
 
@@ -78,12 +76,12 @@ class MemberIngesterImplTest {
 
     @Test
     @DisplayName("Adding Member when there is a member with the same id that already exists")
-    void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() throws IOException {
+    void when_TheMemberAlreadyExists_thenEmptyOptionalIsReturned() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQUADS).build().toModel();
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, "txId", model);
+                0L, true, "txId", model);
         when(memberRepository.insertAll(List.of(member))).thenReturn(List.of());
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);
@@ -95,12 +93,12 @@ class MemberIngesterImplTest {
 
     @Test
     @DisplayName("Adding Member when there is no existing member with the same id")
-    void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() throws IOException {
+    void when_TheMemberDoesNotAlreadyExists_thenMemberIsStored() {
         Model model = RDFParser.source("example-ldes-member.nq").lang(Lang.NQ).toModel();
         Member member = new Member(
                 MEMBER_ID, COLLECTION_NAME,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622", TIMESTAMP,
-                0L, "txId", model);
+                0L, true, "txId", model);
         when(memberRepository.insertAll(List.of(member))).thenReturn(List.of(member));
 
         boolean memberIngested = memberIngestService.ingest(COLLECTION_NAME, model);

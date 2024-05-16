@@ -9,13 +9,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class EventSourceServiceImplTest {
+class IngestEventSourceServiceImplTest {
 
 	private static final String COLLECTION_NAME = "parcels";
 
@@ -23,7 +26,7 @@ class EventSourceServiceImplTest {
 	private MemberRepository memberRepository;
 
 	@InjectMocks
-	private EventSourceServiceImpl eventSourceService;
+	private IngestEventSourceServiceImpl eventSourceService;
 
 	@Test
 	void test_getMemberStreamOfCollection() {
@@ -36,8 +39,19 @@ class EventSourceServiceImplTest {
 		assertEquals(3, resultList.size());
 	}
 
+	@Test
+	void test_getNextMember() {
+		long sequence = 0L;
+		when(memberRepository.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, sequence))
+				.thenReturn(Optional.of(createMember(0)));
+
+		Optional<Member> result = eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, sequence);
+
+		assertThat(result).isPresent().matches(memberOptional -> Objects.equals(memberOptional.get().getId(), "0"));
+	}
+
 	private Member createMember(int id) {
-		return new Member(String.valueOf(id), COLLECTION_NAME, null, null, (long) id, null, null);
+		return new Member(String.valueOf(id), COLLECTION_NAME, null, null, (long) id, true, null, null);
 	}
 
 }

@@ -10,11 +10,11 @@ import java.util.Optional;
 
 public class EventStreamMongoRepository implements EventStreamRepository {
 	private final EventStreamEntityRepository repository;
-	private final EventStreamConverter converter = new EventStreamConverter();
-
-	public EventStreamMongoRepository(EventStreamEntityRepository repository) {
+	private final EventStreamConverter converter;
+	public EventStreamMongoRepository(EventStreamEntityRepository repository, EventStreamConverter converter) {
 		this.repository = repository;
-	}
+        this.converter = converter;
+    }
 
 	@Override
 	public List<EventStream> retrieveAllEventStreams() {

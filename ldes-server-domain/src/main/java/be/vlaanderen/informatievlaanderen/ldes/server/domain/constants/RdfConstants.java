@@ -26,6 +26,7 @@ public class RdfConstants {
 	public static final Property LDES_VERSION_OF = createProperty(LDES, "versionOfPath");
 	public static final Property LDES_TIMESTAMP_PATH = createProperty(LDES, "timestampPath");
 	public static final Property LDES_CREATE_VERSIONS = createProperty(LDES, "createVersions");
+	public static final Property LDES_EVENT_SOURCE = createProperty(LDES, "eventSource");
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";

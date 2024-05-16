@@ -31,7 +31,8 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 				row.get("id"),
 				row.get("collectionName"),
 				row.get("versionOf"),
-				LocalDateTime.parse(row.get("timestamp")));
+				LocalDateTime.parse(row.get("timestamp")),
+				true);
 		properties.addViewReference(row.get("viewReference"));
 		return properties;
 	}
@@ -111,7 +112,7 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 
 	@And("I delete the MemberProperties with id {string}")
 	public void iDeleteTheMemberPropertiesWithId(String id) {
-		memberPropertiesRepository.deleteById(id);
+		memberPropertiesRepository.deleteAllByIds(List.of(id));
 	}
 
 	@And("I retrieve the expired MemberProperties for {string} with duration {string}")
@@ -124,6 +125,15 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, timeBasedRetentionPolicy).toList();
 	}
 
+	@And("I retrieve the expired MemberProperties for collection {string} with duration {string}")
+	public void iRetrieveTheExpiredMemberPropertiesForWithDurationForACollection(String collectionName,
+																   String durationString) {
+		Duration duration = Duration.parse(durationString);
+		TimeBasedRetentionPolicy timeBasedRetentionPolicy = new TimeBasedRetentionPolicy(duration);
+		retrievedMemberProperties =
+				memberPropertiesRepository.findExpiredMemberProperties(collectionName, timeBasedRetentionPolicy).toList();
+	}
+
 	@And("I retrieve the expired MemberProperties for {string} with {int} versions")
 	public void iRetrieveTheExpiredMemberPropertiesForWithVersions(String viewNameString,
 																   int versionsToKeep) {
@@ -131,6 +141,14 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep);
 		retrievedMemberProperties =
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, versionBasedRetentionPolicy).toList();
+	}
+
+	@And("I retrieve the expired MemberProperties for collection {string} with {int} versions")
+	public void iRetrieveTheExpiredMemberPropertiesForWithVersionsForACollection(String collection,
+																   int versionsToKeep) {
+		var versionBasedRetentionPolicy = new VersionBasedRetentionPolicy(versionsToKeep);
+		retrievedMemberProperties =
+				memberPropertiesRepository.findExpiredMemberProperties(collection, versionBasedRetentionPolicy).toList();
 	}
 
 	@And("I retrieve the expired MemberProperties for {string} with duration {string} and {int} versions")
@@ -142,6 +160,16 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		var retentionPolicy = new TimeAndVersionBasedRetentionPolicy(duration, versionsToKeep);
 		retrievedMemberProperties =
 				memberPropertiesRepository.findExpiredMemberProperties(viewName, retentionPolicy).toList();
+	}
+
+	@And("I retrieve the expired MemberProperties for collection {string} with duration {string} and {int} versions")
+	public void iRetrieveTheExpiredMemberPropertiesForWithDurationAndVersionsForACollection(String collection,
+																			  String durationString,
+																			  int versionsToKeep) {
+		var duration = Duration.parse(durationString);
+		var retentionPolicy = new TimeAndVersionBasedRetentionPolicy(duration, versionsToKeep);
+		retrievedMemberProperties =
+				memberPropertiesRepository.findExpiredMemberProperties(collection, retentionPolicy).toList();
 	}
 
 	@And("I add the view with name {string} to the MemberProperties with id {string}")
@@ -158,9 +186,19 @@ public class MemberPropertiesRepositorySteps extends MongoRetentionIntegrationTe
 		memberPropertiesRepository.addViewToAll(ViewName.fromString(viewName));
 	}
 
+	@And("I remove members {string} and {string} from the event source")
+	public void iRemoveMembersFromEventSource(String id1, String id2) {
+		memberPropertiesRepository.removeFromEventSource(List.of(id1, id2));
+	}
+
 	@Then("the MemberProperties all contain a reference to view {string}")
 	public void theMemberPropertiesAllContainAReferenceToView(String viewName) {
 		assertThat(retrievedMemberProperties).allMatch(prop -> prop.containsViewReference(viewName));
+	}
+
+	@Then("The MemberProperties are not in the event source")
+	public void theMemberPropertiesAreNotInTheEventSource() {
+		assertThat(retrievedMemberProperties).allMatch(prop -> !prop.isInEventSource());
 	}
 
 	@Then("the MemberProperties do not contain a reference to view {string}")

@@ -34,7 +34,7 @@ class IngestMemberSequenceServiceTest {
 				);
 		long sequence = 20L;
 		when(memberEntityRepository.findFirstByCollectionNameOrderBySequenceNrDesc(existingCollection))
-				.thenReturn(Optional.of(new MemberEntity("id", existingCollection, null, null, sequence, null, null)));
+				.thenReturn(Optional.of(new MemberEntity("id", existingCollection, null, null, sequence, true, null, null)));
 		ingestMemberSequenceService.handleEventStreamCreated(existingCollectionEvent);
 
 		String newCollection = "collection";
