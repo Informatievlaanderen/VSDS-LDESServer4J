@@ -6,6 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.repository
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.service.MemberEntityListener;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
 import io.micrometer.core.instrument.Metrics;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.apache.jena.riot.Lang;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -23,11 +25,13 @@ public class MemberPostgresRepository implements MemberRepository {
 	private static final String LDES_SERVER_DELETED_MEMBERS_COUNT = "ldes_server_deleted_members_count";
 	private final MemberEntityRepository repository;
 	private final MemberEntityMapper mapper;
+	private final EntityManager entityManager;
 
 	public MemberPostgresRepository(MemberEntityRepository repository,
-	                                MemberEntityMapper mapper) {
+	                                MemberEntityMapper mapper, EntityManager entityManager) {
 		this.repository = repository;
 		this.mapper = mapper;
+		this.entityManager = entityManager;
 		MemberEntityListener.repository = repository;
 	}
 
@@ -86,15 +90,23 @@ public class MemberPostgresRepository implements MemberRepository {
 
 	@Override
 	@Transactional
-	public void deleteMember(String memberId) {
-		repository.deleteById(memberId);
-		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment();
+	public void deleteMembers(List<String> memberIds) {
+		repository.deleteAllById(memberIds);
+		Metrics.counter(LDES_SERVER_DELETED_MEMBERS_COUNT).increment(memberIds.size());
 	}
 
 	@Override
-	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr) {
-		return repository
-				.findFirstByCollectionNameAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, sequenceNr)
+	@Transactional
+	public void removeFromEventSource(List<String> ids) {
+		Query query = entityManager.createQuery("UPDATE MemberEntity m SET m.isInEventSource = false " +
+		                                        "WHERE m.id IN :memberIds");
+		query.setParameter("memberIds", ids);
+		query.executeUpdate();
+	}
+
+	@Override
+	public Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr) {
+		return repository.findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(collectionName, true, sequenceNr)
 				.map(mapper::toMember);
 	}
 

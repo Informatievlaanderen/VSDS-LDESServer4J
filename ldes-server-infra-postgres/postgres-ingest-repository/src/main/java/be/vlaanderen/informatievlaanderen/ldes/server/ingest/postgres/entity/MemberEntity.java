@@ -20,17 +20,20 @@ public class MemberEntity {
 	private LocalDateTime timestamp;
 	private Long sequenceNr;
 	private String transactionId;
+	private boolean isInEventSource;
 	@Column(columnDefinition = "bytea")
 	private byte[] model;
 
 	protected MemberEntity() {}
 
-	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, byte[] model) {
+	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr,
+	                    boolean isInEventSource, String transactionId, byte[] model) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 		this.sequenceNr = sequenceNr;
+		this.isInEventSource = isInEventSource;
 		this.transactionId = transactionId;
 		this.model = model;
 	}
@@ -53,6 +56,10 @@ public class MemberEntity {
 
 	public Long getSequenceNr() {
 		return sequenceNr;
+	}
+
+	public boolean isInEventSource() {
+		return isInEventSource;
 	}
 
 	public void setSequenceNr(Long sequenceNr) {

@@ -66,12 +66,12 @@ class IngestMigrationTest {
 		String memberId = "%s/https://ex.com/1".formatted(es);
 		String versionOf = "https://example.com/John-Doe";
 		LocalDateTime timestamp = LocalDateTime.parse("2024-05-14T11:08:30.217");
-		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, 1L, "1", exampleModelNqString));
+		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, true,1L, "1", exampleModelNqString));
 		memberId = "%s/https://ex.com/2".formatted(es);
-		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, 2L, "1", exampleModelNqString));
+		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, true,2L, "1", exampleModelNqString));
 		memberId = "%s/https://ex.com/3".formatted(es);
-		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, 3L, "1", exampleModelNqString));
-		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, 3L, "1", exampleModelNqString));
+		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, true,3L, "1", exampleModelNqString));
+		mongoTemplate.save(new MemberEntity(memberId, es, versionOf, timestamp, true,3L, "1", exampleModelNqString));
 
 		jobLauncherTestUtils.setJob(job);
 		jobLauncherTestUtils.launchJob();
@@ -87,6 +87,7 @@ class IngestMigrationTest {
 		assertEquals(timestamp, lastEntry.getTimestamp());
 		assertEquals(versionOf, lastEntry.getVersionOf());
 		assertEquals(3L, lastEntry.getSequenceNr());
+		assertTrue(lastEntry.isInEventSource());
 
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(lastEntry.getModel());
 		Model returnedModel = RDFParser.source(inputStream).lang(Lang.RDFPROTO).toModel();

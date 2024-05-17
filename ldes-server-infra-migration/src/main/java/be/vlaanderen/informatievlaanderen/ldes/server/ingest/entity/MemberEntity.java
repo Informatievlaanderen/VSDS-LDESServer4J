@@ -24,15 +24,17 @@ public class MemberEntity {
 	private final String collectionName;
 	private final String versionOf;
 	private final LocalDateTime timestamp;
+	private final boolean isInEventSource;
 	private Long sequenceNr;
 	private final String transactionId;
 	private final String model;
 
-	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, String transactionId, String model) {
+	public MemberEntity(String id, String collectionName, String versionOf, LocalDateTime timestamp, boolean isInEventSource, Long sequenceNr, String transactionId, String model) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
+		this.isInEventSource = isInEventSource;
 		this.sequenceNr = sequenceNr;
 		this.transactionId = transactionId;
 		this.model = model;
@@ -70,10 +72,14 @@ public class MemberEntity {
 		return model;
 	}
 
+	public boolean isInEventSource() {
+		return isInEventSource;
+	}
+
 	public Member toMember() {
 		final Model model = RDFParserBuilder.create().fromString(getModel()).lang(Lang.NQUADS).toModel();
 		return new Member(getId(), getCollectionName(), getVersionOf(), getTimestamp(),
-				getSequenceNr(), getTransactionId(), model
+				getSequenceNr(), isInEventSource(), getTransactionId(), model
 		);
 	}
 

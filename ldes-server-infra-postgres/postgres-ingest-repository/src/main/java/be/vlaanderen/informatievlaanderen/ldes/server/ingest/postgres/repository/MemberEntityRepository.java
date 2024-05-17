@@ -22,10 +22,8 @@ public interface MemberEntityRepository extends JpaRepository<MemberEntity, Stri
 
 	List<MemberEntity> findAllByIdIn(List<String> memberIds);
 
-	Optional<MemberEntity> findMemberEntityByCollectionNameAndSequenceNr(String collectionName, long sequenceNr);
-
-	Optional<MemberEntity> findFirstByCollectionNameAndSequenceNrGreaterThanOrderBySequenceNrAsc(String collectionName,
-			long sequenceNr);
+	Optional<MemberEntity> findFirstByCollectionNameAndIsInEventSourceAndSequenceNrGreaterThanOrderBySequenceNrAsc(String collectionName,
+	                                                                                                               boolean inEventSource, long sequenceNr);
 
 	long countByCollectionName(String collectionName);
 

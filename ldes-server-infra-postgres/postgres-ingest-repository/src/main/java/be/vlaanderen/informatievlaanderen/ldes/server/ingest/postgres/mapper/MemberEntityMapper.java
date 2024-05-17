@@ -25,6 +25,7 @@ public class MemberEntityMapper {
 				member.getVersionOf(),
 				member.getTimestamp(),
 				member.getSequenceNr(),
+				member.isInEventSource(),
 				member.getTransactionId(),
 				outputStream.toByteArray()
 		);
@@ -41,6 +42,7 @@ public class MemberEntityMapper {
 				memberEntity.getVersionOf(),
 				memberEntity.getTimestamp(),
 				memberEntity.getSequenceNr(),
+				memberEntity.isInEventSource(),
 				memberEntity.getTransactionId(),
 				model
 		);

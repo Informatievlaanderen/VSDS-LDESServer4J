@@ -35,7 +35,7 @@ public class RetentionMigrationConfig {
 	@Bean
 	public ItemProcessor<be.vlaanderen.informatievlaanderen.ldes.server.retention.entities.MemberPropertiesEntity, MemberPropertiesEntity> memberPropertiesEntityProcessor(MemberEntityMapper mapper) {
 		return noSQLData -> new MemberPropertiesEntity(noSQLData.getId(), noSQLData.getCollectionName(),
-				noSQLData.getViews(), noSQLData.getVersionOf(), noSQLData.getTimestamp());
+				noSQLData.getViews(), noSQLData.isInEventSource(), noSQLData.getVersionOf(), noSQLData.getTimestamp());
 	}
 
 	@Bean

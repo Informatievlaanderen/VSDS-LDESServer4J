@@ -11,12 +11,14 @@ import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retenti
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.timebased.TimeBasedRetentionPolicy;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.services.retentionpolicy.definition.versionbased.VersionBasedRetentionPolicy;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -51,6 +53,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Transactional
 	public void addViewToAll(ViewName viewName) {
 		propertiesRepo.findAllByCollectionName(viewName.getCollectionName())
+				.stream()
 				.map(memberProperty -> new MemberViewsEntity(memberProperty, viewName.asString()))
 				.forEach(entityManager::persist);
 	}
@@ -81,18 +84,25 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
-	@Transactional
-	public void deleteById(String id) {
-		propertiesRepo.deleteById(id);
+	public void deleteAllByIds(List<String> ids) {
+		propertiesRepo.deleteAllById(ids);
+	}
+
+	@Override
+	public void removeFromEventSource(List<String> ids) {
+		Query query = entityManager.createQuery("UPDATE MemberPropertiesEntity m SET m.isInEventSource = :isInEventSource " +
+		                                        "WHERE m.id IN :memberIds");
+		query.setParameter("isInEventSource", false);
+		query.setParameter("memberIds", ids);
+		query.executeUpdate();
 	}
 
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 	                                                            TimeBasedRetentionPolicy policy) {
-		return propertiesRepo.findExpiredMemberPropertiesBeforeTimestamp(viewName.getCollectionName(),
-						viewName.asString(), LocalDateTime.now().minus(policy.duration()))
+		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
 				.stream()
-				.map(propertiesMapper::toMemberPropertiesEntity)
+				.filter(entity -> entity.getViews().contains(viewName.asString()))
 				.map(propertiesMapper::toMemberProperties);
 	}
 
@@ -100,22 +110,64 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 	                                                            VersionBasedRetentionPolicy policy) {
 
-		return propertiesRepo.findExpiredMemberProperties(viewName.getCollectionName(), viewName.asString())
+		return propertiesRepo.findAllByCollectionName(viewName.getCollectionName())
 				.stream()
-				.filter(projection -> policy.numberOfMembersToKeep() < projection.getVersionNumber())
-				.map(propertiesMapper::toMemberPropertiesEntity)
-				.map(propertiesMapper::toMemberProperties);
+				.filter(entity -> entity.getViews().contains(viewName.asString()))
+				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
+				.map(propertiesMapper::toMemberProperties)
+				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.values()
+				.stream()
+				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
+						.skip(policy.numberOfMembersToKeep()));
 	}
 
 	@Override
 	public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
 	                                                            TimeAndVersionBasedRetentionPolicy policy) {
-		return propertiesRepo.findExpiredMemberPropertiesBeforeTimestamp(viewName.getCollectionName(),
-						viewName.asString(), LocalDateTime.now().minus(policy.duration()))
+		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(viewName.getCollectionName(), LocalDateTime.now().minus(policy.duration()))
 				.stream()
-				.filter(projection -> policy.numberOfMembersToKeep() < projection.getVersionNumber())
-				.map(propertiesMapper::toMemberPropertiesEntity)
+				.filter(entity -> entity.getViews().contains(viewName.asString()))
+				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
+				.map(propertiesMapper::toMemberProperties)
+				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.values()
+				.stream()
+				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
+						.skip(policy.numberOfMembersToKeep()));
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeBasedRetentionPolicy policy) {
+		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
+				.stream()
 				.map(propertiesMapper::toMemberProperties);
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName, VersionBasedRetentionPolicy policy) {
+		return propertiesRepo.findAllByCollectionName(collectionName)
+				.stream()
+				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
+				.map(propertiesMapper::toMemberProperties)
+				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.values()
+				.stream()
+				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
+						.skip(policy.numberOfMembersToKeep()));
+	}
+
+	@Override
+	public Stream<MemberProperties> findExpiredMemberProperties(String collectionName, TimeAndVersionBasedRetentionPolicy policy) {
+		return propertiesRepo.findAllByCollectionNameAndTimestampBefore(collectionName, LocalDateTime.now().minus(policy.duration()))
+				.stream()
+				.sorted((o1, o2) -> o2.getTimestamp().compareTo(o1.getTimestamp()))
+				.map(propertiesMapper::toMemberProperties)
+				.collect(Collectors.groupingBy(MemberProperties::getVersionOf))
+				.values()
+				.stream()
+				.flatMap(memberPropertiesGroup -> memberPropertiesGroup.stream()
+						.skip(policy.numberOfMembersToKeep()));
 	}
 
 }

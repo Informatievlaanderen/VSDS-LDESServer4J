@@ -48,12 +48,12 @@ class RetentionMigrationTest {
 		String memberId = "%s/https://ex.com/1".formatted(es);
 		String versionOf = "https://example.com/John-Doe";
 		LocalDateTime timestamp = LocalDateTime.parse("2024-05-14T11:08:30.217");
-		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), versionOf, timestamp));
+		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), true, versionOf, timestamp));
 		memberId = "%s/https://ex.com/2".formatted(es);
-		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), versionOf, timestamp));
+		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), true, versionOf, timestamp));
 		memberId = "%s/https://ex.com/3".formatted(es);
-		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), versionOf, timestamp));
-		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), versionOf, timestamp));
+		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), true, versionOf, timestamp));
+		mongoTemplate.save(new MemberPropertiesEntity(memberId, es, Set.of("v1", "v2"), true, versionOf, timestamp));
 
 		jobLauncherTestUtils.setJob(job);
 		jobLauncherTestUtils.launchJob();
@@ -67,6 +67,7 @@ class RetentionMigrationTest {
 		assertEquals(es, lastEntry.getCollectionName());
 		assertEquals(timestamp, lastEntry.getTimestamp());
 		assertEquals(versionOf, lastEntry.getVersionOf());
+		assertTrue(lastEntry.isInEventSource());
 		assertTrue(lastEntry.getViews().containsAll(List.of("v1", "v2")));
 	}
 }

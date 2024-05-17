@@ -21,15 +21,17 @@ public class MemberPropertiesEntity {
 	private String collectionName;
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<MemberViewsEntity> views;
+	private boolean isInEventSource;
 	private String versionOf;
 	private LocalDateTime timestamp;
 
 	protected MemberPropertiesEntity() {}
-	public MemberPropertiesEntity(String id, String collectionName, Set<String> views, String versionOf,
-			LocalDateTime timestamp) {
+	public MemberPropertiesEntity(String id, String collectionName, Set<String> views, boolean isInEventSource, String versionOf,
+	                              LocalDateTime timestamp) {
 		this.id = id;
 		this.collectionName = collectionName;
 		this.views = convertViews(views);
+		this.isInEventSource = isInEventSource;
 		this.versionOf = versionOf;
 		this.timestamp = timestamp;
 	}
@@ -54,6 +56,10 @@ public class MemberPropertiesEntity {
 
 	public LocalDateTime getTimestamp() {
 		return timestamp;
+	}
+
+	public boolean isInEventSource() {
+		return isInEventSource;
 	}
 
 	private Set<MemberViewsEntity> convertViews(Set<String> views) {
