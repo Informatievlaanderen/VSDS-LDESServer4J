@@ -24,6 +24,13 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    ldes:timestampPath dc:created ;
    ldes:versionOfPath dc:isVersionOf ;
    ldes:createVersions false ;
+   ldes:eventSource [
+        a ldes:EventSource ;
+        ldes:retentionPolicy [
+            a <https://w3id.org/ldes#DurationAgoPolicy> ;
+            <https://w3id.org/tree#value>  "PT2M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+        ]
+   ] ;
    tree:shape col:shape ;
    tree:view col:view1 ;
    tree:view col:view2 .

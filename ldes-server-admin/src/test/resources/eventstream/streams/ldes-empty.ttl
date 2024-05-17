@@ -15,6 +15,13 @@ server:collectionName1 a ldes:EventStream, dcat:Dataset ;
    ldes:timestampPath dcterms:created ;
    ldes:versionOfPath dcterms:isVersionOf ;
    ldes:createVersions false ;
+   ldes:eventSource [
+        a ldes:EventSource ;
+        ldes:retentionPolicy [
+            a <https://w3id.org/ldes#DurationAgoPolicy> ;
+            <https://w3id.org/tree#value>  "PT2M"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+        ]
+   ] ;
    tree:shape col:shape .
 
 col:shape a sh:NodeShape ;
