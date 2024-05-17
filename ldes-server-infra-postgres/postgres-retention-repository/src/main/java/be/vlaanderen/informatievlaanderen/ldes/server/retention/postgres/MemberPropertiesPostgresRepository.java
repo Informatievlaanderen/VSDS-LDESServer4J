@@ -89,6 +89,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public void removeFromEventSource(List<String> ids) {
 		Query query = entityManager.createQuery("UPDATE MemberPropertiesEntity m SET m.isInEventSource = :isInEventSource " +
 		                                        "WHERE m.id IN :memberIds");
