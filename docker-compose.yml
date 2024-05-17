@@ -2,7 +2,7 @@ version: "3.3"
 services:
   ldes-server:
     container_name: basic_ldes-server
-    image: ldes/ldes-server
+    image: ldes/ldes-server:postgres-exp
     environment:
       - SPRING_CONFIG_LOCATION=/config/
       - PYROSCOPE_CONFIGURATION_FILE=/config/pyroscope.properties
@@ -17,16 +17,18 @@ services:
     networks:
       - ldes
     depends_on:
-      - ldes-mongodb
-  ldes-mongodb:
-    container_name: ldes-mongodb
-    build:
-      context: ./docker-compose/mongo
+      - postgres
+  postgres:
+    container_name: ldes-postgres
+    image: postgres:14-alpine
     ports:
-      - 27017:27017
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=test
     networks:
       - ldes
-    command: --replSet rs0
   pyroscope:
     image: grafana/pyroscope:latest
     ports:

@@ -22,12 +22,14 @@ pyroscope:
   agent:
     enabled: true
 spring:
-  data:
-    mongodb:
-      database: ldes
-      host: ldes-mongodb
-      port: 27017
-      auto-index-creation: true
+  datasource:
+    url: jdbc:postgresql://ldes-postgres:5432/test
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: postgresql
 #server:
 #  servlet:
 #    context-path: /ldes

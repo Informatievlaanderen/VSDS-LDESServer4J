@@ -2,8 +2,12 @@ package be.vlaanderen.informatievlaanderen.ldes.server.domain.converter;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RdfFormatException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.RelativeUrlException;
+import com.apicatalog.jsonld.JsonLdOptions;
+import com.apicatalog.jsonld.context.cache.LruCache;
 import org.apache.jena.rdf.model.Model;
-import org.apache.jena.riot.*;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RIOT;
 import org.apache.jena.sparql.util.Context;
 import org.apache.jena.sparql.util.ContextAccumulator;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,9 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.StringWriter;
-
-import com.apicatalog.jsonld.JsonLdOptions;
-import com.apicatalog.jsonld.context.cache.LruCache;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.MAX_JSONLD_CACHE_CAPACITY;
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.ServerConfig.USE_RELATIVE_URL_KEY;
@@ -47,10 +48,6 @@ public class RdfModelConverter {
         if (useRelativeUrl && RELATIVE_URL_INCOMPATIBLE_LANGS.contains(lang)) {
             throw new RelativeUrlException(lang);
         }
-    }
-
-    public Model fromString(final String content, final Lang lang) {
-        return RDFParser.fromString(content).context(getContext()).lang(lang).toModel();
     }
 
     public static String toString(final Model model, final Lang lang) {
