@@ -110,8 +110,8 @@ public class ViewServiceImpl implements ViewService {
             throw new MissingResourceException(EVENT_STREAM_TYPE, viewName.getCollectionName());
         }
 
-        eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
         deleteAllViewsByViewName(List.of(viewName));
+        eventPublisher.publishEvent(new ViewDeletedEvent(viewName));
     }
 
     @Override

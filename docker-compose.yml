@@ -2,7 +2,7 @@ version: "3.3"
 services:
   ldes-server:
     container_name: basic_ldes-server
-    image: ldes/ldes-server:postgres-exp
+    image: ghcr.io/informatievlaanderen/ldes-server:20240517140451
     environment:
       - SPRING_CONFIG_LOCATION=/config/
       - PYROSCOPE_CONFIGURATION_FILE=/config/pyroscope.properties

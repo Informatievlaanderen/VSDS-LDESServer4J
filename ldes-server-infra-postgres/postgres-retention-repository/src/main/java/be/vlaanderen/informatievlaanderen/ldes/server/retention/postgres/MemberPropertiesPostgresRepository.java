@@ -66,6 +66,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName) {
 		return propertiesRepo.findMembersWithView(viewName.asString())
 				.map(propertiesMapper::toMemberProperties);
@@ -74,7 +75,13 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Override
 	@Transactional
 	public void removeViewReference(String id, String viewName) {
-		viewsRepo.deleteViewForMember(viewName, id);
+		viewsRepo.deleteViewForMember(id, viewName);
+	}
+
+	@Override
+	@Transactional
+	public void removeViewReference(String viewName) {
+		viewsRepo.deleteViewForMember(viewName);
 	}
 
 	@Override

@@ -27,13 +27,10 @@ class DeleteEventHandlerTest {
 	private MemberRemover memberRemover;
 	private DeleteEventHandler eventHandler;
 	@Captor
-	ArgumentCaptor<MemberProperties> captor;
-	@Captor
 	ArgumentCaptor<String> viewCaptor;
 
 	@BeforeEach
 	void setUp() {
-		captor = ArgumentCaptor.forClass(MemberProperties.class);
 		viewCaptor = ArgumentCaptor.forClass(String.class);
 		member1.addViewReference(VIEW.asString());
 		member2.addViewReference(VIEW.asString());
@@ -50,11 +47,8 @@ class DeleteEventHandlerTest {
 
 		eventHandler.handleViewDeletedEvent(event);
 
-		verify(memberRemover, times(2)).removeMemberFromView(captor.capture(), viewCaptor.capture());
-		assertEquals("1", captor.getAllValues().get(0).getId());
-		assertEquals("2", captor.getAllValues().get(1).getId());
-		assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(0));
-		assertEquals(VIEW.asString(), viewCaptor.getAllValues().get(1));
+		verify(memberRemover).removeView(viewCaptor.capture());
+		assertEquals(VIEW.asString(), viewCaptor.getValue());
 
 	}
 
