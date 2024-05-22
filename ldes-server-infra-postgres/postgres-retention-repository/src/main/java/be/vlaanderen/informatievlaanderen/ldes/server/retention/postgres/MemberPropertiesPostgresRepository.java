@@ -75,7 +75,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Override
 	@Transactional
 	public void removeViewReference(String id, String viewName) {
-		viewsRepo.deleteViewForMember(id, viewName);
+		viewsRepo.deleteViewForMember(viewName, id);
 	}
 
 	@Override
