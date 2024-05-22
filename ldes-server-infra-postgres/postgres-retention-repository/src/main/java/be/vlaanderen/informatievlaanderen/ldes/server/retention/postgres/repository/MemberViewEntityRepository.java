@@ -12,4 +12,8 @@ public interface MemberViewEntityRepository extends JpaRepository<MemberViewsEnt
     @Modifying
     @Query("DELETE FROM MemberViewsEntity v WHERE v.view = :view AND v.member.id = :memberId")
     void deleteViewForMember(@Param("view") String view, @Param("memberId") String memberId);
+
+    @Modifying
+    @Query("DELETE FROM MemberViewsEntity v WHERE v.view = :view")
+    void deleteViewForMember(@Param("view") String view);
 }

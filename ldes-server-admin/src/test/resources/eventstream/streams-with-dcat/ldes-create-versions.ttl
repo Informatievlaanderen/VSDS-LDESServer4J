@@ -13,6 +13,9 @@ server:animals a ldes:EventStream, dcat:Dataset  ;
     dcterms:identifier "http://localhost:8080/animals"^^rdfs:Literal ;
 	ldes:timestampPath dcterms:created ;
 	ldes:versionOfPath dcterms:isVersionOf ;
+    ldes:eventSource [
+         a ldes:EventSource ;
+    ] ;
 	ldes:createVersions true ;
     tree:shape [
         a sh:NodeShape

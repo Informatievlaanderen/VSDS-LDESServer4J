@@ -30,6 +30,7 @@ public class RdfConstants {
 	public static final String RDF_SYNTAX = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final Property RDF_SYNTAX_TYPE = createProperty(RDF_SYNTAX, "type");
 	public static final String LDES_EVENT_STREAM_URI = "https://w3id.org/ldes#EventStream";
+	public static final String LDES_EVENT_SOURCE_URI = "https://w3id.org/ldes#EventSource";
 	public static final String GENERATED_AT_TIME = "generatedAtTime";
 	public static final String DC_TERMS = "http://purl.org/dc/terms/";
 	public static final Property IS_PART_OF_PROPERTY = createProperty(DC_TERMS, "isPartOf");

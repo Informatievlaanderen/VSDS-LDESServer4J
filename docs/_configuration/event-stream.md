@@ -111,10 +111,10 @@ For more info, visit the [Swagger API documentation.](./admin-api)
 To determine which members should be permanently deleted from the server, it is necessary to set an event source on each event stream.
 In this object, the retention policies for the event stream can be set. Each member that falls outside of each retention policy will be removed from the event source.
 These members will then be deleted, only if they not a part of any view.
-More information on which retention policies can be used can be found [here](./retention-policies/index.md)
+More information on which retention policies can be used can be found [here](./retention-policies/index)
 
 The retention policies of an event source are the only part of an event stream that can be updated once the event stream is created.
-To do this, there is an endpoint on the admin api. More info can be found [here](./admin-api.md)
+To do this, there is an endpoint on the admin api. More info can be found [here](./admin-api)
 
 Older versions of the server deleted members the moment they were no longer part of any view, the event source prevents this.
 If this behaviour is wanted, it can be recreated by setting a retention policy which all members will fail.

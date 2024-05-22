@@ -72,6 +72,15 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
     }
 
     @Override
+    public void removeViewReference(String viewName) {
+        memberPropertiesMap.entrySet().forEach(entry -> {
+            if (entry.getValue().containsViewReference(viewName)) {
+                memberPropertiesMap.remove(entry.getKey());
+            }
+        });
+    }
+
+    @Override
     public void removeMemberPropertiesOfCollection(String collectionName) {
         List<MemberProperties> properties = memberPropertiesMap
                 .values()

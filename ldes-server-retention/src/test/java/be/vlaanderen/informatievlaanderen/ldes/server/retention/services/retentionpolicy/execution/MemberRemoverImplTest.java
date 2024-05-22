@@ -51,7 +51,7 @@ class MemberRemoverImplTest {
 	}
 
 	@Test
-	void when_MemberPropertiesToBeREmovedFromEventSource_Then_MemberIsRemovedFromEventSource() {
+	void when_MemberPropertiesToBeRemovedFromEventSource_Then_MemberIsRemovedFromEventSource() {
 		MemberProperties memberProperties = new MemberProperties("1", null, null, null, true);
 		MemberProperties memberProperties2 = new MemberProperties("1", null, null, null, false);
 
