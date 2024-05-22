@@ -127,7 +127,14 @@ public class FragmentPostgresRepository implements FragmentRepository {
 		log.atInfo().log("{} child/children of {} was/were made immutable.", modifiedRows, fragment.getFragmentIdString());
     }
 
-    private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
+	@Override
+	@Transactional
+	public void makeAllFragmentsImmutableInCollection(String collectionName) {
+		repository.makeFragmentsImmutableInCollection(collectionName);
+		log.info("All fragments are made immutable in collection {}", collectionName);
+	}
+
+	private void removeRelationsPointingToDeletedFragment(LdesFragmentIdentifier readyForDeletionFragmentId) {
 		List<FragmentEntity> fragments = repository.findAllByRelations_TreeNode(readyForDeletionFragmentId.asDecodedFragmentId());
 		fragments.forEach(fragment -> {
 			List<TreeRelationEntity> relationsToRemove = fragment.getRelations().stream()

@@ -67,4 +67,6 @@ public interface FragmentRepository {
 	 * @param fragment The fragment whose children should become immutable
 	 */
     void makeChildrenImmutable(Fragment fragment);
+
+	void makeAllFragmentsImmutableInCollection(String collectionName);
 }

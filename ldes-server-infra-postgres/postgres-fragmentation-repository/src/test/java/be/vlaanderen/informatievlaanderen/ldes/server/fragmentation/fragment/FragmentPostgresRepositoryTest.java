@@ -8,6 +8,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.FragmentEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.FragmentEntityRepository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,6 +19,9 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class FragmentPostgresRepositoryTest {
 
@@ -34,7 +38,7 @@ class FragmentPostgresRepositoryTest {
 	@ArgumentsSource(LdesFragmentEntityListProvider.class)
 	void when_RetrieveOpenFragment_FirstFragmentThatIsOpenAndBelongsToCollectionIsReturned(
 			List<FragmentEntity> entitiesInRepository, String expectedFragmentId) {
-		Mockito.when(ldesFragmentEntityRepository
+		when(ldesFragmentEntityRepository
 				.findAllByImmutableAndViewName(false,
 						VIEW_NAME.asString()))
 				.thenReturn(entitiesInRepository.stream()
@@ -49,6 +53,13 @@ class FragmentPostgresRepositoryTest {
 
 		Assertions.assertTrue(ldesFragment.isPresent());
 		Assertions.assertEquals(expectedFragmentId, ldesFragment.get().getFragmentIdString());
+	}
+
+	@Test
+	void makeAllFragmentsImmutableInCollection() {
+		ldesFragmentPostgresRepository.makeAllFragmentsImmutableInCollection("collectionName");
+
+		verify(ldesFragmentEntityRepository).makeFragmentsImmutableInCollection("collectionName");
 	}
 
 	static class LdesFragmentEntityListProvider implements ArgumentsProvider {
