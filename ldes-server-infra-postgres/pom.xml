@@ -21,7 +21,7 @@
 
 
     <properties>
-        <postgresql.version>42.6.0</postgresql.version>
+        <postgresql.version>42.6.1</postgresql.version>
         <hibernate-extensions.version>3.7.4</hibernate-extensions.version>
     </properties>
 
