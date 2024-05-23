@@ -1,0 +1,24 @@
+ldes-server:
+  migrate-mongo: "true"
+  host-name: abc
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+

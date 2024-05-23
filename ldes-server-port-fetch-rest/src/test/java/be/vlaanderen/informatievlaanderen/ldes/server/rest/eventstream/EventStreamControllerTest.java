@@ -82,7 +82,7 @@ class EventStreamControllerTest {
 				"http://www.w3.org/ns/prov#generatedAtTime",
 				"http://purl.org/dc/terms/isVersionOf",
 				false, List.of(),
-				ModelFactory.createDefaultModel());
+				ModelFactory.createDefaultModel(), List.of());
 
 		when(eventStreamService.retrieveEventStream(COLLECTION)).thenReturn(eventStream);
 	}

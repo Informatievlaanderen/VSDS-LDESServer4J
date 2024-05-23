@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface MemberRetriever {
 
-    Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThan(String collectionName, long sequenceNr);
+    Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 }

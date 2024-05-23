@@ -2,6 +2,9 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamServiceSpi;
+import org.apache.jena.rdf.model.Model;
+
+import java.util.List;
 
 public interface EventStreamService extends EventStreamServiceSpi {
 
@@ -9,4 +12,5 @@ public interface EventStreamService extends EventStreamServiceSpi {
 
 	EventStreamTO createEventStream(EventStreamTO eventStream);
 
+	void updateEventSource(String collectionName, List<Model> eventSourceModel);
 }

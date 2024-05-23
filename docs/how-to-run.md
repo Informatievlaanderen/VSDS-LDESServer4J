@@ -34,12 +34,13 @@ springdoc:
 ldes-server:
   host-name: "http://localhost:8080"
 spring:
-  data:
-    mongodb:
-      host: ldes-mongodb
-      port: 27017
-      database: ldes
-      auto-index-creation: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: update
 rest:
   max-age: 120
   max-age-immutable: 604800
@@ -97,36 +98,22 @@ Here is an explanation provided for all the possibilities on how to tweak and co
     <td>No</td>
     <td>604800</td>
   </tr>
-  <tr><td colspan="4"><b>MongoDB Storage</b><sup>2</sup></td></tr>
+  <tr><td colspan="4"><b>PostgreSQL Storage</b><sup>2</sup></td></tr>
   <tr>
-    <td>spring.data.mongodb.host</td>
-    <td>URL that points to the MongoDB server</td>
+    <td>spring.datasource.url</td>
+    <td>URL that points to the PostgreSQL server</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
-    <td>spring.data.mongodb.port</td>
-    <td>Port on which the MongoDB server runs</td>
+    <td>spring.datasource.username</td>
+    <td>Username to log into provided PostgreSQL instance</td>
     <td></td>
     <td></td>
   </tr>
   <tr>
-    <td>spring.data.mongodb.database</td>
-    <td>Name for the existing or to be created database on the MongoDB server</td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>spring.data.mongodb.uri</td>
-    <td>
-      Alternative to the previous 3 properties, allows passing the mongodb connection string. Note that when a MongoDB link needs to be configured with authentication, it is typically done with an uri, e.g. <code>mongodb://myDatabaseUser:D1fficultP%40ssw0rd@mongodb0.example.com:27017/?authSource=admin</code>
-    </td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td>spring.data.mongodb.auto-index-creation</td>
-    <td>Enables the server to automatically create indices in mongodb. If this property is not enabled, you have to manage the indices manually. This can have a significant impact on performance. <br> We highly advise you to keep this on for performance reasons</td>
+    <td>spring.datasource.password</td>
+    <td>Password to log into provided PostgreSQL instance</td>
     <td></td>
     <td></td>
   </tr>
@@ -180,8 +167,8 @@ Here is an explanation provided for all the possibilities on how to tweak and co
 
 > **Note** 1: The specified url will be prefixed by an optional `server.servlet.context-path`
 
-> **Note** 2: As of this moment the LDES Server only supports a MongoDB implementation. The following properties have
-> to be set to provide connectivity between the server and the database
+> **Note** 2: Since the 3.0 release, the MongoDB got replaced with a PostgreSQL implementation.
+> For Migration instructions, please check the below migration paragraph.
 
 
 > **Note** 3: Unix usually supports a cron expression of 5 parameters, which excludes seconds. However, the spring
@@ -208,17 +195,38 @@ services:
     networks:
       - ldes
     depends_on:
-      - ldes-mongodb
-  ldes-mongodb:
-    container_name: ldes-mongodb
-    image: mongo
+      - ldes-postgres
+  postgres:
+    container_name: ldes-postgres
+    image: postgres:14-alpine
     ports:
-      - 27017:27017
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=test
     networks:
       - ldes
 networks:
   ldes:
     name: quick_start_network
+````
+
+## Migration to 3.0
+
+Since the Mongodb implementation got replaced with a PostgreSQL one, a migration path has been provided.
+To enable this, add the following properties to your config:
+
+````yaml
+ldes-server:
+  migrate-mongo: true
+spring:
+  data:
+    mongodb:
+      uri: # connection string pointing to mongodb instance
+  batch:
+    jdbc:
+      initialize-schema: always
 ````
 
 [spring documentation]: https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/scheduling/support/CronExpression.html

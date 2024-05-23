@@ -1,0 +1,2 @@
+_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#DurationAgoPolicy> .
+_:genid1 <https://w3id.org/tree#value> "PT2M"^^<http://www.w3.org/2001/XMLSchema#duration> .

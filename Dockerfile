@@ -17,13 +17,12 @@ FROM amazoncorretto:21-alpine-jdk
 
 COPY --from=app-stage ldes-server-application/target/ldes-server-application.jar ./
 
-COPY --from=app-stage ldes-server-infra-mongo/mongo-repository/target/mongo-repository-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-mongo/mongock-changesets/target/mongock-changesets-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-mongo/mongo-ingest-repository/target/mongo-ingest-repository-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-mongo/mongo-fetch-repository/target/mongo-fetch-repository-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-mongo/mongo-retention-repository/target/mongo-retention-repository-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-mongo/mongo-fragmentation-repository/target/mongo-fragmentation-repository-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-mongo/mongo-admin-repository/target/mongo-admin-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-postgres/postgres-ingest-repository/target/postgres-ingest-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-postgres/postgres-fetch-repository/target/postgres-fetch-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-postgres/postgres-retention-repository/target/postgres-retention-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-postgres/postgres-fragmentation-repository/target/postgres-fragmentation-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-postgres/postgres-admin-repository/target/postgres-admin-repository-jar-with-dependencies.jar ./lib/
+COPY --from=app-stage ldes-server-infra-migration/target/ldes-server-infra-migration-jar-with-dependencies.jar ./lib/
 
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/

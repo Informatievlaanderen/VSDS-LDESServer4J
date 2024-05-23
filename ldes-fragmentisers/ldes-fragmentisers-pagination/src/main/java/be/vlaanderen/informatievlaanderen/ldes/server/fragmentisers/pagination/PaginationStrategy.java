@@ -13,6 +13,7 @@ import org.apache.jena.rdf.model.Model;
 import static java.lang.Boolean.TRUE;
 
 public class PaginationStrategy extends FragmentationStrategyDecorator {
+
 	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 
 	private final OpenPageProvider openPageProvider;

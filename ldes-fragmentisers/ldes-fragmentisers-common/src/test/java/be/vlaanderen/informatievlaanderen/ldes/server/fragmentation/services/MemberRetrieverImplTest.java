@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.EventSourceService;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.IngestEventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class MemberRetrieverImplTest {
     private static final long LAST_PROCESSED_SEQUENCE_NR = 65L;
 
     @Mock
-    private EventSourceService eventSourceService;
+    private IngestEventSourceService eventSourceService;
     @Mock
     private MemberMapperCollection memberMapperCollection;
     @InjectMocks
@@ -37,11 +37,11 @@ class MemberRetrieverImplTest {
     @Test
     void given_MemberMapper_and_IngestMember_when_FindFirst_then_Return_FragmentMember() {
         final MemberMapper memberMapper = new MemberMapper("http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
-        when(eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThan(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR))
-                .thenReturn(Optional.of(new Member(MEMBER_ID, COLLECTION_NAME, VERSION_OF, TIMESTAMP, LAST_PROCESSED_SEQUENCE_NR + 1, "txId", ModelFactory.createDefaultModel())));
+        when(eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR))
+                .thenReturn(Optional.of(new Member(MEMBER_ID, COLLECTION_NAME, VERSION_OF, TIMESTAMP, LAST_PROCESSED_SEQUENCE_NR + 1, true, "txId", ModelFactory.createDefaultModel())));
         when(memberMapperCollection.getMemberMapper(COLLECTION_NAME)).thenReturn(Optional.of(memberMapper));
 
-        var retrievedMember = memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR);
+        var retrievedMember = memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR);
 
         assertThat(retrievedMember)
                 .hasValueSatisfying(member -> {
@@ -53,7 +53,7 @@ class MemberRetrieverImplTest {
 
     @Test
     void given_NoMemberMapper_when_FindFirst_then_ThrowException() {
-        assertThatThrownBy(() -> memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR))
+        assertThatThrownBy(() -> memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR))
                 .isInstanceOf(MissingResourceException.class);
     }
 
@@ -62,7 +62,7 @@ class MemberRetrieverImplTest {
         final MemberMapper memberMapper = new MemberMapper("http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
         when(memberMapperCollection.getMemberMapper(COLLECTION_NAME)).thenReturn(Optional.of(memberMapper));
 
-        var retrievedMember = memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR);
+        var retrievedMember = memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR);
 
         assertThat(retrievedMember).isEmpty();
     }

@@ -76,7 +76,7 @@ class MemberIngestValidatorImplTest {
     }
 
     private Member createBasicMember() {
-        return new Member("id", "myCollection", "versionOf", LocalDateTime.now(), 0L, "txId", null);
+        return new Member("id", "myCollection", "versionOf", LocalDateTime.now(), 0L, true, "txId", null);
     }
 
 }

@@ -51,6 +51,7 @@ public class FragmentationStrategyExecutor {
 			var nextMemberToFragment = getNextMemberToFragment(determineLastProcessedSequence());
 
 			while (nextMemberToFragment.isPresent() && isExecutorActive) {
+
 				final FragmentSequence lastProcessedSequence = fragment(nextMemberToFragment.get());
 				nextMemberToFragment = getNextMemberToFragment(lastProcessedSequence);
 			}
@@ -65,7 +66,7 @@ public class FragmentationStrategyExecutor {
 	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
 		final String collectionName = viewName.getCollectionName();
 		final long lastProcessedSequenceNr = lastProcessedSequence.sequenceNr();
-		return memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThan(collectionName, lastProcessedSequenceNr);
+		return memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, lastProcessedSequenceNr);
 	}
 
 	private FragmentSequence fragment(Member member) {

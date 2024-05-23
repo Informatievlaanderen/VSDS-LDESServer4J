@@ -3,6 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatserver.services.DcatServerService;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventsource.services.EventSourceService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.eventstream.repository.EventStreamRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
@@ -11,6 +12,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventSource;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import org.apache.jena.rdf.model.Model;
@@ -29,42 +31,31 @@ public class EventStreamServiceImpl implements EventStreamService {
 	private final ShaclShapeService shaclShapeService;
 	private final DcatServerService dcatServerService;
 	private final DcatDatasetService dcatDatasetService;
+	private final EventSourceService eventSourceService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public EventStreamServiceImpl(EventStreamRepository eventStreamRepository, ViewService viewService,
-			ShaclShapeService shaclShapeService, DcatDatasetService dcatDatasetService,
-			DcatServerService dcatServerService, ApplicationEventPublisher eventPublisher) {
+                                  ShaclShapeService shaclShapeService, DcatDatasetService dcatDatasetService,
+                                  DcatServerService dcatServerService, EventSourceService eventSourceService, ApplicationEventPublisher eventPublisher) {
 		this.eventStreamRepository = eventStreamRepository;
 		this.viewService = viewService;
 		this.shaclShapeService = shaclShapeService;
 		this.dcatServerService = dcatServerService;
 		this.dcatDatasetService = dcatDatasetService;
-		this.eventPublisher = eventPublisher;
+        this.eventSourceService = eventSourceService;
+        this.eventPublisher = eventPublisher;
 	}
 
 	@Override
 	public List<EventStreamTO> retrieveAllEventStreams() {
-		return eventStreamRepository.retrieveAllEventStreams().stream().map(eventStream -> {
-			List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
-			ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
-			Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
-			return new EventStreamTO(eventStream.getCollection(), eventStream.getTimestampPath(),
-					eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(),
-					views, shaclShape.getModel(), dataset.orElse(null));
-		}).toList();
+		return eventStreamRepository.retrieveAllEventStreams().stream().map(this::mapToEventStreamTO).toList();
 	}
 
 	@Override
 	public EventStreamTO retrieveEventStream(String collectionName) {
 		EventStream eventStream = eventStreamRepository.retrieveEventStream(collectionName)
 				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
-		List<ViewSpecification> views = viewService.getViewsByCollectionName(collectionName);
-		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(collectionName);
-		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(collectionName);
-
-		return new EventStreamTO(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(), views,
-				shaclShape.getModel(), dataset.orElse(null));
+		return mapToEventStreamTO(eventStream);
 	}
 
 	@Override
@@ -86,6 +77,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 		try {
 			eventStreamRepository.saveEventStream(eventStream);
 			shaclShapeService.updateShaclShape(shaclShape);
+			eventSourceService.saveEventSource(eventStreamTO.getCollection(), eventStreamTO.getEventSourceRetentionPolicies());
 			eventPublisher.publishEvent(new EventStreamCreatedEvent(eventStream));
 			eventStreamTO.getViews().forEach(viewService::addView);
 		} catch (RuntimeException e) {
@@ -94,6 +86,23 @@ public class EventStreamServiceImpl implements EventStreamService {
 		}
 
 		return eventStreamTO;
+	}
+
+	@Override
+	public void updateEventSource(String collectionName, List<Model> eventSourceModel) {
+		eventSourceService.saveEventSource(collectionName, eventSourceModel);
+	}
+
+	private EventStreamTO mapToEventStreamTO(EventStream eventStream) {
+		List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
+		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
+		Optional<DcatDataset> dataset = dcatDatasetService.retrieveDataset(eventStream.getCollection());
+		Optional<EventSource> eventSource = eventSourceService.getEventSource(eventStream.getCollection());
+		return new EventStreamTO(eventStream.getCollection(), eventStream.getTimestampPath(),
+				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(),
+				views, shaclShape.getModel(),
+				eventSource.map(EventSource::getRetentionPolicies).orElse(List.of()),
+				dataset.orElse(null));
 	}
 
 	private void delete(String collectionName) {

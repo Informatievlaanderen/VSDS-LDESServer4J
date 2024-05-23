@@ -20,4 +20,9 @@ public class ValidatorsConfig {
 	public ModelValidator shaclShapeShaclValidator(@Value("${ldes-server.shacl-shape-shacl:shapeShaclShape.ttl}") String shapeShaclShapeUri) {
 		return new ShaclValidator(shapeShaclShapeUri);
 	}
+
+	@Bean("eventSourceShaclValidator")
+	public ModelValidator eventSourceShaclValidator(@Value("${ldes-server.eventsource-shape:eventsourceShaclShape.ttl}") String eventStreamShapeUri) {
+		return new ShaclValidator(eventStreamShapeUri);
+	}
 }

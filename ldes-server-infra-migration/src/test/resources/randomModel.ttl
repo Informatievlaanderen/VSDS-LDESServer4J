@@ -1,0 +1,22 @@
+@prefix v: <http://rdf.data-vocabulary.org/#> .
+
+[]
+    v:ingredients "1 cup ice cubes", "1 tablespoons white sugar", "1/2 cup club soda", "1/2 lime, juiced with pulp", "12 fresh mint leaves", "2 fluid ounces white rum" ;
+    v:instructions [
+                      v:description "Crush lime juice, mint and sugar together in glass." ;
+                      v:step 1
+                  ], [
+                      v:description "Fill glass to top with ice cubes." ;
+                      v:step 2
+                  ], [
+                      v:description "Pour white rum over ice." ;
+                      v:step 3
+                  ], [
+                      v:description "Fill the rest of glass with club soda, stir." ;
+                      v:step 4
+                  ], [
+                      v:description "Garnish with a lime wedge." ;
+                      v:step 5
+                  ] ;
+    v:name "Mojito" ;
+    v:yield "1 cocktail" .

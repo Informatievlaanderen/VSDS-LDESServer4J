@@ -1,0 +1,23 @@
+_:genid1 <http://rdf.data-vocabulary.org/#ingredients> "1 cup ice cubes" .
+_:genid1 <http://rdf.data-vocabulary.org/#ingredients> "1 tablespoons white sugar" .
+_:genid1 <http://rdf.data-vocabulary.org/#ingredients> "1/2 cup club soda" .
+_:genid1 <http://rdf.data-vocabulary.org/#ingredients> "1/2 lime, juiced with pulp" .
+_:genid1 <http://rdf.data-vocabulary.org/#ingredients> "12 fresh mint leaves" .
+_:genid1 <http://rdf.data-vocabulary.org/#ingredients> "2 fluid ounces white rum" .
+_:genid1 <http://rdf.data-vocabulary.org/#instructions> _:genid2 .
+_:genid1 <http://rdf.data-vocabulary.org/#instructions> _:genid3 .
+_:genid1 <http://rdf.data-vocabulary.org/#instructions> _:genid4 .
+_:genid1 <http://rdf.data-vocabulary.org/#instructions> _:genid5 .
+_:genid1 <http://rdf.data-vocabulary.org/#instructions> _:genid6 .
+_:genid1 <http://rdf.data-vocabulary.org/#name> "Mojito" .
+_:genid1 <http://rdf.data-vocabulary.org/#yield> "1 cocktail" .
+_:genid2 <http://rdf.data-vocabulary.org/#description> "Crush lime juice, mint and sugar together in glass." .
+_:genid2 <http://rdf.data-vocabulary.org/#step> "1"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:genid3 <http://rdf.data-vocabulary.org/#description> "Fill glass to top with ice cubes." .
+_:genid3 <http://rdf.data-vocabulary.org/#step> "2"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:genid4 <http://rdf.data-vocabulary.org/#description> "Pour white rum over ice." .
+_:genid4 <http://rdf.data-vocabulary.org/#step> "3"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:genid5 <http://rdf.data-vocabulary.org/#description> "Fill the rest of glass with club soda, stir." .
+_:genid5 <http://rdf.data-vocabulary.org/#step> "4"^^<http://www.w3.org/2001/XMLSchema#integer> .
+_:genid6 <http://rdf.data-vocabulary.org/#description> "Garnish with a lime wedge." .
+_:genid6 <http://rdf.data-vocabulary.org/#step> "5"^^<http://www.w3.org/2001/XMLSchema#integer> .

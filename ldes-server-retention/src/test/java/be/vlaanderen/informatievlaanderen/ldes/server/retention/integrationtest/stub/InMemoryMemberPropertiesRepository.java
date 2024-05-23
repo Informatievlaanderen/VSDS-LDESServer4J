@@ -72,6 +72,15 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
     }
 
     @Override
+    public void removeViewReference(String viewName) {
+        memberPropertiesMap.entrySet().forEach(entry -> {
+            if (entry.getValue().containsViewReference(viewName)) {
+                memberPropertiesMap.remove(entry.getKey());
+            }
+        });
+    }
+
+    @Override
     public void removeMemberPropertiesOfCollection(String collectionName) {
         List<MemberProperties> properties = memberPropertiesMap
                 .values()
@@ -82,8 +91,17 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
     }
 
     @Override
-    public void deleteById(String id) {
-        memberPropertiesMap.remove(id);
+    public void deleteAllByIds(List<String> ids) {
+        ids.forEach(memberPropertiesMap::remove);
+    }
+
+    @Override
+    public void removeFromEventSource(List<String> ids) {
+        ids.forEach(id -> {
+            MemberProperties oldMember = memberPropertiesMap.remove(id);
+            insert(new MemberProperties(id, oldMember.getCollectionName(), oldMember.getVersionOf(),
+                    oldMember.getTimestamp(), false));
+        });
     }
 
     @Override
@@ -115,6 +133,47 @@ public class InMemoryMemberPropertiesRepository implements MemberPropertiesRepos
 
     @Override
     public Stream<MemberProperties> findExpiredMemberProperties(ViewName viewName,
+                                                                TimeAndVersionBasedRetentionPolicy policy) {
+        return Stream.of(
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/4")
+        ).filter(Objects::nonNull);
+    }
+
+    @Override
+    public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
+                                                                TimeBasedRetentionPolicy policy) {
+        return Stream.of(
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/4")
+        ).filter(Objects::nonNull);
+    }
+
+    @Override
+    public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
+                                                                VersionBasedRetentionPolicy policy) {
+        return Stream.of(
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/2/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/1"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/2"),
+                memberPropertiesMap.get("http://test-data/mobility-hindrances/3/3")
+        ).filter(Objects::nonNull);
+    }
+
+    @Override
+    public Stream<MemberProperties> findExpiredMemberProperties(String collectionName,
                                                                 TimeAndVersionBasedRetentionPolicy policy) {
         return Stream.of(
                 memberPropertiesMap.get("http://test-data/mobility-hindrances/1/1"),

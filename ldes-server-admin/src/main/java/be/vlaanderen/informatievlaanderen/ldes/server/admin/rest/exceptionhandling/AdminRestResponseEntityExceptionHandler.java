@@ -54,13 +54,6 @@ public class AdminRestResponseEntityExceptionHandler extends ResponseEntityExcep
 		return handleException(ex, HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
 	}
 
-	@ExceptionHandler(value = {Exception.class})
-	protected ResponseEntity<Object> fallbackHandleException(
-			Exception ex, WebRequest request) {
-		log.error(ex.getMessage());
-		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
-	}
-
 	private ResponseEntity<Object> handleException(
 			Exception ex, HttpStatus status, WebRequest request) {
 		String bodyOfResponse = ex.getMessage();

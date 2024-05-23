@@ -28,17 +28,21 @@ class EventStreamConverterImplTest {
 	private EventStreamConverter eventStreamConverter;
 	private Model shacl;
 	private Model dataSetModel;
+	private List<Model> eventSourceRetentionModels;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
 		String hostName = "http://localhost:8080";
 		PrefixConstructor prefixConstructor = new PrefixConstructor(hostName, false);
-		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(new RetentionModelExtractor(),
+		RetentionModelExtractor retentionModelExtractor = new RetentionModelExtractor();
+		ViewSpecificationConverter viewSpecificationConverter = new ViewSpecificationConverter(retentionModelExtractor,
 				new FragmentationConfigExtractor(), prefixConstructor);
 		PrefixAdder prefixAdder = new PrefixAdderImpl();
-		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, prefixAdder, prefixConstructor);
+		eventStreamConverter = new EventStreamConverterImpl(viewSpecificationConverter, retentionModelExtractor, prefixAdder, prefixConstructor);
 		shacl = readModelFromFile("shacl/collection-shape.ttl");
 		dataSetModel = readModelFromFile("dcat/dataset/valid.ttl");
+		Model retentionModel = readModelFromFile("retention/example_timebased.ttl");
+		eventSourceRetentionModels = List.of(retentionModel);
 	}
 
 	@Nested
@@ -68,7 +72,7 @@ class EventStreamConverterImplTest {
 		void when_modelHasViews_then_convertToEventStreamResponse() {
 			EventStreamTO expectedEventStreamTO = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
-					views, shacl);
+					views, shacl, List.of());
 
 			EventStreamTO result = eventStreamConverter.fromModel(eventStreamModel);
 
@@ -79,7 +83,7 @@ class EventStreamConverterImplTest {
 		void when_modelCreateVersions_then_convertToEventStreamResponse() {
 			EventStreamTO expectedEventStreamTO = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", true,
-					views, shacl);
+					views, shacl, List.of());
 			eventStreamModel.remove(eventStreamModel.listStatements(null,
 					createProperty("https://w3id.org/ldes#createVersions"), (RDFNode) null));
 			eventStreamModel.add(createResource("http://localhost:8080/collectionName1"),
@@ -94,7 +98,7 @@ class EventStreamConverterImplTest {
 		void when_eventStreamHasViews_then_convertToModel() {
 			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
-					views, shacl);
+					views, shacl, eventSourceRetentionModels);
 
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
@@ -116,7 +120,7 @@ class EventStreamConverterImplTest {
 			EventStreamTO expectedEventStreamTO = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
 					List.of(),
-					shacl);
+					shacl, List.of());
 
 			assertEquals(expectedEventStreamTO, eventStreamConverter.fromModel(eventStreamModel));
 		}
@@ -125,7 +129,7 @@ class EventStreamConverterImplTest {
 		void when_eventStreamResponseHasNoViews_then_convertToModel() {
 			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", false,
-					List.of(), shacl);
+					List.of(), shacl, eventSourceRetentionModels);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 			assertThat(convertedModel).matches(eventStreamModel::isIsomorphicWith);
 		}
@@ -134,7 +138,7 @@ class EventStreamConverterImplTest {
 		void when_eventStreamCreateVersions_then_convertToModel() {
 			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf", true,
-					List.of(), shacl);
+					List.of(), shacl, eventSourceRetentionModels);
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 
 			eventStreamModel.remove(eventStreamModel.listStatements(null,
@@ -150,7 +154,7 @@ class EventStreamConverterImplTest {
 			EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					null, null, false,
 					List.of(),
-					shacl);
+					shacl, eventSourceRetentionModels);
 
 			eventStreamModel.remove(eventStreamModel.listStatements(null,
 					createProperty("https://w3id.org/ldes#versionOfPath"), (RDFNode) null));
@@ -190,7 +194,7 @@ class EventStreamConverterImplTest {
 		void when_eventStreamHasViewsAndDataset_Then_ConvertToModel() {
 			final EventStreamTO eventStream = new EventStreamTO("collectionName1",
 					"http://purl.org/dc/terms/created", "http://purl.org/dc/terms/isVersionOf",
-                    true, views, shacl,
+                    true, views, shacl, eventSourceRetentionModels,
 					new DcatDataset("collectionName1", dataSetModel));
 			final Model convertedModel = eventStreamConverter.toModel(eventStream);
 

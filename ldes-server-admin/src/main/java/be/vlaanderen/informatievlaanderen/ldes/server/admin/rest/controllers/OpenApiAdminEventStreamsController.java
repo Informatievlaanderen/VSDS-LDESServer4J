@@ -186,4 +186,29 @@ public interface OpenApiAdminEventStreamsController {
 	@ApiResponse(responseCode = "200", description = "Event Stream has been successfully deleted")
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found")
 	void deleteEventStream(@Parameter(example = "event-stream") String collectionName);
+
+	@Operation(summary = "Update the Event Source of an Event Stream")
+	@ApiResponse(responseCode = "200", description = "Event Source has been successfully updated", content = {
+			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
+					@prefix ldes: <https://w3id.org/ldes#> .
+					@prefix dcterms: <http://purl.org/dc/terms/> .
+					@prefix tree: <https://w3id.org/tree#>.
+					     
+					<> a ldes:EventSource ;
+					    ldes:retentionPolicy [
+					        a ldes:DurationAgoPolicy ;
+					        tree:value "PT5S"^^<http://www.w3.org/2001/XMLSchema#duration> ;
+					      ] .
+					""")),
+			@Content(mediaType = contentTypeNQuads, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """
+					<http://njh.me/> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#EventSource> .
+					<http://njh.me/> <https://w3id.org/ldes#retentionPolicy> _:genid1 .
+					_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://w3id.org/ldes#DurationAgoPolicy> .
+					_:genid1 <https://w3id.org/tree#value> "PT5S"^^<http://www.w3.org/2001/XMLSchema#duration> .
+					""")),
+			@Content(mediaType = contentTypeJSONLD, examples = @ExampleObject(value = """
+					[{"@id":"_:b0","@type":["https://w3id.org/ldes#DurationAgoPolicy"],"https://w3id.org/tree#value":[{"@value":"PT5S","@type":"http://www.w3.org/2001/XMLSchema#duration"}]},{"@id":"http://njh.me/","@type":["https://w3id.org/ldes#EventSource"],"https://w3id.org/ldes#retentionPolicy":[{"@id":"_:b0"}]},{"@id":"https://w3id.org/ldes#DurationAgoPolicy"},{"@id":"https://w3id.org/ldes#EventSource"}]
+					"""))})
+	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found")
+    void updateEventSource(@Parameter(example = "event-stream") String collectionName, Model eventSourceModel);
 }
