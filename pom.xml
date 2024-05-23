@@ -9,7 +9,7 @@
 
     <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
     <artifactId>ldes-server</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -26,7 +26,6 @@
         <module>ldes-server-compaction</module>
         <module>ldes-server-integration-test</module>
         <module>ldes-server-instrumentation</module>
-        <module>ldes-server-infra-migration</module>
     </modules>
 
     <developers>
