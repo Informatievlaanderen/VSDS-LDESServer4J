@@ -24,7 +24,7 @@ public class MemberPaginationService {
     private final ApplicationEventPublisher eventPublisher;
     private final ViewName viewName;
     private long sequenceNr;
-    private Future task;
+    private Future<?> task;
 
     public MemberPaginationService(FragmentSequenceRepository fragmentSequenceRepository, BucketisedMemberRepository bucketisedMemberRepository,
                                    OpenPageProvider openPageProvider, FragmentRepository fragmentRepository, ApplicationEventPublisher eventPublisher, ViewName viewName) {
@@ -40,23 +40,9 @@ public class MemberPaginationService {
     public void paginateMember() {
         List<BucketisedMember> bucketisedMembers = getNextMember(viewName);
         while(!bucketisedMembers.isEmpty()) {
-            List<ImmutablePair<Fragment, BucketisedMember>> pages = bucketisedMembers.stream().map(member -> {
-                Fragment page = openPageProvider
-                        .retrieveOpenFragmentOrCreateNewFragment(LdesFragmentIdentifier.fromFragmentId(member.fragmentId()));
-                return new ImmutablePair<>(page, member);
-            }).toList();
+            List<ImmutablePair<Fragment, BucketisedMember>> pages = getPages(bucketisedMembers);
+            allocateMembers(pages);
 
-            pages.forEach(pair -> {
-                BucketisedMember member = pair.getRight();
-                Fragment page = pair.getLeft();
-                eventPublisher.publishEvent(new MemberAllocatedEvent(member.memberId(), page.getViewName().getCollectionName(),
-                        page.getViewName().asString(), page.getFragmentId().asDecodedFragmentId()));
-            });
-
-            pages.forEach(pair -> {
-                Fragment page = pair.getLeft();
-                fragmentRepository.incrementNrOfMembersAdded(page.getFragmentId());
-            });
             fragmentSequenceRepository.saveLastProcessedSequence(new FragmentSequence(viewName, sequenceNr + 1));
             sequenceNr += 1;
             bucketisedMembers = getNextMember(viewName);
@@ -71,7 +57,7 @@ public class MemberPaginationService {
         task.cancel(true);
     }
 
-    public void setTask(Future task) {
+    public void setTask(Future<?> task) {
         this.task = task;
     }
 
@@ -81,6 +67,28 @@ public class MemberPaginationService {
     }
 
     private List<BucketisedMember> getNextMember(ViewName viewName) {
-        return bucketisedMemberRepository.getFirstUnallocatedMember(viewName, sequenceNr + 1);
+        return bucketisedMemberRepository.getFirstUnallocatedMember(viewName, sequenceNr);
+    }
+
+    private List<ImmutablePair<Fragment, BucketisedMember>> getPages(List<BucketisedMember> bucketisedMembers) {
+        return bucketisedMembers.stream().map(member -> {
+            Fragment page = openPageProvider
+                    .retrieveOpenFragmentOrCreateNewFragment(LdesFragmentIdentifier.fromFragmentId(member.fragmentId()));
+            return new ImmutablePair<>(page, member);
+        }).toList();
+    }
+
+    private void allocateMembers(List<ImmutablePair<Fragment, BucketisedMember>> pages) {
+        pages.forEach(pair -> {
+            BucketisedMember member = pair.getRight();
+            Fragment page = pair.getLeft();
+            eventPublisher.publishEvent(new MemberAllocatedEvent(member.memberId(), page.getViewName().getCollectionName(),
+                    page.getViewName().asString(), page.getFragmentId().asDecodedFragmentId()));
+        });
+
+        pages.forEach(pair -> {
+            Fragment page = pair.getLeft();
+            fragmentRepository.incrementNrOfMembersAdded(page.getFragmentId());
+        });
     }
 }

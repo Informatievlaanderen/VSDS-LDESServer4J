@@ -56,7 +56,7 @@ public class PaginationService {
         if (paginationService == null) {
             LOGGER.warn("Missing view: {}", viewName.asString());
         } else if (!paginationService.isRunning()) {
-            Future task = executorService.submit(paginationService::paginateMember);
+            Future<?> task = executorService.submit(paginationService::paginateMember);
             paginationService.setTask(task);
         }
     }
