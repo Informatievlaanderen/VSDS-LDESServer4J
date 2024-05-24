@@ -22,7 +22,6 @@ COPY --from=app-stage ldes-server-infra-postgres/postgres-fetch-repository/targe
 COPY --from=app-stage ldes-server-infra-postgres/postgres-retention-repository/target/postgres-retention-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-postgres/postgres-fragmentation-repository/target/postgres-fragmentation-repository-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-infra-postgres/postgres-admin-repository/target/postgres-admin-repository-jar-with-dependencies.jar ./lib/
-COPY --from=app-stage ldes-server-infra-migration/target/ldes-server-infra-migration-jar-with-dependencies.jar ./lib/
 
 COPY --from=app-stage ldes-server-port-ingest-rest/target/ldes-server-port-ingest-rest-jar-with-dependencies.jar ./lib/
 COPY --from=app-stage ldes-server-port-ingest/target/ldes-server-port-ingest-jar-with-dependencies.jar ./lib/

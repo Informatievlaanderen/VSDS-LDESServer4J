@@ -225,15 +225,5 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>mongo-to-postgres-migration</id>
-            <dependencies>
-                <dependency>
-                    <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-                    <artifactId>ldes-server-infra-migration</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 </project>
