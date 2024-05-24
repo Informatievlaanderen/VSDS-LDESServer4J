@@ -1,23 +1,26 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.MemberBucketisationEntity.BUCKETISATION;
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.MemberBucketisationEntity.BUCKETISATION;
 
-@Document(BUCKETISATION)
+@Entity
+@Table(name = BUCKETISATION, indexes = {
+        @Index(columnList = "viewName"),
+        @Index(columnList = "fragmentId"),
+        @Index(columnList = "sequenceNr")
+})
 public class MemberBucketisationEntity {
     public static final String BUCKETISATION = "bucketisation";
     @Id
-    private final String id;
-    @Indexed
-    private final String viewName;
-    @Indexed
-    private final String fragmentId;
-    private final String memberId;
-    @Indexed
-    private final long sequenceNr;
+    private String id;
+    private String viewName;
+    private String fragmentId;
+    private String memberId;
+    private long sequenceNr;
 
     public MemberBucketisationEntity(String id, String viewName, String fragmentId, String memberId, long sequenceNr) {
         this.id = id;
@@ -25,6 +28,10 @@ public class MemberBucketisationEntity {
         this.fragmentId = fragmentId;
         this.memberId = memberId;
         this.sequenceNr = sequenceNr;
+    }
+
+    protected MemberBucketisationEntity() {
+
     }
 
     public String getId() {

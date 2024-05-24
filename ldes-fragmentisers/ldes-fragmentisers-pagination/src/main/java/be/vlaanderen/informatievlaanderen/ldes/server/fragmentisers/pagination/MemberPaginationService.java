@@ -11,11 +11,10 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.F
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.pagination.services.OpenPageProvider;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.concurrent.Future;
 
 public class MemberPaginationService {
     private final FragmentSequenceRepository fragmentSequenceRepository;
@@ -25,7 +24,7 @@ public class MemberPaginationService {
     private final ApplicationEventPublisher eventPublisher;
     private final ViewName viewName;
     private long sequenceNr;
-    private boolean isRunning;
+    private Future task;
 
     public MemberPaginationService(FragmentSequenceRepository fragmentSequenceRepository, BucketisedMemberRepository bucketisedMemberRepository,
                                    OpenPageProvider openPageProvider, FragmentRepository fragmentRepository, ApplicationEventPublisher eventPublisher, ViewName viewName) {
@@ -35,13 +34,10 @@ public class MemberPaginationService {
         this.fragmentRepository = fragmentRepository;
         this.eventPublisher = eventPublisher;
         this.viewName = viewName;
-        isRunning = false;
         sequenceNr = determineLastProcessedSequence(viewName).sequenceNr();
     }
 
     public void paginateMember() {
-        isRunning = true;
-
         List<BucketisedMember> bucketisedMembers = getNextMember(viewName);
         while(!bucketisedMembers.isEmpty()) {
             List<ImmutablePair<Fragment, BucketisedMember>> pages = bucketisedMembers.stream().map(member -> {
@@ -65,11 +61,18 @@ public class MemberPaginationService {
             sequenceNr += 1;
             bucketisedMembers = getNextMember(viewName);
         }
-        isRunning = false;
     }
 
     public boolean isRunning() {
-        return isRunning;
+        return task != null && !(task.isDone() || task.isCancelled());
+    }
+
+    public void stopTask() {
+        task.cancel(true);
+    }
+
+    public void setTask(Future task) {
+        this.task = task;
     }
 
     private FragmentSequence determineLastProcessedSequence(ViewName viewName) {

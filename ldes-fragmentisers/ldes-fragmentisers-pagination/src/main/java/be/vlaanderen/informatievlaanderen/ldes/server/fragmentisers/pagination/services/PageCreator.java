@@ -22,7 +22,6 @@ public class PageCreator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCreator.class);
 
 	public PageCreator(FragmentRepository fragmentRepository, boolean bidirectionalRelations) {
-
 		this.fragmentRepository = fragmentRepository;
 		this.bidirectionalRelations = bidirectionalRelations;
 	}

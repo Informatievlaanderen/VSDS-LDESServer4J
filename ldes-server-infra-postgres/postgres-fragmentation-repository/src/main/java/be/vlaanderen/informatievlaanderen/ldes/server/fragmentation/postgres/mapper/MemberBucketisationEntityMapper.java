@@ -1,8 +1,8 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.infra.mongo.fragmentation.entity.MemberBucketisationEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.MemberBucketisationEntity;
 import org.springframework.stereotype.Component;
 
 @Component
