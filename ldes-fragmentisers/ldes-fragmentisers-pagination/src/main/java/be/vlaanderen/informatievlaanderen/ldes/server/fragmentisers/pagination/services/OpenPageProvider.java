@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
@@ -39,14 +38,11 @@ public class OpenPageProvider {
 					Fragment newFragment = pageCreator.createFirstFragment(parentFragment);
 					fragmentRepository.saveFragment(newFragment);
 
-
 					TreeRelation treeRelation = new TreeRelation("", newFragment.getFragmentId(), "", "", GENERIC_TREE_RELATION);
 					if (!parentFragment.containsRelation(treeRelation)) {
 						parentFragment.addRelation(treeRelation);
 						fragmentRepository.saveFragment(parentFragment);
 					}
-
-
 
 					return newFragment;
 				});

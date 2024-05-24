@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl.PAGINATION_FRAGMENTATION;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -46,43 +47,26 @@ class FragmentationStrategyCreatorImplTest {
 	@Test
 	void when_ViewSpecificationFragmentationConfigIsNull_FragmentationStrategyImplIsReturned() {
 		ViewSpecification viewSpecification = new ViewSpecification(VIEW_NAME, List.of(), List.of(), 100);
-		FragmentationStrategyWrapper paginationFragmentationStrategyWrapper = Mockito
-				.mock(FragmentationStrategyWrapper.class);
-		when(applicationContext.getBean(PAGINATION_FRAGMENTATION)).thenReturn(paginationFragmentationStrategyWrapper);
-		FragmentationStrategy paginationFragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
-		when(paginationFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext),
-				any(FragmentationStrategyImpl.class),
-				eq(viewSpecification.getPaginationProperties())))
-				.thenReturn(paginationFragmentationStrategy);
 
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
 
-		assertEquals(paginationFragmentationStrategy, fragmentationStrategy);
+		assertThat(fragmentationStrategy).isOfAnyClassIn(FragmentationStrategyImpl.class);
 		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
 		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
-		inOrder.verify(applicationContext).getBean(PAGINATION_FRAGMENTATION);
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
 	void when_ViewSpecificationFragmentationConfigIsNotNull_WrappedFragmentationStrategyIsReturned() {
 		ViewSpecification viewSpecification = getViewSpecification();
-		FragmentationStrategyWrapper paginationFragmentationStrategyWrapper = Mockito
-				.mock(FragmentationStrategyWrapper.class);
-		when(applicationContext.getBean(PAGINATION_FRAGMENTATION)).thenReturn(paginationFragmentationStrategyWrapper);
-		FragmentationStrategy paginationFragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
-		when(paginationFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext),
-				any(FragmentationStrategyImpl.class),
-				eq(viewSpecification.getPaginationProperties())))
-				.thenReturn(paginationFragmentationStrategy);
 		FragmentationStrategyWrapper timebasedFragmentationStrategyWrapper = Mockito
 				.mock(FragmentationStrategyWrapper.class);
 		when(applicationContext.getBean(TIMEBASED)).thenReturn(timebasedFragmentationStrategyWrapper);
 		FragmentationStrategy timebasedFragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
-		when(timebasedFragmentationStrategyWrapper.wrapFragmentationStrategy(applicationContext,
-				paginationFragmentationStrategy,
-				new ConfigProperties(TIMEBASED_PROPERTIES)))
+		when(timebasedFragmentationStrategyWrapper.wrapFragmentationStrategy(eq(applicationContext),
+				any(FragmentationStrategyImpl.class),
+				eq(new ConfigProperties(TIMEBASED_PROPERTIES))))
 				.thenReturn(timebasedFragmentationStrategy);
 
 		FragmentationStrategyWrapper geospatialFragmentationStrategyWrapper = Mockito
@@ -99,7 +83,6 @@ class FragmentationStrategyCreatorImplTest {
 		assertEquals(geospatialFragmentationStrategy, fragmentationStrategy);
 		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
 		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
-		inOrder.verify(applicationContext).getBean(PAGINATION_FRAGMENTATION);
 		inOrder.verify(applicationContext).getBean(TIMEBASED);
 		inOrder.verify(applicationContext).getBean(GEOSPATIAL);
 		inOrder.verifyNoMoreInteractions();

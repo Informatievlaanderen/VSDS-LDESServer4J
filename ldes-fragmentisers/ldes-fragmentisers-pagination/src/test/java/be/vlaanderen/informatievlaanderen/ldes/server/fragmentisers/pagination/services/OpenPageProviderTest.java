@@ -38,21 +38,25 @@ class OpenPageProviderTest {
 	void when_NoFragmentExists_thenFirstFragmentIsCreated() {
 		Fragment createdFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"1"));
+		when(fragmentRepository.retrieveFragment(PARENT_FRAGMENT.getFragmentId()))
+				.thenReturn(Optional.of(PARENT_FRAGMENT));
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
 				.thenReturn(Optional.empty());
 		when(pageCreator.createFirstFragment(PARENT_FRAGMENT))
 				.thenReturn(createdFragment);
 
-		Pair<Fragment, Boolean> ldesFragment = openPageProvider
-				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
+		Fragment ldesFragment = openPageProvider
+				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentId());
 
-		assertTrue(ldesFragment.getRight());
-		assertEquals(createdFragment, ldesFragment.getKey());
+		assertEquals(createdFragment, ldesFragment);
 		InOrder inOrder = inOrder(fragmentRepository, pageCreator);
 		inOrder.verify(fragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
+		inOrder.verify(fragmentRepository,
+				times(1)).retrieveFragment(PARENT_FRAGMENT.getFragmentId());
 		inOrder.verify(pageCreator, times(1)).createFirstFragment(PARENT_FRAGMENT);
 		inOrder.verify(fragmentRepository, times(1)).saveFragment(createdFragment);
+		inOrder.verify(fragmentRepository, times(1)).saveFragment(PARENT_FRAGMENT);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -64,11 +68,10 @@ class OpenPageProviderTest {
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
 				.thenReturn(Optional.of(existingFragment));
 
-		Pair<Fragment, Boolean> ldesFragment = openPageProvider
-				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
+		Fragment ldesFragment = openPageProvider
+				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentId());
 
-		assertFalse(ldesFragment.getRight());
-		assertEquals(existingFragment, ldesFragment.getKey());
+		assertEquals(existingFragment, ldesFragment);
 		InOrder inOrder = inOrder(fragmentRepository, pageCreator);
 		inOrder.verify(fragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
@@ -84,15 +87,16 @@ class OpenPageProviderTest {
 				false, 3, List.of(), null);
 		Fragment newFragment = PARENT_FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER,
 				"3"));
+		when(fragmentRepository.retrieveFragment(PARENT_FRAGMENT.getFragmentId()))
+				.thenReturn(Optional.of(PARENT_FRAGMENT));
 		when(fragmentRepository.retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId()))
 				.thenReturn(Optional.of(completeFragment));
 		when(pageCreator.createNewFragment(completeFragment, PARENT_FRAGMENT)).thenReturn(newFragment);
 
-		Pair<Fragment, Boolean> ldesFragment = openPageProvider
-				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT);
+		Fragment ldesFragment = openPageProvider
+				.retrieveOpenFragmentOrCreateNewFragment(PARENT_FRAGMENT.getFragmentId());
 
-		assertFalse(ldesFragment.getRight());
-		assertEquals(newFragment, ldesFragment.getKey());
+		assertEquals(newFragment, ldesFragment);
 		InOrder inOrder = inOrder(fragmentRepository, pageCreator);
 		inOrder.verify(fragmentRepository,
 				times(1)).retrieveOpenChildFragment(PARENT_FRAGMENT.getFragmentId());
