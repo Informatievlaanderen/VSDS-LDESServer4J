@@ -1,6 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.ingest.MembersIngestedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +19,9 @@ class FragmentationServiceTest {
 
 	@Mock
 	private FragmentationStrategyCollection fragmentationStrategyCollection;
+
+	@Mock
+	private FragmentRepository fragmentRepository;
 
 	@InjectMocks
 	private FragmentationService fragmentationService;
@@ -36,4 +41,12 @@ class FragmentationServiceTest {
 		verify(executorB).execute();
 	}
 
+	@Test
+	void when_EventStreamClosedEvent_then_FragmentsAreMadeImmutable() {
+		EventStreamClosedEvent event = new EventStreamClosedEvent("collectionName");
+
+		fragmentationService.markFragmentsImmutableInCollection(event);
+
+		verify(fragmentRepository).markFragmentsImmutableInCollection("collectionName");
+	}
 }

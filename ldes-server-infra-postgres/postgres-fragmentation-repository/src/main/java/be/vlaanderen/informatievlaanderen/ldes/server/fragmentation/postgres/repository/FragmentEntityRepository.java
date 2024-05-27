@@ -54,7 +54,7 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
 	Stream<FragmentEntity> findByDeleteTimeNotNull();
 
 	@Modifying
-	@Query(value = "UPDATE fragmentation_fragment SET immutable = true WHERE collectionName = :collectionName",
+	@Query(value = "UPDATE fragmentation_fragment SET immutable = true WHERE collection_name = :collectionName",
 			nativeQuery = true)
-	void makeFragmentsImmutableInCollection(@Param("collectionName") String collectionName);
+	void markFragmentsImmutableInCollection(@Param("collectionName") String collectionName);
 }

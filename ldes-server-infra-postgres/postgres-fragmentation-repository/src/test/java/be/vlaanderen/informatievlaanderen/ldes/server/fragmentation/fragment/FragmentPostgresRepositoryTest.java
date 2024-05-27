@@ -56,10 +56,10 @@ class FragmentPostgresRepositoryTest {
 	}
 
 	@Test
-	void makeAllFragmentsImmutableInCollection() {
-		ldesFragmentPostgresRepository.makeAllFragmentsImmutableInCollection("collectionName");
+	void markFragmentsImmutableInCollection() {
+		ldesFragmentPostgresRepository.markFragmentsImmutableInCollection("collectionName");
 
-		verify(ldesFragmentEntityRepository).makeFragmentsImmutableInCollection("collectionName");
+		verify(ldesFragmentEntityRepository).markFragmentsImmutableInCollection("collectionName");
 	}
 
 	static class LdesFragmentEntityListProvider implements ArgumentsProvider {

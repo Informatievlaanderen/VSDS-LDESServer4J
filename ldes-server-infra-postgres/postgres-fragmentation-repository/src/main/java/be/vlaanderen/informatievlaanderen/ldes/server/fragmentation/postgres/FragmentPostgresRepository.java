@@ -130,8 +130,8 @@ public class FragmentPostgresRepository implements FragmentRepository {
 
 	@Override
 	@Transactional
-	public void makeAllFragmentsImmutableInCollection(String collectionName) {
-		repository.makeFragmentsImmutableInCollection(collectionName);
+	public void markFragmentsImmutableInCollection(String collectionName) {
+		repository.markFragmentsImmutableInCollection(collectionName);
 		log.info("All fragments are made immutable in collection {}", collectionName);
 	}
 

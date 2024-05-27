@@ -80,11 +80,18 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     }
 
     @Override
+    @PutMapping("/{collectionName}")
+    public void closeEventStream(@PathVariable String collectionName) {
+        log.atInfo().log("START closing collection {}", collectionName);
+        eventStreamService.closeEventStream(collectionName);
+        log.atInfo().log("FINISHED closing collection {}", collectionName);
+    }
+
+    @Override
     @PutMapping("/{collectionName}/eventsource")
     public void updateEventSource(@PathVariable String collectionName, @RequestBody Model eventSourceModel) {
         eventSourceValidator.validate(eventSourceModel);
         List<Model> retentionPolicies = retentionModelExtractor.extractRetentionStatements(eventSourceModel);
         eventStreamService.updateEventSource(collectionName, retentionPolicies);
     }
-
 }

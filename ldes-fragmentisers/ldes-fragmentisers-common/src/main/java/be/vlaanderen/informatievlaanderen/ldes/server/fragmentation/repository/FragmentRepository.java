@@ -68,5 +68,5 @@ public interface FragmentRepository {
 	 */
     void makeChildrenImmutable(Fragment fragment);
 
-	void makeAllFragmentsImmutableInCollection(String collectionName);
+	void markFragmentsImmutableInCollection(String collectionName);
 }
