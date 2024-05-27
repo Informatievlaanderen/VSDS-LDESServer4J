@@ -23,6 +23,7 @@ public interface MemberPropertiesRepository {
 	Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName);
 
 	void removeViewReference(String id, String viewName);
+	void removeViewReference(String viewName);
 
 	void removeMemberPropertiesOfCollection(String collectionName);
 

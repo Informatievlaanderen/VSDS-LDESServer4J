@@ -141,8 +141,8 @@ class ViewServiceImplTest {
 			viewService.deleteViewByViewName(viewName);
 
 			InOrder inOrder = inOrder(viewRepository, eventPublisher, dcatViewService);
-			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verify(viewRepository).deleteViewByViewName(viewName);
+			inOrder.verify(eventPublisher).publishEvent(any(ViewDeletedEvent.class));
 			inOrder.verifyNoMoreInteractions();
 		}
 	}

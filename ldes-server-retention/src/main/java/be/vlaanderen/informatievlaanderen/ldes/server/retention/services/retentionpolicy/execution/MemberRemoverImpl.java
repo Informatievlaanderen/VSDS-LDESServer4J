@@ -32,6 +32,11 @@ public class MemberRemoverImpl implements MemberRemover {
 	}
 
 	@Override
+	public void removeView(String viewName) {
+		memberPropertiesRepository.removeViewReference(viewName);
+	}
+
+	@Override
 	public void removeMembersFromEventSource(List<MemberProperties> memberProperties) {
 		List<String> ids = memberProperties.stream().filter(MemberProperties::isInEventSource).map(MemberProperties::getId).toList();
 		if (!ids.isEmpty()) {

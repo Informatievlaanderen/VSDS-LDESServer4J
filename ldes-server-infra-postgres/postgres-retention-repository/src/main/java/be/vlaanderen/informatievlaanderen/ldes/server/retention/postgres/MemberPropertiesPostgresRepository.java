@@ -66,6 +66,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public Stream<MemberProperties> getMemberPropertiesWithViewReference(ViewName viewName) {
 		return propertiesRepo.findMembersWithView(viewName.asString())
 				.map(propertiesMapper::toMemberProperties);
@@ -75,6 +76,12 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	@Transactional
 	public void removeViewReference(String id, String viewName) {
 		viewsRepo.deleteViewForMember(viewName, id);
+	}
+
+	@Override
+	@Transactional
+	public void removeViewReference(String viewName) {
+		viewsRepo.deleteViewForMember(viewName);
 	}
 
 	@Override
@@ -89,6 +96,7 @@ public class MemberPropertiesPostgresRepository implements MemberPropertiesRepos
 	}
 
 	@Override
+	@Transactional
 	public void removeFromEventSource(List<String> ids) {
 		Query query = entityManager.createQuery("UPDATE MemberPropertiesEntity m SET m.isInEventSource = :isInEventSource " +
 		                                        "WHERE m.id IN :memberIds");

@@ -8,6 +8,8 @@ public interface MemberRemover {
 
 	void removeMemberFromView(MemberProperties memberProperties, String viewName);
 
+	void removeView(String viewName);
+
 	void removeMembersFromEventSource(List<MemberProperties> memberProperties);
 
 	void deleteMembers(List<MemberProperties> memberProperties);

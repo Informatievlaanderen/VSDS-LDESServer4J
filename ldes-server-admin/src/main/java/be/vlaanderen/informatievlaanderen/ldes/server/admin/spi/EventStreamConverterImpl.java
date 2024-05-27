@@ -54,6 +54,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
         final Statement collectionNameStmt = createStatement(subject, RDF_SYNTAX_TYPE, createResource(EVENT_STREAM_TYPE));
         final Statement dcatTypeStmt = createStatement(subject, RDF_SYNTAX_TYPE, createResource(DATASET_TYPE));
         final Model dataset = eventStreamTO.getDcatDataset().getModelWithIdentity(prefix);
+        final List<Statement> eventSourceStatements = getEventSourceStatements(eventStreamTO.getEventSourceRetentionPolicies(), subject);
 
         Model eventStreamModel = createDefaultModel()
                 .add(collectionNameStmt)
@@ -64,6 +65,7 @@ public class EventStreamConverterImpl implements EventStreamConverter {
                 .add(eventStreamTO.getShacl())
                 .add(getViewReferenceStatements(eventStreamTO.getViews(), subject, prefix))
                 .add(getViewStatements(eventStreamTO.getViews()))
+                .add(eventSourceStatements)
                 .add(dataset);
 
         Statement shaclStatement = getShaclReferenceStatement(eventStreamTO.getShacl(), subject);
@@ -116,6 +118,23 @@ public class EventStreamConverterImpl implements EventStreamConverter {
         return getIdentifier(shacl, createResource(NODE_SHAPE_TYPE))
                 .map(resource -> createStatement(subject, TREE_SHAPE, resource))
                 .orElse(createStatement(subject, TREE_MEMBER, createResource()));
+    }
+
+    private List<Statement> getEventSourceStatements(List<Model> eventSourceRetentionModels, Resource subject) {
+        List<Statement> statements = new ArrayList<>();
+        Resource eventSourceResource = createResource();
+        statements.add(
+                createStatement(subject, LDES_EVENT_SOURCE, eventSourceResource));
+        statements.add(
+                createStatement(eventSourceResource, RDF_SYNTAX_TYPE, createResource(LDES_EVENT_SOURCE_URI)));
+        eventSourceRetentionModels.forEach(retentionModel -> {
+            Resource retentionResource = createResource();
+            retentionModel.listStatements().forEach(statement -> statements
+                    .add(createStatement(retentionResource, statement.getPredicate(), statement.getObject())));
+            statements.add(
+                    createStatement(eventSourceResource, createProperty(RETENTION_TYPE), retentionResource));
+        });
+        return statements;
     }
 
     private Resource getIRIFromCollectionName(String name, String prefix) {

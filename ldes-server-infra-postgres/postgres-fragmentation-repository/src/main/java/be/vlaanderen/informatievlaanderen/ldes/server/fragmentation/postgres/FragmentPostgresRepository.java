@@ -86,6 +86,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public void removeLdesFragmentsOfView(String viewName) {
 		int deleteCount = repository.removeByViewName(viewName).size();
 		log.debug("Deleted {} treeNodes", deleteCount);

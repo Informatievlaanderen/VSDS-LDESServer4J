@@ -27,8 +27,7 @@ public class DeleteEventHandler {
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		ViewName viewName = event.getViewName();
 		log.atInfo().log("STARTED deleting members of view {} in the background", viewName.asString());
-		memberPropertiesRepository.getMemberPropertiesWithViewReference(viewName)
-				.forEach(memberProperties -> memberRemover.removeMemberFromView(memberProperties, viewName.asString()));
+		memberRemover.removeView(viewName.asString());
         log.atInfo().log("FINISHED deleting members of view {} in the background", viewName.asString());
 
     }
