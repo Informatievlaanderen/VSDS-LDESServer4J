@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;

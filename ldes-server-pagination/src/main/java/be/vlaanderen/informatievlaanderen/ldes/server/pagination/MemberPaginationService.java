@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
@@ -8,8 +8,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.repositories.PaginationSequenceRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -62,7 +62,7 @@ public class MemberPaginationService {
 
     private FragmentSequence determineLastProcessedSequence(ViewName viewName) {
         return sequenceRepository.findLastProcessedSequence(viewName)
-                .orElse(FragmentSequence.createNeverProcessedSequence(viewName));
+                .orElse(new FragmentSequence(viewName, 0));
     }
 
     private List<BucketisedMember> getNextMember(ViewName viewName) {

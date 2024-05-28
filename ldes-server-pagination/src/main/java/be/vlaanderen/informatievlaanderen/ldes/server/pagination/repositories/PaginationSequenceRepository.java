@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination.repositories;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;

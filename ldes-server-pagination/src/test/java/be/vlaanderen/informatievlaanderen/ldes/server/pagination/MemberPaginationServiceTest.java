@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
@@ -8,9 +8,9 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Buc
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.repositories.PaginationSequenceRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.constants.PaginationConstants;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.OpenPageProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -19,7 +19,6 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.vsds.server.pagination.constants.PaginationConstants.PAGE_NUMBER;
 import static org.mockito.Mockito.*;
 
 class MemberPaginationServiceTest {
@@ -51,7 +50,7 @@ class MemberPaginationServiceTest {
     void when_MemberPresent_Then_MemberPaginated() {
         when(bucketisedMemberRepository.getFirstUnallocatedMember(VIEW_NAME, SEQ_NR))
                 .thenReturn(List.of(MEMBER));
-        Fragment child = FRAGMENT.createChild(new FragmentPair(PAGE_NUMBER, "1"));
+        Fragment child = FRAGMENT.createChild(new FragmentPair(PaginationConstants.PAGE_NUMBER, "1"));
         when(openPageProvider.retrieveOpenFragmentOrCreateNewFragment(FRAGMENT_ID))
                 .thenReturn(child);
 

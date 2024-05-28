@@ -4,11 +4,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSeque
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.mapper.PaginationSequenceEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PaginationSequenceEntityRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.repositories.PaginationSequenceRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Component
+@Primary
 public class PaginationSequencePostgresRepository implements PaginationSequenceRepository {
 
     private static final String COLLECTION_VIEW_SEPARATOR = "/";

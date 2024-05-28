@@ -1,19 +1,17 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ConfigProperties;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.config.PaginationConfig;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.repositories.PaginationSequenceRepository;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.services.OpenPageProvider;
-import be.vlaanderen.informatievlaanderen.vsds.server.pagination.services.PageCreator;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.config.PaginationProperties;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.OpenPageProvider;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.config.PaginationConfig;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.PageCreator;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
-
-import static be.vlaanderen.informatievlaanderen.vsds.server.pagination.config.PaginationProperties.BIDIRECTIONAL_RELATIONS;
-import static be.vlaanderen.informatievlaanderen.vsds.server.pagination.config.PaginationProperties.MEMBER_LIMIT;
 
 @Component
 public class MemberPaginationServiceCreator {
@@ -52,7 +50,7 @@ public class MemberPaginationServiceCreator {
     }
 
     private PaginationConfig createPaginationConfig(ConfigProperties properties) {
-        return new PaginationConfig(Long.valueOf(properties.get(MEMBER_LIMIT)),
-                Boolean.parseBoolean(properties.getOrDefault(BIDIRECTIONAL_RELATIONS, "true")));
+        return new PaginationConfig(Long.valueOf(properties.get(PaginationProperties.MEMBER_LIMIT)),
+                Boolean.parseBoolean(properties.getOrDefault(PaginationProperties.BIDIRECTIONAL_RELATIONS, "true")));
     }
 }

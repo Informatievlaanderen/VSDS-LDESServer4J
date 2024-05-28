@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination.constants;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination.constants;
 
 public class PaginationConstants {
 

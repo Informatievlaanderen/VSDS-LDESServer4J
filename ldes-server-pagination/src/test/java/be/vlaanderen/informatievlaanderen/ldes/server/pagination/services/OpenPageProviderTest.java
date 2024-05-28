@@ -1,26 +1,26 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Optional;
 
-import static be.vlaanderen.informatievlaanderen.vsds.server.pagination.constants.PaginationConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.constants.PaginationConstants.PAGE_NUMBER;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OpenPageProviderTest {
 
-	private final PageCreator pageCreator = mock(PageCreator.class);
+	private final PageCreator pageCreator = Mockito.mock(PageCreator.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private OpenPageProvider openPageProvider;
 	private static Fragment PARENT_FRAGMENT;

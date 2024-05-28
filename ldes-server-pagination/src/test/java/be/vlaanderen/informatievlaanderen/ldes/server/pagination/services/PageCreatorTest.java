@@ -1,4 +1,4 @@
-package be.vlaanderen.informatievlaanderen.vsds.server.pagination.services;
+package be.vlaanderen.informatievlaanderen.ldes.server.pagination.services;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
@@ -12,8 +12,8 @@ import org.mockito.InOrder;
 
 import java.util.List;
 
-import static be.vlaanderen.informatievlaanderen.vsds.server.pagination.constants.PaginationConstants.FIRST_PAGE_NUMBER;
-import static be.vlaanderen.informatievlaanderen.vsds.server.pagination.constants.PaginationConstants.PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.constants.PaginationConstants.FIRST_PAGE_NUMBER;
+import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.constants.PaginationConstants.PAGE_NUMBER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
