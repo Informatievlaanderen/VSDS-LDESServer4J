@@ -6,11 +6,13 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.map
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class BucketisedMemberPostgresRepository implements BucketisedMemberRepository {
+    private static final String COLLECTION_VIEW_SEPARATOR = "/";
     private final MemberBucketEntityRepository memberBucketEntityRepository;
     private final MemberBucketEntityMapper mapper;
 
@@ -28,5 +30,17 @@ public class BucketisedMemberPostgresRepository implements BucketisedMemberRepos
     public List<BucketisedMember> getFirstUnallocatedMember(ViewName viewName, Long sequenceNr) {
         return memberBucketEntityRepository.findAllByViewNameAndSequenceNr(viewName.asString(), sequenceNr)
                 .stream().map(mapper::toBucketisedMember).toList();
+    }
+
+    @Override
+    @Transactional
+    public void deleteByViewName(ViewName viewName) {
+        memberBucketEntityRepository.deleteAllByViewName(viewName.asString());
+    }
+
+    @Override
+    @Transactional
+    public void deleteByCollection(String collectionName) {
+        memberBucketEntityRepository.deleteAllByViewNameStartingWith(collectionName + COLLECTION_VIEW_SEPARATOR);
     }
 }

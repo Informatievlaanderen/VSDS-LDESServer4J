@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import org.springframework.context.event.EventListener;
@@ -25,15 +26,17 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 	private final Set<FragmentationStrategyExecutor> fragmentationStrategySet;
 	private final FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator;
 	private final FragmentSequenceRepository fragmentSequenceRepository;
+	private final BucketisedMemberRepository bucketisedMemberRepository;
 
 	public FragmentationStrategyCollectionImpl(
-			FragmentRepository fragmentRepository,
-			FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator,
-			FragmentSequenceRepository fragmentSequenceRepository) {
+            FragmentRepository fragmentRepository,
+            FragmentationStrategyExecutorCreatorImpl fragmentationStrategyExecutorCreator,
+            FragmentSequenceRepository fragmentSequenceRepository, BucketisedMemberRepository bucketisedMemberRepository) {
 		this.fragmentRepository = fragmentRepository;
 		this.fragmentationStrategyExecutorCreator = fragmentationStrategyExecutorCreator;
 		this.fragmentSequenceRepository = fragmentSequenceRepository;
-		this.fragmentationStrategySet = new HashSet<>();
+        this.bucketisedMemberRepository = bucketisedMemberRepository;
+        this.fragmentationStrategySet = new HashSet<>();
 	}
 
 	public List<FragmentationStrategyExecutor> getFragmentationStrategyExecutors(String collectionName) {
@@ -66,6 +69,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 				executor -> Objects.equals(executor.getViewName().getCollectionName(), event.collectionName()));
 		fragmentRepository.deleteTreeNodesByCollection(event.collectionName());
 		fragmentSequenceRepository.deleteByCollection(event.collectionName());
+		bucketisedMemberRepository.deleteByCollection(event.collectionName());
 	}
 
 	@EventListener
@@ -73,6 +77,7 @@ public class FragmentationStrategyCollectionImpl implements FragmentationStrateg
 		removeFromStrategySet(executor -> Objects.equals(executor.getViewName(), event.getViewName()));
 		fragmentRepository.removeLdesFragmentsOfView(event.getViewName().asString());
 		fragmentSequenceRepository.deleteByViewName(event.getViewName());
+		bucketisedMemberRepository.deleteByViewName(event.getViewName());
 	}
 
 	private void removeFromStrategySet(Predicate<FragmentationStrategyExecutor> filterPredicate) {

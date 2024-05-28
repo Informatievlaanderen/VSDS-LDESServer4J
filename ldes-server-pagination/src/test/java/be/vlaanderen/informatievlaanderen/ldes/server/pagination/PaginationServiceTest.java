@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -23,6 +24,7 @@ class PaginationServiceTest {
     private final ViewName VIEW_NAME_2 = new ViewName("collection", "view2");
     private MemberPaginationService service1;
     private MemberPaginationService service2;
+    private PaginationSequenceRepository sequenceRepository;
     private MemberPaginationServiceCreator memberPaginationServiceCreator;
     private ExecutorService executorService;
     private PaginationService paginationService;
@@ -33,7 +35,8 @@ class PaginationServiceTest {
         executorService = mock(ExecutorService.class);
         service1 = Mockito.mock(MemberPaginationService.class);
         service2 = Mockito.mock(MemberPaginationService.class);
-        paginationService = new PaginationService(memberPaginationServiceCreator);
+        sequenceRepository = Mockito.mock(PaginationSequenceRepository.class);
+        paginationService = new PaginationService(memberPaginationServiceCreator, sequenceRepository);
     }
 
     @Test
@@ -71,8 +74,9 @@ class PaginationServiceTest {
 
         paginationService.handleViewDeletedEvent(new ViewDeletedEvent(VIEW_NAME_1));
 
-        InOrder inOrder = inOrder(service1, service2);
+        InOrder inOrder = inOrder(service1, service2, sequenceRepository);
         inOrder.verify(service1).isRunning();
         inOrder.verify(service1).stopTask();
+        inOrder.verify(sequenceRepository).deleteByViewName(VIEW_NAME_1);
     }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MemberBucketEntityRepository extends JpaRepository<MemberBucketEntity, String> {
     List<MemberBucketEntity> findAllByViewNameAndSequenceNr(String viewName, Long sequenceNr);
+    void deleteAllByViewName (String viewName);
+    void deleteAllByViewNameStartingWith (String collectionName);
 }

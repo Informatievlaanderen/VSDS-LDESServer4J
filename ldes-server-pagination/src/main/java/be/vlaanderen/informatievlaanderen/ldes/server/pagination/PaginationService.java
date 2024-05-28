@@ -6,6 +6,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -20,11 +21,13 @@ import java.util.concurrent.*;
 public class PaginationService {
     private static final Logger LOGGER = LoggerFactory.getLogger(PaginationService.class);
     private final MemberPaginationServiceCreator memberPaginationServiceCreator;
+    private final PaginationSequenceRepository sequenceRepository;
     private final Map<ViewName, MemberPaginationService> map = new HashMap<>();
     private final ExecutorService executorService;
 
-    public PaginationService(MemberPaginationServiceCreator memberPaginationServiceCreator) {
+    public PaginationService(MemberPaginationServiceCreator memberPaginationServiceCreator, PaginationSequenceRepository sequenceRepository) {
         this.memberPaginationServiceCreator = memberPaginationServiceCreator;
+        this.sequenceRepository = sequenceRepository;
         executorService = createExecutorService();
     }
 
@@ -45,6 +48,7 @@ public class PaginationService {
         if (paginationService.isRunning()) {
             paginationService.stopTask();
         }
+        sequenceRepository.deleteByViewName(viewName);
         map.remove(viewName);
     }
 

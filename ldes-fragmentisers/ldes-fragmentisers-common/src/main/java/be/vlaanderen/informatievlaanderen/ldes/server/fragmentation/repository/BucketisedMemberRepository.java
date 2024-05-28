@@ -8,4 +8,6 @@ import java.util.List;
 public interface BucketisedMemberRepository {
     void insertAll(List<BucketisedMember> members);
     List<BucketisedMember> getFirstUnallocatedMember(ViewName viewName, Long sequenceNr);
+    void deleteByViewName(ViewName viewName);
+    void deleteByCollection(String collectionName);
 }
