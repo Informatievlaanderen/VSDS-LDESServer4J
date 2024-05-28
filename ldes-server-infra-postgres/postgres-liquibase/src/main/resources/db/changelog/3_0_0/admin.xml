@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="admin-init">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="dcat_catalog"/>
+                <tableExists tableName="dcat_dataservice"/>
+                <tableExists tableName="dcat_dataset"/>
+                <tableExists tableName="eventsource"/>
+                <tableExists tableName="eventstream"/>
+                <tableExists tableName="shacl_shape"/>
+                <tableExists tableName="view"/>
+            </not>
+        </preConditions>
+        <createTable tableName="dcat_catalog">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dcat_catalog_pkey"/>
+            </column>
+            <column name="dcat" type="TEXT"/>
+        </createTable>
+        <createTable tableName="dcat_dataservice">
+            <column name="view_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dcat_dataservice_pkey"/>
+            </column>
+            <column name="model" type="TEXT"/>
+        </createTable>
+        <createTable tableName="dcat_dataset">
+            <column name="collection_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="dcat_dataset_pkey"/>
+            </column>
+            <column name="model" type="TEXT"/>
+        </createTable>
+        <createTable tableName="eventsource">
+            <column name="collection_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="eventsource_pkey"/>
+            </column>
+            <column name="retention_policies" type="JSONB"/>
+        </createTable>
+        <createTable tableName="eventstream">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="eventstream_pkey"/>
+            </column>
+            <column name="timestamp_path" type="VARCHAR(255)"/>
+            <column name="version_creation_enabled" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version_of_path" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable tableName="shacl_shape">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="shacl_shape_pkey"/>
+            </column>
+            <column name="model" type="TEXT"/>
+        </createTable>
+        <createTable tableName="view">
+            <column name="view_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="view_pkey"/>
+            </column>
+            <column name="fragmentations" type="TEXT"/>
+            <column name="page_size" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retention_policies" type="JSONB"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

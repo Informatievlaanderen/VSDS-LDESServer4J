@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="fragmentation-init">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="fragmentation_fragment"/>
+                <tableExists tableName="fragmentation_fragment_relations"/>
+                <tableExists tableName="fragmentation_sequence"/>
+            </not>
+        </preConditions>
+        <createTable tableName="fragmentation_fragment">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="fragmentation_fragment_pkey"/>
+            </column>
+            <column name="collection_name" type="VARCHAR(255)"/>
+            <column name="delete_time" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="fragmentations" type="TEXT"/>
+            <column name="immutable" type="BOOLEAN"/>
+            <column name="next_update_ts" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="nr_of_members_added" type="INTEGER"/>
+            <column name="parent_id" type="VARCHAR(255)"/>
+            <column name="root" type="BOOLEAN"/>
+            <column name="view_name" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createIndex indexName="idxfsr9wn496pubd93jed7dhsh98" tableName="fragmentation_fragment">
+            <column name="view_name"/>
+        </createIndex>
+        <createIndex indexName="idxcjyrdkwx7rqh77yi22qjbymha" tableName="fragmentation_fragment">
+            <column name="collection_name"/>
+        </createIndex>
+        <createIndex indexName="idxcn14cpfn506e0kv1buef8ftvn" tableName="fragmentation_fragment">
+            <column name="delete_time"/>
+        </createIndex>
+        <createIndex indexName="root_of_view" tableName="fragmentation_fragment">
+            <column name="root"/>
+            <column name="view_name"/>
+        </createIndex>
+        <createIndex indexName="immutable_with_parent" tableName="fragmentation_fragment">
+            <column name="immutable"/>
+            <column name="parent_id"/>
+        </createIndex>
+
+        <createTable tableName="fragmentation_fragment_relations">
+            <column name="fragment_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="relation" type="VARCHAR(255)"/>
+            <column name="tree_node" type="VARCHAR(255)"/>
+            <column name="tree_path" type="VARCHAR(255)"/>
+            <column name="tree_value" type="VARCHAR(255)"/>
+            <column name="tree_value_type" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="fragmentation_sequence">
+            <column name="view_name" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="fragmentation_sequence_pkey"/>
+            </column>
+            <column name="last_processed_sequence" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class BucketisedMemberSaverImpl {
+public class BucketisedMemberSaverImpl implements BucketisedMemberSaver {
     private final BucketisedMemberRepository repository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -18,6 +18,7 @@ public class BucketisedMemberSaverImpl {
         this.eventPublisher = eventPublisher;
     }
 
+    @Override
     public void save(List<BucketisedMember> members) {
         repository.insertAll(members);
         eventPublisher.publishEvent(new MemberBucketisedEvent(members.getFirst().viewName()));

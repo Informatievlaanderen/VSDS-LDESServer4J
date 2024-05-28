@@ -20,12 +20,7 @@ class FragmentationStrategyImplTest {
 	private static final long SEQ_NR = 5L;
 	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 	private static final LdesFragmentIdentifier FRAGMENT_ID = new LdesFragmentIdentifier(VIEW_NAME, List.of());
-	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
-	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
-
-	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl(
-			fragmentRepository,
-			eventPublisher);
+	private final FragmentationStrategyImpl fragmentationStrategy = new FragmentationStrategyImpl();
 
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {

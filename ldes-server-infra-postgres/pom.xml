@@ -16,6 +16,7 @@
         <module>postgres-ingest-repository</module>
         <module>postgres-retention-repository</module>
         <module>postgres-liquibase</module>
+        <module>postgres-pagination-repository</module>
     </modules>
 
     <artifactId>ldes-server-infra-postgres</artifactId>

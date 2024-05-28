@@ -40,8 +40,7 @@ class FragmentationStrategyCreatorImplTest {
 		rootFragmentCreator = mock(RootFragmentCreator.class);
 		ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, fragmentRepository, rootFragmentCreator,
-				eventPublisher);
+				applicationContext, rootFragmentCreator);
 	}
 
 	@Test

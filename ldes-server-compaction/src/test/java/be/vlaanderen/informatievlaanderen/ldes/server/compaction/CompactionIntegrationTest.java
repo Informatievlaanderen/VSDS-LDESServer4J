@@ -45,8 +45,6 @@ public class CompactionIntegrationTest {
     @Autowired
     @MockBean
     AllocationRepository allocationRepository;
-    @Autowired
-    FragmentationStrategyImpl fragmentationStrategy;
 
     @TestComponent
     protected static class EventConsumer {
@@ -57,11 +55,6 @@ public class CompactionIntegrationTest {
 
     @TestConfiguration
     public static class CompactionIntegrationTestConfiguration {
-
-        @Bean("compactionFragmentation")
-        public FragmentationStrategyImpl fragmentationStrategy() {
-            return mock(FragmentationStrategyImpl.class);
-        }
 
         @Bean
         public RetentionPolicyEmptinessChecker retentionPolicyEmptinessChecker() {

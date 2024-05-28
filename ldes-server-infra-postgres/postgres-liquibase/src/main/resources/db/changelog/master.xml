@@ -1,7 +1,21 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+    <include file="/db/changelog/3_0_0/retention.xml" />
+    <include file="/db/changelog/3_0_0/fetch.xml" />
+    <include file="/db/changelog/3_0_0/fragmentation.xml" />
+    <include file="/db/changelog/3_0_0/ingest.xml" />
+    <include file="/db/changelog/3_0_0/admin.xml" />
     <include file="/db/changelog/3_0_1/bucketisation.sql" />
 
+<changeSet author="vsds" id="1716541682505-30">
+    <preConditions onFail="MARK_RAN">
+        <not>
+            <foreignKeyConstraintExists foreignKeyName="fkdix5ditfgcg3njrncmn5cs528" foreignKeyTableName="retention_member_views" />
+            <foreignKeyConstraintExists foreignKeyName="fkh2ttgdol8wn63nqsk3lgtyg8r" foreignKeyTableName="fragmentation_fragment_relations" />
+        </not>
+    </preConditions>
+    <addForeignKeyConstraint baseColumnNames="member_id" baseTableName="retention_member_views" constraintName="fkdix5ditfgcg3njrncmn5cs528" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="retention_member_properties" validate="true"/>
+    <addForeignKeyConstraint baseColumnNames="fragment_id" baseTableName="fragmentation_fragment_relations" constraintName="fkh2ttgdol8wn63nqsk3lgtyg8r" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="fragmentation_fragment" validate="true"/>
+</changeSet>
 </databaseChangeLog>
