@@ -48,7 +48,7 @@ class MemberPaginationServiceTest {
 
     @Test
     void when_MemberPresent_Then_MemberPaginated() {
-        when(bucketisedMemberRepository.getFirstUnallocatedMember(VIEW_NAME, SEQ_NR))
+        when(bucketisedMemberRepository.getFirstUnallocatedMember(VIEW_NAME, 1L))
                 .thenReturn(List.of(MEMBER));
         Fragment child = FRAGMENT.createChild(new FragmentPair(PaginationConstants.PAGE_NUMBER, "1"));
         when(openPageProvider.retrieveOpenFragmentOrCreateNewFragment(FRAGMENT_ID))
