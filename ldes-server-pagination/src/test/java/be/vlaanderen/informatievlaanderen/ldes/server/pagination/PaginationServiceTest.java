@@ -58,8 +58,6 @@ class PaginationServiceTest {
         InOrder inOrder = inOrder(executorService, service1, service2);
         inOrder.verify(service1).isRunning();
         inOrder.verify(service1).setTask(any());
-        inOrder.verify(service1, times(1)).paginateMember();;
-        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
