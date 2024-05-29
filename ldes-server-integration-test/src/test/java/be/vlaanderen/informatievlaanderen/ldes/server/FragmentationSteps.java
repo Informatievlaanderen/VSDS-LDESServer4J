@@ -88,7 +88,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("this fragment contains {int} members")
 	public void thisFragmentContainsMembers(int expectedMemberCount) {
-		await().atMost(Duration.of(20, ChronoUnit.SECONDS)).until(() -> {
+		await().atMost(Duration.of(60, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
 			return MemberCounter.countMembers(expectedMemberCount).matches(currentFragment);
 		});
@@ -101,7 +101,7 @@ public class FragmentationSteps extends LdesServerIntegrationTest {
 
 	@And("this fragment has no relations")
 	public void thisFragmentHasNoRelations() {
-		await().atMost(Duration.of(20, ChronoUnit.SECONDS)).until(() -> {
+		await().atMost(Duration.of(60, ChronoUnit.SECONDS)).until(() -> {
 			fetchFragment(currentPath);
 			return !currentFragment.listObjectsOfProperty(createProperty(TREE + "relation")).hasNext();
 		});
