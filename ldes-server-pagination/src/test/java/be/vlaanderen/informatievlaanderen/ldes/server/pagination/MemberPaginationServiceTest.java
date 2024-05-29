@@ -58,7 +58,7 @@ class MemberPaginationServiceTest {
 
         InOrder inOrder = inOrder(eventPublisher, fragmentRepository);
         inOrder.verify(eventPublisher, times(1)).publishEvent(new MemberAllocatedEvent(MEMBER.memberId(), VIEW_NAME.getCollectionName(),
-                MEMBER.viewName().asString(), child.getFragmentIdString()));
+                MEMBER.viewName().getViewName(), child.getFragmentIdString()));
         inOrder.verify(fragmentRepository, times(1)).incrementNrOfMembersAdded(child.getFragmentId());
         inOrder.verifyNoMoreInteractions();
     }
