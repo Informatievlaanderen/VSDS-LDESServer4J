@@ -4,7 +4,4 @@
     <include file="/db/changelog/3_0_0/master.xml" />
     <include file="/db/changelog/3_0_1/master.xml" />
 
-    <changeSet author="vsds" id="1716541682505-30">
-
-    </changeSet>
 </databaseChangeLog>
