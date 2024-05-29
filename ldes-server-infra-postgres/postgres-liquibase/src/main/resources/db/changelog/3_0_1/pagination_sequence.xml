@@ -8,7 +8,7 @@
                 <tableExists tableName="pagination_sequence"/>
             </not>
         </preConditions>
-        <createTable tableName="fragmentation_sequence">
+        <createTable tableName="pagination_sequence">
             <column name="view_name" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pagination_sequence_pkey"/>
             </column>
