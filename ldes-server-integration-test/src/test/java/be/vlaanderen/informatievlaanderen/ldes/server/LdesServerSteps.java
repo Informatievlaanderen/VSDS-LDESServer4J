@@ -260,7 +260,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@And("the LDES {string} contains {int} members")
 	public void theLDESContainsMembers(String collection, int expectedMemberCount) {
-		await().atMost(Duration.ofSeconds(120))
+		await().atMost(Duration.ofSeconds(80))
 				.until(() -> memberRepository.getMemberStreamOfCollection(collection).count() == expectedMemberCount);
 	}
 
@@ -311,7 +311,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I fetch a fragment from url {string} in a streaming way")
 	public void iFetchAStreamingFragment(String url) {
-		await().atMost(Duration.ofSeconds(120))
+		await().atMost(Duration.ofSeconds(80))
 				.until(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)
