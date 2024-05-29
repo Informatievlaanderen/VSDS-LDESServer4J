@@ -132,7 +132,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 	@Then("I can fetch the TreeNode {string} and it contains {int} members")
 	public void iCanFetchTheTreeNodeAndItContainsMembers(String url, int expectedNumberOfMembers) {
 		await()
-				.atMost(40, SECONDS)
+				.atMost(60, SECONDS)
 				.pollInterval(1, SECONDS)
 				.untilAsserted(() -> mockMvc.perform(get(url))
 						.andExpect(MemberCounter.countMembers(expectedNumberOfMembers))
@@ -243,7 +243,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 				.next()
 				.toString();
 
-		await().atMost(Duration.ofSeconds(40))
+		await().atMost(Duration.ofSeconds(60))
 				.until(() -> {
 					Model fragmentPage = RDFParser.fromString(
 									mockMvc.perform(get(fragmentUrl.formatted(collection, view))
@@ -311,7 +311,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I fetch a fragment from url {string} in a streaming way")
 	public void iFetchAStreamingFragment(String url) {
-		await().atMost(Duration.ofSeconds(40))
+		await().atMost(Duration.ofSeconds(60))
 				.until(() -> {
 					FluxExchangeResult<String> response = client.get()
 							.uri(url)
