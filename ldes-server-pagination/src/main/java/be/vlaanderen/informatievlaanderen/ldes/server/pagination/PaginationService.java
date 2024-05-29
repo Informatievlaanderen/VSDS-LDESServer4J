@@ -54,6 +54,7 @@ public class PaginationService {
 
     @EventListener
     @Async
+    @SuppressWarnings("java:S2629")
     public void handleMemberBucketisedEvent(MemberBucketisedEvent event) {
         ViewName viewName = event.viewName();
         MemberPaginationService paginationService = map.get(viewName);

@@ -6,18 +6,15 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.RootFragmentCreator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Map;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreatorImpl.PAGINATION_FRAGMENTATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -36,9 +33,7 @@ class FragmentationStrategyCreatorImplTest {
 	@BeforeEach
 	void setUp() {
 		applicationContext = mock(ApplicationContext.class);
-		FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 		rootFragmentCreator = mock(RootFragmentCreator.class);
-		ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
 				applicationContext, rootFragmentCreator);
 	}

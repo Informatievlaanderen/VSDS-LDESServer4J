@@ -28,6 +28,7 @@ public class FragmentationStrategyExecutor {
 	private final BucketisedMemberSaver bucketisedMemberSaver;
 	private boolean isExecutorActive = true;
 
+	@SuppressWarnings("java:S107")
 	public FragmentationStrategyExecutor(ViewName viewName,
                                          FragmentationStrategy fragmentationStrategy,
                                          RootFragmentRetriever rootFragmentRetriever,
