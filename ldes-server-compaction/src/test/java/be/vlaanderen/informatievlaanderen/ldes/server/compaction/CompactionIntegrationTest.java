@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.compaction;
 import be.vlaanderen.informatievlaanderen.ldes.server.compaction.application.services.SchedulingConfigCompaction;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.BulkMemberAllocatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.repository.AllocationRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.spi.RetentionPolicyEmptinessChecker;
 import io.cucumber.spring.CucumberContextConfiguration;

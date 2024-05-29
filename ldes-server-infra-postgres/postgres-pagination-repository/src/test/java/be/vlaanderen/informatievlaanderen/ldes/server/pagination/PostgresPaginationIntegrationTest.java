@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.rep
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.SequenceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.pagination.postgres.repository.PaginationSequenceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.retention.repositories.MemberPropertiesRepository;
 import io.cucumber.spring.CucumberContextConfiguration;
