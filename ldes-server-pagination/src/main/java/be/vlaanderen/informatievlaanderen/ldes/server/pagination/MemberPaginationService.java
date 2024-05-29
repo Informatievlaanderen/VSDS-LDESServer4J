@@ -82,7 +82,7 @@ public class MemberPaginationService {
             BucketisedMember member = pair.getRight();
             Fragment page = pair.getLeft();
             eventPublisher.publishEvent(new MemberAllocatedEvent(member.memberId(), page.getViewName().getCollectionName(),
-                    page.getViewName().asString(), page.getFragmentId().asDecodedFragmentId()));
+                    page.getViewName().getViewName(), page.getFragmentId().asDecodedFragmentId()));
         });
 
         pages.forEach(pair -> {
