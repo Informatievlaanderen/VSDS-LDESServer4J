@@ -1,13 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.MemberRetriever;
 import io.micrometer.observation.ObservationRegistry;
-import org.apache.jena.rdf.model.Model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -24,15 +25,18 @@ public class FragmentationStrategyExecutor {
 	private final ObservationRegistry observationRegistry;
 	private final MemberRetriever memberRetriever;
 	private final FragmentSequenceRepository fragmentSequenceRepository;
+	private final BucketisedMemberSaver bucketisedMemberSaver;
 	private boolean isExecutorActive = true;
 
+	@SuppressWarnings("java:S107")
 	public FragmentationStrategyExecutor(ViewName viewName,
                                          FragmentationStrategy fragmentationStrategy,
                                          RootFragmentRetriever rootFragmentRetriever,
                                          ObservationRegistry observationRegistry,
                                          ExecutorService executorService,
-										 MemberRetriever memberRetriever,
-                                         FragmentSequenceRepository fragmentSequenceRepository) {
+                                         MemberRetriever memberRetriever,
+                                         FragmentSequenceRepository fragmentSequenceRepository,
+										 BucketisedMemberSaver bucketisedMemberSaver) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
 		this.executorService = executorService;
@@ -40,7 +44,8 @@ public class FragmentationStrategyExecutor {
 		this.viewName = viewName;
         this.memberRetriever = memberRetriever;
         this.fragmentSequenceRepository = fragmentSequenceRepository;
-	}
+        this.bucketisedMemberSaver = bucketisedMemberSaver;
+    }
 
 	public void execute() {
 		executorService.execute(addMembersToFragments());
@@ -72,9 +77,8 @@ public class FragmentationStrategyExecutor {
 	private FragmentSequence fragment(Member member) {
 		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
 		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
-		String memberId = member.id();
-		Model memberModel = member.model();
-		fragmentationStrategy.addMemberToFragment(rootFragmentOfView, memberId, memberModel, parentObservation);
+		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(rootFragmentOfView, member, parentObservation);
+		bucketisedMemberSaver.save(members);
 		final FragmentSequence lastProcessedSequence = new FragmentSequence(viewName, member.sequenceNr());
 		fragmentSequenceRepository.saveLastProcessedSequence(lastProcessedSequence);
 		parentObservation.stop();

@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Primary
 public interface SequenceEntityRepository extends JpaRepository<SequenceEntity, String> {
-	void deleteAllByViewNameStartingWith(String collectionName);
+    void deleteAllByViewNameStartingWith(String collectionName);
 }

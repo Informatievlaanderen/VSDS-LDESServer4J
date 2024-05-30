@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.SequenceEntityMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.SequenceEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;

@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.sequence;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.PostgresFragmentationIntegrationTest;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

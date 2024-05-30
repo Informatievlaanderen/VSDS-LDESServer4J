@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="retention-init">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="retention_member_views"/>
+                <tableExists tableName="retention_member_properties"/>
+            </not>
+        </preConditions>
+        <createTable tableName="retention_member_views">
+            <column autoIncrement="true" name="id" startWith="19711" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="retention_member_views_pkey"/>
+            </column>
+            <column name="view" type="VARCHAR(255)"/>
+            <column name="member_id" type="VARCHAR(255)"/>
+        </createTable>
+        <createTable tableName="retention_member_properties">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="retention_member_properties_pkey"/>
+            </column>
+            <column name="collection_name" type="VARCHAR(255)"/>
+            <column name="is_in_event_source" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="version_of" type="VARCHAR(255)"/>
+        </createTable>
+        <createIndex indexName="idx3mw3hkmk4pkhm5hg3ptn3bdmn" tableName="retention_member_properties">
+            <column name="collection_name"/>
+        </createIndex>
+        <createIndex indexName="idx6mncfjyln4j5kn7mwba0ir1j5" tableName="retention_member_properties">
+            <column name="version_of"/>
+        </createIndex>
+        <createIndex indexName="idxd67whd6tvl68unj2vxcpqcs8w" tableName="retention_member_properties">
+            <column name="timestamp"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

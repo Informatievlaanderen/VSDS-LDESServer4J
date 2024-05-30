@@ -59,18 +59,17 @@ class GeospatialFragmentationStrategyTest {
 		Fragment tileFragmentTwo = mockCreationGeospatialFragment("2/2/2");
 		Fragment tileFragmentThree = mockCreationGeospatialFragment("3/3/3");
 
-		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(),
-				member.model(), mock(Observation.class));
+		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member, mock(Observation.class));
 
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentOne),
-						any(), any(), any(Observation.class));
+						any(), any(Observation.class));
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentTwo),
-						any(), any(), any(Observation.class));
+						any(), any(Observation.class));
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(tileFragmentThree),
-						any(), any(), any(Observation.class));
+						any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 	@Test
@@ -83,12 +82,11 @@ class GeospatialFragmentationStrategyTest {
 				PARENT_FRAGMENT))
 				.thenReturn(defaultTileFragment);
 
-		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member.id(),
-				member.model(), mock(Observation.class));
+		geospatialFragmentationStrategy.addMemberToFragment(PARENT_FRAGMENT, member, mock(Observation.class));
 
 		verify(decoratedFragmentationStrategy,
 				times(1)).addMemberToFragment(eq(defaultTileFragment),
-				any(), any(), any(Observation.class));
+				any(), any(Observation.class));
 		verifyNoMoreInteractions(decoratedFragmentationStrategy);
 	}
 
