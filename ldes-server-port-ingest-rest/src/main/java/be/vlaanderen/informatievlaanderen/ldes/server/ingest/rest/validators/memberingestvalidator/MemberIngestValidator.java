@@ -15,14 +15,12 @@ import org.apache.jena.shacl.ValidationReport;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class MemberIngestValidator implements IngestValidator {
     private final Set<EventStream> eventstreams = new HashSet<>();
+    private final Set<String> closedEventstreams = new HashSet<>();
     private final List<IngestReportValidator> validators;
 
     public MemberIngestValidator(List<IngestReportValidator> validators) {
@@ -48,15 +46,22 @@ public class MemberIngestValidator implements IngestValidator {
     @EventListener
     public void handleEventStreamClosedEvent(EventStreamClosedEvent event) {
         eventstreams.removeIf(eventStream -> Objects.equals(eventStream.getCollection(), event.collectionName()));
+        closedEventstreams.add(event.collectionName());
     }
 
     @Override
     public void validate(Model model, String collectionName) {
-        EventStream eventStream = eventstreams.stream()
+        checkIfCollectionClosed(collectionName);
+
+        Optional<EventStream> eventStream = eventstreams.stream()
                 .filter(stream -> Objects.equals(stream.getCollection(), collectionName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("collection %s is closed or might not exist".formatted(collectionName)));
-        validateModel(model, eventStream);
+                .findFirst();
+        eventStream.ifPresent(stream -> validateModel(model, stream));
+    }
+
+    private void checkIfCollectionClosed(String collectionName) {
+        if (closedEventstreams.contains(collectionName))
+            throw new IllegalArgumentException("collection %s is closed".formatted(collectionName));
     }
 
     private void validateModel(Model model, EventStream eventStream) {

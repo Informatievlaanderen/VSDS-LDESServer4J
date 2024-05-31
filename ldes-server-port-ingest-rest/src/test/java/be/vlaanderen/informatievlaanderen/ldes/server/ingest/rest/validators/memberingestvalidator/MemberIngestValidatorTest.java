@@ -60,7 +60,7 @@ class MemberIngestValidatorTest {
 
         assertThatThrownBy(() -> validator.validate(model, collectionName))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("collection %s is closed or might not exist".formatted(collectionName));
+                .hasMessage("collection %s is closed".formatted(collectionName));
     }
 
     static class IncorrectMemberArgumentsProvider implements ArgumentsProvider {
