@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="fetch-init">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="fetch_allocation"/>
+            </not>
+        </preConditions>
+        <createTable tableName="fetch_allocation">
+            <column name="id" type="VARCHAR(1024)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="fetch_allocation_pkey"/>
+            </column>
+            <column name="collection_name" type="VARCHAR(255)"/>
+            <column name="fragment_id" type="VARCHAR(255)"/>
+            <column name="member_id" type="VARCHAR(255)"/>
+            <column name="view_name" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createIndex indexName="idxpyepis6ote3trlqure45ckbn7" tableName="fetch_allocation">
+            <column name="collection_name"/>
+        </createIndex>
+        <createIndex indexName="idxp98b5wsvkvg8asc28un2kmbkk" tableName="fetch_allocation">
+            <column name="fragment_id"/>
+        </createIndex>
+        <createIndex indexName="collection_view" tableName="fetch_allocation">
+            <column name="collection_name"/>
+            <column name="view_name"/>
+        </createIndex>
+        <createIndex indexName="memberid_view" tableName="fetch_allocation">
+            <column name="collection_name"/>
+            <column name="view_name"/>
+            <column name="member_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

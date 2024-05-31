@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.FragmentEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.repositories.MemberRepository;
@@ -36,6 +37,9 @@ public class PostgresFragmentationIntegrationTest {
     @Autowired
     public FragmentSequenceRepository fragmentSequenceRepository;
 
+    @Autowired
+    public BucketisedMemberRepository bucketisedMemberRepository;
+
     @TestConfiguration
     public static class EventStreamControllerTestConfiguration {
 
@@ -53,7 +57,5 @@ public class PostgresFragmentationIntegrationTest {
         public MemberPropertiesRepository memberPropertiesRepository() {
             return Mockito.mock(MemberPropertiesRepository.class);
         }
-
     }
-
 }

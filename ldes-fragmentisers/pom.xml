@@ -15,7 +15,6 @@
 		<module>ldes-fragmentisers-common</module>
 		<module>ldes-fragmentisers-geospatial</module>
 		<module>ldes-fragmentisers-timebased-hierarchical</module>
-		<module>ldes-fragmentisers-pagination</module>
         <module>ldes-fragmentisers-reference</module>
     </modules>
 

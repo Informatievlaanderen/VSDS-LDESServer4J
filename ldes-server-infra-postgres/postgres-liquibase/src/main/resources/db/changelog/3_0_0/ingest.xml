@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+    <changeSet author="vsds" id="ingest-init">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="ingest_ldesmember"/>
+            </not>
+        </preConditions>
+        <createTable tableName="ingest_ldesmember">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ingest_ldesmember_pkey"/>
+            </column>
+            <column name="collection_name" type="VARCHAR(255)"/>
+            <column name="is_in_event_source" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="model" type="BYTEA"/>
+            <column name="sequence_nr" type="BIGINT"/>
+            <column name="timestamp" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="transaction_id" type="VARCHAR(255)"/>
+            <column name="version_of" type="VARCHAR(255)"/>
+        </createTable>
+        <createIndex indexName="idxnxni86e0qin7oekg2ivny5w5l" tableName="ingest_ldesmember">
+            <column name="collection_name"/>
+        </createIndex>
+        <createIndex indexName="idxgfsov0411i7exy7osic104oui" tableName="ingest_ldesmember">
+            <column name="collection_name"/>
+            <column name="sequence_nr"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

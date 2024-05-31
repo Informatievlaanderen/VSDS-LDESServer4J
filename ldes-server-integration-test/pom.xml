@@ -62,7 +62,13 @@
         </dependency>
         <dependency>
             <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
-            <artifactId>ldes-fragmentisers-pagination</artifactId>
+            <artifactId>ldes-server-pagination</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>be.vlaanderen.informatievlaanderen.vsds</groupId>
+            <artifactId>postgres-pagination-repository</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

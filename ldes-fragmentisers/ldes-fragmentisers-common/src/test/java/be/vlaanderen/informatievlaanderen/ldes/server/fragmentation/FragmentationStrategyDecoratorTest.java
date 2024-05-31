@@ -53,11 +53,10 @@ class FragmentationStrategyDecoratorTest {
 		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		Member member = mock(Member.class);
 		Observation span = mock(Observation.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member.id(), member.model(),
+		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,
 				span);
 		verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member.id(),
-						member.model(), span);
+				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
 	}
 
 	static class FragmentationStrategyDecoratorTestImpl extends

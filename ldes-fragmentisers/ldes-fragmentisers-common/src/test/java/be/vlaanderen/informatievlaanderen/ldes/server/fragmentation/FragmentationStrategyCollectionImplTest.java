@@ -7,6 +7,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewIn
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyExecutorCreatorImpl;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,11 @@ class FragmentationStrategyCollectionImplTest {
 			FragmentationStrategyExecutorCreatorImpl.class);
 	private final FragmentRepository fragmentRepository = mock(FragmentRepository.class);
 	private final FragmentSequenceRepository fragmentSequenceRepository = mock(FragmentSequenceRepository.class);
+	private final BucketisedMemberRepository bucketisedMemberRepository = mock(BucketisedMemberRepository.class);
 
 	private final FragmentationStrategyCollectionImpl fragmentationStrategyCollection = new FragmentationStrategyCollectionImpl(
-			fragmentRepository,
-			fragmentationStrategyExecutorCreator, fragmentSequenceRepository);
+			fragmentRepository, fragmentationStrategyExecutorCreator,
+			fragmentSequenceRepository, bucketisedMemberRepository);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -81,11 +83,13 @@ class FragmentationStrategyCollectionImplTest {
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 		// verify that the executor is shutdown before removing everything from repos.
 		var fragmentationStrategyExecutor = initResult.fragmentationStrategyExecutor;
-		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository, fragmentationStrategyExecutor);
+		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository,
+				fragmentationStrategyExecutor, bucketisedMemberRepository);
 		inOrder.verify(fragmentationStrategyExecutor).shutdown();
 		inOrder.verify(fragmentRepository)
 				.removeLdesFragmentsOfView(initResult.viewSpecification().getName().asString());
 		inOrder.verify(fragmentSequenceRepository).deleteByViewName(initResult.viewName);
+		inOrder.verify(bucketisedMemberRepository).deleteByViewName(initResult.viewName);
 	}
 
 	@Test
@@ -112,10 +116,12 @@ class FragmentationStrategyCollectionImplTest {
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 		// verify that the executor is shutdown before removing everything from repos.
 		var fragmentationStrategyExecutor = initResult.fragmentationStrategyExecutor;
-		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository, fragmentationStrategyExecutor);
+		InOrder inOrder = inOrder(fragmentRepository, fragmentSequenceRepository,
+				fragmentationStrategyExecutor, bucketisedMemberRepository);
 		inOrder.verify(fragmentationStrategyExecutor).shutdown();
 		inOrder.verify(fragmentRepository).deleteTreeNodesByCollection(initResult.viewName.getCollectionName());
 		inOrder.verify(fragmentSequenceRepository).deleteByCollection(initResult.viewName.getCollectionName());
+		inOrder.verify(bucketisedMemberRepository).deleteByCollection(initResult.viewName.getCollectionName());
 	}
 
 }

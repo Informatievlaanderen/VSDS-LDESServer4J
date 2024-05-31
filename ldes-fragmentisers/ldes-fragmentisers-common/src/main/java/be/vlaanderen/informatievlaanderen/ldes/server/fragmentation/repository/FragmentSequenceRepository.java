@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentSequence;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 
 import java.util.Optional;
 

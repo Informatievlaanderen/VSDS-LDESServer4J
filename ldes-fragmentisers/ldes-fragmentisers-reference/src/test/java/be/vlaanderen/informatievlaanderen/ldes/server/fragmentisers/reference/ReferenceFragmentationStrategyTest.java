@@ -63,17 +63,17 @@ class ReferenceFragmentationStrategyTest {
         Fragment referenceFragmentThree = mockCreationReferenceFragment(typeAdres);
 
         referenceFragmentationStrategy
-                .addMemberToFragment(PARENT_FRAGMENT, member.id(), member.model(), mock(Observation.class));
+                .addMemberToFragment(PARENT_FRAGMENT, member, mock(Observation.class));
 
         verify(decoratedFragmentationStrategy,
                 times(1)).addMemberToFragment(eq(referenceFragmentOne),
-                any(), any(), any(Observation.class));
+                any(), any(Observation.class));
         verify(decoratedFragmentationStrategy,
                 times(1)).addMemberToFragment(eq(referenceFragmentTwo),
-                any(), any(), any(Observation.class));
+                any(), any(Observation.class));
         verify(decoratedFragmentationStrategy,
                 times(1)).addMemberToFragment(eq(referenceFragmentThree),
-                any(), any(), any(Observation.class));
+                any(), any(Observation.class));
         verifyNoMoreInteractions(decoratedFragmentationStrategy);
     }
 
