@@ -41,6 +41,7 @@ public class MemberIngestValidator implements IngestValidator {
     @EventListener
     public void handleEventStreamDeletedEvent(EventStreamDeletedEvent event) {
         eventstreams.removeIf(eventStream -> Objects.equals(eventStream.getCollection(), event.collectionName()));
+        closedEventstreams.remove(event.collectionName());
     }
 
     @EventListener
