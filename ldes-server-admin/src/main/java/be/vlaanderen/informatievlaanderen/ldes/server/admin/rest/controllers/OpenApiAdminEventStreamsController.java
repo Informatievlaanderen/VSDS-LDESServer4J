@@ -187,6 +187,11 @@ public interface OpenApiAdminEventStreamsController {
 	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found")
 	void deleteEventStream(@Parameter(example = "event-stream") String collectionName);
 
+	@Operation(summary = "Close an Event Stream")
+	@ApiResponse(responseCode = "200", description = "Event Stream is successfully closed and all related fragments are made immutable")
+	@ApiResponse(responseCode = "404", description = "Event Stream with provided collection name could not be found")
+	void closeEventStream(@Parameter(example = "event-stream") String collectionName);
+
 	@Operation(summary = "Update the Event Source of an Event Stream")
 	@ApiResponse(responseCode = "200", description = "Event Source has been successfully updated", content = {
 			@Content(mediaType = contentTypeTurtle, schema = @Schema(implementation = String.class), examples = @ExampleObject(value = """

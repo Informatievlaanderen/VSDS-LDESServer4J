@@ -9,11 +9,11 @@ public class EventStreamConverter {
 
     public EventStreamEntity fromEventStream(EventStream eventStream) {
 		return new EventStreamEntity(eventStream.getCollection(), eventStream.getTimestampPath(),
-				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled());
+				eventStream.getVersionOfPath(), eventStream.isVersionCreationEnabled(), eventStream.isClosed());
 	}
 
 	public EventStream toEventStream(EventStreamEntity eventStreamEntity) {
 		return new EventStream(eventStreamEntity.getId(), eventStreamEntity.getTimestampPath(),
-				eventStreamEntity.getVersionOfPath(), eventStreamEntity.isVersionCreationEnabled());
+				eventStreamEntity.getVersionOfPath(), eventStreamEntity.isVersionCreationEnabled(), eventStreamEntity.isClosed());
 	}
 }

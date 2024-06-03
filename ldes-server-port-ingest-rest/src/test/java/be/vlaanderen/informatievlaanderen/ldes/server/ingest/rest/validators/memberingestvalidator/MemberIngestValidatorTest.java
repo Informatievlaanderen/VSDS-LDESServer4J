@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.memberingestvalidator;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ShaclValidationException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
@@ -18,6 +19,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MemberIngestValidatorTest {
@@ -48,6 +50,17 @@ class MemberIngestValidatorTest {
     @ArgumentsSource(CorrectMemberArgumentsProvider.class)
     void when_CorrectMemberReceived_Then_ValidationDoesNotThrowException(Model model, String collectionName) {
         assertDoesNotThrow(() -> validator.validate(model, collectionName));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(CorrectMemberArgumentsProvider.class)
+    void when_EventStreamClosedEvent_validationThrowsException(Model model, String collectionName) {
+        EventStreamClosedEvent eventStreamClosedEvent = new EventStreamClosedEvent(collectionName);
+        validator.handleEventStreamClosedEvent(eventStreamClosedEvent);
+
+        assertThatThrownBy(() -> validator.validate(model, collectionName))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("collection %s is closed".formatted(collectionName));
     }
 
     static class IncorrectMemberArgumentsProvider implements ArgumentsProvider {

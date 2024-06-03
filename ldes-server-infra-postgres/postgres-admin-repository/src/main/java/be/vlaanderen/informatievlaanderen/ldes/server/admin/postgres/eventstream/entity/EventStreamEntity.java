@@ -12,14 +12,23 @@ public class EventStreamEntity {
 	private String timestampPath;
 	private String versionOfPath;
 	private boolean versionCreationEnabled;
+	private boolean isClosed;
 
 	protected EventStreamEntity() {}
 
-	public EventStreamEntity(String id, String timestampPath, String versionOfPath, boolean versionCreationEnabled) {
+	public EventStreamEntity(String id,
+							 String timestampPath,
+							 String versionOfPath,
+							 boolean versionCreationEnabled) {
+		this(id, timestampPath, versionOfPath, versionCreationEnabled, false);
+	}
+
+	public EventStreamEntity(String id, String timestampPath, String versionOfPath, boolean versionCreationEnabled, boolean isClosed) {
 		this.id = id;
 		this.timestampPath = timestampPath;
 		this.versionOfPath = versionOfPath;
 		this.versionCreationEnabled = versionCreationEnabled;
+		this.isClosed = isClosed;
 	}
 
 	public String getId() {
@@ -36,5 +45,9 @@ public class EventStreamEntity {
 
 	public boolean isVersionCreationEnabled() {
 		return versionCreationEnabled;
+	}
+
+	public boolean isClosed() {
+		return isClosed;
 	}
 }

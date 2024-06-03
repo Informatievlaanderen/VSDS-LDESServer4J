@@ -51,5 +51,10 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
             nativeQuery = true)
     void incrementNrOfMembersAdded(@Param("id") String id, @Param("memberCount") Integer memberCount);
 
-    Stream<FragmentEntity> findByDeleteTimeNotNull();
+	Stream<FragmentEntity> findByDeleteTimeNotNull();
+
+	@Modifying
+	@Query(value = "UPDATE fragmentation_fragment SET immutable = true WHERE collection_name = :collectionName",
+			nativeQuery = true)
+	void markFragmentsImmutableInCollection(@Param("collectionName") String collectionName);
 }

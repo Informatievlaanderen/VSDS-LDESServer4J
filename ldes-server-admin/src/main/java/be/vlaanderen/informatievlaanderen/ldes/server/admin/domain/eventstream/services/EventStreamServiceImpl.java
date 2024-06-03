@@ -9,6 +9,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.services.ShaclShapeService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.view.service.ViewService;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.spi.EventStreamTO;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamCreatedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -53,8 +54,7 @@ public class EventStreamServiceImpl implements EventStreamService {
 
 	@Override
 	public EventStreamTO retrieveEventStream(String collectionName) {
-		EventStream eventStream = eventStreamRepository.retrieveEventStream(collectionName)
-				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
+		EventStream eventStream = getEventStream(collectionName);
 		return mapToEventStreamTO(eventStream);
 	}
 
@@ -93,6 +93,12 @@ public class EventStreamServiceImpl implements EventStreamService {
 		eventSourceService.saveEventSource(collectionName, eventSourceModel);
 	}
 
+	@Override
+	public void closeEventStream(String collectionName) {
+		EventStream eventStream = getEventStream(collectionName);
+		eventPublisher.publishEvent(new EventStreamClosedEvent(eventStream.getCollection()));
+	}
+
 	private EventStreamTO mapToEventStreamTO(EventStream eventStream) {
 		List<ViewSpecification> views = viewService.getViewsByCollectionName(eventStream.getCollection());
 		ShaclShape shaclShape = shaclShapeService.retrieveShaclShape(eventStream.getCollection());
@@ -103,6 +109,11 @@ public class EventStreamServiceImpl implements EventStreamService {
 				views, shaclShape.getModel(),
 				eventSource.map(EventSource::getRetentionPolicies).orElse(List.of()),
 				dataset.orElse(null));
+	}
+
+	private EventStream getEventStream(String collectionName) {
+		return eventStreamRepository.retrieveEventStream(collectionName)
+				.orElseThrow(() -> new MissingResourceException("eventstream", collectionName));
 	}
 
 	private void delete(String collectionName) {

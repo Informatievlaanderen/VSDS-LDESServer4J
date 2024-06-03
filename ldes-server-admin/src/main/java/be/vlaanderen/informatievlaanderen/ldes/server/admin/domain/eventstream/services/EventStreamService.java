@@ -13,4 +13,6 @@ public interface EventStreamService extends EventStreamServiceSpi {
 	EventStreamTO createEventStream(EventStreamTO eventStream);
 
 	void updateEventSource(String collectionName, List<Model> eventSourceModel);
+
+	void closeEventStream(String collectionName);
 }
