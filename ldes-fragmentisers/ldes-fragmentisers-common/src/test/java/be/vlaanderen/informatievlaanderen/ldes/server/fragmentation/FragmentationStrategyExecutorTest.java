@@ -47,8 +47,6 @@ class FragmentationStrategyExecutorTest {
 	private MemberRetriever memberRetriever;
 	@Mock
 	private FragmentSequenceRepository fragmentSequenceRepository;
-	@Mock
-	private BucketisedMemberSaverImpl bucketisedMemberSaver;
 
 	@Nested
 	class ExecuteNext {
@@ -59,20 +57,20 @@ class FragmentationStrategyExecutorTest {
 		void when_ExecuteIsCalled_then_AllLogicIsWrappedByTheExecutorService() {
 			ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-					observationRegistry, executorService, memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+					observationRegistry, executorService, memberRetriever, fragmentSequenceRepository);
 
 			executor.execute();
 
 			verify(executorService).execute(any());
 			verifyNoMoreInteractions(fragmentationStrategy, rootFragmentRetriever, observationRegistry,
-					memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+					memberRetriever, fragmentSequenceRepository);
 		}
 
 		@Test
 		void when_ExecuteIsCalled_then_TheExecutorService_should_NotFragmentAnythingIfNotPresent() {
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
 					ObservationRegistry.create(),
-					MoreExecutors.newDirectExecutorService(), memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+					MoreExecutors.newDirectExecutorService(), memberRetriever, fragmentSequenceRepository);
 			FragmentSequence fragmentSequence = new FragmentSequence(viewName, 0L);
 			when(fragmentSequenceRepository.findLastProcessedSequence(viewName))
 					.thenReturn(Optional.of(fragmentSequence));
@@ -90,7 +88,7 @@ class FragmentationStrategyExecutorTest {
 			ObservationRegistry observationRegistry = ObservationRegistry.create();
 			var executor = new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
 					observationRegistry, MoreExecutors.newDirectExecutorService(), memberRetriever,
-					fragmentSequenceRepository, bucketisedMemberSaver);
+					fragmentSequenceRepository);
 			when(fragmentSequenceRepository.findLastProcessedSequence(viewName)).thenReturn(Optional.empty());
 			String memberId = "id";
 			Model memberModel = ModelFactory.createDefaultModel();
@@ -104,7 +102,7 @@ class FragmentationStrategyExecutorTest {
 
 			executor.execute();
 
-			verify(fragmentationStrategy).addMemberToFragment(eq(rootFragment), eq(member), any());
+			verify(fragmentationStrategy).addMemberToBucket(eq(rootFragment), eq(member), any());
 			verify(fragmentSequenceRepository).saveLastProcessedSequence(new FragmentSequence(viewName, sequenceNr));
 		}
 	}
@@ -113,7 +111,7 @@ class FragmentationStrategyExecutorTest {
 	void isPartOfCollection() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA, null, null, null,
-				null, memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+				null, memberRetriever, fragmentSequenceRepository);
 
 		assertTrue(executorA.isPartOfCollection(viewNameA.getCollectionName()));
 		assertFalse(executorA.isPartOfCollection("other"));
@@ -123,7 +121,7 @@ class FragmentationStrategyExecutorTest {
 	void shutDown() throws InterruptedException {
 		final ViewName viewName = ViewName.fromString("col/viewA");
 		final FragmentationStrategyExecutor executor = new FragmentationStrategyExecutor(viewName, null, null, null,
-				executorService, memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+				executorService, memberRetriever, fragmentSequenceRepository);
 
 		executor.shutdown();
 
@@ -135,7 +133,7 @@ class FragmentationStrategyExecutorTest {
 	void getViewName() {
 		final ViewName viewNameA = ViewName.fromString("col/viewA");
 		final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA, null, null, null,
-				null, memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+				null, memberRetriever, fragmentSequenceRepository);
 
 		assertEquals(viewNameA, executorA.getViewName());
 	}
@@ -155,23 +153,22 @@ class FragmentationStrategyExecutorTest {
 
 		private static final ViewName viewNameA = ViewName.fromString("col/viewA");
 		private static final FragmentationStrategyExecutor executorA = new FragmentationStrategyExecutor(viewNameA,
-				null, null, null, null, null, null, null);
+				null, null, null, null, null, null);
 
 		@Override
 		public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 			return Stream.of(
 					Arguments.of(equals(), executorA, executorA),
 					Arguments.of(equals(), executorA,
-							new FragmentationStrategyExecutor(viewNameA, null, null, null, null, null, null, null)),
+							new FragmentationStrategyExecutor(viewNameA, null, null, null, null, null, null)),
 					Arguments.of(equals(), executorA,
 							new FragmentationStrategyExecutor(viewNameA, mock(FragmentationStrategy.class),
 									mock(RootFragmentRetriever.class), mock(ObservationRegistry.class),
 									mock(ExecutorService.class), mock(MemberRetriever.class),
-									mock(FragmentSequenceRepository.class),
-									mock(BucketisedMemberSaverImpl.class))),
+									mock(FragmentSequenceRepository.class))),
 					Arguments.of(notEquals(), executorA,
 							new FragmentationStrategyExecutor(ViewName.fromString("col/viewB"), null, null, null,
-									null, null, null, null)));
+									null, null, null)));
 		}
 
 		private static BiConsumer<Object, Object> equals() {

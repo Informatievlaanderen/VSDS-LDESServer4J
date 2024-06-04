@@ -63,16 +63,16 @@ class ReferenceFragmentationStrategyTest {
         Fragment referenceFragmentThree = mockCreationReferenceFragment(typeAdres);
 
         referenceFragmentationStrategy
-                .addMemberToFragment(PARENT_FRAGMENT, member, mock(Observation.class));
+                .addMemberToBucket(PARENT_FRAGMENT, member, mock(Observation.class));
 
         verify(decoratedFragmentationStrategy,
-                times(1)).addMemberToFragment(eq(referenceFragmentOne),
+                times(1)).addMemberToBucket(eq(referenceFragmentOne),
                 any(), any(Observation.class));
         verify(decoratedFragmentationStrategy,
-                times(1)).addMemberToFragment(eq(referenceFragmentTwo),
+                times(1)).addMemberToBucket(eq(referenceFragmentTwo),
                 any(), any(Observation.class));
         verify(decoratedFragmentationStrategy,
-                times(1)).addMemberToFragment(eq(referenceFragmentThree),
+                times(1)).addMemberToBucket(eq(referenceFragmentThree),
                 any(), any(Observation.class));
         verifyNoMoreInteractions(decoratedFragmentationStrategy);
     }

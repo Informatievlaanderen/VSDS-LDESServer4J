@@ -1,13 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.TreeRelation;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import io.micrometer.observation.Observation;
-
-import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.domain.constants.RdfConstants.GENERIC_TREE_RELATION;
 
@@ -24,9 +21,13 @@ public abstract class FragmentationStrategyDecorator implements FragmentationStr
 	}
 
 	@Override
-	public List<BucketisedMember> addMemberToFragment(Fragment rootFragmentOfView, Member member,
-													  Observation parentObservation) {
-		return fragmentationStrategy.addMemberToFragment(rootFragmentOfView, member, parentObservation);
+	public void addMemberToBucket(Fragment rootFragmentOfView, Member member, Observation parentObservation) {
+		fragmentationStrategy.addMemberToBucket(rootFragmentOfView, member, parentObservation);
+	}
+
+	@Override
+	public void saveBucket() {
+		fragmentationStrategy.saveBucket();
 	}
 
 	protected void addRelationFromParentToChild(Fragment parentFragment, Fragment childFragment) {

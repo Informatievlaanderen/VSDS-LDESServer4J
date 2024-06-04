@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentationConfig;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.BucketisedMemberSaver;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyWrapper;
@@ -15,16 +16,19 @@ public class FragmentationStrategyCreatorImpl implements FragmentationStrategyCr
 	public static final String PAGINATION_FRAGMENTATION = "PaginationFragmentation";
 	private final ApplicationContext applicationContext;
 	private final RootFragmentCreator rootFragmentCreator;
+	private final BucketisedMemberSaver bucketisedMemberSaver;
 
 	public FragmentationStrategyCreatorImpl(ApplicationContext applicationContext,
-			RootFragmentCreator rootFragmentCreator) {
+                                            RootFragmentCreator rootFragmentCreator, BucketisedMemberSaver bucketisedMemberSaver) {
 		this.applicationContext = applicationContext;
 		this.rootFragmentCreator = rootFragmentCreator;
-	}
+        this.bucketisedMemberSaver = bucketisedMemberSaver;
+    }
 
+	@Override
 	public FragmentationStrategy createFragmentationStrategyForView(ViewSpecification viewSpecification) {
 		rootFragmentCreator.createRootFragmentForView(viewSpecification.getName());
-		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl();
+		FragmentationStrategy fragmentationStrategy = new FragmentationStrategyImpl(bucketisedMemberSaver);
 		if (viewSpecification.getFragmentations() != null) {
 			fragmentationStrategy = wrapFragmentationStrategy(viewSpecification.getFragmentations(),
 					fragmentationStrategy);

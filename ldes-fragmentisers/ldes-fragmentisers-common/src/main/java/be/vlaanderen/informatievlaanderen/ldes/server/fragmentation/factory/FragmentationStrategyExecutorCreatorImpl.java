@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.BucketisedMemberSaverImpl;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyExecutor;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.RootFragmentRetriever;
@@ -25,20 +24,17 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
     private final MemberRetriever memberRetriever;
     private final FragmentSequenceRepository fragmentSequenceRepository;
     private final FragmentationStrategyCreator fragmentationStrategyCreator;
-    private final BucketisedMemberSaverImpl bucketisedMemberSaver;
 
     public FragmentationStrategyExecutorCreatorImpl(FragmentRepository fragmentRepository,
                                                     ObservationRegistry observationRegistry,
                                                     MemberRetriever memberRetriever,
                                                     FragmentSequenceRepository fragmentSequenceRepository,
-                                                    FragmentationStrategyCreator fragmentationStrategyCreator,
-                                                    BucketisedMemberSaverImpl bucketisedMemberSaver) {
+                                                    FragmentationStrategyCreator fragmentationStrategyCreator) {
         this.fragmentRepository = fragmentRepository;
         this.observationRegistry = observationRegistry;
         this.memberRetriever = memberRetriever;
         this.fragmentSequenceRepository = fragmentSequenceRepository;
         this.fragmentationStrategyCreator = fragmentationStrategyCreator;
-        this.bucketisedMemberSaver = bucketisedMemberSaver;
     }
 
 	public FragmentationStrategyExecutor createExecutor(ViewName viewName,
@@ -47,7 +43,7 @@ public class FragmentationStrategyExecutorCreatorImpl implements FragmentationSt
 				.createFragmentationStrategyForView(viewSpecification);
 		final var rootFragmentRetriever = new RootFragmentRetriever(fragmentRepository, observationRegistry);
 		return new FragmentationStrategyExecutor(viewName, fragmentationStrategy, rootFragmentRetriever,
-				observationRegistry, createExecutorService(), memberRetriever, fragmentSequenceRepository, bucketisedMemberSaver);
+				observationRegistry, createExecutorService(), memberRetriever, fragmentSequenceRepository);
 	}
 
     /**

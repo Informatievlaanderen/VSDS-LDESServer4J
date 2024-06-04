@@ -2,7 +2,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategy;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.FragmentationStrategyDecorator;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
@@ -10,9 +9,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.bu
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
-
-import java.util.Collection;
-import java.util.List;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.reference.fragmentation.ReferenceFragmentCreator.FRAGMENT_KEY_REFERENCE_ROOT;
 
@@ -36,8 +32,8 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
     }
 
     @Override
-    public List<BucketisedMember> addMemberToFragment(Fragment parentFragment, Member member,
-                                                      Observation parentObservation) {
+    public void addMemberToBucket(Fragment parentFragment, Member member,
+                                  Observation parentObservation) {
         final var fragmentationObservation = startObservation(parentObservation);
         final var rootFragment = getOrCreateRootFragment(parentFragment);
         var fragments =
@@ -47,12 +43,10 @@ public class ReferenceFragmentationStrategy extends FragmentationStrategyDecorat
                         .map(reference -> fragmentCreator.getOrCreateFragment(parentFragment, reference, rootFragment))
                         .toList();
 
-        List<BucketisedMember> members = fragments.parallelStream()
-                .map(ldesFragment -> super.addMemberToFragment(ldesFragment, member, fragmentationObservation))
-                .flatMap(Collection::stream)
-                .toList();
+        fragments
+                .parallelStream()
+                .forEach(ldesFragment -> super.addMemberToBucket(ldesFragment, member, fragmentationObservation));
         fragmentationObservation.stop();
-        return members;
     }
 
     private Observation startObservation(Observation parentObservation) {

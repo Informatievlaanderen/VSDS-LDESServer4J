@@ -20,51 +20,46 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class FragmentationStrategyDecoratorTest {
-	FragmentationStrategy fragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
-	FragmentRepository fragmentRepository = mock(FragmentRepository.class);
-	private FragmentationStrategyDecorator fragmentationStrategyDecorator;
-	private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
+    FragmentationStrategy fragmentationStrategy = Mockito.mock(FragmentationStrategy.class);
+    FragmentRepository fragmentRepository = mock(FragmentRepository.class);
+    private FragmentationStrategyDecorator fragmentationStrategyDecorator;
+    private static final ViewName VIEW_NAME = new ViewName("collectionName", "view");
 
-	@BeforeEach
-	void setUp() {
-		fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
-				fragmentRepository);
-	}
+    @BeforeEach
+    void setUp() {
+        fragmentationStrategyDecorator = new FragmentationStrategyDecoratorTestImpl(fragmentationStrategy,
+                fragmentRepository);
+    }
 
-	@Test
-	void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
+    @Test
+    void when_ParentDoesNotYetHaveRelationToChild_AddRelationAndSaveToDatabase() {
 
-		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		Fragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
-		TreeRelation expectedRelation = new TreeRelation("",
-				childFragment.getFragmentId(), "", "",
-				GENERIC_TREE_RELATION);
+        Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+        Fragment childFragment = parentFragment.createChild(new FragmentPair("key", "value"));
+        TreeRelation expectedRelation = new TreeRelation("",
+                childFragment.getFragmentId(), "", "",
+                GENERIC_TREE_RELATION);
 
-		fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
-				childFragment);
+        fragmentationStrategyDecorator.addRelationFromParentToChild(parentFragment,
+                childFragment);
 
-		assertTrue(parentFragment.containsRelation(expectedRelation));
-		verify(fragmentRepository,
-				Mockito.times(1)).saveFragment(parentFragment);
-	}
+        assertTrue(parentFragment.containsRelation(expectedRelation));
+        verify(fragmentRepository).saveFragment(parentFragment);
+    }
 
-	@Test
-	void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
-		Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
-		Member member = mock(Member.class);
-		Observation span = mock(Observation.class);
-		fragmentationStrategyDecorator.addMemberToFragment(parentFragment, member,
-				span);
-		verify(fragmentationStrategy,
-				Mockito.times(1)).addMemberToFragment(parentFragment, member, span);
-	}
+    @Test
+    void when_DecoratorAddsMemberToFragment_WrappedFragmentationStrategyIsCalled() {
+        Fragment parentFragment = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
+        Member member = mock(Member.class);
+        Observation span = mock(Observation.class);
+        fragmentationStrategyDecorator.addMemberToBucket(parentFragment, member, span);
+        verify(fragmentationStrategy).addMemberToBucket(parentFragment, member, span);
+    }
 
-	static class FragmentationStrategyDecoratorTestImpl extends
-			FragmentationStrategyDecorator {
-		protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
-				FragmentRepository fragmentRepository) {
-			super(fragmentationStrategy,
-					fragmentRepository);
-		}
-	}
+    static class FragmentationStrategyDecoratorTestImpl extends FragmentationStrategyDecorator {
+        protected FragmentationStrategyDecoratorTestImpl(FragmentationStrategy fragmentationStrategy,
+                                                         FragmentRepository fragmentRepository) {
+            super(fragmentationStrategy, fragmentRepository);
+        }
+    }
 }

@@ -29,13 +29,15 @@ class FragmentationStrategyCreatorImplTest {
 	private ApplicationContext applicationContext;
 	private RootFragmentCreator rootFragmentCreator;
 	private FragmentationStrategyCreatorImpl fragmentationStrategyCreator;
+	private BucketisedMemberSaver bucketisedMemberSaver;
 
 	@BeforeEach
 	void setUp() {
 		applicationContext = mock(ApplicationContext.class);
 		rootFragmentCreator = mock(RootFragmentCreator.class);
+		bucketisedMemberSaver = mock(BucketisedMemberSaver.class);
 		fragmentationStrategyCreator = new FragmentationStrategyCreatorImpl(
-				applicationContext, rootFragmentCreator);
+				applicationContext, rootFragmentCreator, bucketisedMemberSaver);
 	}
 
 	@Test
@@ -45,8 +47,8 @@ class FragmentationStrategyCreatorImplTest {
 		FragmentationStrategy fragmentationStrategy = fragmentationStrategyCreator
 				.createFragmentationStrategyForView(viewSpecification);
 
-		assertThat(fragmentationStrategy).isOfAnyClassIn(FragmentationStrategyImpl.class);
-		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
+		assertThat(fragmentationStrategy).isInstanceOf(FragmentationStrategyImpl.class);
+		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator, bucketisedMemberSaver);
 		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -75,7 +77,7 @@ class FragmentationStrategyCreatorImplTest {
 				.createFragmentationStrategyForView(viewSpecification);
 
 		assertEquals(geospatialFragmentationStrategy, fragmentationStrategy);
-		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator);
+		InOrder inOrder = inOrder(applicationContext, rootFragmentCreator, bucketisedMemberSaver);
 		inOrder.verify(rootFragmentCreator).createRootFragmentForView(viewSpecification.getName());
 		inOrder.verify(applicationContext).getBean(TIMEBASED);
 		inOrder.verify(applicationContext).getBean(GEOSPATIAL);

@@ -6,21 +6,32 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.B
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class BucketisedMemberSaverImpl implements BucketisedMemberSaver {
+public class CachedBucketisedMemberSaver implements BucketisedMemberSaver {
+    private final List<BucketisedMember> cachedMembers = new ArrayList<>();
     private final BucketisedMemberRepository repository;
     private final ApplicationEventPublisher eventPublisher;
 
-    public BucketisedMemberSaverImpl(BucketisedMemberRepository repository, ApplicationEventPublisher eventPublisher) {
+    public CachedBucketisedMemberSaver(BucketisedMemberRepository repository, ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
         this.eventPublisher = eventPublisher;
     }
 
     @Override
-    public void save(List<BucketisedMember> members) {
-        repository.insertAll(members);
-        eventPublisher.publishEvent(new MemberBucketisedEvent(members.getFirst().viewName()));
+    public void addBucketisedMember(BucketisedMember bucketisedMember) {
+        cachedMembers.add(bucketisedMember);
+    }
+
+    @Override
+    public void flush() {
+        if(cachedMembers.isEmpty()) {
+            return;
+        }
+        repository.insertAll(List.copyOf(cachedMembers));
+        eventPublisher.publishEvent(new MemberBucketisedEvent(cachedMembers.getFirst().viewName()));
+        cachedMembers.clear();
     }
 }
