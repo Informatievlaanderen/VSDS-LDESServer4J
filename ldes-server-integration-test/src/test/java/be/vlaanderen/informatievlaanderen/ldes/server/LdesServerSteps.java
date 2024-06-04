@@ -344,7 +344,7 @@ public class LdesServerSteps extends LdesServerIntegrationTest {
 
 	@When("I close the collection {string}")
 	public void iCloseTheEventstream(String collection) throws Exception {
-		mockMvc.perform(put("/admin/api/v1/eventstreams/{collection}", collection))
+		mockMvc.perform(post("/admin/api/v1/eventstreams/{collection}/close", collection))
 				.andExpect(status().is2xxSuccessful());
 	}
 }

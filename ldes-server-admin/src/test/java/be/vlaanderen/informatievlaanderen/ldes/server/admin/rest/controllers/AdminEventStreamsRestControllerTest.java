@@ -244,7 +244,7 @@ class AdminEventStreamsRestControllerTest {
 	class CloseEventStream {
 		@Test
 		void when_collectionExists_and_triesToClose_then_expectStatus200() throws Exception {
-			mockMvc.perform(put("/admin/api/v1/eventstreams/name1"))
+			mockMvc.perform(post("/admin/api/v1/eventstreams/name1/close"))
 					.andExpect(status().isOk());
 
 			verify(eventStreamService).closeEventStream(COLLECTION);
@@ -254,7 +254,7 @@ class AdminEventStreamsRestControllerTest {
 		void when_collectionDoesNotExist_then_expectStatus404() throws Exception {
 			doThrow(MissingResourceException.class).when(eventStreamService).closeEventStream(COLLECTION);
 
-			mockMvc.perform(put("/admin/api/v1/eventstreams/name1"))
+			mockMvc.perform(post("/admin/api/v1/eventstreams/name1/close"))
 					.andExpect(status().isNotFound())
 					.andExpect(content().contentType(MediaType.TEXT_PLAIN));
 
