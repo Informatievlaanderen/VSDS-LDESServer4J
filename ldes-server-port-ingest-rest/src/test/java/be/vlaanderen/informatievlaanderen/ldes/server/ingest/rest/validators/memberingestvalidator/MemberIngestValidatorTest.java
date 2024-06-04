@@ -9,18 +9,23 @@ import be.vlaanderen.informatievlaanderen.ldes.server.ingest.rest.validators.ing
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.InOrder;
 
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.inOrder;
 
 class MemberIngestValidatorTest {
     private static final String TIMESTAMP_PATH = "http://purl.org/dc/terms/created";
@@ -61,6 +66,31 @@ class MemberIngestValidatorTest {
         assertThatThrownBy(() -> validator.validate(model, collectionName))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("collection %s is closed".formatted(collectionName));
+    }
+
+    @Test
+    void when_EventStreamInit_Then_EventstreamAddedToMap() {
+        EventStream stream = new EventStream("new", TIMESTAMP_PATH, VERSIONOF_PATH, false);
+
+        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
+
+        assertThat(validator)
+                .extracting("eventstreams", InstanceOfAssertFactories.collection(EventStream.class))
+                .contains(stream);
+    }
+
+    @Test
+    void when_ClosedEventStreamInit_Then_EventstreamAddedToMap() {
+        EventStream stream = new EventStream("closed", TIMESTAMP_PATH, VERSIONOF_PATH, false, true);
+
+        validator.handleEventStreamInitEvent(new EventStreamCreatedEvent(stream));
+
+        assertThat(validator)
+                .extracting("eventstreams", InstanceOfAssertFactories.collection(EventStream.class))
+                .doesNotContain(stream);
+        assertThat(validator)
+                .extracting("closedEventstreams", InstanceOfAssertFactories.collection(String.class))
+                .contains(stream.getCollection());
     }
 
     static class IncorrectMemberArgumentsProvider implements ArgumentsProvider {
