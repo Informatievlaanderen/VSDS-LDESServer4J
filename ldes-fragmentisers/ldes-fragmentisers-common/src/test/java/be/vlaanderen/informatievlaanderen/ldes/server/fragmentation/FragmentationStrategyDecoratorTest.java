@@ -53,7 +53,9 @@ class FragmentationStrategyDecoratorTest {
         Member member = mock(Member.class);
         Observation span = mock(Observation.class);
         fragmentationStrategyDecorator.addMemberToBucket(parentFragment, member, span);
+        fragmentationStrategyDecorator.saveBucket();
         verify(fragmentationStrategy).addMemberToBucket(parentFragment, member, span);
+        verify(fragmentationStrategy).saveBucket();
     }
 
     static class FragmentationStrategyDecoratorTestImpl extends FragmentationStrategyDecorator {
