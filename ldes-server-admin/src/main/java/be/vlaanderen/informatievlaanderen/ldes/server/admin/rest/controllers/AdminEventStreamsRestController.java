@@ -80,7 +80,7 @@ public class AdminEventStreamsRestController implements OpenApiAdminEventStreams
     }
 
     @Override
-    @PutMapping("/{collectionName}")
+    @PostMapping("/{collectionName}/close")
     public void closeEventStream(@PathVariable String collectionName) {
         log.atInfo().log("START closing collection {}", collectionName);
         eventStreamService.closeEventStream(collectionName);
