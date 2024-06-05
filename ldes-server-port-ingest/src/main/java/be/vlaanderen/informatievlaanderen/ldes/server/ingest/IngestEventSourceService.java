@@ -1,14 +1,14 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public interface IngestEventSourceService {
 
-	Stream<Member> getMemberStreamOfCollection(String collectionName);
+	Stream<IngestedMember> getMemberStreamOfCollection(String collectionName);
 
-	Optional<Member> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
+	Optional<IngestedMember> findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(String collectionName, long sequenceNr);
 
 }

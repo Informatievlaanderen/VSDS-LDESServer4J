@@ -2,6 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.me
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.VersionObjectModelBuilder;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ResourceFactory;
 
@@ -14,11 +15,11 @@ public class MemberMapper {
         this.timestampPath = timestampPath;
     }
 
-    public Member mapToFragmentationMember(be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member ingestMember) {
+    public Member mapToFragmentationMember(IngestedMember ingestMember) {
         return new Member(ingestMember.getId(), enrichModel(ingestMember), ingestMember.getSequenceNr());
     }
 
-    private Model enrichModel(be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member ingestMember) {
+    private Model enrichModel(IngestedMember ingestMember) {
         final String memberId = ingestMember.getId();
         final String subjectUri = memberId.startsWith("http") ? memberId : memberId.substring(memberId.indexOf("/") + 1);
         if(ingestMember.getModel().containsResource(ResourceFactory.createProperty(subjectUri))) {

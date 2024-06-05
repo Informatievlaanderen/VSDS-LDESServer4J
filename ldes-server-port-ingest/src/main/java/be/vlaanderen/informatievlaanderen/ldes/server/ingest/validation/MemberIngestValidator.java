@@ -1,9 +1,9 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 
 public interface MemberIngestValidator {
 
-	void validate(Member member);
+	void validate(IngestedMember member);
 
 }

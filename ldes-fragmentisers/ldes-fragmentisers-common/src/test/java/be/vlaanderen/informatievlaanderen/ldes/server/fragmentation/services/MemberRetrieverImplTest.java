@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingR
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper.MemberMapperCollection;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.IngestEventSourceService;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +38,7 @@ class MemberRetrieverImplTest {
     void given_MemberMapper_and_IngestMember_when_FindFirst_then_Return_FragmentMember() {
         final MemberMapper memberMapper = new MemberMapper("http://purl.org/dc/terms/isVersionOf", "http://www.w3.org/ns/prov#generatedAtTime");
         when(eventSourceService.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR))
-                .thenReturn(Optional.of(new Member(MEMBER_ID, COLLECTION_NAME, VERSION_OF, TIMESTAMP, LAST_PROCESSED_SEQUENCE_NR + 1, true, "txId", ModelFactory.createDefaultModel())));
+                .thenReturn(Optional.of(new IngestedMember(MEMBER_ID, COLLECTION_NAME, VERSION_OF, TIMESTAMP, LAST_PROCESSED_SEQUENCE_NR + 1, true, "txId", ModelFactory.createDefaultModel())));
         when(memberMapperCollection.getMemberMapper(COLLECTION_NAME)).thenReturn(Optional.of(memberMapper));
 
         var retrievedMember = memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(COLLECTION_NAME, LAST_PROCESSED_SEQUENCE_NR);

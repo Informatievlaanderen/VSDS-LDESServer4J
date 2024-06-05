@@ -1,0 +1,42 @@
+package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch;
+
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
+import org.springframework.batch.item.Chunk;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.util.List;
+
+@Component
+public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>> {
+
+	private static final String SQL = "insert into fragmentation_bucketisation (view_name, fragment_id, member_id, sequence_nr) " +
+	                                  "values (?, ?, ?, ?)";
+
+	@Autowired
+	private DataSource dataSource;
+
+	@Override
+	public void write(Chunk<? extends List<BucketisedMember>> chunk) throws Exception {
+		Chunk<? extends BucketisedMember> buckets = new Chunk<>(chunk.getItems()
+				.stream()
+				.flatMap(List::stream)
+				.toList());
+
+		PreparedStatement ps = dataSource.getConnection().prepareStatement(SQL);
+		for (BucketisedMember bucket : buckets) {
+			// Set the variables
+			ps.setString(1, bucket.viewName().asString());
+			ps.setString(2, bucket.fragmentId());
+			ps.setString(3, bucket.memberId());
+			ps.setLong(4, bucket.sequenceNr());
+			// Add it to the batch
+			ps.addBatch();
+
+		}
+		ps.executeBatch();
+	}
+}

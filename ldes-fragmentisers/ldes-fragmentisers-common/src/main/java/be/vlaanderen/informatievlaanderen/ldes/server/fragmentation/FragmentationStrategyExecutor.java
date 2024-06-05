@@ -1,8 +1,8 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.MemberRetriever;
@@ -36,7 +36,7 @@ public class FragmentationStrategyExecutor {
                                          ExecutorService executorService,
                                          MemberRetriever memberRetriever,
                                          FragmentSequenceRepository fragmentSequenceRepository,
-										 BucketisedMemberSaver bucketisedMemberSaver) {
+                                         BucketisedMemberSaver bucketisedMemberSaver) {
 		this.rootFragmentRetriever = rootFragmentRetriever;
 		this.observationRegistry = observationRegistry;
 		this.executorService = executorService;

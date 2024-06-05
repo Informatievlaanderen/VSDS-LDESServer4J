@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static org.apache.jena.rdf.model.ResourceFactory.createProperty;
 
-public class Member {
+public class IngestedMember {
 
     public static final String TREE = "https://w3id.org/tree#";
     public static final Property TREE_MEMBER = createProperty(TREE, "member");
@@ -26,7 +26,7 @@ public class Member {
     private final Model model;
 
     @SuppressWarnings("java:S107")
-    public Member(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, boolean inEventSource, String transactionId, Model model) {
+    public IngestedMember(String id, String collectionName, String versionOf, LocalDateTime timestamp, Long sequenceNr, boolean inEventSource, String transactionId, Model model) {
         this.id = id;
         this.collectionName = collectionName;
         this.versionOf = versionOf;
@@ -83,7 +83,7 @@ public class Member {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        Member member = (Member) o;
+        IngestedMember member = (IngestedMember) o;
         return getId().equals(member.getId());
     }
 

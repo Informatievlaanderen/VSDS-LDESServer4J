@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.pagination.constants.PaginationConstants.PAGE_NUMBER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class OpenPageProviderTest {
@@ -30,7 +30,7 @@ class OpenPageProviderTest {
 	void setUp() {
 		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		openPageProvider = new OpenPageProvider(pageCreator,
-				fragmentRepository, 3L);
+				fragmentRepository);
 	}
 
 	@Test

@@ -30,7 +30,7 @@ class ViewCollectionTest {
     void testHandleViewAddedEvent(ViewSupplier viewSupplier) {
         viewCollection.handle(viewSupplier);
 
-        assertThat(viewCollection.getViews()).contains(viewSupplier.getViewSpecification());
+        assertThat(viewCollection.getViews()).contains(viewSupplier.viewSpecification());
     }
 
     static class ViewSupplierProvider implements ArgumentsProvider {

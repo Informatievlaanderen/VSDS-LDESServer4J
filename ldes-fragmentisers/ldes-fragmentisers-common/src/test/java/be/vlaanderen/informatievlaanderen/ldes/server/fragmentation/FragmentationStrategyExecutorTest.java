@@ -1,12 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.MemberRetriever;
+import com.github.jsonldjava.shaded.com.google.common.util.concurrent.MoreExecutors;
 import io.micrometer.observation.ObservationRegistry;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
@@ -28,8 +29,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
-import com.github.jsonldjava.shaded.com.google.common.util.concurrent.MoreExecutors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -48,7 +47,7 @@ class FragmentationStrategyExecutorTest {
 	@Mock
 	private FragmentSequenceRepository fragmentSequenceRepository;
 	@Mock
-	private BucketisedMemberSaverImpl bucketisedMemberSaver;
+	private BucketisedMemberSaver bucketisedMemberSaver;
 
 	@Nested
 	class ExecuteNext {
@@ -168,7 +167,7 @@ class FragmentationStrategyExecutorTest {
 									mock(RootFragmentRetriever.class), mock(ObservationRegistry.class),
 									mock(ExecutorService.class), mock(MemberRetriever.class),
 									mock(FragmentSequenceRepository.class),
-									mock(BucketisedMemberSaverImpl.class))),
+									mock(BucketisedMemberSaver.class))),
 					Arguments.of(notEquals(), executorA,
 							new FragmentationStrategyExecutor(ViewName.fromString("col/viewB"), null, null, null,
 									null, null, null, null)));

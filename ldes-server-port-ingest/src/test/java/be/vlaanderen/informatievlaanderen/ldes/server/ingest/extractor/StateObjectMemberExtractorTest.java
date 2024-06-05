@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
@@ -25,12 +25,12 @@ class StateObjectMemberExtractorTest {
     void test_memberExtraction() {
         final Model ingestedModel = RDFParser.source("bulk-members/simpsons/all.nq").lang(Lang.NQ).toModel();
 
-        List<Member> members = stateObjectMemberExtractor.extractMembers(ingestedModel);
+        List<IngestedMember> members = stateObjectMemberExtractor.extractMembers(ingestedModel);
 
-        List<String> txIds = members.stream().map(Member::getTransactionId).distinct().toList();
+        List<String> txIds = members.stream().map(IngestedMember::getTransactionId).distinct().toList();
         assertThat(txIds).hasSize(1);
 
-        List<LocalDateTime> ingestedTimestamps = members.stream().map(Member::getTimestamp).distinct().toList();
+        List<LocalDateTime> ingestedTimestamps = members.stream().map(IngestedMember::getTimestamp).distinct().toList();
         assertThat(ingestedTimestamps).hasSize(1);
 
         final List<String> expectedMemberIds = Stream.of("bart", "lisa", "homer")
@@ -39,7 +39,7 @@ class StateObjectMemberExtractorTest {
 
 
         assertThat(members)
-                .map(Member::getId)
+                .map(IngestedMember::getId)
                 .containsExactlyInAnyOrderElementsOf(expectedMemberIds);
 
     }

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,9 +32,9 @@ class FragmentationStrategyImplTest {
 		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(fragment, member, mock(Observation.class));
 
 		assertThat(members).hasSize(1);
-		assertThat(members.getFirst()).hasFieldOrPropertyWithValue("memberId", MEMBER_ID)
-				.hasFieldOrPropertyWithValue("viewName", VIEW_NAME)
-				.hasFieldOrPropertyWithValue("fragmentId", FRAGMENT_ID.asDecodedFragmentId())
-				.hasFieldOrPropertyWithValue("sequenceNr", SEQ_NR);
+		assertEquals(members.getFirst().memberId(), MEMBER_ID);
+		assertEquals(members.getFirst().viewName(), VIEW_NAME);
+		assertEquals(members.getFirst().fragmentId(), FRAGMENT_ID.asDecodedFragmentId());
+		assertEquals(members.getFirst().sequenceNr(), SEQ_NR);
 	}
 }

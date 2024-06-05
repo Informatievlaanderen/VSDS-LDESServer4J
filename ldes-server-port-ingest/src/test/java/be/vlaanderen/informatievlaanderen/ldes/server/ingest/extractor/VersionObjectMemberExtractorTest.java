@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.extractor;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.exceptions.MemberIdNotFoundException;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
@@ -34,7 +34,7 @@ class VersionObjectMemberExtractorTest {
     void given_ValidModel_when_ExtractMembers_then_ReturnSingleMember() throws IOException {
         final Model model = readValidModel();
         final String memberId = "%s/%s".formatted(COLLECTION, "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622/483");
-        final Member expectedMember = new Member(
+        final IngestedMember expectedMember = new IngestedMember(
                 memberId,
                 COLLECTION,
                 "https://private-api.gipod.beta-vlaanderen.be/api/v1/mobility-hindrances/10228622",
@@ -45,7 +45,7 @@ class VersionObjectMemberExtractorTest {
                 model
         );
 
-        final Member member = memberExtractor.extractMembers(model).getFirst();
+        final IngestedMember member = memberExtractor.extractMembers(model).getFirst();
 
         assertThat(member)
                 .usingRecursiveComparison()

@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MemberBucketisedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.repositories.PaginationSequenceRepository;
@@ -53,7 +53,7 @@ class PaginationServiceTest {
         when(service2.isRunning()).thenReturn(false);
         when(executorService.submit(any(Callable.class))).thenReturn(new CompletableFuture<>());
 
-        paginationService.handleMemberBucketisedEvent(new MemberBucketisedEvent(VIEW_NAME_1));
+        paginationService.handleMemberBucketisedEvent(new MembersBucketisedEvent());
 
         InOrder inOrder = inOrder(executorService, service1, service2);
         inOrder.verify(service1).isRunning();

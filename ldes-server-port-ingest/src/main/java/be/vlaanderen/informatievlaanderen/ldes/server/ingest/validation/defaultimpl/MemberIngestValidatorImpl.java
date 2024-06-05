@@ -2,7 +2,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.default
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclChangedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ShaclDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.MemberIngestValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.validation.defaultimpl.modelingestvalidator.ModelIngestValidator;
 import org.springframework.context.event.EventListener;
@@ -33,7 +33,7 @@ public class MemberIngestValidatorImpl implements MemberIngestValidator {
 	}
 
 	@Override
-	public void validate(Member member) {
+	public void validate(IngestedMember member) {
 		var validator = validators.get(member.getCollectionName());
 		if (validator != null) {
 			validator.validate(member.getModel());

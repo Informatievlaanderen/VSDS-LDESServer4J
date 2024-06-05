@@ -1,6 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.MemberPostgresRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.postgres.entity.MemberEntity;
 import org.apache.jena.rdf.model.Model;
@@ -14,7 +14,7 @@ import java.io.ByteArrayOutputStream;
 @Component
 public class MemberEntityMapper {
 
-	public MemberEntity toMemberEntity(Member member) {
+	public MemberEntity toMemberEntity(IngestedMember member) {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		RDFWriter.source(member.getModel())
 				.lang(MemberPostgresRepository.CONVERSION_LANG).output(outputStream);
@@ -31,12 +31,12 @@ public class MemberEntityMapper {
 		);
 	}
 
-	public Member toMember(MemberEntity memberEntity) {
+	public IngestedMember toMember(MemberEntity memberEntity) {
 		final Model model = RDFParser.source(new ByteArrayInputStream(memberEntity.getModel()))
 				.lang(MemberPostgresRepository.CONVERSION_LANG)
 				.toModel();
 
-		return new Member(
+		return new IngestedMember(
 				memberEntity.getId(),
 				memberEntity.getCollectionName(),
 				memberEntity.getVersionOf(),

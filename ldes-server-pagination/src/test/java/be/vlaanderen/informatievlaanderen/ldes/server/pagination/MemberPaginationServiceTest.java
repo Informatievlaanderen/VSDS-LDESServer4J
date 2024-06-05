@@ -4,6 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentatio
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentPair;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
+import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
@@ -19,6 +20,7 @@ import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class MemberPaginationServiceTest {
@@ -42,19 +44,18 @@ class MemberPaginationServiceTest {
         openPageProvider = Mockito.mock(OpenPageProvider.class);
         fragmentRepository = mock(FragmentRepository.class);
         eventPublisher = mock(ApplicationEventPublisher.class);
-        paginationService = new MemberPaginationService(sequenceRepository, bucketisedMemberRepository,
-                openPageProvider, fragmentRepository, eventPublisher, VIEW_NAME);
+        paginationService = new MemberPaginationService(
+                openPageProvider, fragmentRepository, openPageProvider, view.getPageSize());
     }
 
     @Test
     void when_MemberPresent_Then_MemberPaginated() {
-        when(bucketisedMemberRepository.getFirstUnallocatedMember(VIEW_NAME, 1L))
-                .thenReturn(List.of(MEMBER));
         Fragment child = FRAGMENT.createChild(new FragmentPair(PaginationConstants.PAGE_NUMBER, "1"));
         when(openPageProvider.retrieveOpenFragmentOrCreateNewFragment(FRAGMENT_ID))
                 .thenReturn(child);
 
-        paginationService.paginateMember();
+        List<MemberAllocation> memberAllocations = paginationService.paginateMember(List.of(MEMBER));
+        assertEquals(1, memberAllocations.size());
 
         InOrder inOrder = inOrder(eventPublisher, fragmentRepository);
         inOrder.verify(eventPublisher, times(1)).publishEvent(new MemberAllocatedEvent(MEMBER.memberId(), VIEW_NAME.getCollectionName(),

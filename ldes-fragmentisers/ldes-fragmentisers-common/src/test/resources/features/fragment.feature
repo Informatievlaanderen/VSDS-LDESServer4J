@@ -1,4 +1,4 @@
-Feature: Execute FragmentDeletion
+Feature: Fragmentation
 
   Scenario: Execution FragmentDeletion
     Given the following Fragments are present

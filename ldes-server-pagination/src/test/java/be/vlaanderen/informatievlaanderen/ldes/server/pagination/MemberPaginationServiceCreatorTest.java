@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,8 +29,8 @@ class MemberPaginationServiceCreatorTest {
         bucketisedMemberRepository = mock(BucketisedMemberRepository.class);
         fragmentRepository = mock(FragmentRepository.class);
         eventPublisher = mock(ApplicationEventPublisher.class);
-        memberPaginationServiceCreator = new MemberPaginationServiceCreator(sequenceRepository, bucketisedMemberRepository,
-                fragmentRepository, eventPublisher);
+//        memberPaginationServiceCreator = new MemberPaginationServiceCreator(sequenceRepository, bucketisedMemberRepository,
+//                fragmentRepository);
     }
 
     @Test
