@@ -7,7 +7,7 @@ import org.hibernate.annotations.Type;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "oldViewModel")
 @Table(name = "view")
 public class ViewEntity {
 	@Id

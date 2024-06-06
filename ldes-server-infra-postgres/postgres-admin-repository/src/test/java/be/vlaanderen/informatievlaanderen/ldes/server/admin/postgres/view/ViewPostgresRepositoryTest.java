@@ -1,93 +1,129 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.repository.ViewEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.v2.entity.ViewEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.v2.repository.ViewEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class ViewPostgresRepositoryTest {
 
-	private final ViewEntityRepository viewEntityRepository = mock(ViewEntityRepository.class);
-	private ViewPostgresRepository repository;
+    public static final String VIEW_NAME = "view1";
+    public static final String COLLECTION_NAME = "collection1";
+    @Mock
+    private ViewEntityRepository viewEntityRepository;
+    @Mock
+    private EventStreamEntityRepository eventStreamEntityRepository;
+    @InjectMocks
+    private ViewPostgresRepository repository;
 
-	@BeforeEach
-	void setUp() {
-		repository = new ViewPostgresRepository(viewEntityRepository);
-	}
+    @Test
+    void test_retrievingAllViews_AND_retrievingAllViewsOfCollection() {
+        when(viewEntityRepository.findAll())
+                .thenReturn(List.of(
+                        new ViewEntity(VIEW_NAME, List.of(), List.of(), 100) {{
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                        }},
+                        new ViewEntity("view2", List.of(), List.of(), 100) {{
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                        }},
+                        new ViewEntity("view1", List.of(), List.of(), 100) {{
+                            setEventStream(new EventStreamEntity("collection2", null, null, false, false));
+                        }}));
+        final List<ViewSpecification> expectedViews = List.of(
+                new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), List.of(), 100),
+                new ViewSpecification(new ViewName(COLLECTION_NAME, "view2"), List.of(), List.of(), 100),
+                new ViewSpecification(new ViewName("collection2", VIEW_NAME), List.of(), List.of(), 100));
 
-	@Test
-	void test_retrievingAllViews_AND_retrievingAllViewsOfCollection() {
-		when(viewEntityRepository.findAll())
-				.thenReturn(List.of(
-						new ViewEntity("collection1/view1", List.of(), List.of(), 100),
-						new ViewEntity("collection1/view2", List.of(), List.of(), 100),
-						new ViewEntity("collection2/view1", List.of(), List.of(), 100)));
+        List<ViewSpecification> viewSpecifications = repository.retrieveAllViews();
 
-		final List<ViewSpecification> expectedViews = List.of(
-				new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of(), 100),
-				new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of(), 100),
-				new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of(), 100));
-		final List<ViewSpecification> viewsOfCollection1 = List.of(
-				new ViewSpecification(new ViewName("collection1", "view1"), List.of(), List.of(), 100),
-				new ViewSpecification(new ViewName("collection1", "view2"), List.of(), List.of(), 100));
-		final List<ViewSpecification> viewsOfCollection2 = List.of(
-				new ViewSpecification(new ViewName("collection2", "view1"), List.of(), List.of(), 100));
+        assertThat(viewSpecifications).containsExactlyInAnyOrderElementsOf(expectedViews);
+    }
 
-		List<ViewSpecification> viewSpecifications = repository.retrieveAllViews();
-		assertEquals(expectedViews, viewSpecifications);
+    @Test
+    void test_RetrieveViewsOfCollection() {
+        when(viewEntityRepository.findAllByCollectionName(COLLECTION_NAME))
+                .thenReturn(Stream.of(
+                        new ViewEntity(VIEW_NAME, List.of(), List.of(), 100) {{
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                        }},
+                        new ViewEntity("view2", List.of(), List.of(), 100) {{
+                            setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+                        }}));
+        final List<ViewSpecification> expectedViews = List.of(
+                new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(), List.of(), 100),
+                new ViewSpecification(new ViewName(COLLECTION_NAME, "view2"), List.of(), List.of(), 100));
 
-		viewSpecifications = repository.retrieveAllViewsOfCollection("collection1");
-		assertEquals(viewsOfCollection1, viewSpecifications);
+        final List<ViewSpecification> actualViews = repository.retrieveAllViewsOfCollection(COLLECTION_NAME);
 
-		viewSpecifications = repository.retrieveAllViewsOfCollection("collection2");
-		assertEquals(viewsOfCollection2, viewSpecifications);
+        assertThat(actualViews).containsExactlyInAnyOrderElementsOf(expectedViews);
+    }
 
-		verify(viewEntityRepository, times(3)).findAll();
-	}
+    @Test
+    void given_EventStreamExists_test_savingOfView() {
+        when(eventStreamEntityRepository.findByName(COLLECTION_NAME)).thenReturn(Optional.of(mock()));
+        final ViewSpecification view = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(),
+                List.of(), 100);
 
-	@Test
-	void test_savingOfView() {
-		final ViewSpecification view = new ViewSpecification(new ViewName("collection1", "view1"), List.of(),
-				List.of(), 100);
+        repository.saveView(view);
 
-		repository.saveView(view);
+        verify(viewEntityRepository).save(any(ViewEntity.class));
+    }
 
-		verify(viewEntityRepository).save(any(ViewEntity.class));
-	}
+    @Test
+    void given_EventStreamDoesNotExist_test_savingOfView() {
+        when(eventStreamEntityRepository.findByName(COLLECTION_NAME)).thenReturn(Optional.empty());
+        final ViewSpecification view = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME), List.of(),
+                List.of(), 100);
 
-	@Test
-	void test_deletingOfView() {
-		final ViewName viewName = new ViewName("collection1", "view1");
+        assertThatThrownBy(() -> repository.saveView(view))
+                .isInstanceOf(MissingResourceException.class)
+                .hasMessage("Resource of type: EventStream with id: %s could not be found.", COLLECTION_NAME);
 
-		repository.deleteViewByViewName(viewName);
+        verifyNoInteractions(viewEntityRepository);
+    }
 
-		verify(viewEntityRepository).deleteById(viewName.asString());
-	}
+    @Test
+    void test_deletingOfView() {
+        final ViewName viewName = new ViewName(COLLECTION_NAME, VIEW_NAME);
 
-	@Test
-	void test_getViewByViewName() {
-		ViewEntity viewEntity = new ViewEntity("collection1/view1", List.of(), List.of(), 100);
-		ViewSpecification expectedViewSpecification = new ViewSpecification(new ViewName("collection1", "view1"),
-				List.of(), List.of(), 100);
-		when(viewEntityRepository.findById(expectedViewSpecification.getName().asString()))
-				.thenReturn(Optional.of(viewEntity));
+        repository.deleteViewByViewName(viewName);
 
-		Optional<ViewSpecification> actualViewSpecification = repository
-				.getViewByViewName(expectedViewSpecification.getName());
+        verify(viewEntityRepository).deleteByViewName(viewName.getCollectionName(), viewName.getViewName());
+    }
 
-		verify(viewEntityRepository).findById(expectedViewSpecification.getName().asString());
-		assertTrue(actualViewSpecification.isPresent());
-		assertEquals(expectedViewSpecification, actualViewSpecification.get());
-	}
+    @Test
+    void test_getViewByViewName() {
+        ViewEntity viewEntity = new ViewEntity(VIEW_NAME, List.of(), List.of(), 100);
+        viewEntity.setEventStream(new EventStreamEntity(COLLECTION_NAME, null, null, false, false));
+
+        ViewSpecification expectedViewSpecification = new ViewSpecification(new ViewName(COLLECTION_NAME, VIEW_NAME),
+                List.of(), List.of(), 100);
+        when(viewEntityRepository.findByViewName(expectedViewSpecification.getName().getCollectionName(), expectedViewSpecification.getName().getViewName()))
+                .thenReturn(Optional.of(viewEntity));
+
+        Optional<ViewSpecification> actualViewSpecification = repository
+                .getViewByViewName(expectedViewSpecification.getName());
+
+        assertThat(actualViewSpecification)
+                .contains(expectedViewSpecification);
+    }
 
 }
