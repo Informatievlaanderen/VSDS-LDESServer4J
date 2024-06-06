@@ -30,7 +30,7 @@ class OpenPageProviderTest {
 	void setUp() {
 		PARENT_FRAGMENT = new Fragment(new LdesFragmentIdentifier(VIEW_NAME, List.of()));
 		openPageProvider = new OpenPageProvider(pageCreator,
-				fragmentRepository);
+				fragmentRepository, 3L);
 	}
 
 	@Test

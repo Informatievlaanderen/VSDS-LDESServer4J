@@ -15,13 +15,14 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Component
 public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>, List<MemberAllocation>> {
 
 	private final MemberPaginationServiceCreator memberPaginationServiceCreator;
 
-	private final Map<String, MemberPaginationService> paginationServices = new HashMap<>();
+	protected final Map<String, MemberPaginationService> paginationServices = new HashMap<>();
 
 	public PaginationProcessor(MemberPaginationServiceCreator memberPaginationServiceCreator) {
 		this.memberPaginationServiceCreator = memberPaginationServiceCreator;
@@ -33,6 +34,11 @@ public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>
 			return null;
 		}
 		String viewName = bucketisedMembers.getFirst().getViewName();
+
+		MemberPaginationService memberPaginationService = paginationServices.get(viewName);
+		if (memberPaginationService == null) {
+			throw new NoSuchElementException("View %s was not registered.".formatted(viewName));
+		}
 		return paginationServices.get(viewName).paginateMember(bucketisedMembers);
 	}
 
@@ -49,5 +55,9 @@ public class PaginationProcessor implements ItemProcessor<List<BucketisedMember>
 	@EventListener
 	public void handleViewDeletedEvent(ViewDeletedEvent event) {
 		paginationServices.remove(event.getViewName().asString());
+	}
+
+	protected Map<String, MemberPaginationService> getPaginationServices() {
+		return paginationServices;
 	}
 }

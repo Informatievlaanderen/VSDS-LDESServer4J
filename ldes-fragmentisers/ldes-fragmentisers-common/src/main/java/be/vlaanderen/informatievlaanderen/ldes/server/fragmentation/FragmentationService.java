@@ -1,6 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewRebucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamClosedEvent;
@@ -96,7 +97,7 @@ public class FragmentationService {
 				launchJob(job, jobParameters);
 			}
 		} else if (job.getName().equals(REBUCKETISATION_JOB)) {
-			eventPublisher.publishEvent(new ViewRebucketisedEvent(jobParameters.getString("viewName")));
+			eventPublisher.publishEvent(new NewViewBucketisedEvent(jobParameters.getString("viewName")));
 		}
 
 	}

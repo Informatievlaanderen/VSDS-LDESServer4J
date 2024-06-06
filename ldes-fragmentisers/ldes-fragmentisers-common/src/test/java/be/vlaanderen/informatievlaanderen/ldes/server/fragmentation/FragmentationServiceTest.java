@@ -18,7 +18,6 @@ import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.JobRepositoryTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,12 +61,7 @@ class FragmentationServiceTest {
 	private FragmentationService fragmentationService;
 
 	@Autowired
-	private JobLauncherTestUtils jobLauncherTestUtils;
-
-	@Autowired
 	private JobRepositoryTestUtils jobRepositoryTestUtils;
-	@Autowired
-	private JobExplorer jobExplorer;
 
 	private final String collectionName = "es";
 	private final String versionOf = "x";

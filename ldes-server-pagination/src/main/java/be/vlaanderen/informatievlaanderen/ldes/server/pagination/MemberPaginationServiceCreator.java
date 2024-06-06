@@ -20,8 +20,7 @@ public class MemberPaginationServiceCreator {
     public MemberPaginationService createPaginationService(ViewSpecification view) {
         OpenPageProvider openPageProvider = getOpenPageProvider(view.getPaginationProperties());
 
-        return new MemberPaginationService(fragmentRepository, new MemberPaginationServiceCreator(fragmentRepository),
-                openPageProvider, view.getPageSize()); //TODO cleanup
+        return new MemberPaginationService(fragmentRepository, openPageProvider, view.getPageSize());
     }
 
     public OpenPageProvider getOpenPageProvider(ConfigProperties properties) {

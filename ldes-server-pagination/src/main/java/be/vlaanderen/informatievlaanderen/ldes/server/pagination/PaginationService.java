@@ -1,12 +1,10 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.pagination;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.MembersBucketisedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewRebucketisedEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.NewViewBucketisedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.fetching.entities.MemberAllocation;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.batch.PaginationProcessor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -30,32 +28,30 @@ import java.util.List;
 
 @Component
 public class PaginationService {
-	private static final Logger log = LoggerFactory.getLogger(PaginationService.class);
 	private static final String PAGINATION_JOB = "pagination";
 	private static final String NEW_VIEW_PAGINATION_JOB = "newViewPagination";
 	private final JobLauncher jobLauncher;
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final Partitioner bucketisationPartitioner;
-	private final Partitioner rebucketisationPartitioner;
+	private final Partitioner viewBucketisationPartitioner;
 	private final ItemReader<List<BucketisedMember>> reader;
 	private final PaginationProcessor processor;
 	private final ItemWriter<List<MemberAllocation>> writer;
 	private final TaskExecutor taskExecutor;
 	private final JobExplorer jobExplorer;
 	private boolean shouldTriggerPagination;
-	private boolean shouldTriggerNewViewPagination;
 
 	public PaginationService(JobLauncher jobLauncher, JobRepository jobRepository,
 	                         PlatformTransactionManager transactionManager,
 	                         @Qualifier("bucketisationPartitioner") Partitioner bucketisationPartitioner,
-	                         @Qualifier("rebucketisationPartitioner") Partitioner rebucketisationPartitioner,
+	                         @Qualifier("viewBucketisationPartitioner") Partitioner viewBucketisationPartitioner,
 	                         ItemReader<List<BucketisedMember>> reader, PaginationProcessor processor, ItemWriter<List<MemberAllocation>> writer, TaskExecutor taskExecutor, JobExplorer jobExplorer) {
 		this.jobLauncher = jobLauncher;
 		this.jobRepository = jobRepository;
 		this.transactionManager = transactionManager;
 		this.bucketisationPartitioner = bucketisationPartitioner;
-		this.rebucketisationPartitioner = rebucketisationPartitioner;
+		this.viewBucketisationPartitioner = viewBucketisationPartitioner;
 		this.reader = reader;
 		this.processor = processor;
 		this.writer = writer;
@@ -78,7 +74,7 @@ public class PaginationService {
 
 	@EventListener
 	@SuppressWarnings("java:S2629")
-	public void handleMemberBucketisedEvent(ViewRebucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		runJob(newViewPaginationJob(), new JobParametersBuilder()
 				.addString("viewName", event.viewName())
 				.addLocalDateTime("triggered", LocalDateTime.now())
@@ -133,7 +129,7 @@ public class PaginationService {
 
 	private Step newViewPaginationStep() {
 		return new StepBuilder("newViewPaginationMasterStep", jobRepository)
-				.partitioner("memberBucketPartitionStep", rebucketisationPartitioner)
+				.partitioner("memberBucketPartitionStep", viewBucketisationPartitioner)
 				.step(new StepBuilder("paginationStep", jobRepository)
 						.<List<BucketisedMember>, List<MemberAllocation>>chunk(150, transactionManager)
 						.reader(reader)

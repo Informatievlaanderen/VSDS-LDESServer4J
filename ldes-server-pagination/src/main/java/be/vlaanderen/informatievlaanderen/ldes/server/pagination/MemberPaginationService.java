@@ -15,15 +15,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MemberPaginationService {
 	private final FragmentRepository fragmentRepository;
-	private final MemberPaginationServiceCreator paginationServiceCreator;
 	private final OpenPageProvider pageProvider;
 	private final int maxPageSize;
 
 	public MemberPaginationService(FragmentRepository fragmentRepository,
-	                               MemberPaginationServiceCreator paginationServiceCreator,
 	                               OpenPageProvider openPageProvider, int maxPageSize) {
 		this.fragmentRepository = fragmentRepository;
-		this.paginationServiceCreator = paginationServiceCreator;
 		this.pageProvider = openPageProvider;
 		this.maxPageSize = maxPageSize;
 	}
@@ -62,5 +59,9 @@ public class MemberPaginationService {
 		fragmentMemberCounter.forEach((key, value) -> fragmentRepository.incrementNrOfMembersAdded(key, value.get()));
 
 		return memberAllocations;
+	}
+
+	protected int getMaxPageSize() {
+		return maxPageSize;
 	}
 }

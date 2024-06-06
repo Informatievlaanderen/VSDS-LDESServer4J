@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component("rebucketisationPartitioner")
+@Component("viewBucketisationPartitioner")
 @JobScope
-public class RebucketisationPartitioner implements Partitioner {
+public class ViewBucketisationPartitioner implements Partitioner {
 
 	@PersistenceContext
 	private EntityManager entityManager;
