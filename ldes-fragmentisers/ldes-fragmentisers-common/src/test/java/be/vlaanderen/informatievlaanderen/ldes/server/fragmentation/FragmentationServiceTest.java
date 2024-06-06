@@ -31,7 +31,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +41,7 @@ import static org.mockito.Mockito.*;
 @SpringBatchTest
 @EnableAutoConfiguration
 @ActiveProfiles("test")
-@ContextConfiguration(classes = { SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
+@ContextConfiguration(classes = {SpringBatchConfiguration.class, FragmentationService.class, BucketProcessor.class})
 class FragmentationServiceTest {
 
 	@MockBean(name = "newMemberReader")
@@ -87,16 +89,17 @@ class FragmentationServiceTest {
 
 		fragmentationService.executeFragmentation(new MembersIngestedEvent("collection", List.of()));
 
-		assertEquals(2 * members.size(), output.size());
+		await().atMost(10, TimeUnit.SECONDS)
+				.untilAsserted(() -> assertEquals(2 * members.size(), output.size()));
 
 		output.clear();
 
-		ViewSpecification newView = new ViewSpecification(ViewName.fromString(collectionName+ "/v3"), List.of(), List.of(), 100);
+		ViewSpecification newView = new ViewSpecification(ViewName.fromString(collectionName + "/v3"), List.of(), List.of(), 100);
 		mockBasicViews(3);
 
-		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView));
+		fragmentationService.handleViewInitializationEvent(new ViewNeedsRebucketisationEvent(newView.getName()));
 
-		assertEquals(members.size(), output.size());
+		await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(members.size(), output.size()));
 	}
 
 	private void mockBasicViews(int count) {
@@ -107,7 +110,7 @@ class FragmentationServiceTest {
 			when(executor.bucketise(any())).thenReturn(List.of(
 					new BucketisedMember("x", new ViewName(collectionName, "v" + i), "v" + i, 0L)));
 			fragmentationExecutors.add(executor);
-			when(strategyCollection.getFragmentationStrategyExecutor("es/v"+i)).thenReturn(Optional.of(executor));
+			when(strategyCollection.getFragmentationStrategyExecutor("es/v" + i)).thenReturn(Optional.of(executor));
 		}
 
 		when(strategyCollection.getFragmentationStrategyExecutors(collectionName)).thenReturn(fragmentationExecutors);

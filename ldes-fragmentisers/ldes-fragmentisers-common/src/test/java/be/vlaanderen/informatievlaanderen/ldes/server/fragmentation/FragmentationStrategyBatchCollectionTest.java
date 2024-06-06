@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
 import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -28,9 +29,10 @@ class FragmentationStrategyBatchCollectionTest {
 	private final ApplicationEventPublisher eventPublisher = mock(ApplicationEventPublisher.class);
 	private final ObservationRegistry observationRegistry = mock(ObservationRegistry.class);
 	private final BucketisedMemberRepository bucketisedMemberRepository = mock(BucketisedMemberRepository.class);
+	private final ViewBucketisationService viewBucketisationService = mock(ViewBucketisationService.class);
 
 	private final FragmentationStrategyBatchCollection fragmentationStrategyCollection = new FragmentationStrategyBatchCollection(
-			fragmentRepository, bucketisedMemberRepository, fragmentationStrategyCreator, eventPublisher, observationRegistry);
+			fragmentRepository, bucketisedMemberRepository, fragmentationStrategyCreator, viewBucketisationService, observationRegistry);
 
 	@Test
 	void when_ViewAddedEventIsReceived_FragmentationStrategyIsAddedToMap() {
@@ -40,7 +42,7 @@ class FragmentationStrategyBatchCollectionTest {
 		fragmentationStrategyCollection.handleViewAddedEvent(new ViewAddedEvent(initResult.viewSpecification()));
 
 		verifySingleViewAdded(initResult);
-		verify(eventPublisher).publishEvent(new ViewNeedsRebucketisationEvent(initResult.viewSpecification));
+		verify(eventPublisher).publishEvent(new ViewNeedsRebucketisationEvent(initResult.viewName));
 	}
 
 	@Test
@@ -64,10 +66,10 @@ class FragmentationStrategyBatchCollectionTest {
 		ViewSpecification viewSpecification = initViewAddedResult.viewSpecification;
 		assertTrue(fragmentationStrategyCollection.getFragmentationStrategyExecutors(COLLECTION_NAME).isEmpty());
 
-		fragmentationStrategyCollection.handleViewInitializationEvent(new ViewInitializationEvent(viewSpecification));
+		fragmentationStrategyCollection.handleViewAddedEvent(new ViewInitializationEvent(viewSpecification));
 
 		verifySingleViewAdded(initViewAddedResult);
-		verify(eventPublisher).publishEvent(new ViewNeedsRebucketisationEvent(initViewAddedResult.viewSpecification));
+		verify(eventPublisher).publishEvent(new ViewNeedsRebucketisationEvent(initViewAddedResult.viewName));
 	}
 
 	@Test

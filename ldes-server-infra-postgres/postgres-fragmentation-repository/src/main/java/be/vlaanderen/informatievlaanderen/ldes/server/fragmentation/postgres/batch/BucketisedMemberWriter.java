@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 
@@ -26,17 +27,19 @@ public class BucketisedMemberWriter implements ItemWriter<List<BucketisedMember>
 				.flatMap(List::stream)
 				.toList());
 
-		PreparedStatement ps = dataSource.getConnection().prepareStatement(SQL);
-		for (BucketisedMember bucket : buckets) {
-			// Set the variables
-			ps.setString(1, bucket.viewName().asString());
-			ps.setString(2, bucket.fragmentId());
-			ps.setString(3, bucket.memberId());
-			ps.setLong(4, bucket.sequenceNr());
-			// Add it to the batch
-			ps.addBatch();
-
+		try(Connection connection = dataSource.getConnection()) {
+			PreparedStatement ps = connection.prepareStatement(SQL);
+			for (BucketisedMember bucket : buckets) {
+				// Set the variables
+				ps.setString(1, bucket.viewName().asString());
+				ps.setString(2, bucket.fragmentId());
+				ps.setString(3, bucket.memberId());
+				ps.setLong(4, bucket.sequenceNr());
+				// Add it to the batch
+				ps.addBatch();
+			}
+			ps.executeBatch();
 		}
-		ps.executeBatch();
+
 	}
 }

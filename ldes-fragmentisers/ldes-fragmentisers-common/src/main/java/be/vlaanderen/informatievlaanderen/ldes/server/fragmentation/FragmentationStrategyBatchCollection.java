@@ -1,17 +1,13 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewAddedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewDeletedEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.ViewInitializationEvent;
-import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.fragmentation.ViewNeedsRebucketisationEvent;
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.*;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.factory.FragmentationStrategyCreator;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.BucketisedMemberRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.ViewBucketisationService;
 import io.micrometer.observation.ObservationRegistry;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -25,19 +21,18 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 	private final Set<FragmentationStrategyBatchExecutor> fragmentationStrategySet;
 	private final BucketisedMemberRepository bucketisedMemberRepository;
 	private final FragmentationStrategyCreator fragmentationStrategyCreator;
-	private final ApplicationEventPublisher eventPublisher;
+	private final ViewBucketisationService viewBucketisationService;
 	private final ObservationRegistry observationRegistry;
 
 	public FragmentationStrategyBatchCollection(
 			FragmentRepository fragmentRepository,
 			BucketisedMemberRepository bucketisedMemberRepository,
-			FragmentationStrategyCreator fragmentationStrategyCreator,
-			ApplicationEventPublisher eventPublisher,
+			FragmentationStrategyCreator fragmentationStrategyCreator, ViewBucketisationService viewBucketisationService,
 			ObservationRegistry observationRegistry) {
 		this.fragmentRepository = fragmentRepository;
 		this.bucketisedMemberRepository = bucketisedMemberRepository;
 		this.fragmentationStrategyCreator = fragmentationStrategyCreator;
-		this.eventPublisher = eventPublisher;
+		this.viewBucketisationService = viewBucketisationService;
 		this.observationRegistry = observationRegistry;
 		this.fragmentationStrategySet = new HashSet<>();
 	}
@@ -60,20 +55,11 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 				.findFirst();
 	}
 
-	@EventListener
-	public void handleViewAddedEvent(ViewAddedEvent event) {
-		prepareFragmentationStrategyExecutor(event.getViewName(), event.viewSpecification());
-	}
-
-	@EventListener
-	public void handleViewInitializationEvent(ViewInitializationEvent event) {
-		prepareFragmentationStrategyExecutor(event.getViewName(), event.viewSpecification());
-	}
-
-	private void prepareFragmentationStrategyExecutor(ViewName viewName, ViewSpecification viewSpecification) {
-		final var fragmentationStrategyExecutor = createExecutor(viewName, viewSpecification);
+	@EventListener({ViewAddedEvent.class, ViewInitializationEvent.class})
+	public void handleViewAddedEvent(ViewSupplier event) {
+		final var fragmentationStrategyExecutor = createExecutor(event.viewSpecification().getName(), event.viewSpecification());
 		fragmentationStrategySet.add(fragmentationStrategyExecutor);
-		eventPublisher.publishEvent(new ViewNeedsRebucketisationEvent(viewSpecification));
+		viewBucketisationService.setFragmentationHasView(event.viewSpecification().getName());
 	}
 
 	@EventListener
@@ -82,6 +68,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 				executor -> Objects.equals(executor.getViewName().getCollectionName(), event.collectionName()));
 		fragmentRepository.deleteTreeNodesByCollection(event.collectionName());
 		bucketisedMemberRepository.deleteByCollection(event.collectionName());
+		viewBucketisationService.setFragmentationHasDeletedCollection(event.collectionName());
 	}
 
 	@EventListener
@@ -89,6 +76,7 @@ public class FragmentationStrategyBatchCollection implements FragmentationStrate
 		removeFromStrategySet(executor -> Objects.equals(executor.getViewName(), event.getViewName()));
 		fragmentRepository.removeLdesFragmentsOfView(event.getViewName().asString());
 		bucketisedMemberRepository.deleteByViewName(event.getViewName());
+		viewBucketisationService.setFragmentationHasDeletedView(event.getViewName());
 	}
 
 	private void removeFromStrategySet(Predicate<FragmentationStrategyBatchExecutor> filterPredicate) {

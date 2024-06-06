@@ -24,6 +24,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -31,6 +35,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@EnableScheduling
+@EnableAsync
 public class FragmentationService {
 	public static final String LDES_SERVER_CREATE_FRAGMENTS_COUNT = "ldes_server_create_fragments_count";
 	private final String BUCKETISATION_JOB = "bucketisation";
@@ -68,20 +74,25 @@ public class FragmentationService {
 	}
 
 	@EventListener
-	public void executeFragmentation(MembersIngestedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		if (isJobRunning(BUCKETISATION_JOB)) {
-			shouldTriggerBucketisation = true;
-		} else {
-			launchJob(bucketiseJob(), new JobParameters());
-		}
+	public void executeFragmentation(MembersIngestedEvent event) {
+		shouldTriggerBucketisation = true;
 	}
 
 	@EventListener
+	@Async
 	public void handleViewInitializationEvent(ViewNeedsRebucketisationEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		launchJob(rebucketiseJob(), new JobParametersBuilder()
-				.addString("viewName", event.getViewName().asString())
+				.addString("viewName", event.viewName().asString())
 				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
+	}
+
+	@Scheduled(fixedRate = 500)
+	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+		if (shouldTriggerBucketisation && !isJobRunning(BUCKETISATION_JOB)) {
+			shouldTriggerBucketisation = false;
+			launchJob(bucketiseJob(), new JobParameters());
+		}
 	}
 
 	@EventListener

@@ -4,6 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecifica
 
 public interface ViewSupplier {
 
-    ViewSpecification viewSpecification();
+	ViewSpecification viewSpecification();
 
 }
