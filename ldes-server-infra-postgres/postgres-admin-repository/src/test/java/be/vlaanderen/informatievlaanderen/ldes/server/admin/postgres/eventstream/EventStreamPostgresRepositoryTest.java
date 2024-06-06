@@ -39,7 +39,7 @@ class EventStreamPostgresRepositoryTest {
     }
 
     @Test
-    @DisplayName("test retrieval of all eventstreams of a non-empty mongo collection")
+    @DisplayName("test retrieval of all eventstreams of a non-empty collection")
     void when_dbHasEntities_then_returnAll() {
         when(eventStreamEntityRepository.findAll()).thenReturn(List.of(OLD_EVENT_STREAM_ENTITY));
         when(newEventStreamEntityRepository.findAll()).thenReturn(List.of(
@@ -52,6 +52,22 @@ class EventStreamPostgresRepositoryTest {
                 EVENT_STREAM,
                 EVENT_STREAM_1,
                 new EventStream("other_collection", "created", "version", false));
+        assertThat(eventStreams).containsExactlyInAnyOrderElementsOf(expectedEventStreams);
+    }
+
+    @Test
+    @DisplayName("test retrieval of all eventstreams of a non-empty collection")
+    void when_dbHasEntitiesInTwoDataModels_then_returnAllOnce() {
+        when(eventStreamEntityRepository.findAll()).thenReturn(List.of(OLD_EVENT_STREAM_ENTITY));
+        when(newEventStreamEntityRepository.findAll()).thenReturn(List.of(
+                EVENT_STREAM_ENTITY,
+                new EventStreamEntity(COLLECTION_1, OLD_EVENT_STREAM_ENTITY.getTimestampPath(), OLD_EVENT_STREAM_ENTITY.getVersionOfPath(), false, false)
+        ));
+
+        List<EventStream> eventStreams = repository.retrieveAllEventStreams();
+        List<EventStream> expectedEventStreams = List.of(
+                EVENT_STREAM,
+                EVENT_STREAM_1);
         assertThat(eventStreams).containsExactlyInAnyOrderElementsOf(expectedEventStreams);
     }
 

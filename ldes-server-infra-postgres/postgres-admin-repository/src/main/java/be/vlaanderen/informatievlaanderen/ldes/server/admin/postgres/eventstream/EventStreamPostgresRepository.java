@@ -31,7 +31,7 @@ public class EventStreamPostgresRepository implements EventStreamRepository {
 				.map(converter::toEventStream);
 		final var newStreams = repository.findAll().stream()
 				.map(EventStreamMapper::fromEntity);
-		return Streams.concat(oldStreams, newStreams).toList();
+		return Streams.concat(oldStreams, newStreams).distinct().toList();
 	}
 
 	@Override
