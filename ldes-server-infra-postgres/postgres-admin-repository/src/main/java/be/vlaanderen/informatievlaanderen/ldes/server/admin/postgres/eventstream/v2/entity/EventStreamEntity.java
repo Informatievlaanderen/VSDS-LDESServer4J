@@ -1,6 +1,5 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsource.v2.entity.EventSourceEntity;
 import jakarta.persistence.*;
 
 @Entity(name = "collections")
@@ -25,9 +24,6 @@ public class EventStreamEntity {
 
     @Column(nullable = false)
     private Boolean isClosed;
-
-    @OneToOne(mappedBy = "eventStream", fetch = FetchType.LAZY)
-    private EventSourceEntity eventSource;
 
     public EventStreamEntity() {
     }
@@ -58,9 +54,5 @@ public class EventStreamEntity {
 
     public boolean isClosed() {
         return isClosed;
-    }
-
-    public void setEventSource(EventSourceEntity eventSource) {
-        this.eventSource = eventSource;
     }
 }
