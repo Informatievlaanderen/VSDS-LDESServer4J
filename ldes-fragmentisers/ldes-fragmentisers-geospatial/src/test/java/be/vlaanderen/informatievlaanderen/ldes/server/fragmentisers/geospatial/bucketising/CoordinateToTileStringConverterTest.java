@@ -11,7 +11,6 @@ import org.locationtech.jts.io.ParseException;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateToTileStringConverter.calculateTiles;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -40,7 +39,7 @@ class CoordinateToTileStringConverterTest {
     @ParameterizedTest
     @ArgumentsSource(WktZoomTilesArgumentsProvider.class)
     void calculateTiles_byWktString(String wktString, int zoom, Set<String> expectedTiles) throws ParseException {
-        Set<String> actual = calculateTiles(wktString, zoom);
+        Set<String> actual = CoordinateToTileStringConverter.calculateTiles(wktString, zoom);
 
         assertThat(actual).isEqualTo(expectedTiles);
     }
