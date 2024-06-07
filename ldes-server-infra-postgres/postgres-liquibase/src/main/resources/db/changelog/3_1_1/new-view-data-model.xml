@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-views-table" author="vsds">
+        <createTable tableName="views">
+            <column name="view_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="collection_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fragmentations" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="retention_policies" type="jsonb">
+                <constraints nullable="false"/>
+            </column>
+            <column name="page_size" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint columnNames="collection_id, name" tableName="views" constraintName="uc_views_collection_id_name"/>
+
+        <addForeignKeyConstraint baseColumnNames="collection_id"
+                                 baseTableName="views"
+                                 constraintName="fk_views_collection_id"
+                                 referencedColumnNames="collection_id"
+                                 referencedTableName="collections"
+                                 onDelete="CASCADE"/>
+
+        <rollback>
+            <dropTable tableName="views" cascadeConstraints="true" />
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-view-data" author="vsds">
+        <preConditions>
+            <tableExists tableName="views"/>
+        </preConditions>
+        <sqlFile path="db/changelog/3_1_1/migrate-view-data.sql" />
+        <rollback>
+            <delete tableName="views"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="drop-old-view-table" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="migrate-view-data" author="vsds"
+                               changeLogFile="db/changelog/3_1_1/new-view-data-model.xml"/>
+        </preConditions>
+        <dropTable tableName="view" cascadeConstraints="true"/>
+    </changeSet>
+</databaseChangeLog>

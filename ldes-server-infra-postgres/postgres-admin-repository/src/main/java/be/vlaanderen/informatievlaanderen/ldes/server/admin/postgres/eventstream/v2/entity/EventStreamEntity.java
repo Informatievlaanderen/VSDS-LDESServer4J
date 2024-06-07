@@ -7,22 +7,22 @@ import jakarta.persistence.*;
 public class EventStreamEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "collection_id", unique = true, nullable = false)
+    @Column(name = "collection_id", unique = true, nullable = false, columnDefinition = "SMALLINT")
     private Integer id;
 
     @Column(unique = true, nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "timestamp_path", nullable = false)
     private String timestampPath;
 
-    @Column(nullable = false)
+    @Column(name = "version_of_path", nullable = false)
     private String versionOfPath;
 
-    @Column(nullable = false)
+    @Column(name = "create_versions", nullable = false)
     private Boolean versionCreationEnabled;
 
-    @Column(nullable = false)
+    @Column(name = "is_closed", nullable = false)
     private Boolean isClosed;
 
     public EventStreamEntity() {
