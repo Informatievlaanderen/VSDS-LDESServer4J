@@ -44,6 +44,7 @@ public class ViewPostgresRepository implements ViewRepository {
     }
 
     @Override
+    @Transactional
     public void deleteViewByViewName(ViewName viewName) {
         viewEntityRepository.deleteByViewName(viewName.getCollectionName(), viewName.getViewName());
     }

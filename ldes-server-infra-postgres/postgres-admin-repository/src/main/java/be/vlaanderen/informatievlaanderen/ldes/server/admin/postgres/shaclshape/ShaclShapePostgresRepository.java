@@ -4,7 +4,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entitie
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.repository.ShaclShapeEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.service.ShaclShapeEntityConverter;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -34,9 +33,8 @@ public class ShaclShapePostgresRepository implements ShaclShapeRepository {
 
 	@Override
 	@Transactional
-	public ShaclShape saveShaclShape(ShaclShape shaclShape) {
+	public void saveShaclShape(ShaclShape shaclShape) {
 		repository.save(converter.fromShaclShape(shaclShape));
-		return shaclShape;
 	}
 
 	@Override

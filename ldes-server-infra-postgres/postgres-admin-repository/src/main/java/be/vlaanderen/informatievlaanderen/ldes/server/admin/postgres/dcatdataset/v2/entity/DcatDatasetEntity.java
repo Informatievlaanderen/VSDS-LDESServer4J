@@ -26,9 +26,8 @@ public class DcatDatasetEntity {
 
     public DcatDatasetEntity() {}
 
-    public DcatDatasetEntity(EventStreamEntity eventStream, Model model) {
+    public DcatDatasetEntity(EventStreamEntity eventStream) {
         this.eventStream = eventStream;
-        this.model = model;
     }
 
     public String getCollectionName() {
@@ -37,5 +36,9 @@ public class DcatDatasetEntity {
 
     public Model getModel() {
         return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 }

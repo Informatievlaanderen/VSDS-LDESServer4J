@@ -1,9 +1,11 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.v2.entity;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.ModelListConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.FragmentationConfigEntity;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
+import org.apache.jena.rdf.model.Model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
@@ -18,7 +20,7 @@ public class ViewEntity {
     @Column(name = "view_id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "collection_id", nullable = false)
     private EventStreamEntity eventStream;
@@ -30,9 +32,9 @@ public class ViewEntity {
     @Column(name = "fragmentations", columnDefinition = "jsonb", nullable = false)
     private List<FragmentationConfigEntity> fragmentations;
 
-    @Type(JsonBinaryType.class)
-    @Column(name = "retention_policies", columnDefinition = "jsonb", nullable = false)
-    private List<String> retentionPolicies;
+    @Convert(converter = ModelListConverter.class)
+    @Column(name = "retention_policies", columnDefinition = "text", nullable = false)
+    private List<Model> retentionPolicies;
 
     @Column(name = "page_size", nullable = false)
     private Integer pageSize;
@@ -40,7 +42,7 @@ public class ViewEntity {
     public ViewEntity() {
     }
 
-    public ViewEntity(String name, List<FragmentationConfigEntity> fragmentations, List<String> retentionPolicies, Integer pageSize) {
+    public ViewEntity(String name, List<FragmentationConfigEntity> fragmentations, List<Model> retentionPolicies, Integer pageSize) {
         this.name = name;
         this.fragmentations = fragmentations;
         this.retentionPolicies = retentionPolicies;
@@ -55,7 +57,7 @@ public class ViewEntity {
         return fragmentations;
     }
 
-    public List<String> getRetentionPolicies() {
+    public List<Model> getRetentionPolicies() {
         return retentionPolicies;
     }
 

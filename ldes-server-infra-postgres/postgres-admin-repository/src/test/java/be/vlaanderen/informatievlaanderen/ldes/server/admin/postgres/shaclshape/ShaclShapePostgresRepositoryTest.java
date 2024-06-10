@@ -91,10 +91,9 @@ class ShaclShapePostgresRepositoryTest {
 		final Model shaclModel = RDFParser.fromString(shaclShapeString).lang(Lang.TURTLE).toModel();
 		final ShaclShape shaclShape = new ShaclShape(COLLECTION, shaclModel);
 
-		final ShaclShape savedShaclShape = repository.saveShaclShape(shaclShape);
+		repository.saveShaclShape(shaclShape);
 
 		verify(shaclShapeEntityRepository).save(any(ShaclShapeEntity.class));
-		assertEquals(shaclShape, savedShaclShape);
 	}
 
 	@Test

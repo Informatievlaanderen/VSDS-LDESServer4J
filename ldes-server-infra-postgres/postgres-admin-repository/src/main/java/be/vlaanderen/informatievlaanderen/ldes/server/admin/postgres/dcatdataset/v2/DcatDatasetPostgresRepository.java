@@ -5,7 +5,6 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdata
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2.entity.DcatDatasetEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2.mapper.DcatDatasetMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2.repository.DcatDatasetEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.repository.EventStreamEntityRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-//@Repository
+@Repository
 public class DcatDatasetPostgresRepository implements DcatDatasetRepository {
     private final DcatDatasetEntityRepository dcatDatasetEntityRepository;
     private final EventStreamEntityRepository eventStreamEntityRepository;
@@ -31,19 +30,32 @@ public class DcatDatasetPostgresRepository implements DcatDatasetRepository {
     @Override
     @Transactional
     public void saveDataset(DcatDataset dataset) {
-        eventStreamEntityRepository
-                .findByName(dataset.getCollectionName())
-                .map(eventStream -> new DcatDatasetEntity(eventStream, dataset.getModel()))
-                .ifPresent(dcatDatasetEntityRepository::save);
+        dcatDatasetEntityRepository.findByCollectionName(dataset.getCollectionName())
+                .or(() -> eventStreamEntityRepository.findByName(dataset.getCollectionName()).map(DcatDatasetEntity::new))
+                .ifPresent(dcatDatasetEntity -> {
+                    dcatDatasetEntity.setModel(dataset.getModel());
+                    dcatDatasetEntityRepository.save(dcatDatasetEntity);
+                });
     }
 
     @Override
-    public void deleteDataset(String id) {
-        dcatDatasetEntityRepository.deleteByCollectionName(id);
+    @Transactional
+    public boolean deleteDataset(String id) {
+        final var dcatDatasetEntity = dcatDatasetEntityRepository.findByCollectionName(id);
+        if (dcatDatasetEntity.isPresent()) {
+            dcatDatasetEntityRepository.delete(dcatDatasetEntity.get());
+            return true;
+        }
+        return false;
     }
 
     @Override
     public List<DcatDataset> findAll() {
         return dcatDatasetEntityRepository.findAll().stream().map(DcatDatasetMapper::fromEntity).toList();
+    }
+
+    @Override
+    public boolean exitsByCollectionName(String collectionName) {
+        return dcatDatasetEntityRepository.existsByCollectionName(collectionName);
     }
 }

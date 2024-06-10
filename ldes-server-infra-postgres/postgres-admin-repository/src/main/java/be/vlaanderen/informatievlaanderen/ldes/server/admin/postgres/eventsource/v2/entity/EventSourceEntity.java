@@ -2,12 +2,10 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventsourc
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.ModelListConverter;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity.EventStreamEntity;
-import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
 import org.apache.jena.rdf.model.Model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.Type;
 
 import java.util.List;
 
@@ -16,25 +14,23 @@ import java.util.List;
 public class EventSourceEntity {
     @Id
     @Column(name = "collection_id", nullable = false)
-    private Integer id;
+    private Integer collectionId;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "collection_id", nullable = false)
     private EventStreamEntity eventStream;
 
-    @Type(value = JsonBinaryType.class)
     @Convert(converter = ModelListConverter.class)
-    @Column(name = "retention_policies", columnDefinition = "jsonb", nullable = false)
+    @Column(name = "retention_policies", columnDefinition = "text", nullable = false)
     private List<Model> retentionPolicies;
 
     public EventSourceEntity() {
     }
 
-    public EventSourceEntity(EventStreamEntity eventStream, List<Model> retentionPolicies) {
+    public EventSourceEntity(EventStreamEntity eventStream) {
         this.eventStream = eventStream;
-        this.retentionPolicies = retentionPolicies;
     }
 
     public String getCollectionName() {
@@ -43,5 +39,9 @@ public class EventSourceEntity {
 
     public List<Model> getRetentionPolicies() {
         return retentionPolicies;
+    }
+
+    public void setRetentionPolicies(List<Model> retentionPolicies) {
+        this.retentionPolicies = retentionPolicies;
     }
 }

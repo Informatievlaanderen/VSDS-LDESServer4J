@@ -10,6 +10,6 @@ public interface DcatDatasetEntityRepository extends JpaRepository<DcatDatasetEn
     @Query("SELECT d FROM DcatDatasetEntity d WHERE d.eventStream.name = :collectionName")
     Optional<DcatDatasetEntity> findByCollectionName(String collectionName);
 
-    @Query("DELETE FROM DcatDatasetEntity d WHERE d.eventStream.name = :collectionName")
-    void deleteByCollectionName(String collectionName);
+    @Query("SELECT CASE WHEN COUNT(d) > 0 THEN true ELSE false END FROM DcatDatasetEntity d WHERE d.eventStream.name = :collectionName")
+    boolean existsByCollectionName(String collectionName);
 }

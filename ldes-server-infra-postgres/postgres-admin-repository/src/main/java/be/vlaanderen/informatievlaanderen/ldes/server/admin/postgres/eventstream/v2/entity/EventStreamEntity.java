@@ -36,6 +36,10 @@ public class EventStreamEntity {
         this.isClosed = isClosed;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getName() {
         return name;
     }

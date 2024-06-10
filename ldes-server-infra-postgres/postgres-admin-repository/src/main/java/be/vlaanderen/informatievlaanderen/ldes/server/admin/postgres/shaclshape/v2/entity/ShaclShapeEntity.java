@@ -27,9 +27,8 @@ public class ShaclShapeEntity {
 
     protected ShaclShapeEntity() {}
 
-    public ShaclShapeEntity(EventStreamEntity eventStream, Model model) {
+    public ShaclShapeEntity(EventStreamEntity eventStream) {
         this.eventStream = eventStream;
-        this.model = model;
     }
 
     public String getCollectionName() {
@@ -38,5 +37,9 @@ public class ShaclShapeEntity {
 
     public Model getModel() {
         return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
     }
 }

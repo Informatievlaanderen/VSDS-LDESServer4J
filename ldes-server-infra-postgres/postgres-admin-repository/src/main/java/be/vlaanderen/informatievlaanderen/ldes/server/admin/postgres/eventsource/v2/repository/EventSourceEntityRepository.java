@@ -9,7 +9,4 @@ import java.util.Optional;
 public interface EventSourceEntityRepository extends JpaRepository<EventSourceEntity, Integer> {
     @Query("SELECT e FROM EventSourceEntity e WHERE e.eventStream.name = :collectionName")
     Optional<EventSourceEntity> findByCollectionName(String collectionName);
-
-    @Query("DELETE FROM EventSourceEntity e WHERE e.eventStream.name = :collectionName")
-    void deleteByCollectionName(String collectionName);
 }

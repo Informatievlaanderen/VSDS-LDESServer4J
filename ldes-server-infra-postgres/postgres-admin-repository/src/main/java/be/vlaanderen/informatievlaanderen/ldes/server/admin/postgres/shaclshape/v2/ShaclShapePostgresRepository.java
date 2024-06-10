@@ -2,11 +2,11 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.v2.entity.ShaclShapeEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.v2.mapper.ShaclShapeMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.v2.repository.ShaclShapeEntityRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,14 +33,17 @@ public class ShaclShapePostgresRepository implements ShaclShapeRepository {
     }
 
     @Override
-    public ShaclShape saveShaclShape(ShaclShape shaclShape) {
-        eventStreamEntityRepository.findByName(shaclShape.getCollection())
-                .map(eventStream -> new ShaclShapeEntity(eventStream, shaclShape.getModel()))
-                .ifPresent(shaclShapeEntityRepository::save);
-        return shaclShape;
+    public void saveShaclShape(ShaclShape shaclShape) {
+        shaclShapeEntityRepository.findByCollectionName(shaclShape.getCollection())
+                .or(() -> eventStreamEntityRepository.findByName(shaclShape.getCollection()).map(ShaclShapeEntity::new))
+                .ifPresent(shaclShapeEntity -> {
+                    shaclShapeEntity.setModel(shaclShape.getModel());
+                    shaclShapeEntityRepository.save(shaclShapeEntity);
+                });
     }
 
     @Override
+    @Transactional
     public void deleteShaclShape(String collectionName) {
         shaclShapeEntityRepository.deleteByCollectionName(collectionName);
     }
