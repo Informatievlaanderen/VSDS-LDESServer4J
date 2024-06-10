@@ -33,6 +33,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @EnableScheduling
@@ -50,7 +51,7 @@ public class FragmentationService {
 	private final BucketProcessor processor;
 	private final ItemWriter<List<BucketisedMember>> bucketWriter;
 	private final ApplicationEventPublisher eventPublisher;
-	private boolean shouldTriggerBucketisation;
+	private AtomicBoolean shouldTriggerBucketisation = new AtomicBoolean(false);
 
 	private final FragmentRepository fragmentRepository;
 
@@ -75,7 +76,7 @@ public class FragmentationService {
 
 	@EventListener
 	public void executeFragmentation(MembersIngestedEvent event) {
-		shouldTriggerBucketisation = true;
+		shouldTriggerBucketisation.set(true);
 	}
 
 	@EventListener
@@ -89,8 +90,8 @@ public class FragmentationService {
 
 	@Scheduled(fixedRate = 1500)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		if (shouldTriggerBucketisation && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
-			shouldTriggerBucketisation = false;
+		if (shouldTriggerBucketisation.get() && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
+			shouldTriggerBucketisation.set(false);
 			launchJob(bucketiseJob(), new JobParameters());
 		}
 	}

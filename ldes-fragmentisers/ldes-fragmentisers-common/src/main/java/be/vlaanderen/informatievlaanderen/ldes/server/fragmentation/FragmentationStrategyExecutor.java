@@ -3,7 +3,7 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSequence;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.MemberRetriever;
 import io.micrometer.observation.ObservationRegistry;
@@ -68,13 +68,13 @@ public class FragmentationStrategyExecutor {
 				.orElse(FragmentSequence.createNeverProcessedSequence(viewName));
 	}
 
-	private Optional<Member> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
+	private Optional<FragmentationMember> getNextMemberToFragment(FragmentSequence lastProcessedSequence) {
 		final String collectionName = viewName.getCollectionName();
 		final long lastProcessedSequenceNr = lastProcessedSequence.sequenceNr();
 		return memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(collectionName, lastProcessedSequenceNr);
 	}
 
-	private FragmentSequence fragment(Member member) {
+	private FragmentSequence fragment(FragmentationMember member) {
 		var parentObservation = createNotStarted("execute fragmentation", observationRegistry).start();
 		var rootFragmentOfView = rootFragmentRetriever.retrieveRootFragmentOfView(viewName, parentObservation);
 		List<BucketisedMember> members = fragmentationStrategy.addMemberToFragment(rootFragmentOfView, member, parentObservation);

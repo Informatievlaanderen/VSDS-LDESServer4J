@@ -51,4 +51,8 @@ public class OpenPageProvider {
 	public boolean needsToCreateNewFragment(Fragment fragment) {
 		return fragment.getNrOfMembersAdded() >= memberLimit;
 	}
+
+	public Long getMemberLimit() {
+		return memberLimit;
+	}
 }

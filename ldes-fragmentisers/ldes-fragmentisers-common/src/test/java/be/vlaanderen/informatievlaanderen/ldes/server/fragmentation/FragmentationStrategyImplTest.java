@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentI
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import io.micrometer.observation.Observation;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ class FragmentationStrategyImplTest {
 	@Test
 	void when_memberIsAddedToFragment_FragmentationStrategyImplSavesUpdatedFragment() {
 		Fragment fragment = new Fragment(FRAGMENT_ID);
-		Member member = mock(Member.class);
+		FragmentationMember member = mock(FragmentationMember.class);
 		when(member.id()).thenReturn(MEMBER_ID);
 		when(member.sequenceNr()).thenReturn(SEQ_NR);
 

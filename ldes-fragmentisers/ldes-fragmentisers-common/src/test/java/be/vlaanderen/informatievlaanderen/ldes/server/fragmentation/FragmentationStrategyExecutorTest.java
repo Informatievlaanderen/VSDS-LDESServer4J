@@ -4,7 +4,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.FragmentSeque
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.LdesFragmentIdentifier;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fragment;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentSequenceRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.MemberRetriever;
 import com.github.jsonldjava.shaded.com.google.common.util.concurrent.MoreExecutors;
@@ -94,7 +94,7 @@ class FragmentationStrategyExecutorTest {
 			String memberId = "id";
 			Model memberModel = ModelFactory.createDefaultModel();
 			long sequenceNr = 1L;
-			Member member = new Member(memberId, memberModel, sequenceNr);
+			FragmentationMember member = new FragmentationMember(memberId, memberModel, sequenceNr);
 			when(memberRetriever.findFirstByCollectionNameAndSequenceNrGreaterThanAndInEventSource(viewName.getCollectionName(),
 					FragmentSequence.createNeverProcessedSequence(viewName).sequenceNr()))
 					.thenReturn(Optional.of(member));

@@ -1,7 +1,7 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.services.membermapper;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.converter.VersionObjectModelBuilder;
-import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Member;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.FragmentationMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.ingest.entities.IngestedMember;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ResourceFactory;
@@ -15,8 +15,8 @@ public class MemberMapper {
         this.timestampPath = timestampPath;
     }
 
-    public Member mapToFragmentationMember(IngestedMember ingestMember) {
-        return new Member(ingestMember.getId(), enrichModel(ingestMember), ingestMember.getSequenceNr());
+    public FragmentationMember mapToFragmentationMember(IngestedMember ingestMember) {
+        return new FragmentationMember(ingestMember.getId(), enrichModel(ingestMember), ingestMember.getSequenceNr());
     }
 
     private Model enrichModel(IngestedMember ingestMember) {

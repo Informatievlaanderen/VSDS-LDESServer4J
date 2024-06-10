@@ -34,7 +34,7 @@ public class BucketisationPartitioner implements Partitioner {
 			context.putString("viewName", viewName);
 			context.putString("fragmentId", fragmentId);
 
-			contextMap.put("view: %s bucket: %s".formatted(ViewName.fromString(viewName).getViewName(), contextMap.size()), context);
+			contextMap.put("view: %s bucket: %s".formatted(ViewName.fromString(viewName).getViewName(), fragmentId.hashCode()), context);
 		}
 
 		return contextMap;

@@ -23,7 +23,7 @@ public class MemberPaginationServiceCreator {
         return new MemberPaginationService(fragmentRepository, openPageProvider, view.getPageSize());
     }
 
-    public OpenPageProvider getOpenPageProvider(ConfigProperties properties) {
+    private OpenPageProvider getOpenPageProvider(ConfigProperties properties) {
         PaginationConfig paginationConfig = createPaginationConfig(properties);
         PageCreator pageFragmentCreator = getPageCreator(paginationConfig.bidirectionalRelations());
         return new OpenPageProvider(pageFragmentCreator, fragmentRepository,
