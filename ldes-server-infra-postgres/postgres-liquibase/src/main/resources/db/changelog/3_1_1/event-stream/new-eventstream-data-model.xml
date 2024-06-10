@@ -40,7 +40,7 @@
         <preConditions>
             <tableExists tableName="collections"/>
         </preConditions>
-        <sqlFile path="db/changelog/3_1_1/migrate-eventstream-data.sql"/>
+        <sqlFile path="db/changelog/3_1_1/event-stream/migrate-eventstream-data.sql"/>
         <rollback>
             <delete tableName="collections"/>
         </rollback>
@@ -48,7 +48,7 @@
     <changeSet id="drop-old-eventstream-table" author="vsds">
         <preConditions>
             <changeSetExecuted id="migrate-eventstream-data" author="vsds"
-                               changeLogFile="db/changelog/3_1_1/new-eventstream-data-model.xml"/>
+                               changeLogFile="db/changelog/3_1_1/event-stream/new-eventstream-data-model.xml"/>
         </preConditions>
         <dropTable tableName="eventstream" cascadeConstraints="true"/>
     </changeSet>

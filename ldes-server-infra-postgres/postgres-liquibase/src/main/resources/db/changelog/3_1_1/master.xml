@@ -4,7 +4,9 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="/db/changelog/3_1_1/new-eventstream-data-model.xml"/>
-    <include file="db/changelog/3_1_1/new-view-data-model.xml"/>
-    <include file="db/changelog/3_1_1/add-fk-to-dcat-datasets.xml"/>
+    <include file="/db/changelog/3_1_1/event-stream/new-eventstream-data-model.xml"/>
+    <include file="/db/changelog/3_1_1/views/new-view-data-model.xml"/>
+    <include file="/db/changelog/3_1_1/dcat-datasets/add-fk-to-dcat-datasets.xml"/>
+    <include file="/db/changelog/3_1_1/shacl-shapes/add-fk-to-shacl-shapes.xml"/>
+    <include file="/db/changelog/3_1_1/event-source/add-fk-to-event-source.xml"/>
 </databaseChangeLog>
