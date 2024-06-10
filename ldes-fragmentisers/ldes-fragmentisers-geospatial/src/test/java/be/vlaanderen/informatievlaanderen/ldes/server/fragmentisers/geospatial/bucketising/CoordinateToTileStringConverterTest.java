@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -9,6 +10,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.bucketising.CoordinateToTileStringConverter.calculateTiles;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CoordinateToTileStringConverterTest {
@@ -16,9 +18,18 @@ class CoordinateToTileStringConverterTest {
     @ParameterizedTest
     @ArgumentsSource(WktZoomTilesArgumentsProvider.class)
     void calculateTiles_byWktString(String wktString, int zoom, Set<String> expectedTiles) {
-        Set<String> actual = CoordinateToTileStringConverter.calculateTiles(wktString, zoom);
+        Set<String> actual = calculateTiles(wktString, zoom);
 
         assertThat(actual).isEqualTo(expectedTiles);
+    }
+
+    @Test
+    void calculateTiles_returnEmptySet_onException() {
+        String faultyWkt = "POINT (aaaa bbbb)";
+
+        Set<String> actual = calculateTiles(faultyWkt, 0);
+
+        assertThat(actual).isEmpty();
     }
 
     static class WktZoomTilesArgumentsProvider implements ArgumentsProvider {
