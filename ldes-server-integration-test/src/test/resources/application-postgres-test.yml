@@ -14,9 +14,8 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
-  jpa:
-    hibernate:
-      ddl-auto: update
+  liquibase:
+    change-log: classpath:/db/changelog/master.xml
 
 logging:
   level:

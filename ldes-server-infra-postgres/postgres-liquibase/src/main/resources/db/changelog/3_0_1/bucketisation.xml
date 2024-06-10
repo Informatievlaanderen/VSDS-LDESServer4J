@@ -19,6 +19,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint columnNames="view_name, fragment_id, member_id"
+                             constraintName="fragmentation_bucketisation_uq"
+                             tableName="fragmentation_bucketisation"/>
         <createIndex indexName="fragmentation_bucketisation_view_name" tableName="fragmentation_bucketisation">
             <column name="view_name"/>
         </createIndex>

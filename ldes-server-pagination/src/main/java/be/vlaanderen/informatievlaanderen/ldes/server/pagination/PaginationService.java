@@ -9,6 +9,7 @@ import org.springframework.batch.core.*;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
@@ -20,6 +21,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -61,24 +64,28 @@ public class PaginationService {
 
 
 	@EventListener
+	@Async
 	@SuppressWarnings("java:S2629")
 	public void handleMemberBucketisedEvent(MembersBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		if (isJobRunning(PAGINATION_JOB) || isJobRunning(NEW_VIEW_PAGINATION_JOB)) {
-			shouldTriggerPagination = true;
-		} else {
-			runJob(paginationJob(), new JobParametersBuilder()
-					.addLocalDateTime("triggered", LocalDateTime.now())
-					.toJobParameters());
-		}
+		shouldTriggerPagination = true;
 	}
 
 	@EventListener
+	@Async
 	@SuppressWarnings("java:S2629")
 	public void handleNewViewBucketisedEvent(NewViewBucketisedEvent event) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
 		runJob(newViewPaginationJob(), new JobParametersBuilder()
 				.addString("viewName", event.viewName())
 				.addLocalDateTime("triggered", LocalDateTime.now())
 				.toJobParameters());
+	}
+
+	@Scheduled(fixedRate = 1500)
+	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+		if (shouldTriggerPagination && !isJobRunning(PAGINATION_JOB) && !isJobRunning(NEW_VIEW_PAGINATION_JOB)) {
+			shouldTriggerPagination = false;
+			runJob(paginationJob(), new JobParametersBuilder().toJobParameters());
+		}
 	}
 
 	private boolean isJobRunning(String jobName) {
@@ -92,9 +99,7 @@ public class PaginationService {
 			runJob(job, jobParameters);
 		} else if (job.getName().equals(PAGINATION_JOB) && shouldTriggerPagination) {
 			shouldTriggerPagination = false;
-			runJob(paginationJob(), new JobParametersBuilder()
-					.addLocalDateTime("triggered", LocalDateTime.now())
-					.toJobParameters());
+			runJob(paginationJob(), new JobParametersBuilder().toJobParameters());
 		}
 
 	}
@@ -102,6 +107,7 @@ public class PaginationService {
 	private Job paginationJob() {
 		return new JobBuilder(PAGINATION_JOB, jobRepository)
 				.start(paginationStep())
+				.incrementer(new RunIdIncrementer())
 				.build();
 	}
 

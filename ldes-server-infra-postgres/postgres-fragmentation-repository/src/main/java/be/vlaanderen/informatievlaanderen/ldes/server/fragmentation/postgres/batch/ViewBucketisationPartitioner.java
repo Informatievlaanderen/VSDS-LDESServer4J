@@ -26,8 +26,11 @@ public class ViewBucketisationPartitioner implements Partitioner {
 	public Map<String, ExecutionContext> partition(int gridSize) {
 		String viewName = jobParameters.get("viewName");
 
-		List<String> fragmentIds = entityManager.createNativeQuery("SELECT DISTINCT fragment_id FROM fragmentation_bucketisation " +
-		                                                           "WHERE view_name = :viewName", String.class)
+		List<String> fragmentIds = entityManager.createNativeQuery("SELECT DISTINCT fb.fragment_id FROM fragmentation_bucketisation fb " +
+		                                                           "LEFT JOIN fetch_allocation fa ON " +
+		                                                           "fb.view_name = fa.view_name AND " +
+		                                                           "fb.member_id = fa.member_id " +
+		                                                           "WHERE fa.id IS NULL AND fb.view_name = :viewName", String.class)
 				.setParameter("viewName", viewName)
 				.getResultList();
 
@@ -36,7 +39,7 @@ public class ViewBucketisationPartitioner implements Partitioner {
 			ExecutionContext context = new ExecutionContext();
 			context.putString("fragmentId", fragmentId);
 
-			contextMap.put("partition" + fragmentId, context);
+			contextMap.put("partition: " + contextMap.size(), context);
 		}
 
 		return contextMap;

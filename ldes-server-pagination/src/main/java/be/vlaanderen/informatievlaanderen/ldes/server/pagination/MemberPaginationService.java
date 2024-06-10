@@ -7,11 +7,12 @@ import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.Fra
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.repository.FragmentRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.pagination.services.OpenPageProvider;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class MemberPaginationService {
 	private final FragmentRepository fragmentRepository;
@@ -33,13 +34,13 @@ public class MemberPaginationService {
 		String viewName = bucketisedMembers.getFirst().getViewName();
 		String bucketId = bucketisedMembers.getFirst().fragmentId();
 
-		Map<LdesFragmentIdentifier, AtomicInteger> fragmentMemberCounter = new HashMap<>();
+		Set<Fragment> updatedPages = new HashSet<>();
 
 		AtomicReference<Fragment> activePage = new AtomicReference<>(pageProvider
 				.retrieveOpenFragmentOrCreateNewFragment(LdesFragmentIdentifier.fromFragmentId(bucketId)));
 		AtomicInteger freeItems = new AtomicInteger(maxPageSize - activePage.get().getNrOfMembersAdded());
 
-		List<MemberAllocation> memberAllocations = bucketisedMembers.stream()
+		Set<MemberAllocation> memberAllocations = bucketisedMembers.stream()
 				.map(bucketisedMember -> {
 					String id = bucketisedMember.memberId() + "/" + activePage.get().getFragmentIdString();
 					MemberAllocation memberAllocation = new MemberAllocation(id, activePage.get().getViewName().getCollectionName(),
@@ -50,15 +51,15 @@ public class MemberPaginationService {
 								.retrieveOpenFragmentOrCreateNewFragment(LdesFragmentIdentifier.fromFragmentId(bucketId)));
 						freeItems.set(maxPageSize - activePage.get().getNrOfMembersAdded());
 					}
-					fragmentMemberCounter.putIfAbsent(activePage.get().getFragmentId(), new AtomicInteger(0));
-					fragmentMemberCounter.get(activePage.get().getFragmentId()).incrementAndGet();
+					activePage.get().incrementNrOfMembersAdded();
+					updatedPages.add(activePage.get());
 					return memberAllocation;
 				})
-				.toList();
+				.collect(Collectors.toSet());
 
-		fragmentMemberCounter.forEach((key, value) -> fragmentRepository.incrementNrOfMembersAdded(key, value.get()));
+		updatedPages.forEach(fragmentRepository::saveFragment);
 
-		return memberAllocations;
+		return memberAllocations.stream().toList();
 	}
 
 	protected int getMaxPageSize() {

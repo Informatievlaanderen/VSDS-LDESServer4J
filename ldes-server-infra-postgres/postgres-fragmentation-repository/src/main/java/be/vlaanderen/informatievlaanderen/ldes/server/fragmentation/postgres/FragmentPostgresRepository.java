@@ -37,6 +37,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Fragment> retrieveFragment(LdesFragmentIdentifier fragmentId) {
 		return repository
 				.findById(fragmentId.asDecodedFragmentId())
@@ -44,6 +45,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Fragment> retrieveMutableFragment(String viewName,
 			List<FragmentPair> fragmentPairList) {
 		return repository
@@ -54,6 +56,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Fragment> retrieveOpenChildFragment(LdesFragmentIdentifier parentId) {
 		return repository
 				.findByImmutableAndParentId(false, parentId.asDecodedFragmentId())
@@ -61,6 +64,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Fragment> retrieveRootFragment(String viewName) {
 		return repository
 				.findLdesFragmentEntityByRootAndViewName(true, viewName)
@@ -74,11 +78,13 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional
 	public void incrementNrOfMembersAdded(LdesFragmentIdentifier fragmentId, int size) {
 		repository.incrementNrOfMembersAdded(fragmentId.asDecodedFragmentId(), size);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Stream<Fragment> retrieveFragmentsOfView(String viewName) {
 		return repository
 				.findAllByViewName(viewName)
@@ -100,6 +106,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Fragment> retrieveFragmentsByOutgoingRelation(LdesFragmentIdentifier ldesFragmentIdentifier) {
 		return repository
 				.findAllByRelations_TreeNode(ldesFragmentIdentifier.asDecodedFragmentId())
@@ -109,6 +116,7 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Stream<Fragment> getDeletionCandidates() {
 		return repository
 				.findByDeleteTimeNotNull()
@@ -123,9 +131,10 @@ public class FragmentPostgresRepository implements FragmentRepository {
 	}
 
     @Override
+    @Transactional
     public void makeChildrenImmutable(Fragment fragment) {
 		int modifiedRows = repository.closeChildren(fragment.getFragmentIdString());
-		log.atInfo().log("{} child/children of {} was/were made immutable.", modifiedRows, fragment.getFragmentIdString());
+		log.debug("{} child/children of {} was/were made immutable.", modifiedRows, fragment.getFragmentIdString());
     }
 
 	@Override

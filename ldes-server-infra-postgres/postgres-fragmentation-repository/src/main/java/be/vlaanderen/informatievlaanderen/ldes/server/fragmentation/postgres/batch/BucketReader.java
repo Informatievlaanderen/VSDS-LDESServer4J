@@ -3,83 +3,76 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.ba
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.entities.BucketisedMember;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.entity.MemberBucketEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.mapper.MemberBucketEntityMapper;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
+import be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.repository.MemberBucketEntityRepository;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.annotation.BeforeStep;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@StepScope
 public class BucketReader implements ItemReader<List<BucketisedMember>>, StepExecutionListener {
-	private final String VIEW_NAME = "viewName";
-	@PersistenceContext
-	private EntityManager entityManager;
-	final MemberBucketEntityMapper mapper;
-	private final int pageSize = 100;
-	private Long totalRecords;
-	private int currentPage;
+	private final MemberBucketEntityMapper mapper;
+	private static final int PAGE_SIZE = 100;
+	private int currentPage = 0;
 	private String viewName;
 	private String fragmentId;
 
-	public BucketReader(MemberBucketEntityMapper mapper) {
+	private final MemberBucketEntityRepository repository;
+
+	public BucketReader(MemberBucketEntityMapper mapper, MemberBucketEntityRepository repository) {
 		this.mapper = mapper;
+		this.repository = repository;
 	}
 
 	@BeforeStep
 	public void beforeStep(StepExecution stepExecution) {
 		currentPage = 0;
-		if (stepExecution.getJobParameters().getParameters().containsKey(VIEW_NAME)) {
-			viewName = stepExecution.getJobParameters().getString(VIEW_NAME);
-		} else {
-			viewName = stepExecution.getExecutionContext().getString(VIEW_NAME);
-		}
-
-		fragmentId = stepExecution.getExecutionContext().getString("fragmentId");
-
-		Query countQuery = entityManager.createNativeQuery("""
-				select COUNT(fb.id) from fragmentation_bucketisation fb
-				LEFT JOIN fetch_allocation fa ON
-				    fb.view_name = CONCAT(fa.collection_name, '/', fa.view_name)
-				        AND fb.member_id = fa.member_id
-				WHERE fa.id IS NULL AND fb.view_name = :viewName AND fb.fragment_id = :fragmentId
-						""", Long.class);
-		countQuery.setParameter(VIEW_NAME, viewName);
-		countQuery.setParameter("fragmentId", fragmentId);
-		totalRecords = (Long) countQuery.getSingleResult();
+		viewName = getViewName(stepExecution);
+		fragmentId = getFragmentId(stepExecution);
 	}
 
 	@Override
 	public ExitStatus afterStep(@NotNull StepExecution stepExecution) {
-		return null;
+		return stepExecution.getExitStatus();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public List<BucketisedMember> read() {
-		if (totalRecords == null || totalRecords == 0 || currentPage >= Math.ceil(1.0 * totalRecords / pageSize)) {
+		Pageable pageable = PageRequest.of(currentPage++, PAGE_SIZE);
+		Page<MemberBucketEntity> page = repository.findUnprocessedBuckets(viewName, fragmentId, pageable);
+		if (page.isEmpty()) {
 			return null;
 		}
-		Query dataQuery = entityManager.createNativeQuery("""
-				select fb.* from fragmentation_bucketisation fb
-				LEFT JOIN fetch_allocation fa ON
-				    fb.view_name = fa.view_name AND fb.member_id = fa.member_id
-				WHERE fa.id IS NULL AND fb.view_name = :viewName AND fb.fragment_id = :fragmentId
-				ORDER BY fb.id
-				        """, MemberBucketEntity.class);
-		dataQuery.setParameter(VIEW_NAME, viewName);
-		dataQuery.setParameter("fragmentId", fragmentId);
-		dataQuery.setFirstResult(currentPage * pageSize);
-		dataQuery.setMaxResults(pageSize);
-		List<MemberBucketEntity> listOfMyData = dataQuery.getResultList();
-		currentPage++;
-		return listOfMyData.stream().map(mapper::toBucketisedMember).toList();
+
+		List<BucketisedMember> out = page.getContent()
+				.stream()
+				.map(mapper::toBucketisedMember)
+				.toList();
+
+		return out;
+	}
+
+	private String getViewName(StepExecution stepExecution) {
+		if (stepExecution.getJobParameters().getParameters().containsKey("viewName")) {
+			return stepExecution.getJobParameters().getString("viewName");
+		} else {
+			return stepExecution.getExecutionContext().getString("viewName");
+		}
+	}
+
+	private String getFragmentId(StepExecution stepExecution) {
+		return stepExecution.getExecutionContext().getString("fragmentId");
 	}
 }

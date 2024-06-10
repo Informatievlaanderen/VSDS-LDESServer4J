@@ -21,7 +21,6 @@ public interface FragmentEntityRepository extends JpaRepository<FragmentEntity, 
     List<FragmentEntity> findAllByImmutableAndViewName(Boolean immutable, String viewName);
 
     Optional<FragmentEntity> findByImmutableAndParentId(boolean immutable, String parentId);
-    Optional<FragmentEntity> findAllByImmutableAndParentId(boolean immutable, String parentId);
 
     Stream<FragmentEntity> findAllByViewName(String viewName);
 

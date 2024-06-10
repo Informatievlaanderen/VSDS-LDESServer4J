@@ -87,9 +87,9 @@ public class FragmentationService {
 				.toJobParameters());
 	}
 
-	@Scheduled(fixedRate = 500)
+	@Scheduled(fixedRate = 1500)
 	public void scheduledJobLauncher() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-		if (shouldTriggerBucketisation && !isJobRunning(BUCKETISATION_JOB)) {
+		if (shouldTriggerBucketisation && !isJobRunning(BUCKETISATION_JOB) && !isJobRunning(REBUCKETISATION_JOB)) {
 			shouldTriggerBucketisation = false;
 			launchJob(bucketiseJob(), new JobParameters());
 		}
@@ -104,9 +104,6 @@ public class FragmentationService {
 		jobLauncher.run(job, jobParameters);
 		if (job.getName().equals(BUCKETISATION_JOB)) {
 			eventPublisher.publishEvent(new MembersBucketisedEvent());
-			if (shouldTriggerBucketisation) {
-				launchJob(job, jobParameters);
-			}
 		} else if (job.getName().equals(REBUCKETISATION_JOB)) {
 			eventPublisher.publishEvent(new NewViewBucketisedEvent(jobParameters.getString("viewName")));
 		}

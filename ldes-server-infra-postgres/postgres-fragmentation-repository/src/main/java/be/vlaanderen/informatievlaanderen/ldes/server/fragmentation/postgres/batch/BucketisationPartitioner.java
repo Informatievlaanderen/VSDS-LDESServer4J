@@ -1,5 +1,6 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.fragmentation.postgres.batch;
 
+import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -18,7 +19,11 @@ public class BucketisationPartitioner implements Partitioner {
 
 	@Override
 	public Map<String, ExecutionContext> partition(int gridSize) {
-		List<Object[]> viewNameFragmentIdPairs = entityManager.createNativeQuery("SELECT DISTINCT view_name, fragment_id FROM fragmentation_bucketisation", Object[].class).getResultList();
+		List<Object[]> viewNameFragmentIdPairs = entityManager.createNativeQuery("SELECT DISTINCT fb.view_name, fb.fragment_id FROM fragmentation_bucketisation fb " +
+		                                                                         "LEFT JOIN fetch_allocation fa ON " +
+		                                                                         "fb.view_name = fa.view_name AND " +
+		                                                                         "fb.member_id = fa.member_id " +
+		                                                                         "WHERE fa.id IS NULL", Object[].class).getResultList();
 
 		Map<String, ExecutionContext> contextMap = new HashMap<>(viewNameFragmentIdPairs.size());
 		for (Object[] pair : viewNameFragmentIdPairs) {
@@ -29,7 +34,7 @@ public class BucketisationPartitioner implements Partitioner {
 			context.putString("viewName", viewName);
 			context.putString("fragmentId", fragmentId);
 
-			contextMap.put("view: %s bucket: %s".formatted(viewName, fragmentId), context);
+			contextMap.put("view: %s bucket: %s".formatted(ViewName.fromString(viewName).getViewName(), contextMap.size()), context);
 		}
 
 		return contextMap;

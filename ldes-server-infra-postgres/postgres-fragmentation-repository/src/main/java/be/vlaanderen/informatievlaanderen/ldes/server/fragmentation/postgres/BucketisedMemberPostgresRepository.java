@@ -23,7 +23,7 @@ public class BucketisedMemberPostgresRepository implements BucketisedMemberRepos
 
     @Override
     public void insertAll(List<BucketisedMember> members) {
-        memberBucketEntityRepository.saveAll(members.stream().map(mapper::toMemberBucketisationEntity).toList());
+//        memberBucketEntityRepository.saveAll(members.stream().map(mapper::toMemberBucketisationEntity).toList());
     }
 
     @Override

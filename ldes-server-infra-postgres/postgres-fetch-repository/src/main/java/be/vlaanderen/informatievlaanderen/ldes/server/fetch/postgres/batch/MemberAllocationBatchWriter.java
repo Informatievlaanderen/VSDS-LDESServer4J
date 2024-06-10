@@ -6,6 +6,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
 
@@ -24,7 +25,8 @@ public class MemberAllocationBatchWriter implements ItemWriter<List<MemberAlloca
 		Chunk<? extends MemberAllocation> memberAllocations = new Chunk(chunk.getItems()
 				.stream()
 				.flatMap(List::stream)
-				.toList());
+				.distinct()
+				.toArray());
 
 		writer.write(memberAllocations);
 	}
@@ -35,19 +37,21 @@ public class MemberAllocationBatchWriter implements ItemWriter<List<MemberAlloca
 			                                  "values (?, ?, ?, ?, ?)";
 			@Override
 			public void write(Chunk<? extends MemberAllocation> chunk) throws Exception {
-				PreparedStatement ps = dataSource.getConnection().prepareStatement(SQL);
-				for (MemberAllocation allocation : chunk) {
-					// Set the variables
-					ps.setString(1, allocation.getId());
-					ps.setString(2, allocation.getCollectionName());
-					ps.setString(3, allocation.getFragmentId());
-					ps.setString(4, allocation.getMemberId());
-					ps.setString(5, allocation.getViewName());
-					// Add it to the batch
-					ps.addBatch();
+				try (Connection connection = dataSource.getConnection()) {
+					PreparedStatement ps = connection.prepareStatement(SQL);
+					for (MemberAllocation allocation : chunk.getItems()) {
+						// Set the variables
+						ps.setString(1, allocation.id());
+						ps.setString(2, allocation.collectionName());
+						ps.setString(3, allocation.fragmentId());
+						ps.setString(4, allocation.memberId());
+						ps.setString(5, allocation.viewName());
+						// Add it to the batch
+						ps.addBatch();
 
+					}
+					ps.executeBatch();
 				}
-				ps.executeBatch();
 			}
 		};
 	}
