@@ -2,44 +2,39 @@ package be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.
 
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.Tile;
 import be.vlaanderen.informatievlaanderen.ldes.server.fragmentisers.geospatial.model.TileGrid;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
+
 public class CoordinateToTileStringConverter {
+
+    private static final Logger log = LoggerFactory.getLogger(CoordinateToTileStringConverter.class);
 
     private CoordinateToTileStringConverter() {
     }
 
-    public static Set<String> calculateTiles(String wktString, final int zoom) throws ParseException {
-        Geometry geometry = convertWktToGeometry(wktString);
-        Envelope envelope = geometry.getEnvelopeInternal();
-        return new TileGrid(envelope, zoom)
-                .findIntersectingTiles(geometry)
-                .stream()
-                .map(Tile::toTileString)
-                .collect(Collectors.toSet());
-    }
+    public static Set<String> calculateTiles(String wktString, final int zoom) {
+        try {
+            Geometry geometry = convertWktToGeometry(wktString);
+            Envelope boundingBoxGeometry = geometry.getEnvelopeInternal();
+            return new TileGrid(boundingBoxGeometry, zoom)
+                    .findIntersectingTiles(geometry)
+                    .stream()
+                    .map(Tile::toTileString)
+                    .collect(Collectors.toSet());
+        } catch (ParseException ex) {
+            log.error("Could not calculate tiles for wktString {}", wktString, ex);
+        }
 
-    public static String convertCoordinate(final Coordinate coordinate, final int zoom) {
-        int xtile = (int) Math.floor((coordinate.x + 180) / 360 * (1 << zoom));
-        int ytile = (int) Math.floor(
-                (1 - Math.log(Math.tan(Math.toRadians(coordinate.y)) + 1 / Math.cos(Math.toRadians(coordinate.y)))
-                        / Math.PI) / 2 * (1 << zoom));
-        if (xtile < 0)
-            xtile = 0;
-        if (xtile >= (1 << zoom))
-            xtile = ((1 << zoom) - 1);
-        if (ytile < 0)
-            ytile = 0;
-        if (ytile >= (1 << zoom))
-            ytile = ((1 << zoom) - 1);
-        return (zoom + "/" + xtile + "/" + ytile);
+        return emptySet();
     }
 
     private static Geometry convertWktToGeometry(String geoFeature) throws ParseException {

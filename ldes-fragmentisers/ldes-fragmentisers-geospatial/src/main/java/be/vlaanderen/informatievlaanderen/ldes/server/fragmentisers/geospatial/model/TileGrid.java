@@ -28,9 +28,9 @@ public class TileGrid {
         Set<Tile> intersectingTiles = new HashSet<>();
 
         calculateTilesInGrid().forEach(tile -> {
-            Geometry bboxPolygon = toPolygon(new BoundingBox(tile));
+            Geometry boundingBoxTile = toPolygon(new BoundingBox(tile));
 
-            if (geometry.intersects(bboxPolygon)) {
+            if (geometry.intersects(boundingBoxTile)) {
                 intersectingTiles.add(tile);
             }
         });
