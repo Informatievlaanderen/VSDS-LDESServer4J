@@ -5,6 +5,11 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="create-new-views-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="views" />
+            </not>
+        </preConditions>
         <createTable tableName="views">
             <column name="view_id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

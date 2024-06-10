@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="create-new-dcat-datasets-table" author="vsds">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="dcat_datasets"/>
+            </not>
+        </preConditions>
+        <createTable tableName="dcat_datasets">
+            <column name="collection_id" type="integer">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="model" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="dcat_datasets" baseColumnNames="collection_id"
+                                 constraintName="fk_dcat_datasets_collection_id"
+                                 referencedTableName="collections"
+                                 referencedColumnNames="collection_id"
+                                 onDelete="CASCADE"/>
+        <rollback>
+            <dropTable tableName="dcat_datasets" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="migrate-dcat-datasets-data" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="create-new-dcat-datasets-table" author="vsds"
+                               changeLogFile="db/changelog/3_1_1/add-fk-to-dcat-datasets.xml"/>
+        </preConditions>
+        <sqlFile path="db/changelog/3_1_1/migrate-dcat-datasets-data.sql"/>
+        <rollback>
+            <delete tableName="dcat_datasets"/>
+        </rollback>
+    </changeSet>
+    <changeSet id="drop-old-dcat-datasets-table" author="vsds">
+        <preConditions>
+            <changeSetExecuted id="migrate-dcat-datasets-data" author="vsds"
+                               changeLogFile="db/changelog/3_1_1/add-fk-to-dcat-datasets.xml"/>
+        </preConditions>
+        <dropTable tableName="dcat_dataset" cascadeConstraints="true"/>
+    </changeSet>
+</databaseChangeLog>

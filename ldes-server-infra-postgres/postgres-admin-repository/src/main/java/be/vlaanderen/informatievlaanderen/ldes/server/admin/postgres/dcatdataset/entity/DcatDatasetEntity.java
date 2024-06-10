@@ -5,7 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-@Entity
+@Entity(name = "old-dcat")
 @Table(name = "dcat_dataset")
 public class DcatDatasetEntity {
 	@Id

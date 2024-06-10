@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-@Component
+//@Component
 public class ShaclShapePostgresRepository implements ShaclShapeRepository {
 	private final ShaclShapeEntityRepository repository;
 	private final ShaclShapeEntityConverter converter = new ShaclShapeEntityConverter();

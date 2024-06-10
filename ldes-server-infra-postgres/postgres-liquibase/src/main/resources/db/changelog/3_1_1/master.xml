@@ -5,5 +5,6 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="/db/changelog/3_1_1/new-eventstream-data-model.xml"/>
-    <include file="db/changelog/3_1_1/new-view-data-model.xml" />
+    <include file="db/changelog/3_1_1/new-view-data-model.xml"/>
+    <include file="db/changelog/3_1_1/add-fk-to-dcat-datasets.xml"/>
 </databaseChangeLog>

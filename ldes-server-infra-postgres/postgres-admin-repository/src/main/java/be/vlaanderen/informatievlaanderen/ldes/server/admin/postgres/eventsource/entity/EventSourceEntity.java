@@ -9,7 +9,7 @@ import org.hibernate.annotations.Type;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "OldEventStreamEntity")
 @Table(name = "eventsource")
 public class EventSourceEntity {
 	@Id

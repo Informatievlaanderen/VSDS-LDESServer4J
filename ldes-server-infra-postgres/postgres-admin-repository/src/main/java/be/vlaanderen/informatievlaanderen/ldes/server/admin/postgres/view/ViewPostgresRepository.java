@@ -10,6 +10,7 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.v2.rep
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -54,6 +55,8 @@ public class ViewPostgresRepository implements ViewRepository {
 
     @Override
     public List<ViewSpecification> retrieveAllViewsOfCollection(String collectionName) {
-        return viewEntityRepository.findAllByCollectionName(collectionName).map(ViewSpecificationMapper::fromEntity).toList();
+        return viewEntityRepository.findAllByCollectionName(collectionName).stream()
+                .map(ViewSpecificationMapper::fromEntity)
+                .toList();
     }
 }
