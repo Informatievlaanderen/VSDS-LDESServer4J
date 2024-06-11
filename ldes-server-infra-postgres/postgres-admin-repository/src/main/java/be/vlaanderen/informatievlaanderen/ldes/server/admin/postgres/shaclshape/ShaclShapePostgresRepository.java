@@ -6,8 +6,8 @@ import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.mapper.ShaclShapeMapper;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.repository.ShaclShapeEntityRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

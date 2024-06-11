@@ -3,7 +3,6 @@ package be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcatdataset.
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.services.DcatDatasetServiceImpl;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.validation.dcat.DcatDatasetValidator;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.events.admin.EventStreamDeletedEvent;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.ExistingResourceException;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.exceptions.MissingResourceException;
@@ -35,8 +34,6 @@ class DcatDatasetServiceImplTest {
 	private DcatDatasetServiceImpl datasetService;
 	@Mock
 	private DcatDatasetRepository repository;
-	@Mock
-	private DcatDatasetValidator validator;
 
 	@BeforeEach
 	void setUp() throws URISyntaxException {
@@ -95,7 +92,7 @@ class DcatDatasetServiceImplTest {
 	class RemoveDataset {
 		@Test
 		void removeDataset() {
-			when(datasetService.retrieveDataset(DATASET_ID)).thenReturn(Optional.of(dataset));
+			when(repository.exitsByCollectionName(DATASET_ID)).thenReturn(true);
 
 			datasetService.deleteDataset(DATASET_ID);
 
@@ -104,7 +101,7 @@ class DcatDatasetServiceImplTest {
 
 		@Test
 		void when_DatasetNotFound_Then_DatasetNotDeleted() {
-			when(datasetService.retrieveDataset(DATASET_ID)).thenReturn(Optional.empty());
+			when(repository.exitsByCollectionName(DATASET_ID)).thenReturn(false);
 
 			datasetService.deleteDataset(DATASET_ID);
 
@@ -126,7 +123,7 @@ class DcatDatasetServiceImplTest {
 	@Test
 	void should_DeleteDataset_when_EventStreamDeletedEventIsReceived() {
 		String collectionName = "collectionName";
-		when(repository.retrieveDataset(collectionName)).thenReturn(Optional.of(new DcatDataset(collectionName)));
+		when(repository.exitsByCollectionName(collectionName)).thenReturn(true);
 
 		datasetService.handleEventStreamDeletedEvent(new EventStreamDeletedEvent(collectionName));
 

@@ -30,6 +30,7 @@ public class FragmentSequencePostgresRepository implements FragmentSequenceRepos
 	}
 
 	@Override
+	@Transactional
 	public void saveLastProcessedSequence(FragmentSequence sequence) {
 		repository.save(mapper.toEntity(sequence));
 	}
