@@ -9,6 +9,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FileUtils;
 import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.springframework.test.web.servlet.ResultActions;
@@ -17,6 +18,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import static be.vlaanderen.informatievlaanderen.ldes.server.admin.rest.controllers.DcatDatasetRestController.BASE_URL;
 import static org.mockito.Mockito.*;
@@ -71,7 +73,7 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
     public void theMetadataWillBeStored() {
         Model model = RDFParser.fromString(datasetString).lang(Lang.TURTLE).build().toModel();
         DcatDataset dataset = new DcatDataset(COLLECTION_NAME, model);
-        verify(dcatDatasetRepository, times(1)).saveDataset(dataset);
+        verify(dcatDatasetRepository).saveDataset(dataset);
     }
 
     @And("The dataset will not be stored")
@@ -99,6 +101,7 @@ public class DcatDatasetRestControllerSteps extends SpringIntegrationTest {
     @And("The dataset already exists")
     public void theDataserviceAlreadyExists() {
         when(dcatDatasetRepository.exitsByCollectionName(COLLECTION_NAME)).thenReturn(true);
+        when(dcatDatasetRepository.retrieveDataset(COLLECTION_NAME)).thenReturn(Optional.of(new DcatDataset(COLLECTION_NAME, ModelFactory.createDefaultModel())));
     }
 
     @And("The dataset does not yet exist")
