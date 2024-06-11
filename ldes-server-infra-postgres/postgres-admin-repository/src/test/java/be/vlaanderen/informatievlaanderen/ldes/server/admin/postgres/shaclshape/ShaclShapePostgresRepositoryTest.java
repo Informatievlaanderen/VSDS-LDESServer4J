@@ -1,121 +1,120 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.entities.ShaclShape;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.shacl.repository.ShaclShapeRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.repository.ShaclShapeEntityRepository;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ShaclShapePostgresRepositoryTest {
-	private static final String COLLECTION = "collection1";
-	@Mock
-	private ShaclShapeEntityRepository shaclShapeEntityRepository;
+    private static final String COLLECTION = "collection-name";
+    @Mock
+    private ShaclShapeEntityRepository shaclShapeEntityRepository;
+    @Mock
+    private EventStreamEntityRepository eventStreamEntityRepository;
+    @InjectMocks
+    private ShaclShapePostgresRepository repository;
 
-	private ShaclShapeRepository repository;
 
-	@BeforeEach
-	void setUp() {
-		repository = new ShaclShapePostgresRepository(shaclShapeEntityRepository);
-	}
+    @Test
+    void when_retrieveShacl_then_shaclIsReturned() {
+        final ShaclShapeEntity shaclShapeEntity = initShaclShapeEntity(loadShaclModel());
+        when(shaclShapeEntityRepository.findByCollectionName(COLLECTION)).thenReturn(Optional.of(shaclShapeEntity));
+        final ShaclShape expectedShaclShape = new ShaclShape(COLLECTION, loadShaclModel());
 
-	@Test
-	void when_retrieveShacl_then_shaclIsReturned() throws URISyntaxException, IOException {
-		final String shaclShapeString = loadShaclString();
-		final ShaclShapeEntity shaclShapeEntity = new ShaclShapeEntity(COLLECTION, shaclShapeString);
+        Optional<ShaclShape> shaclShape = repository.retrieveShaclShape(COLLECTION);
 
-		when(shaclShapeEntityRepository.findById(COLLECTION)).thenReturn(Optional.of(shaclShapeEntity));
+        assertThat(shaclShape).contains(expectedShaclShape);
+    }
 
-		final Model expectedShaclModel = ModelFactory.createDefaultModel();
-		final ShaclShape expectedShaclShape = new ShaclShape(COLLECTION, expectedShaclModel);
+    @Test
+    void when_retrieveNonExistingShacl_then_emptyOptionalIsReturned() {
+        when(shaclShapeEntityRepository.findByCollectionName(COLLECTION)).thenReturn(Optional.empty());
 
-		Optional<ShaclShape> shaclShape = repository.retrieveShaclShape(COLLECTION);
+        Optional<ShaclShape> shaclShape = repository.retrieveShaclShape(COLLECTION);
 
-		verify(shaclShapeEntityRepository).findById(COLLECTION);
-		assertTrue(shaclShape.isPresent());
-		assertEquals(expectedShaclShape, shaclShape.get());
-	}
+        verify(shaclShapeEntityRepository).findByCollectionName(COLLECTION);
+        assertTrue(shaclShape.isEmpty());
+    }
 
-	@Test
-	void when_retrieveNonExistingShacl_then_emptyOptionalIsReturned() {
-		when(shaclShapeEntityRepository.findById(COLLECTION)).thenReturn(Optional.empty());
+    @Test
+    void when_retrieveAllShacls_then_listIsReturned() {
+        final String otherCollectionName = "other-collection";
+        final ShaclShapeEntity firstEntity = initShaclShapeEntity(loadShaclModel());
+        final ShaclShapeEntity secondEntity = mock();
+        when(secondEntity.getCollectionName()).thenReturn(otherCollectionName);
+        when(shaclShapeEntityRepository.findAll())
+                .thenReturn(List.of(firstEntity, secondEntity));
+        final List<ShaclShape> expectedShapes = List.of(
+                new ShaclShape(COLLECTION, loadShaclModel()),
+                new ShaclShape(otherCollectionName, ModelFactory.createDefaultModel()));
 
-		Optional<ShaclShape> shaclShape = repository.retrieveShaclShape(COLLECTION);
+        final List<ShaclShape> shaclShapes = repository.retrieveAllShaclShapes();
 
-		verify(shaclShapeEntityRepository).findById(COLLECTION);
-		assertTrue(shaclShape.isEmpty());
-	}
+        assertThat(shaclShapes).containsExactlyInAnyOrderElementsOf(expectedShapes);
+    }
 
-	@Test
-	void when_retrieveAllShacls_then_listIsReturned() throws URISyntaxException, IOException {
-		final String shaclShapeString = loadShaclString();
-		when(shaclShapeEntityRepository.findAll())
-				.thenReturn(List.of(
-						new ShaclShapeEntity("c1", ""),
-						new ShaclShapeEntity("c2", shaclShapeString)));
+    @Test
+    void given_NewShaclShape_when_SaveShacl_then_SaveShaclShapeEntity() {
+        when(shaclShapeEntityRepository.findByCollectionName(COLLECTION)).thenReturn(Optional.empty());
+        final ShaclShape shaclShape = new ShaclShape(COLLECTION, loadShaclModel());
+        when(eventStreamEntityRepository.findByName(COLLECTION)).thenReturn(Optional.of(mock()));
 
-		final List<ShaclShape> expectedShapes = List.of(
-				new ShaclShape("c1", ModelFactory.createDefaultModel()),
-				new ShaclShape("c2", RDFParser.fromString(shaclShapeString).lang(Lang.TURTLE).toModel()));
+        repository.saveShaclShape(shaclShape);
 
-		final List<ShaclShape> shaclShapes = repository.retrieveAllShaclShapes();
+        InOrder inOrder = inOrder(shaclShapeEntityRepository, eventStreamEntityRepository);
+        inOrder.verify(shaclShapeEntityRepository).findByCollectionName(COLLECTION);
+        inOrder.verify(eventStreamEntityRepository).findByName(COLLECTION);
+        inOrder.verify(shaclShapeEntityRepository).save(any(ShaclShapeEntity.class));
+    }
 
-		verify(shaclShapeEntityRepository).findAll();
-		assertEquals(expectedShapes, shaclShapes);
-	}
+    @Test
+    void given_ExistingShaclShape_when_SaveShacl_then_SaveShaclShapeEntity() {
+        final ShaclShapeEntity entity = initShaclShapeEntity(loadShaclModel());
+        when(shaclShapeEntityRepository.findByCollectionName(COLLECTION)).thenReturn(Optional.of(entity));
+        final ShaclShape shaclShape = new ShaclShape(COLLECTION, loadShaclModel());
 
-	@Test
-	void when_saveShacl_then_shaclIsReturned() throws URISyntaxException, IOException {
-		final String shaclShapeString = loadShaclString();
-		final Model shaclModel = RDFParser.fromString(shaclShapeString).lang(Lang.TURTLE).toModel();
-		final ShaclShape shaclShape = new ShaclShape(COLLECTION, shaclModel);
+        repository.saveShaclShape(shaclShape);
 
-		repository.saveShaclShape(shaclShape);
+        InOrder inOrder = inOrder(shaclShapeEntityRepository, eventStreamEntityRepository);
+        inOrder.verify(shaclShapeEntityRepository).findByCollectionName(COLLECTION);
+        inOrder.verify(shaclShapeEntityRepository).save(any(ShaclShapeEntity.class));
+        inOrder.verifyNoMoreInteractions();
+    }
 
-		verify(shaclShapeEntityRepository).save(any(ShaclShapeEntity.class));
-	}
+    @Test
+    void when_ShaclDeleted_then_ReturnEmptyWithRetrieval() {
+        repository.deleteShaclShape(COLLECTION);
 
-	@Test
-	void when_shaclDeleted_then_returnEmptyWithRetrieval() throws URISyntaxException, IOException {
-		final String shaclShapeString = loadShaclString();
+        verify(shaclShapeEntityRepository).deleteByCollectionName(COLLECTION);
+    }
 
-		when(shaclShapeEntityRepository.findById(COLLECTION))
-				.thenReturn(Optional.of(new ShaclShapeEntity(COLLECTION, shaclShapeString)))
-				.thenReturn(Optional.empty());
+    private ShaclShapeEntity initShaclShapeEntity(Model model) {
+        final EventStreamEntity eventStreamEntity = new EventStreamEntity(COLLECTION, "", "", false, false);
+        final ShaclShapeEntity shaclShapeEntity = new ShaclShapeEntity(eventStreamEntity);
+        shaclShapeEntity.setModel(model);
+        return shaclShapeEntity;
+    }
 
-		assertFalse(repository.retrieveShaclShape(COLLECTION).isEmpty());
-
-		repository.deleteShaclShape(COLLECTION);
-		verify(shaclShapeEntityRepository).deleteById(COLLECTION);
-
-		assertTrue(repository.retrieveShaclShape(COLLECTION).isEmpty());
-	}
-
-	private String loadShaclString() throws URISyntaxException, IOException {
-		ClassLoader classLoader = getClass().getClassLoader();
-		Path path = Paths.get(Objects.requireNonNull(classLoader.getResource("shacl/shacl-shape.ttl")).toURI());
-		return Files.lines(path).collect(Collectors.joining());
-	}
+    private Model loadShaclModel() {
+        return RDFParser.source("shacl/shacl-shape.ttl").toModel();
+    }
 
 }

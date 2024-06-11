@@ -5,40 +5,40 @@ import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.Fragmentation
 import java.util.Map;
 
 public class FragmentationConfigEntity {
-	private String name;
-	private Map<String, String> config;
+    private String name;
+    private Map<String, String> config;
 
-	public FragmentationConfigEntity() {}
+    public FragmentationConfigEntity() {}
 
-	public FragmentationConfigEntity(String name, Map<String, String> config) {
-		this.name = name;
-		this.config = config;
-	}
+    public FragmentationConfigEntity(String name, Map<String, String> config) {
+        this.name = name;
+        this.config = config;
+    }
 
-	public static FragmentationConfigEntity toEntity(FragmentationConfig fragmentationConfig) {
-		return new FragmentationConfigEntity(fragmentationConfig.getName(), fragmentationConfig.getConfig());
-	}
+    public static FragmentationConfigEntity toEntity(FragmentationConfig fragmentationConfig) {
+        return new FragmentationConfigEntity(fragmentationConfig.getName(), fragmentationConfig.getConfig());
+    }
 
-	public FragmentationConfig fromEntity() {
-		var fragmentationConfig = new FragmentationConfig();
-		fragmentationConfig.setName(this.name);
-		fragmentationConfig.setConfig(this.config);
-		return fragmentationConfig;
-	}
+    public FragmentationConfig fromEntity() {
+        var fragmentationConfig = new FragmentationConfig();
+        fragmentationConfig.setName(this.name);
+        fragmentationConfig.setConfig(this.config);
+        return fragmentationConfig;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Map<String, String> getConfig() {
-		return config;
-	}
+    public Map<String, String> getConfig() {
+        return config;
+    }
 
-	public void setConfig(Map<String, String> config) {
-		this.config = config;
-	}
+    public void setConfig(Map<String, String> config) {
+        this.config = config;
+    }
 }

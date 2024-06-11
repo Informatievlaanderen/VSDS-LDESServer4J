@@ -1,31 +1,44 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.ModelConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
+import jakarta.persistence.*;
+import org.apache.jena.rdf.model.Model;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
-@Entity(name = "old-dcat")
-@Table(name = "dcat_dataset")
+@Entity
+@Table(name = "dcat_datasets")
 public class DcatDatasetEntity {
-	@Id
-	private String collectionName;
-	@Column(columnDefinition = "text")
-	private String model;
+    @Id
+    @Column(name = "collection_id", unique = true, nullable = false)
+    private Integer collectionId;
 
-	protected DcatDatasetEntity() {}
+    @MapsId
+    @OneToOne(fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "collection_id", nullable = false)
+    private EventStreamEntity eventStream;
 
-	public DcatDatasetEntity(String collectionName, String model) {
-		this.collectionName = collectionName;
-		this.model = model;
-	}
+    @Column(nullable = false, columnDefinition = "text")
+    @Convert(converter = ModelConverter.class)
+    private Model model;
 
-	public String getCollectionName() {
-		return collectionName;
-	}
+    public DcatDatasetEntity() {}
 
-	public String getModel() {
-		return model;
-	}
+    public DcatDatasetEntity(EventStreamEntity eventStream) {
+        this.eventStream = eventStream;
+    }
 
+    public String getCollectionName() {
+        return eventStream.getName();
+    }
+
+    public Model getModel() {
+        return model;
+    }
+
+    public void setModel(Model model) {
+        this.model = model;
+    }
 }

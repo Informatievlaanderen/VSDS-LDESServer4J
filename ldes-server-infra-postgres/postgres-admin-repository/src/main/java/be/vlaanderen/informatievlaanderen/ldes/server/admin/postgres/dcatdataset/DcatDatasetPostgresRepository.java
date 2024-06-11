@@ -1,11 +1,11 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.entities.DcatDataset;
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.domain.dcat.dcatdataset.repository.DcatDatasetRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2.entity.DcatDatasetEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2.mapper.DcatDatasetMapper;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.v2.repository.DcatDatasetEntityRepository;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.repository.EventStreamEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.entity.DcatDatasetEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.mapper.DcatDatasetMapper;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.dcatdataset.repository.DcatDatasetEntityRepository;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.repository.EventStreamEntityRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 

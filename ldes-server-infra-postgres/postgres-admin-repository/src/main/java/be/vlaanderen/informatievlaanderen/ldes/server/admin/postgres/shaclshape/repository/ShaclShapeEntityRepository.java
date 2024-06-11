@@ -1,11 +1,18 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.repository;
 
-
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.shaclshape.entity.ShaclShapeEntity;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-@Repository("OldShaclShapeEntityRepository")
-public interface ShaclShapeEntityRepository extends JpaRepository<ShaclShapeEntity, String> {
+import java.util.Optional;
+
+public interface ShaclShapeEntityRepository extends JpaRepository<ShaclShapeEntity, Integer> {
+    @Query("SELECT s FROM ShaclShapeEntity s WHERE s.eventStream.name = :collectionName")
+    Optional<ShaclShapeEntity> findByCollectionName(String collectionName);
+
+    @Modifying
+    @Query("DELETE FROM ShaclShapeEntity s WHERE s.eventStream.name = :collectionName")
+    void deleteByCollectionName(String collectionName);
+
 }

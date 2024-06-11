@@ -1,7 +1,7 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.v2.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.mapper;
 
 import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.FragmentationConfigEntity;
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.v2.entity.ViewEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity.ViewEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewName;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.ViewSpecification;
 

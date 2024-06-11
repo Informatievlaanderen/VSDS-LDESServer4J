@@ -1,50 +1,70 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.entity;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.view.service.FragmentationConfigEntityConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.ModelListConverter;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import io.hypersistence.utils.hibernate.type.json.JsonBinaryType;
 import jakarta.persistence.*;
+import org.apache.jena.rdf.model.Model;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 
 import java.util.List;
 
-@Entity(name = "oldViewModel")
-@Table(name = "view")
+@Entity
+@Table(name = "views", uniqueConstraints = @UniqueConstraint(columnNames = {"collection_id", "name"}))
 public class ViewEntity {
-	@Id
-	private String viewName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "view_id", nullable = false)
+    private Integer id;
 
-	@Type(JsonBinaryType.class)
-	@Column(columnDefinition = "jsonb")
-	private List<String> retentionPolicies;
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "collection_id", nullable = false)
+    private EventStreamEntity eventStream;
 
-	@Convert(converter = FragmentationConfigEntityConverter.class)
-	@Column(name = "fragmentations", columnDefinition = "text")
-	private List<FragmentationConfigEntity> fragmentations;
-	private int pageSize;
+    @Column(nullable = false)
+    private String name;
 
-	protected ViewEntity() {}
+    @Type(JsonBinaryType.class)
+    @Column(name = "fragmentations", columnDefinition = "jsonb", nullable = false)
+    private List<FragmentationConfigEntity> fragmentations;
 
-	public ViewEntity(String viewName, List<String> retentionPolicies,
-	                  List<FragmentationConfigEntity> fragmentations, int pageSize) {
-		this.viewName = viewName;
-		this.retentionPolicies = retentionPolicies;
-		this.fragmentations = fragmentations;
-		this.pageSize = pageSize;
-	}
+    @Convert(converter = ModelListConverter.class)
+    @Column(name = "retention_policies", columnDefinition = "text", nullable = false)
+    private List<Model> retentionPolicies;
 
-	public String getViewName() {
-		return viewName;
-	}
+    @Column(name = "page_size", nullable = false)
+    private Integer pageSize;
 
-	public List<String> getRetentionPolicies() {
-		return retentionPolicies;
-	}
+    public ViewEntity() {
+    }
 
-	public List<FragmentationConfigEntity> getFragmentations() {
-		return fragmentations;
-	}
+    public ViewEntity(String name, List<FragmentationConfigEntity> fragmentations, List<Model> retentionPolicies, Integer pageSize) {
+        this.name = name;
+        this.fragmentations = fragmentations;
+        this.retentionPolicies = retentionPolicies;
+        this.pageSize = pageSize;
+    }
 
-	public int getPageSize() {
-		return pageSize;
-	}
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public List<FragmentationConfigEntity> getFragmentations() {
+        return fragmentations;
+    }
+
+    public List<Model> getRetentionPolicies() {
+        return retentionPolicies;
+    }
+
+    public String getComposedViewName() {
+        return eventStream.getName() + "/" + name;
+    }
+
+    public void setEventStream(EventStreamEntity eventStream) {
+        this.eventStream = eventStream;
+    }
 }

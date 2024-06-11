@@ -1,53 +1,62 @@
 package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-@Entity
-@Table(name = "eventstream")
+@Entity(name = "collections")
+@Table(name = "collections")
 public class EventStreamEntity {
-	@Id
-	private String id;
-	private String timestampPath;
-	private String versionOfPath;
-	private boolean versionCreationEnabled;
-	private boolean isClosed;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "collection_id", unique = true, nullable = false, columnDefinition = "SMALLINT")
+    private Integer id;
 
-	protected EventStreamEntity() {}
+    @Column(unique = true, nullable = false)
+    private String name;
 
-	public EventStreamEntity(String id,
-							 String timestampPath,
-							 String versionOfPath,
-							 boolean versionCreationEnabled) {
-		this(id, timestampPath, versionOfPath, versionCreationEnabled, false);
-	}
+    @Column(name = "timestamp_path", nullable = false)
+    private String timestampPath;
 
-	public EventStreamEntity(String id, String timestampPath, String versionOfPath, boolean versionCreationEnabled, boolean isClosed) {
-		this.id = id;
-		this.timestampPath = timestampPath;
-		this.versionOfPath = versionOfPath;
-		this.versionCreationEnabled = versionCreationEnabled;
-		this.isClosed = isClosed;
-	}
+    @Column(name = "version_of_path", nullable = false)
+    private String versionOfPath;
 
-	public String getId() {
-		return id;
-	}
+    @Column(name = "create_versions", nullable = false)
+    private Boolean versionCreationEnabled;
 
-	public String getTimestampPath() {
-		return timestampPath;
-	}
+    @Column(name = "is_closed", nullable = false)
+    private Boolean isClosed;
 
-	public String getVersionOfPath() {
-		return versionOfPath;
-	}
+    public EventStreamEntity() {
+    }
 
-	public boolean isVersionCreationEnabled() {
-		return versionCreationEnabled;
-	}
+    public EventStreamEntity(String name, String timestampPath, String versionOfPath, Boolean versionCreationEnabled, Boolean isClosed) {
+        this.name = name;
+        this.timestampPath = timestampPath;
+        this.versionOfPath = versionOfPath;
+        this.versionCreationEnabled = versionCreationEnabled;
+        this.isClosed = isClosed;
+    }
 
-	public boolean isClosed() {
-		return isClosed;
-	}
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTimestampPath() {
+        return timestampPath;
+    }
+
+    public String getVersionOfPath() {
+        return versionOfPath;
+    }
+
+    public Boolean getVersionCreationEnabled() {
+        return versionCreationEnabled;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
 }

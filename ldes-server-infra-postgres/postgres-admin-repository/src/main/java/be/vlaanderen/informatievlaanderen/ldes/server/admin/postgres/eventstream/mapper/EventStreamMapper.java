@@ -1,6 +1,6 @@
-package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.mapper;
+package be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.mapper;
 
-import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.v2.entity.EventStreamEntity;
+import be.vlaanderen.informatievlaanderen.ldes.server.admin.postgres.eventstream.entity.EventStreamEntity;
 import be.vlaanderen.informatievlaanderen.ldes.server.domain.model.EventStream;
 
 public class EventStreamMapper {
